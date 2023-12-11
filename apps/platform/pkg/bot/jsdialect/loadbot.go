@@ -3,13 +3,13 @@ package jsdialect
 import (
 	"github.com/teris-io/shortid"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, connection adapt.Connection, loadOp *adapt.LoadOp, integrationConnection *adapt.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(bot *meta.Bot, connection wire.Connection, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		// Private
 		loadOp:                loadOp,
@@ -22,11 +22,11 @@ func NewLoadBotAPI(bot *meta.Bot, connection adapt.Connection, loadOp *adapt.Loa
 	}
 }
 
-func NewLoadRequestMetadata(op *adapt.LoadOp) *LoadRequestMetadata {
+func NewLoadRequestMetadata(op *wire.LoadOp) *LoadRequestMetadata {
 	metadata, _ := op.GetCollectionMetadata()
-	fields := make([]*adapt.LoadRequestField, len(op.Fields))
-	conditions := make([]*adapt.LoadRequestCondition, len(op.Conditions))
-	orders := make([]*adapt.LoadRequestOrder, len(op.Order))
+	fields := make([]*wire.LoadRequestField, len(op.Fields))
+	conditions := make([]*wire.LoadRequestCondition, len(op.Conditions))
+	orders := make([]*wire.LoadRequestOrder, len(op.Order))
 	for i := range op.Fields {
 		fields[i] = &(op.Fields[i])
 	}
@@ -56,22 +56,22 @@ type LoadRequestMetadata struct {
 	// PRIVATE
 	CollectionMetadata *BotCollectionMetadata `bot:"collectionMetadata"`
 	// Public
-	CollectionName string                        `bot:"collection"`
-	Conditions     []*adapt.LoadRequestCondition `bot:"conditions"`
-	Fields         []*adapt.LoadRequestField     `bot:"fields"`
-	Order          []*adapt.LoadRequestOrder     `bot:"order"`
-	Query          bool                          `bot:"query"`
-	BatchSize      int                           `bot:"batchSize"`
-	BatchNumber    int                           `bot:"batchNumber"`
-	LoadAll        bool                          `bot:"loadAll"`
+	CollectionName string                       `bot:"collection"`
+	Conditions     []*wire.LoadRequestCondition `bot:"conditions"`
+	Fields         []*wire.LoadRequestField     `bot:"fields"`
+	Order          []*wire.LoadRequestOrder     `bot:"order"`
+	Query          bool                         `bot:"query"`
+	BatchSize      int                          `bot:"batchSize"`
+	BatchNumber    int                          `bot:"batchNumber"`
+	LoadAll        bool                         `bot:"loadAll"`
 }
 
 type LoadBotAPI struct {
 	// Private
-	connection            adapt.Connection
-	integrationConnection *adapt.IntegrationConnection
+	connection            wire.Connection
+	integrationConnection *wire.IntegrationConnection
 	loadErrors            []string
-	loadOp                *adapt.LoadOp
+	loadOp                *wire.LoadOp
 	// Public
 	Http                *BotHttpAPI          `bot:"http"`
 	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
@@ -128,9 +128,9 @@ func (lb *LoadBotAPI) AddRecord(record interface{}) {
 			item.SetField(key, typedField)
 		}
 		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
-		if val, err := item.GetField(adapt.ID_FIELD); err == nil || val == nil || val == "" {
+		if val, err := item.GetField(wire.ID_FIELD); err == nil || val == nil || val == "" {
 			if shortId, shortIdErr := shortid.Generate(); shortIdErr != nil {
-				item.SetField(adapt.ID_FIELD, shortId)
+				item.SetField(wire.ID_FIELD, shortId)
 			}
 		}
 		lb.loadOp.Collection.AddItem(item)

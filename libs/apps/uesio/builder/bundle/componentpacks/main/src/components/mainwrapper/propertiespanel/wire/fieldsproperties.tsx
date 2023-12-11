@@ -71,7 +71,6 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 			)}
 			<ScrollPanel
 				ref={anchorEl}
-				variant="uesio/builder.mainsection"
 				context={context}
 				footer={
 					<BuildActionsArea justify="space-around" context={context}>

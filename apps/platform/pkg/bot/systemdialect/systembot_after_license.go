@@ -1,14 +1,14 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func setLicenced(licensed map[string]bool, change *adapt.ChangeItem) error {
+func setLicenced(licensed map[string]bool, change *wire.ChangeItem) error {
 	licensedAppID, err := change.GetFieldAsString("uesio/studio.applicensed->uesio/core.id")
 	if err != nil {
 		return err
@@ -19,27 +19,27 @@ func setLicenced(licensed map[string]bool, change *adapt.ChangeItem) error {
 	return nil
 }
 
-func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	licensePricingItemDeps := adapt.Collection{}
+	licensePricingItemDeps := wire.Collection{}
 	visited := map[string]bool{}
 	licensed := map[string]bool{}
 
-	err := request.LoopUpdates(func(change *adapt.ChangeItem) error {
+	err := request.LoopUpdates(func(change *wire.ChangeItem) error {
 		return setLicenced(licensed, change)
 	})
 	if err != nil {
 		return err
 	}
 
-	err = request.LoopDeletes(func(change *adapt.ChangeItem) error {
+	err = request.LoopDeletes(func(change *wire.ChangeItem) error {
 		return setLicenced(licensed, change)
 	})
 	if err != nil {
 		return err
 	}
 
-	err = request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err = request.LoopInserts(func(change *wire.ChangeItem) error {
 
 		err := setLicenced(licensed, change)
 		if err != nil {
@@ -64,7 +64,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 			&lptc,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
-				Conditions: []adapt.LoadRequestCondition{
+				Conditions: []wire.LoadRequestCondition{
 					{
 						Field: "uesio/studio.app",
 						Value: appID,
@@ -78,12 +78,12 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		}
 
 		for _, ptc := range lptc {
-			licensePricingItemDeps = append(licensePricingItemDeps, &adapt.Item{
+			licensePricingItemDeps = append(licensePricingItemDeps, &wire.Item{
 				"uesio/studio.app": map[string]interface{}{
-					adapt.ID_FIELD: appID,
+					wire.ID_FIELD: appID,
 				},
 				"uesio/studio.license": map[string]interface{}{
-					adapt.ID_FIELD: licenseID,
+					wire.ID_FIELD: licenseID,
 				},
 				"uesio/studio.metadatatype": ptc.MetadataType,
 				"uesio/studio.actiontype":   ptc.ActionType,
@@ -107,9 +107,9 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		&apps,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    adapt.ID_FIELD,
+					Field:    wire.ID_FIELD,
 					Operator: "IN",
 					Value:    ids,
 				},
@@ -138,7 +138,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 			Collection: "uesio/studio.licensepricingitem",
 			Wire:       "LicensePricingTemplatedWire",
 			Changes:    &licensePricingItemDeps,
-			Options: &adapt.SaveOptions{
+			Options: &wire.SaveOptions{
 				Upsert: true,
 			},
 		},

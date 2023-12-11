@@ -1,14 +1,12 @@
 package wire
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-)
+import "github.com/thecloudmasters/uesio/pkg/types/wire"
 
 func GetAvailableUsernames() ([]string, error) {
 
 	// Get users
 	users, err := Load("uesio/core.user", &LoadOptions{
-		Fields: []adapt.LoadRequestField{{
+		Fields: []wire.LoadRequestField{{
 			ID: "uesio/core.username",
 		}},
 		RequireWriteAccess: true,

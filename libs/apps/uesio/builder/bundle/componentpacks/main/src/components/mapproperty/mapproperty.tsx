@@ -54,7 +54,6 @@ const MapProperty: definition.UC<Definition> = (props) => {
 
 	return (
 		<ScrollPanel
-			variant="uesio/builder.mainsection"
 			footer={
 				<BuildActionsArea justify="space-around" context={context}>
 					{actions &&

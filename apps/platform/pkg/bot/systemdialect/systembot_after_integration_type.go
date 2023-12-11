@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
@@ -21,7 +21,7 @@ func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
 }
 
 // Delete all Integration Actions when an Integration Type is deleted
-func runIntegrationTypeAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	var integrationTypeKeys []string
 	for i := range request.Deletes {
@@ -54,12 +54,12 @@ func runIntegrationTypeAfterSaveBot(request *adapt.SaveOp, connection adapt.Conn
 
 	iac := meta.IntegrationActionCollection{}
 	err := datasource.PlatformLoad(&iac, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/core.id",
 			},
 		},
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.integrationtype",
 				Values:   targetIntegrationTypes,

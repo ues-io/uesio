@@ -4,14 +4,14 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func TestGetConnectionString(t *testing.T) {
 
 	type testCase struct {
 		description      string
-		creds            *adapt.Credentials
+		creds            *wire.Credentials
 		expectConnString string
 		expectErr        error
 	}
@@ -19,7 +19,7 @@ func TestGetConnectionString(t *testing.T) {
 	var tests = []testCase{
 		{
 			"build a connection string with regular chars",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host":     "some.host",
 				"port":     "1234",
 				"username": "un",
@@ -31,7 +31,7 @@ func TestGetConnectionString(t *testing.T) {
 		},
 		{
 			"default to 5432 if no port provided",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host":     "some.host",
 				"username": "un",
 				"password": "pw",
@@ -42,7 +42,7 @@ func TestGetConnectionString(t *testing.T) {
 		},
 		{
 			"require username",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host": "localhost",
 			},
 			"",
@@ -50,7 +50,7 @@ func TestGetConnectionString(t *testing.T) {
 		},
 		{
 			"require password",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host":     "localhost",
 				"username": "foo",
 			},
@@ -59,7 +59,7 @@ func TestGetConnectionString(t *testing.T) {
 		},
 		{
 			"require database",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host":     "localhost",
 				"username": "foo",
 				"password": "bar",
@@ -69,7 +69,7 @@ func TestGetConnectionString(t *testing.T) {
 		},
 		{
 			"escape URL-unsafe characters in password",
-			&adapt.Credentials{
+			&wire.Credentials{
 				"host":     "some.host",
 				"username": "un",
 				"password": "acbd`cjaskf;",

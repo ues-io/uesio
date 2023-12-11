@@ -3,13 +3,13 @@ package jsdialect
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func botSave(collection string, changes adapt.Collection, session *sess.Session, connection adapt.Connection) error {
+func botSave(collection string, changes wire.Collection, session *sess.Session, connection wire.Connection) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -21,7 +21,7 @@ func botSave(collection string, changes adapt.Collection, session *sess.Session,
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func botDelete(collection string, deletes adapt.Collection, session *sess.Session, connection adapt.Connection) error {
+func botDelete(collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -33,10 +33,10 @@ func botDelete(collection string, deletes adapt.Collection, session *sess.Sessio
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connection) (*adapt.Collection, error) {
-	collection := &adapt.Collection{}
+func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
+	collection := &wire.Collection{}
 
-	op := &adapt.LoadOp{
+	op := &wire.LoadOp{
 		BatchSize:      request.BatchSize,
 		CollectionName: request.Collection,
 		Collection:     collection,
@@ -48,7 +48,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 		LoadAll:        request.LoadAll,
 	}
 
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session, &datasource.LoadOptions{
+	_, err := datasource.Load([]*wire.LoadOp{op}, session, &datasource.LoadOptions{
 		Connection: connection,
 		Metadata:   datasource.GetConnectionMetadata(connection),
 	})
@@ -59,7 +59,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection adapt.Connecti
 	return collection, nil
 }
 
-func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session, connection adapt.Connection) (interface{}, error) {
+func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session, connection wire.Connection) (interface{}, error) {
 	ic, err := datasource.GetIntegrationConnection(integrationID, session, connection)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func runIntegrationAction(integrationID string, action string, options interface
 	return datasource.RunIntegrationAction(ic, action, options, connection)
 }
 
-func botCall(botKey string, params map[string]interface{}, session *sess.Session, connection adapt.Connection) (map[string]interface{}, error) {
+func botCall(botKey string, params map[string]interface{}, session *sess.Session, connection wire.Connection) (map[string]interface{}, error) {
 	botNamespace, botName, err := meta.ParseKeyWithDefault(botKey, session.GetContextAppName())
 	if err != nil {
 		return nil, errors.New("invalid bot name provided")

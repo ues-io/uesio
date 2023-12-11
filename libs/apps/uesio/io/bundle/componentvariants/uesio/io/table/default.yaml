@@ -7,28 +7,21 @@ definition:
       - overflow-auto
     table:
       - border-separate
-      - rounded-lg
       - border-spacing-0
       - w-full
-      - border-slate-300
-      - border
     header:
       - border-b
-      - border-slate-300
-      - bg-slate-100
+      - border-slate-150
     headerCell:
-      - last:border-r-0
+      - tracking-wider
       - uppercase
-      - text-[10pt]
-      - font-normal
+      - text-xs
+      - font-light
       - p-4
-      - text-slate-600
+      - text-slate-800
       - border-b
-      - border-r
-      - border-slate-300
+      - border-slate-150
       - whitespace-nowrap
-      - first:rounded-tl-lg
-      - last:rounded-tr-lg
     headerCellInner:
       - text-left
       - grid
@@ -49,27 +42,16 @@ definition:
       - "[&.isselected>.numbercheck]:block"
       - "[&:hover>.numbercheck]:block"
     cell:
-      - last:border-r-0
       - border-b
-      - border-r
-      - border-slate-300
+      - border-slate-150
       - p-0
     body:
-      - "[&>tr:last-child>td]:first:rounded-bl-lg"
-      - "[&>tr:last-child>td]:last:rounded-br-lg"
-      - "[&>tr:last-child>td]:border-b-0"
       - "[&.hasRowAction>tr]:hover:cursor-pointer"
       - "[&.hasRowAction>tr]:hover:bg-slate-50"
     rowDeleted:
       - bg-red-100
     noData:
-      - border-b
-      - border-r
-      - border-l
-      - border-slate-300
       - text-center
-      - rounded-br-lg
-      - rounded-bl-lg
       - p-4
       - text-slate-500
       - text-sm

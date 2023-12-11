@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type NamespaceSwapItem struct {
 	collection *NamespaceSwapCollection
-	item       *adapt.Item
+	item       *wire.Item
 }
 
 func (i *NamespaceSwapItem) ScanBytes(v []byte) error {
@@ -79,7 +79,7 @@ func (c *NamespaceSwapCollection) MarshalJSON() ([]byte, error) {
 func (c *NamespaceSwapCollection) NewItem() meta.Item {
 	return &NamespaceSwapItem{
 		collection: c,
-		item:       &adapt.Item{},
+		item:       &wire.Item{},
 	}
 }
 
@@ -111,8 +111,8 @@ func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
 }
 
 // MapConditions Gets the conditions from the wire and translates them from core to studio
-func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadRequestCondition) []adapt.LoadRequestCondition {
-	var studioConditions []adapt.LoadRequestCondition
+func (c *NamespaceSwapCollection) MapConditions(coreConditions []wire.LoadRequestCondition) []wire.LoadRequestCondition {
+	var studioConditions []wire.LoadRequestCondition
 	for _, elem := range coreConditions {
 		elem.Field = c.SwapNS(elem.Field)
 		studioConditions = append(studioConditions, elem)
@@ -120,8 +120,8 @@ func (c *NamespaceSwapCollection) MapConditions(coreConditions []adapt.LoadReque
 	return studioConditions
 }
 
-func (c *NamespaceSwapCollection) MapOrder(coreOrder []adapt.LoadRequestOrder) []adapt.LoadRequestOrder {
-	var studioOrder []adapt.LoadRequestOrder
+func (c *NamespaceSwapCollection) MapOrder(coreOrder []wire.LoadRequestOrder) []wire.LoadRequestOrder {
+	var studioOrder []wire.LoadRequestOrder
 	for _, elem := range coreOrder {
 		elem.Field = c.SwapNS(elem.Field)
 		studioOrder = append(studioOrder, elem)
@@ -129,7 +129,7 @@ func (c *NamespaceSwapCollection) MapOrder(coreOrder []adapt.LoadRequestOrder) [
 	return studioOrder
 }
 
-func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName string, from, to *adapt.MetadataCache) error {
+func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName string, from, to *wire.MetadataCache) error {
 
 	fromCollectionMetadata, err := from.GetCollection(fromCollectionName)
 	if err != nil {

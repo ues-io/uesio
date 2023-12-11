@@ -1,5 +1,6 @@
 name: secondarytoolbar
 label: Secondary Toolbar Button
+extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
@@ -14,4 +15,7 @@ definition:
       - border-slate-200
       - whitespace-nowrap
       - bg-slate-50
+      - leading-none
+      - tracking-wider
+      - gap-3
 public: true

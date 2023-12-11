@@ -10,17 +10,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/oauth2"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getIntegrationConnection(authType string, credentials *adapt.Credentials) *adapt.IntegrationConnection {
-	return adapt.NewIntegrationConnection(
+func getIntegrationConnection(authType string, credentials *wire.Credentials) *wire.IntegrationConnection {
+	return wire.NewIntegrationConnection(
 		&meta.Integration{
 			BundleableBase: meta.BundleableBase{
 				Name:      "someservice",
@@ -100,20 +100,20 @@ func Test_Request(t *testing.T) {
 	var noOpSave oauth2.CredentialSaver
 	var noOpDelete oauth2.CredentialSaver
 
-	noOpFetch = func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+	noOpFetch = func(ic *wire.IntegrationConnection) (*wire.Item, error) {
 		credentialFetchCalled = true
 		return nil, nil
 	}
-	noOpSave = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+	noOpSave = func(item *wire.Item, ic *wire.IntegrationConnection) error {
 		credentialSaveCalled = true
 		return nil
 	}
-	noOpDelete = func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+	noOpDelete = func(item *wire.Item, ic *wire.IntegrationConnection) error {
 		return nil
 	}
 
 	type args struct {
-		integration         *adapt.IntegrationConnection
+		integration         *wire.IntegrationConnection
 		request             *BotHttpRequest
 		response            string
 		responseContentType string
@@ -433,7 +433,7 @@ func Test_Request(t *testing.T) {
 		{
 			"Basic Authentication",
 			args{
-				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+				integration: getIntegrationConnection("BASIC_AUTH", &wire.Credentials{
 					"username": "luigi",
 					"password": "abc123",
 				}),
@@ -457,7 +457,7 @@ func Test_Request(t *testing.T) {
 		{
 			"Basic Authentication - missing username",
 			args{
-				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+				integration: getIntegrationConnection("BASIC_AUTH", &wire.Credentials{
 					"password": "abc123",
 				}),
 				request: &BotHttpRequest{
@@ -473,7 +473,7 @@ func Test_Request(t *testing.T) {
 		{
 			"Basic Authentication - missing password",
 			args{
-				integration: getIntegrationConnection("BASIC_AUTH", &adapt.Credentials{
+				integration: getIntegrationConnection("BASIC_AUTH", &wire.Credentials{
 					"username": "luigi",
 				}),
 				request: &BotHttpRequest{
@@ -489,7 +489,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: header",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey":        "1234",
 					"location":      "header",
 					"locationName":  "Authorization",
@@ -512,7 +512,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: header, use default template",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey":       "1234",
 					"location":     "header",
 					"locationName": "x-api-key",
@@ -534,7 +534,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: query string",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey":        "1234",
 					"location":      "querystring",
 					"locationName":  "key",
@@ -557,7 +557,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: invalid location type",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey":        "1234",
 					"location":      "foo",
 					"locationName":  "key",
@@ -576,7 +576,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: missing api key",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{}),
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{}),
 				request: &BotHttpRequest{
 					Method: "GET",
 					URL:    server.URL + "/array",
@@ -590,7 +590,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: missing location",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey": "1234",
 				}),
 				request: &BotHttpRequest{
@@ -606,7 +606,7 @@ func Test_Request(t *testing.T) {
 		{
 			"API Key Authentication: missing locationName",
 			args{
-				integration: getIntegrationConnection("API_KEY", &adapt.Credentials{
+				integration: getIntegrationConnection("API_KEY", &wire.Credentials{
 					"apikey":   "1234",
 					"location": "header",
 				}),
@@ -623,7 +623,7 @@ func Test_Request(t *testing.T) {
 		{
 			"OAuth 2 Client Credentials authentication - no existing token",
 			args{
-				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &wire.Credentials{
 					"tokenUrl":     server.URL + "/oauth/token",
 					"clientId":     "suchclient",
 					"clientSecret": "muchsecret",
@@ -631,7 +631,7 @@ func Test_Request(t *testing.T) {
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
 					Fetch: noOpFetch,
-					Save: func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+					Save: func(item *wire.Item, ic *wire.IntegrationConnection) error {
 						credentialSaveCalled = true
 						// Verify that the expected fields were called
 						accessToken, _ := item.GetField(oauth2.AccessTokenField)
@@ -639,8 +639,8 @@ func Test_Request(t *testing.T) {
 						tokenType, _ := item.GetField(oauth2.TokenTypeField)
 						assert.Equal(t, "bearer", tokenType)
 						userReference, _ := item.GetField(oauth2.UserField)
-						expectUserReference := &adapt.Item{}
-						expectUserReference.SetField(adapt.ID_FIELD, "user123")
+						expectUserReference := &wire.Item{}
+						expectUserReference.SetField(wire.ID_FIELD, "user123")
 						assert.Equal(t, expectUserReference, userReference)
 						integrationKey, _ := item.GetField(oauth2.IntegrationField)
 						assert.Equal(t, "luigi/foo.someservice", integrationKey)
@@ -693,16 +693,16 @@ func Test_Request(t *testing.T) {
 		{
 			"OAuth 2 Client Credentials authentication - don't reauthenticate if non-expired token exists",
 			args{
-				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &wire.Credentials{
 					"tokenUrl":     server.URL + "/oauth/token",
 					"clientId":     "suchclient",
 					"clientSecret": "muchsecret",
 					"scopes":       "api,refresh_token",
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
-					Fetch: func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+					Fetch: func(ic *wire.IntegrationConnection) (*wire.Item, error) {
 						credentialFetchCalled = true
-						item := &adapt.Item{
+						item := &wire.Item{
 							oauth2.AccessTokenField:           "abcd1234",
 							oauth2.TokenTypeField:             "bearer",
 							oauth2.AccessTokenExpirationField: time.Now().Add(time.Hour).Unix(),
@@ -741,22 +741,22 @@ func Test_Request(t *testing.T) {
 		{
 			"OAuth 2 Client Credentials authentication - reauthenticate if 401 is returned",
 			args{
-				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &adapt.Credentials{
+				integration: getIntegrationConnection("OAUTH2_CLIENT_CREDENTIALS", &wire.Credentials{
 					"tokenUrl":     server.URL + "/oauth/token",
 					"clientId":     "suchclient",
 					"clientSecret": "muchsecret",
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
-					Fetch: func(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+					Fetch: func(ic *wire.IntegrationConnection) (*wire.Item, error) {
 						credentialFetchCalled = true
-						item := &adapt.Item{
+						item := &wire.Item{
 							oauth2.AccessTokenField:           "oldtoken",
 							oauth2.TokenTypeField:             "bearer",
 							oauth2.AccessTokenExpirationField: time.Now().Add(time.Hour).Unix(),
 						}
 						return item, nil
 					},
-					Save: func(item *adapt.Item, ic *adapt.IntegrationConnection) error {
+					Save: func(item *wire.Item, ic *wire.IntegrationConnection) error {
 						credentialSaveCalled = true
 						// Verify that the expected fields were provided
 						accessToken, _ := item.GetField(oauth2.AccessTokenField)

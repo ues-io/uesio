@@ -255,6 +255,13 @@ describe("Uesio Builder Tests", () => {
 				addButtonPageDef
 			)
 
+			//Close again the code panel & the index so the button is visible
+			//and the clone button does not appear twice on the view.
+			cy.hotkey("{meta}y")
+			getBuilderState("codepanel").should("not.be.ok")
+			cy.hotkey("{meta}i")
+			getBuilderState("indexpanel").should("not.be.ok")
+
 			// Select the button
 			getCanvasElement('["components"]', 0).click()
 			// Verify the selection

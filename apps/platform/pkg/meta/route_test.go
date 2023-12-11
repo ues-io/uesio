@@ -8,38 +8,38 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var route_local_view_local_theme = trimYamlString(`
+var route_local_view_local_theme = TrimYamlString(`
 name: myroute
 path: mypath
 view: myview
 theme: mytheme
 `)
 
-var route_local_view_no_theme = trimYamlString(`
+var route_local_view_no_theme = TrimYamlString(`
 name: myroute
 path: mypath
 view: myview
 `)
 
-var route_this_app_view_no_theme = trimYamlString(`
+var route_this_app_view_no_theme = TrimYamlString(`
 name: myroute
 path: mypath
 view: this/app.myview
 `)
 
-var route_fq_view_no_theme = trimYamlString(`
+var route_fq_view_no_theme = TrimYamlString(`
 name: myroute
 path: mypath
 view: my/namespace.myview
 `)
 
-var route_redirect = trimYamlString(`
+var route_redirect = TrimYamlString(`
 name: myroute
 type: redirect
 redirect: http://www.google.com
 `)
 
-var route_redirect_error = trimYamlString(`
+var route_redirect_error = TrimYamlString(`
 name: myroute
 type: redirect
 `)

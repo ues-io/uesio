@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/felixge/httpsnoop"
+
+	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 // By default, we only output logs at INFO level or higher.
@@ -32,7 +34,7 @@ func init() {
 	}
 	var handler slog.Handler
 	// In Dev mode, use our pretty dev logger
-	if os.Getenv("UESIO_DEV") == "true" {
+	if env.InDevMode() {
 		handler = NewDevLogHandler(os.Stdout, handlerOptions)
 	} else {
 		// In prod, use a structured JSON handler

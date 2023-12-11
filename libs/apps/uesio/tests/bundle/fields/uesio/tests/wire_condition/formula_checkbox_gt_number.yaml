@@ -1,6 +1,6 @@
 name: formula_checkbox_gt_number
-type: FORMULA
 label: Formula Checkbox Greater Than Number
+type: FORMULA
 formula:
   expression: uesio/tests.number > 5
   returntype: CHECKBOX

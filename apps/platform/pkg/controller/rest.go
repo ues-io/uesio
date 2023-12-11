@@ -1,15 +1,15 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/gorilla/mux"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -20,9 +20,9 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 	collectionNamespace := vars["namespace"]
 	collectionName := vars["name"]
 
-	fields := []adapt.LoadRequestField{
+	fields := []wire.LoadRequestField{
 		{
-			ID: adapt.ID_FIELD,
+			ID: wire.ID_FIELD,
 		},
 	}
 
@@ -31,7 +31,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 		for _, fieldList := range queryFields {
 			fieldArray := strings.Split(fieldList, ",")
 			for _, field := range fieldArray {
-				fields = append(fields, adapt.LoadRequestField{
+				fields = append(fields, wire.LoadRequestField{
 					ID: field,
 				})
 			}
@@ -40,19 +40,17 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	op := &adapt.LoadOp{
+	op := &wire.LoadOp{
 		WireName:       "RestWire",
 		CollectionName: collectionNamespace + "." + collectionName,
-		Collection:     &adapt.Collection{},
+		Collection:     &wire.Collection{},
 		Fields:         fields,
 		Query:          true,
 	}
 
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
+	_, err := datasource.Load([]*wire.LoadOp{op}, session, nil)
 	if err != nil {
-		msg := "Load Failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		HandleError(w, exceptions.NewBadRequestException("Load Failed: "+err.Error()))
 		return
 	}
 

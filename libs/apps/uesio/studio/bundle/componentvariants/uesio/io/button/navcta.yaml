@@ -4,4 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     icon:
-      - text-[$Theme{color.primary}]
+      - text-slate-900
+      - hover:bg-slate-100
+      - rounded-full
+      - p-1.5

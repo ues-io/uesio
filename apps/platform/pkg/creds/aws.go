@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getConfig(ctx context.Context, region, accessKeyID, secretAccessKey, sessionToken string) (aws.Config, error) {
@@ -17,7 +17,7 @@ func getConfig(ctx context.Context, region, accessKeyID, secretAccessKey, sessio
 	return config.LoadDefaultConfig(ctx, config.WithRegion(region))
 }
 
-func GetAWSConfig(ctx context.Context, dbcreds *adapt.Credentials) (aws.Config, error) {
+func GetAWSConfig(ctx context.Context, dbcreds *wire.Credentials) (aws.Config, error) {
 
 	region, ok := (*dbcreds)["region"]
 	if !ok {

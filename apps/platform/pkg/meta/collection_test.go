@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var localMetadataNames = trimYamlString(`
+var localMetadataNames = TrimYamlString(`
 name: somecollection
 type: EXTERNAL
 uniqueKey:
@@ -20,7 +20,7 @@ loadBot: someloadbot
 saveBot: somesavebot
 `)
 
-var qualifiedMetadataReferences = trimYamlString(`
+var qualifiedMetadataReferences = TrimYamlString(`
 name: somecollection
 type: EXTERNAL
 uniqueKey:
@@ -32,7 +32,7 @@ loadBot: luigi/foo.someloadbot
 saveBot: luigi/foo.somesavebot
 `)
 
-var thisAppMetadataReferences = trimYamlString(`
+var thisAppMetadataReferences = TrimYamlString(`
 name: somecollection
 type: EXTERNAL
 uniqueKey:

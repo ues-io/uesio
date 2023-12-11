@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func CreateNewApp(user, name, color, icon string) (*App, error) {
@@ -31,7 +31,7 @@ func CreateNewApp(user, name, color, icon string) (*App, error) {
 	}, nil
 }
 
-var appRequestFields = []adapt.LoadRequestField{
+var appRequestFields = []wire.LoadRequestField{
 	{
 		ID: "uesio/studio.name",
 	},
@@ -101,7 +101,7 @@ func GetApp() (*App, error) {
 		"uesio/studio.app",
 		&LoadOptions{
 			Fields: appRequestFields,
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    "uesio/core.uniquekey",
 					RawValue: app,

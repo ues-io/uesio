@@ -67,6 +67,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Config Values
               subtitle: Named values that must be configured separately in each site / workspace
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: tune
               actions:
                 - uesio/io.group:
                     components:
@@ -88,7 +92,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}

@@ -10,17 +10,17 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type Auth struct{}
 
-func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *meta.AuthSource, connection adapt.Connection, session *sess.Session) (auth.AuthConnection, error) {
-
+func (a *Auth) GetAuthConnection(credentials *wire.Credentials, authSource *meta.AuthSource, connection wire.Connection, session *sess.Session) (auth.AuthConnection, error) {
 	return &Connection{
 		credentials: credentials,
 		authSource:  authSource,
@@ -59,9 +59,9 @@ func passwordPolicyValidation(password string) error {
 }
 
 type Connection struct {
-	credentials *adapt.Credentials
+	credentials *wire.Credentials
 	authSource  *meta.AuthSource
-	connection  adapt.Connection
+	connection  wire.Connection
 	session     *sess.Session
 }
 
@@ -96,16 +96,16 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("You must enter a username")
+		return nil, exceptions.NewBadRequestException("You must enter a username")
 	}
 	plainPassword, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, auth.NewAuthRequestError("You must enter a password")
+		return nil, exceptions.NewBadRequestException("You must enter a password")
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
 	if err != nil {
-		return nil, auth.NewAuthRequestError("Failed getting login method data: " + err.Error())
+		return nil, exceptions.NewBadRequestException("Failed getting login method data: " + err.Error())
 	}
 
 	if loginmethod == nil {
@@ -116,16 +116,16 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 		}
 		return cognitoConnection.Login(payload)
 		// END TEMPORARY
-		//return nil, auth.NewAuthRequestError("No account found with this login method")
+		//return nil, exceptions.NewBadRequestException()("No account found with this login method")
 	}
 
 	if loginmethod.VerificationCode != "" {
-		return nil, auth.NewNotAuthorizedError("Unable to login - your email address has not yet been verified. Please verify your email and then try again.")
+		return nil, exceptions.NewUnauthorizedException("Unable to login - your email address has not yet been verified. Please verify your email and then try again.")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(loginmethod.Hash), []byte(plainPassword))
 	if err != nil {
-		return nil, auth.NewNotAuthorizedError("The password you are trying to log in with is incorrect")
+		return nil, exceptions.NewUnauthorizedException("The password you are trying to log in with is incorrect")
 	}
 
 	return auth.GetUserByID(loginmethod.User.ID, c.session, c.connection)
@@ -136,27 +136,27 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed: " + err.Error())
+		return exceptions.NewBadRequestException("Signup failed: " + err.Error())
 	}
 
 	firstname, err := auth.GetRequiredPayloadValue(payload, "firstname")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed: " + err.Error())
+		return exceptions.NewBadRequestException("Signup failed: " + err.Error())
 	}
 
 	lastname, err := auth.GetRequiredPayloadValue(payload, "lastname")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed: " + err.Error())
+		return exceptions.NewBadRequestException("Signup failed: " + err.Error())
 	}
 
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed: " + err.Error())
+		return exceptions.NewBadRequestException("Signup failed: " + err.Error())
 	}
 
 	err = passwordPolicyValidation(password)
 	if err != nil {
-		return auth.NewAuthRequestError("Signup failed: " + err.Error())
+		return exceptions.NewBadRequestException("Signup failed: " + err.Error())
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -195,7 +195,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
-		return auth.NewAuthRequestError("Unable to reset password: you must provide a username")
+		return exceptions.NewBadRequestException("Unable to reset password: you must provide a username")
 	}
 
 	code := generateCode()
@@ -217,7 +217,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 	}
 
 	if loginmethod == nil {
-		return auth.NewAuthRequestError("No account found with this login method")
+		return exceptions.NewBadRequestException("No account found with this login method")
 	}
 	loginmethod.FederationID = username
 	loginmethod.VerificationCode = code
@@ -235,22 +235,22 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
-		return auth.NewAuthRequestError("A username must be provided")
+		return exceptions.NewBadRequestException("A username must be provided")
 	}
 
 	verificationCode, err := auth.GetPayloadValue(payload, "verificationcode")
 	if err != nil {
-		return auth.NewAuthRequestError("A verification code must be provided")
+		return exceptions.NewBadRequestException("A verification code must be provided")
 	}
 
 	newPassword, err := auth.GetPayloadValue(payload, "newpassword")
 	if err != nil {
-		return auth.NewAuthRequestError("A new password must be provided")
+		return exceptions.NewBadRequestException("A new password must be provided")
 	}
 
 	err = passwordPolicyValidation(newPassword)
 	if err != nil {
-		return auth.NewAuthRequestError("This password does not meet the password policy requirements: " + err.Error())
+		return exceptions.NewBadRequestException("This password does not meet the password policy requirements: " + err.Error())
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
@@ -259,20 +259,20 @@ func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payl
 	}
 
 	if loginmethod == nil {
-		return auth.NewAuthRequestError("Unable to find this login method")
+		return exceptions.NewBadRequestException("Unable to find this login method")
 	}
 
 	if isExpired(loginmethod.VerificationExpires) {
-		return auth.NewAuthRequestError("The provided verification code has expired.")
+		return exceptions.NewBadRequestException("The provided verification code has expired.")
 	}
 
 	if loginmethod.VerificationCode != verificationCode {
-		return auth.NewAuthRequestError("The provided verification code does not match.")
+		return exceptions.NewBadRequestException("The provided verification code does not match.")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 	if err != nil {
-		return auth.NewAuthRequestError("The new password could not be used, please try another password")
+		return exceptions.NewBadRequestException("The new password could not be used, please try another password")
 	}
 
 	loginmethod.Hash = string(hash)
@@ -302,12 +302,12 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return auth.NewAuthRequestError("Username not provided")
+		return exceptions.NewBadRequestException("Username not provided")
 	}
 
 	verificationCode, err := auth.GetRequiredPayloadValue(payload, "verificationcode")
 	if err != nil {
-		return auth.NewAuthRequestError("Verification code not provided")
+		return exceptions.NewBadRequestException("Verification code not provided")
 	}
 
 	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
@@ -320,15 +320,15 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[
 	}
 
 	if loginmethod.VerificationCode == "" {
-		return auth.NewAuthRequestError("This account is already verified")
+		return exceptions.NewBadRequestException("This account is already verified")
 	}
 
 	if isExpired(loginmethod.VerificationExpires) {
-		return auth.NewAuthRequestError("The code is expired, please request a new one")
+		return exceptions.NewBadRequestException("The code is expired, please request a new one")
 	}
 
 	if loginmethod.VerificationCode != verificationCode {
-		return auth.NewAuthRequestError("The codes do not match")
+		return exceptions.NewBadRequestException("The codes do not match")
 	}
 
 	loginmethod.VerificationCode = ""

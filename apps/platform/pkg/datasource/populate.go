@@ -5,22 +5,23 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type ChangeProcessor func(change *adapt.ChangeItem) *adapt.SaveError
+type ChangeProcessor func(change *wire.ChangeItem) *wire.SaveError
 
-func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
-	return func(change *adapt.ChangeItem) *adapt.SaveError {
+func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
+	return func(change *wire.ChangeItem) *wire.SaveError {
 		if !change.IsNew {
 			return nil
 		}
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			autoNumberMeta = (*adapt.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
+			autoNumberMeta = (*wire.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		suffix := fmt.Sprintf(format, change.Autonumber)
@@ -38,49 +39,49 @@ func populateAutoNumbers(field *adapt.FieldMetadata) ChangeProcessor {
 		}
 
 		if err = change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
-			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+			return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 		}
 
 		return nil
 	}
 }
 
-func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) ChangeProcessor {
-	return func(change *adapt.ChangeItem) *adapt.SaveError {
+func populateTimestamps(field *wire.FieldMetadata, timestamp int64) ChangeProcessor {
+	return func(change *wire.ChangeItem) *wire.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			if err := change.FieldChanges.SetField(field.GetFullName(), timestamp); err != nil {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
 	}
 }
 
-func populateUser(field *adapt.FieldMetadata, user *meta.User) ChangeProcessor {
-	return func(change *adapt.ChangeItem) *adapt.SaveError {
+func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
+	return func(change *wire.ChangeItem) *wire.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
-				adapt.ID_FIELD:         user.ID,
-				adapt.UNIQUE_KEY_FIELD: user.UniqueKey, //TO-DO this not sure should be UUIIDD
+				wire.ID_FIELD:          user.ID,
+				wire.UNIQUE_KEY_FIELD:  user.UniqueKey, //TO-DO this not sure should be UUIIDD
 				"uesio/core.firstname": user.FirstName,
 				"uesio/core.lastname":  user.LastName,
 				"uesio/core.picture": map[string]interface{}{
-					adapt.ID_FIELD: user.GetPictureID(),
+					wire.ID_FIELD: user.GetPictureID(),
 				},
 			})
 			if err != nil {
-				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
 	}
 }
 
-func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionKey := op.Metadata.GetFullName()
 
@@ -105,7 +106,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
-	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+	return op.LoopChanges(func(change *wire.ChangeItem) error {
 		if change.IsNew {
 			autonumberStart++
 			change.Autonumber = autonumberStart
@@ -118,7 +119,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		// Enforce field-level security for save
 		return change.Loop(func(field string, value interface{}) error {
 			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
-				return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field)
+				return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field))
 			}
 			return nil
 		})

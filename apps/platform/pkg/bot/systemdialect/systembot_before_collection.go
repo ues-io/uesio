@@ -1,13 +1,13 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCollectionBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runCollectionBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
 		_, err := requireValue(change, "uesio/studio.label")
 		if err != nil {

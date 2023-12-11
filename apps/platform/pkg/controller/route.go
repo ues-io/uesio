@@ -96,10 +96,10 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, se
 }
 
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
-	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path), sess.GetAnonSession(session.GetSite()))
+	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "true"), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
+		return
 	}
 	file.RespondJSON(w, r, routingMergeData)
 }
@@ -111,7 +111,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 		Session: session,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		HandleError(w, err)
 		return
 	}
 
@@ -133,20 +133,22 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.Route
 	return GetRoutingMergeData(route, depsCache, session)
 }
 
-func getNotFoundRoute(path string) *meta.Route {
+func getNotFoundRoute(path string, err string, displayButton string) *meta.Route {
+	params := map[string]string{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
 	return &meta.Route{
-		ViewRef: "uesio/core.notfound",
+		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
 			Namespace: "uesio/core",
 		},
 		Path:     path,
 		ThemeRef: "uesio/core.default",
+		Params:   params,
 		Title:    "Not Found",
 	}
 }
 
 func GetErrorRoute(path string, err string) *meta.Route {
-	params := map[string]string{"error": err}
+	params := map[string]string{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
@@ -171,7 +173,12 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	var route *meta.Route
 	if redirect {
-		route = getNotFoundRoute(path)
+		showButtton := "false"
+		switch err.(type) {
+		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
+			showButtton = "true"
+		}
+		route = getNotFoundRoute(path, err.Error(), showButtton)
 	} else {
 		route = GetErrorRoute(path, err.Error())
 	}

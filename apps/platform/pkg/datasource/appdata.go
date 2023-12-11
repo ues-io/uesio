@@ -1,14 +1,15 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type MetadataResponse struct {
 	NamespaceInfo `json:",inline"`
 	Key           string `json:"key"`
+	Label         string `json:"label"`
 }
 
 type NamespaceInfo struct {
@@ -22,14 +23,14 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 
 	// Load in App Settings
 	err := PlatformLoad(&apps, &PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
-				Field:    adapt.UNIQUE_KEY_FIELD,
+				Field:    wire.UNIQUE_KEY_FIELD,
 				Operator: "IN",
 				Value:    namespaces,
 			},
 		},
-		Fields: []adapt.LoadRequestField{
+		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/studio.color",
 			},
@@ -57,7 +58,7 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 }
 
 // QueryAppForWrite queries an app with write access required
-func QueryAppForWrite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.App, error) {
+func QueryAppForWrite(value, field string, session *sess.Session, connection wire.Connection) (*meta.App, error) {
 	useSession := session
 	if useSession.GetWorkspace() != nil {
 		useSession = session.RemoveWorkspaceContext()
@@ -67,7 +68,7 @@ func QueryAppForWrite(value, field string, session *sess.Session, connection ada
 		&app,
 		&PlatformLoadOptions{
 			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: field,
 					Value: value,

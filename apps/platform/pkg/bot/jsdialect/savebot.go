@@ -1,10 +1,10 @@
 package jsdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type SaveRequestMetadata struct {
@@ -15,7 +15,7 @@ type SaveRequestMetadata struct {
 	Upsert             bool                   `bot:"upsert"`
 }
 
-func NewSaveRequestMetadata(op *adapt.SaveOp) *SaveRequestMetadata {
+func NewSaveRequestMetadata(op *wire.SaveOp) *SaveRequestMetadata {
 	return &SaveRequestMetadata{
 		CollectionMetadata: NewBotCollectionMetadata(op.Metadata),
 		CollectionName:     op.Metadata.GetFullName(),
@@ -23,7 +23,7 @@ func NewSaveRequestMetadata(op *adapt.SaveOp) *SaveRequestMetadata {
 	}
 }
 
-func NewSaveBotAPI(bot *meta.Bot, connection adapt.Connection, saveOp *adapt.SaveOp, integrationConnection *adapt.IntegrationConnection) *SaveBotAPI {
+func NewSaveBotAPI(bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveOp, integrationConnection *wire.IntegrationConnection) *SaveBotAPI {
 	return &SaveBotAPI{
 		saveOp:                saveOp,
 		connection:            connection,
@@ -40,9 +40,9 @@ func NewSaveBotAPI(bot *meta.Bot, connection adapt.Connection, saveOp *adapt.Sav
 
 type SaveBotAPI struct {
 	// PRIVATE
-	saveOp                *adapt.SaveOp
-	connection            adapt.Connection
-	integrationConnection *adapt.IntegrationConnection
+	saveOp                *wire.SaveOp
+	connection            wire.Connection
+	integrationConnection *wire.IntegrationConnection
 
 	// PUBLIC
 	SaveRequestMetadata *SaveRequestMetadata `bot:"saveRequest"`
@@ -85,7 +85,7 @@ func (sba *SaveBotAPI) GetUser() *UserAPI {
 }
 
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
-	sba.saveOp.AddError(&adapt.SaveError{
+	sba.saveOp.AddError(&wire.SaveError{
 		RecordID: recordId,
 		FieldID:  fieldId,
 		Message:  message,

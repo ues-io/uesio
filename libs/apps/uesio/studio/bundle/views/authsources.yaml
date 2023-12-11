@@ -61,13 +61,17 @@ definition:
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
-              title: Auth methods
+              title: Auth sources
               subtitle: Speak friend and enter
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: dynamic_feed
               actions:
                 - uesio/io.group:
                     components:
                       - uesio/io.button:
-                          text: Create a New Auth Method
+                          text: Create a New Auth Source
                           uesio.variant: uesio/io.primary
                           hotkey: "n"
                           signals:
@@ -80,11 +84,11 @@ definition:
                     uesio.id: authsourcesTable
                     wire: authsources
                     columns:
-                      - label: Auth Method Name
+                      - label: Auth Source Name
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
@@ -110,7 +114,7 @@ definition:
   panels:
     newAuthSource:
       uesio.type: uesio/io.dialog
-      title: Create a new Auth Method
+      title: Create a new Auth Source
       width: 500px
       height: 600px
       components:

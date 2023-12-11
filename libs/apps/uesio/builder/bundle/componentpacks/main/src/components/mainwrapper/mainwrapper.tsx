@@ -13,7 +13,8 @@ import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
 const StyleDefaults = Object.freeze({
 	root: [
 		"bg-slate-50",
-		"p-2",
+		"px-2",
+		"pb-2",
 		"gap-2",
 		"h-full",
 		"grid-cols-[auto_1fr]",

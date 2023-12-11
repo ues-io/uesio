@@ -1,16 +1,16 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/credentials"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, error) {
-	credentialsMap := adapt.Credentials{}
+func GetCredentials(key string, session *sess.Session) (*wire.Credentials, error) {
+	credentialsMap := wire.Credentials{}
 
 	if key == "" {
 		return &credentialsMap, nil
@@ -59,7 +59,7 @@ func getEntryValue(entry *credentials.CredentialEntry, session *sess.Session) (s
 	return entry.Value, nil
 }
 
-func addCredentialEntries(credentialsMap adapt.Credentials, entriesSpec credentials.CredentialEntriesMap, session *sess.Session) error {
+func addCredentialEntries(credentialsMap wire.Credentials, entriesSpec credentials.CredentialEntriesMap, session *sess.Session) error {
 	for entryName, entry := range entriesSpec {
 		if value, err := getEntryValue(entry, session); err != nil {
 			return err

@@ -11,12 +11,12 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // TODO: Eliminate the need to keep this manual list.
@@ -52,7 +52,7 @@ var ORDERED_ITEMS = [...]string{
 
 type DeployOptions struct {
 	Upsert     bool
-	Connection adapt.Connection
+	Connection wire.Connection
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
@@ -227,7 +227,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 
 	var saves []datasource.PlatformSaveRequest
 
-	saveOptions := &adapt.SaveOptions{
+	saveOptions := &wire.SaveOptions{
 		Upsert: options.Upsert,
 	}
 
@@ -278,7 +278,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		// to overwrite the other fields
 		workspaceItem.SetItemMeta(&meta.ItemMeta{
 			ValidFields: map[string]bool{
-				adapt.ID_FIELD:               true,
+				wire.ID_FIELD:                true,
 				"uesio/studio.loginroute":    true,
 				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,

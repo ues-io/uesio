@@ -6,11 +6,11 @@ import (
 	"mime"
 	"path"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -34,7 +34,7 @@ type FileUploadOp struct {
 	Params          map[string]string `json:"params"`
 }
 
-func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fieldID string) (*adapt.CollectionMetadata, *adapt.FieldMetadata, error) {
+func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, fieldID string) (*wire.CollectionMetadata, *wire.FieldMetadata, error) {
 	collectionMetadata, err := metadataResponse.GetCollection(collectionID)
 	if err != nil {
 		return nil, nil, err
@@ -51,12 +51,12 @@ func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fiel
 	return collectionMetadata, fieldMetadata, nil
 }
 
-func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Session, params map[string]string) ([]*meta.UserFileMetadata, error) {
+func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]string) ([]*meta.UserFileMetadata, error) {
 
 	ufms := meta.UserFileMetadataCollection{}
-	idMaps := map[string]adapt.LocatorMap{}
+	idMaps := map[string]wire.LocatorMap{}
 	fieldUpdates := []datasource.SaveRequest{}
-	metadataResponse := &adapt.MetadataCache{}
+	metadataResponse := &wire.MetadataCache{}
 	// First get create all the metadata
 	for _, op := range ops {
 
@@ -66,10 +66,10 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 			}
 			idMap, ok := idMaps[op.CollectionID]
 			if !ok {
-				idMap = adapt.LocatorMap{}
+				idMap = wire.LocatorMap{}
 				idMaps[op.CollectionID] = idMap
 			}
-			err := idMap.AddID(op.RecordUniqueKey, adapt.ReferenceLocator{
+			err := idMap.AddID(op.RecordUniqueKey, wire.ReferenceLocator{
 				Item: op,
 			})
 			if err != nil {
@@ -83,14 +83,14 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 	for collectionKey := range idMaps {
 
 		idMap := idMaps[collectionKey]
-		err := adapt.LoadLooper(connection, collectionKey, idMap, []adapt.LoadRequestField{
+		err := datasource.LoadLooper(connection, collectionKey, idMap, []wire.LoadRequestField{
 			{
-				ID: adapt.ID_FIELD,
+				ID: wire.ID_FIELD,
 			},
 			{
-				ID: adapt.UNIQUE_KEY_FIELD,
+				ID: wire.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
+		}, wire.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			if item == nil {
 				return errors.New("Could not match upload on unique key: " + ID)
@@ -99,7 +99,7 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
 				op := match.(*FileUploadOp)
-				idValue, err := item.GetField(adapt.ID_FIELD)
+				idValue, err := item.GetField(wire.ID_FIELD)
 				if err != nil {
 					return err
 				}
@@ -147,7 +147,7 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{
 		Collection: &ufms,
-		Options: &adapt.SaveOptions{
+		Options: &wire.SaveOptions{
 			Upsert: true,
 		},
 		Params: params,
@@ -172,16 +172,16 @@ func Upload(ops []*FileUploadOp, connection adapt.Connection, session *sess.Sess
 			fieldUpdates = append(fieldUpdates, datasource.SaveRequest{
 				Collection: ufm.CollectionID,
 				Wire:       "filefieldupdate",
-				Changes: &adapt.Collection{
+				Changes: &wire.Collection{
 					{
 						ufm.FieldID: map[string]interface{}{
-							adapt.ID_FIELD: ufm.ID,
+							wire.ID_FIELD: ufm.ID,
 						},
-						adapt.ID_FIELD: ufm.RecordID,
+						wire.ID_FIELD: ufm.RecordID,
 					},
 				},
 				Params: params,
-				Options: &adapt.SaveOptions{
+				Options: &wire.SaveOptions{
 					Upsert: true,
 				},
 			})

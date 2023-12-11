@@ -1,19 +1,23 @@
 import type { MetadataKey, MetadataType } from "../metadata/types"
 import { CollectionKey } from "../bands/wire/types"
+import { DisplayOperator } from "../component/display"
 
 export type ParamCondition = {
 	param: string
 	value?: string | boolean | number
 	type: "fieldValue" | "hasValue" | "hasNoValue"
+	operator?: DisplayOperator
 }
 
 type ParamBase = {
 	// name will only be populated for Bot Params
 	name: string
+	label?: string
 	type?:
 		| "RECORD"
 		| "TEXT"
 		| "LIST"
+		| "MAP"
 		| "METADATA"
 		| "METADATANAME"
 		| "MULTIMETADATA"
@@ -41,6 +45,10 @@ type NumberParam = ParamBase & {
 }
 type ListParam = ParamBase & {
 	type: "LIST"
+	default?: string
+}
+type MapParam = ParamBase & {
+	type: "MAP"
 	default?: string
 }
 
@@ -79,6 +87,7 @@ export type ParamDefinition =
 	| RecordParam
 	| TextParam
 	| ListParam
+	| MapParam
 	| SelectParam
 	| CheckboxParam
 	| NumberParam

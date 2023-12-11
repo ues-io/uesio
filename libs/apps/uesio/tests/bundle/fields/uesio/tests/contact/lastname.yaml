@@ -1,4 +1,4 @@
 name: lastname
-type: TEXT
 label: Last Name
+type: TEXT
 required: true

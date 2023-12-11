@@ -3,10 +3,10 @@ package systemdialect
 import (
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 	studioBotCollectionId  = "uesio/studio.bot"
 )
 
-func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// TASKS:
 	// 1. Whenever a user file is inserted or updated,  if the file is the User's profile,
 	// we need to invalidate the User cache in Redis
@@ -25,10 +25,10 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 	appFullName := session.GetSite().GetAppFullName()
 
 	var userKeysToDelete []string
-	studioFileUpdates := adapt.Collection{}
-	studioBotUpdates := adapt.Collection{}
+	studioFileUpdates := wire.Collection{}
+	studioBotUpdates := wire.Collection{}
 
-	if err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+	if err := request.LoopChanges(func(change *wire.ChangeItem) error {
 		relatedCollection, err := change.GetField("uesio/core.collectionid")
 		if err != nil {
 			return err
@@ -51,9 +51,9 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				return nil
 			}
 			if pathString, ok := pathField.(string); ok {
-				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
+				studioFileUpdates = append(studioFileUpdates, &wire.Item{
 					"uesio/studio.path": pathString,
-					adapt.ID_FIELD:      relatedRecordId,
+					wire.ID_FIELD:       relatedRecordId,
 				})
 			} else {
 				return nil
@@ -61,9 +61,9 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 		} else if relatedCollection == studioBotCollectionId {
 			// Increment the timestamp on the parent Bot,
 			// so that we are able to achieve cache invalidation
-			studioBotUpdates = append(studioBotUpdates, &adapt.Item{
-				adapt.UPDATED_AT_FIELD: time.Now().Unix(),
-				adapt.ID_FIELD:         relatedRecordId,
+			studioBotUpdates = append(studioBotUpdates, &wire.Item{
+				wire.UPDATED_AT_FIELD: time.Now().Unix(),
+				wire.ID_FIELD:         relatedRecordId,
 			})
 		}
 		return nil

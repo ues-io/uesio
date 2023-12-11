@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func NewBot(key string) (*Bot, error) {
@@ -95,9 +97,10 @@ type IBotParam interface {
 }
 
 type BotParamCondition struct {
-	Param string      `yaml:"param" json:"param"`
-	Value interface{} `yaml:"value" json:"value"`
-	Type  string      `yaml:"type,omitempty" json:"type"`
+	Param    string      `yaml:"param" json:"param"`
+	Value    interface{} `yaml:"value" json:"value"`
+	Type     string      `yaml:"type,omitempty" json:"type"`
+	Operator string      `yaml:"operator,omitempty" json:"operator"`
 }
 
 func (b BotParamCondition) GetParam() string {
@@ -113,9 +116,10 @@ func (b BotParamCondition) GetType() string {
 }
 
 type BotParamConditionResponse struct {
-	Param string      `json:"param"`
-	Value interface{} `json:"value"`
-	Type  string      `json:"type"`
+	Param    string      `json:"param"`
+	Value    interface{} `json:"value"`
+	Type     string      `json:"type"`
+	Operator string      `json:"operator"`
 }
 
 func (b BotParamConditionResponse) GetParam() string {
@@ -126,12 +130,17 @@ func (b BotParamConditionResponse) GetValue() interface{} {
 	return b.Value
 }
 
+func (b BotParamConditionResponse) GetOperator() string {
+	return b.Operator
+}
+
 func (b BotParamConditionResponse) GetType() string {
 	return b.Type
 }
 
 type BotParam struct {
 	Name         string              `yaml:"name" json:"name"`
+	Label        string              `yaml:"label,omitempty" json:"label"`
 	Prompt       string              `yaml:"prompt,omitempty" json:"prompt"`
 	Type         string              `yaml:"type" json:"type"`
 	MetadataType string              `yaml:"metadataType,omitempty" json:"metadatatype"`
@@ -159,6 +168,7 @@ func (b BotParam) GetConditions() []IBotParamCondition {
 
 type BotParamResponse struct {
 	Name         string                      `json:"name"`
+	Label        string                      `json:"label"`
 	Prompt       string                      `json:"prompt"`
 	Type         string                      `json:"type"`
 	MetadataType string                      `json:"metadataType,omitempty"`
@@ -306,55 +316,6 @@ func (b *Bot) MarshalYAML() (interface{}, error) {
 	return (*BotWrapper)(b), nil
 }
 
-type BotParamValidationError struct {
-	Message string
-	Param   string
-}
-
-func (e *BotParamValidationError) Error() string {
-	return fmt.Sprintf("%s: %s", e.Message, e.Param)
-}
-
-func NewParamError(message string, param string) error {
-	return &BotParamValidationError{Param: param, Message: message}
-}
-
-type BotExecutionError struct {
-	Message string
-}
-
-func (e *BotExecutionError) Error() string {
-	return e.Message
-}
-
-func NewBotExecutionError(message string) error {
-	return &BotExecutionError{Message: message}
-}
-
-type BotAccessError struct {
-	message string
-}
-
-func (e *BotAccessError) Error() string {
-	return e.message
-}
-
-func NewBotAccessError(message string) error {
-	return &BotAccessError{message}
-}
-
-type BotNotFoundError struct {
-	message string
-}
-
-func (e *BotNotFoundError) Error() string {
-	return e.message
-}
-
-func NewBotNotFoundError(message string) error {
-	return &BotNotFoundError{message}
-}
-
 func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 	conditions := param.GetConditions()
 	if len(conditions) < 1 {
@@ -390,7 +351,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		// First check for requiredness
 		if paramValue == nil || paramValue == "" {
 			if param.Required {
-				return NewParamError("missing required param", param.Name)
+				return exceptions.NewInvalidParamException("missing required param", param.Name)
 			} else {
 				// Don't bother performing any further validation if the param is not provided
 				// and is not required
@@ -402,17 +363,17 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		case "NUMBER":
 			// Cast to the corresponding type
 			if !isNumericType(paramValue) {
-				return NewParamError("could not convert param to number", param.Name)
+				return exceptions.NewInvalidParamException("could not convert param to number", param.Name)
 			}
 		case "CHECKBOX":
 			// Cast to the corresponding type
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
-				return NewParamError("param value must either be 'true' or 'false'", param.Name)
+				return exceptions.NewInvalidParamException("param value must either be 'true' or 'false'", param.Name)
 			}
 		case "METADATANAME":
 			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
 			if !ok {
-				return NewParamError("param failed metadata validation, no capital letters or special characters allowed", param.Name)
+				return exceptions.NewInvalidParamException("param failed metadata validation, no capital letters or special characters allowed", param.Name)
 			}
 		}
 	}

@@ -8,14 +8,13 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getMigrationsDirectory() string {
 	return "file://./migrations"
 }
-func getConnectionString(credentials *adapt.Credentials) (string, error) {
+func getConnectionString(credentials *wire.Credentials) (string, error) {
 	host, err := credentials.GetRequiredEntry("host")
 	if err != nil {
 		return "", err

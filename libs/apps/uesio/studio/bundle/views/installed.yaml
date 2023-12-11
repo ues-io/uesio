@@ -58,6 +58,10 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Installed Bundles
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: backpack
               actions:
                 - uesio/io.group:
                     components:

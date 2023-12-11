@@ -3,15 +3,15 @@ package mock
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type Auth struct{}
 
-func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *meta.AuthSource, connection adapt.Connection, session *sess.Session) (auth.AuthConnection, error) {
+func (a *Auth) GetAuthConnection(credentials *wire.Credentials, authSource *meta.AuthSource, connection wire.Connection, session *sess.Session) (auth.AuthConnection, error) {
 
 	return &Connection{
 		credentials: credentials,
@@ -22,9 +22,9 @@ func (a *Auth) GetAuthConnection(credentials *adapt.Credentials, authSource *met
 }
 
 type Connection struct {
-	credentials *adapt.Credentials
+	credentials *wire.Credentials
 	authSource  *meta.AuthSource
-	connection  adapt.Connection
+	connection  wire.Connection
 	session     *sess.Session
 }
 

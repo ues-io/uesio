@@ -1,10 +1,10 @@
 package fieldvalidations
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func Validate(op *adapt.SaveOp) error {
+func Validate(op *wire.SaveOp) error {
 
 	var validations []ValidationFunc
 	for _, field := range op.Metadata.Fields {
@@ -38,7 +38,7 @@ func Validate(op *adapt.SaveOp) error {
 		}
 	}
 
-	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+	return op.LoopChanges(func(change *wire.ChangeItem) error {
 		for _, validation := range validations {
 			err := validation(change)
 			if err != nil {

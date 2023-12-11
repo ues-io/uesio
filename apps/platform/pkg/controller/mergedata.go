@@ -1,20 +1,20 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
-
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
+	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -177,7 +177,7 @@ func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, s
 	wireData := map[string]meta.Group{}
 	if metadata != nil && metadata.Wire != nil {
 		for _, entity := range metadata.Wire.GetItems() {
-			wire := entity.(*adapt.LoadOp)
+			wire := entity.(*wire.LoadOp)
 			wireData[wire.WireName] = wire.Collection
 		}
 	}
@@ -256,8 +256,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 
 	routingMergeData, err := GetRoutingMergeData(route, preload, session)
 	if err != nil {
-		msg := "Error getting route merge data: " + err.Error()
-		http.Error(w, msg, http.StatusInternalServerError)
+		HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
 		return
 	}
 
@@ -281,10 +280,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	// 	w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=script", script))
 	// }
 
-	err = indexTemplate.Execute(w, mergeData)
-	if err != nil {
-		msg := "Error Merging Template: " + err.Error()
-		http.Error(w, msg, http.StatusInternalServerError)
+	if err = indexTemplate.Execute(w, mergeData); err != nil {
+		HandleError(w, errors.New("Error merging template: "+err.Error()))
 		return
 	}
 }

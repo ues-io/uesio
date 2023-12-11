@@ -1,15 +1,15 @@
 package systemdialect
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// If a user file is being deleted, we want to delete the underlying file blob data as well
 	// using the configured file storage adapter
 	var userFileIdsBeingDeleted []string
@@ -23,9 +23,9 @@ func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection
 		// Load all the userfile records
 		ufmc := meta.UserFileMetadataCollection{}
 		err := datasource.PlatformLoad(&ufmc, &datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
+			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    adapt.ID_FIELD,
+					Field:    wire.ID_FIELD,
 					Value:    userFileIdsBeingDeleted,
 					Operator: "IN",
 				},

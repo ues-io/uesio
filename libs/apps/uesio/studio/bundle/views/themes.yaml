@@ -62,6 +62,11 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Themes
+              subtitle: Memes for your views
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: palette
               actions:
                 - uesio/io.group:
                     components:
@@ -92,7 +97,7 @@ definition:
                                     components:
                                       - uesio/io.iconlabel:
                                           uesio.variant: uesio/io.namespacefield
-                                          text: ${uesio/studio.name}
+                                          text: ${uesio/studio.label}
                                           subtitle: ${uesio/studio.namespace}
                                           icon: ${uesio/studio.appicon}
                                           color: ${uesio/studio.appcolor}

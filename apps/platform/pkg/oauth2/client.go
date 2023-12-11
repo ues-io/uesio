@@ -9,11 +9,11 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type CredentialAccessors struct {
@@ -21,8 +21,8 @@ type CredentialAccessors struct {
 	Save   CredentialSaver
 	Delete CredentialSaver
 }
-type CredentialFetcher func(ic *adapt.IntegrationConnection) (*adapt.Item, error)
-type CredentialSaver func(credential *adapt.Item, ic *adapt.IntegrationConnection) error
+type CredentialFetcher func(ic *wire.IntegrationConnection) (*wire.Item, error)
+type CredentialSaver func(credential *wire.Item, ic *wire.IntegrationConnection) error
 type authHeaderEventListener func(token *oauth2.Token, authHeader string)
 
 var (
@@ -33,7 +33,7 @@ func SetUserCredentialAccessors(accessors *CredentialAccessors) {
 	credentialAccessors = accessors
 }
 
-func defaultCredentialFetch(ic *adapt.IntegrationConnection) (*adapt.Item, error) {
+func defaultCredentialFetch(ic *wire.IntegrationConnection) (*wire.Item, error) {
 	session := ic.GetSession()
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
@@ -43,7 +43,7 @@ func defaultCredentialFetch(ic *adapt.IntegrationConnection) (*adapt.Item, error
 	return GetIntegrationCredential(session.GetSiteUser().ID, ic.GetIntegration().GetKey(), coreSession, connection)
 }
 
-func defaultCredentialSave(credential *adapt.Item, ic *adapt.IntegrationConnection) error {
+func defaultCredentialSave(credential *wire.Item, ic *wire.IntegrationConnection) error {
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
 	if err != nil {
@@ -52,7 +52,7 @@ func defaultCredentialSave(credential *adapt.Item, ic *adapt.IntegrationConnecti
 	return UpsertIntegrationCredential(credential, coreSession, connection)
 }
 
-func defaultCredentialDelete(credential *adapt.Item, ic *adapt.IntegrationConnection) error {
+func defaultCredentialDelete(credential *wire.Item, ic *wire.IntegrationConnection) error {
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
 	if err != nil {
@@ -73,7 +73,7 @@ func init() {
 	InitCredentialAccessors()
 }
 
-func MakeRequestWithStoredUserCredentials(req *http.Request, ic *adapt.IntegrationConnection) (*http.Response, error) {
+func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.IntegrationConnection) (*http.Response, error) {
 	session := ic.GetSession()
 	integration := ic.GetIntegration()
 	credentials := ic.GetCredentials()
@@ -160,7 +160,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *adapt.Integrati
 // getClient creates a custom HTTP client which performs automatic token refreshing on expiration
 // while allowing for us (Uesio) to modify how the authorization header is set,
 // and notify other code when the header is set to know whether a new access token / refresh token was generated
-func getClient(integration *meta.Integration, credentials *adapt.Credentials, t *oauth2.Token, host string, opts *ClientOptions) (*http.Client, error) {
+func getClient(integration *meta.Integration, credentials *wire.Credentials, t *oauth2.Token, host string, opts *ClientOptions) (*http.Client, error) {
 
 	var tokenSource oauth2.TokenSource
 

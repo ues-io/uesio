@@ -1,0 +1,11 @@
+name: tabpanel
+label: Tab Panel
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    inner:
+      - border
+      - border-rounded
+      - border-slate-300
+      - p-6
+public: true

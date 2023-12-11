@@ -3,30 +3,30 @@ package datasource
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func getCascadeDeletes(
-	wire *adapt.SaveOp,
-	connection adapt.Connection,
+	op *wire.SaveOp,
+	connection wire.Connection,
 	session *sess.Session,
-) (map[string]adapt.Collection, error) {
+) (map[string]wire.Collection, error) {
 
-	cascadeDeleteFKs := map[string]adapt.Collection{}
+	cascadeDeleteFKs := map[string]wire.Collection{}
 
-	if len(wire.Deletes) == 0 {
+	if len(op.Deletes) == 0 {
 		return cascadeDeleteFKs, nil
 	}
 
-	deleteIds := wire.Deletes.GetIDs()
-	ufmcToDelete := &adapt.Collection{}
-	op := &adapt.LoadOp{
+	deleteIds := op.Deletes.GetIDs()
+	ufmcToDelete := &wire.Collection{}
+	loadop := &wire.LoadOp{
 		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
 		Collection:     ufmcToDelete,
 		WireName:       "deleteUserFiles",
-		Conditions: []adapt.LoadRequestCondition{
+		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/core.recordid",
 				Value:    deleteIds,
@@ -37,7 +37,7 @@ func getCascadeDeletes(
 		LoadAll: true,
 	}
 
-	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
+	_, err := Load([]*wire.LoadOp{loadop}, session, &LoadOptions{
 		Connection: connection,
 		Metadata:   GetConnectionMetadata(connection),
 	})
@@ -62,22 +62,22 @@ func getCascadeDeletes(
 
 				referencedCollection := referenceGroupMetadata.Collection
 
-				if wire.Metadata.GetFullName() != collectionKey || len(wire.Deletes) == 0 {
+				if op.Metadata.GetFullName() != collectionKey || len(op.Deletes) == 0 {
 					continue
 				}
 
 				ids := []string{}
-				for _, deletion := range wire.Deletes {
+				for _, deletion := range op.Deletes {
 					ids = append(ids, deletion.IDValue)
 				}
 
-				fields := []adapt.LoadRequestField{{ID: adapt.ID_FIELD}}
-				op := &adapt.LoadOp{
+				fields := []wire.LoadRequestField{{ID: wire.ID_FIELD}}
+				op := &wire.LoadOp{
 					CollectionName: referenceGroupMetadata.Collection,
 					WireName:       "CascadeDelete",
 					Fields:         fields,
-					Collection:     &adapt.Collection{},
-					Conditions: []adapt.LoadRequestCondition{
+					Collection:     &wire.Collection{},
+					Conditions: []wire.LoadRequestCondition{
 						{
 							Field:    referenceGroupMetadata.Field,
 							Value:    ids,
@@ -85,7 +85,7 @@ func getCascadeDeletes(
 						},
 					},
 					Query:  true,
-					Params: wire.Params,
+					Params: op.Params,
 				}
 
 				err := connection.Load(op, session)
@@ -101,7 +101,7 @@ func getCascadeDeletes(
 
 				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
-					refRK, err := refItem.GetField(adapt.ID_FIELD)
+					refRK, err := refItem.GetField(wire.ID_FIELD)
 					if err != nil {
 						return err
 					}
@@ -126,7 +126,7 @@ func getCascadeDeletes(
 	}
 
 	// Now that we've built a unique set of reference ids to cascade delete by Collection,
-	// convert this to a map of collection names to adapt.Collection
+	// convert this to a map of collection names to wire.Collection
 	// so that we can more easily perform the deletes (elsewhere)
 	if len(cascadeDeleteIdsByCollection) > 0 {
 		for collectionName, idsMap := range cascadeDeleteIdsByCollection {
@@ -134,11 +134,11 @@ func getCascadeDeletes(
 			if numIds == 0 {
 				continue
 			}
-			collectionItems := make(adapt.Collection, numIds)
+			collectionItems := make(wire.Collection, numIds)
 			i := 0
 			for id := range idsMap {
-				collectionItems[i] = &adapt.Item{
-					adapt.ID_FIELD: id,
+				collectionItems[i] = &wire.Item{
+					wire.ID_FIELD: id,
 				}
 				i++
 			}
@@ -149,7 +149,7 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	deletes, err := getCascadeDeletes(op, connection, session)
 	if err != nil {
 		return err
@@ -166,7 +166,7 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 				Collection: collectionKey,
 				Wire:       "CascadeDelete",
 				Deletes:    &ids,
-				Options: &adapt.SaveOptions{
+				Options: &wire.SaveOptions{
 					IgnoreMissingRecords: true,
 				},
 				Params: op.Params,

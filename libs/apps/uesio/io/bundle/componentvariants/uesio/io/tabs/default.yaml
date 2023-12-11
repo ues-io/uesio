@@ -2,8 +2,8 @@ name: default
 label: Default
 definition:
   labelsVariant: uesio/io.default
-  panelVariant: uesio/io.default
+  panelVariant: uesio/io.tabpanel
 variants:
   - uesio/io.tablabels:uesio/io.default
-  - uesio/io.scrollpanel:uesio/io.default
+  - uesio/io.scrollpanel:uesio/io.tabpanel
 public: true

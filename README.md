@@ -268,18 +268,100 @@ To run the worker process, use `npm run nx -- worker platform` (Or `nx worker pl
 
 Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
 
-| Environment Variable         | Description                                                                                | Examples, Values & Help                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| UESIO_USE_HTTPS              | Use ssl or not                                                                             | true or false                                                                           |
-| HOST                         | Host to use for HTTP server. Set to "localhost" for local development                      | Defaults to ""                                                                          |
-| UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                | filesystem or "" (Can be either empty, or "filesystem" if you want sessions to persist) |
-| UESIO_PLATFORM_BUCKET        | The Bucket in AWS file uploads will be populated to if using the useio.platform filesource |                                                                                         |
-| UESIO_STATIC_ASSETS_HOST     | Host from which to serve static files, including vendored JS (React) and Uesio assets      | Defaults to "" (assets served from local filesystem / Docker container)                 |
-| UESIO_ALLOW_INSECURE_COOKIES | Allows cookies without the secure flag (Useful in local docker envirnments)                | true                                                                                    |
-| UESIO_LOCAL_FILES            | Set to "true" to have the uesio.platform filesource save files to the file system          | true                                                                                    |
-| UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             | true                                                                                    |
-| COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |                                                                                         |
-| COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
+<table>
+  <tr>
+    <td>Environment Variable</td>
+    <td>Description</td>
+    <td>Default</td>
+    <td>Examples, Values, and Help</td>
+  </tr>
+  <tr>
+  <tr>
+    <td>UESIO_USE_HTTPS</td>
+    <td>Whether or not to serve with TLS</td>
+    <td>false</td>
+    <td>true / false</td>
+  </tr>
+  <tr>
+    <td>HOST</td>
+    <td>Host to use for HTTP server</td>
+    <td>""</td>
+    <td>Set to "localhost" for local development</td>
+  </tr>
+
+  <tr>
+    <td>UESIO_SESSION_STORE</td>
+    <td>Allows you to specify the storage location for user sessions</td>
+    <td>redis</td>
+    <td>redis, filesystem, ""</td>
+  </tr>
+  <tr>
+    <td>UESIO_USERFILES_BUCKET_NAME</td>
+    <td>The Bucket in AWS / local folder where user-uploaded files will be stored.</td>
+    <td>""</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_BUNDLES_BUCKET_NAME</td>
+    <td>The Bucket in AWS / local folder where bundles will be stored.</td>
+    <td>""</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_STATIC_ASSETS_HOST</td>
+    <td>Host from which to serve static files, including vendored JS (React) and Uesio assets</td>
+    <td>""</td>
+    <td>By default, assets are served from the local filesystem / Docker container. Alternately, set this to a valid URL where Uesio static assets live, e.g. "https://www.ues.io"</td>
+  </tr>
+  <tr>
+    <td>UESIO_ALLOW_INSECURE_COOKIES</td>
+    <td>Allows cookies without the secure flag</td>
+    <td>true</td>
+    <td>Useful in local docker development</td>
+  </tr>
+  <tr>
+    <td>UESIO_PLATFORM_FILESOURCE_TYPE</td>
+    <td>Controls where user-uploaded files are stored</td>
+    <td>uesio.local</td>
+    <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
+  </tr>
+  <tr>
+    <td>UESIO_PLATFORM_FILESOURCE_CREDENTIALS</td>
+    <td>The name of the Uesio credential to use for saving user-uploaded files</td>
+    <td>uesio/core.aws</td>
+    <td>Must be a fully-qualified Uesio credential name</td>
+  </tr>
+  <tr>
+    <td>UESIO_PLATFORM_BUNDLESTORE_TYPE</td>
+    <td>Controls where Uesio bundles are stored</td>
+    <td>uesio.local</td>
+    <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
+  </tr>
+  <tr>
+    <td>UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS</td>
+    <td>The name of the Uesio credential to use for saving bundlestore files</td>
+    <td>uesio/core.aws</td>
+    <td>Must be a fully-qualified Uesio credential name</td>
+  </tr>
+  <tr>
+    <td>UESIO_MOCK_AUTH</td>
+    <td>Enables you to login with mock user accounts (currently a hardcoded list)</td>
+    <td>false</td>
+    <td>Only for local dev / unit tests</td>
+  </tr>
+  <tr>
+    <td>UESIO_GRACEFUL_SHUTDOWN_SECONDS</td>
+    <td>The number of seconds to wait before terminating the Uesio app / worker process</td>
+    <td>5</td>
+    <td>Should be less than whatever the ECS / Kubernetes / etc shutdown window is (usually 30)</td>
+  </tr>
+  <tr>
+    <td>UESIO_USAGE_JOB_RECURRENCE_MINUTES</td>
+    <td>The number of minutes to wait between runs of the Usage worker job</td>
+    <td>10</td>
+    <td>Usage data (stored in Redis) will only be aggregated and committed to Postgres as often as this job is run by the worker process. Set to a lower window for more frequent checks.</td>
+  </tr>
+</table>
 
 # npm dependencies
 

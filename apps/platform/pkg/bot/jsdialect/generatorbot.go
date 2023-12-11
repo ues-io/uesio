@@ -2,17 +2,18 @@ package jsdialect
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"regexp"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,7 +30,7 @@ type GeneratorBotAPI struct {
 	Params     *ParamsAPI `bot:"params"`
 	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
-	Connection adapt.Connection
+	Connection wire.Connection
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
@@ -122,7 +123,7 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
 	// This allows the repeater input to be either a string or a slice of strings
-	repeater, err := adapt.GetStringSlice(repeaterInput)
+	repeater, err := wire.GetStringSlice(repeaterInput)
 	if err != nil {
 		return "", err
 	}
@@ -167,42 +168,27 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 		return nil, err
 	}
 
-	// Traverse the node to find merges
-	if len(node.Content) > 0 {
-		err = mergeNodes(node.Content[0], params, true)
-		if err != nil {
-			return nil, err
-		}
+	err = mergeNode(node, params)
+	if err != nil {
+		return nil, err
 	}
 
 	return node, nil
 
 }
 
-func mergeNodes(node *yaml.Node, params map[string]interface{}, allowYaml bool) error {
+func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 	if node == nil || params == nil {
 		return nil
 	}
 
-	if node.Kind == yaml.MappingNode {
-		for i := range node.Content {
-			if i%2 != 0 {
-				err := mergeNodes(node.Content[i], params, true)
-				if err != nil {
-					return err
-				}
-			} else {
-				err := mergeNodes(node.Content[i], params, false)
-				if err != nil {
-					return err
-				}
-			}
-		}
+	if node.Kind == yaml.DocumentNode {
+		return mergeNode(node.Content[0], params)
 	}
 
-	if node.Kind == yaml.SequenceNode {
+	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
 		for i := range node.Content {
-			err := mergeNodes(node.Content[i], params, false)
+			err := mergeNode(node.Content[i], params)
 			if err != nil {
 				return err
 			}
@@ -212,24 +198,34 @@ func mergeNodes(node *yaml.Node, params map[string]interface{}, allowYaml bool) 
 	if node.Kind == yaml.ScalarNode {
 		re := regexp.MustCompile("\\$\\{(.*?)\\}")
 		match := re.FindStringSubmatch(node.Value)
-		for _, merge := range match {
+		if len(match) == 2 {
+			matchExpression := match[0] //${mymerge}
+			merge := match[1]           // mymerge
 			mergeValue := params[merge]
 			mergeString, ok := mergeValue.(string)
 			if ok {
-				if allowYaml {
-					if mergeString == "" {
-						node.SetString("")
-						continue
-					}
-					newNode, err := mergeYamlString(mergeString, nil)
-					if err != nil {
-						return err
-					}
-					// Replace that crap
-					*node = *newNode.Content[0]
-				} else {
-					node.SetString(mergeString)
+
+				newNode, err := mergeYamlString(mergeString, nil)
+				if err != nil {
+					return err
 				}
+
+				contentNode := newNode.Content[0]
+
+				// If newNode is a scalar we can just merge it in to the template
+				if contentNode.Kind == yaml.ScalarNode {
+					node.SetString(strings.Replace(node.Value, matchExpression, contentNode.Value, 1))
+					return nil
+				}
+
+				// If newNode is not a scalar, then we have to be sure it was the
+				// entire merge.
+				if matchExpression != node.Value {
+					return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
+				}
+
+				// Replace that crap
+				*node = *contentNode
 			}
 		}
 	}

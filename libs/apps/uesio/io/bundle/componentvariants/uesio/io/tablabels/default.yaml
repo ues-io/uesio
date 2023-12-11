@@ -7,16 +7,24 @@ definition:
       - grid-flow-col
       - auto-cols-max
     tab:
+      - py-3
       - px-4
-      - py-2
-      - rounded-lg
+      - bg-slate-50
       - text-sm
       - text-slate-700
-      - mr-2
+      - tracking-wide
       - cursor-pointer
+      - border-y-1
+      - border-transparent
+      - border-b-slate-300
+      - -mb-[1px]
     tabSelected:
-      - bg-slate-800
-      - text-white
+      - border-slate-300
+      - border-1
+      - border-b-white
+      - text-slate-900
+      - bg-white
       - font-medium
       - cursor-default
+      - z-0
 public: true

@@ -4,18 +4,18 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type PlatformSaveRequest struct {
 	Collection meta.CollectionableGroup
-	Options    *adapt.SaveOptions
+	Options    *wire.SaveOptions
 	Params     map[string]string
 }
 
-func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connection, session *sess.Session) error {
+func PlatformDelete(request meta.CollectionableGroup, connection wire.Connection, session *sess.Session) error {
 	return doPlatformSave([]SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: request.GetName(),
@@ -23,7 +23,7 @@ func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connectio
 	}}, connection, session)
 }
 
-func PlatformDeleteOne(item meta.CollectionableItem, connection adapt.Connection, session *sess.Session) error {
+func PlatformDeleteOne(item meta.CollectionableItem, connection wire.Connection, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Item: item,
 	}
@@ -40,7 +40,7 @@ func GetSaveRequestFromPlatformSave(psr PlatformSaveRequest) SaveRequest {
 	}
 }
 
-func PlatformSaves(psrs []PlatformSaveRequest, connection adapt.Connection, session *sess.Session) error {
+func PlatformSaves(psrs []PlatformSaveRequest, connection wire.Connection, session *sess.Session) error {
 	requests := make([]SaveRequest, len(psrs))
 	for i := range psrs {
 		requests[i] = GetSaveRequestFromPlatformSave(psrs[i])
@@ -73,14 +73,14 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	return nil
 }
 
-func GetConnectionMetadata(connection adapt.Connection) *adapt.MetadataCache {
+func GetConnectionMetadata(connection wire.Connection) *wire.MetadataCache {
 	if connection == nil {
 		return nil
 	}
 	return connection.GetMetadata()
 }
 
-func GetConnectionSaveOptions(connection adapt.Connection) *SaveOptions {
+func GetConnectionSaveOptions(connection wire.Connection) *SaveOptions {
 	if connection == nil {
 		return nil
 	}
@@ -90,22 +90,22 @@ func GetConnectionSaveOptions(connection adapt.Connection) *SaveOptions {
 	}
 }
 
-func doPlatformSave(requests []SaveRequest, connection adapt.Connection, session *sess.Session) error {
+func doPlatformSave(requests []SaveRequest, connection wire.Connection, session *sess.Session) error {
 	err := SaveWithOptions(requests, session, GetConnectionSaveOptions(connection))
 	return HandleSaveRequestErrors(requests, err)
 }
 
-func PlatformSave(psr PlatformSaveRequest, connection adapt.Connection, session *sess.Session) error {
+func PlatformSave(psr PlatformSaveRequest, connection wire.Connection, session *sess.Session) error {
 	return PlatformSaves([]PlatformSaveRequest{
 		psr,
 	}, connection, session)
 }
 
-func PlatformSaveOne(item meta.CollectionableItem, options *adapt.SaveOptions, connection adapt.Connection, session *sess.Session) error {
+func PlatformSaveOne(item meta.CollectionableItem, options *wire.SaveOptions, connection wire.Connection, session *sess.Session) error {
 	return PlatformSave(*GetPlatformSaveOneRequest(item, options), connection, session)
 }
 
-func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.SaveOptions) *PlatformSaveRequest {
+func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *wire.SaveOptions) *PlatformSaveRequest {
 	return &PlatformSaveRequest{
 		Collection: &LoadOneCollection{
 			Item: item,
@@ -114,9 +114,9 @@ func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.Save
 	}
 }
 
-func GetPlatformConnection(metadata *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (adapt.Connection, error) {
+func GetPlatformConnection(metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
 	if metadata == nil {
-		metadata = &adapt.MetadataCache{}
+		metadata = &wire.MetadataCache{}
 	}
 	return GetConnection(meta.PLATFORM_DATA_SOURCE, metadata, session, connection)
 }

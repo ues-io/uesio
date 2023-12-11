@@ -65,6 +65,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Bots
               subtitle: Beep. Boop. Beep.
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: smart_toy
               actions:
                 - uesio/io.group:
                     components:
@@ -80,11 +84,18 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: bots
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/studio.name
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: bots
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                            - uesio/studio.type
+                      - uesio/io.filter:
+                          wire: bots
+                          fieldId: uesio/studio.type
+                          labelPosition: none
                 - uesio/io.table:
                     uesio.id: botsTable
                     wire: bots
@@ -93,7 +104,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
