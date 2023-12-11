@@ -1,0 +1,35 @@
+name: viewheader
+pack: main
+entrypoint: components/viewheader/viewheader
+title: View Header
+description: Adds a responsive header to a view
+category: LAYOUT
+discoverable: true
+icon: dashboard
+slots:
+  - name: logo
+    label: Logo Area
+  - name: left
+    label: Left Aligned Content
+  - name: center
+    label: Center Aligned Content
+  - name: right
+    label: Right Aligned Content
+  - name: avatar
+    label: Avatar Area
+defaultDefinition:
+  uesio.variant: uesio/io.default
+properties:
+sections:
+  - type: HOME
+    properties:
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:
+  root:
+  logo:
+  content:
+  left:
+  center:
+  right:
+  avatar:
