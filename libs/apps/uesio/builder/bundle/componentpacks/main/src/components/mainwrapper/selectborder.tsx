@@ -39,6 +39,7 @@ const StyleDefaults = Object.freeze({
 		"after:outline-2",
 		"after:outline-blue-600",
 		"after:-outline-offset-[2px]",
+		"after:z-10",
 	],
 	selectedAlways: ["relative"],
 	arrow: ["fill-blue-600"],
