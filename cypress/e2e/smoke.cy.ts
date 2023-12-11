@@ -62,6 +62,8 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.typeInInput("new-field-label", "Is Extinct")
 			cy.changeSelectValue("new-field-type", "CHECKBOX")
 			cy.clickButton("save-field-and-add-another")
+			//Save takes time so this was to fast
+			cy.wait(500)
 			// Create a NUMBER field
 			cy.typeInInput("new-field-name", "estimated_population")
 			cy.getByIdFragment("input", "new-field-name").blur()
