@@ -66,12 +66,12 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: sites
         left:
           - uesio/core.view:
-              view: uesio/studio.sitenav
+              view: sitenav
               uesio.context:
                 wire: sites
               params:

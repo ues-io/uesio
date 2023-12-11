@@ -11,10 +11,10 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
         left:
           - uesio/core.view:
-              view: uesio/studio.homeleftnav
+              view: homeleftnav
               uesio.id: orglist
               wire: orgs
               components:
@@ -31,5 +31,5 @@ definition:
                           text: domain
         content:
           - uesio/core.view:
-              view: uesio/studio.homecontent
+              view: homecontent
               uesio.id: homecontent

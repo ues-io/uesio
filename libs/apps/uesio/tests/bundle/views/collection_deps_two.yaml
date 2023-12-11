@@ -21,4 +21,4 @@ definition:
   components:
     - uesio/core.view:
         uesio.id: depsOne
-        view: uesio/tests.collection_deps_one
+        view: collection_deps_one

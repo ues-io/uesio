@@ -60,7 +60,7 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: apps
         left:
@@ -69,7 +69,7 @@ definition:
                 - type: wireHasRecords
                   wire: apps
               uesio.id: appnavview
-              view: uesio/studio.appnav
+              view: appnav
               uesio.context:
                 wire: apps
               params:

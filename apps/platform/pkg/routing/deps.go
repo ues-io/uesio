@@ -274,7 +274,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 			viewID = ""
 		}
 
-		err = processView(viewKey, viewID, deps, subParams, session)
+		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, session)
 		if err != nil {
 			return err
 		}

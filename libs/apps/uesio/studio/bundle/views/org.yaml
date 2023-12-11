@@ -74,10 +74,10 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
         left:
           - uesio/core.view:
-              view: uesio/studio.homeleftnav
+              view: homeleftnav
               uesio.id: orglist
         content:
           - uesio/io.list:

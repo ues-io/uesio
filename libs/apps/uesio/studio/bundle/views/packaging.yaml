@@ -92,7 +92,7 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: workspaces
               params:
@@ -102,7 +102,7 @@ definition:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
-              view: uesio/studio.workspacenav
+              view: workspacenav
               params:
                 selected: packaging
         content:

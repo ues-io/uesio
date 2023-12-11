@@ -28,7 +28,7 @@ definition:
         - uesio/io.text:
             text: $Prop{text2}
         - uesio/core.view:
-            view: uesio/tests.declarative_components
+            view: declarative_components
   - uesio/core.slot:
       name: footer
 title: Declarative 2

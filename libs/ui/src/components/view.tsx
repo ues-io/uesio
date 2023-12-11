@@ -10,6 +10,7 @@ import {
 import { UC } from "../definition/definition"
 import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
+import { getFullyQualifiedKey } from "../bands/collection/class"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -65,7 +66,12 @@ const ViewComponentId = "uesio/core.view"
 
 const View: UC<ViewComponentDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
-	const { params, view: viewDefId } = definition
+	const { params, view: localViewDefId } = definition
+	const viewDefId = getFullyQualifiedKey(
+		localViewDefId,
+		context.getNamespace()
+	)
+
 	// Backwards compatibility for definition.id
 	// TODO: Remove when all instances of this are fixed
 	const uesioId = definition[COMPONENT_ID] || definition.id || path || "$root"
