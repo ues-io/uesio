@@ -9,7 +9,10 @@ import { ID_FIELD, PlainCollection } from "./types"
 const isLocalNamespace = (ns: string, localNamespace: string) =>
 	ns === localNamespace || ns === "this/app"
 
-const getFullyQualifiedKey = (key: string, defaultNamespace: string) => {
+const getFullyQualifiedKey = (
+	key: string,
+	defaultNamespace: string | undefined
+) => {
 	if (!key) return ""
 	if (!defaultNamespace) return key
 	const [first, second] = parseKey(key)
@@ -151,6 +154,6 @@ class Collection {
 
 const searchableFieldTypes = ["TEXT", "LONGTEXT", "SELECT"]
 
-export { getFieldParts }
+export { getFieldParts, getFullyQualifiedKey }
 
 export default Collection

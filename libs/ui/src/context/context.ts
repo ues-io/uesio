@@ -14,7 +14,7 @@ import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import get from "lodash/get"
-import { getAncestorPath } from "../component/path"
+import { getAncestorPath, parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { parseVariantName } from "../component/component"
@@ -409,6 +409,17 @@ class Context {
 
 	getViewDefId = () =>
 		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef
+
+	getNamespace = () => {
+		const viewDefId = this.stack
+			.filter(hasViewContext)
+			.find((f) => f?.viewDef)?.viewDef
+		if (!viewDefId) {
+			return undefined
+		}
+		const [namespace] = parseKey(viewDefId)
+		return namespace
+	}
 
 	getRoute = () =>
 		this.stack.filter(isRouteContextFrame).find((f) => f.route)?.route

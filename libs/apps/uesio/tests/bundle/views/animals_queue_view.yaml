@@ -60,7 +60,7 @@ definition:
                           title: Animal Details
                       - uesio/core.view:
                           id: detailview
-                          view: uesio/tests.view_with_param_condition
+                          view: view_with_param_condition
                           params:
                             genus: ${uesio/tests.genus}
                             species: ${uesio/tests.species}
