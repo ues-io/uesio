@@ -134,9 +134,6 @@ definition:
                                   - uesio/studio.suggestedwiredatabutton:
                                       wire: collectionData
                                       targetTableId: collectionDataTable
-                                      uesio.display:
-                                        - type: wireHasNoChanges
-                                          wire: collectionData
                       - uesio/io.box:
                           components:
                             - uesio/studio.datamanager:

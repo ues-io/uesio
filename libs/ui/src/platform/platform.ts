@@ -9,7 +9,7 @@ import { Context } from "../context/context"
 import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
-import { PlainWireRecord } from "../bands/wirerecord/types"
+import { PlainFieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
 import {
@@ -82,7 +82,7 @@ const getMonacoEditorVersion = () =>
 	(window as unknown as UesioWindow).monacoEditorVersion
 
 type BotParams = {
-	[key: string]: string
+	[key: string]: PlainFieldValue
 }
 
 type BotResponse = {

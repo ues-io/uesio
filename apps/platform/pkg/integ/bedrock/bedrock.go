@@ -16,6 +16,7 @@ import (
 	"github.com/aws/smithy-go"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -146,8 +147,8 @@ func hydrateInvokeModelOptions(requestOptions map[string]interface{}) *InvokeMod
 	topP := float64WithDefault(requestOptions["top_p"], 0.999)
 	topK := intWithDefault(requestOptions["top_k"], 250)
 	return &InvokeModelOptions{
-		Input:             requestOptions["input"].(string),
-		Model:             requestOptions["model"].(string),
+		Input:             goutils.StringValue(requestOptions["input"]),
+		Model:             goutils.StringValue(requestOptions["model"]),
 		MaxTokensToSample: maxTokensToSample,
 		Temperature:       temperature,
 		TopK:              topK,

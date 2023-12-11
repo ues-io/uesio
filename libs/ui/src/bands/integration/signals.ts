@@ -1,20 +1,25 @@
-import { Context } from "../../context/context"
+import { Context, Mergeable } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { BotParams, platform } from "../../platform/platform"
 import { getErrorString } from "../utils"
 import { MetadataKey } from "../../metadata/types"
 import { runMany } from "../../signals/signals"
+import JSONTransformStream from "./JSONTransformStream"
 
 // The key for the entire band
 const INTEGRATION_BAND = "integration"
+
+type OnChunkFunction = (context: Context) => Promise<Context>
+type ChunkTransform = "json" | "text"
 
 export interface RunActionSignal extends SignalDefinition {
 	integrationType: MetadataKey
 	integration: MetadataKey
 	action: string
+	transform?: ChunkTransform
 	params?: BotParams
 	// onChunk allows for signals to be invoked for each chunk of streaming data received
-	onChunk?: SignalDefinition[]
+	onChunk?: SignalDefinition[] | OnChunkFunction
 }
 
 const errorBoundaryStart = "-----ERROR-----"
@@ -31,9 +36,12 @@ const signals: Record<string, SignalDescriptor> = {
 				action,
 				params = {},
 				stepId,
+				transform,
 				onChunk,
 			} = signalInvocation
-			const mergedParams = context.mergeStringMap(params)
+			const mergedParams = context.mergeStringMap(
+				params as Record<string, Mergeable>
+			)
 
 			try {
 				const response = await platform.runIntegrationAction(
@@ -53,38 +61,57 @@ const signals: Record<string, SignalDescriptor> = {
 					finalResult = await response.json()
 				} else if (response.body && noSniff) {
 					// Handle streaming responses
-					const reader = response.body.getReader()
-					const decoder = new TextDecoder()
-					let streamResult = await reader.read()
-					const chunks = []
-					while (!streamResult.done) {
-						const text = decoder.decode(streamResult.value)
-						// Check if the text contains a special error message boundary
-						if (text.includes(errorBoundaryStart)) {
-							throw new Error(
-								text.substring(
-									text.indexOf(errorBoundaryStart) +
-										errorBoundaryStart.length,
-									text.indexOf(errorBoundaryEnd)
-								)
-							)
-						}
-						chunks.push(text)
-						if (onChunk && stepId) {
-							await runMany(
-								onChunk,
-								context.addSignalOutputFrame(stepId, {
-									data: text,
-								})
-							)
-						}
-						streamResult = await reader.read()
+					const chunks = [] as (string | object)[]
+					const chunkWriterStream = new WritableStream<
+						string | object
+					>({
+						async write(chunk) {
+							chunks.push(chunk)
+							if (stepId && onChunk) {
+								const onChunkContext =
+									context.addSignalOutputFrame(stepId, {
+										data: chunk,
+									})
+								if (typeof onChunk === "function") {
+									await onChunk(onChunkContext)
+								} else if (Array.isArray(onChunk)) {
+									await runMany(onChunk, onChunkContext)
+								}
+							}
+						},
+					})
+
+					// Stream the response through our text decoder and,
+					// if we want to transform to JSON, through the JSON transformer
+					await (transform === "json"
+						? response.body
+								.pipeThrough(new TextDecoderStream())
+								.pipeThrough(JSONTransformStream())
+								.pipeTo(chunkWriterStream)
+						: response.body
+								.pipeThrough(new TextDecoderStream())
+								.pipeTo(chunkWriterStream))
+					if ("text" === transform || !transform) {
+						// Our final output should be text, not an array of objects
+						finalResult = (chunks as string[]).join("")
 					}
-					finalResult = chunks.join("")
 				} else {
 					finalResult = await response.text()
 				}
 
+				// Check if the text contains a special error message boundary
+				if (
+					typeof finalResult === "string" &&
+					finalResult.includes(errorBoundaryStart)
+				) {
+					throw new Error(
+						finalResult.substring(
+							finalResult.indexOf(errorBoundaryStart) +
+								errorBoundaryStart.length,
+							finalResult.indexOf(errorBoundaryEnd)
+						)
+					)
+				}
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
 				if (stepId) {
@@ -94,6 +121,7 @@ const signals: Record<string, SignalDescriptor> = {
 				}
 				return context
 			} catch (error) {
+				console.error(error)
 				// TODO: Recommend putting errors within signal output frame as well
 				const message = getErrorString(error)
 				return context.addErrorFrame([message])
