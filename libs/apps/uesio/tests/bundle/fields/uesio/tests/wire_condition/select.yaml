@@ -1,4 +1,4 @@
 name: select
-type: SELECT
 label: Select
+type: SELECT
 selectList: selectlist

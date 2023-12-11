@@ -1,7 +1,5 @@
-import Wire from "../bands/wire/class"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
 import { PlainWireRecord } from "../bands/wirerecord/types"
-import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
@@ -21,6 +19,7 @@ type MergeType =
 	| "Time"
 	| "Date"
 	| "RecordMeta"
+	| "Collection"
 	| "Theme"
 	| "File"
 	| "UserFile"
@@ -39,32 +38,25 @@ export const InvalidSignalOutputMergeMsg =
 export const InvalidComponentOutputMsg =
 	"Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
 
+const parseWireExpression = (
+	fullExpression: string
+): [string | undefined, string] => {
+	const expressionParts = fullExpression.split(colonDelimiter)
+	if (expressionParts.length === 1) {
+		return [undefined, fullExpression]
+	}
+	return [expressionParts[0], expressionParts[1]]
+}
+
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context) => {
-		const expressionParts = fullExpression.split(":")
-		let record: WireRecord | undefined
-		let expression = fullExpression
-		if (expressionParts.length === 1) {
-			record = context.getRecord()
-		} else {
-			const wirename = expressionParts[0]
-			record = context.getRecord(wirename)
-			expression = expressionParts[1]
-		}
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const record = context.getRecord(wirename)
 		return record?.getFieldValue(expression) ?? ""
 	},
 	Records: (fullExpression, context) => {
-		const expressionParts = fullExpression.split(":")
-		let records: WireRecord[] | undefined
-		let expression = fullExpression
-		// TODO: Find closest multi-record context
-		if (expressionParts.length === 1) {
-			records = context.getWire()?.getData()
-		} else {
-			const wirename = expressionParts[0]
-			records = context.getWire(wirename)?.getData()
-			expression = expressionParts[1]
-		}
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const records = context.getWire(wirename)?.getData()
 		return (
 			records?.map(
 				(r) => r.getFieldValue<wire.PlainFieldValue>(expression) ?? ""
@@ -72,17 +64,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 		)
 	},
 	Sum: (fullExpression, context) => {
-		const expressionParts = fullExpression.split(":")
-		let wire: Wire | undefined
-		let expression = fullExpression
-		if (expressionParts.length === 1) {
-			wire = context.getWire()
-		} else {
-			const wirename = expressionParts[0]
-			wire = context.getWire(wirename)
-			expression = expressionParts[1]
-		}
-
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const wire = context.getWire(wirename)
 		let total = 0
 		wire?.getData().forEach((record) => {
 			total += (record.getFieldValue(expression) as number) || 0
@@ -176,6 +159,17 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		return ""
 	},
+	Collection: (fullExpression, context) => {
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const collection = context.getWireCollection(wirename)
+		if (expression === "label") {
+			return collection?.getLabel() || ""
+		}
+		if (expression === "pluralLabel") {
+			return collection?.getPluralLabel() || ""
+		}
+		return ""
+	},
 	Theme: (expression, context) => {
 		const [scope, value] = expression.split(".")
 		const theme = context.getTheme()
@@ -185,8 +179,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return ""
 	},
 	SelectList: (expression, context) => {
-		const wire = context.getWire()
-		const fieldMetadata = wire?.getCollection().getField(expression)
+		const fieldMetadata = context.getWireCollection()?.getField(expression)
 		const selectListMetadata = fieldMetadata?.getSelectOptions(context)
 		const value = context.getRecord()?.getFieldValue(expression)
 		const label =

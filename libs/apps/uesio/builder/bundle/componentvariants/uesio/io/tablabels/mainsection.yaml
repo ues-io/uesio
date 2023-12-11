@@ -3,21 +3,24 @@ label: mainsection
 definition:
   uesio.styleTokens:
     root:
-      - bg-[$Theme{color.primary}]
+      - bg-slate-50
       - p-2
       - gap-x-2
       - gap-y-1
       - flex
       - flex-wrap
       - leading-none
+      - border-b-1
+      - border-slate-300
     tab:
       - uppercase
       - p-1.5
       - text-[8pt]
       - rounded
-      - text-white
+      - tracking-wide
+      - text-slate-600
       - whitespace-nowrap
     tabSelected:
-      - text-slate-700
-      - bg-slate-50
+      - text-white
+      - bg-[$Theme{color.primary}]
 public: true

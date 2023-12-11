@@ -187,6 +187,8 @@ definition:
                 itemIcon: list
                 itemName: $Param{collectionname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${collections:uesio/studio.appicon}
+                itemNameSpaceColor: ${collections:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -202,8 +204,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Collection - ${uesio/studio.plurallabel}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.plurallabel}
+                    subtitle: Collection
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:
@@ -468,7 +475,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
@@ -500,11 +507,11 @@ definition:
                               workspace:
                                 name: $Param{workspacename}
                                 app: $Param{app}
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
-                    uesio.styleTokens:
-                      root:
-                        - mt-2
                     uesio.display:
                       - type: fieldValue
                         wire: collections
@@ -560,7 +567,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
@@ -758,7 +765,7 @@ definition:
                                           components:
                                             - uesio/io.iconlabel:
                                                 uesio.variant: uesio/io.namespacefield
-                                                text: ${uesio/studio.name}
+                                                text: ${uesio/studio.label}
                                                 subtitle: ${uesio/studio.namespace}
                                                 icon: ${uesio/studio.appicon}
                                                 color: ${uesio/studio.appcolor}

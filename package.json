@@ -8,6 +8,7 @@
 		"clean": "rm -rf dist; rm -rf node_modules/.cache/nx",
 		"watch-all": "nx run-many --target=watch --all --parallel=12",
 		"kill:webserver": "lsof -t -i :3000 | xargs kill -9",
+		"graceful-shutdown": "lsof -t -i :3000 | xargs kill -15",
 		"affected": "nx affected",
 		"affected:apps": "nx affected:apps",
 		"affected:build": "nx affected:build",

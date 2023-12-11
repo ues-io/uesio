@@ -1,6 +1,6 @@
 name: sendgrid
+label: SendGrid
 public: true
 type: sendgrid
-credentials: uesio/core.sendgrid
-headers: {}
-baseUrl: ""
+credentials: sendgrid
+authentication: API_KEY

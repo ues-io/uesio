@@ -13,6 +13,8 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 
 	const [viewNamespace, viewName] = component.path.parseKey(viewKey || "")
 
+	const itemNSInfo = getBuilderNamespace(context, viewNamespace)
+
 	return (
 		<Group context={context}>
 			<component.Component
@@ -69,6 +71,8 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				path=""
 				definition={{
 					title: viewName,
+					icon: itemNSInfo?.icon,
+					iconcolor: itemNSInfo?.color,
 					signals: [
 						{
 							signal: "route/NAVIGATE",

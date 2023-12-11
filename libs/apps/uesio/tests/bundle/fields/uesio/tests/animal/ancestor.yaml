@@ -1,5 +1,5 @@
 name: ancestor
-type: REFERENCE
 label: Direct Ancestor
+type: REFERENCE
 reference:
   collection: animal

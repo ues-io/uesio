@@ -5,12 +5,14 @@ definition:
   uesio.styleTokens:
     root:
       - py-2
-      - px-5
-      - text-slate-700
-      - focus:bg-slate-100
+      - px-4
+      - text-slate-600
+      - focus:bg-white
       - focus:outline-offset-[-1px]
       - items-center
-      - hover:bg-slate-50
+      - hover:bg-white
+      - gap-4
+      - rounded
     selected:
       - text-white
       - bg-primary

@@ -21,6 +21,7 @@ import {
 	respondVoid,
 	postMultipartForm,
 	del,
+	interceptPlatformRedirects,
 } from "./async"
 import { memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
@@ -90,6 +91,10 @@ type BotResponse = {
 	error: string
 }
 
+type IntegrationActionMetadata = {
+	inputs?: ParamDefinition[]
+}
+
 type ConfigValueResponse = {
 	value: string
 	managedby: string
@@ -143,6 +148,7 @@ type MetadataInfo = {
 	icon: string
 	namespace: string
 	key: string
+	label?: string
 }
 
 type NamespaceInfo = {
@@ -657,17 +663,48 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
-	autocomplete: async (
+	runIntegrationAction: async (
 		context: Context,
-		request: AutocompleteRequest
-	): Promise<AutocompleteResponse> => {
+		integration: MetadataKey,
+		action: string,
+		params: BotParams
+	): Promise<Response> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
 			context,
-			`${prefix}/ai/complete`,
-			request
+			`${prefix}/integrationactions/run/${integration.replace(
+				".",
+				"/"
+			)}?action=${encodeURIComponent(action)}`,
+			params
 		)
-		return respondJSON(response)
+		if (interceptPlatformRedirects(response)) {
+			return response
+		}
+		if (response.status >= 400) {
+			const errorText = await response.text()
+			throw new Error(
+				errorText
+					? errorText
+					: "We are sorry, something went wrong on our side"
+			)
+		}
+		return response
+	},
+	describeIntegrationAction: async (
+		context: Context,
+		integrationType: MetadataKey,
+		actionName: string
+	): Promise<IntegrationActionMetadata> => {
+		if (!integrationType || !actionName) return Promise.resolve({})
+		const prefix = getPrefix(context)
+		return getJSON(
+			context,
+			`${prefix}/integrationactions/describe/${integrationType.replace(
+				".",
+				"/"
+			)}?action=${encodeURIComponent(actionName)}`
+		)
 	},
 	getMonacoEditorVersion,
 	getStaticAssetsHost,

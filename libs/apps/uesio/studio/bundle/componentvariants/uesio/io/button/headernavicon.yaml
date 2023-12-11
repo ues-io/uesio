@@ -1,0 +1,13 @@
+name: headernavicon
+label: Header Nav Icon
+extends: uesio/io.nav
+definition:
+  uesio.styleTokens:
+    icon:
+      - text-xl
+      - text-slate-700
+      - hover:bg-slate-200
+      - hover:text-slate-900
+      - px-2
+      - py-1
+      - rounded-full

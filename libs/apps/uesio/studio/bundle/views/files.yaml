@@ -61,6 +61,10 @@ definition:
               uesio.variant: uesio/io.main
               title: Files
               subtitle: Does it spark joy?
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: collections
               actions:
                 - uesio/io.group:
                     components:
@@ -87,7 +91,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}

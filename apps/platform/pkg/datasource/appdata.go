@@ -9,6 +9,7 @@ import (
 type MetadataResponse struct {
 	NamespaceInfo `json:",inline"`
 	Key           string `json:"key"`
+	Label         string `json:"label"`
 }
 
 type NamespaceInfo struct {

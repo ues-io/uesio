@@ -10,5 +10,5 @@ definition:
       - after:absolute
       - after:animate-bounce
       - after:text-black-200
-      - after:top-5
-      - after:left-0
+      - after:top-6
+      - after:left-1.5

@@ -97,9 +97,10 @@ type IBotParam interface {
 }
 
 type BotParamCondition struct {
-	Param string      `yaml:"param" json:"param"`
-	Value interface{} `yaml:"value" json:"value"`
-	Type  string      `yaml:"type,omitempty" json:"type"`
+	Param    string      `yaml:"param" json:"param"`
+	Value    interface{} `yaml:"value" json:"value"`
+	Type     string      `yaml:"type,omitempty" json:"type"`
+	Operator string      `yaml:"operator,omitempty" json:"operator"`
 }
 
 func (b BotParamCondition) GetParam() string {
@@ -115,9 +116,10 @@ func (b BotParamCondition) GetType() string {
 }
 
 type BotParamConditionResponse struct {
-	Param string      `json:"param"`
-	Value interface{} `json:"value"`
-	Type  string      `json:"type"`
+	Param    string      `json:"param"`
+	Value    interface{} `json:"value"`
+	Type     string      `json:"type"`
+	Operator string      `json:"operator"`
 }
 
 func (b BotParamConditionResponse) GetParam() string {
@@ -128,12 +130,17 @@ func (b BotParamConditionResponse) GetValue() interface{} {
 	return b.Value
 }
 
+func (b BotParamConditionResponse) GetOperator() string {
+	return b.Operator
+}
+
 func (b BotParamConditionResponse) GetType() string {
 	return b.Type
 }
 
 type BotParam struct {
 	Name         string              `yaml:"name" json:"name"`
+	Label        string              `yaml:"label,omitempty" json:"label"`
 	Prompt       string              `yaml:"prompt,omitempty" json:"prompt"`
 	Type         string              `yaml:"type" json:"type"`
 	MetadataType string              `yaml:"metadataType,omitempty" json:"metadatatype"`
@@ -161,6 +168,7 @@ func (b BotParam) GetConditions() []IBotParamCondition {
 
 type BotParamResponse struct {
 	Name         string                      `json:"name"`
+	Label        string                      `json:"label"`
 	Prompt       string                      `json:"prompt"`
 	Type         string                      `json:"type"`
 	MetadataType string                      `json:"metadataType,omitempty"`

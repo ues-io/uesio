@@ -12,7 +12,6 @@ properties:
     name: icon
   - type: TEXT
     name: iconcolor
-    defaultValue: "#AAA"
   - type: SIGNALS
     name: signals
     label: Signals

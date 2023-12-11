@@ -35,7 +35,7 @@ export const sortMetadata = (
 			if (aInApp && !bInApp) return -1
 			if (bInApp && !aInApp) return 1
 		}
-		return a.key.localeCompare(b.key)
+		return (a.label || a.key).localeCompare(b.label || b.key)
 	})
 	return values
 }
@@ -100,6 +100,7 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 
 	const renderer = (item: metadata.MetadataInfo) => (
 		<NamespaceLabel
+			title={item.label}
 			metadatakey={item.key}
 			metadatainfo={item}
 			context={context}

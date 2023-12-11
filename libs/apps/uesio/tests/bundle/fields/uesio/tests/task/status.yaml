@@ -1,6 +1,6 @@
 name: status
-type: STRUCT
 label: Status
+type: STRUCT
 subfields:
   - name: name
     label: Name

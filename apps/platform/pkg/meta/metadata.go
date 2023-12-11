@@ -93,6 +93,8 @@ type BundleableItem interface {
 	GetDBID(string) string
 	SetNamespace(string)
 	GetNamespace() string
+	SetLabel(string)
+	GetLabel() string
 	SetModified(time.Time)
 	IsPublic() bool
 }
@@ -276,6 +278,11 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 		}
 		conditions["uesio/studio.collection"] = grouping
 	} else if metadataType == "credentials" {
+		if grouping != "" {
+			conditions["uesio/studio.type"] = grouping
+		}
+	} else if metadataType == "integrations" {
+		// grouping is optional for integrations
 		if grouping != "" {
 			conditions["uesio/studio.type"] = grouping
 		}

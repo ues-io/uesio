@@ -14,6 +14,7 @@ func NewBase(namespace, name string) BundleableBase {
 
 type BundleableBase struct {
 	Name      string     `yaml:"name" json:"uesio/studio.name"`
+	Label     string     `yaml:"label,omitempty" json:"uesio/studio.label"`
 	Namespace string     `yaml:"-" json:"-"`
 	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
 	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
@@ -25,6 +26,17 @@ func (bb *BundleableBase) GetNamespace() string {
 
 func (bb *BundleableBase) SetNamespace(namespace string) {
 	bb.Namespace = namespace
+}
+
+func (bb *BundleableBase) GetLabel() string {
+	if bb.Label != "" {
+		return bb.Label
+	}
+	return bb.Name
+}
+
+func (bb *BundleableBase) SetLabel(label string) {
+	bb.Label = label
 }
 
 func (bb *BundleableBase) IsPublic() bool {

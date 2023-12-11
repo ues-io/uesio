@@ -81,6 +81,17 @@ definition:
               uesio.context:
                 wire: teams
         left:
+          - uesio/core.view:
+              uesio.display:
+                - type: wireHasRecords
+                  wire: apps
+              uesio.id: appnavview
+              view: uesio/studio.appnav
+              uesio.context:
+                wire: apps
+              params:
+                app: $Param{app}
+                selected: teams
         content:
           - uesio/io.list:
               uesio.id: teamDeck
@@ -89,7 +100,12 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Team - ${uesio/studio.name}
+                    title: ${uesio/studio.name}
+                    subtitle: Team
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: groups
                     actions:
                       - uesio/io.group:
                           components:
@@ -98,7 +114,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newMember
                                 text: Add Member
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                             - uesio/io.button:
                                 text: $Label{uesio/io.delete}
                                 signals:
@@ -108,8 +124,24 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
+                - uesio/io.titlebar:
+                    title: Team Members
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: teammembers
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                - uesio/io.titlebar:
+                    title: This team has no members - click 'Add Member' to build this team.
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: teammembers
                 - uesio/io.deck:
                     uesio.id: teammembersslist
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: teammembers
                     wire: teammembers
                     components:
                       - uesio/io.tile:
@@ -152,7 +184,7 @@ definition:
                 wires:
                   - "teams"
               - signal: "route/NAVIGATE"
-                path: "app/$Param{app}"
+                path: "app/$Param{app}/teams"
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
             uesio.variant: uesio/io.secondary
@@ -162,8 +194,8 @@ definition:
     newMember:
       uesio.type: uesio/io.dialog
       title: Create a New Team Member
-      width: 400px
-      height: 500px
+      width: 550px
+      height: 350px
       components:
         - uesio/io.list:
             uesio.id: newteamlist
@@ -199,7 +231,21 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: $Label{uesio/io.save}
+            text: Save and new
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newteammember
+              - signal: wire/RESET
+                wire: newteammember
+              - signal: wire/LOAD
+                wires:
+                  - apps
+                  - teams
+                  - teammembers
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: Save and close
             signals:
               - signal: wire/SAVE
                 wires:

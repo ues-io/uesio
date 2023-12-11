@@ -83,7 +83,8 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Site - ${uesio/studio.name}
+                    title: ${uesio/studio.name}
+                    subtitle: Site
                     actions:
                       - uesio/io.group:
                           components:

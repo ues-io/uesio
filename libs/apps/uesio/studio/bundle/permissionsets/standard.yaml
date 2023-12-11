@@ -72,6 +72,7 @@ views:
   uesio/studio.siteorgs: true
   uesio/studio.sitenav: true
   uesio/studio.team: true
+  uesio/studio.teams: true
   uesio/studio.theme: true
   uesio/studio.themes: true
   uesio/studio.topbar: true
@@ -166,6 +167,7 @@ routes:
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true
   uesio/studio.team: true
+  uesio/studio.teams: true
   uesio/studio.theme: true
   uesio/studio.themes: true
   uesio/studio.user: true

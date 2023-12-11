@@ -6,12 +6,10 @@ wires:
 # Components determine the layout and composition of your view
 components:
   - uesio/io.box:
-      uesio.styleTokens:
-        root:
-          - p-10
       components:
         - uesio/io.titlebar:
-            title: ${collection}
+            title: $Collection{${wirename}:pluralLabel}
+            subtitle: List View
             uesio.variant: uesio/io.main
             actions:
               - uesio/io.group:
@@ -53,6 +51,7 @@ components:
                         text: Mode
                         uesio.variant: uesio/io.secondary
         - uesio/io.box:
+            uesio.variant: uesio/io.section
             components:
               - uesio/io.table:
                   rowactions:

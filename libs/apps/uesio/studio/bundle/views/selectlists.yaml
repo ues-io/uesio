@@ -60,7 +60,11 @@ definition:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
               title: Select Lists
-              subtitle: Check it twice.
+              subtitle: Check it twice
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: playlist_add_check
               actions:
                 - uesio/io.group:
                     components:
@@ -87,7 +91,7 @@ definition:
                         components:
                           - uesio/io.iconlabel:
                               uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.name}
+                              text: ${uesio/studio.label}
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}

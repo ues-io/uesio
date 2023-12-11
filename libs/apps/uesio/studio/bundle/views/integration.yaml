@@ -64,6 +64,8 @@ definition:
                 itemIcon: electrical_services
                 itemName: $Param{integrationname}
                 itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${integration:uesio/studio.appicon}
+                itemNameSpaceColor: ${integration:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -79,8 +81,13 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Integration - ${uesio/studio.name}
-                    subtitle: $Param{namespace}
+                    title: ${uesio/studio.name}
+                    subtitle: Integration
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
                     actions:
                       - uesio/io.group:
                           components:
@@ -180,11 +187,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
-                                fieldId: uesio/studio.type
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                                fieldId: uesio/studio.label
                             - uesio/io.field:
                                 fieldId: uesio/core.updatedby
                                 user:
@@ -200,6 +203,8 @@ definition:
                               name: $Param{workspacename}
                               app: $Param{app}
                           items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.type
                             - uesio/io.field:
                                 fieldId: uesio/studio.authentication
                             - uesio/io.field:
@@ -232,12 +237,6 @@ definition:
                                     value: API_KEY
                             - uesio/io.field:
                                 fieldId: uesio/studio.baseurl
-                            - uesio/io.field:
-                              fieldId: uesio/studio.headers
-                              uesio.display:
-                                - type: fieldValue
-                                  field: uesio/studio.type
-                                  value: web
 
   panels:
     testAuthentication:

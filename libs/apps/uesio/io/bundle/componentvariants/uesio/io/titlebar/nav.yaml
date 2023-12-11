@@ -8,8 +8,6 @@ definition:
   uesio.styleTokens:
     root:
       - gap-2
-      - border-b-1
-      - border-slate-50
     title:
       - font-light
       - text-xs
@@ -17,7 +15,6 @@ definition:
       - uppercase
       - tracking-wider
       - p-4
-      - pl-5
     subtitle:
       - text-xs
       - text-slate-600

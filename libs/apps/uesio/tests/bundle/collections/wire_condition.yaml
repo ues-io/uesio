@@ -1,6 +1,6 @@
 name: wire_condition
-public: true
 label: Wire Condtion Test Data
+public: true
 pluralLabel: Wire Conditions Test Data
 uniqueKey:
   - name

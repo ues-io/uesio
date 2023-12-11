@@ -4,8 +4,14 @@ public: true
 definition:
   uesio.styleTokens:
     root:
-      - ml-2
       - p-0
+      - pt-2
     label:
-      - text-sm
-      - p-0
+      - text-xs
+      - uppercase
+      - tracking-wider
+      - p-2
+      - pb-1
+      - font-normal
+      - border-b-1
+      - border-slate-200

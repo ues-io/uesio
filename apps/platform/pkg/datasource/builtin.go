@@ -18,30 +18,30 @@ var ID_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "id",
 		Namespace: "uesio/core",
+		Label:     "Id",
 	},
 	ReadOnly: true,
 	Type:     "TEXT",
-	Label:    "Id",
 }
 
 var UNIQUE_KEY_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "uniquekey",
 		Namespace: "uesio/core",
+		Label:     "Unique Key",
 	},
 	ReadOnly: true,
 	Type:     "TEXT",
-	Label:    "Unique Key",
 }
 
 var OWNER_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "owner",
 		Namespace: "uesio/core",
+		Label:     "Owner",
 	},
 	ReadOnly:     false,
 	Type:         "USER",
-	Label:        "Owner",
 	AutoPopulate: "CREATE",
 }
 
@@ -49,10 +49,10 @@ var CREATEDBY_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "createdby",
 		Namespace: "uesio/core",
+		Label:     "Created By",
 	},
 	ReadOnly:     true,
 	Type:         "USER",
-	Label:        "Created By",
 	AutoPopulate: "CREATE",
 }
 
@@ -60,10 +60,10 @@ var UPDATEDBY_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "updatedby",
 		Namespace: "uesio/core",
+		Label:     "Updated By",
 	},
 	ReadOnly:     true,
 	Type:         "USER",
-	Label:        "Updated By",
 	AutoPopulate: "UPDATE",
 }
 
@@ -71,10 +71,10 @@ var CREATEDAT_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "createdat",
 		Namespace: "uesio/core",
+		Label:     "Created At",
 	},
 	ReadOnly:     true,
 	Type:         "TIMESTAMP",
-	Label:        "Created At",
 	AutoPopulate: "CREATE",
 }
 
@@ -82,10 +82,10 @@ var UPDATEDAT_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "updatedat",
 		Namespace: "uesio/core",
+		Label:     "Updated At",
 	},
 	ReadOnly:     true,
 	Type:         "TIMESTAMP",
-	Label:        "Updated At",
 	AutoPopulate: "UPDATE",
 }
 
@@ -93,13 +93,13 @@ var COLLECTION_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "collection",
 		Namespace: "uesio/core",
+		Label:     "Collection",
 	},
 	ReadOnly: true,
 	Type:     "METADATA",
 	MetadataFieldMetadata: &meta.MetadataFieldMetadata{
 		Type: "COLLECTION",
 	},
-	Label: "Collection",
 }
 
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{

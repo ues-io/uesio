@@ -1,6 +1,6 @@
 name: member
-type: REFERENCE
 label: Member
+type: REFERENCE
 required: true
 reference:
   collection: uesio/core.user

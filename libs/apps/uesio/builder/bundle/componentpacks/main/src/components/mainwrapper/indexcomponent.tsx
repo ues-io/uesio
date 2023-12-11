@@ -15,7 +15,13 @@ import CloneAction from "../../actions/cloneaction"
 
 const StyleDefaults = Object.freeze({
 	tag: ["py-1", "px-1.5", "m-0", "bg-slate-100"],
-	tagtitle: ["uppercase", "font-light", "text-[8pt]", "mb-0"],
+	tagtitle: [
+		"uppercase",
+		"font-light",
+		"text-[8pt]",
+		"mb-0",
+		"text-slate-600",
+	],
 	actionarea: ["text-right", "bg-slate-50", "text-slate-700"],
 })
 

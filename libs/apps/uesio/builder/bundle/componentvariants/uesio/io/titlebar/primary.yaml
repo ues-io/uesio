@@ -9,6 +9,7 @@ definition:
       - p-2
     title:
       - text-white
+      - tracking-wide
       - uppercase
       - text-xs
     subtitle:

@@ -1,4 +1,4 @@
 name: category
-type: TEXT
 label: Category
+type: TEXT
 required: true

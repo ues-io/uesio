@@ -1,0 +1,12 @@
+name: add_numbers
+label: Add Numbers
+bot: add_numbers
+params:
+  - name: a
+    label: A
+    type: NUMBER
+    required: true
+  - name: b
+    label: B
+    type: NUMBER
+    required: true

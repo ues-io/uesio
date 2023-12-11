@@ -1,6 +1,6 @@
 name: current
-type: STRUCT
 label: Current Weather
+type: STRUCT
 subfields:
   - name: day
     label: Day

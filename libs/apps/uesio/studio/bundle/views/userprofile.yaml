@@ -69,9 +69,6 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Profile Settings
                       - uesio/io.box:
                           components:
                             - uesio/io.grid:
@@ -102,9 +99,6 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Account Settings
                       - uesio/io.box:
                           components:
                             - uesio/io.group:

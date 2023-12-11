@@ -34,7 +34,6 @@ type ComponentVariant struct {
 	BundleableBase `yaml:",inline"`
 	Component      string   `yaml:"-" json:"uesio/studio.component"`
 	Extends        string   `yaml:"extends,omitempty" json:"uesio/studio.extends"`
-	Label          string   `yaml:"label" json:"uesio/studio.label"`
 	Definition     *YAMLDef `yaml:"definition" json:"uesio/studio.definition"`
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 }
