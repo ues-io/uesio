@@ -240,7 +240,7 @@ definition:
       height: 500px
       components:
         - uesio/core.view:
-            view: uesio/studio.appedit
+            view: appedit
             uesio.context:
               wire: newapp
       actions:

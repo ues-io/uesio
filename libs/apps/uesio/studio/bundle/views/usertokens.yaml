@@ -25,10 +25,10 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
         left:
           - uesio/core.view:
-              view: uesio/studio.userprofilenav
+              view: userprofilenav
               uesio.context:
                 wire: users
               params:
