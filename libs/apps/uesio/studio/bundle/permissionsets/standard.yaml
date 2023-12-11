@@ -19,8 +19,6 @@ bots:
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
-  uesio/studio.suggestdata: true
-  uesio/studio.suggestfields: true
 views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true

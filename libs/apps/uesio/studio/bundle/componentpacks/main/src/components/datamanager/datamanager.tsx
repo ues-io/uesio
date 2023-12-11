@@ -213,7 +213,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 					mode: "EDIT",
 					rownumbers: true,
 					selectable: true,
-					pagesize: 10,
+					pagesize: 5,
 					rowactions: [
 						{
 							text: "Delete",

@@ -1,61 +1,32 @@
-import { component, definition, api, context, styles } from "@uesio/ui"
-import { useState } from "react"
-import { parse } from "best-effort-json-parser"
+import { component, definition, api, context, styles, signal } from "@uesio/ui"
+import { useCallback, useState } from "react"
 
 type Props = {
 	prompt: string
-	botName: string
 	label: string
 	loadingLabel: string
 	handleResults: (results: unknown[]) => void
+	integrationName?: string
+	actionName?: string
 	icon?: string
 	targetTableId?: string
 }
 
 export type AutocompleteResponse = {
-	data?: string
-}
-
-const OPENAI_JSON_PREAMBLE = "```json\n"
-
-export const preparse = (data: string) => {
-	if (!data) return data
-	// OpenAI has started returnin "json```" blocks, so try to extract those
-	if (data.includes(OPENAI_JSON_PREAMBLE)) {
-		return data.substring(
-			data.indexOf(OPENAI_JSON_PREAMBLE) + OPENAI_JSON_PREAMBLE.length,
-			data.lastIndexOf("```")
-		)
-	} else if (data.includes("[")) {
-		return data.substring(data.indexOf("["), data.lastIndexOf("]") + 1)
-	} else {
-		return data
-	}
-}
-
-export const handleAutocompleteData = (
-	response: AutocompleteResponse,
-	handleResults: (results: unknown[]) => void
-) => {
-	const data = response?.data
-
-	if (data) {
-		const dataArray: unknown[] = parse(preparse(data))
-		if (dataArray?.length) {
-			handleResults(dataArray)
-		}
-	}
+	data: object
 }
 
 const StyleDefaults = Object.freeze({
 	pulse: ["animate-pulse"],
 })
+const stepId = "autocomplete"
 
 const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
 		prompt,
-		botName,
+		integrationName = "uesio/core.bedrock",
+		actionName = "streammodel",
 		targetTableId,
 		icon = "magic_button",
 		handleResults,
@@ -69,6 +40,30 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const [isLoading, setLoading] = useState(false)
+
+	const handleAutocompleteData = useCallback(
+		(resultContext: context.Context) => {
+			const result = resultContext.getSignalOutputs(stepId)
+			if (!result) {
+				api.notification.addError(
+					"Unable to suggest data, please try again!",
+					resultContext
+				)
+				return
+			}
+			const autocompleteResponse = result.data as AutocompleteResponse
+			try {
+				handleResults([autocompleteResponse.data])
+			} catch (e) {
+				api.notification.addError(
+					"Unable to suggest data, unexpected error: " + e,
+					resultContext
+				)
+				return
+			}
+		},
+		[handleResults]
+	)
 
 	return (
 		<Button
@@ -85,42 +80,28 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 			}
 			onClick={() => {
 				setLoading(true)
-
-				const signalResult = api.signal.run(
-					{
-						signal: "bot/CALL",
-						bot: botName,
-						stepId: "autocomplete",
-						params: {
-							prompt,
-						},
-					},
+				const signalResult = api.signal.runMany(
+					[
+						{
+							signal: "integration/RUN_ACTION",
+							integration: integrationName,
+							action: actionName,
+							stepId,
+							transform: "json",
+							params: {
+								input: prompt,
+								model: "anthropic.claude-v2",
+								temperature: 0.5,
+							},
+							onChunk: handleAutocompleteData,
+						} as signal.SignalDefinition,
+					],
 					context
 				) as Promise<context.Context>
 
 				signalResult
 					.then((resultContext) => {
 						setLoading(false)
-						const result =
-							resultContext.getSignalOutputs("autocomplete")
-						if (!result) {
-							api.notification.addError(
-								"Unable to suggest data, please try again!",
-								context
-							)
-							return
-						}
-						try {
-							handleAutocompleteData(result.data, handleResults)
-						} catch (e) {
-							api.notification.addError(
-								"Unable to suggest data, unexpected error: " +
-									e,
-								context
-							)
-							return
-						}
-
 						if (targetTableId) {
 							// Turn the target table into edit mode
 							api.signal.run(
@@ -131,7 +112,7 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 									targettype: "specific",
 									componentid: targetTableId,
 								},
-								context
+								resultContext
 							) as Promise<context.Context>
 						}
 					})

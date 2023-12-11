@@ -408,8 +408,6 @@ definition:
                             - uesio/studio.suggestedfields:
                                 uesio.id: suggestedfields
                                 uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: fields
                                   - type: fieldValue
                                     wire: collections
                                     field: uesio/studio.type
