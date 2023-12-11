@@ -15,23 +15,62 @@ const StyleDefaults = Object.freeze({
 	readonly: [],
 })
 
+// adds an option for the current value if it is not present in the options list.
+export const addSelectedValueToOptions = (
+	options: wire.SelectOption[] = [],
+	value: string
+): wire.SelectOption[] => {
+	const optionMatch = options?.find((option) => option.value === value)
+	if (!optionMatch && value) {
+		return [
+			...options,
+			{
+				label: value,
+				value,
+				disabled: true,
+			} as wire.SelectOption,
+		]
+	} else return options
+}
+
+// adds option(s) for all currently selected values not present in the options list
+export const addSelectedValuesToOptions = (
+	options: wire.SelectOption[] = [],
+	values: string[]
+): wire.SelectOption[] => {
+	const missingValues = values.filter(
+		(value) => !options.find((option) => option.value === value)
+	)
+	if (missingValues.length) {
+		return [
+			...options,
+			...missingValues.map(
+				(value) =>
+					({
+						label: value,
+						value,
+						disabled: true,
+					} as wire.SelectOption)
+			),
+		]
+	} else return options
+}
+
 const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
-	const { readonly, setValue, mode, options, id, context } = props
+	const { readonly, setValue, mode, options = [], id, context } = props
 	const value = (props.value as string) || ""
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.selectfield"
 	)
-
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
-		const valueLabel = optionMatch?.label || ""
 		return (
 			<TextField
 				classes={classes}
 				setValue={setValue}
-				value={valueLabel}
+				value={optionMatch?.label || value}
 				mode={mode}
 				readonly={readonly}
 				context={context}
@@ -43,6 +82,7 @@ const SelectField: definition.UtilityComponent<SelectFieldProps> = (props) => {
 		if (!options || options.length === 0) {
 			return
 		}
+
 		return options
 			?.filter(({ validFor }) => component.shouldAll(validFor, context))
 			.map(({ disabled, value, label, options: groupOptions }) =>
