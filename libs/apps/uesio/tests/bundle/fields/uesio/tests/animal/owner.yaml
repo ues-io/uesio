@@ -1,0 +1,8 @@
+name: owner
+type: REFERENCE
+label: Owner
+reference:
+  multicollection: true
+  collections:
+    - uesio/tests.contact
+    - uesio/tests.account

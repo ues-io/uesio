@@ -62,7 +62,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/fields/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 15
+jsonpath "$[*]" count == 16
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"
@@ -75,7 +75,7 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/fields/n
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 7
+jsonpath "$[*]" count == 8
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"

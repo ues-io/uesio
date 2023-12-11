@@ -15,9 +15,14 @@ type ReferenceMetadata struct {
 
 func (r *ReferenceMetadata) UnmarshalYAML(node *yaml.Node) error {
 	var err error
-	r.Collection, err = pickRequiredMetadataItem(node, "collection", r.Namespace)
-	// There's nothing else to unmarshal, so we can quit now.
-	return err
+	r.MultiCollection = GetNodeValueAsBool(node, "multicollection", false)
+	if !r.MultiCollection {
+		r.Collection, err = pickRequiredMetadataItem(node, "collection", r.Namespace)
+		if err != nil {
+			return err
+		}
+	}
+	return node.Decode((*ReferenceMetadataWrapper)(r))
 }
 
 func (r *ReferenceMetadata) MarshalYAML() (interface{}, error) {
