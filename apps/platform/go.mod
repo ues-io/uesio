@@ -24,7 +24,7 @@ require (
 	github.com/gomodule/redigo v1.8.9
 	github.com/gorilla/mux v1.8.1
 	github.com/icza/session v1.2.0
-	github.com/jackc/pgx/v5 v5.4.3
+	github.com/jackc/pgx/v5 v5.5.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
