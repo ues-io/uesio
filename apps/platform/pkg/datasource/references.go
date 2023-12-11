@@ -212,5 +212,5 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 		}
 	}
 
-	return multiCollectionsRefs.Load(connection.GetMetadata(), session, connection)
+	return multiCollectionsRefs.Load(connection.GetMetadata(), session, nil)
 }

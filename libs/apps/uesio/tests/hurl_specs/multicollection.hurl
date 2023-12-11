@@ -58,7 +58,7 @@ Accept: application/json
                 "temp1":{
                     "uesio/tests.species": "Cat",
                     "uesio/tests.genus": "Felis",
-                    "uesio/tests.owner": {
+                    "uesio/tests.keeper": {
                         "uesio/core.id": "{{ACC-UUID}}"
                     }
                 }
@@ -92,7 +92,7 @@ Accept: application/json
                     "id": "uesio/tests.species"
                 },
                 {
-                    "id": "uesio/tests.owner"
+                    "id": "uesio/tests.keeper"
                 }
             ],
             "conditions": [
@@ -108,10 +108,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[0]['uesio/tests.owner']['uesio/core.collection']" == "uesio/tests.account"
-jsonpath "$.wires[0].data[0]['uesio/tests.owner']['uesio/core.id']" == "{{ACC-UUID}}"
+jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.collection']" == "uesio/tests.account"
+jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.id']" == "{{ACC-UUID}}"
 
-# insert a cat owned by the contact
+# insert a pig owned by the contact
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
@@ -121,9 +121,9 @@ Accept: application/json
             "deletes":{},
             "changes":{
                 "temp1":{
-                    "uesio/tests.species": "Cat",
+                    "uesio/tests.species": "Pig",
                     "uesio/tests.genus": "Felis",
-                    "uesio/tests.owner": {
+                    "uesio/tests.keeper": {
                         "uesio/core.id": "{{CON-UUID}}"
                     }
                 }
@@ -134,15 +134,15 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].changes['temp1']['uesio/tests.species']" == "Cat"
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.species']" == "Pig"
 jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" == "Felis"
 jsonpath "$.wires[0].changes['temp1']['uesio/core.id']" matches /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 jsonpath "$.wires[0].errors" == null
 [Captures]
-CAT-CON-UUID: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
+PIG-CON-UUID: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 
-# Get the cat owned by contant record and check the multicollection
+# Get the pig owned by contant record and check the multicollection
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -158,13 +158,13 @@ Accept: application/json
                     "id": "uesio/tests.species"
                 },
                 {
-                    "id": "uesio/tests.owner"
+                    "id": "uesio/tests.keeper"
                 }
             ],
             "conditions": [
                 {
                     "field": "uesio/core.id",
-                    "value": "{{CAT-CON-UUID}}"
+                    "value": "{{PIG-CON-UUID}}"
                 }
             ]
         }
@@ -172,5 +172,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[0]['uesio/tests.owner']['uesio/core.collection']" == "uesio/tests.contact"
-jsonpath "$.wires[0].data[0]['uesio/tests.owner']['uesio/core.id']" == "{{CON-UUID}}"
+jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.collection']" == "uesio/tests.contact"
+jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.id']" == "{{CON-UUID}}"

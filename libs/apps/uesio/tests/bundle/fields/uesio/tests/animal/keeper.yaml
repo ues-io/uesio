@@ -1,6 +1,6 @@
-name: owner
+name: keeper
 type: REFERENCE
-label: Owner
+label: Keeper
 reference:
   multicollection: true
   collections:
