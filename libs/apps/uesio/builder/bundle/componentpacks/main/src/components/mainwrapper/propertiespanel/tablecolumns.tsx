@@ -202,15 +202,33 @@ const TableColumns: definition.UC = (props) => {
 		} as FieldMetadataProperty
 		delete fieldDisplayTypeProperty.wireProperty
 
+		const referenceCollection = {
+			...ioFieldProperties.find((p) => p.name === "referenceCollection"),
+			wireName,
+			fieldProperty: "field",
+		} as FieldMetadataProperty
+		delete referenceCollection.wireProperty
+
+		const isMultiCollectionReference = {
+			...ioFieldProperties.find(
+				(p) => p.name === "isMultiCollectionReference"
+			),
+			wireName,
+			fieldProperty: "field",
+		} as FieldMetadataProperty
+		delete isMultiCollectionReference.wireProperty
+
 		const tableFieldProperties = [
 			columnTypeProperty,
 			fieldProperty,
 			fieldDisplayTypeProperty,
+			referenceCollection,
+			isMultiCollectionReference,
 			widthProperty,
 			labelProperty,
 		] as ComponentProperty[]
 
-		return tableFieldProperties.concat(ioFieldProperties.slice(5))
+		return tableFieldProperties.concat(ioFieldProperties.slice(7))
 	}
 
 	const getItemChildren = (column: ColumnDefinition, itemIndex: number) => {
