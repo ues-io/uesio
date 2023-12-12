@@ -41,56 +41,125 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		label: "Condition Type",
 		options: [
 			{
-				label: "Select an option",
+				label: "",
 				value: "",
 			},
 			{
-				label: "Wire field value",
-				value: "fieldValue",
+				label: "Wire",
+				value: "wireRelatedOptions",
+				options: [
+					{
+						label: "Wire field value",
+						value: "fieldValue",
+					},
+					{
+						label: "Wire has changes",
+						value: "wireHasChanges",
+					},
+					{
+						label: "Wire has no changes",
+						value: "wireHasNoChanges",
+					},
+					{
+						label: "Wire is loading",
+						value: "wireIsLoading",
+					},
+					{
+						label: "Wire is not loading",
+						value: "wireIsNotLoading",
+					},
+					{
+						label: "Wire has loaded all records",
+						value: "wireHasLoadedAllRecords",
+					},
+					{
+						label: "Wire has more records to load",
+						value: "wireHasMoreRecordsToLoad",
+					},
+					{
+						label: "Wire has no records",
+						value: "wireHasNoRecords",
+					},
+					{
+						label: "Wire has records",
+						value: "wireHasRecords",
+					},
+					{
+						label: "Wire has search condition",
+						value: "wireHasSearchCondition",
+					},
+					{
+						label: "Wire has no search condition",
+						value: "wireHasNoSearchCondition",
+					},
+				],
+				disabled: true,
 			},
 			{
-				label: "View Param is set",
-				value: "paramIsSet",
+				label: "Params",
+				value: "paramRelatedOptions",
+				options: [
+					{
+						label: "View Param is set",
+						value: "paramIsSet",
+					},
+					{
+						label: "View Param is not set",
+						value: "paramIsNotSet",
+					},
+					{
+						label: "Param equals",
+						value: "paramValue",
+					},
+				],
 			},
 			{
-				label: "View Param is not set",
-				value: "paramIsNotSet",
+				label: "Merges",
+				value: "mergesRelatedOptions",
+				options: [
+					{
+						label: "Merge value comparison",
+						value: "mergeValue",
+					},
+					{
+						label: "Merge value is empty",
+						value: "hasNoValue",
+					},
+					{
+						label: "Merge value is not empty",
+						value: "hasValue",
+					},
+				],
 			},
 			{
-				label: "Param equals",
-				value: "paramValue",
-			},
-			{
-				label: "Merge value comparison",
-				value: "mergeValue",
-			},
-			{
-				label: "Merge value is empty",
-				value: "hasNoValue",
-			},
-			{
-				label: "Merge value is not empty",
-				value: "hasValue",
-			},
-			{
-				label: "Collection context",
-				value: "collectionContext",
-			},
-			{
-				label: "Feature Flag value",
-				value: "featureFlag",
-			},
-			{
-				label: "Field Mode",
-				value: "fieldMode",
-			},
-			{
-				label: "Wire has changes",
-				value: "wireHasChanges",
-			},
-			{
-				label: "Wire has no changes",
-				value: "wireHasNoChanges",
+				label: "Others",
+				value: "othersRelatedOptions",
+				options: [
+					{
+						label: "Collection context",
+						value: "collectionContext",
+					},
+					{
+						label: "Feature Flag value",
+						value: "featureFlag",
+					},
+					{
+						label: "Field Mode",
+						value: "fieldMode",
+					},
+					{
+						label: "Record is new",
+						value: "recordIsNew",
+					},
+					{
+						label: "Record is not new",
+						value: "recordIsNotNew",
+					},
+					{
+						label: "Has profile",
+						value: "hasProfile",
+					},
+				],
 			},
 		],
 		onChange: [
@@ -120,6 +189,14 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 							"fieldValue",
 							"wireHasChanges",
 							"wireHasNoChanges",
+							"wireIsLoading",
+							"wireIsNotLoading",
+							"wireHasLoadedAllRecords",
+							"wireHasMoreRecordsToLoad",
+							"wireHasNoRecords",
+							"wireHasRecords",
+							"wireHasSearchCondition",
+							"wireHasNoSearchCondition",
 						],
 						type: "fieldValue",
 					},
@@ -235,6 +312,22 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 					},
 				],
 			},
+			{
+				// If type is no longer hasProfile, clear out profile
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "hasProfile",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "profile",
+					},
+				],
+			},
 		],
 	},
 	{
@@ -245,7 +338,19 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["fieldValue", "wireHasChanges", "wireHasNoChanges"],
+				values: [
+					"fieldValue",
+					"wireHasChanges",
+					"wireHasNoChanges",
+					"wireIsLoading",
+					"wireIsNotLoading",
+					"wireHasLoadedAllRecords",
+					"wireHasMoreRecordsToLoad",
+					"wireHasNoRecords",
+					"wireHasRecords",
+					"wireHasSearchCondition",
+					"wireHasNoSearchCondition",
+				],
 				type: "fieldValue",
 			},
 		],
@@ -459,6 +564,20 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				field: "type",
 				operator: "EQUALS",
 				value: "fieldMode",
+				type: "fieldValue",
+			},
+		],
+	},
+	{
+		type: "METADATA",
+		name: "profile",
+		metadataType: "PROFILE",
+		label: "Profile",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "EQUALS",
+				value: "hasProfile",
 				type: "fieldValue",
 			},
 		],
