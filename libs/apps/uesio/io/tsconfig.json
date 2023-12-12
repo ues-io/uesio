@@ -11,6 +11,11 @@
 		}
 	],
 	"compilerOptions": {
-		"sourceMap": true
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"baseUrl": "./",
+		"paths": {
+			"@uesio/ui": ["../../../ui/src/index.ts"]
+		}
 	}
 }
