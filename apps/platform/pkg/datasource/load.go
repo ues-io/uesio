@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/merge"
@@ -502,6 +503,19 @@ func GetMetadataForLoad(
 					{
 						ID: wire.COLLECTION_FIELD,
 					},
+				}
+				//Make sure we get a list of all collections available
+				var collectionsGroup meta.CollectionCollection
+				err = bundle.LoadAllFromAny(&collectionsGroup, nil, session, nil)
+				if err != nil {
+					return err
+				}
+				for _, collection := range collectionsGroup {
+					collections.AddCollection(collection.GetKey())
+				}
+				err = collections.Load(metadataResponse, session, nil)
+				if err != nil {
+					return err
 				}
 			} else {
 				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)

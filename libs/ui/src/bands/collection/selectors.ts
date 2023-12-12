@@ -21,4 +21,6 @@ const useCollections = (
 		)
 	)
 
-export { useCollection, useCollections, getCollection }
+const useCollectionKeys = () => useSelector(selectors.selectIds) as string[]
+
+export { useCollection, useCollections, getCollection, useCollectionKeys }

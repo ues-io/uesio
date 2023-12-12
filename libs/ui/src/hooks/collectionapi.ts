@@ -1,6 +1,7 @@
 import {
 	useCollection as useColl,
 	getCollection as getColl,
+	useCollectionKeys,
 } from "../bands/collection/selectors"
 import { Context } from "../context/context"
 import getMetadata from "../bands/collection/operations/get"
@@ -48,4 +49,10 @@ const getCollection = (collectionName: string) => {
 const createJob = platform.createJob
 const importData = platform.importData
 
-export { useCollection, getCollection, createJob, importData }
+export {
+	useCollection,
+	getCollection,
+	createJob,
+	importData,
+	useCollectionKeys,
+}

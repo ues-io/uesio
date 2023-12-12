@@ -28,11 +28,11 @@ const MultiReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		referenceMetadata?.collections &&
 		referenceMetadata.collections.length > 0
 
-	const [metadata] = api.builder.useMetadataList(context, "COLLECTION", "")
+	const metadata = api.collection.useCollectionKeys()
 
 	const collections = hasCollections
 		? referenceMetadata?.collections
-		: Object.keys(metadata || {})
+		: metadata.filter((e) => e !== "uesio/core.common")
 
 	const [collectionId, setCollectionId] = useState<string>(recordCollection)
 
