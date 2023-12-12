@@ -11,6 +11,7 @@ interface TableUtilityProps<R, C extends TableColumn> {
 	columns: C[]
 	isDeletedFunc?: (row: R) => boolean
 	isSelectedFunc?: (row: R, index: number) => boolean
+	isRowExpandedFunc?: (row: R) => boolean
 	isAllSelectedFunc?: () => boolean | undefined
 	onSelectChange?: (row: R, index: number, selected: boolean) => void
 	onAllSelectChange?: (selected: boolean) => void
@@ -36,6 +37,7 @@ const StyleDefaults = Object.freeze({
 	body: [],
 	row: ["group"],
 	rowDeleted: [],
+	rowExpanded: [],
 	noData: [],
 })
 
@@ -54,6 +56,7 @@ const Table: definition.UtilityComponent<
 		defaultActionFunc,
 		rowActionsFunc,
 		drawerRendererFunc,
+		isRowExpandedFunc,
 		columnHeaderFunc,
 		columnMenuFunc,
 		isDeletedFunc,
@@ -160,9 +163,16 @@ const Table: definition.UtilityComponent<
 									}
 									className={styles.cx(
 										classes.row,
+										isRowExpandedFunc?.(row) &&
+											classes.rowExpanded,
 										isDeletedFunc?.(row) &&
 											classes.rowDeleted
 									)}
+									data-expanded={
+										isRowExpandedFunc?.(row)
+											? "true"
+											: "false"
+									}
 									key={index + 1}
 								>
 									{(rowNumberFunc || isSelectedFunc) && (

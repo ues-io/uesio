@@ -362,6 +362,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
+	const isRowExpanded = (recordContext: RecordContext) => {
+		const res = isRowOpenFunc?.(recordContext) || false
+		console.log({ res })
+		return res
+	}
 
 	return (
 		<>
@@ -388,6 +393,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
 				isDeletedFunc={isDeletedFunc}
+				isRowExpandedFunc={isRowExpanded}
 				isSelectedFunc={isSelectedFunc}
 				onSelectChange={onSelectChange}
 				onAllSelectChange={onAllSelectChange}

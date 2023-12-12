@@ -1,8 +1,8 @@
-import { signal } from "@uesio/ui"
+import { signal, context } from "@uesio/ui"
 
 const getRecordId = (
 	signal: signal.SignalDefinition,
-	context: signal.Context
+	context: context.Context
 ) => {
 	const recordId =
 		(context.merge(signal.recordId as string) as string) ||
