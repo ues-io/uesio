@@ -59,8 +59,11 @@ properties:
         conditions:
           - type: fieldValue
             field: fieldDisplayType
-            operator: NOT_EQUALS
-            value: REFERENCE
+            operator: NOT_IN
+            values:
+              - REFERENCE
+              - USER
+              - FILE
       - updates:
           - field: number
         conditions:
@@ -91,6 +94,21 @@ properties:
     wireProperty: wire
     fieldProperty: fieldId
     metadataProperty: reference.collection
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        operator: IN
+        values:
+          - REFERENCE
+          - USER
+          - FILE
+  - name: isMultiCollectionReference
+    type: FIELD_METADATA
+    display: false
+    viewOnly: true
+    wireProperty: wire
+    fieldProperty: fieldId
+    metadataProperty: reference.multiCollection
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -272,6 +290,10 @@ properties:
           - REFERENCE
           - USER
           - FILE
+      - type: fieldValue
+        field: isMultiCollectionReference
+        operator: NOT_EQUALS
+        value: true
     properties:
       - name: template
         type: TEXT
@@ -324,6 +346,7 @@ sections:
       - fieldId
       - fieldDisplayType
       - referenceCollection
+      - isMultiCollectionReference
       - label
       - labelPosition
       - placeholder

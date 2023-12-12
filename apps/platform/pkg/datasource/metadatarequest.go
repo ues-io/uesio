@@ -199,6 +199,11 @@ func ProcessFieldsMetadata(fields map[string]*wire.FieldMetadata, collectionKey 
 			}
 
 			referenceMetadata := fieldMetadata.ReferenceMetadata
+			if referenceMetadata.MultiCollection {
+				//Let's go and load the common collection
+				referenceMetadata = &wire.ReferenceMetadata{Collection: constant.CommonCollection}
+			}
+
 			// Only add to additional requests if we don't already have that metadata
 			refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
 			if err != nil {

@@ -23,7 +23,7 @@ export type ReferenceFieldOptions = {
 	conditions?: wire.WireConditionState[]
 }
 
-interface ReferenceFieldProps {
+export interface ReferenceFieldProps {
 	path: string
 	fieldId: string
 	fieldMetadata: collection.Field

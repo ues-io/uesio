@@ -5,6 +5,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+var COMMON_COLLECTION_METADATA = wire.CollectionMetadata{
+	Name:        "common",
+	Namespace:   "uesio/core",
+	Label:       "Common",
+	PluralLabel: "Common",
+	Fields:      map[string]*wire.FieldMetadata{},
+	Type:        "DYNAMIC",
+}
+
 var ID_FIELD_DEF = meta.Field{
 	BundleableBase: meta.BundleableBase{
 		Name:      "id",
