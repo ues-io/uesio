@@ -61,9 +61,6 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 
 	// TODO: rather than useMetadataList, just do a wire load on the bundleable collection
 	// this requires us to add basically any bundleable metadata collection to core
-	if (!context.getWorkspace() && !context.getSiteAdmin()) {
-		throw new Error("Must provide either siteadmin or workspace context")
-	}
 	const isMulti = fieldMetadata?.getType() === "MULTIMETADATA"
 
 	const metadataFieldOptions =
@@ -93,8 +90,7 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 		context.mergeString(grouping)
 	)
 
-	const contextApp =
-		context.getWorkspace()?.app || context.getSiteAdmin()?.app
+	const contextApp = context.getApp()
 
 	const items = metadata ? sortMetadata(metadata, contextApp) : []
 
