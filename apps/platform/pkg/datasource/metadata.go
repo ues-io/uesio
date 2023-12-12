@@ -228,15 +228,17 @@ func GetValidationMetadata(f *meta.Field) *wire.ValidationMetadata {
 }
 
 func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, session *sess.Session, connection wire.Connection) (*wire.CollectionMetadata, error) {
-	//fake the common collection
-	if key == "uesio/core.common" {
-		metadataCache.AddCollection(key, &COMMON_COLLECTION_METADATA)
-		return &COMMON_COLLECTION_METADATA, nil
-	}
 
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {
+		return collectionMetadata, nil
+	}
+
+	// special handling for the common collection metadata
+	if key == "uesio/core.common" {
+		collectionMetadata = &COMMON_COLLECTION_METADATA
+		metadataCache.AddCollection(key, collectionMetadata)
 		return collectionMetadata, nil
 	}
 

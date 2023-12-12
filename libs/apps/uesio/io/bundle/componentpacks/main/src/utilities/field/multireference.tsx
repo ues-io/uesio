@@ -1,40 +1,11 @@
-import {
-	wire,
-	collection,
-	definition,
-	context,
-	component,
-	api,
-} from "@uesio/ui"
-import ReferenceField from "./reference"
+import { collection, definition, component, api } from "@uesio/ui"
+import ReferenceField, { ReferenceFieldProps } from "./reference"
 import { useState } from "react"
 const { COLLECTION_FIELD } = collection
 
-export type ReferenceFieldOptions = {
-	searchFields?: string[]
-	returnFields?: string[]
-	order?: wire.OrderState[]
-	components?: definition.DefinitionList
-	template?: string
-	requirewriteaccess?: boolean
-	conditions?: wire.WireConditionState[]
-}
-
-interface MultiReferenceFieldProps {
-	path: string
-	fieldId: string
-	fieldMetadata: collection.Field
-	mode: context.FieldMode
-	readonly?: boolean
-	record?: wire.WireRecord
-	options?: ReferenceFieldOptions
-	placeholder?: string
-	setValue?: (value: wire.PlainWireRecord | null) => void
-}
-
-const MultiReferenceField: definition.UtilityComponent<
-	MultiReferenceFieldProps
-> = (props) => {
+const MultiReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
+	props
+) => {
 	const SelectField = component.getUtility("uesio/io.selectfield")
 	const Group = component.getUtility("uesio/io.group")
 	const {
