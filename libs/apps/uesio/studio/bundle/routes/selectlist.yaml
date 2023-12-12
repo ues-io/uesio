@@ -2,3 +2,4 @@ name: selectlist
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/selectlists/{namespace:\w*\/\w*}/{selectlistname}
 view: selectlist
 theme: default
+title: "Select List: $Param{selectlistname"
