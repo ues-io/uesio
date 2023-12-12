@@ -62,7 +62,7 @@ const MultiReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 							...fieldMetadata.source,
 							reference: {
 								collection: collectionId,
-								multicollection: false,
+								multiCollection: false,
 								collections: [],
 							},
 						})

@@ -196,7 +196,7 @@ type AutoNumberMetadata struct {
 
 type ReferenceMetadata struct {
 	Collection      string   `json:"collection"`
-	MultiCollection bool     `json:"multicollection"`
+	MultiCollection bool     `json:"multiCollection"`
 	CollectionsRefs []string `json:"collections"`
 }
 

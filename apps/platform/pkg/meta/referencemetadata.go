@@ -8,14 +8,14 @@ type ReferenceMetadataWrapper ReferenceMetadata
 
 type ReferenceMetadata struct {
 	Collection      string   `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	MultiCollection bool     `yaml:"multicollection,omitempty" json:"uesio/studio.multicollection"`
+	MultiCollection bool     `yaml:"multiCollection,omitempty" json:"uesio/studio.multicollection"`
 	CollectionsRefs []string `yaml:"collections,omitempty" json:"uesio/studio.collections"`
 	Namespace       string   `yaml:"-" json:"-"`
 }
 
 func (r *ReferenceMetadata) UnmarshalYAML(node *yaml.Node) error {
 	var err error
-	r.MultiCollection = GetNodeValueAsBool(node, "multicollection", false)
+	r.MultiCollection = GetNodeValueAsBool(node, "multiCollection", false)
 	if !r.MultiCollection {
 		r.Collection, err = pickRequiredMetadataItem(node, "collection", r.Namespace)
 		if err != nil {

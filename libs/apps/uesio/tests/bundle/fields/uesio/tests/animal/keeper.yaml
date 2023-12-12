@@ -2,7 +2,7 @@ name: keeper
 type: REFERENCE
 label: Keeper
 reference:
-  multicollection: true
+  multiCollection: true
   collections:
     - uesio/tests.contact
     - uesio/tests.account

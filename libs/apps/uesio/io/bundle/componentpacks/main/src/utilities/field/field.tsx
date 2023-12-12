@@ -249,7 +249,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <MetadataField {...common} options={props.metadata} />
 			break
 		case "REFERENCE":
-			referenceMetadata?.multicollection
+			referenceMetadata?.multiCollection
 				? (content = (
 						<MultiReferenceField {...common} options={reference} />
 				  ))
