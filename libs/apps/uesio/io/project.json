@@ -29,6 +29,13 @@
 			"options": {
 				"lintFilePatterns": ["libs/apps/uesio/io/**/*.ts*"]
 			}
+		},
+		"test": {
+			"executor": "@nx/jest:jest",
+			"options": {
+				"jestConfig": "libs/apps/uesio/io/jest.config.ts"
+			},
+			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/io"]
 		}
 	},
 	"tags": [],
