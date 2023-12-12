@@ -1,7 +1,6 @@
 ######################################################
-# Tests multi-collection
+# Tests multi-collection reference fields
 ######################################################
-
 
 #insert a multicollection record 
 # col1 and col2  
@@ -14,7 +13,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "uesio"
 }
 
-# GET an account uuid
+# GET an account and contact uuid
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
@@ -23,18 +22,7 @@ Accept: application/json
             "collection":"uesio/tests.account",
             "query":true,
             "batchsize":1
-        }
-    ]
-}
-HTTP 200
-[Captures]
-ACC-UUID: jsonpath "$.wires[0].data[0]['uesio/core.id']"
-
-# GET an contact uuid
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
-Accept: application/json
-{
-    "wires": [
+        },
         {
             "collection":"uesio/tests.contact",
             "query":true,
@@ -44,7 +32,8 @@ Accept: application/json
 }
 HTTP 200
 [Captures]
-CON-UUID: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+ACC-UUID: jsonpath "$.wires[0].data[0]['uesio/core.id']"
+CON-UUID: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # insert a cat owned by the account
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -140,7 +129,6 @@ jsonpath "$.wires[0].changes['temp1']['uesio/core.id']" matches /^[0-9a-f]{8}-[0
 jsonpath "$.wires[0].errors" == null
 [Captures]
 PIG-CON-UUID: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
-
 
 # Get the pig owned by contant record and check the multicollection
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
