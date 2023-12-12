@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -197,7 +198,9 @@ func GetFormulaMetadata(f *meta.Field) *wire.FormulaMetadata {
 func GetReferenceMetadata(f *meta.Field) *wire.ReferenceMetadata {
 	if f.Type == "REFERENCE" && f.ReferenceMetadata != nil {
 		return &wire.ReferenceMetadata{
-			Collection: f.ReferenceMetadata.Collection,
+			Collection:      f.ReferenceMetadata.Collection,
+			MultiCollection: f.ReferenceMetadata.MultiCollection,
+			CollectionsRefs: f.ReferenceMetadata.CollectionsRefs,
 		}
 	}
 	return nil
@@ -226,9 +229,17 @@ func GetValidationMetadata(f *meta.Field) *wire.ValidationMetadata {
 }
 
 func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, session *sess.Session, connection wire.Connection) (*wire.CollectionMetadata, error) {
+
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {
+		return collectionMetadata, nil
+	}
+
+	// special handling for the common collection metadata
+	if key == constant.CommonCollection {
+		collectionMetadata = &COMMON_COLLECTION_METADATA
+		metadataCache.AddCollection(key, collectionMetadata)
 		return collectionMetadata, nil
 	}
 

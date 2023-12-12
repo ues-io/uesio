@@ -34,7 +34,7 @@ import {
 	FieldValueSetter,
 	LabelPosition,
 } from "../../components/field/field"
-
+import MultiReferenceField from "./multireference"
 interface FieldProps {
 	setValue: FieldValueSetter
 	value: wire.FieldValue
@@ -140,6 +140,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	let selectOptions: wire.SelectOption[]
 	let multiSelectProps
 	let content: ReactElement
+	const referenceMetadata = fieldMetadata.getReferenceMetadata()
 
 	switch (displayType) {
 		case "DATE":
@@ -248,7 +249,11 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <MetadataField {...common} options={props.metadata} />
 			break
 		case "REFERENCE":
-			content = <ReferenceField {...common} options={reference} />
+			referenceMetadata?.multiCollection
+				? (content = (
+						<MultiReferenceField {...common} options={reference} />
+				  ))
+				: (content = <ReferenceField {...common} options={reference} />)
 			break
 		case "TIMESTAMP":
 			content = <TimestampField {...common} />

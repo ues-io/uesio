@@ -7,15 +7,22 @@ import (
 type ReferenceMetadataWrapper ReferenceMetadata
 
 type ReferenceMetadata struct {
-	Collection string `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Namespace  string `yaml:"-" json:"-"`
+	Collection      string   `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	MultiCollection bool     `yaml:"multiCollection,omitempty" json:"uesio/studio.multicollection"`
+	CollectionsRefs []string `yaml:"collections,omitempty" json:"uesio/studio.collections"`
+	Namespace       string   `yaml:"-" json:"-"`
 }
 
 func (r *ReferenceMetadata) UnmarshalYAML(node *yaml.Node) error {
 	var err error
-	r.Collection, err = pickRequiredMetadataItem(node, "collection", r.Namespace)
-	// There's nothing else to unmarshal, so we can quit now.
-	return err
+	r.MultiCollection = GetNodeValueAsBool(node, "multiCollection", false)
+	if !r.MultiCollection {
+		r.Collection, err = pickRequiredMetadataItem(node, "collection", r.Namespace)
+		if err != nil {
+			return err
+		}
+	}
+	return node.Decode((*ReferenceMetadataWrapper)(r))
 }
 
 func (r *ReferenceMetadata) MarshalYAML() (interface{}, error) {

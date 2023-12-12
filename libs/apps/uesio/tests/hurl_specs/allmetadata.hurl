@@ -47,14 +47,15 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 7
+jsonpath "$.wires[0].data" count == 8
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
 jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
 
 # Get a list of common fields available to our workspace for the animal collection
 POST https://{{host}}:{{port}}/site/wires/load
@@ -223,14 +224,15 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal"
-jsonpath "$.wires[1].data" count == 7
+jsonpath "$.wires[1].data" count == 8
 jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
 jsonpath "$.wires[1].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
 jsonpath "$.wires[1].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
-jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
-jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
-jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
-jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
+jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[1].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
 
 # Test conditions on Credential by type, to verify that we can do per-item Bundleable Item filtering
 POST https://{{host}}:{{port}}/site/wires/load
