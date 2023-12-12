@@ -456,7 +456,7 @@ const platform = {
 		const mdType = METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
 		const namespaceUrl = namespace ? `/namespace/${namespace}` : ""
-		return getJSON(
+		return memoizedGetJSON(
 			context,
 			`${prefix}/metadata/types/${mdType}${namespaceUrl}/list${groupingUrl}`
 		)

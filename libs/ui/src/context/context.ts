@@ -299,6 +299,13 @@ class Context {
 	siteadmin?: SiteAdminState
 	slotLoader?: MetadataKey
 
+	// returns the context app name, using workspace/site admin context if present
+	// or otherwise defaulting to the site context app name
+	getApp = () =>
+		this.getWorkspace()?.app ||
+		this.getSiteAdmin()?.app ||
+		this.getSite()?.app
+
 	getRecordId = () => this.getRecord()?.getId()
 
 	removeRecordFrame = (times: number): Context => {
