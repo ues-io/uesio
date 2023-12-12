@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -138,13 +139,13 @@ func HandleReferences(
 
 func HandleMultiCollectionReferences(connection wire.Connection, referencedCollections wire.ReferenceRegistry,
 	session *sess.Session) error {
-	// 1. Check the map to see if there is "uesio/core.common" collection
-	common, ok := referencedCollections["uesio/core.common"]
+	// 1. Check the map to see if the common collection is present
+	common, ok := referencedCollections[constant.CommonCollection]
 	if !ok {
 		return nil
 	}
 
-	delete(referencedCollections, "uesio/core.common")
+	delete(referencedCollections, constant.CommonCollection)
 
 	if len(common.IDMap) == 0 {
 		return nil
@@ -162,7 +163,7 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 		},
 	})
 
-	err := LoadLooper(connection, "uesio/core.common", common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	err := LoadLooper(connection, constant.CommonCollection, common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.

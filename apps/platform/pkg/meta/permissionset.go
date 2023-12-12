@@ -247,7 +247,7 @@ func (ps *PermissionSet) CanRunIntegrationAction(integrationName, actionName str
 }
 
 func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
-	if key == "uesio/core.common" {
+	if key == constant.CommonCollection {
 		return false
 	}
 	if ps.AllowAllCollections {

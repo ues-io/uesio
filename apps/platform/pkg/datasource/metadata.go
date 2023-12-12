@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -236,7 +237,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 	}
 
 	// special handling for the common collection metadata
-	if key == "uesio/core.common" {
+	if key == constant.CommonCollection {
 		collectionMetadata = &COMMON_COLLECTION_METADATA
 		metadataCache.AddCollection(key, collectionMetadata)
 		return collectionMetadata, nil

@@ -7,6 +7,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -198,7 +199,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 
 			referencedCollection := fieldMetadata.ReferenceMetadata.Collection
 			if fieldMetadata.ReferenceMetadata.MultiCollection {
-				referencedCollection = "uesio/core.common"
+				referencedCollection = constant.CommonCollection
 			}
 
 			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)

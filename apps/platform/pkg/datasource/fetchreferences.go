@@ -3,6 +3,7 @@ package datasource
 import (
 	"fmt"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -77,7 +78,7 @@ func FetchReferences(
 
 			referencedCollection := field.ReferenceMetadata.Collection
 			if field.ReferenceMetadata.MultiCollection {
-				referencedCollection = "uesio/core.common"
+				referencedCollection = constant.CommonCollection
 			}
 
 			refCollectionMetadata, err := metadata.GetCollection(referencedCollection)
