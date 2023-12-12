@@ -92,6 +92,14 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 						label: "Wire has no search condition",
 						value: "wireHasNoSearchCondition",
 					},
+					{
+						label: "Record is new",
+						value: "recordIsNew",
+					},
+					{
+						label: "Record is not new",
+						value: "recordIsNotNew",
+					},
 				],
 				disabled: true,
 			},
@@ -146,14 +154,6 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 					{
 						label: "Field Mode",
 						value: "fieldMode",
-					},
-					{
-						label: "Record is new",
-						value: "recordIsNew",
-					},
-					{
-						label: "Record is not new",
-						value: "recordIsNotNew",
 					},
 					{
 						label: "Has profile",
