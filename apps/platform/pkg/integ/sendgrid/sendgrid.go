@@ -7,6 +7,7 @@ import (
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -43,8 +44,8 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 
 func getEmailsList(addresses interface{}, names interface{}) []*mail.Email {
 
-	addressesSlice, isAddressesSlice := addresses.([]string)
-	namesSlice, isNamesSlice := names.([]string)
+	addressesSlice, isAddressesSlice := goutils.StringSliceValue(addresses)
+	namesSlice, isNamesSlice := goutils.StringSliceValue(names)
 
 	// Try to parse the emails as slices
 	if isAddressesSlice {
@@ -67,29 +68,7 @@ func getEmailsList(addresses interface{}, names interface{}) []*mail.Email {
 		}
 		return emails
 	}
-	// Next check if the address/name is a single slice
-	addressString, isAddressString := addresses.(string)
-	nameString, isNamesString := names.(string)
-
-	if isAddressString && isNamesString {
-		return []*mail.Email{{
-			Name:    nameString,
-			Address: addressString,
-		}}
-	} else if isAddressString {
-		return []*mail.Email{{
-			Name:    addressString,
-			Address: addressString,
-		}}
-	}
 	return []*mail.Email{}
-}
-
-func asString(v interface{}) string {
-	if stringVal, isString := v.(string); isString {
-		return stringVal
-	}
-	return ""
 }
 
 func createMessage(requestOptions map[string]interface{}) *mail.SGMailV3 {
@@ -115,18 +94,18 @@ func createMessage(requestOptions map[string]interface{}) *mail.SGMailV3 {
 		case "bccNames":
 			bccNames = v
 		case "subject":
-			message.Subject = asString(v)
-		case "plainBody":
-			plainBody = asString(v)
-		case "contentType":
-			contentType = asString(v)
+			message.Subject = goutils.StringValue(v)
+		case "plainBody", "plainbody":
+			plainBody = goutils.StringValue(v)
+		case "contentType", "contenttype":
+			contentType = goutils.StringValue(v)
 		case "from":
-			fromAddress = asString(v)
+			fromAddress = goutils.StringValue(v)
 		case "fromName":
-			fromName = asString(v)
-		case "templateId":
-			templateId = asString(v)
-		case "dynamicTemplateData":
+			fromName = goutils.StringValue(v)
+		case "templateId", "templateid":
+			templateId = goutils.StringValue(v)
+		case "dynamicTemplateData", "dynamictemplatedata":
 			if mapVal, isMap := v.(map[string]interface{}); isMap {
 				dynamicTemplateData = mapVal
 			}
