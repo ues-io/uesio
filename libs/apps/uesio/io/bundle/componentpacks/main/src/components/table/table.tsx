@@ -168,13 +168,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				)
 				handler?.()
 		  }
-		: (recordContext: RecordContext) => {
-				onDrawerChange?.(
-					recordContext,
-					0,
-					!isRowOpenFunc?.(recordContext)
-				)
-		  }
+		: null
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
