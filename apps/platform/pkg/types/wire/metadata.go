@@ -200,6 +200,18 @@ type ReferenceMetadata struct {
 	CollectionsRefs []string `json:"collections"`
 }
 
+func (m *ReferenceMetadata) GetCollection() string {
+	return m.Collection
+}
+
+func (m *ReferenceMetadata) IsMultiCollection() bool {
+	return m.MultiCollection
+}
+
+func (m *ReferenceMetadata) GetCollections() []string {
+	return m.CollectionsRefs
+}
+
 type ReferenceGroupMetadata struct {
 	Collection string `json:"collection"`
 	Field      string `json:"field"`
@@ -254,6 +266,16 @@ func MergeFieldMaps(target, other map[string]*FieldMetadata) {
 			targetFieldMetadata.Merge(otherFieldMetadata)
 		}
 	}
+}
+
+// GetExternalFieldName returns the external field name for this Uesio field, if defined.
+func (fm *FieldMetadata) GetExternalFieldName() string {
+	return fm.ColumnName
+}
+
+// GetReferenceMetadata returns reference field metadata, if it exists
+func (fm *FieldMetadata) GetReferenceMetadata() *ReferenceMetadata {
+	return fm.ReferenceMetadata
 }
 
 // Merge performs a deep merge that extends our field metadata with the other's field metadata,
