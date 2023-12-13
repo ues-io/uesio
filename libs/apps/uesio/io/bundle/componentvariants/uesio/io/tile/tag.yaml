@@ -30,7 +30,7 @@ definition:
     avatar:
       - flex
       - text-sm
-      - text-slate-500
+      - text-slate-600
       - group-hover:text-slate-900
 
 public: true
