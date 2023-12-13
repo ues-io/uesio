@@ -23,6 +23,7 @@ import initWiresOp from "./operations/initialize"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
+import resetConditionsOp from "./operations/resetconditions"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 
 import { WireConditionState } from "./conditions/conditions"
@@ -114,6 +115,10 @@ interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
 	searchFields?: string[]
+}
+
+interface ResetConditionsSignal extends SignalDefinition {
+	wire: string
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -293,6 +298,10 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/SAVE`]: {
 		dispatcher: (signal: SaveWiresSignal, context: Context) =>
 			saveWiresOp(context, mergeSignalWireNames(signal, context)),
+	},
+	[`${WIRE_BAND}/RESET_CONDITIONS`]: {
+		dispatcher: (signal: ResetConditionsSignal, context: Context) =>
+			resetConditionsOp(context, context.mergeString(signal.wire)),
 	},
 }
 

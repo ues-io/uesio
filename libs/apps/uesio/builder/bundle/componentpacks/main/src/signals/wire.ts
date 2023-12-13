@@ -392,6 +392,18 @@ const signals: SignalBandDefinition = {
 			],
 			canError: true,
 		},
+		[`${BAND}/RESET_CONDITIONS`]: {
+			label: "Reset All Named Conditions On Wire",
+			description:
+				"Reset all named conditions on the wire to their original state",
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
+		},
 	} as Record<string, SignalDescriptor>,
 }
 
