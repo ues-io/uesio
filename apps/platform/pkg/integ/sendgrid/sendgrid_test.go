@@ -142,6 +142,41 @@ func Test_createMessage(t *testing.T) {
 				}},
 			},
 		},
+		{
+			"backwards compatibility - support all lowercase parameter names",
+			map[string]interface{}{
+				// Use []interface{} type here, as that is what we get when the input comes from other Bots
+				"to":          []interface{}{"abel@ues.io", "zach@ues.io"},
+				"cc":          []interface{}{"wessel@ues.io", "zach@ues.io"},
+				"bcc":         []interface{}{"gregg@ues.io", "zach@ues.io"},
+				"from":        "ben@ues.io",
+				"contenttype": "text/plain",
+				"subject":     "Another email",
+				"plainbody":   "This is an email",
+			},
+			&mail.SGMailV3{
+				From:    &mail.Email{"ben@ues.io", "ben@ues.io"},
+				Subject: "Another email",
+				Content: []*mail.Content{{
+					Type:  "text/plain",
+					Value: "This is an email",
+				}},
+				Personalizations: []*mail.Personalization{{
+					To: []*mail.Email{
+						{"abel@ues.io", "abel@ues.io"},
+						{"zach@ues.io", "zach@ues.io"},
+					},
+					CC: []*mail.Email{
+						{"wessel@ues.io", "wessel@ues.io"},
+						{"zach@ues.io", "zach@ues.io"},
+					},
+					BCC: []*mail.Email{
+						{"gregg@ues.io", "gregg@ues.io"},
+						{"zach@ues.io", "zach@ues.io"},
+					},
+				}},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
