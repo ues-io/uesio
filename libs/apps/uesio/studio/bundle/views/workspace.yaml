@@ -23,14 +23,14 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: workspaces
         left:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
-              view: uesio/studio.workspacenav
+              view: workspacenav
               params:
                 selected: home
         content:

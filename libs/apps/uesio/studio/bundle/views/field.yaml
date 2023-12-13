@@ -44,7 +44,7 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: workspaces
               params:
@@ -59,7 +59,7 @@ definition:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
-              view: uesio/studio.workspacenav
+              view: workspacenav
               params:
                 selected: collections
         content:
@@ -71,6 +71,7 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Field - ${uesio/studio.name}
+                    subtitle: ${uesio/studio.collection}
                     actions:
                       - uesio/io.group:
                           uesio.display:
@@ -154,23 +155,34 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.languagelabel
                             - uesio/io.field:
-                                fieldId: uesio/studio.collection
-                                label: Collection
-                            - uesio/io.field:
                                 fieldId: uesio/studio.columnname
                                 uesio.display:
                                   - type: fieldValue
                                     wire: collections
                                     field: uesio/studio.type
                                     value: EXTERNAL
-                            - uesio/io.box:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.reference->uesio/studio.multicollection
+                                displayAs: TOGGLE
                                 uesio.display:
                                   - field: uesio/studio.type
                                     value: REFERENCE
-                                components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.reference->uesio/studio.collection
-                                      label: Ref. Collection
+                            - uesio/io.field:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCE
+                                  - field: uesio/studio.reference->uesio/studio.multicollection
+                                    value: true
+                                fieldId: uesio/studio.reference->uesio/studio.collections
+                            - uesio/io.field:
+                                fieldId: uesio/studio.reference->uesio/studio.collection
+                                label: Ref. Collection
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: REFERENCE
+                                  - field: uesio/studio.reference->uesio/studio.multicollection
+                                    operator: NOT_EQUALS
+                                    value: true
                             - uesio/io.field:
                                 fieldId: uesio/studio.required
                                 displayAs: TOGGLE

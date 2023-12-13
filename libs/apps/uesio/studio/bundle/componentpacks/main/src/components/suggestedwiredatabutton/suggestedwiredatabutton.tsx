@@ -22,12 +22,15 @@ const handleResults = (wire: wire.Wire, results: wire.PlainWireRecord[]) => {
 		// }
 	})
 	results.forEach((result) => {
-		wire.createRecord({
-			...result,
-			// Populate values for all SELECT/MULTISELECT fields
-			...getSelectFieldValues(selectOrMSFields),
-			// ...getReferenceFieldValue(referenceFields),
-		})
+		wire.createRecord(
+			{
+				...result,
+				// Populate values for all SELECT/MULTISELECT fields
+				...getSelectFieldValues(selectOrMSFields),
+				// ...getReferenceFieldValue(referenceFields),
+			},
+			true
+		)
 	})
 }
 
@@ -49,6 +52,7 @@ const getRandomSelectOptionValue = (options: wire.SelectOption[]): string =>
 	options[Math.floor(Math.random() * options.length)].value
 
 const nonAiFieldTypes = ["SELECT", "MULTISELECT", "REFERENCE", "AUTONUMBER"]
+const excludeFields = ["uesio/core.owner"]
 
 const getFieldMetadataForPrompt = (
 	fields: wire.LoadRequestField[] | undefined,
@@ -64,6 +68,7 @@ const getFieldMetadataForPrompt = (
 					const type = fieldMetadata.getType()
 					return (
 						fieldMetadata.getCreateable() &&
+						!excludeFields.includes(field.id) &&
 						!nonAiFieldTypes.includes(type)
 					)
 				})
@@ -119,7 +124,6 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 		<SuggestDataButton
 			context={context.deleteWorkspace()}
 			prompt={prompt}
-			botName="uesio/studio.suggestdata"
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
 			handleResults={(results: wire.PlainWireRecord[]) => {

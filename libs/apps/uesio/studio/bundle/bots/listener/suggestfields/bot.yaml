@@ -1,8 +1,0 @@
-name: suggestfields
-type: LISTENER
-dialect: TYPESCRIPT
-timeout: 30
-params:
-  - name: prompt
-    type: TEXT
-    required: true

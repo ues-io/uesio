@@ -1,4 +1,4 @@
-import { Context } from "../../context/context"
+import { Context, Mergeable } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { BotParams, platform } from "../../platform/platform"
 import { parseKey } from "../../component/path"
@@ -18,7 +18,9 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: async (signalInvocation: CallSignal, context: Context) => {
 			const { bot, params } = signalInvocation
 			const [namespace, name] = parseKey(bot)
-			const mergedParams = context.mergeStringMap(params)
+			const mergedParams = context.mergeStringMap(
+				params as Record<string, Mergeable>
+			)
 
 			try {
 				const response = await platform.callBot(

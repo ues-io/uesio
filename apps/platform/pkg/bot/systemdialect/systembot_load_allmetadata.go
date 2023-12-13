@@ -9,6 +9,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -323,21 +324,14 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	return nil
 }
 
-func getStringValue(val interface{}) string {
-	if stringValue, isString := val.(string); isString {
-		return stringValue
-	}
-	return ""
-}
-
 func getConditionValue(condition *wire.LoadRequestCondition) string {
 	var conditionValue string
 	if condition.Value != nil {
-		conditionValue = getStringValue(condition.Value)
+		conditionValue = goutils.StringValue(condition.Value)
 	} else if condition.Values != nil {
 		allValues := condition.Values.([]interface{})
 		if len(allValues) > 0 {
-			conditionValue = getStringValue(allValues[0])
+			conditionValue = goutils.StringValue(allValues[0])
 		}
 	}
 	return conditionValue

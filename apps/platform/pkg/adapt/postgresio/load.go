@@ -305,5 +305,10 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
+	err = datasource.HandleMultiCollectionReferences(c, referencedCollections, session)
+	if err != nil {
+		return err
+	}
+
 	return datasource.HandleReferences(c, referencedCollections, session, true)
 }

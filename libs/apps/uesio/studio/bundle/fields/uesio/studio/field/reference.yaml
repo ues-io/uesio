@@ -7,3 +7,11 @@ subfields:
     type: METADATA
     metadata:
       type: COLLECTION
+  - name: uesio/studio.multicollection
+    type: CHECKBOX
+    label: Multi Collection
+  - name: uesio/studio.collections
+    type: MULTIMETADATA
+    label: Collections
+    metadata:
+      type: COLLECTION

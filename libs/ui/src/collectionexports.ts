@@ -17,6 +17,7 @@ import {
 	UPDATED_BY_FIELD,
 	CREATED_AT_FIELD,
 	CREATED_BY_FIELD,
+	COLLECTION_FIELD,
 } from "./bands/collection/types"
 import { addBlankSelectOption } from "./bands/field/utils"
 
@@ -40,4 +41,5 @@ export {
 	UPDATED_BY_FIELD,
 	CREATED_AT_FIELD,
 	CREATED_BY_FIELD,
+	COLLECTION_FIELD,
 }

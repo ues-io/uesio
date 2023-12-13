@@ -5,6 +5,7 @@ import { getBuildMode, getComponentDef, useDropPath } from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 import { DeclarativeComponentSlotLoaderId } from "../declarativecomponentslotloader/declarativecomponentslotloader"
+import { InnerViewSlotLoaderId } from "../innerviewslotloader/innerviewslotloader"
 import { standardAccepts } from "../../helpers/dragdrop"
 
 export const SlotBuilderComponentId = "uesio/builder.slotbuilder"
@@ -82,6 +83,12 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 				) {
 					childrenContext = context.setCustomSlotLoader(
 						DeclarativeComponentSlotLoaderId
+					)
+				}
+				// If we're using a subview
+				if (props.componentType === "uesio/core.view") {
+					childrenContext = context.setCustomSlotLoader(
+						InnerViewSlotLoaderId
 					)
 				}
 				return (

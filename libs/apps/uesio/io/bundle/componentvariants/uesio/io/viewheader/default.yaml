@@ -1,0 +1,28 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - grid-cols-[auto_1fr_auto]
+      - items-center
+      - gap-2
+    logo:
+    content:
+      - grid
+      - grid-flow-col
+      - justify-between
+    left:
+      - grid
+      - grid-flow-col
+      - gap-2
+      - items-center
+      - auto-cols-max
+    right:
+      - grid
+      - grid-flow-col
+      - gap-2
+      - items-center
+      - auto-cols-max
+    avatar:
+public: true

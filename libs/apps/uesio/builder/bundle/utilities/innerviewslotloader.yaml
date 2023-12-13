@@ -1,0 +1,3 @@
+name: innerviewslotloader
+pack: main
+entrypoint: utilities/innerviewslotloader/innerviewslotloader

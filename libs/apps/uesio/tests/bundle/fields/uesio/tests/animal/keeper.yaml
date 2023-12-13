@@ -1,0 +1,8 @@
+name: keeper
+type: REFERENCE
+label: Keeper
+reference:
+  multiCollection: true
+  collections:
+    - uesio/tests.contact
+    - uesio/tests.account

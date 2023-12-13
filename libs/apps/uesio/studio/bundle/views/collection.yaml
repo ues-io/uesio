@@ -179,7 +179,7 @@ definition:
         uesio.variant: uesio/studio.main
         header:
           - uesio/core.view:
-              view: uesio/studio.topbar
+              view: topbar
               uesio.context:
                 wire: workspaces
               params:
@@ -193,7 +193,7 @@ definition:
           - uesio/core.view:
               uesio.context:
                 wire: workspaces
-              view: uesio/studio.workspacenav
+              view: workspacenav
               params:
                 selected: collections
         content:
@@ -408,8 +408,6 @@ definition:
                             - uesio/studio.suggestedfields:
                                 uesio.id: suggestedfields
                                 uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: fields
                                   - type: fieldValue
                                     wire: collections
                                     field: uesio/studio.type
@@ -985,6 +983,18 @@ definition:
                       value: REFERENCE
                   components:
                     - uesio/io.field:
+                        fieldId: uesio/studio.reference->uesio/studio.multicollection
+                        displayAs: TOGGLE
+                    - uesio/io.field:
+                        uesio.display:
+                          - field: uesio/studio.reference->uesio/studio.multicollection
+                            value: true
+                        fieldId: uesio/studio.reference->uesio/studio.collections
+                    - uesio/io.field:
+                        uesio.display:
+                          - field: uesio/studio.reference->uesio/studio.multicollection
+                            operator: NOT_EQUALS
+                            value: true
                         fieldId: uesio/studio.reference->uesio/studio.collection
                         label: Ref. Collection
                         uesio.id: new-field-collection

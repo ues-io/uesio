@@ -493,8 +493,17 @@ func GetMetadataForLoad(
 			}
 		}
 
-		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.Collection != "" {
-			if len(op.Fields[i].Fields) == 0 {
+		if fieldMetadata.Type == "REFERENCE" && len(op.Fields[i].Fields) == 0 {
+			if fieldMetadata.ReferenceMetadata.MultiCollection {
+				op.Fields[i].Fields = []wire.LoadRequestField{
+					{
+						ID: wire.ID_FIELD,
+					},
+					{
+						ID: wire.COLLECTION_FIELD,
+					},
+				}
+			} else {
 				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 				if err != nil {
 					return err
@@ -509,7 +518,6 @@ func GetMetadataForLoad(
 				}
 			}
 		}
-
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
 			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {

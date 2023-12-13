@@ -3,6 +3,7 @@ package datasource
 import (
 	"fmt"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -74,16 +75,22 @@ func FetchReferences(
 	for i := range op.Metadata.Fields {
 		field := op.Metadata.Fields[i]
 		if wire.IsReference(field.Type) {
-			refCollectionMetadata, err := metadata.GetCollection(field.ReferenceMetadata.Collection)
+
+			referencedCollection := field.ReferenceMetadata.Collection
+			if field.ReferenceMetadata.MultiCollection {
+				referencedCollection = constant.CommonCollection
+			}
+
+			refCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 			if err != nil {
 				return err
 			}
 
-			refIDReq := referencedIDCollections.Get(field.ReferenceMetadata.Collection)
+			refIDReq := referencedIDCollections.Get(referencedCollection)
 			refIDReq.Metadata = refCollectionMetadata
 			refIDReq.MatchField = wire.ID_FIELD
 
-			refUniqueKeyReq := referencedUniqueKeyCollections.Get(field.ReferenceMetadata.Collection)
+			refUniqueKeyReq := referencedUniqueKeyCollections.Get(referencedCollection)
 			refUniqueKeyReq.Metadata = refCollectionMetadata
 			refUniqueKeyReq.MatchField = wire.UNIQUE_KEY_FIELD
 

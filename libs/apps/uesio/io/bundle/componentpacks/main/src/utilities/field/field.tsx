@@ -11,7 +11,10 @@ import MultiSelectField from "./multiselect"
 import NumberField, { NumberFieldOptions } from "./number"
 import RadioButtons from "./radiobuttons"
 import ReferenceField, { ReferenceFieldOptions } from "./reference"
-import SelectField from "./select"
+import SelectField, {
+	addSelectedValuesToOptions,
+	addSelectedValueToOptions,
+} from "./select"
 import TextAreaField, { LongTextFieldOptions } from "./textarea"
 import TextField, { TextFieldOptions } from "./text"
 import TimestampField from "./timestamp"
@@ -34,7 +37,7 @@ import {
 	FieldValueSetter,
 	LabelPosition,
 } from "../../components/field/field"
-
+import MultiReferenceField from "./multireference"
 interface FieldProps {
 	setValue: FieldValueSetter
 	value: wire.FieldValue
@@ -136,10 +139,11 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const displayType = fieldMetadata.getType()
 	const subType = fieldMetadata.getSubType() as collection.FieldType
 	let mapFieldOptions: MapFieldOptions
-
 	let selectOptions: wire.SelectOption[]
+	let values: string[]
 	let multiSelectProps
 	let content: ReactElement
+	const referenceMetadata = fieldMetadata.getReferenceMetadata()
 
 	switch (displayType) {
 		case "DATE":
@@ -174,7 +178,10 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			)
 			break
 		case "SELECT": {
-			selectOptions = fieldMetadata.getSelectOptions(context)
+			selectOptions = addSelectedValueToOptions(
+				fieldMetadata.getSelectOptions(context),
+				common.value as string
+			)
 			content =
 				displayAs === "RADIO" ? (
 					<RadioButtons {...common} options={selectOptions} />
@@ -184,15 +191,21 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			break
 		}
 		case "MULTISELECT":
+			values = common.value
+				? Object.keys(common.value as Record<string, boolean>)
+				: []
 			multiSelectProps = {
 				...common,
-				options: fieldMetadata.getSelectOptions(context),
+				options: addSelectedValuesToOptions(
+					fieldMetadata.getSelectOptions(context),
+					values
+				),
 				// Storage of Multiselect values in DB is a Map[string]boolean containing the values which are selected,
 				// but the renderers expect a simple array of selected values, so we need to convert to/from that format
-				setValue: (values: wire.PlainFieldValue[]) => {
-					values.length
+				setValue: (newValues: wire.PlainFieldValue[]) => {
+					newValues.length
 						? common.setValue(
-								values.reduce(
+								newValues.reduce(
 									(acc, val) => ({
 										...acc,
 										[val as string]: true,
@@ -202,9 +215,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 						  )
 						: common.setValue(null)
 				},
-				value: common.value
-					? Object.keys(common.value as Record<string, boolean>)
-					: [],
+				value: values,
 			}
 			content =
 				displayAs === "SELECT" ? (
@@ -248,7 +259,11 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <MetadataField {...common} options={props.metadata} />
 			break
 		case "REFERENCE":
-			content = <ReferenceField {...common} options={reference} />
+			referenceMetadata?.multiCollection
+				? (content = (
+						<MultiReferenceField {...common} options={reference} />
+				  ))
+				: (content = <ReferenceField {...common} options={reference} />)
 			break
 		case "TIMESTAMP":
 			content = <TimestampField {...common} />
