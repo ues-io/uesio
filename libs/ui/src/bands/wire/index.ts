@@ -484,7 +484,7 @@ export {
 	addLookupWires,
 }
 
-export type { WireLoadAction }
+export type { SetConditionValuePayload, WireLoadAction }
 
 export const {
 	markForDelete,

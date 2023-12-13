@@ -79,8 +79,9 @@ interface SetConditionSignal extends SignalDefinition {
 }
 interface SetConditionValueSignal extends SignalDefinition {
 	wire: string
-	value: string | number | boolean
 	conditionId: string
+	value?: PlainFieldValue
+	values?: PlainFieldValue[]
 }
 interface SetOrderSignal extends SignalDefinition {
 	wire: string
@@ -224,12 +225,10 @@ const signals: Record<string, SignalDescriptor> = {
 
 	[`${WIRE_BAND}/SET_CONDITION_VALUE`]: {
 		dispatcher: (signal: SetConditionValueSignal, context: Context) =>
-			setConditionValueOp(
+			setConditionValueOp({
 				context,
-				context.mergeString(signal.wire),
-				context.mergeString(signal.conditionId),
-				context.merge(signal.value) as PlainFieldValue
-			),
+				...context.mergeMap<SetConditionValueSignal>(signal),
+			}),
 	},
 	[`${WIRE_BAND}/SET_CONDITION`]: {
 		dispatcher: (signal: SetConditionSignal, context: Context) =>

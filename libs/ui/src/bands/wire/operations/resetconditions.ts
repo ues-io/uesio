@@ -1,7 +1,8 @@
 import { dispatch } from "../../../store/store"
-import { Context } from "../../../context/context"
-import { setConditionValue, getFullWireId } from ".."
+import { Context, Mergeable } from "../../../context/context"
+import { setConditionValue, getFullWireId, SetConditionValuePayload } from ".."
 import { isValueCondition } from "../conditions/conditions"
+import { PlainFieldValue } from "../../wirerecord/types"
 
 export default (context: Context, wireName: string) => {
 	//this returns the original wire definition
@@ -12,14 +13,17 @@ export default (context: Context, wireName: string) => {
 		wireDef.conditions.forEach((condition) => {
 			if (condition.id && isValueCondition(condition)) {
 				const { id, value, values } = condition
-				dispatch(
-					setConditionValue({
-						entity: getFullWireId(viewId, wireName),
-						id,
-						value,
-						values,
-					})
-				)
+				const payload = {
+					entity: getFullWireId(viewId, wireName),
+					id,
+				} as SetConditionValuePayload
+				if (value ?? false)
+					payload.value = context.merge(value as Mergeable)
+				if (values ?? false)
+					payload.values = context.merge(
+						values as Mergeable
+					) as PlainFieldValue[]
+				dispatch(setConditionValue(payload))
 			}
 		})
 	}
