@@ -14,10 +14,12 @@ definition:
       - items-center
       - border-1
       - rounded
-      - border-transparent
+      - border-slate-200
       - tracking-wider
       - gap-2
       - group
+      - hover:bg-white
+      - hover:border-slate-500
     content:
       - whitespace-nowrap
       - text-ellipsis
@@ -27,8 +29,8 @@ definition:
       - group-hover:text-slate-900
     avatar:
       - flex
-      - text-base
-      - text-slate-600
+      - text-sm
+      - text-slate-500
       - group-hover:text-slate-900
 
 public: true

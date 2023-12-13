@@ -4,9 +4,12 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - from-white
-      - to-slate-100
-      - bg-gradient-to-br
-      - h-[60px]
+      - bg-slate-50
       - border-b-1
       - border-slate-300
+    logo:
+      - px-4
+      - py-2
+      - opacity-80
+    avatar:
+      - px-3
