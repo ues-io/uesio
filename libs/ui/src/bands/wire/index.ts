@@ -63,6 +63,7 @@ type AddConditionPayload = {
 type SetConditionValuePayload = {
 	id: string
 	value: FieldValue
+	values?: FieldValue[]
 } & EntityPayload
 
 type RemoveOrderPayload = {
@@ -276,13 +277,14 @@ const wireSlice = createSlice({
 		setConditionValue: createEntityReducer<
 			SetConditionValuePayload,
 			PlainWire
-		>((state, { value, id }) => {
+		>((state, { values, value, id }) => {
 			if (!state.conditions) state.conditions = []
 			const condition = state.conditions.find(
 				(existingCondition) => existingCondition.id === id
 			)
-			if (isValueCondition(condition)) {
+			if (condition && isValueCondition(condition)) {
 				condition.value = value as PlainFieldValue
+				condition.values = values as PlainFieldValue[]
 			}
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
