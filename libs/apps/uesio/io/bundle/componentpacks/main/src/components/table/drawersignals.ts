@@ -3,17 +3,9 @@ import { signal, context } from "@uesio/ui"
 const getRecordId = (
 	signal: signal.SignalDefinition,
 	context: context.Context
-) => {
-	const recordId =
-		(context.merge(signal.recordId as string) as string) ||
-		context.getRecord()?.getId()
-	// context.getRecord()?.getIdFieldValue()
-
-	if (!recordId || typeof recordId !== "string") {
-		throw new Error("missing record id")
-	}
-	return recordId
-}
+) =>
+	context.mergeString(signal.recordId as string) ||
+	context.getRecord()?.getId()
 
 const signals: Record<
 	string,
@@ -24,6 +16,7 @@ const signals: Record<
 	DRAWER_OPEN: {
 		dispatcher: (state, signal, context) => {
 			const recordId = getRecordId(signal, context)
+			if (!recordId) return
 			state.drawerState = {
 				...(signal.autoCollapse ? {} : state.drawerState),
 				[recordId]: true,
@@ -33,7 +26,7 @@ const signals: Record<
 	DRAWER_CLOSE: {
 		dispatcher: (state, signal, context) => {
 			const recordId = getRecordId(signal, context)
-
+			if (!recordId) return
 			state.drawerState = {
 				...state.drawerState,
 				[recordId]: false,
@@ -43,7 +36,7 @@ const signals: Record<
 	DRAWER_TOGGLE: {
 		dispatcher: (state, signal, context) => {
 			const recordId = getRecordId(signal, context)
-
+			if (!recordId) return
 			state.drawerState = {
 				...(signal.autoCollapse ? {} : state.drawerState),
 				[recordId]: !state.drawerState[recordId],

@@ -109,6 +109,18 @@ const Table: definition.UtilityComponent<
 		return rowNumberFunc?.(index + 1)
 	}
 
+	const getDrawer =
+		drawerRendererFunc && isRowExpandedFunc
+			? (row: unknown) =>
+					isRowExpandedFunc(row) && (
+						<tr className={styles.cx(classes.row)}>
+							<td colSpan={1000} className={classes.drawer}>
+								{drawerRendererFunc(row)}
+							</td>
+						</tr>
+					)
+			: undefined
+
 	return (
 		<div className={classes.root}>
 			<table id={id} className={classes.table}>
@@ -168,11 +180,6 @@ const Table: definition.UtilityComponent<
 										isDeletedFunc?.(row) &&
 											classes.rowDeleted
 									)}
-									data-expanded={
-										isRowExpandedFunc?.(row)
-											? "true"
-											: "false"
-									}
 									key={index + 1}
 								>
 									{(rowNumberFunc || isSelectedFunc) && (
@@ -205,22 +212,7 @@ const Table: definition.UtilityComponent<
 										</td>
 									)}
 								</tr>
-								{(() => {
-									if (!drawerRendererFunc) return null
-									const DrawerComponent =
-										drawerRendererFunc?.(row)
-									if (!DrawerComponent) return null
-									return (
-										<tr className={styles.cx(classes.row)}>
-											<td
-												colSpan={rows.length}
-												className={classes.drawer}
-											>
-												{drawerRendererFunc(row)}
-											</td>
-										</tr>
-									)
-								})()}
+								{getDrawer?.(row)}
 							</>
 						)
 					})}

@@ -85,8 +85,6 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
-const getDrawerId = (r: RecordContext) => r.item.getId()
-
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
 	const wire = api.wire.useWire(definition.wire, context)
@@ -141,7 +139,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		Record<string, boolean>
 	>("selected", componentId, {})
 
-	const [drawerOpen] = api.component.useStateSlice<Record<string, boolean>>(
+	const [openDrawers] = api.component.useStateSlice<Record<string, boolean>>(
 		"drawerState",
 		componentId,
 		{}
@@ -209,28 +207,19 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const isRowOpenFunc = definition.drawer
 		? (recordContext: RecordContext) =>
-				!!drawerOpen?.[getDrawerId(recordContext)]
+				!!openDrawers?.[recordContext.item.getId()]
 		: undefined
 
 	const drawerRendererFunc = definition.drawer
-		? (recordContext: RecordContext) => {
-				console.log(
-					"rendering drawer",
-					drawerOpen,
-					isRowOpenFunc && isRowOpenFunc(recordContext)
-				)
-				if (!(isRowOpenFunc && isRowOpenFunc(recordContext)))
-					return null
-				return (
-					<component.Slot
-						definition={definition}
-						componentType={componentType}
-						listName="drawer"
-						path={`${path}["drawer"]`}
-						context={recordContext.context}
-					/>
-				)
-		  }
+		? (recordContext: RecordContext) => (
+				<component.Slot
+					definition={definition}
+					componentType={componentType}
+					listName="drawer"
+					path={`${path}["drawer"]`}
+					context={recordContext.context}
+				/>
+		  )
 		: undefined
 
 	const columnHeaderFunc = (column: ColumnDefinition) =>
@@ -342,11 +331,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
-	const isRowExpanded = (recordContext: RecordContext) => {
-		const res = isRowOpenFunc?.(recordContext) || false
-		console.log({ res })
-		return res
-	}
 
 	return (
 		<>
@@ -373,7 +357,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
 				isDeletedFunc={isDeletedFunc}
-				isRowExpandedFunc={isRowExpanded}
+				isRowExpandedFunc={isRowOpenFunc}
 				isSelectedFunc={isSelectedFunc}
 				onSelectChange={onSelectChange}
 				onAllSelectChange={onAllSelectChange}
