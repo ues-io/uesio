@@ -351,7 +351,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				}
 				defaultActionFunc={defaultActionsFunc}
 				rowActionsFunc={rowActionsFunc}
-				// Render func below in every row and return null if it shouldn't be open
 				drawerRendererFunc={drawerRendererFunc}
 				columnHeaderFunc={columnHeaderFunc}
 				columnMenuFunc={columnMenuFunc}
