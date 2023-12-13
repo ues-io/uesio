@@ -85,7 +85,7 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
-const getDrawerId = (r: RecordContext) => r.item.getIdFieldValue() || ""
+const getDrawerId = (r: RecordContext) => r.item.getId()
 
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
@@ -141,9 +141,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		Record<string, boolean>
 	>("selected", componentId, {})
 
-	const [drawerOpen, setDrawerOpen] = api.component.useStateSlice<
-		Record<string, boolean>
-	>("drawerState", componentId, {})
+	const [drawerOpen] = api.component.useStateSlice<Record<string, boolean>>(
+		"drawerState",
+		componentId,
+		{}
+	)
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
@@ -168,7 +170,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				)
 				handler?.()
 		  }
-		: null
+		: undefined
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
@@ -212,6 +214,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const drawerRendererFunc = definition.drawer
 		? (recordContext: RecordContext) => {
+				console.log(
+					"rendering drawer",
+					drawerOpen,
+					isRowOpenFunc && isRowOpenFunc(recordContext)
+				)
 				if (!(isRowOpenFunc && isRowOpenFunc(recordContext)))
 					return null
 				return (
@@ -329,27 +336,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 								},
 						  }
 						: omit(selected, recordContext.item.getId())
-				)
-		  }
-		: undefined
-
-	const onDrawerChange = definition.drawer
-		? (
-				recordContext: RecordContext,
-				index: number,
-				isDrawerOpen: boolean
-		  ) => {
-				const recordId = getDrawerId(recordContext)
-				if (!recordId) return
-				setDrawerOpen(
-					isDrawerOpen
-						? {
-								...drawerOpen,
-								...{
-									[recordId]: true,
-								},
-						  }
-						: omit(drawerOpen, recordId)
 				)
 		  }
 		: undefined

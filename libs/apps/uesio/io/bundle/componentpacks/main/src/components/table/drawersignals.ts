@@ -6,7 +6,8 @@ const getRecordId = (
 ) => {
 	const recordId =
 		(context.merge(signal.recordId as string) as string) ||
-		context.getRecord()?.getIdFieldValue()
+		context.getRecord()?.getId()
+	// context.getRecord()?.getIdFieldValue()
 
 	if (!recordId || typeof recordId !== "string") {
 		throw new Error("missing record id")
@@ -24,7 +25,7 @@ const signals: Record<
 		dispatcher: (state, signal, context) => {
 			const recordId = getRecordId(signal, context)
 			state.drawerState = {
-				...state.drawerState,
+				...(signal.autoCollapse ? {} : state.drawerState),
 				[recordId]: true,
 			}
 		},
@@ -44,7 +45,7 @@ const signals: Record<
 			const recordId = getRecordId(signal, context)
 
 			state.drawerState = {
-				...state.drawerState,
+				...(signal.autoCollapse ? {} : state.drawerState),
 				[recordId]: !state.drawerState[recordId],
 			}
 		},
