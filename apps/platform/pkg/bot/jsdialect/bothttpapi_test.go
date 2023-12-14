@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -20,6 +21,17 @@ import (
 )
 
 func getIntegrationConnection(authType string, credentials *wire.Credentials) *wire.IntegrationConnection {
+	s := (&sess.Session{}).SetSiteSession(sess.NewSiteSession(&meta.Site{
+		Name: "prod",
+		App: &meta.App{
+			BuiltIn:  meta.BuiltIn{UniqueKey: "luigi/foo"},
+			FullName: "luigi/foo",
+			Name:     "foo",
+		},
+	}, &meta.User{
+		BuiltIn: meta.BuiltIn{ID: "user123"},
+	}))
+	s.SetGoContext(context.Background())
 	return wire.NewIntegrationConnection(
 		&meta.Integration{
 			BundleableBase: meta.BundleableBase{
@@ -29,16 +41,7 @@ func getIntegrationConnection(authType string, credentials *wire.Credentials) *w
 			Authentication: authType,
 		},
 		&meta.IntegrationType{},
-		(&sess.Session{}).SetSiteSession(sess.NewSiteSession(&meta.Site{
-			Name: "prod",
-			App: &meta.App{
-				BuiltIn:  meta.BuiltIn{UniqueKey: "luigi/foo"},
-				FullName: "luigi/foo",
-				Name:     "foo",
-			},
-		}, &meta.User{
-			BuiltIn: meta.BuiltIn{ID: "user123"},
-		})),
+		s,
 		credentials,
 		nil)
 }

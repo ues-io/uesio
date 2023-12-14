@@ -69,7 +69,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		getSiteAdminUser(),
 	))
 
-	bundleDef, err := bundle.GetSiteBundleDef(siteadmin, connection)
+	bundleDef, err := bundle.GetSiteBundleDef(session.Context(), siteadmin, connection)
 	if err != nil {
 		return err
 	}

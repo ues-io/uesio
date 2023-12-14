@@ -37,19 +37,19 @@ type RedirectMetadata struct {
 
 // ExchangeAuthorizationCodeForAccessToken takes an authorization code that is pushed to the redirect URL
 // and exchanges it for an access token.
-func ExchangeAuthorizationCodeForAccessToken(credentials *wire.Credentials, host, code string, state *State) (*oauth2.Token, error) {
+func ExchangeAuthorizationCodeForAccessToken(ctx context.Context, credentials *wire.Credentials, host, code string, state *State) (*oauth2.Token, error) {
 	conf, err := GetConfig(credentials, host)
 	if err != nil {
 		return nil, err
 	}
-	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, httpClient.Get())
+	newCtx := context.WithValue(ctx, oauth2.HTTPClient, httpClient.Get())
 
 	// Make sure that this is a valid exchange we initiated, and extract the PKCE identifier
 	verifier, err := oauthExchangeCache.Get(state.Nonce)
 	if err != nil {
 		return nil, errors.New("invalid oauth state parameter")
 	}
-	tok, err := conf.Exchange(ctx, code, oauth2.VerifierOption(verifier))
+	tok, err := conf.Exchange(newCtx, code, oauth2.VerifierOption(verifier))
 	if err != nil {
 		return nil, errors.New("failed to exchange authorization code for access token: " + err.Error())
 	}

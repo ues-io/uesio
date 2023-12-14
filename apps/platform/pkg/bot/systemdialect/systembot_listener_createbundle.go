@@ -98,6 +98,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
+		Context:    session.Context(),
 	})
 	if err != nil {
 		return nil, err
@@ -106,6 +107,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Namespace: appID,
 		Version:   bundle.GetVersionString(),
+		Context:   session.Context(),
 	})
 	if err != nil {
 		return nil, err

@@ -1,8 +1,6 @@
 package postgresio
 
 import (
-	"context"
-
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -12,7 +10,7 @@ const maxAutoNumber = "SELECT COALESCE(MAX(autonumber),0) FROM public.data WHERE
 // GetAutonumber returns the current max autonumber for a given tenant collection.
 func (c *Connection) GetAutonumber(cm *wire.CollectionMetadata, session *sess.Session) (int, error) {
 	var count int
-	if err := c.GetClient().QueryRow(context.Background(), maxAutoNumber, session.GetTenantID(), cm.GetFullName()).Scan(&count); err != nil {
+	if err := c.GetClient().QueryRow(c.ctx, maxAutoNumber, session.GetTenantID(), cm.GetFullName()).Scan(&count); err != nil {
 		return 0, TranslatePGError(err)
 	}
 	return count, nil

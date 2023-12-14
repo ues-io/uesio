@@ -47,7 +47,7 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 		BatchNumber:    op.BatchNumber,
 	}
 
-	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
+	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(session.Context()), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}

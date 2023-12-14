@@ -22,7 +22,7 @@ func NewBeforeSaveAPI(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection
 		Inserts:    &InsertsAPI{op},
 		Updates:    &UpdatesAPI{op},
 		Deletes:    &DeletesAPI{op},
-		LogApi:     NewBotLogAPI(bot),
+		LogApi:     NewBotLogAPI(bot, session.Context()),
 		session:    session,
 		op:         op,
 		connection: connection,

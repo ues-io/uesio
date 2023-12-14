@@ -15,7 +15,7 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 		return nil, exceptions.NewBadRequestException("no username provided")
 	}
 
-	systemSession, err := auth.GetSystemSession(session.GetSite(), nil)
+	systemSession, err := auth.GetSystemSession(session.Context(), session.GetSite(), nil)
 	if err != nil {
 		return nil, err
 	}

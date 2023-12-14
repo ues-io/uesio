@@ -16,7 +16,7 @@ func NewLoadBotAPI(bot *meta.Bot, connection wire.Connection, loadOp *wire.LoadO
 		connection:            connection,
 		integrationConnection: integrationConnection,
 		// Public
-		LogApi:              NewBotLogAPI(bot),
+		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
 		Http:                NewBotHttpAPI(bot, integrationConnection),
 		LoadRequestMetadata: NewLoadRequestMetadata(loadOp),
 	}

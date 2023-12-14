@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"context"
 	"errors"
 
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -23,17 +25,17 @@ func GetUserFromBrowserSession(browserSession session.Session, site *meta.Site) 
 }
 
 func GetSessionFromUser(sessionID string, user *meta.User, site *meta.Site) (*sess.Session, error) {
-	session := sess.New(sessionID, user, site)
-	profileKey := session.GetContextProfile()
+	s := sess.New(sessionID, user, site)
+	profileKey := s.GetContextProfile()
 	if profileKey == "" {
 		return nil, errors.New("No profile found in session")
 	}
-	profile, err := datasource.LoadAndHydrateProfile(profileKey, session)
+	profile, err := datasource.LoadAndHydrateProfile(profileKey, s)
 	if err != nil {
 		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 	}
-	session.GetContextUser().Permissions = profile.FlattenPermissions()
-	return session, nil
+	s.GetContextUser().Permissions = profile.FlattenPermissions()
+	return s, nil
 }
 
 func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
@@ -44,9 +46,9 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 		return cachedUser, nil
 	}
 
-	session := sess.GetAnonSession(site)
+	s := sess.GetAnonSession(context.Background(), site)
 
-	user, err := GetUserByID(userid, session, nil)
+	user, err := GetUserByID(userid, s, nil)
 	if err != nil {
 		return nil, err
 	}

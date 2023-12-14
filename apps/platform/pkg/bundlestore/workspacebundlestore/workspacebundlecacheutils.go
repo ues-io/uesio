@@ -1,6 +1,7 @@
 package workspacebundlestore
 
 import (
+	"context"
 	"encoding/json"
 	"log/slog"
 	"os"
@@ -67,7 +68,7 @@ func getMinimumViableSession() *sess.Session {
 		FullName: "uesio/core",
 		Name:     "core",
 	}
-	return sess.New("wsbundlecache", &meta.User{
+	s := sess.New("wsbundlecache", &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "system",
 		},
@@ -87,6 +88,8 @@ func getMinimumViableSession() *sess.Session {
 		},
 		App: coreApp,
 	})
+	s.SetGoContext(context.Background())
+	return s
 }
 
 func handleWorkspaceMetadataChange(payload string) {

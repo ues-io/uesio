@@ -30,7 +30,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.ForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
+	err = auth.ForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -50,7 +50,7 @@ func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.ConfirmForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
+	err = auth.ConfirmForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
