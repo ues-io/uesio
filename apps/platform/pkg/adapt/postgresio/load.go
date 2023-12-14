@@ -307,5 +307,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	return datasource.HandleReferences(c, referencedCollections, session, true)
+	return datasource.HandleReferences(c, referencedCollections, session, &datasource.ReferenceOptions{
+		AllowMissingItems: true,
+	})
 }
