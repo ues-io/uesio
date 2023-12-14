@@ -13,9 +13,11 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
@@ -107,17 +109,13 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	userFileID := r.URL.Query().Get("userfileid")
 	version := r.URL.Query().Get("version")
 	if userFileID == "" {
-		err := errors.New("no userfileid in the request url query")
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid"))
 		return
 	}
 	buf := &bytes.Buffer{}
 	userFile, err := filesource.Download(buf, userFileID, session)
 	if err != nil {
-		err := errors.New("unable to load file:" + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -98,7 +99,7 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, se
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
 	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "true"), sess.GetAnonSession(session.GetSite()))
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, routingMergeData)
@@ -111,7 +112,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 		Session: session,
 	})
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -187,7 +188,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	adminSession := sess.GetAnonSession(session.GetSite())
 	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
-	// This method is usually used for returning "not found" errors, so if we can't derive a more specific error code,
+	// This method is usually used for returning "not found" ctlutil, so if we can't derive a more specific error code,
 	// default to 404, but ideally we would have a more specific code here.
 	statusCode := exceptions.GetStatusCodeForError(err)
 	if statusCode == http.StatusInternalServerError {

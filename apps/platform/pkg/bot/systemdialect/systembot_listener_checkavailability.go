@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -22,7 +21,7 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 	}
 
 	_, err = auth.GetUserByKey(username, systemSession, nil)
-	_, recordNotFound := err.(*datasource.RecordNotFoundError)
+	_, recordNotFound := err.(*exceptions.NotFoundException)
 	if recordNotFound {
 		return map[string]interface{}{
 			"message": "That username is available",

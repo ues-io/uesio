@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -51,7 +52,7 @@ func Secrets(w http.ResponseWriter, r *http.Request) {
 
 	response, err := getSecrets(session)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -70,11 +71,11 @@ func SetSecret(w http.ResponseWriter, r *http.Request) {
 	var setRequest SecretSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body"))
 		return
 	}
 	if err = datasource.SetSecretFromKey(namespace+"."+name, setRequest.Value, session); err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, &bot.BotResponse{

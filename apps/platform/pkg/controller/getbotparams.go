@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -56,7 +57,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
-		HandleError(w, exceptions.NewBadRequestException("Wrong bot type"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Wrong bot type"))
 		return
 	}
 
@@ -71,7 +72,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 
 	err := bundle.Load(robot, session, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

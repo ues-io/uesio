@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -30,7 +31,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 
 	profile, err := datasource.LoadAndHydrateProfile(user.Profile, session)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -46,7 +47,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -61,7 +62,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
-			HandleError(w, err)
+			ctlutil.HandleError(w, err)
 			return
 		}
 	}
@@ -80,7 +81,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
 		return
 	}
 
@@ -88,7 +89,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

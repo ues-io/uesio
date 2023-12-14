@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -20,7 +21,7 @@ func Favicon(w http.ResponseWriter, r *http.Request) {
 	}
 	fileItem, err := meta.NewFile(favicon)
 	if err != nil {
-		HandleError(w, exceptions.NewNotFoundException("favicon file not found"))
+		ctlutil.HandleError(w, exceptions.NewNotFoundException("favicon file not found"))
 		return
 	}
 

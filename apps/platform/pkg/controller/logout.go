@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -19,7 +20,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	site := session.GetSite()
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	session = sess.Logout(w, r, publicUser, session)
@@ -31,7 +32,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid login route: "+loginRoute))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login route: "+loginRoute))
 		return
 	}
 
