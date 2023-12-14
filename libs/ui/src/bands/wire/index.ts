@@ -284,9 +284,15 @@ const wireSlice = createSlice({
 				(existingCondition) => existingCondition.id === id
 			)
 			if (condition && isValueCondition(condition)) {
-				condition.value = value as PlainFieldValue
-				condition.values = values as PlainFieldValue[]
-				condition.inactive = inactive ?? false
+				if (value !== undefined) {
+					condition.value = value as PlainFieldValue
+				}
+				if (values !== undefined) {
+					condition.values = values as PlainFieldValue[]
+				}
+				if (inactive !== undefined) {
+					condition.inactive = inactive
+				}
 			}
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
