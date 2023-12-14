@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -98,7 +99,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap, err := getMetadataList(metadatatype, namespace, grouping, session)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

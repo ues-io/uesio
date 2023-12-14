@@ -2,7 +2,6 @@ package file
 
 import (
 	"bytes"
-	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -25,19 +25,15 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 
 	componentPack := meta.NewBaseComponentPack(namespace, name)
 
-	err := bundle.Load(componentPack, session, nil)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, "Not Found", http.StatusNotFound)
+	if err := bundle.Load(componentPack, session, nil); err != nil {
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	buf := &bytes.Buffer{}
 	fileMeta, err := bundle.GetItemAttachment(buf, componentPack, "dist/"+path, session)
-
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

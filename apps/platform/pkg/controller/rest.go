@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -50,7 +51,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	_, err := datasource.Load([]*wire.LoadOp{op}, session, nil)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("Load Failed: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Load Failed: "+err.Error()))
 		return
 	}
 

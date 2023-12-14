@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -25,25 +26,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid signup request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body"))
 		return
 	}
 
 	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
-		HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
 		return
 	}
 
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
-		HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
 		return
 	}
 
 	user, err := auth.Signup(signupMethod, payload, systemSession)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -54,7 +55,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -81,20 +82,20 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}, site)
 
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	systemSession, err := auth.GetSystemSession(site, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	// If signup confirmation succeeded, go ahead and log the user in
 	user, err := auth.GetUserByKey(username, systemSession, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

@@ -618,7 +618,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		}
 
 		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
-			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
+			return nil, err
 		}
 
 		//Set default order by: id - asc

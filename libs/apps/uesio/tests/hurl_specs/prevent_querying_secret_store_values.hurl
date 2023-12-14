@@ -40,9 +40,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body == "Load Failed: metadata: uesio/core.secretstorevalue: Metadata item: uesio/core.secretstorevalue is not public\n"
+body == "Metadata item: uesio/core.secretstorevalue is not public\n"
 
 # Invoke a bot that runs an integration action that fetches a secret which we SHOULD have access to
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/secret_access_tester

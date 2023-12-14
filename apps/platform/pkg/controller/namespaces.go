@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
@@ -47,7 +48,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 
 	namespaces, err := getNamespaces(metadatatype, session)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
