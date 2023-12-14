@@ -7,8 +7,9 @@ export default function createlogin(bot: ListenerBotApi) {
 	const code = bot.params.get("code")
 	const host = bot.params.get("host")
 	const link = host + redirect + "?code=" + code + "&username=" + username
-	const contenttype = "text/html"
+	const contentType = "text/html"
 	const from = "info@ues.io"
+	const fromName = "ues.io"
 	const subject = "User created in ues.io studio"
 	const body = `
 	<!DOCTYPE html>
@@ -24,9 +25,11 @@ export default function createlogin(bot: ListenerBotApi) {
 
 	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
 		to: [email],
+		toNames: [username],
 		from,
+		fromName,
 		subject,
-		plainbody: body,
-		contenttype,
+		plainBody: body,
+		contentType,
 	})
 }

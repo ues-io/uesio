@@ -56,4 +56,9 @@ definition:
       - text-slate-500
       - text-sm
       - font-light
+    drawer:
+      - bg-slate-50
+      - p-6
+      - border-b-1
+      - border-slate-150
 public: true

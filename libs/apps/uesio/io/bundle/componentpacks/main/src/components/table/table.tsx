@@ -20,6 +20,7 @@ import Button from "../../utilities/button/button"
 import Group from "../../utilities/group/group"
 import MenuButton from "../../utilities/menubutton/menubutton"
 import Paginator from "../../utilities/paginator/paginator"
+import drawerSignals from "./drawersignals"
 import { default as IOTable } from "../../utilities/table/table"
 
 import {
@@ -36,6 +37,7 @@ type TableDefinition = {
 	wire: string
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
+	drawer: definition.DefinitionList
 	rowactions?: RowAction[]
 	recordDisplay?: component.DisplayCondition[]
 	rownumbers?: boolean
@@ -76,6 +78,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	SET_READ_MODE: setReadMode,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
+	...drawerSignals,
 }
 
 const StyleDefaults = Object.freeze({
@@ -136,6 +139,12 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		Record<string, boolean>
 	>("selected", componentId, {})
 
+	const [openDrawers] = api.component.useStateSlice<Record<string, boolean>>(
+		"drawerState",
+		componentId,
+		{}
+	)
+
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -193,6 +202,23 @@ const Table: definition.UC<TableDefinition> = (props) => {
 							})}
 					</Group>
 				</FieldWrapper>
+		  )
+		: undefined
+
+	const isRowOpenFunc = definition.drawer
+		? (recordContext: RecordContext) =>
+				!!openDrawers?.[recordContext.item.getId()]
+		: undefined
+
+	const drawerRendererFunc = definition.drawer
+		? (recordContext: RecordContext) => (
+				<component.Slot
+					definition={definition}
+					componentType={componentType}
+					listName="drawer"
+					path={`${path}["drawer"]`}
+					context={recordContext.context}
+				/>
 		  )
 		: undefined
 
@@ -325,10 +351,12 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				}
 				defaultActionFunc={defaultActionsFunc}
 				rowActionsFunc={rowActionsFunc}
+				drawerRendererFunc={drawerRendererFunc}
 				columnHeaderFunc={columnHeaderFunc}
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
 				isDeletedFunc={isDeletedFunc}
+				isRowExpandedFunc={isRowOpenFunc}
 				isSelectedFunc={isSelectedFunc}
 				onSelectChange={onSelectChange}
 				onAllSelectChange={onAllSelectChange}

@@ -55,7 +55,7 @@ html {
 	font-family: "Material Icons";
 	font-style: normal;
 	font-weight: 400;
-	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/material-symbols/v2/materialsymbols.woff2") format("woff2");
+	src: url("{{ .StaticAssetsHost }}/static/vendor/fonts/material-symbols/v3/materialsymbols.woff2") format("woff2");
 }
 
 @font-face {
