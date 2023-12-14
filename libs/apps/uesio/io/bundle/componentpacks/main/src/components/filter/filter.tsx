@@ -63,6 +63,8 @@ const getFilterContent = (
 		case "CHECKBOX":
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
+			if (displayAs === "MULTISELECT")
+				return <MultiSelectFilter {...common} />
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
 			return <MultiSelectFilter {...common} />

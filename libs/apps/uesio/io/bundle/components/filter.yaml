@@ -109,6 +109,11 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: CHECKBOX
+      - label: Multi Select
+        value: MULTISELECT
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
@@ -116,6 +121,7 @@ properties:
         values:
           - DATE
           - CHECKBOX
+          - SELECT
   - name: label
     type: TEXT
     label: Label
