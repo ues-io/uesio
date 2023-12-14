@@ -55,14 +55,15 @@ func GetMetadataResponse(metadataResponse *wire.MetadataCache, collectionID, fie
 type FieldsMap map[string]FieldsMap
 
 func (fm *FieldsMap) getRequestFields() []wire.LoadRequestField {
+	if fm == nil {
+		return nil
+	}
 	fields := []wire.LoadRequestField{
 		{
 			ID: wire.ID_FIELD,
 		},
 	}
-	if fm == nil {
-		return fields
-	}
+
 	for fieldKey, subFields := range *fm {
 		fields = append(fields, wire.LoadRequestField{
 			ID:     fieldKey,
@@ -84,6 +85,32 @@ func (fm *FieldsMap) merge(newFields *FieldsMap) {
 			existing.merge(&subFields)
 		}
 	}
+}
+
+func (fm *FieldsMap) add(fieldKey string) {
+	fm.merge(getFieldsMap([]string{fieldKey}))
+}
+
+func (fm *FieldsMap) addMany(fieldKeys []string) {
+	fm.merge(getFieldsMap(fieldKeys))
+}
+
+func getFieldsMap(fieldKeys []string) *FieldsMap {
+	fieldsMap := FieldsMap{}
+	for _, fieldKey := range fieldKeys {
+		fieldParts := strings.Split(fieldKey, constant.RefSep)
+		if len(fieldParts) == 1 {
+			// This is somewhat wierd, but it prevents reference
+			// fields in the token from being fully loaded.
+			// It shouldn't affect other fields
+			fieldsMap[fieldKey] = FieldsMap{
+				wire.ID_FIELD: nil,
+			}
+		} else {
+			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], constant.RefSep)})
+		}
+	}
+	return &fieldsMap
 }
 
 type MetadataRequestOptions struct {
@@ -336,12 +363,21 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{wire.ID_FIELD, wire.UNIQUE_KEY_FIELD, metadata.NameField}
+			if metadata.AccessField != "" {
+				collection.merge(&FieldsMap{
+					metadata.AccessField: nil,
+				})
+			}
+			if mr.Options.LoadAccessFields {
+				if metadata.RecordChallengeTokens != nil {
+					collection.merge(getFieldsForTokens(metadata.RecordChallengeTokens))
+				}
+			}
+
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
-			if metadata.AccessField != "" {
-				fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
-			}
+
 			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
@@ -353,8 +389,6 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			if err != nil {
 				return err
 			}
-			// Get all Fields from the AccessFields collection
-			additionalRequests.Options.LoadAllFields = true
 			err = additionalRequests.AddCollection(accessFieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
 				return err
