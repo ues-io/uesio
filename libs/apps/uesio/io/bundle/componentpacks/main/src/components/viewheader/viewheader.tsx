@@ -1,4 +1,5 @@
 import { component, styles, definition } from "@uesio/ui"
+import { default as IOViewHeader } from "../../utilities/viewheader/viewheader"
 
 const StyleDefaults = Object.freeze({
 	root: [],
@@ -24,9 +25,11 @@ const ViewHeader: definition.UC<ViewHeaderDefinition> = (props) => {
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
-		<div className={classes.root}>
-			<div className={classes.logo}>
-				{logo && (
+		<IOViewHeader
+			classes={classes}
+			context={context}
+			logo={
+				logo && (
 					<component.Slot
 						definition={definition}
 						listName="logo"
@@ -34,45 +37,43 @@ const ViewHeader: definition.UC<ViewHeaderDefinition> = (props) => {
 						context={context}
 						componentType={componentType}
 					/>
-				)}
-			</div>
-			<div className={classes.content}>
-				<div className={classes.left}>
-					{left && (
-						<component.Slot
-							definition={definition}
-							listName="left"
-							path={props.path}
-							context={context}
-							componentType={componentType}
-						/>
-					)}
-				</div>
-				<div className={classes.center}>
-					{center && (
-						<component.Slot
-							definition={definition}
-							listName="center"
-							path={props.path}
-							context={context}
-							componentType={componentType}
-						/>
-					)}
-				</div>
-				<div className={classes.right}>
-					{right && (
-						<component.Slot
-							definition={definition}
-							listName="right"
-							path={props.path}
-							context={context}
-							componentType={componentType}
-						/>
-					)}
-				</div>
-			</div>
-			<div className={classes.avatar}>
-				{avatar && (
+				)
+			}
+			left={
+				left && (
+					<component.Slot
+						definition={definition}
+						listName="left"
+						path={props.path}
+						context={context}
+						componentType={componentType}
+					/>
+				)
+			}
+			center={
+				center && (
+					<component.Slot
+						definition={definition}
+						listName="center"
+						path={props.path}
+						context={context}
+						componentType={componentType}
+					/>
+				)
+			}
+			right={
+				right && (
+					<component.Slot
+						definition={definition}
+						listName="right"
+						path={props.path}
+						context={context}
+						componentType={componentType}
+					/>
+				)
+			}
+			avatar={
+				avatar && (
 					<component.Slot
 						definition={definition}
 						listName="avatar"
@@ -80,9 +81,9 @@ const ViewHeader: definition.UC<ViewHeaderDefinition> = (props) => {
 						context={context}
 						componentType={componentType}
 					/>
-				)}
-			</div>
-		</div>
+				)
+			}
+		/>
 	)
 }
 

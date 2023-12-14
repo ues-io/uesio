@@ -4,18 +4,10 @@ import HeaderCrumbs from "./headercrumbs"
 import { useBuildMode } from "../../api/stateapi"
 
 const StyleDefaults = Object.freeze({
-	root: [
-		"grid-flow-col",
-		"justify-between",
-		"h-[60px]",
-		"bg-slate-50",
-		"items-center",
-		"gap-2",
-		"px-4",
-		"shrink-0",
-	],
-	logo: ["pr-4", "opacity-80"],
-	avatar: ["h-9", "w-9", "border-2", "border-white"],
+	root: ["bg-slate-50", "py-2"],
+	logo: ["px-4"],
+	avatar: ["px-3"],
+	avatarInner: ["border-2", "border-white", "h-9", "w-9"],
 })
 
 // Yes, navigator.platform is deprecated, but according to MDN in 2023
@@ -28,12 +20,11 @@ export const metaKey =
 
 const MainHeader: definition.UtilityComponent = (props) => {
 	const { context, id } = props
-	const Grid = component.getUtility("uesio/io.grid")
-	const Group = component.getUtility("uesio/io.group")
 	const IOImage = component.getUtility("uesio/io.image")
 	const Avatar = component.getUtility("uesio/io.avatar")
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
+	const ViewHeader = component.getUtility("uesio/io.viewheader")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 	const [buildMode, setBuildMode] = useBuildMode(context)
@@ -50,48 +41,53 @@ const MainHeader: definition.UtilityComponent = (props) => {
 		context
 	)
 	return (
-		<Grid className={classes.root} context={context}>
-			<Group context={context}>
+		<ViewHeader
+			classes={classes}
+			logo={
 				<IOImage
-					className={classes.logo}
 					height="34"
 					file="uesio/core.logo"
 					context={context}
 					onClick={homeLogoOnClick}
 					link={homeLogoLink}
 				/>
-				<HeaderCrumbs context={context} />
-			</Group>
-			<Group context={context} className="gap-3">
-				<Button
-					context={context}
-					label={"Preview"}
-					icon={
-						<Icon
-							context={context}
-							weight={300}
-							fill={false}
-							icon={"visibility"}
-						/>
-					}
-					variant="uesio/builder.secondarytoolbar"
-					onClick={() => {
-						api.builder.getBuilderDeps(context).then(() => {
-							setBuildMode(!buildMode)
-						})
-					}}
-					tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
-					tooltipPlacement="left"
-				/>
-				<SaveCancelArea id={id} context={context} />
+			}
+			left={<HeaderCrumbs context={context} />}
+			right={
+				<>
+					<Button
+						context={context}
+						label={"Preview"}
+						icon={
+							<Icon
+								context={context}
+								weight={300}
+								fill={false}
+								icon={"visibility"}
+							/>
+						}
+						variant="uesio/builder.secondarytoolbar"
+						onClick={() => {
+							api.builder.getBuilderDeps(context).then(() => {
+								setBuildMode(!buildMode)
+							})
+						}}
+						tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
+						tooltipPlacement="left"
+					/>
+					<SaveCancelArea id={id} context={context} />
+				</>
+			}
+			avatar={
 				<Avatar
-					className={classes.avatar}
+					className={classes.avatarInner}
 					image="$User{picture}"
 					text="$User{initials}"
 					context={context}
 				/>
-			</Group>
-		</Grid>
+			}
+			context={context}
+		/>
 	)
 }
 

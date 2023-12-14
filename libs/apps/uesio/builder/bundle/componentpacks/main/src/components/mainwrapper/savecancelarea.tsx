@@ -16,32 +16,30 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 		cancel(context)
 	})
 
+	if (!hasChanges) return null
+
 	return (
 		<Group context={context}>
-			{hasChanges && (
-				<>
-					<Button
-						context={context}
-						label="Save Changes"
-						id={`${id}:save-builder-changes`}
-						disabled={!hasChanges}
-						variant="uesio/builder.primarytoolbar"
-						onClick={() => {
-							save(context)
-						}}
-					/>
-					<Button
-						context={context}
-						id={`${id}:cancel-builder-changes`}
-						label="Cancel"
-						disabled={!hasChanges}
-						variant="uesio/builder.secondarytoolbar"
-						onClick={() => {
-							cancel(context)
-						}}
-					/>
-				</>
-			)}
+			<Button
+				context={context}
+				label="Save Changes"
+				id={`${id}:save-builder-changes`}
+				disabled={!hasChanges}
+				variant="uesio/builder.primarytoolbar"
+				onClick={() => {
+					save(context)
+				}}
+			/>
+			<Button
+				context={context}
+				id={`${id}:cancel-builder-changes`}
+				label="Cancel"
+				disabled={!hasChanges}
+				variant="uesio/builder.secondarytoolbar"
+				onClick={() => {
+					cancel(context)
+				}}
+			/>
 		</Group>
 	)
 }

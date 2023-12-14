@@ -9,10 +9,6 @@ definition:
         logo:
           - uesio/io.image:
               uesio.id: img-uesio-logo
-              uesio.styleTokens:
-                root:
-                  - mx-4
-                  - opacity-80
               height: 34
               file: uesio/core.logo
               signals:
@@ -137,7 +133,6 @@ definition:
           - uesio/io.avatar:
               uesio.styleTokens:
                 root:
-                  - mx-3
                   - border-2
                   - border-white
                   - h-9
