@@ -6,11 +6,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
-
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func Save(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +23,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if err := datasource.Save(saveRequestBatch.Wires, session); err != nil {
-		_, ok := err.(*wire.SaveError)
+		_, ok := err.(*exceptions.SaveException)
 		// If the error is a save error still respond
 		if ok {
 			file.RespondJSON(w, r, &saveRequestBatch)

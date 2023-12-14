@@ -18,13 +18,13 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string            `json:"collection"`
-	Wire       string            `json:"wire"`
-	Changes    meta.Group        `json:"changes"`
-	Deletes    meta.Group        `json:"deletes"`
-	Errors     []wire.SaveError  `json:"errors"`
-	Options    *wire.SaveOptions `json:"options"`
-	Params     map[string]string `json:"params"`
+	Collection string                     `json:"collection"`
+	Wire       string                     `json:"wire"`
+	Changes    meta.Group                 `json:"changes"`
+	Deletes    meta.Group                 `json:"deletes"`
+	Errors     []exceptions.SaveException `json:"errors"`
+	Options    *wire.SaveOptions          `json:"options"`
+	Params     map[string]string          `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -131,8 +131,8 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	return nil
 }
 
-func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *wire.SaveError {
-	saveError := wire.NewGenericSaveError(err)
+func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *exceptions.SaveException {
+	saveError := wire.NewGenericSaveException(err)
 	op.AddError(saveError)
 	return saveError
 }
@@ -188,7 +188,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Check for population errors here
 	if op.HasErrors() {
-		return wire.NewGenericSaveError(errors.New("Error with field population"))
+		return wire.NewGenericSaveException(errors.New("Error with field population"))
 	}
 
 	err = runBeforeSaveBots(op, connection, session)
@@ -299,7 +299,7 @@ func SaveOps(batch []*wire.SaveOp, connection wire.Connection, session *sess.Ses
 			err2 := runDynamicCollectionSaveBots(op, connection, session)
 			if err2 != nil {
 				// If this error is already in the save op, don't add it again
-				if _, isGenericSaveError := err2.(*wire.SaveError); isGenericSaveError {
+				if _, isSaveException := err2.(*exceptions.SaveException); isSaveException {
 					return err2
 				} else {
 					return HandleErrorAndAddToSaveOp(op, err2)
