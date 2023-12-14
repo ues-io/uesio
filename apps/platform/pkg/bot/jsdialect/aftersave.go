@@ -4,6 +4,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -41,7 +42,7 @@ func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connec
 }
 
 func (as *AfterSaveAPI) AddError(message string) {
-	as.op.AddError(wire.NewSaveError("", "", message))
+	as.op.AddError(exceptions.NewSaveException("", "", message))
 }
 
 func (as *AfterSaveAPI) Save(collection string, changes wire.Collection) error {

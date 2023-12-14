@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -19,7 +20,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -28,7 +29,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	returnParams, err := datasource.CallListenerBotInTransaction(namespace, name, params, session)
 
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

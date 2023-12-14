@@ -2,7 +2,6 @@ package postgresio
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -241,7 +240,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
 	if err != nil {
-		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
+		return TranslatePGError(err)
 	}
 	defer rows.Close()
 
@@ -258,7 +257,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 		err := rows.Scan(item)
 		if err != nil {
-			return err
+			return TranslatePGError(err)
 		}
 
 		for _, refCol := range referencedCollections {
@@ -291,9 +290,8 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		index++
 
 	}
-	err = rows.Err()
-	if err != nil {
-		return err
+	if err = rows.Err(); err != nil {
+		return TranslatePGError(err)
 	}
 
 	//fmt.Printf("PG LOAD %v %v\n", op.CollectionName, time.Since(start))

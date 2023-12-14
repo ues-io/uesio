@@ -5,6 +5,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
@@ -51,7 +52,7 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 	view := meta.NewBaseView(namespace, name)
 
 	if err := bundle.Load(view, session, nil); err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	} else {
 		file.RespondJSON(w, r, getViewParamResponse((*yaml.Node)(view.Definition)))

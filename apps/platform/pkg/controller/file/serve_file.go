@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -21,11 +22,8 @@ const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=3153600
 
 func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 	w.Header().Set("content-type", "text/json")
-
-	err := json.NewEncoder(w).Encode(v)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(v); err != nil {
+		ctlutil.HandleError(w, err)
 		return
 	}
 }
@@ -57,17 +55,14 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 
 	session := middleware.GetSession(r)
 
-	err := bundle.Load(file, session, nil)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, "Not Found", http.StatusNotFound)
+	if err := bundle.Load(file, session, nil); err != nil {
+		ctlutil.HandleError(w, err)
 		return
 	}
 	buf := &bytes.Buffer{}
 	fileMetadata, err := bundle.GetItemAttachment(buf, file, file.Path, session)
 	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, "Failed File Download", http.StatusInternalServerError)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

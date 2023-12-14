@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -25,7 +26,7 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 	deps.Collection = nil
 
 	if err := routing.GetBuilderDependencies(namespace, name, deps, session); err != nil {
-		HandleError(w, exceptions.NewBadRequestException("Failed Getting Builder Metadata: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Builder Metadata: "+err.Error()))
 		return
 	}
 

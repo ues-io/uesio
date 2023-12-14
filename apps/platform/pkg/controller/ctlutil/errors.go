@@ -1,4 +1,4 @@
-package controller
+package ctlutil
 
 import (
 	"log/slog"

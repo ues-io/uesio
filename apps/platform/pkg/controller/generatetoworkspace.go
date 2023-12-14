@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 
@@ -26,7 +27,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
 		// this should be a BadRequestException
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

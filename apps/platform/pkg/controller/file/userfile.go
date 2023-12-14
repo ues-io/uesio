@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,9 +12,11 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
@@ -75,56 +76,43 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 }
 
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
-
-	result, err := processUploadRequest(r)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if result, err := processUploadRequest(r); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		RespondJSON(w, r, result)
 	}
-
-	RespondJSON(w, r, result)
 }
 
+// DeleteUserFile deletes the requested user file
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userFileID := vars["fileid"]
 	session := middleware.GetSession(r)
-	// Load all the userfile records
-	err := filesource.Delete(userFileID, session)
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := filesource.Delete(mux.Vars(r)["fileid"], session); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		RespondJSON(w, r, &bot.BotResponse{
+			Success: true,
+		})
 	}
-	RespondJSON(w, r, &bot.BotResponse{
-		Success: true,
-	})
 }
 
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-	userFileID := r.URL.Query().Get("userfileid")
-	version := r.URL.Query().Get("version")
+	query := r.URL.Query()
+	userFileID := query.Get("userfileid")
+	version := query.Get("version")
 	if userFileID == "" {
-		err := errors.New("no userfileid in the request url query")
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid"))
 		return
 	}
 	buf := &bytes.Buffer{}
-	userFile, err := filesource.Download(buf, userFileID, session)
-	if err != nil {
-		err := errors.New("unable to load file:" + err.Error())
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if userFile, err := filesource.Download(buf, userFileID, session); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		respondFile(w, r, &FileRequest{
+			Path:         userFile.Path,
+			LastModified: time.Unix(userFile.UpdatedAt, 0),
+			Namespace:    "",
+			Version:      version,
+		}, bytes.NewReader(buf.Bytes()))
 	}
-
-	respondFile(w, r, &FileRequest{
-		Path:         userFile.Path,
-		LastModified: time.Unix(userFile.UpdatedAt, 0),
-		Namespace:    "",
-		Version:      version,
-	}, bytes.NewReader(buf.Bytes()))
 }

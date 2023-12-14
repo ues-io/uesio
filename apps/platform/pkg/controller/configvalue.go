@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -80,7 +81,7 @@ func ConfigValues(w http.ResponseWriter, r *http.Request) {
 
 	response, err := getValues(session)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -95,7 +96,7 @@ func ConfigValue(w http.ResponseWriter, r *http.Request) {
 
 	response, err := getValue(session, key)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -114,11 +115,11 @@ func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 	var setRequest ConfigValueSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid request format"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request format"))
 		return
 	}
 	if err = configstore.SetValueFromKey(namespace+"."+name, setRequest.Value, session); err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, &bot.BotResponse{

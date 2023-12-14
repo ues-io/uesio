@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -91,15 +92,14 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 			continue
 		}
 
-		err = b.GetItem(retrievedItem, version, session)
-		if err != nil {
-			if _, ok := err.(*bundlestore.PermissionError); ok {
+		// TODO: Shouldn't we return these errors?
+		if err = b.GetItem(retrievedItem, version, session); err != nil {
+			switch err.(type) {
+			case *exceptions.NotFoundException, *exceptions.ForbiddenException:
 				continue
+			default:
+				return err
 			}
-			if _, ok := err.(*bundlestore.NotFoundError); ok {
-				continue
-			}
-			return err
 		}
 		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, conditions) {
 			group.AddItem(retrievedItem)
