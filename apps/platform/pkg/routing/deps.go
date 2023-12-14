@@ -281,7 +281,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 	}
 
 	if viewInstanceID != "" {
-		ops := []*wire.LoadOp{}
+		var ops []*wire.LoadOp
 
 		for _, pair := range depMap.Wires {
 
@@ -297,8 +297,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 				Params:    params,
 				Preloaded: true,
 			}
-			err := pair.Node.Decode(loadOp)
-			if err != nil {
+			if err := pair.Node.Decode(loadOp); err != nil {
 				return err
 			}
 			ops = append(ops, loadOp)

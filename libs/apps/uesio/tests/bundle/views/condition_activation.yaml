@@ -1,0 +1,72 @@
+name: condition_activation
+definition:
+  # Wires connect to data in collections
+  wires:
+    conditions:
+      collection: uesio/tests.wire_condition
+      fields:
+        uesio/tests.name:
+        uesio/tests.select:
+        uesio/core.owner:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.createdby:
+        uesio/core.createdat:
+      conditions:
+        - field: uesio/tests.name
+          value: ID-002
+          id: one
+          inactive: true
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.titlebar:
+        title: uesio/tests.wire_condition
+        uesio.variant: uesio/io.main
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.group:
+              components:
+                - uesio/io.button:
+                    uesio.id: toggleCondition
+                    uesio.variant: uesio/io.primary
+                    text: Toggle Condition
+                    signals:
+                      - signal: wire/TOGGLE_CONDITION
+                        wire: conditions
+                        conditionId: one
+                      - signal: wire/LOAD
+                        wires:
+                          - conditions
+                - uesio/io.button:
+                    uesio.id: setConditionValue
+                    uesio.variant: uesio/io.primary
+                    text: Set Condition value
+                    signals:
+                      - signal: wire/SET_CONDITION_VALUE
+                        wire: conditions
+                        conditionId: one
+                        value: ID-003
+                      - signal: wire/LOAD
+                        wires:
+                          - conditions
+                - uesio/io.button:
+                    uesio.id: resetNamedConditions
+                    uesio.variant: uesio/io.primary
+                    text: Reset named Conditions
+                    signals:
+                      - signal: wire/RESET_CONDITIONS
+                        wire: conditions
+                      - signal: wire/LOAD
+                        wires:
+                          - conditions
+          - uesio/io.table:
+              columns:
+                - field: uesio/tests.name
+                - field: uesio/tests.select
+                - field: uesio/core.owner
+                - field: uesio/core.createdby
+                - field: uesio/core.createdat
+              uesio.id: conditionsTable
+              mode: EDIT
+              wire: conditions

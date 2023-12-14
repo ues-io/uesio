@@ -23,6 +23,7 @@ import initWiresOp from "./operations/initialize"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
+import resetConditionsOp from "./operations/resetconditions"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 
 import { WireConditionState } from "./conditions/conditions"
@@ -78,8 +79,9 @@ interface SetConditionSignal extends SignalDefinition {
 }
 interface SetConditionValueSignal extends SignalDefinition {
 	wire: string
-	value: string | number | boolean
 	conditionId: string
+	value?: PlainFieldValue
+	values?: PlainFieldValue[]
 }
 interface SetOrderSignal extends SignalDefinition {
 	wire: string
@@ -114,6 +116,10 @@ interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
 	searchFields?: string[]
+}
+
+interface ResetConditionsSignal extends SignalDefinition {
+	wire: string
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -219,12 +225,10 @@ const signals: Record<string, SignalDescriptor> = {
 
 	[`${WIRE_BAND}/SET_CONDITION_VALUE`]: {
 		dispatcher: (signal: SetConditionValueSignal, context: Context) =>
-			setConditionValueOp(
+			setConditionValueOp({
 				context,
-				context.mergeString(signal.wire),
-				context.mergeString(signal.conditionId),
-				context.merge(signal.value) as PlainFieldValue
-			),
+				...context.mergeMap<SetConditionValueSignal>(signal),
+			}),
 	},
 	[`${WIRE_BAND}/SET_CONDITION`]: {
 		dispatcher: (signal: SetConditionSignal, context: Context) =>
@@ -293,6 +297,10 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/SAVE`]: {
 		dispatcher: (signal: SaveWiresSignal, context: Context) =>
 			saveWiresOp(context, mergeSignalWireNames(signal, context)),
+	},
+	[`${WIRE_BAND}/RESET_CONDITIONS`]: {
+		dispatcher: (signal: ResetConditionsSignal, context: Context) =>
+			resetConditionsOp(context, context.mergeString(signal.wire)),
 	},
 }
 
