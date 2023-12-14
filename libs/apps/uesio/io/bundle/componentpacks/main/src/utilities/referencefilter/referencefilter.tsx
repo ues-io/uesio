@@ -34,7 +34,7 @@ const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 								value: value
 									? value[collection.ID_FIELD]
 									: null,
-								inactive: value === null,
+								inactive: value === null || value === undefined,
 							},
 						},
 						{

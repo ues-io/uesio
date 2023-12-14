@@ -37,18 +37,21 @@ const wireDef1 = {
 			field: "ben/planets.name",
 			valueSource: "VALUE",
 			value: "kepler",
+			inactive: true,
 		},
 		{
 			id: "456",
 			field: "ben/planets.galaxy",
 			valueSource: "VALUE",
 			values: [1, 2],
+			inactive: false,
 		},
 		{
 			field: "uesio/core.id",
 			valueSource: "VALUE",
 			operator: "IN",
 			values: ["abc", "defg"],
+			inactive: false,
 		},
 	] as ValueConditionState[],
 }
@@ -61,6 +64,7 @@ const wireDef2 = {
 			field: "ben/planets.name",
 			valueSource: "VALUE",
 			value: "$Param{first} $Param{last}",
+			inactive: true,
 		} as ValueConditionState,
 	],
 	fields: {},
@@ -95,12 +99,23 @@ const tests: WireSignalTest[] = [
 		run: () => (wire) => () => {
 			expect(wire).toMatchObject({
 				conditions: [
-					{ id: "123", field: "ben/planets.name", value: "kepler" },
-					{ id: "456", field: "ben/planets.galaxy", values: [1, 2] },
+					{
+						id: "123",
+						field: "ben/planets.name",
+						value: "kepler",
+						inactive: true,
+					},
+					{
+						id: "456",
+						field: "ben/planets.galaxy",
+						values: [1, 2],
+						inactive: false,
+					},
 					{
 						field: "uesio/core.id",
 						operator: "IN",
 						values: ["abc", "defg"],
+						inactive: false,
 					},
 				],
 			})
@@ -144,6 +159,7 @@ const tests: WireSignalTest[] = [
 					field: "ben/planets.name",
 					valueSource: "VALUE",
 					value: "Luigi Vampa",
+					inactive: true,
 				},
 			])
 		},

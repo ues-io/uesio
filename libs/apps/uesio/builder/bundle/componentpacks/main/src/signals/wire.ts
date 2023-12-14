@@ -39,7 +39,7 @@ const getConditionIdsDescriptor = (wire: string): ComponentProperty => ({
 	type: "CONDITION",
 	filter: (def: wire.WireConditionState) => !!def.id,
 	wire,
-	label: "condition",
+	label: "Condition",
 })
 
 const getWireAndConditionsDescriptor = (wire: string) => [
@@ -252,7 +252,7 @@ const signals: SignalBandDefinition = {
 				{
 					name: "value",
 					type: "TEXT",
-					label: "value",
+					label: "Value",
 				},
 			],
 		},

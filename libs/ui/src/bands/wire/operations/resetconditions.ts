@@ -12,10 +12,11 @@ export default (context: Context, wireName: string) => {
 		const viewId = context.getViewId()
 		wireDef.conditions.forEach((condition) => {
 			if (condition.id && isValueCondition(condition)) {
-				const { id, value, values } = condition
+				const { id, value, values, inactive } = condition
 				const payload = {
 					entity: getFullWireId(viewId, wireName),
 					id,
+					inactive: context.mergeBoolean(inactive, false),
 				} as SetConditionValuePayload
 				if (value ?? false)
 					payload.value = context.merge(value as Mergeable)
