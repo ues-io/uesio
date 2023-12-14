@@ -2,7 +2,6 @@ package postgresio
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -241,7 +241,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
 	if err != nil {
-		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
+		return exceptions.NewBadRequestException("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
 	}
 	defer rows.Close()
 

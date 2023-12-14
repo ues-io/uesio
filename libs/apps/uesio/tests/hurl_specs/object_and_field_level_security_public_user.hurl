@@ -20,9 +20,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body contains "Load Failed: Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
+body contains "Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
 
 # Object level security -- we SHOULD be able to query the animal collection
 # because the public profile DOES have access to it

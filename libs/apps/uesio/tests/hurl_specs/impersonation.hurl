@@ -96,9 +96,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body == "Load Failed: Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection.\n"
+body == "Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection.\n"
 
 # Verify that I can still load routes and their dependencies
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
@@ -139,9 +139,9 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 403
 [Asserts]
-body == "Load Failed: Profile uesio/tests.public does not have read access to the uesio/tests.account collection.\n"
+body == "Profile uesio/tests.public does not have read access to the uesio/tests.account collection.\n"
 
 # But I should be able to see animal records
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

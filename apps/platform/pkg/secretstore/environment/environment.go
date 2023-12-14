@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type SecretStore struct {
@@ -22,7 +23,7 @@ var secretValues = map[string]string{
 func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 	value, ok := secretValues[key]
 	if !ok {
-		return "", errors.New("Secret Value not found: " + key)
+		return "", exceptions.NewNotFoundException("Secret Value not found: " + key)
 	}
 	return value, nil
 }

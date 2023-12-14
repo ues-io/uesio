@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
@@ -68,14 +69,14 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 	hasPermission := b.Permissions.HasPermission(item.GetPermChecker())
 	if !hasPermission {
 		message := fmt.Sprintf("No Permission to metadata item: %s : %s", item.GetCollectionName(), key)
-		return bundlestore.NewPermissionError(message)
+		return exceptions.NewForbiddenException(message)
 	}
 
 	if doCache {
 		cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key)
 		if ok {
 			if !b.AllowPrivate && !cachedItem.IsPublic() {
-				return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+				return exceptions.NewForbiddenException("Metadata item: " + key + " is not public")
 			}
 			return meta.Copy(item, cachedItem)
 		}
@@ -84,7 +85,7 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 	buf := &bytes.Buffer{}
 	fileMetadata, err := download(buf, filepath.Join(getBasePath(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
-		return bundlestore.NewNotFoundError("Metadata item: " + key + " does not exist")
+		return exceptions.NewNotFoundException("Metadata item: " + key + " does not exist")
 	}
 	item.SetModified(*fileMetadata.LastModified())
 	err = bundlestore.DecodeYAML(item, buf)
@@ -92,7 +93,7 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 		return err
 	}
 	if !b.AllowPrivate && !item.IsPublic() {
-		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+		return exceptions.NewForbiddenException("Metadata item: " + key + " is not public")
 	}
 	if !doCache {
 		return nil
@@ -138,16 +139,14 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 			continue
 		}
 
-		err = b.GetItem(retrievedItem)
-
-		if err != nil {
-			if _, ok := err.(*bundlestore.PermissionError); ok {
+		// TODO: Shouldn't we return these errors?
+		if err = b.GetItem(retrievedItem); err != nil {
+			switch err.(type) {
+			case *exceptions.NotFoundException, *exceptions.ForbiddenException:
 				continue
+			default:
+				return err
 			}
-			if _, ok := err.(*bundlestore.NotFoundError); ok {
-				continue
-			}
-			return err
 		}
 
 		// Check to see if the item meets bundle conditions

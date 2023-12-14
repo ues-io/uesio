@@ -88,21 +88,19 @@ func Route(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
-	routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite()))
-	if err != nil {
-		slog.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSession(session.GetSite())); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		file.RespondJSON(w, r, routingMergeData)
 	}
-	file.RespondJSON(w, r, routingMergeData)
 }
 
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
-	routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "true"), sess.GetAnonSession(session.GetSite()))
-	if err != nil {
+	if routingMergeData, err := getRouteAPIResult(getNotFoundRoute(path, "You may need to log in again.", "true"), sess.GetAnonSession(session.GetSite())); err != nil {
 		ctlutil.HandleError(w, err)
-		return
+	} else {
+		file.RespondJSON(w, r, routingMergeData)
 	}
-	file.RespondJSON(w, r, routingMergeData)
 }
 
 func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.Route, session *sess.Session) {
