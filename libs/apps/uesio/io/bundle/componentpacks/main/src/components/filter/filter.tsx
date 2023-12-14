@@ -111,6 +111,18 @@ const getDefaultCondition = (
 						field: fieldName,
 				  }
 		}
+		case "SELECT": {
+			return !displayAs
+				? {
+						id: path,
+						field: fieldName,
+				  }
+				: {
+						id: path,
+						operator: operator || "IN",
+						field: fieldName,
+				  }
+		}
 		case "MULTISELECT": {
 			return {
 				id: path,
