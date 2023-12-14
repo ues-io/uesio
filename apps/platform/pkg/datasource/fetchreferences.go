@@ -122,7 +122,7 @@ func FetchReferences(
 					}
 
 					return refIDReq.AddID(idFieldValue, wire.ReferenceLocator{
-						Item:  change,
+						Item:  change.FieldChanges,
 						Field: field,
 					})
 				}
@@ -138,7 +138,7 @@ func FetchReferences(
 					}
 
 					return refUniqueKeyReq.AddID(uniqueKeyFieldValue, wire.ReferenceLocator{
-						Item:  change,
+						Item:  change.FieldChanges,
 						Field: field,
 					})
 				}
@@ -153,11 +153,15 @@ func FetchReferences(
 		}
 	}
 
-	err := HandleReferences(connection, referencedIDCollections, session, false)
+	err := HandleReferences(connection, referencedIDCollections, session, &ReferenceOptions{
+		MergeItems: true,
+	})
 	if err != nil {
 		return err
 	}
 
-	return HandleReferences(connection, referencedUniqueKeyCollections, session, false)
+	return HandleReferences(connection, referencedUniqueKeyCollections, session, &ReferenceOptions{
+		MergeItems: true,
+	})
 
 }

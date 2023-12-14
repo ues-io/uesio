@@ -75,12 +75,21 @@ func LoadLooper(
 
 }
 
+type ReferenceOptions struct {
+	AllowMissingItems bool
+	MergeItems        bool
+}
+
 func HandleReferences(
 	connection wire.Connection,
 	referencedCollections wire.ReferenceRegistry,
 	session *sess.Session,
-	allowMissingItems bool,
+	options *ReferenceOptions,
 ) error {
+
+	if options == nil {
+		options = &ReferenceOptions{}
+	}
 
 	for collectionName, ref := range referencedCollections {
 
@@ -108,7 +117,7 @@ func HandleReferences(
 
 			// This means we tried to load some references, but they don't exist.
 			if refItem == nil {
-				if allowMissingItems {
+				if options.AllowMissingItems {
 					return nil
 				}
 				return fmt.Errorf("Missing Reference Item For Key: %s on %s -> %s", ID, collectionName, ref.GetMatchField())
@@ -122,6 +131,25 @@ func HandleReferences(
 				if err != nil {
 					return err
 				}
+
+				if options.MergeItems {
+					existingRef, err := concreteItem.GetField(locator.Field.GetFullName())
+					// Only continue with merge items if we already have a reference field
+					if err == nil && existingRef != nil {
+						existingRefItem, err := wire.GetLoadable(existingRef)
+						if err != nil {
+							return err
+						}
+						err = referenceValue.Loop(func(fieldName string, value interface{}) error {
+							return existingRefItem.SetField(fieldName, value)
+						})
+						if err != nil {
+							return err
+						}
+						continue
+					}
+				}
+
 				err = concreteItem.SetField(locator.Field.GetFullName(), referenceValue)
 				if err != nil {
 					return err
