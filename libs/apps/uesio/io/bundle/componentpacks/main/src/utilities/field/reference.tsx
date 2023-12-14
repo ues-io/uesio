@@ -108,7 +108,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		requirewriteaccess = false,
 		returnFields = [nameField],
 		searchFields = [nameField],
-		template,
+		template = "${" + nameField + "}",
 	} = options
 
 	const renderer = (item: wire.PlainWireRecord) => {
