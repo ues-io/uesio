@@ -648,13 +648,19 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 	for _, op := range allOps {
 
+		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
+		// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
+		// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
+		// etc. will also only include active condiitons).
+		// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
+		// conditions, and then we will, at the end of the operation, restore them back.
+		// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
+		// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
 		originalConditions := op.Conditions
 		activeConditions, err := processConditions(op.CollectionName, originalConditions, op.Params, metadataResponse, allOps, session)
 		if err != nil {
 			return nil, err
 		}
-		op.Conditions = activeConditions
-
 		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
 			return nil, err
@@ -674,6 +680,9 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
+		// Mutate the conditions immediately before handing off to the load implementations
+		op.Conditions = activeConditions
+
 		// 3 branches:
 		// 1. Dynamic collections
 		// 2. External integration collections
@@ -689,8 +698,9 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			// native Uesio DB loads
 			loadErr = LoadOp(op, connection, session)
 		}
-		// Regardless of what happened with the load, restore the original conditions list
+		// Regardless of what happened with the load, restore the original conditions list now that we're done
 		op.Conditions = originalConditions
+
 		if loadErr != nil {
 			return nil, loadErr
 		}

@@ -62,7 +62,7 @@ type AddConditionPayload = {
 
 type SetConditionValuePayload = {
 	id: string
-	value: FieldValue
+	value?: FieldValue
 	values?: FieldValue[]
 	inactive?: boolean
 } & EntityPayload
