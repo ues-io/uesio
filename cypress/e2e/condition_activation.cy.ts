@@ -15,16 +15,16 @@ describe("Condition activation/deactivation", () => {
 
 	const viewName = "condition_activation"
 
-	const assertConditionInactive = (inactive: boolean) => {
+	const assertConditionState = (inactive: boolean, value: string) => {
 		cy.getWireState(getViewID(username, appName, viewName), "conditions")
 			.its("conditions")
 			.should("have.length", 1)
 			.each(($condition) => {
 				cy.wrap($condition).should("deep.include", {
 					field: "uesio/tests.name",
-					value: "ID-002",
+					value,
 					inactive,
-					id: "id002",
+					id: "one",
 				})
 			})
 	}
@@ -43,7 +43,7 @@ describe("Condition activation/deactivation", () => {
 					)
 				)
 				getTableRows().should("have.length.above", 1)
-				assertConditionInactive(true)
+				assertConditionState(true, "ID-002")
 
 				// Toggle the condition to active
 				cy.clickButtonIfExists("toggleCondition")
@@ -51,12 +51,22 @@ describe("Condition activation/deactivation", () => {
 				// We should now have exactly one record in our table
 				getTableRows().should("have.length", 1)
 				// And the condition should be active
-				assertConditionInactive(false)
+				assertConditionState(false, "ID-002")
 
 				// Toggle the condition back to inactive
 				cy.clickButtonIfExists("toggleCondition")
 				getTableRows().should("have.length.above", 1)
-				assertConditionInactive(true)
+				assertConditionState(true, "ID-002")
+
+				// Change the condition value, which should also activate it again
+				cy.clickButtonIfExists("setConditionValue")
+				getTableRows().should("have.length", 1)
+				assertConditionState(false, "ID-003")
+
+				// Reset all named conditions, which should deactivate the named condition
+				cy.clickButtonIfExists("resetNamedConditions")
+				getTableRows().should("have.length.above", 1)
+				assertConditionState(true, "ID-002")
 			})
 		}
 	)

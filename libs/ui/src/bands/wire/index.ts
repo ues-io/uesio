@@ -284,14 +284,19 @@ const wireSlice = createSlice({
 				(existingCondition) => existingCondition.id === id
 			)
 			if (condition && isValueCondition(condition)) {
+				let activateCondition = false
 				if (value !== undefined) {
 					condition.value = value as PlainFieldValue
+					activateCondition = true
 				}
 				if (values !== undefined) {
 					condition.values = values as PlainFieldValue[]
+					activateCondition = true
 				}
 				if (inactive !== undefined) {
 					condition.inactive = inactive
+				} else if (activateCondition && condition.inactive) {
+					condition.inactive = false
 				}
 			}
 		}),

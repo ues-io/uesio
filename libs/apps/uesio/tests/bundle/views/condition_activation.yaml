@@ -15,7 +15,7 @@ definition:
       conditions:
         - field: uesio/tests.name
           value: ID-002
-          id: id002
+          id: one
           inactive: true
   # Components determine the layout and composition of your view
   components:
@@ -34,7 +34,29 @@ definition:
                     signals:
                       - signal: wire/TOGGLE_CONDITION
                         wire: conditions
-                        conditionId: id002
+                        conditionId: one
+                      - signal: wire/LOAD
+                        wires:
+                          - conditions
+                - uesio/io.button:
+                    uesio.id: setConditionValue
+                    uesio.variant: uesio/io.primary
+                    text: Set Condition value
+                    signals:
+                      - signal: wire/SET_CONDITION_VALUE
+                        wire: conditions
+                        conditionId: one
+                        value: ID-003
+                      - signal: wire/LOAD
+                        wires:
+                          - conditions
+                - uesio/io.button:
+                    uesio.id: resetNamedConditions
+                    uesio.variant: uesio/io.primary
+                    text: Reset named Conditions
+                    signals:
+                      - signal: wire/RESET_CONDITIONS
+                        wire: conditions
                       - signal: wire/LOAD
                         wires:
                           - conditions
