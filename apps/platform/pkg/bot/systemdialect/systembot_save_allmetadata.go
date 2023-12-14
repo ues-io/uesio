@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"log/slog"
+	"os"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -12,9 +14,23 @@ import (
 )
 
 // In my testing with the CRM app, the variable metadata key size can sway the total size by several 100 to 1000 bytes,
-// so just to err on the cautious size, sticking with a number that averages around 4K
-// (which is about half of the Postgres NOTIFY 8K limit)
-const metadataItemsChunkSize = 90
+// so just to err on the cautious size, sticking with a number that averages around 1K
+// (which is about 1/8 of the Postgres NOTIFY 8K limit).
+// We tried 4K (~90) and were seeing errors in Prod.
+const defaultMetadataItemsChunkSize = 20
+
+var maxItemsPerChunk int
+
+func init() {
+	if maxItemsPerChunkStr := os.Getenv("UESIO_WORKSPACE_CACHE_INVALIDATION_ITEMS_CHUNK"); maxItemsPerChunkStr != "" {
+		if intVal, err := strconv.Atoi(maxItemsPerChunkStr); err != nil {
+			maxItemsPerChunk = intVal
+		}
+	}
+	if maxItemsPerChunk == 0 {
+		maxItemsPerChunk = defaultMetadataItemsChunkSize
+	}
+}
 
 func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
@@ -53,8 +69,8 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 	}
 
 	// Chunk the messages to avoid hitting the max Postgres NOTIFY size limit
-	for i := 0; i < totalChangedKeys; i += metadataItemsChunkSize {
-		end := i + metadataItemsChunkSize
+	for i := 0; i < totalChangedKeys; i += maxItemsPerChunk {
+		end := i + maxItemsPerChunk
 		if end > totalChangedKeys {
 			end = totalChangedKeys
 		}
