@@ -90,6 +90,8 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.Collection = usageData
 
 	//get user references with the current site session
-	return datasource.HandleReferences(connection, referencedCollections, session, true)
+	return datasource.HandleReferences(connection, referencedCollections, session, &datasource.ReferenceOptions{
+		AllowMissingItems: true,
+	})
 
 }
