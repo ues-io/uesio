@@ -116,9 +116,11 @@ func HandleReferences(
 			},
 		}
 
-		nameFieldID := collectionNameField.GetFullName()
-		if collectionNameField != nil && nameFieldID != "" {
-			refFields = append(refFields, wire.LoadRequestField{ID: nameFieldID})
+		if collectionNameField != nil {
+			nameFieldID := collectionNameField.GetFullName()
+			if nameFieldID != "" && nameFieldID != wire.UNIQUE_KEY_FIELD && nameFieldID != wire.ID_FIELD {
+				refFields = append(refFields, wire.LoadRequestField{ID: nameFieldID})
+			}
 		}
 
 		ref.AddFields(refFields)

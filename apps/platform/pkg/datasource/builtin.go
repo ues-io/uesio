@@ -12,7 +12,7 @@ var COMMON_COLLECTION_METADATA = wire.CollectionMetadata{
 	PluralLabel: "Common",
 	Fields:      map[string]*wire.FieldMetadata{},
 	Type:        "DYNAMIC",
-	NameField:   wire.ID_FIELD,
+	NameField:   wire.UNIQUE_KEY_FIELD,
 }
 
 var ID_FIELD_DEF = meta.Field{
