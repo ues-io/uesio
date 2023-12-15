@@ -93,6 +93,14 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 						value: "wireHasNoSearchCondition",
 					},
 					{
+						label: "Wire has active conditions",
+						value: "wireHasActiveConditions",
+					},
+					{
+						label: "Wire has no active conditions",
+						value: "wireHasNoActiveConditions",
+					},
+					{
 						label: "Record is new",
 						value: "recordIsNew",
 					},
@@ -350,6 +358,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 					"wireHasRecords",
 					"wireHasSearchCondition",
 					"wireHasNoSearchCondition",
+					"wireHasActiveConditions",
+					"wireHasNoActiveConditions",
 				],
 				type: "fieldValue",
 			},

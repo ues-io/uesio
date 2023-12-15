@@ -137,6 +137,14 @@ type WireHasNoSearchCondition = {
 	type: "wireHasNoSearchCondition"
 	wire: string
 }
+type wireHasActiveConditions = {
+	type: "wireHasActiveConditions"
+	wire: string
+}
+type wireHasNoActiveConditions = {
+	type: "wireHasNoActiveConditions"
+	wire: string
+}
 
 type HasProfile = {
 	type: "hasProfile"
@@ -172,6 +180,8 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasSearchCondition
 	| WireHasNoSearchCondition
+	| wireHasActiveConditions
+	| wireHasNoActiveConditions
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
@@ -252,6 +262,18 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	if (condition.type === "wireHasNoChanges") {
 		const wire = context.getWire(condition.wire)
 		return !wire?.getChanges().length && !wire?.getDeletes().length
+	}
+	if (condition.type === "wireHasActiveConditions") {
+		const wire = context.getWire(condition.wire)
+		return !!wire
+			?.getConditions()
+			?.filter((condition) => condition.inactive !== true).length
+	}
+	if (condition.type === "wireHasNoActiveConditions") {
+		const wire = context.getWire(condition.wire)
+		return !wire
+			?.getConditions()
+			?.filter((condition) => condition.inactive !== true).length
 	}
 
 	if (
