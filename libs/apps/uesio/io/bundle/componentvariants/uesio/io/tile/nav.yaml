@@ -4,8 +4,8 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - py-2
-      - px-4
+      - py-1.5
+      - px-3.5
       - text-slate-600
       - focus:bg-white
       - focus:outline-offset-[-1px]
@@ -17,7 +17,7 @@ definition:
       - rounded
       - hover:shadow-sm
       - hover:border-1
-      - hover:border-slate-200
+      - hover:border-slate-500
     selected:
       - text-white
       - bg-primary
