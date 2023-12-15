@@ -22,6 +22,7 @@ interface TableUtilityProps<R, C extends TableColumn> {
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
 	drawerRendererFunc?: (row: R) => ReactNode
+	rowKeyFunc: (row: R) => string
 }
 
 const StyleDefaults = Object.freeze({
@@ -61,6 +62,7 @@ const Table: definition.UtilityComponent<
 		columnMenuFunc,
 		isDeletedFunc,
 		cellFunc,
+		rowKeyFunc,
 		context,
 	} = props
 	const classes = styles.useUtilityStyleTokens(
@@ -180,7 +182,7 @@ const Table: definition.UtilityComponent<
 										isDeletedFunc?.(row) &&
 											classes.rowDeleted
 									)}
-									key={index + 1}
+									key={rowKeyFunc(row)}
 								>
 									{(rowNumberFunc || isSelectedFunc) && (
 										<td
