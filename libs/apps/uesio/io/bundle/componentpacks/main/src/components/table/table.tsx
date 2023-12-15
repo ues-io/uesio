@@ -332,6 +332,9 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
 
+	const rowKeyFunc = (recordContext: RecordContext) =>
+		recordContext.item.getId()
+
 	return (
 		<>
 			<IOTable
@@ -361,6 +364,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				onSelectChange={onSelectChange}
 				onAllSelectChange={onAllSelectChange}
 				isAllSelectedFunc={isAllSelectedFunc}
+				rowKeyFunc={rowKeyFunc}
 			/>
 			{((pageSize > 0 && maxPages > 1) || wire.hasMore()) && (
 				<Paginator
