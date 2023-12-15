@@ -2,6 +2,10 @@ name: detailview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
+  - name: headerview
+    prompt: Header View
+    type: METADATA
+    metadataType: VIEW
   - name: collection
     prompt: Collection
     type: METADATA

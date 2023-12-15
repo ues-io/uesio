@@ -2,34 +2,20 @@
 wires:
 # Components are how we describe the layout of our view
 components:
-  - uesio/io.grid:
-      uesio.styleTokens:
-        root:
-          - items-center
-          - p-4
-          - grid-cols-[0fr_0fr_1fr_0fr]
-          - bg-[${backgroundcolor}]
-      items:
-        - uesio/io.griditem:
-            components:
-              - uesio/io.image:
-                  uesio.styleTokens:
-                    root:
-                      - mx-4
-                      - height-[${logoheight}]
-                  file: ${logo}
-        - uesio/io.griditem:
-            components: ${navcollections}
-        - uesio/io.griditem:
-            components:
-              - uesio/io.button:
-                  uesio.variant: uesio/io.nav
-                  uesio.id: logout
-                  text: Log Out
-                  signals:
-                    - signal: "user/LOGOUT"
-        - uesio/io.griditem:
-            components:
-              - uesio/io.avatar:
-                  text: $User{initials}
-                  image: $User{picture}
+  - uesio/io.viewheader:
+      logo:
+        - uesio/io.image:
+            file: ${logo}
+            height: ${logoheight}
+      left: ${navcollections}
+      right:
+        - uesio/io.button:
+            uesio.variant: uesio/io.nav
+            uesio.id: logout
+            text: Log Out
+            signals:
+              - signal: "user/LOGOUT"
+      avatar:
+        - uesio/io.avatar:
+            text: $User{initials}
+            image: $User{picture}

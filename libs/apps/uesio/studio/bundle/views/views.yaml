@@ -70,20 +70,6 @@ definition:
               actions:
                 - uesio/io.group:
                     components:
-                      - uesio/studio.generatorbutton:
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-                          label: Generate List View
-                          generator: uesio/core.listview
-                      - uesio/studio.generatorbutton:
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-                          label: Generate Detail View
-                          generator: uesio/core.detailview
                       - uesio/io.button:
                           text: Create a New View
                           uesio.variant: uesio/io.primary
@@ -95,34 +81,72 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: allviews
-                    focusOnRender: true
-                - uesio/io.table:
-                    uesio.id: viewsTable
-                    wire: allviews
-                    columns:
-                      - label: View
-                        components:
-                          - uesio/io.iconlabel:
-                              uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.label}
-                              subtitle: ${uesio/studio.namespace}
-                              icon: ${uesio/studio.appicon}
-                              color: ${uesio/studio.appcolor}
-                      - field: uesio/core.updatedby
-                        user:
-                          subtitle: $Time{uesio/core.updatedat}
-                      - field: uesio/core.createdby
-                        user:
-                          subtitle: $Time{uesio/core.createdat}
-                    rowactions:
-                      - text: Details
-                        type: DEFAULT
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
-                    pagesize: 10
+                - uesio/io.grid:
+                    uesio.variant: uesio/io.three_columns
+                    uesio.styleTokens:
+                      root:
+                        - gap-10
+                    items:
+                      - uesio/io.griditem:
+                          uesio.styleTokens:
+                            root:
+                              - col-span-1
+                              - lg:col-span-2
+                          components:
+                            - uesio/io.searchbox:
+                                wire: allviews
+                                focusOnRender: true
+                            - uesio/io.table:
+                                uesio.id: viewsTable
+                                wire: allviews
+                                columns:
+                                  - label: View
+                                    components:
+                                      - uesio/io.iconlabel:
+                                          uesio.variant: uesio/io.namespacefield
+                                          text: ${uesio/studio.label}
+                                          subtitle: ${uesio/studio.namespace}
+                                          icon: ${uesio/studio.appicon}
+                                          color: ${uesio/studio.appcolor}
+                                  - field: uesio/core.updatedby
+                                    user:
+                                      subtitle: $Time{uesio/core.updatedat}
+                                  - field: uesio/core.createdby
+                                    user:
+                                      subtitle: $Time{uesio/core.createdat}
+                                rowactions:
+                                  - text: Details
+                                    type: DEFAULT
+                                    signals:
+                                      - signal: route/NAVIGATE
+                                        path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
+                                pagesize: 10
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/studio.generatoractiontile:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate List View
+                                description: Create a view for listing records in a collection
+                                generator: uesio/core.listview
+                            - uesio/studio.generatoractiontile:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate Detail Views
+                                description: Create a views for viewing data for a single record
+                                generator: uesio/core.detailview
+                            - uesio/studio.generatoractiontile:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate Header View
+                                description: Create a standard header view with a logo, navigation, and user avatar
+                                generator: uesio/core.headerview
   panels:
     newView:
       uesio.type: uesio/io.dialog

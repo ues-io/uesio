@@ -148,6 +148,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "uniqueKey") {
 			return record?.getUniqueKey() ?? ""
 		}
+		if (expression === "name") {
+			return record?.getNameFieldValue() ?? ""
+		}
 		if (expression === "index") {
 			return context.getRecordDataIndex() || 0
 		}

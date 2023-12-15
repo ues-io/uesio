@@ -8,8 +8,4 @@ definition:
       - border-b-1
       - border-slate-300
     logo:
-      - px-4
-      - py-2
       - opacity-80
-    avatar:
-      - px-3

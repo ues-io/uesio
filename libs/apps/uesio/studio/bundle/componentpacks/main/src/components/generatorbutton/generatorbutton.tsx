@@ -166,4 +166,5 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 	)
 }
 
+export { GeneratorForm }
 export default GeneratorButton

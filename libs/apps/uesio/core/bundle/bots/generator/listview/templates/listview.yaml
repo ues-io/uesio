@@ -5,8 +5,9 @@ wires:
     fields: ${fields}
 # Components determine the layout and composition of your view
 components:
-  - uesio/io.box:
-      components:
+  - uesio/io.viewlayout:
+      header: ${headerContent}
+      content:
         - uesio/io.titlebar:
             title: $Collection{${wirename}:pluralLabel}
             subtitle: List View

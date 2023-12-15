@@ -3,8 +3,10 @@ package jsdialect
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -31,6 +33,7 @@ type GeneratorBotAPI struct {
 	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
 	Connection wire.Connection
+	LogApi     *BotLogAPI `bot:"log"`
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
@@ -202,12 +205,23 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 			matchExpression := match[0] //${mymerge}
 			merge := match[1]           // mymerge
 			mergeValue := params[merge]
+			fmt.Println(fmt.Sprintf("%v %T", mergeValue, mergeValue))
 			mergeString, ok := mergeValue.(string)
 			if ok {
 
 				newNode, err := mergeYamlString(mergeString, nil)
 				if err != nil {
 					return err
+				}
+
+				fmt.Println("MERGINGG")
+				fmt.Println(merge)
+				fmt.Println(mergeString)
+				fmt.Println(newNode)
+
+				if newNode.Content == nil || len(newNode.Content) == 0 {
+					node.SetString("")
+					return nil
 				}
 
 				contentNode := newNode.Content[0]
@@ -227,6 +241,13 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 				// Replace that crap
 				*node = *contentNode
 			}
+
+			mergeNumber, ok := mergeValue.(int64)
+			if ok {
+				node.Value = strconv.FormatInt(mergeNumber, 10)
+				node.Tag = "!!int"
+			}
+
 		}
 	}
 

@@ -1,0 +1,23 @@
+name: generatoractiontile
+pack: main
+entrypoint: components/generatoractiontile/generatoractiontile
+utilities:
+  - uesio/io.tile
+  - uesio/io.text
+  - uesio/io.dialog
+  - uesio/io.field
+  - uesio/io.grid
+  - uesio/io.metadatafield
+  - uesio/io.textfield
+  - uesio/io.dialogplain
+  - uesio/io.dynamicform
+  - uesio/io.group
+  - uesio/io.titlebar
+variants:
+  - uesio/io.tile:uesio/io.action
+  - uesio/io.text:uesio/io.smalltitle
+  - uesio/io.text:uesio/io.smallcontent
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.menu:uesio/io.default
+  - uesio/io.iconlabel:uesio/io.default
+  - uesio/io.titlebar:uesio/io.dialog

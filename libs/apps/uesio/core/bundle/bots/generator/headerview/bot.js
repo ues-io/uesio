@@ -1,20 +1,20 @@
 function view(bot) {
-	var name = bot.params.get("name")
+	var name = bot.params.get("name") || "header"
 	var logo = bot.params.get("logo")
 	var collections = bot.params.get("collections")
-	var backgroundcolor = bot.params.get("backgroundcolor")
-	var logoheight = bot.params.get("logoheight")
+	var logoheight = bot.params.get("logoheight") || 34
 
-	var navButtonYaml = bot.repeatString(
-		collections,
-		"- uesio/io.button:\n    text: ${key}\n    uesio.variant: uesio/io.nav\n"
-	)
+	var buttonTemplate = bot.mergeYamlTemplate({}, "templates/navbutton.yaml")
+
+	var navButtonYaml = bot.repeatString(collections, buttonTemplate)
+
+	bot.log.info("Blah", name)
+	bot.log.info("Blah2", logoheight)
 
 	var definition = bot.mergeYamlTemplate(
 		{
 			logo: logo,
 			logoheight: logoheight,
-			backgroundcolor: backgroundcolor,
 			collections: collections,
 			navcollections: navButtonYaml,
 		},
