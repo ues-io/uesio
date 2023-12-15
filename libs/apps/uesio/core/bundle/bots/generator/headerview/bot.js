@@ -8,9 +8,6 @@ function view(bot) {
 
 	var navButtonYaml = bot.repeatString(collections, buttonTemplate)
 
-	bot.log.info("Blah", name)
-	bot.log.info("Blah2", logoheight)
-
 	var definition = bot.mergeYamlTemplate(
 		{
 			logo: logo,
