@@ -145,6 +145,10 @@ func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateStri
 	return strings.Join(mergedStrings, ""), nil
 }
 
+func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, gba.Session, gba.Connection)
+}
+
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
 	node, err := mergeYamlString(templateString, params)
 	if err != nil {

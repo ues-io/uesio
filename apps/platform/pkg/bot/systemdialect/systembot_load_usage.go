@@ -73,14 +73,14 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	userRefReq.Metadata = userCollectionMetadata
 
 	for _, item := range usageData.collection {
-		value, err := item.GetFieldAsString("uesio/studio.user")
+		value, err := item.GetFieldAsString("uesio/core.user")
 		if err != nil {
 			return err
 		}
 		userRefReq.AddID(value, wire.ReferenceLocator{
 			Item: item,
 			Field: &wire.FieldMetadata{
-				Namespace: "uesio/studio",
+				Namespace: "uesio/core",
 				Name:      "user",
 			},
 		})

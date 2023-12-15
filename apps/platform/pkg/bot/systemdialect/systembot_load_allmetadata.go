@@ -68,7 +68,16 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 		return err
 	}
 
-	op.Collection = newCollection
+	for _, item := range newCollection.collection {
+		newItem := op.Collection.NewItem()
+		err := item.Loop(func(s string, i interface{}) error {
+			return newItem.SetField(s, i)
+		})
+		if err != nil {
+			return err
+		}
+		op.Collection.AddItem(newItem)
+	}
 
 	return nil
 

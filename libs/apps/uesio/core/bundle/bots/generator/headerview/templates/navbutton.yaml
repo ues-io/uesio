@@ -1,5 +1,5 @@
 - uesio/io.button:
-    text: ${key}
+    text: ${label}
     uesio.variant: uesio/io.nav
     signals:
       - signal: route/NAVIGATE_TO_ASSIGNMENT
