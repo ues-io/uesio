@@ -104,18 +104,12 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: DATE
-      - label: Multi Select
-        value: MULTISELECT
-        validFor:
-          - field: fieldDisplayType
-            value: SELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
         operator: IN
         values:
           - DATE
-          - SELECT
   - name: label
     type: TEXT
     label: Label
