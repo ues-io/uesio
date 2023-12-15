@@ -97,6 +97,16 @@ func HandleReferences(
 			continue
 		}
 
+		collectionMetadata, err := connection.GetMetadata().GetCollection(collectionName)
+		if err != nil {
+			return err
+		}
+
+		collectionNameField, err := collectionMetadata.GetNameField()
+		if err != nil {
+			return err
+		}
+
 		ref.AddFields([]wire.LoadRequestField{
 			{
 				ID: wire.ID_FIELD,
@@ -104,9 +114,12 @@ func HandleReferences(
 			{
 				ID: wire.UNIQUE_KEY_FIELD,
 			},
+			{
+				ID: collectionNameField.GetFullName(),
+			},
 		})
 
-		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+		err = LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			// This is a weird situation.
 			// It means we found a value that we didn't ask for.
@@ -205,12 +218,12 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 			return nil
 		}
 
-		collectionName, err := refItem.GetField("uesio/core.collection")
+		collectionName, err := refItem.GetField(wire.COLLECTION_FIELD)
 		if err != nil {
 			return err
 		}
 
-		refID, err := refItem.GetField("uesio/core.id")
+		refID, err := refItem.GetField(wire.ID_FIELD)
 		if err != nil {
 			return err
 		}
