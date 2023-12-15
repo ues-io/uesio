@@ -118,7 +118,7 @@ properties:
     label: Display as
     options:
       - value: ""
-        label: "--None Selected--"
+        label: "Default"
       - label: Month
         value: MONTH
         validFor:

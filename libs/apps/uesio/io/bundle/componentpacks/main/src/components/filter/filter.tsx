@@ -112,16 +112,12 @@ const getDefaultCondition = (
 				  }
 		}
 		case "SELECT": {
-			return !displayAs
-				? {
-						id: path,
-						field: fieldName,
-				  }
-				: {
-						id: path,
-						operator: operator || "IN",
-						field: fieldName,
-				  }
+			return {
+				id: path,
+				operator:
+					operator || (displayAs === "MULTISELECT" ? "IN" : "EQ"),
+				field: fieldName,
+			}
 		}
 		case "MULTISELECT": {
 			return {
