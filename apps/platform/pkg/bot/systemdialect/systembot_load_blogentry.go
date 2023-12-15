@@ -12,5 +12,5 @@ func runBlogEntryLoadBot(op *wire.LoadOp, connection wire.Connection, session *s
 		//Ignore the errors if the site is not found
 		return nil
 	}
-	return getArticleLoad(op, connection, sess.GetAnonSession(site), "uesio/studio.blogentry")
+	return getArticleLoad(op, connection, sess.GetAnonSession(session.Context(), site), "uesio/studio.blogentry")
 }

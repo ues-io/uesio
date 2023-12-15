@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"log/slog"
 	"os"
@@ -68,14 +69,14 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func runSeeds(connection wire.Connection) error {
+func runSeeds(ctx context.Context, connection wire.Connection) error {
 	err := connection.Migrate()
 	if err != nil {
 		return err
 	}
 
 	// After migration, let's get a session with the system user since we have it now.
-	session, err := auth.GetStudioSystemSession(connection)
+	session, err := auth.GetStudioSystemSession(ctx, connection)
 	if err != nil {
 		return err
 	}
@@ -159,7 +160,9 @@ func seed(cmd *cobra.Command, args []string) {
 
 	slog.Info("Running seeds")
 
-	anonSession := sess.GetStudioAnonSession()
+	ctx := context.Background()
+
+	anonSession := sess.GetStudioAnonSession(ctx)
 
 	connection, err := datasource.GetPlatformConnection(nil, anonSession, nil)
 	cobra.CheckErr(err)
@@ -167,7 +170,7 @@ func seed(cmd *cobra.Command, args []string) {
 	err = connection.BeginTransaction()
 	cobra.CheckErr(err)
 
-	err = runSeeds(connection)
+	err = runSeeds(ctx, connection)
 	if err != nil {
 		slog.Error("Seeds failed: " + err.Error())
 		rollbackErr := connection.RollbackTransaction()

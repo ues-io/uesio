@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
@@ -90,14 +91,14 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 	hasPermission := b.Permissions.HasPermission(item.GetPermChecker())
 	if !hasPermission {
 		message := fmt.Sprintf("No Permission to metadata item: %s : %s", item.GetCollectionName(), key)
-		return bundlestore.NewPermissionError(message)
+		return exceptions.NewForbiddenException(message)
 	}
 
 	if doCache {
 		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key); ok {
 			if !b.AllowPrivate && !cachedItem.IsPublic() {
 				message := fmt.Sprintf("Metadata item: %s is not public", key)
-				return bundlestore.NewPermissionError(message)
+				return exceptions.NewForbiddenException(message)
 			}
 			return meta.Copy(item, cachedItem)
 		}
@@ -122,7 +123,7 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 	}
 	if !b.AllowPrivate && !item.IsPublic() {
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
-		return bundlestore.NewPermissionError(message)
+		return exceptions.NewForbiddenException(message)
 	}
 	if !doCache {
 		return nil
@@ -167,16 +168,14 @@ func (b *SystemBundleStoreConnection) GetAllItems(group meta.BundleableGroup, co
 			continue
 		}
 
-		err = b.GetItem(retrievedItem)
-
-		if err != nil {
-			if _, ok := err.(*bundlestore.PermissionError); ok {
+		// TODO: Shouldn't we return these errors?
+		if err = b.GetItem(retrievedItem); err != nil {
+			switch err.(type) {
+			case *exceptions.NotFoundException, *exceptions.ForbiddenException:
 				continue
+			default:
+				return err
 			}
-			if _, ok := err.(*bundlestore.NotFoundError); ok {
-				continue
-			}
-			return err
 		}
 
 		// Check to see if the item meets bundle conditions

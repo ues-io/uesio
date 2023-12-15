@@ -525,7 +525,7 @@ func GetMetadataForLoad(
 			}
 		}
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(session.Context(), fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}
@@ -618,7 +618,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		}
 
 		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
-			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
+			return nil, err
 		}
 
 		//Set default order by: id - asc

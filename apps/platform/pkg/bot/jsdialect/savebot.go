@@ -4,6 +4,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -33,7 +34,7 @@ func NewSaveBotAPI(bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveO
 		Deletes:             &DeletesAPI{saveOp},
 		Inserts:             &InsertsAPI{saveOp},
 		Updates:             &UpdatesAPI{saveOp},
-		LogApi:              NewBotLogAPI(bot),
+		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
 		SaveRequestMetadata: NewSaveRequestMetadata(saveOp),
 	}
 }
@@ -85,11 +86,7 @@ func (sba *SaveBotAPI) GetUser() *UserAPI {
 }
 
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
-	sba.saveOp.AddError(&wire.SaveError{
-		RecordID: recordId,
-		FieldID:  fieldId,
-		Message:  message,
-	})
+	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, message))
 }
 
 func (sba *SaveBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

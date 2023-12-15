@@ -38,16 +38,16 @@ func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
 	}
 }
 
-func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connection wire.Connection, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
-	if workspace == nil {
+func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
+	if b.Workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 	collectionLocatorMap := map[string]wire.LocatorMap{}
-	namespace := workspace.GetAppFullName()
+	namespace := b.Workspace.GetAppFullName()
 
 	for _, item := range items {
 		collectionName := item.GetBundleFolderName()
-		dbID := item.GetDBID(workspace.UniqueKey)
+		dbID := item.GetDBID(b.Workspace.UniqueKey)
 		_, ok := collectionLocatorMap[collectionName]
 		if !ok {
 			collectionLocatorMap[collectionName] = wire.LocatorMap{}
@@ -69,22 +69,22 @@ func processItems(items []meta.BundleableItem, workspace *meta.Workspace, connec
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
 			LoadAll:    true,
-			Connection: connection,
-			Params:     getParamsFromWorkspace(workspace),
+			Connection: b.Connection,
+			Params:     getParamsFromWorkspace(b.Workspace),
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    wire.UNIQUE_KEY_FIELD,
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
-			}}, sess.GetStudioAnonSession())
+			}}, b.getStudioAnonSession())
 		if err != nil {
 			return err
 		}
 
 		err = group.Loop(func(item meta.Item, _ string) error {
 			bundleable := item.(meta.BundleableItem)
-			dbID := bundleable.GetDBID(workspace.UniqueKey)
+			dbID := bundleable.GetDBID(b.Workspace.UniqueKey)
 			match, ok := locatorMap[dbID]
 			if !ok {
 				return looper(item, nil, dbID)
@@ -119,6 +119,14 @@ func (b *WorkspaceBundleStore) GetConnection(options bundlestore.ConnectionOptio
 
 type WorkspaceBundleStoreConnection struct {
 	bundlestore.ConnectionOptions
+	studioAnonSession *sess.Session
+}
+
+func (b *WorkspaceBundleStoreConnection) getStudioAnonSession() *sess.Session {
+	if b.studioAnonSession == nil {
+		b.studioAnonSession = sess.GetStudioAnonSession(b.Context)
+	}
+	return b.studioAnonSession
 }
 
 // use the workspace's ID, not Name, as the cache key, to ensure that if workspaces are truncated / deleted
@@ -149,7 +157,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 		},
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
-	}, sess.GetStudioAnonSession()); err != nil {
+	}, b.getStudioAnonSession()); err != nil {
 		return err
 	}
 
@@ -170,7 +178,7 @@ func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, cond
 }
 
 func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem) error {
-	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(items, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -212,7 +220,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		Orders: []wire.LoadRequestOrder{{
 			Field: wire.UNIQUE_KEY_FIELD,
 		}},
-	}, sess.GetStudioAnonSession())
+	}, b.getStudioAnonSession())
 
 }
 
@@ -237,7 +245,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	if err != nil {
 		return nil, errors.New("Invalid Record ID for attachment")
 	}
-	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, sess.GetStudioAnonSession())
+	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, b.getStudioAnonSession())
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +253,6 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 }
 
 func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
-	session := sess.GetStudioAnonSession()
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
 		return errors.New("Invalid Record ID for attachment: " + err.Error())
@@ -262,7 +269,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 				},
 			},
 		},
-		session,
+		b.getStudioAnonSession(),
 	)
 	if err != nil {
 		return err
@@ -273,7 +280,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 		if err != nil {
 			return err
 		}
-		_, err = filesource.DownloadItem(f, ufm, session)
+		_, err = filesource.DownloadItem(f, ufm, b.getStudioAnonSession())
 		if err != nil {
 			f.Close()
 			return err
@@ -339,7 +346,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 				},
 			},
 		},
-		sess.GetStudioAnonSession(),
+		b.getStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err
@@ -370,8 +377,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
-
-	return processItems(items, b.Workspace, b.Connection, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(items, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -380,5 +386,4 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 		}
 		return nil
 	})
-
 }

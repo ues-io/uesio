@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -30,7 +31,7 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 				},
 			},
 		},
-		sess.GetStudioAnonSession(),
+		sess.GetStudioAnonSession(context.Background()),
 	)
 	if err != nil {
 		return nil, err
@@ -46,24 +47,24 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(), nil)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(context.Background()), nil)
 }
 
 func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("No Site Provided")
 	}
-	return GetUserByKey("guest", sess.GetAnonSession(site), connection)
+	return GetUserByKey("guest", sess.GetAnonSession(context.Background(), site), connection)
 }
 
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("No Site Provided")
 	}
-	return GetUserByKey("system", sess.GetAnonSession(site), connection)
+	return GetUserByKey("system", sess.GetAnonSession(context.Background(), site), connection)
 }
 
-func GetSystemSession(site *meta.Site, connection wire.Connection) (*sess.Session, error) {
+func GetSystemSession(ctx context.Context, site *meta.Site, connection wire.Connection) (*sess.Session, error) {
 	user, err := GetSystemUser(site, connection)
 	if err != nil {
 		return nil, err
@@ -71,10 +72,10 @@ func GetSystemSession(site *meta.Site, connection wire.Connection) (*sess.Sessio
 
 	user.Permissions = meta.GetAdminPermissionSet()
 	session := sess.New("", user, site)
-
+	session.SetGoContext(ctx)
 	return session, nil
 }
 
-func GetStudioSystemSession(connection wire.Connection) (*sess.Session, error) {
-	return GetSystemSession(sess.GetStudioSite(), connection)
+func GetStudioSystemSession(ctx context.Context, connection wire.Connection) (*sess.Session, error) {
+	return GetSystemSession(ctx, sess.GetStudioSite(), connection)
 }

@@ -1,6 +1,7 @@
 package adapt
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -14,7 +15,7 @@ type Adapter interface {
 	// GetCredentials returns the unique key of the credentials metadata record to use for this adapter
 	GetCredentials() string
 	// GetConnection returns a connection to use for this adapter
-	GetConnection(*wire.Credentials, *wire.MetadataCache, string) (wire.Connection, error)
+	GetConnection(context.Context, *wire.Credentials, *wire.MetadataCache, string) (wire.Connection, error)
 }
 
 var adapterMap = map[string]Adapter{}

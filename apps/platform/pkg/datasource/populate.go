@@ -11,10 +11,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type ChangeProcessor func(change *wire.ChangeItem) *wire.SaveError
+type ChangeProcessor func(change *wire.ChangeItem) *exceptions.SaveException
 
 func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
-	return func(change *wire.ChangeItem) *wire.SaveError {
+	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		if !change.IsNew {
 			return nil
 		}
@@ -39,7 +39,7 @@ func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
 		}
 
 		if err = change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
-			return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), err.Error())
 		}
 
 		return nil
@@ -47,12 +47,12 @@ func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
 }
 
 func populateTimestamps(field *wire.FieldMetadata, timestamp int64) ChangeProcessor {
-	return func(change *wire.ChangeItem) *wire.SaveError {
+	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			if err := change.FieldChanges.SetField(field.GetFullName(), timestamp); err != nil {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -60,7 +60,7 @@ func populateTimestamps(field *wire.FieldMetadata, timestamp int64) ChangeProces
 }
 
 func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
-	return func(change *wire.ChangeItem) *wire.SaveError {
+	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
@@ -74,7 +74,7 @@ func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
 				},
 			})
 			if err != nil {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil

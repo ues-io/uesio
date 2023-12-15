@@ -1,12 +1,12 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -22,31 +22,19 @@ type PlatformLoadOptions struct {
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
-	conditionStrings := []string{}
-	for _, c := range plo.Conditions {
-		conditionStrings = append(conditionStrings, fmt.Sprintf("%s :: %s", c.Field, c.Value))
+	conditionStrings := make([]string, len(plo.Conditions))
+	for i, c := range plo.Conditions {
+		conditionStrings[i] = fmt.Sprintf("%s :: %s", c.Field, c.Value)
 	}
 	return strings.Join(conditionStrings, " ")
 }
 
-type RecordNotFoundError struct {
-	message string
-}
-
-func (e *RecordNotFoundError) Error() string { return e.message }
-
-func NewRecordNotFoundError(message string) *RecordNotFoundError {
-	return &RecordNotFoundError{
-		message: message,
-	}
-}
-
 func GetLoadRequestFields(fieldStrings []string) []wire.LoadRequestField {
-	fields := []wire.LoadRequestField{}
-	for _, field := range fieldStrings {
-		fields = append(fields, wire.LoadRequestField{
+	fields := make([]wire.LoadRequestField, len(fieldStrings))
+	for i, field := range fieldStrings {
+		fields[i] = wire.LoadRequestField{
 			ID: field,
-		})
+		}
 	}
 	return fields
 }
@@ -75,12 +63,11 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 }
 
 func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
-	_, err := Load([]*wire.LoadOp{op}, session, &LoadOptions{
+	if _, err := Load([]*wire.LoadOp{op}, session, &LoadOptions{
 		Connection: options.Connection,
 		Metadata:   GetConnectionMetadata(options.Connection),
-	})
-	if err != nil {
-		return errors.New("Platform LoadFromSite Failed:" + err.Error())
+	}); err != nil {
+		return err
 	}
 
 	if options.LoadAll && op.HasMoreBatches {
@@ -104,10 +91,10 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 	collectionName := collection.GetName()
 
 	if length == 0 {
-		return NewRecordNotFoundError(fmt.Sprintf("Couldn't find item from platform load: Collection=%s, Conditions=%v", collectionName, options.GetConditionsDebug()))
+		return exceptions.NewNotFoundException(fmt.Sprintf("Couldn't find item from platform load: Collection=%s, Conditions=%v", collectionName, options.GetConditionsDebug()))
 	}
 	if length > 1 {
-		return fmt.Errorf("Duplicate item found from platform load: %s (%v)", collectionName+" : "+options.GetConditionsDebug(), length)
+		return exceptions.NewDuplicateException(fmt.Sprintf("Duplicate item found from platform load: %s (%v)", collectionName+" : "+options.GetConditionsDebug(), length))
 	}
 
 	return nil

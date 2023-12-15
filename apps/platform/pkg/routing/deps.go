@@ -398,7 +398,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	// need an admin session for retrieving feature flags
 	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
-	adminSession := sess.GetAnonSession(session.GetSite())
+	adminSession := sess.GetAnonSessionFrom(session)
 
 	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
 	if err != nil {
@@ -423,11 +423,8 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	deps.Theme.AddItem(theme)
 
 	// Get the metadata list
-	namespaces := session.GetContextNamespaces()
-	appNames := []string{}
-	appNames = append(appNames, namespaces...)
-
-	appData, err := datasource.GetAppData(appNames)
+	appNames := session.GetContextNamespaces()
+	appData, err := datasource.GetAppData(session.Context(), appNames)
 	if err != nil {
 		return err
 	}

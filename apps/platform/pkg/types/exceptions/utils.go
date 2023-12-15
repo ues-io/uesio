@@ -5,7 +5,7 @@ import (
 )
 
 // GetStatusCodeForError returns an HTTP status code appropriate for the error type,
-// defaulting to 500 Internal Server Error for generic errors
+// defaulting to 500 Internal Server Error for generic ctlutil
 func GetStatusCodeForError(err error) int {
 	switch err.(type) {
 	case *UnauthorizedException:
@@ -16,6 +16,8 @@ func GetStatusCodeForError(err error) int {
 		return http.StatusNotFound
 	case *ForbiddenException:
 		return http.StatusForbidden
+	case *DuplicateException:
+		return http.StatusConflict
 	}
 	return http.StatusInternalServerError
 }

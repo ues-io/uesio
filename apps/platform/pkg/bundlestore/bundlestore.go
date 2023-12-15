@@ -1,6 +1,7 @@
 package bundlestore
 
 import (
+	"context"
 	"errors"
 	"io"
 
@@ -37,31 +38,8 @@ func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	return adapter, nil
 }
 
-type PermissionError struct {
-	message string
-}
-
-func (e *PermissionError) Error() string { return e.message }
-
-func NewPermissionError(message string) *PermissionError {
-	return &PermissionError{
-		message: message,
-	}
-}
-
-type NotFoundError struct {
-	message string
-}
-
-func (e *NotFoundError) Error() string { return e.message }
-
-func NewNotFoundError(message string) *NotFoundError {
-	return &NotFoundError{
-		message: message,
-	}
-}
-
 type ConnectionOptions struct {
+	Context      context.Context
 	Namespace    string
 	Version      string
 	Connection   wire.Connection

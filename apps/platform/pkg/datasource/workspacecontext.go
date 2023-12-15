@@ -146,7 +146,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		meta.GetAdminPermissionSet(),
 	)
 	session.SetWorkspaceSession(workspaceSession)
-	bundleDef, err := bundle.GetWorkspaceBundleDef(workspace, connection)
+	bundleDef, err := bundle.GetWorkspaceBundleDef(session.Context(), workspace, connection)
 	if err != nil {
 		return err
 	}

@@ -10,6 +10,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type SaveOp struct {
@@ -18,7 +19,7 @@ type SaveOp struct {
 	Updates     ChangeItems
 	Deletes     ChangeItems
 	Options     *SaveOptions
-	Errors      *[]SaveError
+	Errors      *[]exceptions.SaveException
 	InsertCount int
 	Metadata    *CollectionMetadata
 	Params      map[string]string
@@ -37,9 +38,9 @@ func (op *SaveOp) AttachIntegrationConnection(ic *IntegrationConnection) {
 	op.integrationConnection = ic
 }
 
-func (op *SaveOp) AddError(saveError *SaveError) {
+func (op *SaveOp) AddError(saveError *exceptions.SaveException) {
 	if op.Errors == nil {
-		op.Errors = &[]SaveError{}
+		op.Errors = &[]exceptions.SaveException{}
 	}
 	*op.Errors = append(*op.Errors, *saveError)
 }

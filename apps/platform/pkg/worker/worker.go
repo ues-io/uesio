@@ -20,8 +20,8 @@ var jobs []Job
 
 // Register all jobs that should be performed
 func init() {
-	jobs = append(jobs, NewJob("Invoices", "@daily", invoices.InvoicingJob))
-	jobs = append(jobs, NewJob("Usage", getUsageCronSchedule(), usage_worker.UsageWorker))
+	jobs = append(jobs, NewJob("Invoices", "@daily", invoices.InvoicingJobNoContext))
+	jobs = append(jobs, NewJob("Usage", getUsageCronSchedule(), usage_worker.UsageWorkerNoContext))
 }
 
 // Allows for usage job frequency to be overridden by environment variables. defaults to every 10 minutes,

@@ -1,7 +1,6 @@
 package openai
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -74,7 +73,7 @@ func (c *connection) autoComplete(requestOptions interface{}) (interface{}, erro
 func (c *connection) autoCompleteDefault(options *AutoCompleteOptions) ([]string, error) {
 	// Text requests
 	resp, err := c.client.CreateCompletion(
-		context.Background(),
+		c.session.Context(),
 		oai.CompletionRequest{
 			Model:     options.Model,
 			Prompt:    options.Input,
@@ -102,7 +101,7 @@ func (c *connection) autoCompleteDefault(options *AutoCompleteOptions) ([]string
 
 func (c *connection) autoCompleteChat(options *AutoCompleteOptions) ([]string, error) {
 	resp, err := c.client.CreateChatCompletion(
-		context.Background(),
+		c.session.Context(),
 		oai.ChatCompletionRequest{
 			Model: options.Model,
 			Messages: []oai.ChatCompletionMessage{

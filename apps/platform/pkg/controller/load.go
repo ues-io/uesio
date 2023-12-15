@@ -2,9 +2,9 @@ package controller
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
@@ -15,11 +15,8 @@ import (
 func Load(w http.ResponseWriter, r *http.Request) {
 
 	var batch wire.LoadRequestBatch
-	err := json.NewDecoder(r.Body).Decode(&batch)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&batch); err != nil {
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -27,9 +24,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	metadata, err := datasource.Load(batch.Wires, session, nil)
 	if err != nil {
-		msg := "Load Failed: " + err.Error()
-		slog.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	loadResponse := &wire.LoadResponseBatch{

@@ -14,8 +14,8 @@ import (
 type FileAdapter struct {
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *wire.Credentials, bucket string) (file.Connection, error) {
-	client, err := getS3Client(context.Background(), credentials)
+func (a *FileAdapter) GetFileConnection(ctx context.Context, credentials *wire.Credentials, bucket string) (file.Connection, error) {
+	client, err := getS3Client(ctx, credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
@@ -23,6 +23,7 @@ func (a *FileAdapter) GetFileConnection(credentials *wire.Credentials, bucket st
 		credentials: credentials,
 		bucket:      bucket,
 		client:      client,
+		ctx:         ctx,
 	}, nil
 }
 
@@ -30,6 +31,7 @@ type Connection struct {
 	credentials *wire.Credentials
 	bucket      string
 	client      *s3.Client
+	ctx         context.Context
 }
 
 // TODO: Figure out a way to clean up and close unused clients
