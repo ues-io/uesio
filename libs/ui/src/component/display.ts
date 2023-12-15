@@ -230,7 +230,6 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 // and a wire must exist in order to evaluate the condition,
 // otherwise the condition's value will be false.
 const typesRequiringWire = [
-	"collectionContext",
 	"wireHasChanges",
 	"wireHasNoChanges",
 	"wireIsLoading",
@@ -272,7 +271,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	if (type === "collectionContext") {
-		const collection = wire?.getCollection()
+		const collection = context.getWire()?.getCollection()
 		return collection?.getFullName() === condition.collection
 	}
 
