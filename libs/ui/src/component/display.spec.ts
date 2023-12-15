@@ -1,6 +1,13 @@
 import { Context, ViewContext } from "../context/context"
-import { PlainWireRecord } from "../wireexports"
-import { DisplayCondition, should, getWiresForConditions } from "./display"
+import { PlainWire, PlainWireRecord } from "../wireexports"
+import Wire from "../bands/wire/class"
+import {
+	DisplayCondition,
+	should,
+	getWiresForConditions,
+	wireHasActiveConditions,
+	wireHasNoActiveConditions,
+} from "./display"
 
 const viewName = "uesio/core.foo"
 const viewDef = `
@@ -1032,6 +1039,134 @@ describe("getWiresForConditions", () => {
 			actual.sort()
 			tc.expected.sort()
 			expect(actual).toEqual(tc.expected)
+		})
+	})
+})
+
+describe("wireHasActiveConditions", () => {
+	;[
+		{
+			name: "no conditions",
+			wire: new Wire({
+				conditions: [],
+			} as unknown as PlainWire),
+			expected: false,
+		},
+		{
+			name: "one active condition",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+					},
+				],
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "one active and one inactive condition",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.id",
+						value: "123",
+						inactive: true,
+					},
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+						inactive: false,
+					},
+				],
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "only inactive conditions",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.id",
+						value: "123",
+						inactive: true,
+					},
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+						inactive: true,
+					},
+				],
+			} as unknown as PlainWire),
+			expected: false,
+		},
+	].forEach((tc) => {
+		test(tc.name, () => {
+			expect(wireHasActiveConditions(tc.wire)).toEqual(tc.expected)
+		})
+	})
+})
+
+describe("wireHasNoActiveConditions", () => {
+	;[
+		{
+			name: "no conditions",
+			wire: new Wire({
+				conditions: [],
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "one active condition",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+					},
+				],
+			} as unknown as PlainWire),
+			expected: false,
+		},
+		{
+			name: "one active and one inactive condition",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.id",
+						value: "123",
+						inactive: true,
+					},
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+						inactive: false,
+					},
+				],
+			} as unknown as PlainWire),
+			expected: false,
+		},
+		{
+			name: "only inactive conditions",
+			wire: new Wire({
+				conditions: [
+					{
+						field: "uesio/core.id",
+						value: "123",
+						inactive: true,
+					},
+					{
+						field: "uesio/core.uniquekey",
+						value: "foo",
+						inactive: true,
+					},
+				],
+			} as unknown as PlainWire),
+			expected: true,
+		},
+	].forEach((tc) => {
+		test(tc.name, () => {
+			expect(wireHasNoActiveConditions(tc.wire)).toEqual(tc.expected)
 		})
 	})
 })
