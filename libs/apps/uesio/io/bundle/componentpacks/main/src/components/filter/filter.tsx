@@ -63,6 +63,8 @@ const getFilterContent = (
 		case "CHECKBOX":
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
+			if (displayAs === "MULTISELECT")
+				return <MultiSelectFilter {...common} />
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
 			return <MultiSelectFilter {...common} />
@@ -108,6 +110,14 @@ const getDefaultCondition = (
 						operator: "IN",
 						field: fieldName,
 				  }
+		}
+		case "SELECT": {
+			return {
+				id: path,
+				operator:
+					operator || (displayAs === "MULTISELECT" ? "IN" : "EQ"),
+				field: fieldName,
+			}
 		}
 		case "MULTISELECT": {
 			return {
