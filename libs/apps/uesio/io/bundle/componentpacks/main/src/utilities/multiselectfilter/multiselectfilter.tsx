@@ -18,7 +18,6 @@ const MultiSelectFilter: definition.UtilityComponent<MultiSelectFilterProps> = (
 			fieldMetadata={fieldMetadata}
 			context={context}
 			options={fieldMetadata.getSelectMetadata()?.options || []}
-			variant={"uesio/io.filter"}
 			value={Array.isArray(condition.values) ? condition.values : []}
 			setValue={(values: string[]) => {
 				const signals = (

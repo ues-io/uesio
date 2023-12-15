@@ -2,10 +2,8 @@ package datasource
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -74,24 +72,6 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 	return uatc, nil
 }
 
-func getFieldsMap(fieldKeys []string) *FieldsMap {
-	fieldsMap := FieldsMap{}
-	for _, fieldKey := range fieldKeys {
-		fieldParts := strings.Split(fieldKey, constant.RefSep)
-		if len(fieldParts) == 1 {
-			// This is somewhat wierd, but it prevents reference
-			// fields in the token from being fully loaded.
-			// It shouldn't affect other fields
-			fieldsMap[fieldKey] = FieldsMap{
-				wire.ID_FIELD: nil,
-			}
-		} else {
-			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], constant.RefSep)})
-		}
-	}
-	return &fieldsMap
-}
-
 func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, session *sess.Session, reason bool) error {
 	user := session.GetContextUser()
 	if !tokenMap.Has(OWNER_TOKEN) {
@@ -135,7 +115,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 		if token.Type == "lookup" {
 			fieldsMap := getFieldsMap(templating.ExtractKeys(token.Token))
 			if reason {
-				fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Reason)))
+				fieldsMap.addMany(templating.ExtractKeys(token.Reason))
 			}
 
 			var loadConditions []wire.LoadRequestCondition

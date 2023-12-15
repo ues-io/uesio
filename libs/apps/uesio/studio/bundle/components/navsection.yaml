@@ -23,6 +23,8 @@ definition:
             uesio.styleTokens:
               root:
                 - pb-3
+                - grid
+                - gap-0.5
             components:
               - uesio/core.slot:
                   name: content
