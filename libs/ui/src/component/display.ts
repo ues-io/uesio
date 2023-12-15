@@ -1,7 +1,7 @@
 import { Context } from "../context/context"
 import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
-import { WireRecord } from "../wireexports"
+import { Wire, WireRecord } from "../wireexports"
 import { DISPLAY_CONDITIONS } from "../componentexports"
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
@@ -25,6 +25,13 @@ interface FieldValueConditionBase {
 	operator: DisplayOperator
 	value?: string
 	values?: string[]
+}
+
+interface HasWire {
+	wire: string
+}
+interface HasOperator {
+	operator: DisplayOperator
 }
 
 type FieldValueCondition = RequireOnlyOne<
@@ -137,6 +144,14 @@ type WireHasNoSearchCondition = {
 	type: "wireHasNoSearchCondition"
 	wire: string
 }
+type wireHasActiveConditions = {
+	type: "wireHasActiveConditions"
+	wire: string
+}
+type wireHasNoActiveConditions = {
+	type: "wireHasNoActiveConditions"
+	wire: string
+}
 
 type HasProfile = {
 	type: "hasProfile"
@@ -172,6 +187,8 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasSearchCondition
 	| WireHasNoSearchCondition
+	| wireHasActiveConditions
+	| wireHasNoActiveConditions
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
@@ -209,143 +226,169 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	}
 }
 
+// a list of types for which a wire property is required
+// and a wire must exist in order to evaluate the condition,
+// otherwise the condition's value will be false.
+const typesRequiringWire = [
+	"collectionContext",
+	"wireHasChanges",
+	"wireHasNoChanges",
+	"wireIsLoading",
+	"wireIsNotLoading",
+	"wireHasNoRecords",
+	"wireHasRecords",
+	"wireHasSearchCondition",
+	"wireHasNoSearchCondition",
+	"wireHasActiveConditions",
+	"wireHasNoActiveConditions",
+	"wireHasLoadedAllRecords",
+	"wireHasMoreRecordsToLoad",
+	"wireHasNoActiveConditions",
+	"wireHasActiveConditions",
+]
+
+const isConditionRequiringWireProperty = (condition: DisplayCondition) =>
+	typesRequiringWire.includes(condition.type || "fieldValue")
+
+export const wireHasActiveConditions = (wire: Wire) => {
+	if (!wire.getConditions()?.length) return false
+	return wire.getConditions().some((condition) => condition.inactive !== true)
+}
+
+export const wireHasNoActiveConditions = (wire: Wire) =>
+	!wireHasActiveConditions(wire)
+
 function should(condition: DisplayCondition, context: Context): boolean {
 	if (!condition) return true
+	const { type } = condition
+	const { wire: wireName } = condition as HasWire
+	const { operator } = condition as HasOperator
+	let wire = null
+	if (wireName) {
+		wire = context.getWire(wireName) as Wire
+		if (!wire && isConditionRequiringWireProperty(condition)) return false
+	} else if (isConditionRequiringWireProperty(condition)) {
+		return false
+	}
 
-	if (condition.type === "collectionContext") {
-		const wire = context.getWire()
+	if (type === "collectionContext") {
 		const collection = wire?.getCollection()
 		return collection?.getFullName() === condition.collection
 	}
 
-	if (condition.type === "group") {
+	if (type === "group") {
 		const { conjunction = "AND", conditions = [] } = condition
 		return conditions[
 			conjunction === "OR" && conditions?.length ? "some" : "every"
 		]((c) => should(c, context))
 	}
 
-	if (condition.type === "paramIsSet")
-		return !!context.getParam(condition.param)
+	if (type === "paramIsSet") return !!context.getParam(condition.param)
 
-	if (condition.type === "paramIsNotSet")
-		return !context.getParam(condition.param)
+	if (type === "paramIsNotSet") return !context.getParam(condition.param)
 
-	if (condition.type === "fieldMode")
-		return condition.mode === context.getFieldMode()
+	if (type === "fieldMode") return condition.mode === context.getFieldMode()
 
-	if (condition.type === "featureFlag")
+	if (type === "featureFlag")
 		return !!context.getFeatureFlag(condition.name)?.value
 
-	if (condition.type === "recordIsNew") return !!context.getRecord()?.isNew()
+	if (type === "recordIsNew") return !!context.getRecord()?.isNew()
 
-	if (condition.type === "recordIsNotNew")
-		return !context.getRecord()?.isNew()
+	if (type === "recordIsNotNew") return !context.getRecord()?.isNew()
 
-	if (condition.type === "hasProfile")
+	if (type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
 
-	if (condition.type === "wireHasChanges") {
-		const wire = context.getWire(condition.wire)
+	if (type === "wireHasChanges") {
 		return !!wire?.getChanges().length || !!wire?.getDeletes().length
 	}
-	if (condition.type === "wireHasNoChanges") {
-		const wire = context.getWire(condition.wire)
+	if (type === "wireHasNoChanges") {
 		return !wire?.getChanges().length && !wire?.getDeletes().length
 	}
-
-	if (
-		condition.type === "wireIsLoading" ||
-		condition.type === "wireIsNotLoading"
-	) {
-		const wire = context.getWire(condition.wire)
+	if (type === "wireHasNoActiveConditions") {
+		return wireHasNoActiveConditions(wire as Wire)
+	}
+	if (type === "wireHasActiveConditions") {
+		return wireHasActiveConditions(wire as Wire)
+	}
+	if (type === "wireIsLoading" || type === "wireIsNotLoading") {
 		const isLoading = !!wire?.isLoading()
-		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
+		return type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
-	if (
-		condition.type === "wireHasRecords" ||
-		condition.type === "wireHasNoRecords"
-	) {
-		const wire = context.getWire(condition.wire)
+	if (type === "wireHasRecords" || type === "wireHasNoRecords") {
 		const hasRecords = !!wire?.getData().length
-		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
+		return type === "wireHasNoRecords" ? !hasRecords : hasRecords
 	}
 
 	if (
-		condition.type === "wireHasSearchCondition" ||
-		condition.type === "wireHasNoSearchCondition"
+		type === "wireHasSearchCondition" ||
+		type === "wireHasNoSearchCondition"
 	) {
-		const wire = context.getWire(condition.wire)
 		const hasSearchCondition = !!wire
 			?.getConditions()
 			.some((condition) => condition.type === "SEARCH")
-		return condition.type === "wireHasNoSearchCondition"
+		return type === "wireHasNoSearchCondition"
 			? !hasSearchCondition
 			: hasSearchCondition
 	}
 
 	if (
-		condition.type === "wireHasLoadedAllRecords" ||
-		condition.type === "wireHasMoreRecordsToLoad"
+		type === "wireHasLoadedAllRecords" ||
+		type === "wireHasMoreRecordsToLoad"
 	) {
-		const hasAllRecords = !!context.getWire(condition.wire)?.hasAllRecords()
-		return condition.type === "wireHasMoreRecordsToLoad"
+		const hasAllRecords = !!wire?.hasAllRecords()
+		return type === "wireHasMoreRecordsToLoad"
 			? !hasAllRecords
 			: hasAllRecords
 	}
 
-	const canHaveMultipleValues =
-		condition.type === "fieldValue" || condition.type === "paramValue"
+	const canHaveMultipleValues = type === "fieldValue" || type === "paramValue"
 
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.merge(condition.value as string)
 			: condition.value ?? (canHaveMultipleValues ? condition.values : "")
 
-	if (condition.type === "hasNoValue") return !compareToValue
-	if (condition.type === "hasValue") return !!compareToValue
-	if (condition.type === "paramValue")
+	if (type === "hasNoValue") return !compareToValue
+	if (type === "hasValue") return !!compareToValue
+	if (type === "paramValue")
 		return compare(
 			compareToValue,
 			context.getParam(condition.param),
-			condition.operator
+			operator
 		)
-	if (condition.type === "mergeValue")
+	if (type === "mergeValue")
 		return compare(
 			compareToValue,
 			context.merge(condition.sourceValue),
-			condition.operator
+			operator
 		)
 
-	if (!condition.type || condition.type === "fieldValue") {
-		const record = context.getRecord(condition.wire)
+	if (!type || type === "fieldValue") {
+		const record = context.getRecord(wireName)
 		const comparator = (r: WireRecord) =>
 			compare(
 				compareToValue,
 				condition.field ? r.getFieldValue(condition.field) ?? "" : "",
-				condition.operator
+				operator
 			)
 		if (record) return comparator(record)
 
 		// If we have no record in context, test against all records in the wire.
-		const wire = context.getWire(condition.wire)
-		if (!wire) return condition.operator === "NOT_EQUALS"
+		if (!wire) return operator === "NOT_EQUALS"
 		const records = wire.getData()
 
 		// If there are no records, not_equal applies
-		if (!records.length && condition.operator)
-			return condition.operator.includes("NOT")
+		if (!records.length && operator) return operator.includes("NOT")
 
 		// When we check for false condition, we want to check every record.
-		const arrayMethod = condition.operator?.includes("NOT")
-			? "every"
-			: "some"
+		const arrayMethod = operator?.includes("NOT") ? "every" : "some"
 
 		return records[arrayMethod](comparator)
 	}
 
-	console.warn(`Unknown display condition type: ${condition.type}`)
+	console.warn(`Unknown display condition type: ${type}`)
 	return true
 }
 
