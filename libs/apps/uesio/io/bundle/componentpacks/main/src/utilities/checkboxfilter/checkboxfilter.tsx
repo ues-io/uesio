@@ -1,11 +1,10 @@
-import { definition, api, wire, collection } from "@uesio/ui"
+import { definition, api, wire } from "@uesio/ui"
 import SelectField from "../field/select"
 
 interface CheckboxFilterProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState
-	fieldMetadata: collection.Field
 }
 
 const CheckboxFilter: definition.UtilityComponent<CheckboxFilterProps> = (
