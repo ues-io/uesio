@@ -3,7 +3,6 @@ package jsdialect
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -205,7 +204,6 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 			matchExpression := match[0] //${mymerge}
 			merge := match[1]           // mymerge
 			mergeValue := params[merge]
-			fmt.Println(fmt.Sprintf("%v %T", mergeValue, mergeValue))
 			mergeString, ok := mergeValue.(string)
 			if ok {
 
@@ -213,11 +211,6 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 				if err != nil {
 					return err
 				}
-
-				fmt.Println("MERGINGG")
-				fmt.Println(merge)
-				fmt.Println(mergeString)
-				fmt.Println(newNode)
 
 				if newNode.Content == nil || len(newNode.Content) == 0 {
 					node.SetString("")
