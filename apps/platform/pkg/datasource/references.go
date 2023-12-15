@@ -107,17 +107,21 @@ func HandleReferences(
 			return err
 		}
 
-		ref.AddFields([]wire.LoadRequestField{
+		refFields := []wire.LoadRequestField{
 			{
 				ID: wire.ID_FIELD,
 			},
 			{
 				ID: wire.UNIQUE_KEY_FIELD,
 			},
-			{
-				ID: collectionNameField.GetFullName(),
-			},
-		})
+		}
+
+		nameFieldID := collectionNameField.GetFullName()
+		if collectionNameField != nil && nameFieldID != "" {
+			refFields = append(refFields, wire.LoadRequestField{ID: nameFieldID})
+		}
+
+		ref.AddFields(refFields)
 
 		err = LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
