@@ -104,18 +104,18 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: DATE
-      - label: Toggle
-        value: TOGGLE
+      - label: Multi Select
+        value: MULTISELECT
         validFor:
           - field: fieldDisplayType
-            value: CHECKBOX
+            value: SELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
         operator: IN
         values:
           - DATE
-          - CHECKBOX
+          - SELECT
   - name: label
     type: TEXT
     label: Label

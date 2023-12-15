@@ -61,7 +61,7 @@ const getFilterContent = (
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":
-			return <CheckboxFilter {...common} displayAs={displayAs} />
+			return <CheckboxFilter {...common} />
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "MULTISELECT":
