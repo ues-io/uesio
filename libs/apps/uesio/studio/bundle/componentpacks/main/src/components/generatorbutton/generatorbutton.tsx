@@ -106,6 +106,16 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 				height="500px"
 				onClose={() => setOpen(false)}
 				title="Set Generator Parameters"
+				actions={
+					<Group justifyContent="end" context={context}>
+						<Button
+							context={context}
+							variant="uesio/io.primary"
+							label="Generate"
+							onClick={onClick}
+						/>
+					</Group>
+				}
 			>
 				<DynamicForm
 					context={context}
@@ -116,14 +126,6 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					submitLabel="Generate"
 					wireRef={wireRef}
 				/>
-				<Group justifyContent="end" context={context}>
-					<Button
-						context={context}
-						variant="uesio/io.primary"
-						label="Generate"
-						onClick={onClick}
-					/>
-				</Group>
 			</Dialog>
 		</FloatingPortal>
 	)

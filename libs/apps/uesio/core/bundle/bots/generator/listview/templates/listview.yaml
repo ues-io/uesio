@@ -56,11 +56,18 @@ components:
             components:
               - uesio/io.table:
                   rowactions:
-                    - text: Delete
+                    - icon: visibility
+                      uesio.display:
+                        - type: recordIsNotNew
+                      signals:
+                        - signal: route/NAVIGATE_TO_ASSIGNMENT
+                          viewtype: detail
+                          recordid: ${uesio/core.id}
+                    - icon: delete
                       signals:
                         - signal: wire/TOGGLE_DELETE_STATUS
                   columns: ${tableColumns}
                   uesio.id: ${wirename}Table
-                  mode: EDIT
+                  mode: READ
                   wire: ${wirename}
                   pagesize: 10
