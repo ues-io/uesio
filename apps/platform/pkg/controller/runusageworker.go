@@ -10,7 +10,7 @@ import (
 )
 
 func RunUsageWorker(w http.ResponseWriter, r *http.Request) {
-	if err := usage_worker.UsageWorker(); err != nil {
+	if err := usage_worker.UsageWorker(r.Context()); err != nil {
 		ctlutil.HandleError(w, errors.New("Usage Worker Failed: "+err.Error()))
 		return
 	}

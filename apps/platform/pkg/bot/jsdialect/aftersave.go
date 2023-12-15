@@ -30,7 +30,7 @@ func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connec
 		Deletes: &DeletesAPI{
 			op: request,
 		},
-		LogApi:     NewBotLogAPI(bot),
+		LogApi:     NewBotLogAPI(bot, session.Context()),
 		session:    session,
 		op:         request,
 		connection: connection,

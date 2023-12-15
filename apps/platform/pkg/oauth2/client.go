@@ -107,7 +107,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.Integratio
 		TokenTypeOverride: tokenTypeOverride,
 	}
 
-	client, err := getClient(integration, credentials, tok, session.GetContextSite().GetHost(), clientOptions)
+	client, err := getClient(ic.Context(), integration, credentials, tok, session.GetContextSite().GetHost(), clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.Integratio
 // getClient creates a custom HTTP client which performs automatic token refreshing on expiration
 // while allowing for us (Uesio) to modify how the authorization header is set,
 // and notify other code when the header is set to know whether a new access token / refresh token was generated
-func getClient(integration *meta.Integration, credentials *wire.Credentials, t *oauth2.Token, host string, opts *ClientOptions) (*http.Client, error) {
+func getClient(ctx context.Context, integration *meta.Integration, credentials *wire.Credentials, t *oauth2.Token, host string, opts *ClientOptions) (*http.Client, error) {
 
 	var tokenSource oauth2.TokenSource
 
@@ -169,13 +169,13 @@ func getClient(integration *meta.Integration, credentials *wire.Credentials, t *
 		if err != nil {
 			return nil, exceptions.NewUnauthorizedException(err.Error())
 		}
-		tokenSource = oauth2.ReuseTokenSource(t, config.TokenSource(context.Background()))
+		tokenSource = oauth2.ReuseTokenSource(t, config.TokenSource(ctx))
 	} else if integration.Authentication == "OAUTH2_AUTHORIZATION_CODE" {
 		config, err := GetConfig(credentials, host)
 		if err != nil {
 			return nil, exceptions.NewUnauthorizedException(err.Error())
 		}
-		tokenSource = config.TokenSource(context.Background(), t)
+		tokenSource = config.TokenSource(ctx, t)
 	} else {
 		return nil, exceptions.NewUnauthorizedException("unsupported OAuth 2 grant type")
 	}

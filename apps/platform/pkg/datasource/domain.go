@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -29,7 +30,7 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 			},
 			BatchSize: 1,
 		},
-		sess.GetStudioAnonSession(),
+		sess.GetStudioAnonSession(context.Background()),
 	)
 	if err != nil {
 		return nil, err

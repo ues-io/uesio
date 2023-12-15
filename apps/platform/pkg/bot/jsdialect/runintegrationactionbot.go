@@ -10,7 +10,7 @@ import (
 func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
 		actionName: actionName,
-		LogApi:     NewBotLogAPI(bot),
+		LogApi:     NewBotLogAPI(bot, integrationConnection.Context()),
 		Http:       NewBotHttpAPI(bot, integrationConnection),
 		Params: &ParamsAPI{
 			Params: params,

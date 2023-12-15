@@ -34,7 +34,7 @@ func NewSaveBotAPI(bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveO
 		Deletes:             &DeletesAPI{saveOp},
 		Inserts:             &InsertsAPI{saveOp},
 		Updates:             &UpdatesAPI{saveOp},
-		LogApi:              NewBotLogAPI(bot),
+		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
 		SaveRequestMetadata: NewSaveRequestMetadata(saveOp),
 	}
 }

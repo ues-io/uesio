@@ -525,7 +525,7 @@ func GetMetadataForLoad(
 			}
 		}
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(session.Context(), fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}

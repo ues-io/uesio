@@ -200,7 +200,7 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 
 	code := generateCode()
 
-	adminSession := sess.GetAnonSession(c.session.GetSite())
+	adminSession := sess.GetAnonSessionFrom(c.session)
 	loginmethod, err := auth.GetLoginMethod(username, signupMethod.AuthSource, adminSession)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())

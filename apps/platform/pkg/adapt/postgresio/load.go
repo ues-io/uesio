@@ -1,7 +1,6 @@
 package postgresio
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -238,14 +237,14 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	//fmt.Println(loadQuery)
 	//fmt.Println(builder.Values)
 
-	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
+	rows, err := db.Query(c.ctx, loadQuery, builder.Values...)
 	if err != nil {
 		return TranslatePGError(err)
 	}
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := formula.GetFormulaFunction(formulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(c.ctx, formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {

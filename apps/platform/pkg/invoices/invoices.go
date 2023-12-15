@@ -1,6 +1,7 @@
 package invoices
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"strings"
@@ -15,11 +16,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func InvoicingJob() error {
+func InvoicingJobNoContext() error {
+	return InvoicingJob(context.Background())
+}
+
+func InvoicingJob(ctx context.Context) error {
 
 	slog.Info("Starting Invoicing job...")
 
-	session, err := auth.GetStudioSystemSession(nil)
+	session, err := auth.GetStudioSystemSession(ctx, nil)
 	if err != nil {
 		return err
 	}

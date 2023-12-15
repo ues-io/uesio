@@ -53,7 +53,7 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 		return err
 	}
 
-	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession())
+	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession(session.Context()))
 	if err != nil {
 		return err
 	}
@@ -231,7 +231,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 	}
 
-	appData, err := datasource.GetAppData(namespaces)
+	appData, err := datasource.GetAppData(session.Context(), namespaces)
 	if err != nil {
 		return err
 	}

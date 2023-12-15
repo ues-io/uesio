@@ -1,6 +1,7 @@
 package bundle
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -12,15 +13,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetSiteBundleDef(site *meta.Site, connection wire.Connection) (*meta.BundleDef, error) {
-	return GetVersionBundleDef(site.GetAppFullName(), site.Bundle.GetVersionString(), connection)
+func GetSiteBundleDef(ctx context.Context, site *meta.Site, connection wire.Connection) (*meta.BundleDef, error) {
+	return GetVersionBundleDef(ctx, site.GetAppFullName(), site.Bundle.GetVersionString(), connection)
 }
 
-func GetVersionBundleDef(namespace, version string, connection wire.Connection) (*meta.BundleDef, error) {
+func GetVersionBundleDef(ctx context.Context, namespace, version string, connection wire.Connection) (*meta.BundleDef, error) {
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Namespace:  namespace,
 		Version:    version,
 		Connection: connection,
+		Context:    ctx,
 	})
 	if err != nil {
 		return nil, err
@@ -28,13 +30,14 @@ func GetVersionBundleDef(namespace, version string, connection wire.Connection) 
 	return bs.GetBundleDef()
 }
 
-func GetWorkspaceBundleDef(workspace *meta.Workspace, connection wire.Connection) (*meta.BundleDef, error) {
+func GetWorkspaceBundleDef(ctx context.Context, workspace *meta.Workspace, connection wire.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Namespace:  workspace.GetAppFullName(),
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
+		Context:    ctx,
 	})
 	if err != nil {
 		return nil, err
@@ -90,7 +93,16 @@ func GetBundleStoreConnection(namespace string, session *sess.Session, connectio
 		return nil, err
 	}
 
+	var ctx context.Context
+	if session.Context() != nil {
+		ctx = session.Context()
+	} else if connection != nil {
+		ctx = connection.Context()
+	} else {
+		ctx = context.Background()
+	}
 	return bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Context:      ctx,
 		Namespace:    namespace,
 		Version:      version,
 		Connection:   connection,

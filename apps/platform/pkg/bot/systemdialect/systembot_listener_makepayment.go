@@ -35,8 +35,7 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection wire.Co
 	host := datasource.GetHostFromDomain(domain, site)
 	cancelURL := fmt.Sprintf("%s/mypayments", host)
 	successURL := fmt.Sprintf("%s/paymentsuccess/{CHECKOUT_SESSION_ID}", host)
-
-	anonSession := sess.GetStudioAnonSession()
+	anonSession := sess.GetStudioAnonSession(uesioSession.Context())
 	stripeKey, err := datasource.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
 		return nil, err

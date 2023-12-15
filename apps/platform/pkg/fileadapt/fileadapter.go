@@ -1,6 +1,7 @@
 package fileadapt
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -13,7 +14,7 @@ import (
 )
 
 type FileAdapter interface {
-	GetFileConnection(*wire.Credentials, string) (file.Connection, error)
+	GetFileConnection(context.Context, *wire.Credentials, string) (file.Connection, error)
 }
 
 var adapterMap = map[string]FileAdapter{}
@@ -66,5 +67,5 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (file.Connect
 		return nil, err
 	}
 
-	return fileAdapter.GetFileConnection(credentials, mergedBucket)
+	return fileAdapter.GetFileConnection(session.Context(), credentials, mergedBucket)
 }

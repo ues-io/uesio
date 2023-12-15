@@ -1,10 +1,9 @@
 package postgresio
 
 import (
-	"context"
-
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v5"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -81,7 +80,7 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName, tenantID)
 	}
 
-	results := db.SendBatch(context.Background(), batch)
+	results := db.SendBatch(c.ctx, batch)
 	execCount := batch.Len()
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()

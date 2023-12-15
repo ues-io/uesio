@@ -24,6 +24,11 @@ type Connection struct {
 	client      *pgxpool.Pool
 	transaction pgx.Tx
 	datasource  string
+	ctx         context.Context
+}
+
+func (c *Connection) Context() context.Context {
+	return c.ctx
 }
 
 func (c *Connection) GetCredentials() *wire.Credentials {
@@ -38,11 +43,11 @@ func (c *Connection) BeginTransaction() error {
 	if c.transaction != nil {
 		return errors.New("A transaction on this connection has already started")
 	}
-	client, err := connectForSave(c.credentials)
+	client, err := connectForSave(c.ctx, c.credentials)
 	if err != nil {
 		return nil
 	}
-	txn, err := client.Begin(context.Background())
+	txn, err := client.Begin(c.ctx)
 	if err != nil {
 		return err
 	}
@@ -52,14 +57,14 @@ func (c *Connection) BeginTransaction() error {
 }
 func (c *Connection) CommitTransaction() error {
 	if c.transaction != nil {
-		return c.transaction.Commit(context.Background())
+		return c.transaction.Commit(c.ctx)
 	}
 	return nil
 }
 
 func (c *Connection) RollbackTransaction() error {
 	if c.transaction != nil {
-		return c.transaction.Rollback(context.Background())
+		return c.transaction.Rollback(c.ctx)
 	}
 	return nil
 }
@@ -71,17 +76,17 @@ func (c *Connection) GetClient() QueryAble {
 	return c.client
 }
 
-func (c *Connection) GetPGConn(ctx context.Context) (*pgxpool.Conn, error) {
-	return c.client.Acquire(ctx)
+func (c *Connection) GetPGConn() (*pgxpool.Conn, error) {
+	return c.client.Acquire(c.ctx)
 }
 
 func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
 
-func (a *Adapter) GetConnection(credentials *wire.Credentials, metadata *wire.MetadataCache, datasource string) (wire.Connection, error) {
+func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentials, metadata *wire.MetadataCache, datasource string) (wire.Connection, error) {
 
-	client, err := connect(credentials)
+	client, err := connect(ctx, credentials)
 	if err != nil {
 		return nil, err
 	}
@@ -91,5 +96,6 @@ func (a *Adapter) GetConnection(credentials *wire.Credentials, metadata *wire.Me
 		credentials: credentials,
 		client:      client,
 		datasource:  datasource,
+		ctx:         ctx,
 	}, nil
 }

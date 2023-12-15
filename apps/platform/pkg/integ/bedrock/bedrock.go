@@ -42,7 +42,7 @@ type InvokeModelOptions struct {
 
 func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
 
-	cfg, err := creds.GetAWSConfig(context.Background(), ic.GetCredentials())
+	cfg, err := creds.GetAWSConfig(ic.Context(), ic.GetCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 		Accept:      aws.String("*/*"),
 	}
 
-	output, err := c.client.InvokeModelWithResponseStream(context.Background(), input)
+	output, err := c.client.InvokeModelWithResponseStream(c.session.Context(), input)
 	if err != nil {
 		return nil, handleBedrockError(err)
 	}
@@ -222,8 +222,6 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 
 	sigTerm := make(chan os.Signal, 1)
 	signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
-
-	ctx := context.Background()
 
 	go (func(ctx context.Context) {
 		totalCharacters := int64(0)
@@ -259,7 +257,7 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 		if reader != nil && reader.Err() != nil {
 			outputStream.Err() <- reader.Err()
 		}
-	})(ctx)
+	})(c.session.Context())
 
 	return outputStream, nil
 
@@ -285,7 +283,7 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 		Accept:      aws.String("application/json"),
 	}
 
-	output, err := c.client.InvokeModel(context.Background(), input)
+	output, err := c.client.InvokeModel(c.session.Context(), input)
 	if err != nil {
 		return nil, handleBedrockError(err)
 	}

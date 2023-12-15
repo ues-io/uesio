@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"context"
 	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -13,7 +12,7 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 
 	uploader := manager.NewUploader(c.client)
 
-	_, err := uploader.Upload(context.Background(), &s3.PutObjectInput{
+	_, err := uploader.Upload(c.ctx, &s3.PutObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 		Body:   fileData,

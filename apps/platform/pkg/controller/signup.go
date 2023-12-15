@@ -30,7 +30,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	systemSession, err := auth.GetSystemSession(site, nil)
+	systemSession, err := auth.GetSystemSession(session.Context(), site, nil)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
 		return
@@ -70,24 +70,22 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
+	ctx := session.Context()
 	site := session.GetSite()
 	queryParams := r.URL.Query()
 	username := queryParams.Get("username")
 	signupMethodId := getSignupMethodID(mux.Vars(r))
-
-	// Convert all query-string params into a map of values to send to the signup confirmation method
-	err := auth.ConfirmSignUp(signupMethodId, map[string]interface{}{
-		"username":         username,
-		"verificationcode": queryParams.Get("code"),
-	}, site)
-
+	systemSession, err := auth.GetSystemSession(ctx, site, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
 
-	systemSession, err := auth.GetSystemSession(site, nil)
-	if err != nil {
+	// Convert all query-string params into a map of values to send to the signup confirmation method
+	if err = auth.ConfirmSignUp(systemSession, signupMethodId, map[string]interface{}{
+		"username":         username,
+		"verificationcode": queryParams.Get("code"),
+	}, site); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}

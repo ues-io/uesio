@@ -20,7 +20,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 		return nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
 	}
 
-	adminSession := sess.GetAnonSession(session.GetSite())
+	adminSession := sess.GetAnonSessionFrom(session)
 
 	// 4. Check for Existing User
 	loginMethod, err := GetLoginMethod(federationID, authSourceID, adminSession)

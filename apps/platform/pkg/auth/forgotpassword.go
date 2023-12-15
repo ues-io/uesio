@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func ForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
-	session, err := GetSystemSession(site, nil)
+func ForgotPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return err
 	}
@@ -23,9 +25,9 @@ func ForgotPassword(signupMethodID string, payload map[string]interface{}, site 
 	return authconn.ForgotPassword(signupMethod, payload)
 }
 
-func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+func ConfirmForgotPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
 
-	session, err := GetSystemSession(site, nil)
+	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return err
 	}

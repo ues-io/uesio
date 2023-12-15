@@ -1,6 +1,7 @@
 package localfiles
 
 import (
+	"context"
 	"errors"
 	"io"
 	"io/fs"
@@ -27,14 +28,16 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *wire.Credentials, bucket string) (file.Connection, error) {
+func (a *FileAdapter) GetFileConnection(ctx context.Context, credentials *wire.Credentials, bucket string) (file.Connection, error) {
 	return &Connection{
 		bucket: bucket,
+		ctx:    ctx,
 	}, nil
 }
 
 type Connection struct {
 	bucket string
+	ctx    context.Context
 }
 
 func (c *Connection) List(dirPath string) ([]string, error) {

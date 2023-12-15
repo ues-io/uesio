@@ -1,7 +1,6 @@
 package cognito
 
 import (
-	"context"
 	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
@@ -44,7 +43,7 @@ func getFullyQualifiedUsername(site string, username string) string {
 }
 
 func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
-
+	ctx := c.session.Context()
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("You must enter a username")
@@ -61,7 +60,7 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 	if !ok {
 		return nil, exceptions.NewBadRequestException("no user pool provided in credentials")
 	}
-	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	cfg, err := creds.GetAWSConfig(ctx, c.credentials)
 	if err != nil {
 		return nil, exceptions.NewBadRequestException(err.Error())
 	}
@@ -81,7 +80,7 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	client := cognito.NewFromConfig(cfg)
 
-	result, err := client.AdminInitiateAuth(context.Background(), authTry)
+	result, err := client.AdminInitiateAuth(ctx, authTry)
 	if err != nil {
 		return nil, handleCognitoError(err)
 	}

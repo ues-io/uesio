@@ -51,7 +51,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 		},
 		connection: connection,
 		Results:    map[string]interface{}{},
-		LogApi:     NewBotLogAPI(bot),
+		LogApi:     NewBotLogAPI(bot, session.Context()),
 		Http:       NewBotHttpAPI(bot, wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
 	}
 }
