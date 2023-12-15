@@ -11,13 +11,20 @@ definition:
       - focus:outline-offset-[-1px]
       - items-center
       - hover:bg-white
+      - border-1
+      - border-transparent
       - gap-4
       - rounded
+      - hover:shadow-sm
+      - hover:border-1
+      - hover:border-slate-200
     selected:
       - text-white
       - bg-primary
       - focus:bg-black
       - hover:bg-primary
+      - hover:shadow-none
+      - hover:border-transparent
     avatar:
       - text-base
       - flex
