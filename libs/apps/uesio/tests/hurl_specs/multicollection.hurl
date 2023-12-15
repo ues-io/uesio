@@ -25,6 +25,7 @@ Accept: application/json
         },
         {
             "collection":"uesio/tests.contact",
+            "fields": [{"id": "uesio/tests.lastname"}],
             "query":true,
             "batchsize":1
         }
@@ -34,6 +35,7 @@ HTTP 200
 [Captures]
 ACC-UUID: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 CON-UUID: jsonpath "$.wires[1].data[0]['uesio/core.id']"
+CON-LASTNAME: jsonpath "$.wires[1].data[0]['uesio/tests.lastname']"
 
 # insert a cat owned by the account
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
@@ -162,3 +164,5 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.collection']" == "uesio/tests.contact"
 jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.id']" == "{{CON-UUID}}"
+#Make sure the lastname field (the contact collection name field)
+jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/tests.lastname']" == "{{CON-LASTNAME}}"

@@ -6,3 +6,4 @@ uniqueKey:
   - lastname
 access: protected
 accessField: uesio/tests.account
+nameField: lastname
