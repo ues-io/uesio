@@ -3,7 +3,7 @@ import { definition, component, hooks, metadata } from "@uesio/ui"
 import { GeneratorForm } from "../generatorbutton/generatorbutton"
 
 type GeneratorActionTileDefinition = {
-	generator: string
+	generator: metadata.MetadataKey
 	label: string
 	description: string
 	tileVariant?: metadata.MetadataKey

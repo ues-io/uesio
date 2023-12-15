@@ -15,14 +15,14 @@ import {
 } from "../previewbutton/previewbutton"
 
 type GeneratorButtonDefinition = {
-	generator: string
+	generator: metadata.MetadataKey
 	label: string
 	buttonVariant?: metadata.MetadataKey
 	hotkey?: string
 }
 
 interface FormProps {
-	generator: string
+	generator: metadata.MetadataKey
 	setOpen: (value: boolean) => void
 }
 

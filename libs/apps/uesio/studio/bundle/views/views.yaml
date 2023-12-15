@@ -122,31 +122,23 @@ definition:
                                         path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
                                 pagesize: 10
                       - uesio/io.griditem:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           components:
                             - uesio/studio.generatoractiontile:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                                label: Generate Header View
+                                description: Create a standard header view with a logo, navigation, and user avatar
+                                generator: uesio/core.headerview
+                            - uesio/studio.generatoractiontile:
                                 label: Generate List View
                                 description: Create a view for listing records in a collection
                                 generator: uesio/core.listview
                             - uesio/studio.generatoractiontile:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
                                 label: Generate Detail Views
                                 description: Create a views for viewing data for a single record
                                 generator: uesio/core.detailview
-                            - uesio/studio.generatoractiontile:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
-                                label: Generate Header View
-                                description: Create a standard header view with a logo, navigation, and user avatar
-                                generator: uesio/core.headerview
   panels:
     newView:
       uesio.type: uesio/io.dialog
