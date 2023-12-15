@@ -1,0 +1,7 @@
+name: signupmethods
+type: REFERENCEGROUP
+label: Signupmethods
+referenceGroup:
+  collection: signupmethod
+  field: workspace
+  onDelete: CASCADE

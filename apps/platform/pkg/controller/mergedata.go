@@ -7,13 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -256,7 +256,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 
 	routingMergeData, err := GetRoutingMergeData(route, preload, session)
 	if err != nil {
-		HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
 		return
 	}
 
@@ -281,7 +281,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	// }
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
-		HandleError(w, errors.New("Error merging template: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Error merging template: "+err.Error()))
 		return
 	}
 }

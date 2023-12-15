@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -18,7 +20,7 @@ type NamespaceInfo struct {
 	Namespace string `json:"namespace"`
 }
 
-func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
+func GetAppData(ctx context.Context, namespaces []string) (map[string]NamespaceInfo, error) {
 	apps := meta.AppCollection{}
 
 	// Load in App Settings
@@ -38,7 +40,7 @@ func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 				ID: "uesio/studio.icon",
 			},
 		},
-	}, sess.GetStudioAnonSession())
+	}, sess.GetStudioAnonSession(ctx))
 	if err != nil {
 		return nil, err
 	}

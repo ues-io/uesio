@@ -1,6 +1,7 @@
 package sess
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"sort"
@@ -9,6 +10,7 @@ import (
 	"github.com/twmb/murmur3"
 
 	"github.com/icza/session"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -165,6 +167,17 @@ type Session struct {
 	siteAdminSession *SiteSession
 	versionSession   *VersionSession
 	tokens           TokenMap
+	// the Go context associated with this session's HTTP request
+	ctx context.Context
+}
+
+func (s *Session) SetGoContext(ctx context.Context) {
+	s.ctx = ctx
+}
+
+// Context returns the session's associated Go HTTP request Context
+func (s *Session) Context() context.Context {
+	return s.ctx
 }
 
 func (s *Session) SetLabels(labels map[string]string) {

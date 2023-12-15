@@ -80,19 +80,14 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 	return GetUserByKey(username, session, connection)
 }
 
-func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+func ConfirmSignUp(systemSession *sess.Session, signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
 
-	session, err := GetSystemSession(site, nil)
+	signupMethod, err := GetSignupMethod(signupMethodID, systemSession)
 	if err != nil {
 		return err
 	}
 
-	signupMethod, err := GetSignupMethod(signupMethodID, session)
-	if err != nil {
-		return err
-	}
-
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, systemSession)
 	if err != nil {
 		return err
 	}

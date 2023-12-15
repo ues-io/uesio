@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -57,15 +58,15 @@ var clientPool = map[string]*pgxpool.Pool{}
 var saveClientPool = map[string]*pgxpool.Pool{}
 var lock sync.RWMutex
 
-func connect(credentials *wire.Credentials) (*pgxpool.Pool, error) {
-	return checkPoolCache(clientPool, credentials)
+func connect(ctx context.Context, credentials *wire.Credentials) (*pgxpool.Pool, error) {
+	return checkPoolCache(ctx, clientPool, credentials)
 }
 
-func connectForSave(credentials *wire.Credentials) (*pgxpool.Pool, error) {
-	return checkPoolCache(saveClientPool, credentials)
+func connectForSave(ctx context.Context, credentials *wire.Credentials) (*pgxpool.Pool, error) {
+	return checkPoolCache(ctx, saveClientPool, credentials)
 }
 
-func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *wire.Credentials) (*pgxpool.Pool, error) {
+func checkPoolCache(ctx context.Context, cache map[string]*pgxpool.Pool, credentials *wire.Credentials) (*pgxpool.Pool, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	lock.RLock()
@@ -74,7 +75,7 @@ func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *wire.Credential
 	if ok {
 		return client, nil
 	}
-	pool, err := getConnection(credentials, hash)
+	pool, err := getConnection(ctx, credentials, hash)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +87,7 @@ func checkPoolCache(cache map[string]*pgxpool.Pool, credentials *wire.Credential
 	return pool, nil
 }
 
-func getConnection(credentials *wire.Credentials, hash string) (*pgxpool.Pool, error) {
+func getConnection(ctx context.Context, credentials *wire.Credentials, hash string) (*pgxpool.Pool, error) {
 	host, err := credentials.GetRequiredEntry("host")
 	if err != nil {
 		return nil, err
@@ -116,12 +117,12 @@ func getConnection(credentials *wire.Credentials, hash string) (*pgxpool.Pool, e
 		return nil, err
 	}
 	config.ConnConfig.Tracer = &Tracer{}
-	db, err := pgxpool.NewWithConfig(context.Background(), config)
+	db, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.Ping(context.Background())
+	err = db.Ping(ctx)
 	if err != nil {
 		return nil, err
 	}

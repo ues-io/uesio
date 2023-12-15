@@ -8,6 +8,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -44,12 +45,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(nil, s, nil)
 	if err != nil {
-		controller.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
 		return
 	}
 	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
 	if err != nil {
-		controller.HandleError(w, errors.New("failed to enter version context: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("failed to enter version context: "+err.Error()))
 		return
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)
@@ -68,7 +69,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	host := fmt.Sprintf("https://%s", r.Host)
-	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(integrationConnection.GetCredentials(), host, authCode, state)
+	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(s.Context(), integrationConnection.GetCredentials(), host, authCode, state)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
 		return

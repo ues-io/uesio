@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"context"
 	"errors"
 	"io"
 	"time"
@@ -51,10 +50,9 @@ func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
 }
 
 func (c *Connection) DownloadWithDownloader(w io.WriterAt, input *s3.GetObjectInput) (file.Metadata, error) {
-	ctx := context.Background()
 	downloader := manager.NewDownloader(c.client)
 	downloader.Concurrency = 1
-	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
+	head, err := c.client.HeadObject(c.ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    input.Key,
 	})
@@ -62,7 +60,7 @@ func (c *Connection) DownloadWithDownloader(w io.WriterAt, input *s3.GetObjectIn
 		return nil, errors.New("failed to retrieve object information: " + err.Error())
 	}
 
-	_, err = downloader.Download(ctx, w, input)
+	_, err = downloader.Download(c.ctx, w, input)
 	if err != nil {
 		return nil, errors.New("failed to retrieve Object")
 	}

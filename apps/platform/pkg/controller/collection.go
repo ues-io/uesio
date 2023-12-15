@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -25,13 +26,13 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := collections.AddCollection(collectionName); err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	metadataResponse := wire.MetadataCache{}
 	if err := collections.Load(&metadataResponse, session, nil); err != nil {
-		HandleError(w, exceptions.NewBadRequestException("unable to load collection metadata: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("unable to load collection metadata: "+err.Error()))
 		return
 	}
 

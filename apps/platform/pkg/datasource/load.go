@@ -71,14 +71,18 @@ func processConditions(
 	metadata *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
-) error {
+) ([]wire.LoadRequestCondition, error) {
 
 	var err error
+	var useConditions []wire.LoadRequestCondition
 
 	currentCollectionMeta, _ := metadata.GetCollection(collectionKey)
 
-	for i, condition := range conditions {
-
+	for i := range conditions {
+		condition := conditions[i]
+		if condition.Inactive {
+			continue
+		}
 		// Convert potentially reference-crossing conditions to subquery conditions
 		if isReferenceCrossingField(condition.Field) {
 			// Just because it has an arrow does NOT mean it is reference-crossing, it might be a struct field,
@@ -97,10 +101,10 @@ func processConditions(
 				conditionPointer := &condition
 				err = transformReferenceCrossingConditionToSubquery(collectionKey, conditionPointer, metadata)
 				if err != nil {
-					return err
+					return nil, err
 				}
-				// Mutate the original condition in the array, otherwise the changes will be lost
-				conditions[i] = *conditionPointer
+				// Mutate the condition, otherwise the changes will be lost
+				condition = *conditionPointer
 			}
 		}
 
@@ -110,31 +114,34 @@ func processConditions(
 				nestedCollection = condition.SubCollection
 			}
 			if condition.SubConditions != nil {
-				err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session)
-				if err != nil {
-					return err
+				if useSubConditions, err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session); err != nil {
+					return nil, err
+				} else {
+					condition.SubConditions = useSubConditions
 				}
 			}
+			useConditions = append(useConditions, condition)
 			continue
 		}
 
 		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
 
 			if condition.RawValues != nil {
-				conditions[i].Values = condition.RawValues
+				condition.Values = condition.RawValues
 			}
 
 			stringValue, ok := condition.RawValue.(string)
 			if !ok {
 				if condition.RawValue != nil {
-					conditions[i].Value = condition.RawValue
+					condition.Value = condition.RawValue
 				}
+				useConditions = append(useConditions, condition)
 				continue
 			}
 
 			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			mergedValue, err := templating.Execute(template, merge.ServerMergeData{
@@ -142,19 +149,17 @@ func processConditions(
 				ParamValues: params,
 			})
 			if err != nil {
-				return err
+				return nil, err
 			}
-
-			conditions[i].Value = mergedValue
-
+			condition.Value = mergedValue
 		}
 
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
 			value, ok := params[condition.Param]
 			if !ok {
-				return errors.New("Invalid Condition: " + condition.Param)
+				return nil, errors.New("Invalid Condition: " + condition.Param)
 			}
-			conditions[i].Value = value
+			condition.Value = value
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
@@ -162,17 +167,17 @@ func processConditions(
 			for _, param := range condition.Params {
 				value, ok := params[param]
 				if !ok {
-					return errors.New("Invalid Condition, parameter not provided: " + param)
+					return nil, errors.New("Invalid Condition, parameter not provided: " + param)
 				}
 				values = append(values, value)
 			}
-			conditions[i].Values = values
+			condition.Values = values
 		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
-
 			// If we weren't provided ops to lookup, just don't process Lookups
 			if ops == nil {
+				useConditions = append(useConditions, condition)
 				continue
 			}
 			// Look through the previous wires to find the one to look up on.
@@ -185,7 +190,7 @@ func processConditions(
 			}
 
 			if lookupOp == nil {
-				return errors.New("Could not find lookup wire: " + condition.LookupWire)
+				return nil, errors.New("Could not find lookup wire: " + condition.LookupWire)
 			}
 
 			values := make([]interface{}, 0, lookupOp.Collection.Len())
@@ -198,21 +203,22 @@ func processConditions(
 				return nil
 			})
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			conditions[i].Values = values
+			condition.Values = values
 			//default "IN"
-			if conditions[i].Operator == "" {
-				conditions[i].Operator = "IN"
+			if condition.Operator == "" {
+				condition.Operator = "IN"
 			}
-			if !(conditions[i].Operator == "IN" || conditions[i].Operator == "NOT_IN") {
-				return errors.New("Invalid operator for lookup: " + conditions[i].Operator)
+			if !(condition.Operator == "IN" || condition.Operator == "NOT_IN") {
+				return nil, errors.New("Invalid operator for lookup: " + condition.Operator)
 			}
 		}
+		useConditions = append(useConditions, condition)
 	}
 
-	return nil
+	return useConditions, nil
 }
 
 // example:
@@ -519,7 +525,7 @@ func GetMetadataForLoad(
 			}
 		}
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(session.Context(), fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}
@@ -612,7 +618,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		}
 
 		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
-			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
+			return nil, err
 		}
 
 		//Set default order by: id - asc
@@ -642,10 +648,19 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 	for _, op := range allOps {
 
-		if err = processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOps, session); err != nil {
+		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
+		// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
+		// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
+		// etc. will also only include active condiitons).
+		// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
+		// conditions, and then we will, at the end of the operation, restore them back.
+		// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
+		// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
+		originalConditions := op.Conditions
+		activeConditions, err := processConditions(op.CollectionName, originalConditions, op.Params, metadataResponse, allOps, session)
+		if err != nil {
 			return nil, err
 		}
-
 		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
 			return nil, err
@@ -665,21 +680,29 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
 
-		if collectionMetadata.IsDynamic() {
-			if err = runDynamicCollectionLoadBots(op, connection, session); err != nil {
-				return nil, err
-			}
-			continue
-		}
+		// Mutate the conditions immediately before handing off to the load implementations
+		op.Conditions = activeConditions
 
-		// Handle external data integration loads
-		if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
-			err = performExternalIntegrationLoad(integrationName, op, connection, session)
+		// 3 branches:
+		// 1. Dynamic collections
+		// 2. External integration collections
+		// 3. Native Uesio DB collections
+		var loadErr error
+		if collectionMetadata.IsDynamic() {
+			// Dynamic collection loads
+			loadErr = runDynamicCollectionLoadBots(op, connection, session)
+		} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+			// external integration loads
+			loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
 		} else {
-			err = LoadOp(op, connection, session)
+			// native Uesio DB loads
+			loadErr = LoadOp(op, connection, session)
 		}
-		if err != nil {
-			return nil, err
+		// Regardless of what happened with the load, restore the original conditions list now that we're done
+		op.Conditions = originalConditions
+
+		if loadErr != nil {
+			return nil, loadErr
 		}
 	}
 

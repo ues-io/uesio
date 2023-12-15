@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -21,7 +22,7 @@ func NewBeforeSaveAPI(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection
 		Inserts:    &InsertsAPI{op},
 		Updates:    &UpdatesAPI{op},
 		Deletes:    &DeletesAPI{op},
-		LogApi:     NewBotLogAPI(bot),
+		LogApi:     NewBotLogAPI(bot, session.Context()),
 		session:    session,
 		op:         op,
 		connection: connection,
@@ -29,7 +30,7 @@ func NewBeforeSaveAPI(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection
 }
 
 func (bs *BeforeSaveAPI) AddError(message string) {
-	bs.op.AddError(wire.NewSaveError("", "", message))
+	bs.op.AddError(exceptions.NewSaveException("", "", message))
 }
 
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {

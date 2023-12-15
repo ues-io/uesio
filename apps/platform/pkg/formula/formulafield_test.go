@@ -1,6 +1,7 @@
 package formula
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -51,7 +52,7 @@ func TestIdentifierValidation(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fields, err := GetFormulaFields(tt.expression)
+			fields, err := GetFormulaFields(context.Background(), tt.expression)
 			if err != nil {
 				t.Errorf("Error Getting Fields for Expression: %s", err.Error())
 			}

@@ -62,7 +62,9 @@ type AddConditionPayload = {
 
 type SetConditionValuePayload = {
 	id: string
-	value: FieldValue
+	value?: FieldValue
+	values?: FieldValue[]
+	inactive?: boolean
 } & EntityPayload
 
 type RemoveOrderPayload = {
@@ -276,13 +278,26 @@ const wireSlice = createSlice({
 		setConditionValue: createEntityReducer<
 			SetConditionValuePayload,
 			PlainWire
-		>((state, { value, id }) => {
+		>((state, { values, value, id, inactive }) => {
 			if (!state.conditions) state.conditions = []
 			const condition = state.conditions.find(
 				(existingCondition) => existingCondition.id === id
 			)
-			if (isValueCondition(condition)) {
-				condition.value = value as PlainFieldValue
+			if (condition && isValueCondition(condition)) {
+				let activateCondition = false
+				if (value !== undefined) {
+					condition.value = value as PlainFieldValue
+					activateCondition = true
+				}
+				if (values !== undefined) {
+					condition.values = values as PlainFieldValue[]
+					activateCondition = true
+				}
+				if (inactive !== undefined) {
+					condition.inactive = inactive
+				} else if (activateCondition && condition.inactive) {
+					condition.inactive = false
+				}
 			}
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
@@ -482,7 +497,7 @@ export {
 	addLookupWires,
 }
 
-export type { WireLoadAction }
+export type { SetConditionValuePayload, WireLoadAction }
 
 export const {
 	markForDelete,

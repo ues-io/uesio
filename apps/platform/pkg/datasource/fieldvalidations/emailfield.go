@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -17,11 +18,11 @@ func isEmailValid(e string) bool {
 }
 
 func ValidateEmailField(field *wire.FieldMetadata) ValidationFunc {
-	return func(change *wire.ChangeItem) *wire.SaveError {
+	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}
 		}
 		return nil

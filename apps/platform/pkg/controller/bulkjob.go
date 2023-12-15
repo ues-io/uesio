@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -16,7 +17,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
 	var specRequest meta.JobSpecRequest
 	if err := json.NewDecoder(r.Body).Decode(&specRequest); err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid job spec request: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid job spec request: "+err.Error()))
 		return
 	}
 
@@ -25,7 +26,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 	spec := meta.JobSpec(specRequest)
 	jobID, err := bulk.NewJob(&spec, session)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("Failed Creating New Job: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Creating New Job: "+err.Error()))
 		return
 	}
 

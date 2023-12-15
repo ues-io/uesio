@@ -14,13 +14,15 @@ type BotLogAPI struct {
 	bot     *meta.Bot
 	counter uint64
 	start   time.Time
+	ctx     context.Context
 }
 
-func NewBotLogAPI(bot *meta.Bot) *BotLogAPI {
+func NewBotLogAPI(bot *meta.Bot, ctx context.Context) *BotLogAPI {
 	return &BotLogAPI{
 		bot:     bot,
 		counter: 0,
 		start:   time.Now(),
+		ctx:     ctx,
 	}
 }
 
@@ -65,7 +67,7 @@ func (logapi *BotLogAPI) log(level slog.Level, message string, data interface{})
 		Data:         data,
 		Sequence:     atomic.AddUint64(&logapi.counter, 1),
 	}
-	slog.Log(context.Background(), level, message, "bot", &logEntry)
+	slog.Log(logapi.ctx, level, message, "bot", &logEntry)
 }
 
 func (logapi *BotLogAPI) Info(message string, data interface{}) {

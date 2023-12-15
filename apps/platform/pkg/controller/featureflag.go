@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -23,13 +24,13 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	response, err := featureflagstore.GetFeatureFlags(session, user)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	bytes, err := gojay.MarshalJSONArray(response)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -49,7 +50,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 	var setRequest FeatureFlagSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid request format: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request format: "+err.Error()))
 		return
 	}
 	err = featureflagstore.SetValueFromKey(namespace+"."+name, setRequest.Value, setRequest.User, session)
@@ -59,7 +60,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 	file.RespondJSON(w, r, &bot.BotResponse{

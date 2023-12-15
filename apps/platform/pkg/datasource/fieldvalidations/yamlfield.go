@@ -5,16 +5,18 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
-	"github.com/thecloudmasters/uesio/pkg/validation"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+	"github.com/thecloudmasters/uesio/pkg/validation"
 )
 
 const yamlValidationError = "Field '%s' failed YAML schema validation: %s"
 
 func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
-	return func(change *wire.ChangeItem) *wire.SaveError {
+	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err != nil {
 			return nil
@@ -30,11 +32,11 @@ func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
 		if len(field.ValidationMetadata.SchemaUri) > 0 {
 			schema, err2 := validation.GetSchema(field.ValidationMetadata.SchemaUri)
 			if err2 != nil {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
 			}
 			validationResult, err2 := validation.ValidateYaml(schema, yamlBytes)
 			if err2 != nil {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
 			}
 			if validationResult.Valid() {
 				return nil
@@ -57,11 +59,11 @@ func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
 					errStrings[i] = fmt.Sprintf("[%d] %s", i+1, formatted)
 				}
 			}
-			return wire.NewSaveError(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, strings.Join(errStrings, " ")))
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, strings.Join(errStrings, " ")))
 		} else {
 			err = yaml.Unmarshal(yamlBytes, node)
 			if err != nil {
-				return wire.NewSaveError(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err.Error()))
 			}
 			return nil
 		}

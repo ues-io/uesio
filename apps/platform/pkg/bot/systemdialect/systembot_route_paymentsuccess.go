@@ -24,7 +24,7 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) (*
 		ThemeRef: "uesio/studio.default",
 		Params:   nil,
 	}
-	anonSession := sess.GetStudioAnonSession()
+	anonSession := sess.GetStudioAnonSession(uesioSession.Context())
 	stripeKey, err := datasource.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
 		return paymentRoute, nil

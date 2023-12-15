@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -25,13 +26,13 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid request body: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body: "+err.Error()))
 		return
 	}
 
-	err = auth.ForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
+	err = auth.ForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -45,13 +46,13 @@ func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid request body: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body: "+err.Error()))
 		return
 	}
 
-	err = auth.ConfirmForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
+	err = auth.ConfirmForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

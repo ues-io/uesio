@@ -6,6 +6,8 @@ import (
 	"errors"
 	"io"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
@@ -13,7 +15,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
-	"gopkg.in/yaml.v3"
 )
 
 func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Connection, session *sess.Session) error {
@@ -30,6 +31,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	}
 
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Context:      session.Context(),
 		Namespace:    workspaceSession.GetContextAppName(),
 		Version:      bundle.GetVersionString(),
 		Connection:   connection,

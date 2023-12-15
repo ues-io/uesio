@@ -1,9 +1,8 @@
 package postgresio
 
 import (
-	"context"
-
 	"github.com/jackc/pgx/v5"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -62,7 +61,7 @@ func (c *Connection) SetRecordAccessTokens(request *wire.SaveOp, session *sess.S
 		return err
 	}
 
-	results := c.GetClient().SendBatch(context.Background(), batch)
+	results := c.GetClient().SendBatch(c.ctx, batch)
 	execCount := batch.Len()
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()

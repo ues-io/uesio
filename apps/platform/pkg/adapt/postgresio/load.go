@@ -1,8 +1,6 @@
 package postgresio
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -239,14 +237,14 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	//fmt.Println(loadQuery)
 	//fmt.Println(builder.Values)
 
-	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
+	rows, err := db.Query(c.ctx, loadQuery, builder.Values...)
 	if err != nil {
-		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
+		return TranslatePGError(err)
 	}
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := formula.GetFormulaFunction(formulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(c.ctx, formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
@@ -258,7 +256,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 		err := rows.Scan(item)
 		if err != nil {
-			return err
+			return TranslatePGError(err)
 		}
 
 		for _, refCol := range referencedCollections {
@@ -291,9 +289,8 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		index++
 
 	}
-	err = rows.Err()
-	if err != nil {
-		return err
+	if err = rows.Err(); err != nil {
+		return TranslatePGError(err)
 	}
 
 	//fmt.Printf("PG LOAD %v %v\n", op.CollectionName, time.Since(start))
@@ -310,5 +307,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	return datasource.HandleReferences(c, referencedCollections, session, true)
+	return datasource.HandleReferences(c, referencedCollections, session, &datasource.ReferenceOptions{
+		AllowMissingItems: true,
+	})
 }

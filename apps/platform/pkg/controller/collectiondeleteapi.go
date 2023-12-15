@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -111,7 +112,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	_, err := datasource.Load([]*wire.LoadOp{op}, session, nil)
 
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("Error querying collection records to delete: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Error querying collection records to delete: "+err.Error()))
 		return
 	}
 
@@ -124,7 +125,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 			Params:     params,
 		}}
 		if err = datasource.HandleSaveRequestErrors(saveRequests, datasource.Save(saveRequests, session)); err != nil {
-			HandleError(w, exceptions.NewBadRequestException("Delete failed: "+err.Error()))
+			ctlutil.HandleError(w, exceptions.NewBadRequestException("Delete failed: "+err.Error()))
 			return
 		}
 	}

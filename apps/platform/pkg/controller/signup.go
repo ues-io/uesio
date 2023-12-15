@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -25,25 +26,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		HandleError(w, exceptions.NewBadRequestException("invalid signup request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body"))
 		return
 	}
 
-	systemSession, err := auth.GetSystemSession(site, nil)
+	systemSession, err := auth.GetSystemSession(session.Context(), site, nil)
 	if err != nil {
-		HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
 		return
 	}
 
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
-		HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
 		return
 	}
 
 	user, err := auth.Signup(signupMethod, payload, systemSession)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -54,7 +55,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
@@ -69,32 +70,30 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
+	ctx := session.Context()
 	site := session.GetSite()
 	queryParams := r.URL.Query()
 	username := queryParams.Get("username")
 	signupMethodId := getSignupMethodID(mux.Vars(r))
-
-	// Convert all query-string params into a map of values to send to the signup confirmation method
-	err := auth.ConfirmSignUp(signupMethodId, map[string]interface{}{
-		"username":         username,
-		"verificationcode": queryParams.Get("code"),
-	}, site)
-
+	systemSession, err := auth.GetSystemSession(ctx, site, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 
-	systemSession, err := auth.GetSystemSession(site, nil)
-	if err != nil {
-		HandleError(w, err)
+	// Convert all query-string params into a map of values to send to the signup confirmation method
+	if err = auth.ConfirmSignUp(systemSession, signupMethodId, map[string]interface{}{
+		"username":         username,
+		"verificationcode": queryParams.Get("code"),
+	}, site); err != nil {
+		ctlutil.HandleError(w, err)
 		return
 	}
 
 	// If signup confirmation succeeded, go ahead and log the user in
 	user, err := auth.GetUserByKey(username, systemSession, nil)
 	if err != nil {
-		HandleError(w, err)
+		ctlutil.HandleError(w, err)
 		return
 	}
 

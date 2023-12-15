@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -153,7 +154,7 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 	return collectionName + ":" + fieldName + ":" + selectListName
 }
 
-func ProcessFieldsMetadata(fields map[string]*wire.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *wire.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
+func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *wire.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
 
 	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 	if err != nil {
@@ -277,14 +278,14 @@ func ProcessFieldsMetadata(fields map[string]*wire.FieldMetadata, collectionKey 
 		}
 
 		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "STRUCT" || fieldMetadata.Type == "LIST" {
-			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
+			err := ProcessFieldsMetadata(ctx, fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
 			if err != nil {
 				return err
 			}
 		}
 
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := formula.GetFormulaFields(fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(ctx, fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}
@@ -361,7 +362,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			}
 		}
 
-		err = ProcessFieldsMetadata(metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
+		err = ProcessFieldsMetadata(session.Context(), metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
 		if err != nil {
 			return err
 		}

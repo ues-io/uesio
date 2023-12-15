@@ -47,7 +47,7 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 		BatchNumber:    op.BatchNumber,
 	}
 
-	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
+	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(session.Context()), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
@@ -90,6 +90,8 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.Collection = usageData
 
 	//get user references with the current site session
-	return datasource.HandleReferences(connection, referencedCollections, session, true)
+	return datasource.HandleReferences(connection, referencedCollections, session, &datasource.ReferenceOptions{
+		AllowMissingItems: true,
+	})
 
 }

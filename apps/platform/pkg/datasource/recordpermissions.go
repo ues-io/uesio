@@ -43,28 +43,30 @@ func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire
 		return nil, err
 	}
 
-	var fields []wire.LoadRequestField
-
-	for fieldID, fieldInfo := range refCollectionMetadata.Fields {
-		// TODO: We should be better about deciding which field we load in here
-		if fieldInfo.Type == "REFERENCEGROUP" {
-			continue
-		}
-		var subFields []wire.LoadRequestField
-		if fieldID == refCollectionMetadata.AccessField {
-			subFields, err = getAccessFields(refCollectionMetadata, metadata)
-			if err != nil {
-				return nil, err
+	if refCollectionMetadata.AccessField == "" {
+		fieldsMap := &FieldsMap{}
+		for _, token := range refCollectionMetadata.RecordChallengeTokens {
+			fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Token)))
+			for _, condition := range token.Conditions {
+				fieldsMap.merge(getFieldsMap([]string{condition.Field}))
 			}
 		}
+		fieldsMap.merge(getFieldsMap([]string{"uesio/core.owner"}))
 
-		fields = append(fields, wire.LoadRequestField{
-			ID:     fieldID,
-			Fields: subFields,
-		})
+		return fieldsMap.getRequestFields(), nil
 	}
 
-	return fields, nil
+	subFields, err := getAccessFields(refCollectionMetadata, metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	return []wire.LoadRequestField{
+		{
+			ID:     refCollectionMetadata.AccessField,
+			Fields: subFields,
+		},
+	}, nil
 
 }
 
@@ -99,14 +101,16 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 			return err
 		}
 		return refReq.AddID(fk, wire.ReferenceLocator{
-			Item:  change,
+			Item:  change.FieldChanges,
 			Field: fieldMetadata,
 		})
 	}); err != nil {
 		return err
 	}
 
-	return HandleReferences(connection, referencedCollections, session, false)
+	return HandleReferences(connection, referencedCollections, session, &ReferenceOptions{
+		MergeItems: true,
+	})
 }
 
 func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, session *sess.Session) error {

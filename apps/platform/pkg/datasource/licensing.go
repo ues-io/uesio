@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -49,7 +51,7 @@ func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, erro
 	if ok {
 		return licenseMap, nil
 	}
-	anonSession := sess.GetStudioAnonSession()
+	anonSession := sess.GetStudioAnonSession(context.Background())
 	app := meta.App{}
 	err := PlatformLoadOne(&app, &PlatformLoadOptions{
 		Connection: connection,

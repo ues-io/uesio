@@ -1,7 +1,6 @@
 package postgresio
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -25,7 +24,7 @@ func (c *Connection) TruncateTenantData(tenantID string) error {
 	batch.Queue(TRUNCATE_DATA_QUERY, tenantID)
 	batch.Queue(TRUNCATE_TOKENS_QUERY, tenantID)
 
-	results := db.SendBatch(context.Background(), batch)
+	results := db.SendBatch(c.ctx, batch)
 	execCount := batch.Len()
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()

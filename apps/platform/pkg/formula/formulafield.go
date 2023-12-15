@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -91,12 +92,12 @@ func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface
 	return value, nil
 }
 
-func populateFormulaField(field *wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata, exec gval.Evaluable) evalFunc {
+func populateFormulaField(ctx context.Context, field *wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
 		evaluator := &RuntimeEvaluator{item: item, collectionMetadata: collectionMetadata}
 
-		value, err := exec(context.Background(), evaluator)
+		value, err := exec(ctx, evaluator)
 		if err != nil {
 			return err
 		}
@@ -111,7 +112,7 @@ func populateFormulaField(field *wire.FieldMetadata, collectionMetadata *wire.Co
 	}
 }
 
-func GetFormulaFunction(fields map[string]*wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata) evalFunc {
+func GetFormulaFunction(ctx context.Context, fields map[string]*wire.FieldMetadata, collectionMetadata *wire.CollectionMetadata) evalFunc {
 
 	populations := []evalFunc{}
 	for _, field := range fields {
@@ -129,7 +130,7 @@ func GetFormulaFunction(fields map[string]*wire.FieldMetadata, collectionMetadat
 			if err != nil {
 				continue
 			}
-			populations = append(populations, populateFormulaField(field, collectionMetadata, exec))
+			populations = append(populations, populateFormulaField(ctx, field, collectionMetadata, exec))
 		}
 	}
 
@@ -144,13 +145,13 @@ func GetFormulaFunction(fields map[string]*wire.FieldMetadata, collectionMetadat
 	}
 }
 
-func GetFormulaFields(expression string) (map[string]bool, error) {
+func GetFormulaFields(ctx context.Context, expression string) (map[string]bool, error) {
 	exec, err := TestLanguage.NewEvaluable(expression)
 	if err != nil {
 		return nil, err
 	}
 
-	value, err := exec(context.Background(), nil)
+	value, err := exec(ctx, nil)
 	if err != nil {
 		return nil, err
 	}

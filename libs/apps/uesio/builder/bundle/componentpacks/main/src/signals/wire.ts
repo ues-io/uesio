@@ -39,7 +39,7 @@ const getConditionIdsDescriptor = (wire: string): ComponentProperty => ({
 	type: "CONDITION",
 	filter: (def: wire.WireConditionState) => !!def.id,
 	wire,
-	label: "condition",
+	label: "Condition",
 })
 
 const getWireAndConditionsDescriptor = (wire: string) => [
@@ -252,7 +252,7 @@ const signals: SignalBandDefinition = {
 				{
 					name: "value",
 					type: "TEXT",
-					label: "value",
+					label: "Value",
 				},
 			],
 		},
@@ -391,6 +391,18 @@ const signals: SignalBandDefinition = {
 				},
 			],
 			canError: true,
+		},
+		[`${BAND}/RESET_CONDITIONS`]: {
+			label: "Reset All Named Conditions On Wire",
+			description:
+				"Reset all named conditions on the wire to their original state",
+			properties: (): ComponentProperty[] => [
+				{
+					name: "wire",
+					type: "WIRE",
+					label: "Wire",
+				},
+			],
 		},
 	} as Record<string, SignalDescriptor>,
 }
