@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"context"
 	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,7 +10,7 @@ import (
 
 func (c *Connection) Delete(path string) error {
 
-	_, err := c.client.DeleteObject(context.Background(), &s3.DeleteObjectInput{
+	_, err := c.client.DeleteObject(c.ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
@@ -39,7 +38,7 @@ func (c *Connection) EmptyDir(path string) error {
 		s3Ids[i] = types.ObjectIdentifier{Key: aws.String(path + key)}
 	}
 
-	_, err = c.client.DeleteObjects(context.Background(), &s3.DeleteObjectsInput{
+	_, err = c.client.DeleteObjects(c.ctx, &s3.DeleteObjectsInput{
 		Bucket: aws.String(c.bucket),
 		Delete: &types.Delete{
 			Objects: s3Ids,

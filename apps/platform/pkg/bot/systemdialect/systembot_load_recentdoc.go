@@ -70,5 +70,5 @@ func runRecentDocLoadBot(op *wire.LoadOp, connection wire.Connection, session *s
 		//Ignore the errors if the site is not found
 		return nil
 	}
-	return getArticleLoad(op, connection, sess.GetAnonSession(site), "uesio/studio.recentdoc")
+	return getArticleLoad(op, connection, sess.GetAnonSession(session.Context(), site), "uesio/studio.recentdoc")
 }

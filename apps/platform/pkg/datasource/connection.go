@@ -51,5 +51,5 @@ func GetConnection(dataSourceKey string, metadata *wire.MetadataCache, session *
 		return nil, err
 	}
 
-	return adapter.GetConnection(credentials, metadata, dataSourceKey)
+	return adapter.GetConnection(session.Context(), credentials, metadata, dataSourceKey)
 }

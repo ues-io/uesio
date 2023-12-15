@@ -39,7 +39,7 @@ func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}
 func createLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, siteAdminSession *sess.Session) error {
 
 	siteAdmin := siteAdminSession.GetSiteAdmin()
-	session, err := GetSystemSession(siteAdmin, nil)
+	session, err := GetSystemSession(siteAdminSession.Context(), siteAdmin, nil)
 	if err != nil {
 		return err
 	}

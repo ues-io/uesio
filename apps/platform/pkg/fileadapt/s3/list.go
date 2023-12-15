@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"context"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -19,7 +18,7 @@ func (c *Connection) List(path string) ([]string, error) {
 
 	var paths []string
 	for paginator.HasMorePages() {
-		result, err := paginator.NextPage(context.Background())
+		result, err := paginator.NextPage(c.ctx)
 		if err != nil {
 			return nil, err
 		}

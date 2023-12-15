@@ -105,7 +105,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 		tokenMap.Add(NAMED_PERMISSION_TOKEN, namedPermTokens)
 	}
 
-	// To ensure we have access to all of the collections involved in user access token calculation,
+	// To ensure we have access to all the collections involved in user access token calculation,
 	// get an admin session
 	adminSession := GetSiteAdminSession(session)
 	metadata := connection.GetMetadata()

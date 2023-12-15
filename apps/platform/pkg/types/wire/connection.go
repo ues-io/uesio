@@ -1,8 +1,13 @@
 package wire
 
-import "github.com/thecloudmasters/uesio/pkg/sess"
+import (
+	"context"
+
+	"github.com/thecloudmasters/uesio/pkg/sess"
+)
 
 type Connection interface {
+	Context() context.Context
 	Load(*LoadOp, *sess.Session) error
 	Save(*SaveOp, *sess.Session) error
 	SetRecordAccessTokens(*SaveOp, *sess.Session) error

@@ -11,7 +11,7 @@ import (
 
 func addVersionContext(app, version string, session *sess.Session, connection wire.Connection) error {
 
-	bundleDef, err := bundle.GetVersionBundleDef(app, version, connection)
+	bundleDef, err := bundle.GetVersionBundleDef(session.Context(), app, version, connection)
 	if err != nil {
 		return err
 	}

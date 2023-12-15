@@ -1,6 +1,7 @@
 package bundlestore
 
 import (
+	"context"
 	"errors"
 	"io"
 
@@ -38,6 +39,7 @@ func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 }
 
 type ConnectionOptions struct {
+	Context      context.Context
 	Namespace    string
 	Version      string
 	Connection   wire.Connection

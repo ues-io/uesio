@@ -119,7 +119,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	site.Domain = domain
 	site.Subdomain = subdomain
 
-	bundleDef, err := bundle.GetSiteBundleDef(site, nil)
+	bundleDef, err := bundle.GetSiteBundleDef(context.Background(), site, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +289,7 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 	if err != nil {
 		if _, ok := err.(*exceptions.NotFoundException); ok {
 			// Login method not found. Log as a warning.
-			slog.LogAttrs(context.Background(),
+			slog.LogAttrs(session.Context(),
 				slog.LevelWarn,
 				"Could not find login method",
 				slog.String(field, value),

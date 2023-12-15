@@ -1,8 +1,6 @@
 package googleauth
 
 import (
-	"context"
-
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -56,7 +54,7 @@ func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload,
 		return nil, exceptions.NewBadRequestException("google login: invalid client id")
 	}
 
-	return idtoken.Validate(context.Background(), token, clientID)
+	return idtoken.Validate(c.session.Context(), token, clientID)
 
 }
 

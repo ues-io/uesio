@@ -1,6 +1,7 @@
 package usage_worker
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -19,7 +20,11 @@ import (
 
 const MAX_USAGE_PER_RUN = 1000
 
-func UsageWorker() error {
+func UsageWorkerNoContext() error {
+	return UsageWorker(context.Background())
+}
+
+func UsageWorker(ctx context.Context) error {
 
 	slog.Info("Running usage worker job")
 
@@ -31,7 +36,7 @@ func UsageWorker() error {
 		}
 	}(conn)
 
-	session, err := auth.GetStudioSystemSession(nil)
+	session, err := auth.GetStudioSystemSession(ctx, nil)
 	if err != nil {
 		return errors.New("Unable to obtain a system session to use for usage events job: " + err.Error())
 	}
