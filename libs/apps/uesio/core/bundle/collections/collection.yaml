@@ -1,5 +1,5 @@
 name: collection
 type: DYNAMIC
 label: Collection
-pluralLabel: Collection
+pluralLabel: Collections
 public: true

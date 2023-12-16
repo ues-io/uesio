@@ -140,7 +140,7 @@ definition:
                                 generator: uesio/core.listview
                             - uesio/studio.generatoractiontile:
                                 label: Generate Detail Views
-                                description: Create a views for viewing data for a single record
+                                description: Create views for viewing data for a single record
                                 generator: uesio/core.detailview
   panels:
     newView:

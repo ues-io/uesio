@@ -3,7 +3,9 @@ import { default as IOImage } from "../../utilities/image/image"
 
 type ImageDefinition = {
 	file?: string
+	// The image height in pixels
 	height?: number
+	// The image width in pixels
 	width?: number
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"

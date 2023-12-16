@@ -7,7 +7,7 @@ params:
     type: METADATA
     metadataType: FILE
   - name: logoheight
-    prompt: Logo Height
+    prompt: Logo Height (px)
     type: TEXT
     conditions:
       - param: logo
