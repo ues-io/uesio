@@ -5,8 +5,9 @@ wires:
     fields: ${fields}
 # Components determine the layout and composition of your view
 components:
-  - uesio/io.box:
-      components:
+  - uesio/io.viewlayout:
+      header: ${headerContent}
+      content:
         - uesio/io.titlebar:
             title: $Collection{${wirename}:pluralLabel}
             subtitle: List View
@@ -19,6 +20,11 @@ components:
                           - signal: wire/CREATE_RECORD
                             wire: ${wirename}
                             prepend: true
+                          - signal: component/CALL
+                            component: uesio/io.table
+                            componentsignal: SET_EDIT_MODE
+                            targettype: specific
+                            componentid: ${wirename}Table
                         text: $Label{uesio/io.create}
                         uesio.variant: uesio/io.primary
                     - uesio/io.button:
@@ -55,11 +61,20 @@ components:
             components:
               - uesio/io.table:
                   rowactions:
-                    - text: Delete
+                    - icon: visibility
+                      text: View
+                      uesio.display:
+                        - type: recordIsNotNew
+                      signals:
+                        - signal: route/NAVIGATE_TO_ASSIGNMENT
+                          viewtype: detail
+                          recordid: ${uesio/core.id}
+                    - icon: delete
+                      text: $Label{uesio/io.delete}
                       signals:
                         - signal: wire/TOGGLE_DELETE_STATUS
                   columns: ${tableColumns}
                   uesio.id: ${wirename}Table
-                  mode: EDIT
+                  mode: READ
                   wire: ${wirename}
                   pagesize: 10

@@ -1,64 +1,12 @@
-# Wires connect to data in collections
-wires:
-  ${wirename}:
-    collection: ${collection}
-    fields: ${fields}
-    conditions:
-      - field: uesio/core.id
-        value: $Param{recordid}
 # Components determine the layout and composition of your view
 components:
-  - uesio/io.box:
-      uesio.display:
-        - type: paramIsSet
-          param: recordid
-      components:
-        - uesio/io.titlebar:
-            title: ${collection}
-            uesio.variant: uesio/io.main
-            actions:
-              - uesio/io.group:
-                  components:
-                    - uesio/io.button:
-                        signals:
-                          - signal: wire/SAVE
-                            wires:
-                              - ${wirename}
-                        text: Save
-                        hotkey: "meta+s"
-                        uesio.variant: uesio/io.secondary
-                    - uesio/io.button:
-                        signals:
-                          - signal: wire/CANCEL
-                            wire: ${wirename}
-                        text: Cancel
-                        uesio.variant: uesio/io.secondary
-                    - uesio/io.button:
-                        signals:
-                          - signal: component/CALL
-                            component: uesio/io.list
-                            componentsignal: TOGGLE_MODE
-                            targettype: specific
-                            componentid: ${wirename}List
-                        text: Mode
-                        uesio.variant: uesio/io.secondary
-        - uesio/io.list:
-            wire: ${wirename}
-            uesio.id: ${wirename}List
-            components:
-              - uesio/io.box:
-                  uesio.variant: uesio/io.section
-                  components: ${formFields}
-  - uesio/io.box:
-      uesio.display:
-        - type: paramIsNotSet
-          param: recordid
-      uesio.styleTokens:
-        root:
-          - p-10
-      components:
-        - uesio/io.text:
-            text: Select a record
+  - uesio/io.viewlayout:
+      header: ${headerContent}
+      content:
+        - uesio/core.view:
+            view: ${innerView}
+            params:
+              recordid: $Param{recordid}
 params:
   recordid:
     type: RECORD

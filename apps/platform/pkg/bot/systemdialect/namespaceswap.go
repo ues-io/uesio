@@ -8,68 +8,18 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type NamespaceSwapItem struct {
-	collection *NamespaceSwapCollection
-	item       *wire.Item
-}
-
-func (i *NamespaceSwapItem) ScanBytes(v []byte) error {
-	return json.Unmarshal(v, i)
-}
-
-func (i *NamespaceSwapItem) UnmarshalJSON(bytes []byte) error {
-	return json.Unmarshal(bytes, i.item)
-}
-
-func (i *NamespaceSwapItem) MarshalJSON() ([]byte, error) {
-	result := map[string]json.RawMessage{}
-	err := i.Loop(func(fieldName string, value interface{}) error {
-		fieldBytes, err := json.Marshal(value)
-		if err != nil {
-			return err
-		}
-		result[i.collection.SwapNSBack(fieldName)] = fieldBytes
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(result)
-}
-
-func (i *NamespaceSwapItem) SetField(fieldName string, value interface{}) error {
-	return i.item.SetField(fieldName, value)
-}
-
-func (i *NamespaceSwapItem) GetField(fieldName string) (interface{}, error) {
-	return i.item.GetField(fieldName)
-}
-
-func (i *NamespaceSwapItem) GetFieldAsString(fieldName string) (string, error) {
-	return i.item.GetFieldAsString(fieldName)
-}
-
-func (i *NamespaceSwapItem) Loop(iter func(string, interface{}) error) error {
-	return i.item.Loop(iter)
-}
-
-func (i *NamespaceSwapItem) Len() int {
-	return i.item.Len()
-}
-
 func NewNamespaceSwapCollection(original, modified string) *NamespaceSwapCollection {
-
 	return &NamespaceSwapCollection{
 		original:   original,
 		modified:   modified,
-		collection: []*NamespaceSwapItem{},
+		collection: wire.Collection{},
 	}
 }
 
 type NamespaceSwapCollection struct {
 	original   string
 	modified   string
-	collection []*NamespaceSwapItem
+	collection wire.Collection
 }
 
 func (c *NamespaceSwapCollection) MarshalJSON() ([]byte, error) {
@@ -77,14 +27,19 @@ func (c *NamespaceSwapCollection) MarshalJSON() ([]byte, error) {
 }
 
 func (c *NamespaceSwapCollection) NewItem() meta.Item {
-	return &NamespaceSwapItem{
-		collection: c,
-		item:       &wire.Item{},
-	}
+	return &wire.Item{}
 }
 
 func (c *NamespaceSwapCollection) AddItem(item meta.Item) error {
-	c.collection = append(c.collection, item.(*NamespaceSwapItem))
+	// Loop over the item an convert the fields
+	swappedItem := &wire.Item{}
+	err := item.Loop(func(s string, i interface{}) error {
+		return swappedItem.SetField(c.SwapNSBack(s), i)
+	})
+	if err != nil {
+		return err
+	}
+	c.collection = append(c.collection, swappedItem)
 	return nil
 }
 

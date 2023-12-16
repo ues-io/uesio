@@ -3,11 +3,16 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
+      - bg-slate-50
+      - border-b-1
+      - border-slate-300
       - grid
       - grid-cols-[auto_1fr_auto]
       - items-center
       - gap-2
     logo:
+      - px-4
+      - py-2
     content:
       - grid
       - grid-flow-col
@@ -25,4 +30,5 @@ definition:
       - items-center
       - auto-cols-max
     avatar:
+      - px-3
 public: true

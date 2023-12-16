@@ -34,9 +34,25 @@ mykey:
   - two
 `)
 
+var numberMergeResult = meta.TrimYamlString(`
+mykey: 42
+`)
+
 var list = meta.TrimYamlString(`
 - one
 - two
+`)
+
+var mergeInComponent = meta.TrimYamlString(`
+components:
+  - me/my.component:
+      mykey: ${mymerge}
+`)
+
+var mergeInComponentResult = meta.TrimYamlString(`
+components:
+  - me/my.component:
+      mykey: myvalue
 `)
 
 func Test_MergeYAMLString(t *testing.T) {
@@ -96,6 +112,22 @@ func Test_MergeYAMLString(t *testing.T) {
 			},
 			template: keyMerge,
 			response: simple,
+		},
+		{
+			name: "Merge In Component Value",
+			params: map[string]interface{}{
+				"mymerge": "myvalue",
+			},
+			template: mergeInComponent,
+			response: mergeInComponentResult,
+		},
+		{
+			name: "Number Merge",
+			params: map[string]interface{}{
+				"mymerge": int64(42),
+			},
+			template: simpleMerge,
+			response: numberMergeResult,
 		},
 	}
 	for _, tt := range tests {

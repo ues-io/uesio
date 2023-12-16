@@ -240,6 +240,7 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreat
 		Create:     create,
 		Bot:        bot,
 		Connection: connection,
+		LogApi:     NewBotLogAPI(bot, session.Context()),
 	}
 	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
 }

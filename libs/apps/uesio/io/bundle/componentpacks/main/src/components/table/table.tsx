@@ -17,6 +17,7 @@ import {
 	usePagination,
 } from "../../shared/pagination"
 import Button from "../../utilities/button/button"
+import Icon from "../../utilities/icon/icon"
 import Group from "../../utilities/group/group"
 import MenuButton from "../../utilities/menubutton/menubutton"
 import Paginator from "../../utilities/paginator/paginator"
@@ -50,6 +51,7 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
+	icon?: string
 	[component.DISPLAY_CONDITIONS]?: component.DisplayCondition[]
 }
 
@@ -192,6 +194,18 @@ const Table: definition.UC<TableDefinition> = (props) => {
 								return (
 									<Button
 										key={action.text + i}
+										icon={
+											action.icon ? (
+												<Icon
+													context={
+														recordContext.context
+													}
+													icon={context.mergeString(
+														action.icon
+													)}
+												/>
+											) : undefined
+										}
 										variant="uesio/io.rowaction"
 										className="rowaction"
 										label={action.text}
