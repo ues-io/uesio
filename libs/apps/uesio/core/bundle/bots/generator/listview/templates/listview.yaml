@@ -20,6 +20,11 @@ components:
                           - signal: wire/CREATE_RECORD
                             wire: ${wirename}
                             prepend: true
+                          - signal: component/CALL
+                            component: uesio/io.table
+                            componentsignal: SET_EDIT_MODE
+                            targettype: specific
+                            componentid: ${wirename}Table
                         text: $Label{uesio/io.create}
                         uesio.variant: uesio/io.primary
                     - uesio/io.button:
@@ -57,6 +62,7 @@ components:
               - uesio/io.table:
                   rowactions:
                     - icon: visibility
+                      text: View
                       uesio.display:
                         - type: recordIsNotNew
                       signals:
@@ -64,6 +70,7 @@ components:
                           viewtype: detail
                           recordid: ${uesio/core.id}
                     - icon: delete
+                      text: $Label{uesio/io.delete}
                       signals:
                         - signal: wire/TOGGLE_DELETE_STATUS
                   columns: ${tableColumns}
