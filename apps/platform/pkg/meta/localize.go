@@ -13,7 +13,7 @@ func isLocalNamespace(ns, localNamespace string) bool {
 }
 
 // GetFullyQualifiedKey Takes a possibly localized namespace and turns it into a fully qualified,
-// (3rd person) namespace. If the namespace is not local, it is a no-op.
+// three-part key. If the namespace is not local, it is a no-op.
 func GetFullyQualifiedKey(itemKey, localNamespace string) string {
 	if itemKey == "" {
 		return ""
@@ -26,6 +26,16 @@ func GetFullyQualifiedKey(itemKey, localNamespace string) string {
 		return fmt.Sprintf("%s.%s", localNamespace, name)
 	}
 	return itemKey
+}
+
+// GetFullyQualifiedKeys Takes a list of possibly localized namespaces and turns them into fully-qualified,
+// three-part keys. If the namespace is not local, it is a no-op.
+func GetFullyQualifiedKeys(itemKeys []string, localNamespace string) []string {
+	localizedKeys := make([]string, len(itemKeys))
+	for i, key := range itemKeys {
+		localizedKeys[i] = GetFullyQualifiedKey(key, localNamespace)
+	}
+	return localizedKeys
 }
 
 // GetLocalizedKey Takes a possibly fully qualified namespace and turns it into a localized version
