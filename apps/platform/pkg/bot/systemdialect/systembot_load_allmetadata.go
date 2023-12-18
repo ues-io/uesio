@@ -286,14 +286,6 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 				return err
 			}
 		}
-		realID, err := item.GetField(wire.ID_FIELD)
-		if err != nil {
-			return err
-		}
-		if realID == "" {
-			fakeID, _ := shortid.Generate()
-			opItem.SetField(wire.ID_FIELD, fakeID)
-		}
 		// Set the label to the label or name, whichever is provided.
 		// Do this here, before the loop over the requested fields,
 		// to ensure it doesn't get overridden.
@@ -327,6 +319,14 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	}
 
 	for _, item := range itemsSlice[startIdx:endIdx] {
+		realID, err := item.GetField(wire.ID_FIELD)
+		if err != nil {
+			return err
+		}
+		if realID == "" {
+			fakeID, _ := shortid.Generate()
+			item.SetField(wire.ID_FIELD, fakeID)
+		}
 		op.Collection.AddItem(item)
 	}
 
@@ -353,7 +353,7 @@ func sortItems(items []meta.Item, orderings []wire.LoadRequestOrder) {
 		orderSpec = []wire.LoadRequestOrder{
 			{
 				Field: wire.ID_FIELD,
-				Desc:  false,
+				Desc:  true,
 			},
 		}
 	}
