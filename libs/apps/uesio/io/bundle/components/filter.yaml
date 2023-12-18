@@ -83,17 +83,42 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: MULTISELECT
+      - value: IN
+        label: In
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
+      - value: NOT_IN
+        label: Not In
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
     displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        operator: EQUALS
-        value: MULTISELECT
+      - type: group
+        conjunction: OR
+        conditions:
+          - type: fieldValue
+            field: fieldDisplayType
+            operator: EQUALS
+            value: MULTISELECT
+          - type: group
+            conjunction: AND
+            conditions:
+              - type: fieldValue
+                field: fieldDisplayType
+                operator: EQUALS
+                value: SELECT
+              - type: fieldValue
+                field: displayAs
+                operator: EQUALS
+                value: MULTISELECT
+
   - name: displayAs
     type: SELECT
     label: Display as
     options:
       - value: ""
-        label: "--None Selected--"
+        label: "Default"
       - label: Month
         value: MONTH
         validFor:
@@ -104,12 +129,18 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: DATE
+      - label: Multi Select
+        value: MULTISELECT
+        validFor:
+          - field: fieldDisplayType
+            value: SELECT
     displayConditions:
       - type: fieldValue
         field: fieldDisplayType
         operator: IN
         values:
           - DATE
+          - SELECT
   - name: label
     type: TEXT
     label: Label

@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { Fragment, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import CheckboxField from "../field/checkbox"
 
@@ -22,6 +22,7 @@ interface TableUtilityProps<R, C extends TableColumn> {
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
 	drawerRendererFunc?: (row: R) => ReactNode
+	rowKeyFunc: (row: R) => string
 }
 
 const StyleDefaults = Object.freeze({
@@ -61,6 +62,7 @@ const Table: definition.UtilityComponent<
 		columnMenuFunc,
 		isDeletedFunc,
 		cellFunc,
+		rowKeyFunc,
 		context,
 	} = props
 	const classes = styles.useUtilityStyleTokens(
@@ -166,7 +168,7 @@ const Table: definition.UtilityComponent<
 					{rows.map((row, index) => {
 						const isSelected = isSelectedFunc?.(row, index) || false
 						return (
-							<>
+							<Fragment key={rowKeyFunc(row)}>
 								<tr
 									onClick={
 										defaultActionFunc
@@ -180,7 +182,6 @@ const Table: definition.UtilityComponent<
 										isDeletedFunc?.(row) &&
 											classes.rowDeleted
 									)}
-									key={index + 1}
 								>
 									{(rowNumberFunc || isSelectedFunc) && (
 										<td
@@ -213,7 +214,7 @@ const Table: definition.UtilityComponent<
 									)}
 								</tr>
 								{getDrawer?.(row)}
-							</>
+							</Fragment>
 						)
 					})}
 				</tbody>

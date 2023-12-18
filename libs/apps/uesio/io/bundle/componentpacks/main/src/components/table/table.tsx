@@ -17,6 +17,7 @@ import {
 	usePagination,
 } from "../../shared/pagination"
 import Button from "../../utilities/button/button"
+import Icon from "../../utilities/icon/icon"
 import Group from "../../utilities/group/group"
 import MenuButton from "../../utilities/menubutton/menubutton"
 import Paginator from "../../utilities/paginator/paginator"
@@ -50,6 +51,7 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 	type?: "DEFAULT"
+	icon?: string
 	[component.DISPLAY_CONDITIONS]?: component.DisplayCondition[]
 }
 
@@ -192,6 +194,18 @@ const Table: definition.UC<TableDefinition> = (props) => {
 								return (
 									<Button
 										key={action.text + i}
+										icon={
+											action.icon ? (
+												<Icon
+													context={
+														recordContext.context
+													}
+													icon={context.mergeString(
+														action.icon
+													)}
+												/>
+											) : undefined
+										}
 										variant="uesio/io.rowaction"
 										className="rowaction"
 										label={action.text}
@@ -332,6 +346,9 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
 
+	const rowKeyFunc = (recordContext: RecordContext) =>
+		recordContext.item.getId()
+
 	return (
 		<>
 			<IOTable
@@ -361,6 +378,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				onSelectChange={onSelectChange}
 				onAllSelectChange={onAllSelectChange}
 				isAllSelectedFunc={isAllSelectedFunc}
+				rowKeyFunc={rowKeyFunc}
 			/>
 			{((pageSize > 0 && maxPages > 1) || wire.hasMore()) && (
 				<Paginator

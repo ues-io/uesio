@@ -166,16 +166,3 @@ definition:
                                 signals:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/routes
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.action
-                                content:
-                                  - uesio/io.text:
-                                      text: Permission Sets
-                                      element: div
-                                  - uesio/io.text:
-                                      text: Grant users access to your metadata.
-                                      uesio.variant: uesio/io.smallcontent
-                                      element: div
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets

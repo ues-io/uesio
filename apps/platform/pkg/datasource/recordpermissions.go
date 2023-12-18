@@ -28,9 +28,21 @@ func getChallengeCollection(metadata *wire.MetadataCache, collectionMetadata *wi
 	return getChallengeCollection(metadata, refCollectionMetadata)
 }
 
-func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache) ([]wire.LoadRequestField, error) {
+func getFieldsForTokens(tokens []*meta.RecordChallengeToken) *FieldsMap {
+	fieldsMap := &FieldsMap{}
+	for _, token := range tokens {
+		fieldsMap.addMany(templating.ExtractKeys(token.Token))
+		for _, condition := range token.Conditions {
+			fieldsMap.add(condition.Field)
+		}
+	}
+	fieldsMap.add("uesio/core.owner")
+	return fieldsMap
+}
+
+func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache) (*FieldsMap, error) {
 	if collectionMetadata.AccessField == "" {
-		return nil, nil
+		return getFieldsForTokens(collectionMetadata.RecordChallengeTokens), nil
 	}
 
 	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
@@ -43,29 +55,13 @@ func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire
 		return nil, err
 	}
 
-	if refCollectionMetadata.AccessField == "" {
-		fieldsMap := &FieldsMap{}
-		for _, token := range refCollectionMetadata.RecordChallengeTokens {
-			fieldsMap.merge(getFieldsMap(templating.ExtractKeys(token.Token)))
-			for _, condition := range token.Conditions {
-				fieldsMap.merge(getFieldsMap([]string{condition.Field}))
-			}
-		}
-		fieldsMap.merge(getFieldsMap([]string{"uesio/core.owner"}))
-
-		return fieldsMap.getRequestFields(), nil
-	}
-
 	subFields, err := getAccessFields(refCollectionMetadata, metadata)
 	if err != nil {
 		return nil, err
 	}
 
-	return []wire.LoadRequestField{
-		{
-			ID:     refCollectionMetadata.AccessField,
-			Fields: subFields,
-		},
+	return &FieldsMap{
+		collectionMetadata.AccessField: *subFields,
 	}, nil
 
 }
@@ -85,7 +81,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	fields, err := getAccessFields(op.Metadata, metadata)
+	fields, err := getAccessFields(refCollectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -93,7 +89,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 	refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
 	refReq.Metadata = refCollectionMetadata
 
-	refReq.AddFields(fields)
+	refReq.AddFields(fields.getRequestFields())
 
 	if err = op.LoopChanges(func(change *wire.ChangeItem) error {
 		fk, err := change.GetReferenceKey(op.Metadata.AccessField)

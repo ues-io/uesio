@@ -7,7 +7,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - mb-10
+      - mb-6
     title:
       - text-slate-900
       - text-lg

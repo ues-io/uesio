@@ -4,7 +4,7 @@ import { FieldMetadataMap } from "../field/types"
 import { CollectionKey } from "../wire/types"
 import { getCollection } from "./selectors"
 
-import { ID_FIELD, PlainCollection } from "./types"
+import { ID_FIELD, PlainCollection, UNIQUE_KEY_FIELD } from "./types"
 
 const isLocalNamespace = (ns: string, localNamespace: string) =>
 	ns === localNamespace || ns === "this/app"
@@ -127,7 +127,8 @@ class Collection {
 		)
 	getFieldParts = (fieldName: string | null) => getFieldParts(fieldName, this)
 	getIdField = () => this.getField(ID_FIELD)
-	getNameField = () => this.getField(this.source.nameField)
+	getNameField = () =>
+		this.getField(this.source.nameField || UNIQUE_KEY_FIELD)
 	getUniqueKeyFields = () =>
 		this.source.uniqueKey && this.source.uniqueKey.length > 0
 			? this.source.uniqueKey

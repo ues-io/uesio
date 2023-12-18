@@ -4,9 +4,11 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - -m-4
-      - p-4
-      - hover:bg-slate-100
+      - p-6
       - rounded-lg
-      - mb-4
+      - mb-6
+      - border-1
+      - border-slate-200
+      - hover:bg-slate-100
+      - hover:border-slate-500
 public: true

@@ -44,6 +44,10 @@ class WireRecord {
 
 	getIdFieldValue = () => this.getFieldValue<string>(ID_FIELD)
 	getUniqueKey = () => this.getFieldValue<string>(UNIQUE_KEY_FIELD)
+	getNameFieldValue = () =>
+		this.getFieldValue<string>(
+			this.getCollection()?.getNameField()?.getId() || ""
+		)
 
 	getErrors = (fieldId: string) => {
 		const wire = this.wire

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -31,6 +32,7 @@ type GeneratorBotAPI struct {
 	Create     bundlestore.FileCreator
 	Bot        *meta.Bot
 	Connection wire.Connection
+	LogApi     *BotLogAPI `bot:"log"`
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
@@ -143,6 +145,10 @@ func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateStri
 	return strings.Join(mergedStrings, ""), nil
 }
 
+func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, gba.Session, gba.Connection)
+}
+
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
 	node, err := mergeYamlString(templateString, params)
 	if err != nil {
@@ -210,6 +216,11 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 					return err
 				}
 
+				if newNode.Content == nil || len(newNode.Content) == 0 {
+					node.SetString("")
+					return nil
+				}
+
 				contentNode := newNode.Content[0]
 
 				// If newNode is a scalar we can just merge it in to the template
@@ -227,6 +238,13 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 				// Replace that crap
 				*node = *contentNode
 			}
+
+			mergeNumber, ok := mergeValue.(int64)
+			if ok {
+				node.Value = strconv.FormatInt(mergeNumber, 10)
+				node.Tag = "!!int"
+			}
+
 		}
 	}
 
