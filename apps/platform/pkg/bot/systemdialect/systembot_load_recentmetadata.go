@@ -181,7 +181,7 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 			return err
 		}
 
-		label, err := item.GetField("uesio/studio.label")
+		label, _ := item.GetField("uesio/studio.label")
 		if label == nil || label == "" {
 			item.SetField("uesio/studio.label", name)
 		}
