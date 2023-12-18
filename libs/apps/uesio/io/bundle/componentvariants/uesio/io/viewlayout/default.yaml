@@ -14,27 +14,34 @@ definition:
     header:
       - lg:col-span-3
       - md:col-span-2
+      - md:row-start-1
     left:
       - md:h-full
       - md:overflow-auto
       - md:col-start-1
       - md:col-end-1
       - md:w-72
+      - md:row-start-2
     content:
-      - lg:h-full
-      - lg:overflow-auto
-      - lg:col-start-2
-      - lg:col-end-2
+      - md:h-full
+      - md:overflow-auto
+      - md:col-start-2
+      - md:col-end-2
       - "[container-type:inline-size]"
       - h-max
+      - md:row-start-2
     right:
-      - lg:h-full
-      - lg:overflow-auto
+      - md:h-full
+      - md:overflow-auto
       - lg:col-start-3
       - lg:col-end-3
       - lg:w-72
+      - lg:row-start-2
       - md:col-span-2
+      - md:row-start-3
     footer:
       - lg:col-span-3
       - md:col-span-2
+      - lg:row-start-3
+      - md:row-start-4
 public: true

@@ -4,7 +4,7 @@ import HeaderCrumbs from "./headercrumbs"
 import { useBuildMode } from "../../api/stateapi"
 
 const StyleDefaults = Object.freeze({
-	root: ["bg-slate-50", "py-2"],
+	root: ["border-transparent"],
 	logo: ["px-4"],
 	avatar: ["px-3"],
 	avatarInner: ["border-2", "border-white", "h-9", "w-9"],
