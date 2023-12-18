@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -72,7 +74,16 @@ func (sba *SaveBotAPI) GetIntegration() *IntegrationMetadata {
 	}
 	return (*IntegrationMetadata)(sba.integrationConnection.GetIntegration())
 }
-
+func (sb *SaveBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
+	if sb.connection == nil {
+		return nil, errors.New("no collection metadata available for this connection")
+	}
+	collectionMetadata, err := sb.connection.GetMetadata().GetCollection(collectionKey)
+	if err != nil {
+		return nil, err
+	}
+	return NewBotCollectionMetadata(collectionMetadata), nil
+}
 func (sba *SaveBotAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValueFromKey(configValueKey, sba.getSession())
 }

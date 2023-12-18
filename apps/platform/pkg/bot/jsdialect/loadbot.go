@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/teris-io/shortid"
 
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -92,7 +94,16 @@ func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
 	}
 	return lb.integrationConnection.GetCredentials().GetInterfaceMap()
 }
-
+func (lb *LoadBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
+	if lb.connection == nil {
+		return nil, errors.New("no collection metadata available for this connection")
+	}
+	collectionMetadata, err := lb.connection.GetMetadata().GetCollection(collectionKey)
+	if err != nil {
+		return nil, err
+	}
+	return NewBotCollectionMetadata(collectionMetadata), nil
+}
 func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
 	if lb.integrationConnection == nil || lb.integrationConnection.GetIntegration() == nil {
 		return nil

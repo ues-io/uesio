@@ -150,12 +150,15 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	permissions := session.GetContextPermissions()
 
-	err := FetchReferences(connection, op, session)
-	if err != nil {
-		return HandleErrorAndAddToSaveOp(op, err)
-	}
+	var err error
 
 	if !isExternalIntegrationSave {
+		// TODO Maybe do this for external integration saves at some point
+		err = FetchReferences(connection, op, session)
+		if err != nil {
+			return HandleErrorAndAddToSaveOp(op, err)
+		}
+
 		err = HandleUpsertLookup(connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
@@ -202,9 +205,11 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 
 	// Fetch References again.
-	err = FetchReferences(connection, op, session)
-	if err != nil {
-		return HandleErrorAndAddToSaveOp(op, err)
+	if !isExternalIntegrationSave {
+		err = FetchReferences(connection, op, session)
+		if err != nil {
+			return HandleErrorAndAddToSaveOp(op, err)
+		}
 	}
 
 	// Set the unique keys for the last time
