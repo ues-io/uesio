@@ -129,11 +129,6 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: DATE
-      - label: Toggle
-        value: TOGGLE
-        validFor:
-          - field: fieldDisplayType
-            value: CHECKBOX
       - label: Multi Select
         value: MULTISELECT
         validFor:
@@ -145,7 +140,6 @@ properties:
         operator: IN
         values:
           - DATE
-          - CHECKBOX
           - SELECT
   - name: label
     type: TEXT

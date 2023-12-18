@@ -1,26 +1,30 @@
 import { definition, api, wire } from "@uesio/ui"
-import CheckboxField from "../field/checkbox"
-import ToggleField from "../field/toggle"
+import SelectField from "../field/select"
 
 interface CheckboxFilterProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState
-	displayAs?: string
 }
 
 const CheckboxFilter: definition.UtilityComponent<CheckboxFilterProps> = (
 	props
 ) => {
-	const { wire, context, displayAs, condition } = props
+	const { wire, context, condition } = props
 	const wireId = wire.getId()
 
-	return displayAs === "TOGGLE" ? (
-		<ToggleField
+	return (
+		<SelectField
 			context={context}
+			options={[
+				{ label: "Any", value: "" },
+				{ label: "Not Set", value: "null" },
+				{ label: "True", value: "true" },
+				{ label: "False", value: "false" },
+			]}
 			variant={"uesio/io.filter"}
 			value={condition.value || ""}
-			setValue={(value: boolean) => {
+			setValue={(value: string) => {
 				api.signal.runMany(
 					[
 						{
@@ -28,32 +32,7 @@ const CheckboxFilter: definition.UtilityComponent<CheckboxFilterProps> = (
 							wire: wireId,
 							condition: {
 								...condition,
-								value,
-								inactive: !value,
-							},
-						},
-						{
-							signal: "wire/LOAD",
-							wires: [wireId],
-						},
-					],
-					context
-				)
-			}}
-		/>
-	) : (
-		<CheckboxField
-			context={context}
-			variant={"uesio/io.filter"}
-			value={condition.value || ""}
-			setValue={(value: boolean) => {
-				api.signal.runMany(
-					[
-						{
-							signal: "wire/SET_CONDITION",
-							wire: wireId,
-							condition: {
-								...condition,
+								operator: value === "null" ? "IS_BLANK" : "EQ",
 								value,
 								inactive: !value,
 							},
