@@ -32,7 +32,7 @@ definition:
               operator: IN
               values:
                 - Flavion
-                - Willson
+                - Carpe
   # Components determine the layout and composition of your view
   components:
     - uesio/io.titlebar:

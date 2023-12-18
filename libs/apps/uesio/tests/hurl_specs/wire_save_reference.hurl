@@ -17,11 +17,23 @@ Accept: application/json
         {
             "collection":"uesio/tests.account",
             "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.name",
+                    "value": "Acme Widgets Inc"
+                }
+            ],
             "batchsize":1
         },
         {
             "collection":"uesio/tests.contact",
             "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.firstname",
+                    "value": "George"
+                }
+            ],
             "batchsize":1
         }
     ]
