@@ -1,4 +1,6 @@
 name: recordid
-type: "TEXT"
+type: REFERENCE
 label: "Record Id"
-readOnly: true
+createOnly: true
+reference:
+  multiCollection: true

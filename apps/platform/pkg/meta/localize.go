@@ -28,6 +28,16 @@ func GetFullyQualifiedKey(itemKey, localNamespace string) string {
 	return itemKey
 }
 
+// GetFullyQualifiedKeys Takes a list of possibly localized namespaces and turns them into fully-qualified,
+// (3rd person) namespace. If the namespace is not local, it is a no-op.
+func GetFullyQualifiedKeys(itemKeys []string, localNamespace string) []string {
+	localizedKeys := make([]string, len(itemKeys))
+	for i, key := range itemKeys {
+		localizedKeys[i] = GetFullyQualifiedKey(key, localNamespace)
+	}
+	return localizedKeys
+}
+
 // GetLocalizedKey Takes a possibly fully qualified namespace and turns it into a localized version
 func GetLocalizedKey(itemkey, localNamespace string) string {
 	if itemkey == "" {

@@ -8,3 +8,5 @@ nameField: uesio/core.path
 public: true
 label: User File
 pluralLabel: User Files
+accessField: uesio/core.recordid
+access: protected

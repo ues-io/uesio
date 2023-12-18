@@ -84,11 +84,11 @@ func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
 }
 
 func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
-	mapnode, _, err := GetMapNodeWithIndex(node, key)
+	mapNode, _, err := GetMapNodeWithIndex(node, key)
 	if err != nil {
 		return nil, err
 	}
-	return mapnode, nil
+	return mapNode, nil
 }
 
 func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
@@ -131,8 +131,21 @@ func pickStringProperty(node *yaml.Node, property, defaultValue string) string {
 	return value
 }
 
+// Gets a string list property from a map node of a yaml definition and removes that property from the node.
+func pickStringListProperty(node *yaml.Node, property string) []string {
+	valueNode := pickNodeFromMap(node, property)
+	if valueNode == nil {
+		return []string{}
+	}
+	return GetSequenceValueAsStringList(valueNode)
+}
+
 func pickMetadataItem(node *yaml.Node, property, namespace, defaultValue string) string {
 	return GetFullyQualifiedKey(pickStringProperty(node, property, defaultValue), namespace)
+}
+
+func pickMetadataItems(node *yaml.Node, property, namespace string) []string {
+	return GetFullyQualifiedKeys(pickStringListProperty(node, property), namespace)
 }
 
 func pickRequiredMetadataItem(node *yaml.Node, property, namespace string) (string, error) {
@@ -178,4 +191,18 @@ func getYamlNode(yamlContent string) *YAMLDef {
 
 func TrimYamlString(yamlContent string) string {
 	return strings.TrimPrefix(yamlContent, "\n")
+}
+
+func GetSequenceValueAsStringList(node *yaml.Node) []string {
+	if node.Kind != yaml.SequenceNode {
+		return []string{}
+	}
+	var stringValues []string
+	for _, v := range node.Content {
+		if v.Kind != yaml.ScalarNode {
+			continue
+		}
+		stringValues = append(stringValues, v.Value)
+	}
+	return stringValues
 }
