@@ -76,9 +76,9 @@ func (tc *TranslationCollection) FilterPath(path string, conditions BundleCondit
 	}
 
 	requestedLanguage := conditions["uesio/studio.language"]
-	language := strings.TrimSuffix(path, ".yaml")
+	fileName := strings.TrimSuffix(path, ".yaml")
 
-	if requestedLanguage != language {
+	if requestedLanguage != fileName {
 		// Ignore this file
 		return false
 	}

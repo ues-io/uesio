@@ -105,7 +105,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	var routeAssignment *meta.RouteAssignment
 	var routeAssignments meta.RouteAssignmentCollection
 
-	err := bundle.LoadAllFromAny(&routeAssignments, map[string]string{"uesio/studio.collection": namespace + "." + collection}, session, nil)
+	err := bundle.LoadAllFromAny(&routeAssignments, map[string]interface{}{"uesio/studio.collection": namespace + "." + collection}, session, nil)
 	if err != nil {
 		return nil, err
 	}

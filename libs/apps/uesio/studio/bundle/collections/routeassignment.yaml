@@ -6,5 +6,5 @@ uniqueKey:
 nameField: uesio/core.uniquekey
 access: protected
 accessField: uesio/studio.workspace
-label: routeassignment
-pluralLabel: routeassignments
+label: Route Assignment
+pluralLabel: Route Assignments

@@ -571,6 +571,13 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
+func GetDefaultOrder() wire.LoadRequestOrder {
+	return wire.LoadRequestOrder{
+		Field: wire.ID_FIELD,
+		Desc:  false,
+	}
+}
+
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
@@ -623,10 +630,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 		//Set default order by: id - asc
 		if op.Order == nil {
-			op.Order = append(op.Order, wire.LoadRequestOrder{
-				Field: wire.ID_FIELD,
-				Desc:  false,
-			})
+			op.Order = append(op.Order, GetDefaultOrder())
 		}
 
 		if op.Query {

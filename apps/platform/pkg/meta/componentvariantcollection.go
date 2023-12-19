@@ -45,26 +45,7 @@ func (cvc *ComponentVariantCollection) GetItemFromKey(key string) (BundleableIte
 }
 
 func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
-	componentKey, hasComponent := conditions["uesio/studio.component"]
-	parts := strings.Split(path, "/")
-	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
-		// Ignore this file
-		return false
-	}
-	if hasComponent {
-		componentNS, componentName, err := ParseKey(componentKey)
-		if err != nil {
-			return false
-		}
-		nsUser, nsApp, err := ParseNamespace(componentNS)
-		if err != nil {
-			return false
-		}
-		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != componentName {
-			return false
-		}
-	}
-	return true
+	return GroupedPathFilter(path, "uesio/studio.component", conditions)
 }
 
 func (cvc *ComponentVariantCollection) Loop(iter GroupIterator) error {

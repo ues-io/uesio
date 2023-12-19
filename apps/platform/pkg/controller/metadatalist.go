@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -56,8 +57,11 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	if (namespace == "uesio/core" || namespace == "") && metadatatype == "fields" {
 		collectionKey, ok := conditions["uesio/studio.collection"]
 		if ok {
-			// Only add built-in fields if we're grouping on a collection
-			datasource.AddAllBuiltinFields(collection, collectionKey)
+			stringVal := goutils.StringValue(collectionKey)
+			if stringVal != "" {
+				// Only add built-in fields if we're grouping on a collection
+				datasource.AddAllBuiltinFields(collection, stringVal)
+			}
 		}
 	}
 

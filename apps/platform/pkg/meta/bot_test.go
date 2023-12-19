@@ -1,8 +1,9 @@
 package meta
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewListenerBot(t *testing.T) {
@@ -277,6 +278,183 @@ func TestIsParamRelevant(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, IsParamRelevant(tt.args.param, tt.args.paramValues), "IsParamRelevant(%v, %v)", tt.args.param, tt.args.paramValues)
+		})
+	}
+}
+
+func TestBotCollectionPathFilter(t *testing.T) {
+	bc := BotCollection{}
+	type args struct {
+		path           string
+		conditions     BundleConditions
+		definitionOnly bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"empty path- no match",
+			args{
+				path:       "",
+				conditions: BundleConditions{},
+			},
+			false,
+		},
+		{
+			"type condition provided, does not match",
+			args{
+				path: "listener/luigi/foo/bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "GENERATOR",
+				},
+			},
+			false,
+		},
+		{
+			"type condition provided, matches",
+			args{
+				path: "listener/add_numbers/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "LISTENER",
+				},
+			},
+			true,
+		},
+		{
+			"multi-value type condition provided, matches",
+			args{
+				path: "listener/add_numbers/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": []interface{}{
+						"LISTENER",
+						"GENERATOR",
+					},
+				},
+			},
+			true,
+		},
+		{
+			"multi-value type condition provided, no match",
+			args{
+				path: "listener/add_numbers/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": []string{
+						"BEFORESAVE",
+						"GENERATOR",
+					},
+				},
+			},
+			false,
+		},
+		{
+			"type condition provided, matches, non-definition file",
+			args{
+				path: "listener/add_numbers/bot.ts",
+				conditions: BundleConditions{
+					"uesio/studio.type": "LISTENER",
+				},
+			},
+			true,
+		},
+		{
+			"type condition provided, matches, non-definition file, definitionOnly requested",
+			args{
+				path: "listener/add_numbers/bot.ts",
+				conditions: BundleConditions{
+					"uesio/studio.type": "LISTENER",
+				},
+				definitionOnly: true,
+			},
+			false,
+		},
+		{
+			"type condition provided, matches, definition file, definitionOnly requested",
+			args{
+				path: "listener/add_numbers/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "LISTENER",
+				},
+				definitionOnly: true,
+			},
+			true,
+		},
+		{
+			"no collection condition value in BundleConditions - should match",
+			args{
+				path: "beforesave/uesio/foo/bar/before_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "BEFORESAVE",
+				},
+			},
+			true,
+		},
+		{
+			"bad condition value in BundleConditions - don't count as match",
+			args{
+				path: "beforesave/uesio/foo/bar/before_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type":       "BEFORESAVE",
+					"uesio/studio.collection": -1234,
+				},
+			},
+			false,
+		},
+		{
+			"single-value collection condition value in BundleConditions - matches",
+			args{
+				path: "beforesave/uesio/foo/bar/before_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type":       "BEFORESAVE",
+					"uesio/studio.collection": "uesio/foo.bar",
+				},
+			},
+			true,
+		},
+		{
+			"single-value collection condition value in BundleConditions - does not match",
+			args{
+				path: "beforesave/uesio/foo/bar/before_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type":       "BEFORESAVE",
+					"uesio/studio.collection": "luigi/foo.bar",
+				},
+			},
+			false,
+		},
+		{
+			"multi-value collection condition value in BundleConditions - matches",
+			args{
+				path: "beforesave/uesio/foo/bar/before_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "BEFORESAVE",
+					"uesio/studio.collection": []string{
+						"uesio/crm.account",
+						"uesio/foo.bar",
+					},
+				},
+			},
+			true,
+		},
+		{
+			"multi-value collection condition value in BundleConditions - does not match",
+			args{
+				path: "aftersave/uesio/foo/bar/after_save_bar/bot.yaml",
+				conditions: BundleConditions{
+					"uesio/studio.type": "AFTERSAVE",
+					"uesio/studio.collection": []string{
+						"uesio/crm.account",
+						"uesio/crm.contact",
+					},
+				},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, bc.FilterPath(tt.args.path, tt.args.conditions, tt.args.definitionOnly), "BotCollection.FilterPath(%v, %v, %v)", tt.args.path, tt.args.conditions, tt.args.definitionOnly)
 		})
 	}
 }
