@@ -66,6 +66,7 @@ func (ol *OpList) addDelete(item meta.Item, idValue string) {
 		FieldChanges: item,
 		IDValue:      idValue,
 		Metadata:     ol.Metadata,
+		IsDelete:     true,
 	})
 }
 

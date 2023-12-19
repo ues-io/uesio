@@ -174,25 +174,33 @@ func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
 	return nil
 }
 
-func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
+func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata) (FieldsMap, error) {
 	fieldIDMap := FieldsMap{}
+	for _, field := range fields {
+		fieldMetadata, err := collectionMetadata.GetField(field.ID)
+		if err != nil {
+			return nil, err
+		}
+		if err = fieldIDMap.AddField(fieldMetadata); err != nil {
+			return nil, err
+		}
+	}
+	return fieldIDMap, nil
+}
+
+func BuildSpecialFieldMetadataRegistries(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
 	referencedCollections := ReferenceRegistry{}
 	referencedGroupCollections := ReferenceGroupRegistry{}
 	formulaFields := map[string]*FieldMetadata{}
 	for _, field := range fields {
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
-			return nil, nil, nil, nil, err
+			return nil, nil, nil, err
 		}
 
 		if fieldMetadata.IsFormula {
 			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
 			continue
-		}
-
-		err = fieldIDMap.AddField(fieldMetadata)
-		if err != nil {
-			return nil, nil, nil, nil, err
 		}
 
 		if IsReference(fieldMetadata.Type) {
@@ -232,5 +240,5 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 		}
 
 	}
-	return fieldIDMap, referencedCollections, referencedGroupCollections, formulaFields, nil
+	return referencedCollections, referencedGroupCollections, formulaFields, nil
 }

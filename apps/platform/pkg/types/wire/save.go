@@ -127,6 +127,7 @@ type ChangeItem struct {
 	ReadWriteTokens []string
 	Autonumber      int
 	IsNew           bool
+	IsDelete        bool
 	Metadata        *CollectionMetadata
 }
 

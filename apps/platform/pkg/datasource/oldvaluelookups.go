@@ -65,7 +65,7 @@ func HandleOldValuesLookup(
 	session *sess.Session,
 ) error {
 
-	allFields := []wire.LoadRequestField{}
+	var allFields []wire.LoadRequestField
 
 	for fieldID := range op.Metadata.Fields {
 

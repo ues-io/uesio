@@ -114,6 +114,14 @@ func HandleReferences(
 			{
 				ID: wire.UNIQUE_KEY_FIELD,
 			},
+			{
+				ID: wire.OWNER_FIELD,
+				Fields: []wire.LoadRequestField{
+					{
+						ID: wire.ID_FIELD,
+					},
+				},
+			},
 		}
 
 		if collectionNameField != nil {

@@ -363,7 +363,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			metadata.HasAllFields = true
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
-			fieldsToLoad := []string{wire.ID_FIELD, wire.UNIQUE_KEY_FIELD, metadata.NameField}
+			fieldsToLoad := []string{wire.ID_FIELD, wire.UNIQUE_KEY_FIELD, metadata.NameField, wire.OWNER_FIELD}
 			if metadata.AccessField != "" {
 				collection.merge(&FieldsMap{
 					metadata.AccessField: nil,

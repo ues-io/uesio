@@ -104,6 +104,19 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
+	if err = op.LoopDeletes(func(change *wire.ChangeItem) error {
+		fk, err := change.GetOldReferenceKey(op.Metadata.AccessField)
+		if err != nil {
+			return err
+		}
+		return refReq.AddID(fk, wire.ReferenceLocator{
+			Item:  change,
+			Field: fieldMetadata,
+		})
+	}); err != nil {
+		return err
+	}
+
 	return HandleReferences(connection, referencedCollections, session, &ReferenceOptions{
 		MergeItems: true,
 	})
@@ -170,7 +183,11 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 
 	var accessItem meta.Item
 
-	accessItem = change.FieldChanges
+	if change.IsDelete {
+		accessItem = change.OldValues
+	} else {
+		accessItem = change.FieldChanges
+	}
 
 	challengeMetadata := change.Metadata
 
@@ -180,6 +197,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 			return err
 		}
 
+		//TO-DO
 		accessItem, err = wire.GetLoadable(accessInterface)
 		if err != nil {
 			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
@@ -295,8 +313,14 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 			return challengeToken.UserAccessToken + ":" + tokenValue, challengeToken.Access == "readwrite", nil
 		})
 	}
+	err = op.LoopChanges(func(change *wire.ChangeItem) error {
+		if op.Metadata.AccessField != "" {
+			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
+		}
+		return handleStandardChange(change, tokenFuncs, session)
+	})
 
-	return op.LoopChanges(func(change *wire.ChangeItem) error {
+	return op.LoopDeletes(func(change *wire.ChangeItem) error {
 		if op.Metadata.AccessField != "" {
 			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
 		}

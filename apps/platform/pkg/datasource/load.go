@@ -737,7 +737,53 @@ func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, con
 // WARNING!!! This is not a shortcut for Load(ops...)---DO NOT CALL THIS unless you know what you're doing
 func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
+	metadata := connection.GetMetadata()
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	referencedCollections, referencedGroupCollections, formulaFields, err := wire.BuildSpecialFieldMetadataRegistries(op.Fields, collectionMetadata, metadata)
+	if err != nil {
+		return err
+	}
+
 	if err := connection.Load(op, session); err != nil {
+		return err
+	}
+
+	formulaPopulations := formula.GetFormulaFunction(connection.Context(), formulaFields, collectionMetadata)
+	if err := op.Collection.Loop(func(item meta.Item, index string) error {
+		for _, refCol := range referencedCollections {
+			for _, fieldMetadata := range refCol.RefFields {
+				refObj, err := item.GetField(fieldMetadata.GetFullName())
+				if err != nil {
+					return err
+				}
+				refKey, err := wire.GetReferenceKey(refObj)
+				if err != nil {
+					return err
+				}
+				refCol.AddID(refKey, wire.ReferenceLocator{
+					Item:  item,
+					Field: fieldMetadata,
+				})
+			}
+		}
+		return formulaPopulations(item)
+	}); err != nil {
+		return err
+	}
+
+	if err := HandleReferencesGroup(connection, op.Collection, referencedGroupCollections, session); err != nil {
+		return err
+	}
+
+	if err := HandleMultiCollectionReferences(connection, referencedCollections, session); err != nil {
+		return err
+	}
+
+	if err := HandleReferences(connection, referencedCollections, session, &ReferenceOptions{AllowMissingItems: true}); err != nil {
 		return err
 	}
 

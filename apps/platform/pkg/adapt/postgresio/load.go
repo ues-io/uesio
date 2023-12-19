@@ -8,8 +8,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -127,7 +125,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := wire.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, err := wire.GetFieldsMap(op.Fields, collectionMetadata)
 	if err != nil {
 		return err
 	}
@@ -244,7 +242,6 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := formula.GetFormulaFunction(c.ctx, formulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
@@ -258,32 +255,8 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		if err != nil {
 			return TranslatePGError(err)
 		}
-
-		for _, refCol := range referencedCollections {
-			for _, fieldMetadata := range refCol.RefFields {
-				refObj, err := item.GetField(fieldMetadata.GetFullName())
-				if err != nil {
-					return err
-				}
-				refKey, err := wire.GetReferenceKey(refObj)
-				if err != nil {
-					return err
-				}
-				refCol.AddID(refKey, wire.ReferenceLocator{
-					Item:  item,
-					Field: fieldMetadata,
-				})
-			}
-		}
-
-		err = formulaPopulations(item)
-		if err != nil {
-			return err
-		}
-
-		err = op.Collection.AddItem(item)
-		if err != nil {
-			return err
+		if err := op.Collection.AddItem(item); err != nil {
+			return err //TO-DO
 		}
 
 		index++
@@ -297,17 +270,5 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	op.BatchNumber++
 
-	err = datasource.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
-	if err != nil {
-		return err
-	}
-
-	err = datasource.HandleMultiCollectionReferences(c, referencedCollections, session)
-	if err != nil {
-		return err
-	}
-
-	return datasource.HandleReferences(c, referencedCollections, session, &datasource.ReferenceOptions{
-		AllowMissingItems: true,
-	})
+	return nil
 }
