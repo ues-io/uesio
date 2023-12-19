@@ -244,11 +244,18 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 		return nil
 	}
 
+	metadata := connection.GetMetadata()
+
+	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
+	if err != nil {
+		return err
+	}
+
 	// If we have an access field, we need to load in all data from that field
 	if op.Metadata.AccessField != "" {
 
 		// Shortcut - if user can modify all records, no need to do any other checks
-		if session.GetContextPermissions().HasModifyAllRecordsPermission(op.Metadata.GetFullName()) {
+		if session.GetContextPermissions().HasModifyAllRecordsPermission(challengeMetadata.GetFullName()) {
 			return nil
 		}
 
@@ -256,13 +263,6 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 		if err != nil {
 			return err
 		}
-	}
-
-	metadata := connection.GetMetadata()
-
-	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
-	if err != nil {
-		return err
 	}
 
 	var tokenFuncs []tokenFunc
