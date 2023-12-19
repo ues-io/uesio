@@ -9,7 +9,7 @@ import (
 
 func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	adminSession := datasource.GetSiteAdminSession(session)
+	adminSession := sess.GetStudioAnonSession(session.Context())
 	wc := meta.WorkspaceCollection{}
 	err := datasource.PlatformLoad(&wc, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{

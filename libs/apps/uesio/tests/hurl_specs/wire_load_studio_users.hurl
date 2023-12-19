@@ -259,10 +259,9 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 0
 
-# TODO: Delete write protection doesn't work!!! It should!!!
 # Try to delete the test user (as abel, who does not have write access), it should fail
-#DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/core/user?uesio/core.username=eq.testorguser
-#HTTP 400
+DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/core/user?uesio/core.username=eq.testorguser
+HTTP 400
 
 # login again as uesio, who has write access
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login

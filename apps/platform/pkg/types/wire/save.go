@@ -106,6 +106,18 @@ func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	return op.LoopUpdates(changeFunc)
 }
 
+func (op *SaveOp) LoopAllChanges(changeFunc func(change *ChangeItem) error) error {
+	err := op.LoopInserts(changeFunc)
+	if err != nil {
+		return err
+	}
+	err = op.LoopUpdates(changeFunc)
+	if err != nil {
+		return err
+	}
+	return op.LoopDeletes(changeFunc)
+}
+
 func (ci *ChangeItems) GetIDs() []string {
 	ids := make([]string, len(*ci))
 	for _, item := range *ci {
