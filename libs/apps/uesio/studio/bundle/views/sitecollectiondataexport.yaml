@@ -38,13 +38,13 @@ definition:
       collection: uesio/core.bulkjob
       fields:
         uesio/core.id:
-        uesio/core.collection:
+        uesio/core.collectionid:
         uesio/core.createdat:
       order:
         - field: uesio/core.createdat
           desc: true
       conditions:
-        - field: uesio/core.collection
+        - field: uesio/core.collectionid
           value: $Param{namespace}.$Param{collectionname}
       init:
         query: false

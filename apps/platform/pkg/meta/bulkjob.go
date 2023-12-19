@@ -4,7 +4,7 @@ type BulkJob struct {
 	BuiltIn    `yaml:",inline"`
 	AutoID     string   `json:"uesio/core.autoid"`
 	Spec       *JobSpec `json:"uesio/core.spec"`
-	Collection string   `json:"uesio/core.collection"`
+	Collection string   `json:"uesio/core.collectionid"`
 }
 
 func (bj *BulkJob) GetCollectionName() string {
