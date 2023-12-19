@@ -164,7 +164,7 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	}
 
 	if !ps.AllowAllIntegrationActions {
-		for checkIntegrationName, _ := range check.IntegrationActionRefs {
+		for checkIntegrationName := range check.IntegrationActionRefs {
 			_, hasEntry := ps.IntegrationActionRefs[checkIntegrationName]
 			if !hasEntry {
 				return false
@@ -307,6 +307,17 @@ func (ps *PermissionSet) HasDeletePermission(key string) bool {
 		return false
 	} else {
 		return collectionPermission.ModifyAll || collectionPermission.Delete
+	}
+}
+
+func (ps *PermissionSet) HasModifyAllRecordsPermission(key string) bool {
+	if ps.ModifyAllRecords {
+		return true
+	}
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ModifyAll
 	}
 }
 

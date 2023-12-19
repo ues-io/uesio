@@ -91,7 +91,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 
 	refReq.AddFields(fields.getRequestFields())
 
-	if err = op.LoopChanges(func(change *wire.ChangeItem) error {
+	if err = op.LoopAllChanges(func(change *wire.ChangeItem) error {
 		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
 		if err != nil {
 			return err
@@ -119,7 +119,7 @@ func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, sessi
 
 	hasToken := false
 
-	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
+	userCanModifyAllRecords := session.GetContextPermissions().HasModifyAllRecordsPermission(change.Metadata.GetFullName())
 
 	flatTokens := session.GetFlatTokens()
 
@@ -162,11 +162,6 @@ func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, sessi
 }
 
 func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, metadata *wire.MetadataCache, session *sess.Session) error {
-
-	// Shortcut - if user can modify all records, no need to do any other checks
-	if session.GetContextPermissions().ModifyAllRecords {
-		return nil
-	}
 
 	var accessItem meta.Item
 
@@ -249,19 +244,25 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 		return nil
 	}
 
-	// If we have an access field, we need to load in all data from that field
-	if op.Metadata.AccessField != "" {
-		err := loadInAccessFieldData(op, connection, session)
-		if err != nil {
-			return err
-		}
-	}
-
 	metadata := connection.GetMetadata()
 
 	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
 	if err != nil {
 		return err
+	}
+
+	// If we have an access field, we need to load in all data from that field
+	if op.Metadata.AccessField != "" {
+
+		// Shortcut - if user can modify all records, no need to do any other checks
+		if session.GetContextPermissions().HasModifyAllRecordsPermission(challengeMetadata.GetFullName()) {
+			return nil
+		}
+
+		err := loadInAccessFieldData(op, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	var tokenFuncs []tokenFunc
@@ -296,7 +297,7 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 		})
 	}
 
-	return op.LoopChanges(func(change *wire.ChangeItem) error {
+	return op.LoopAllChanges(func(change *wire.ChangeItem) error {
 		if op.Metadata.AccessField != "" {
 			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
 		}
