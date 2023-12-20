@@ -7,6 +7,7 @@ import {
 	getWiresForConditions,
 	wireHasActiveConditions,
 	wireHasNoActiveConditions,
+	wireHasChanges,
 } from "./display"
 
 const viewName = "uesio/core.foo"
@@ -1167,6 +1168,92 @@ describe("wireHasNoActiveConditions", () => {
 	].forEach((tc) => {
 		test(tc.name, () => {
 			expect(wireHasNoActiveConditions(tc.wire)).toEqual(tc.expected)
+		})
+	})
+})
+
+describe("wireHasChanges", () => {
+	;[
+		{
+			name: "no changes or deletes",
+			wire: new Wire({} as unknown as PlainWire),
+			expected: false,
+		},
+		{
+			name: "empty deletes and empty changes",
+			wire: new Wire({
+				deletes: {},
+				changes: {},
+			} as unknown as PlainWire),
+			expected: false,
+		},
+		{
+			name: "has a delete",
+			wire: new Wire({
+				deletes: {
+					"123": {},
+				},
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "has a change in one record",
+			wire: new Wire({
+				changes: {
+					"123": {
+						"uesio/foo.bar": "baz",
+					},
+					"456": {},
+				},
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "has a change in multiple records",
+			wire: new Wire({
+				changes: {
+					"123": {
+						"uesio/foo.bar": "baz",
+					},
+					"456": {
+						"uesio/foo.bar": "baz",
+					},
+				},
+			} as unknown as PlainWire),
+			expected: true,
+		},
+		{
+			name: "has a change in a field we don't care about",
+			wire: new Wire({
+				changes: {
+					"123": {
+						"uesio/foo.bar": "baz",
+						"luigi/yoo.hoo": "aasdf",
+					},
+				},
+				deletes: {
+					"456": {},
+				},
+			} as unknown as PlainWire),
+			fields: ["luigi/yoo.ooy"],
+			expected: false,
+		},
+		{
+			name: "has a change in a field we DO care about",
+			wire: new Wire({
+				changes: {
+					"123": {
+						"uesio/foo.bar": "baz",
+						"luigi/yoo.hoo": "aasdf",
+					},
+				},
+			} as unknown as PlainWire),
+			fields: ["luigi/some.thing", "luigi/yoo.hoo"],
+			expected: true,
+		},
+	].forEach((tc) => {
+		test(tc.name, () => {
+			expect(wireHasChanges(tc.wire, tc.fields)).toEqual(tc.expected)
 		})
 	})
 })
