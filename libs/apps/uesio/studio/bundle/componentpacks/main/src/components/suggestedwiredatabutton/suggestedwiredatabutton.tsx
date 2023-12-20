@@ -51,7 +51,15 @@ const getSelectFieldValues = (
 const getRandomSelectOptionValue = (options: wire.SelectOption[]): string =>
 	options[Math.floor(Math.random() * options.length)].value
 
-const nonAiFieldTypes = ["SELECT", "MULTISELECT", "REFERENCE", "AUTONUMBER"]
+const nonAiFieldTypes = [
+	"AUTONUMBER",
+	"FILE",
+	"MULTISELECT",
+	"REFERENCE",
+	"REFERENCEGROUP",
+	"SELECT",
+	"USER",
+]
 const excludeFields = ["uesio/core.owner"]
 
 const getFieldMetadataForPrompt = (
