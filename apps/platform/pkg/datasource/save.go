@@ -24,7 +24,7 @@ type SaveRequest struct {
 	Deletes    meta.Group                 `json:"deletes"`
 	Errors     []exceptions.SaveException `json:"errors"`
 	Options    *wire.SaveOptions          `json:"options"`
-	Params     map[string]string          `json:"params"`
+	Params     map[string]interface{}     `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {

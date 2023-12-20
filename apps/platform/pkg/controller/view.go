@@ -36,7 +36,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			return
 		}
 
-		params := map[string]string{}
+		params := map[string]interface{}{}
 
 		for key, value := range r.URL.Query() {
 			params[key] = strings.Join(value, ",")

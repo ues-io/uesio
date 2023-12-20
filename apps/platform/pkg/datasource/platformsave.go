@@ -12,7 +12,7 @@ import (
 type PlatformSaveRequest struct {
 	Collection meta.CollectionableGroup
 	Options    *wire.SaveOptions
-	Params     map[string]string
+	Params     map[string]interface{}
 }
 
 func PlatformDelete(request meta.CollectionableGroup, connection wire.Connection, session *sess.Session) error {

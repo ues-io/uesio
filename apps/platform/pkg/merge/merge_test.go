@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -68,7 +69,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Param: missing param",
 			"Param",
 			ServerMergeData{
-				ParamValues: map[string]string{},
+				ParamValues: map[string]interface{}{},
 			},
 			"foo",
 			"",
@@ -78,7 +79,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Param: valid param",
 			"Param",
 			ServerMergeData{
-				ParamValues: map[string]string{
+				ParamValues: map[string]interface{}{
 					"foo": "bar",
 				},
 			},

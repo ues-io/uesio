@@ -15,15 +15,15 @@ type LoginResponse struct {
 }
 
 type RouteMergeData struct {
-	View         string              `json:"view"`
-	Params       map[string]string   `json:"params"`
-	Namespace    string              `json:"namespace"`
-	Path         string              `json:"path"`
-	Workspace    *WorkspaceMergeData `json:"workspace"`
-	Theme        string              `json:"theme"`
-	Title        string              `json:"title"`
-	Dependencies *PreloadMetadata    `json:"dependencies"`
-	Tags         []meta.Tag          `json:"tags"`
+	View         string                 `json:"view"`
+	Params       map[string]interface{} `json:"params"`
+	Namespace    string                 `json:"namespace"`
+	Path         string                 `json:"path"`
+	Workspace    *WorkspaceMergeData    `json:"workspace"`
+	Theme        string                 `json:"theme"`
+	Title        string                 `json:"title"`
+	Dependencies *PreloadMetadata       `json:"dependencies"`
+	Tags         []meta.Tag             `json:"tags"`
 }
 
 type UserPictureMergeData struct {

@@ -12,7 +12,7 @@ import (
 type ServerMergeData struct {
 	Session     *sess.Session
 	WireData    map[string]meta.Group
-	ParamValues map[string]string
+	ParamValues map[string]interface{}
 }
 
 var AlphaUnderscore = "[a-zA-Z_]+"

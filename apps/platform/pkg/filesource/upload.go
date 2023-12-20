@@ -27,11 +27,11 @@ type FileUploadOp struct {
 	Data            io.Reader
 	RecordUniqueKey string
 	ContentLength   int64
-	Path            string            `json:"name"`
-	CollectionID    string            `json:"collectionID"`
-	RecordID        string            `json:"recordID"`
-	FieldID         string            `json:"fieldID"`
-	Params          map[string]string `json:"params"`
+	Path            string                 `json:"name"`
+	CollectionID    string                 `json:"collectionID"`
+	RecordID        string                 `json:"recordID"`
+	FieldID         string                 `json:"fieldID"`
+	Params          map[string]interface{} `json:"params"`
 }
 
 func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, fieldID string) (*wire.CollectionMetadata, *wire.FieldMetadata, error) {
@@ -51,11 +51,11 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 	return collectionMetadata, fieldMetadata, nil
 }
 
-func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]string) ([]*meta.UserFileMetadata, error) {
+func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]interface{}) ([]*meta.UserFileMetadata, error) {
 
 	ufms := meta.UserFileMetadataCollection{}
 	idMaps := map[string]wire.LocatorMap{}
-	fieldUpdates := []datasource.SaveRequest{}
+	var fieldUpdates []datasource.SaveRequest
 	metadataResponse := &wire.MetadataCache{}
 	// First get create all the metadata
 	for _, op := range ops {
