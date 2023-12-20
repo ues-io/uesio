@@ -112,8 +112,33 @@ func DoesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.Bund
 		if err != nil {
 			return false
 		}
-		if fieldValue != conditionDef {
-			return false
+		switch conditionVal := conditionDef.(type) {
+		case []interface{}:
+			foundMatch := false
+			for i := range conditionVal {
+				if conditionVal[i] == fieldValue {
+					foundMatch = true
+					break
+				}
+			}
+			if !foundMatch {
+				return false
+			}
+		case []string:
+			foundMatch := false
+			for i := range conditionVal {
+				if conditionVal[i] == fieldValue {
+					foundMatch = true
+					break
+				}
+			}
+			if !foundMatch {
+				return false
+			}
+		default:
+			if fieldValue != conditionDef {
+				return false
+			}
 		}
 	}
 	return true

@@ -57,6 +57,54 @@ jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
 jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
 
+# Test a multi-value condition on the grouping field
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.bot",
+            "name": "bots",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/studio.name"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.allmetadata",
+                    "value": true
+                },
+                {
+                    "field": "uesio/studio.grouping",
+                    "operator": "IN",
+                    "values": [
+                        "BEFORESAVE",
+                        "AFTERSAVE"
+                    ]
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspacename": "dev"
+            },
+            "order": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "desc": false
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 3
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "increase_population"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "nozebras"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "decrease_population"
+
 # Get a list of common fields available to our workspace for the animal collection
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json

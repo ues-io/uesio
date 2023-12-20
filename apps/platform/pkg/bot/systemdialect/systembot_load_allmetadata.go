@@ -124,6 +124,14 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 }
 
+func isDefaultOrder(order []wire.LoadRequestOrder) bool {
+	if len(order) != 1 {
+		return false
+	}
+	defaultOrder := datasource.GetDefaultOrder()
+	return order[0] == defaultOrder
+}
+
 func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
@@ -143,6 +151,21 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
+	}
+
+	// If we weren't provided with an order, or the current order is the same as the default,
+	// use a custom order that is more helpful
+	if len(op.Order) == 0 || isDefaultOrder(op.Order) {
+		op.Order = []wire.LoadRequestOrder{
+			{
+				Field: wire.UPDATED_AT_FIELD,
+				Desc:  true,
+			},
+			{
+				Field: wire.ID_FIELD,
+				Desc:  true,
+			},
+		}
 	}
 
 	collectionMetadata.SetField(&wire.FieldMetadata{
@@ -178,7 +201,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	namespaces := session.GetContextNamespaces()
 
 	if itemCondition != nil {
-		itemKey := getConditionValue(itemCondition)
+		itemKey := goutils.StringValue(getConditionValue(itemCondition))
 		// If we have no value, then we can't perform the query
 		if itemKey == "" {
 			return nil
@@ -203,7 +226,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			if condition.Field == groupingField {
 				grouping := getConditionValue(groupingCondition)
 				// If we have no value, we can't perform the query
-				if grouping == "" {
+				if meta.IsNilGroupingValue(grouping) {
 					return nil
 				}
 				groupingConditions, err := meta.GetGroupingConditions(metadataType, grouping)
@@ -223,9 +246,13 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		// Special handling if we are asked to load common fields
 		if op.CollectionName == "uesio/studio.field" {
 			// Only add built-in fields if we're grouping on a collection
-			collection, ok := conditions["uesio/studio.collection"]
+			conditionVal, ok := conditions["uesio/studio.collection"]
+			var collection string
+			if ok && conditionVal != nil && conditionVal != "" {
+				collection = goutils.StringValue(conditionVal)
+			}
 			// and if we don't have a condition to exclude built-in fields
-			if ok && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
+			if ok && collection != "" && (isCommonFieldCondition != nil && isCommonFieldCondition.Value == true) {
 				onlyLoadCommonFields = true
 				datasource.AddAllBuiltinFields(group, collection)
 			}
@@ -333,32 +360,22 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	return nil
 }
 
-func getConditionValue(condition *wire.LoadRequestCondition) string {
-	var conditionValue string
+func getConditionValue(condition *wire.LoadRequestCondition) interface{} {
 	if condition.Value != nil {
-		conditionValue = goutils.StringValue(condition.Value)
+		return goutils.StringValue(condition.Value)
 	} else if condition.Values != nil {
-		allValues := condition.Values.([]interface{})
-		if len(allValues) > 0 {
-			conditionValue = goutils.StringValue(allValues[0])
+		if stringSliceValues, isSlice := goutils.StringSliceValue(condition.Values); isSlice {
+			return stringSliceValues
 		}
 	}
-	return conditionValue
+	return nil
 }
 
 func sortItems(items []meta.Item, orderings []wire.LoadRequestOrder) {
-	// Order the collection results, by unique key ASC by default
-	orderSpec := orderings
-	if len(orderSpec) < 1 {
-		orderSpec = []wire.LoadRequestOrder{
-			{
-				Field: wire.ID_FIELD,
-				Desc:  true,
-			},
-		}
-	}
+	// Order the collection results
 	slices.SortStableFunc(items, func(a, b meta.Item) bool {
-		for _, order := range orderSpec {
+		for i := range orderings {
+			order := orderings[i]
 			result := compareItemsByField(a, b, order.Field)
 			// If we couldn't compare the items / they were equal,
 			// then move on to the next field

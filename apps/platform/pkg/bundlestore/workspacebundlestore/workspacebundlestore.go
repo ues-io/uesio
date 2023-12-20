@@ -202,9 +202,20 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 	i := 0
 	for field, value := range conditions {
-		loadConditions[i] = wire.LoadRequestCondition{
-			Field: field,
-			Value: value,
+		// Handle multi-value conditions
+		switch typedVal := value.(type) {
+		case []interface{}, []string:
+			loadConditions[i] = wire.LoadRequestCondition{
+				Field:       field,
+				Values:      typedVal,
+				Operator:    "IN",
+				ValueSource: "VALUE",
+			}
+		default:
+			loadConditions[i] = wire.LoadRequestCondition{
+				Field: field,
+				Value: value,
+			}
 		}
 		i++
 	}

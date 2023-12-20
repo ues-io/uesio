@@ -54,26 +54,7 @@ func (rctc *RecordChallengeTokenCollection) GetItemFromKey(key string) (Bundleab
 }
 
 func (rctc *RecordChallengeTokenCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
-	collectionKey, hasCollection := conditions["uesio/studio.collection"]
-	parts := strings.Split(path, "/")
-	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
-		// Ignore this file
-		return false
-	}
-	if hasCollection {
-		collectionNS, collectionName, err := ParseKey(collectionKey)
-		if err != nil {
-			return false
-		}
-		nsUser, nsApp, err := ParseNamespace(collectionNS)
-		if err != nil {
-			return false
-		}
-		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != collectionName {
-			return false
-		}
-	}
-	return true
+	return GroupedPathFilter(path, "uesio/studio.collection", conditions)
 }
 
 func (rctc *RecordChallengeTokenCollection) Loop(iter GroupIterator) error {

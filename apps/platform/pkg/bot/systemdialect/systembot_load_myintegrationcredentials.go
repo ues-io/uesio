@@ -5,6 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -32,9 +33,9 @@ func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connect
 		return err
 	}
 	// Find all integrations with per-user credentials that the user has access to,
-	// or just one if there is only one requested
-	targetIntegrationName := getTargetIntegrationNameFromConditions(op.Conditions)
-	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(session, connection, targetIntegrationName)
+	// or just specific ones that they requested
+	targetIntegrationNames := getTargetIntegrationNamesFromConditions(op.Conditions)
+	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(session, connection, targetIntegrationNames)
 	if err != nil {
 		return err
 	}
@@ -81,22 +82,25 @@ func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connect
 	return nil
 }
 
-func getTargetIntegrationNameFromConditions(conditions []wire.LoadRequestCondition) string {
-	name := ""
+func getTargetIntegrationNamesFromConditions(conditions []wire.LoadRequestCondition) []string {
+	var integrationNames []string
 	if len(conditions) < 1 {
-		return name
+		return integrationNames
 	}
 	for _, c := range conditions {
 		if c.Field == oauthlib.IntegrationField {
-			if c.Value != nil && c.Value != "" {
-				name = c.Value.(string)
+			if c.Value != nil && c.Value != "" && (c.Operator == "EQ" || c.Operator == "") {
+				if nameString, isString := c.Value.(string); isString {
+					integrationNames = append(integrationNames, nameString)
+				}
+			} else if c.Values != nil && c.Operator == "IN" {
+				if namesSlice, isStringSlice := goutils.StringSliceValue(c.Values); isStringSlice {
+					integrationNames = append(integrationNames, namesSlice...)
+				}
 			}
 		}
-		if name != "" {
-			return name
-		}
 	}
-	return name
+	return integrationNames
 }
 
 func hasStringField(item meta.Item, fieldName string) bool {
@@ -106,21 +110,34 @@ func hasStringField(item meta.Item, fieldName string) bool {
 	return false
 }
 
-func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection wire.Connection, integrationName string) (*meta.IntegrationCollection, error) {
+func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection wire.Connection, integrationKeys []string) (*meta.IntegrationCollection, error) {
 	group := &meta.IntegrationCollection{}
 	conditions := meta.BundleConditions{}
-	// TODO: Eventually we need to support "IN" Bundle Conditions
-	// and other per-user authentication types
-	conditions["uesio/studio.authentication"] = "OAUTH2_AUTHORIZATION_CODE"
-	if integrationName != "" {
-		if _, name, err := meta.ParseKey(integrationName); err == nil {
-			conditions["uesio/studio.name"] = name
-			//conditions["uesio/studio.namespace"] = namespace
+	// Eventually we could add other per-user authentication types to this list,
+	// but currently there aren't any others.
+	conditions["uesio/studio.authentication"] = []string{
+		"OAUTH2_AUTHORIZATION_CODE",
+	}
+	uniqueNames := make(map[string]struct{})
+	uniqueNamespaces := make(map[string]struct{})
+	if len(integrationKeys) > 0 {
+		for i := range integrationKeys {
+			if namespace, name, err := meta.ParseKey(integrationKeys[i]); err == nil {
+				uniqueNames[name] = struct{}{}
+				uniqueNamespaces[namespace] = struct{}{}
+			}
 		}
 	}
-	// TO VERIFY: connection here can be nil?
-	if err := bundle.LoadAllFromAny(group, conditions, session, connection); err != nil {
-		return nil, errors.New("unable to load integrations: " + err.Error())
+	// If we have unique namespaces to load from, do a more targeted load.
+	if len(uniqueNames) > 0 {
+		conditions["uesio/studio.name"] = goutils.MapKeys(uniqueNames)
+		if err := bundle.LoadAllFromNamespaces(goutils.MapKeys(uniqueNamespaces), group, conditions, session, connection); err != nil {
+			return nil, errors.New("unable to load integrations: " + err.Error())
+		}
+	} else {
+		if err := bundle.LoadAllFromAny(group, conditions, session, connection); err != nil {
+			return nil, errors.New("unable to load integrations: " + err.Error())
+		}
 	}
 	return group, nil
 }

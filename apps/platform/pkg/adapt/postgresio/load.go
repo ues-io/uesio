@@ -201,8 +201,9 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		"WHERE\n" +
 		builder.String()
 
-	orders := make([]string, len(op.Order))
-	for i, order := range op.Order {
+	var orders []string
+	for i := range op.Order {
+		order := op.Order[i]
 		fieldMetadata, err := collectionMetadata.GetField(order.Field)
 		if err != nil {
 			return err
@@ -211,14 +212,14 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
+		dir := "asc"
 		if order.Desc {
-			orders[i] = fieldName + " desc"
-			continue
+			dir = "desc"
 		}
-		orders[i] = fieldName + " asc"
+		orders = append(orders, fieldName+" "+dir)
 	}
 
-	if len(op.Order) > 0 {
+	if len(orders) > 0 {
 		loadQuery = loadQuery + "\nORDER BY " + strings.Join(orders, ",")
 	}
 	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {

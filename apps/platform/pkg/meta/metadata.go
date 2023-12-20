@@ -48,7 +48,7 @@ func (bi *BuiltIn) SetItemMeta(itemMeta *ItemMeta) {
 	bi.itemMeta = itemMeta
 }
 
-type BundleConditions map[string]string
+type BundleConditions map[string]interface{}
 
 type CollectionableGroup interface {
 	Group
@@ -133,6 +133,63 @@ func StandardPathFilter(path string) bool {
 	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
 		// Ignore this file
 		return false
+	}
+	return true
+}
+
+// GroupedPathFilter filters a metadata tree where each item lives within a namespaced folder,
+// and where a specific BundleCondition field specifies the fully qualified item key.
+// For example, Collection Fields --- each field lives within a folder corresponding to
+// the field's Collection, e.g. if we had this folder structure:
+//
+//	 uesio/
+//	    crm/
+//			  account/
+//				  mailing_zip.yaml
+//				  mailing_country.yaml
+//			  contact/
+//				  first_name.yaml
+//				  last_name.yaml
+//
+// then we might have
+//
+//	BundleConditions = { "uesio/studio.collection": ["uesio/crm.account", "uesio/crm.contact] }
+//		--> returns all 4 fields
+//	BundleConditions = { "uesio/studio.collection": ["uesio/crm.contact"] }
+//		--> returns just the fields for uesio/crm.contact collection
+//	BundleConditions = { "uesio/studio.collection": ["luigi/foo.bar"] }
+//		--> returns no fields.
+func GroupedPathFilter(path, conditionField string, conditions BundleConditions) bool {
+	conditionValue, hasConditionValue := conditions[conditionField]
+	parts := strings.Split(path, "/")
+	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
+		// Ignore this file
+		return false
+	}
+	if hasConditionValue {
+		foundMatch := false
+		metadataGroupKeys, ok := goutils.StringSliceValue(conditionValue)
+		// If the filter was bad, don't return a value
+		if !ok {
+			return false
+		}
+		// Iterate over the metadata groupings requested and see if we find a match
+		for i := range metadataGroupKeys {
+			groupNS, groupName, err := ParseKey(metadataGroupKeys[i])
+			if err != nil {
+				return false
+			}
+			nsUser, nsApp, err := ParseNamespace(groupNS)
+			if err != nil {
+				return false
+			}
+			if parts[0] == nsUser && parts[1] == nsApp && parts[2] == groupName {
+				// We only need to find one match for the item to be returned from the filter
+				foundMatch = true
+				break
+			}
+		}
+		return foundMatch
 	}
 	return true
 }
@@ -256,10 +313,22 @@ func init() {
 	}
 }
 
-func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {
+func IsNilGroupingValue(groupingValue interface{}) bool {
+	switch v := groupingValue.(type) {
+	case string:
+		return v == ""
+	case []string:
+		return len(v) == 0
+	case []interface{}:
+		return len(v) == 0
+	}
+	return groupingValue == nil
+}
+
+func GetGroupingConditions(metadataType, grouping interface{}) (BundleConditions, error) {
 	conditions := BundleConditions{}
 	if metadataType == "fields" {
-		if grouping == "" {
+		if IsNilGroupingValue(grouping) {
 			return nil, errors.New("metadata type fields requires grouping value")
 		}
 		conditions["uesio/studio.collection"] = grouping
@@ -268,22 +337,23 @@ func GetGroupingConditions(metadataType, grouping string) (BundleConditions, err
 	} else if metadataType == "componentvariants" {
 		conditions["uesio/studio.component"] = grouping
 	} else if metadataType == "integrationactions" {
-		if grouping == "" {
+		if IsNilGroupingValue(grouping) {
 			return nil, errors.New("metadata type integration action requires grouping value")
 		}
 		conditions["uesio/studio.integrationtype"] = grouping
 	} else if metadataType == "recordchallengetokens" {
-		if grouping == "" {
+		if IsNilGroupingValue(grouping) {
 			return nil, errors.New("metadata type record challenge token requires grouping value")
 		}
 		conditions["uesio/studio.collection"] = grouping
 	} else if metadataType == "credentials" {
-		if grouping != "" {
+		// grouping is optional for credentials
+		if !IsNilGroupingValue(grouping) {
 			conditions["uesio/studio.type"] = grouping
 		}
 	} else if metadataType == "integrations" {
 		// grouping is optional for integrations
-		if grouping != "" {
+		if !IsNilGroupingValue(grouping) {
 			conditions["uesio/studio.type"] = grouping
 		}
 	}
