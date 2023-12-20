@@ -84,7 +84,8 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		fieldMetadata.getReferenceMetadata()?.collection || ""
 	)
 
-	const nameField = referencedCollection?.getNameField()?.getId()
+	const nameFieldMetadata = referencedCollection?.getNameField()
+	const nameField = nameFieldMetadata?.getId()
 
 	const [items, setItems] = useState<wire.PlainWireRecord[]>([])
 	const [item, setItem] = useState<wire.PlainWireRecord | null>(
@@ -111,6 +112,21 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		template,
 	} = options
 
+	const getItemValue = (item: wire.PlainWireRecord): wire.FieldValue => {
+		if (nameFieldMetadata?.isReference()) {
+			const ref = item[nameField] as wire.PlainWireRecord
+			return ref
+				? ref[collection.UNIQUE_KEY_FIELD] || ref[collection.ID_FIELD]
+				: "no reference found"
+		}
+
+		return (
+			item[nameField] ||
+			item[collection.UNIQUE_KEY_FIELD] ||
+			item[collection.ID_FIELD]
+		)
+	}
+
 	const renderer = (item: wire.PlainWireRecord) => {
 		if (components) {
 			const recordid = item[collection.ID_FIELD]
@@ -126,11 +142,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (template) {
 			return context.addRecordDataFrame(item).mergeString(template)
 		}
-		return (
-			item[nameField] ||
-			item[collection.UNIQUE_KEY_FIELD] ||
-			item[collection.ID_FIELD]
-		)
+		return getItemValue(item)
 	}
 
 	const onSearch = debounce(async (search: string) => {
