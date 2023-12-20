@@ -258,6 +258,17 @@ export const wireHasActiveConditions = (wire: Wire) => {
 export const wireHasNoActiveConditions = (wire: Wire) =>
 	!wireHasActiveConditions(wire)
 
+export const wireHasChanges = (wire: Wire, changedFields?: string[]) => {
+	const changes = wire.getChanges()
+	if (changedFields && changedFields?.length > 0) {
+		if (!changes || !changes.length) return false
+		return changes.some((change) =>
+			changedFields.some((fieldId) => fieldId in change.source)
+		)
+	}
+	return changes.length > 0 || wire.getDeletes().length > 0
+}
+
 function should(condition: DisplayCondition, context: Context): boolean {
 	if (!condition) return true
 	const { type } = condition
@@ -300,21 +311,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		return context.getUser()?.profile === condition.profile
 
 	if (type === "wireHasChanges") {
-		if (condition.fields && condition.fields?.length > 0) {
-			const changes = wire?.getChanges()
-			const fields = condition.fields
-			const result = fields.some((fieldId) => {
-				if (!changes) {
-					return false
-				}
-				return changes.some((change) => {
-					const fieldValue = change.getFieldValue(fieldId)
-					return !!fieldValue
-				})
-			})
-			return result
-		}
-		return !!wire?.getChanges().length || !!wire?.getDeletes().length
+		return wireHasChanges(wire as Wire, condition.fields)
 	}
 	if (type === "wireHasNoChanges") {
 		return !wire?.getChanges().length && !wire?.getDeletes().length
