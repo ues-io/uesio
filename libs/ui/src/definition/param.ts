@@ -96,18 +96,32 @@ export type ParamDefinition =
 	| MultiMetadataParam
 
 type ViewParamBase = {
+	type?: "RECORD" | "TEXT" | "CHECKBOX" | "NUMBER"
 	required?: boolean
-	default?: string
 }
 type ViewRecordParam = {
 	type: "RECORD"
 	collection: MetadataKey
+	default?: string
 } & ViewParamBase
 type ViewTextParam = {
-	type: "TEXT" | "" | undefined | null
+	type: "TEXT"
+	default?: string
+} & ViewParamBase
+type ViewCheckboxParam = {
+	type: "CHECKBOX"
+	default?: boolean
+} & ViewParamBase
+type ViewNumberParam = {
+	type: "NUMBER"
+	default?: number
 } & ViewParamBase
 
 /**
  * Defines a parameter that a view expects to be provided.
  */
-export type ViewParamDefinition = ViewRecordParam | ViewTextParam
+export type ViewParamDefinition =
+	| ViewRecordParam
+	| ViewTextParam
+	| ViewCheckboxParam
+	| ViewNumberParam

@@ -24,6 +24,8 @@ const paramProperties = [
 		options: [
 			{ value: "RECORD", label: "Record ID" },
 			{ value: "TEXT", label: "Text" },
+			{ value: "CHECKBOX", label: "Checkbox" },
+			{ value: "NUMBER", label: "Number" },
 		],
 	},
 	{

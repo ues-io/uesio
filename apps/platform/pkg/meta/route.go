@@ -29,14 +29,14 @@ type Tag struct {
 type Route struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Type           string            `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Path           string            `yaml:"path,omitempty" json:"uesio/studio.path"`
-	ViewRef        string            `yaml:"view,omitempty" json:"uesio/studio.view"`
-	Redirect       string            `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
-	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
-	ThemeRef       string            `yaml:"theme,omitempty" json:"uesio/studio.theme"`
-	Title          string            `yaml:"title,omitempty" json:"uesio/studio.title"`
-	Tags           []Tag             `yaml:"tags,omitempty" json:"uesio/studio.tags"`
+	Type           string                 `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Path           string                 `yaml:"path,omitempty" json:"uesio/studio.path"`
+	ViewRef        string                 `yaml:"view,omitempty" json:"uesio/studio.view"`
+	Redirect       string                 `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
+	Params         map[string]interface{} `yaml:"params,omitempty" json:"uesio/studio.params"`
+	ThemeRef       string                 `yaml:"theme,omitempty" json:"uesio/studio.theme"`
+	Title          string                 `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Tags           []Tag                  `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 }
 
 type RouteWrapper Route

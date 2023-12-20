@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/goutils"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -320,7 +321,7 @@ func getSelectListMetadata(selectList string) (*w.SelectListMetadata, error) {
 					RawValue: selectList,
 				},
 			},
-			Params: map[string]string{
+			Params: map[string]interface{}{
 				"workspacename": workspaceName,
 				"app":           appName,
 			},

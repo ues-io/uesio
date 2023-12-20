@@ -7,6 +7,7 @@ import (
 	"github.com/stripe/stripe-go/v74/checkout/session"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -30,7 +31,7 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) (*
 		return paymentRoute, nil
 	}
 	stripe.Key = stripeKey
-	checkoutSessionID := route.Params["session_id"]
+	checkoutSessionID := goutils.StringValue(route.Params["session_id"])
 
 	checkoutSession, err := session.Get(checkoutSessionID, nil)
 	if err != nil {

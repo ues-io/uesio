@@ -22,7 +22,7 @@ type SaveOp struct {
 	Errors      *[]exceptions.SaveException
 	InsertCount int
 	Metadata    *CollectionMetadata
-	Params      map[string]string
+	Params      map[string]interface{}
 
 	integrationConnection *IntegrationConnection
 }

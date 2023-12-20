@@ -81,7 +81,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	if route != nil {
 		route.Path = path
 		if route.Params == nil {
-			route.Params = map[string]string{}
+			route.Params = map[string]interface{}{}
 		}
 		// Inject all routeMatch vars, which are fully-resolved and can safely override anything in route params
 		if len(routeMatch.Vars) > 0 {
@@ -137,13 +137,13 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 			return nil, err
 		}
 		route.Path = muxRoute.Path[1:]
-		route.Params = map[string]string{
+		route.Params = map[string]interface{}{
 			"recordid": recordID,
 		}
 	}
 
 	if viewtype == "list" {
-		route.Params = map[string]string{}
+		route.Params = map[string]interface{}{}
 	}
 
 	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
@@ -151,23 +151,29 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	return datasource.RunRouteBots(route, session)
 }
 
-func ResolveRouteParams(routeParams map[string]string, s *sess.Session, vars url.Values) (map[string]string, error) {
-	processedParams := map[string]string{}
+func ResolveRouteParams(routeParams map[string]interface{}, s *sess.Session, vars url.Values) (map[string]interface{}, error) {
+	processedParams := map[string]interface{}{}
 
 	for paramName, paramValue := range routeParams {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
-		if err != nil {
-			return nil, err
-		}
+		// For now, only merge string parameters. Consider merging []string as well...
+		switch typedParamValue := paramValue.(type) {
+		case string:
+			template, err := templating.NewWithFuncs(typedParamValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+			if err != nil {
+				return nil, err
+			}
 
-		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
-			Session:     s,
-			ParamValues: nil,
-		})
-		if err != nil {
-			return nil, err
+			mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+				Session:     s,
+				ParamValues: nil,
+			})
+			if err != nil {
+				return nil, err
+			}
+			processedParams[paramName] = mergedValue
+		default:
+			processedParams[paramName] = paramValue
 		}
-		processedParams[paramName] = mergedValue
 	}
 
 	// Inject query-string parameters

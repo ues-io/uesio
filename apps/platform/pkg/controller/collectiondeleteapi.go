@@ -135,8 +135,8 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getWireParamsFromRequestHeaders(r *http.Request) map[string]string {
-	params := map[string]string{}
+func getWireParamsFromRequestHeaders(r *http.Request) map[string]interface{} {
+	params := map[string]interface{}{}
 	if workspaceName := r.Header.Get("x-uesio-workspacename"); workspaceName != "" {
 		params["workspacename"] = workspaceName
 	}
