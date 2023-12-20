@@ -43,6 +43,33 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 	err := datasource.PlatformLoadOne(
 		userFile,
 		&datasource.PlatformLoadOptions{
+			Fields: []wire.LoadRequestField{
+				// Don't request all fields, otherwise we end up loading in a bunch of References that we don't need
+				{
+					ID: "uesio/core.fieldid",
+				},
+				{
+					ID: "uesio/core.recordid",
+				},
+				{
+					ID: "uesio/core.path",
+				},
+				{
+					ID: "uesio/core.collectionid",
+				},
+				{
+					ID: "uesio/core.filesourceid",
+				},
+				{
+					ID: "uesio/core.type",
+				},
+				{
+					ID: "uesio/core.mimetype",
+				},
+				{
+					ID: "uesio/core.updatedat",
+				},
+			},
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: wire.ID_FIELD,
