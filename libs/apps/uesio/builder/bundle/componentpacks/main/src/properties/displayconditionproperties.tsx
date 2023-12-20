@@ -380,6 +380,20 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		],
 	},
 	{
+		name: "fields",
+		type: "FIELDS",
+		wireField: "wire",
+		label: "Changed Fields (optional)",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "EQUALS",
+				value: "wireHasChanges",
+				type: "fieldValue",
+			},
+		],
+	},
+	{
 		name: "sourceValue",
 		type: "TEXT",
 		label: "Source Value",
