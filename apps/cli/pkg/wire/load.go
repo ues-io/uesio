@@ -12,7 +12,7 @@ type LoadOptions struct {
 	Conditions         []wire.LoadRequestCondition `json:"conditions,omitempty"`
 	Fields             []wire.LoadRequestField     `json:"fields,omitempty"`
 	Orders             []wire.LoadRequestOrder     `json:"order,omitempty"`
-	Params             map[string]string           `json:"params,omitempty"`
+	Params             map[string]interface{}      `json:"params,omitempty"`
 	RequireWriteAccess bool                        `json:"requirewriteaccess"`
 }
 

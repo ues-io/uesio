@@ -298,7 +298,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		)
 	}
 
-	params := map[string]string{
+	params := map[string]interface{}{
 		"workspaceid":   workspace.ID,
 		"workspacename": workspace.Name,
 		"app":           namespace,
