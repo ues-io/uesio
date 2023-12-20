@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
+	"github.com/thecloudmasters/uesio/pkg/types/workspace"
 )
 
 func extractConditionByField(conditions []wire.LoadRequestCondition, field string) *wire.LoadRequestCondition {
@@ -92,6 +93,11 @@ const (
 
 func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
+	isSiteAdmin := false
+	if siteAdminSession := session.GetSiteAdminSession(); siteAdminSession != nil {
+		isSiteAdmin = true
+	}
+
 	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
@@ -104,9 +110,12 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 	// Get the workspace ID from params, and verify that the user performing the query
 	// has write access to the requested workspace
-	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
-	if !wsAccessResult.HasWriteAccess() {
-		return wsAccessResult.Error()
+	var wsAccessResult *workspace.AccessResult
+	if !isSiteAdmin {
+		wsAccessResult = datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+		if !wsAccessResult.HasWriteAccess() {
+			return wsAccessResult.Error()
+		}
 	}
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
@@ -115,10 +124,12 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
 
-	op.Conditions = append(op.Conditions, wire.LoadRequestCondition{
-		Field: "uesio/studio.workspace",
-		Value: wsAccessResult.GetWorkspaceID(),
-	})
+	if !isSiteAdmin {
+		op.Conditions = append(op.Conditions, wire.LoadRequestCondition{
+			Field: "uesio/studio.workspace",
+			Value: wsAccessResult.GetWorkspaceID(),
+		})
+	}
 
 	return datasource.LoadOp(op, connection, session)
 
