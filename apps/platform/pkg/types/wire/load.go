@@ -24,7 +24,7 @@ type LoadOp struct {
 	BatchNumber        int                    `json:"batchnumber" bot:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"requirewriteaccess"`
-	Params             map[string]string      `json:"params,omitempty"`
+	Params             map[string]interface{} `json:"params,omitempty"`
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`

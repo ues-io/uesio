@@ -1,0 +1,4 @@
+name: view_params
+path: view_params
+view: uesio/tests.view_params
+theme: uesio/tests.default

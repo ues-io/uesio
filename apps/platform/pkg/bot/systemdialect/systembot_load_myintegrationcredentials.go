@@ -142,7 +142,7 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	return group, nil
 }
 
-func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, connection wire.Connection, params map[string]string) (*wire.Collection, error) {
+func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, connection wire.Connection, params map[string]interface{}) (*wire.Collection, error) {
 
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
 	if err != nil {

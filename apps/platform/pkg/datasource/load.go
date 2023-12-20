@@ -67,7 +67,7 @@ func getSubFields(loadFields []wire.LoadRequestField) *FieldsMap {
 func processConditions(
 	collectionKey string,
 	conditions []wire.LoadRequestCondition,
-	params map[string]string,
+	params map[string]interface{},
 	metadata *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
@@ -157,17 +157,17 @@ func processConditions(
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
 			value, ok := params[condition.Param]
 			if !ok {
-				return nil, errors.New("Invalid Condition: " + condition.Param)
+				return nil, exceptions.NewBadRequestException("Invalid Condition, param '" + condition.Param + "' was not provided")
 			}
 			condition.Value = value
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
-			var values []string
+			var values []interface{}
 			for _, param := range condition.Params {
 				value, ok := params[param]
 				if !ok {
-					return nil, errors.New("Invalid Condition, parameter not provided: " + param)
+					return nil, exceptions.NewBadRequestException("Invalid Condition, param: '" + param + "' was not provided")
 				}
 				values = append(values, value)
 			}
@@ -190,14 +190,14 @@ func processConditions(
 			}
 
 			if lookupOp == nil {
-				return nil, errors.New("Could not find lookup wire: " + condition.LookupWire)
+				return nil, exceptions.NewBadRequestException("Could not find lookup wire: " + condition.LookupWire)
 			}
 
 			values := make([]interface{}, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
-					return err
+					return exceptions.NewBadRequestException("could not get value of specific Lookup field from record: " + condition.LookupField)
 				}
 				values = append(values, value)
 				return nil
@@ -212,7 +212,7 @@ func processConditions(
 				condition.Operator = "IN"
 			}
 			if !(condition.Operator == "IN" || condition.Operator == "NOT_IN") {
-				return nil, errors.New("Invalid operator for lookup: " + condition.Operator)
+				return nil, exceptions.NewBadRequestException("Invalid operator for lookup condition, must be one of [IN, NOT_IN]: " + condition.Operator)
 			}
 		}
 		useConditions = append(useConditions, condition)

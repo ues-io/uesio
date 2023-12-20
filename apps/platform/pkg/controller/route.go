@@ -136,7 +136,7 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.Route
 }
 
 func getNotFoundRoute(path string, err string, displayButton string) *meta.Route {
-	params := map[string]string{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
+	params := map[string]interface{}{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
@@ -150,7 +150,7 @@ func getNotFoundRoute(path string, err string, displayButton string) *meta.Route
 }
 
 func GetErrorRoute(path string, err string) *meta.Route {
-	params := map[string]string{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
+	params := map[string]interface{}{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{

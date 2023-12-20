@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -32,11 +33,11 @@ func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 	queryWorkspaceForWriteFn = fn
 }
 
-func RequestWorkspaceWriteAccess(params map[string]string, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
+func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
 
-	workspaceID := params["workspaceid"]
-	workspaceName := params["workspacename"]
-	appName := params["app"]
+	workspaceID := goutils.StringValue(params["workspaceid"])
+	workspaceName := goutils.StringValue(params["workspacename"])
+	appName := goutils.StringValue(params["app"])
 	workspaceUniqueKey := ""
 
 	wsKeyInfo := workspace.NewKeyInfo(appName, workspaceName, workspaceID)

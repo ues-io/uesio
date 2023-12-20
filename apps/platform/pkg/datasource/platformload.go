@@ -17,7 +17,7 @@ type PlatformLoadOptions struct {
 	Connection         wire.Connection
 	BatchSize          int
 	LoadAll            bool
-	Params             map[string]string
+	Params             map[string]interface{}
 	RequireWriteAccess bool
 }
 
