@@ -50,12 +50,16 @@ class Wire {
 
 	getChanges = () =>
 		this.source?.changes
-			? Object.keys(this.source.changes).map((id) => this.getRecord(id))
+			? Object.keys(this.source.changes).map(
+					(id) => new WireRecord(this.source.changes[id], id, this)
+			  )
 			: []
 
 	getDeletes = () =>
 		this.source?.deletes
-			? Object.keys(this.source.deletes).map((id) => this.getRecord(id))
+			? Object.keys(this.source.deletes).map(
+					(id) => new WireRecord(this.source.deletes[id], id, this)
+			  )
 			: []
 
 	isLoading = () => this.source?.isLoading

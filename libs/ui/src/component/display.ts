@@ -111,6 +111,7 @@ type WireHasNoChanges = {
 type WireHasChanges = {
 	type: "wireHasChanges"
 	wire: string
+	fields?: string[]
 }
 type WireIsLoading = {
 	type: "wireIsLoading"
@@ -299,6 +300,20 @@ function should(condition: DisplayCondition, context: Context): boolean {
 		return context.getUser()?.profile === condition.profile
 
 	if (type === "wireHasChanges") {
+		if (condition.fields && condition.fields?.length > 0) {
+			const changes = wire?.getChanges()
+			const fields = condition.fields
+			const result = fields.some((fieldId) => {
+				if (!changes) {
+					return false
+				}
+				return changes.some((change) => {
+					const fieldValue = change.getFieldValue(fieldId)
+					return !!fieldValue
+				})
+			})
+			return result
+		}
 		return !!wire?.getChanges().length || !!wire?.getDeletes().length
 	}
 	if (type === "wireHasNoChanges") {
