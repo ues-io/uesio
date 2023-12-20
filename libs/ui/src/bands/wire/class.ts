@@ -49,18 +49,14 @@ class Wire {
 		this.source?.data ? Object.values(this.source.data) : []
 
 	getChanges = () =>
-		this.source?.changes
-			? Object.keys(this.source.changes).map(
-					(id) => new WireRecord(this.source.changes[id], id, this)
-			  )
-			: []
+		Object.entries(this.source?.changes || []).map(
+			([id, changeObj]) => new WireRecord(changeObj, id, this)
+		)
 
 	getDeletes = () =>
-		this.source?.deletes
-			? Object.keys(this.source.deletes).map(
-					(id) => new WireRecord(this.source.deletes[id], id, this)
-			  )
-			: []
+		Object.entries(this.source?.deletes || []).map(
+			([id, deleteObj]) => new WireRecord(deleteObj, id, this)
+		)
 
 	isLoading = () => this.source?.isLoading
 	hasAllRecords = () => !this.source?.more
