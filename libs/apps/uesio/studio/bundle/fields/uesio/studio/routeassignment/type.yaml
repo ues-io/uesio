@@ -1,6 +1,6 @@
 name: type
 type: SELECT
 label: Type
-selectList: routeassignmenttype
+selectList: uesio/core.routeassignmenttype
 required: true
 createOnly: true

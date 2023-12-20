@@ -4,3 +4,4 @@ options:
     value: "list"
   - label: "Detail View"
     value: "detail"
+public: true

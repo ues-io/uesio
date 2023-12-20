@@ -1,0 +1,5 @@
+name: field
+type: DYNAMIC
+label: Field
+pluralLabel: Fields
+public: true

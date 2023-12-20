@@ -69,6 +69,7 @@ components:
                         - signal: route/NAVIGATE_TO_ASSIGNMENT
                           viewtype: detail
                           recordid: ${uesio/core.id}
+                          collection: ${collection}
                     - icon: delete
                       text: $Label{uesio/io.delete}
                       signals:
