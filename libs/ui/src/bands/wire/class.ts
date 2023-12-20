@@ -49,17 +49,26 @@ class Wire {
 		this.source?.data ? Object.values(this.source.data) : []
 
 	getChanges = () =>
-		Object.entries(this.source?.changes || []).map(
+		Object.entries(this.source?.changes || {}).map(
 			([id, changeObj]) => new WireRecord(changeObj, id, this)
 		)
 
 	getDeletes = () =>
-		Object.entries(this.source?.deletes || []).map(
+		Object.entries(this.source?.deletes || {}).map(
 			([id, deleteObj]) => new WireRecord(deleteObj, id, this)
 		)
 
-	isLoading = () => this.source?.isLoading
+	/**
+	 * Returns true if this Wire has any changes or deletes
+	 * @returns boolean
+	 */
+	hasChanged = () =>
+		Object.keys(this.source?.changes || {}).length > 0 ||
+		Object.keys(this.source?.deletes || {}).length > 0
+
 	hasAllRecords = () => !this.source?.more
+
+	isLoading = () => !!this.source?.isLoading
 
 	getErrors = () => this.source?.errors
 
