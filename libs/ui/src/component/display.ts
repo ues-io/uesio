@@ -259,14 +259,14 @@ export const wireHasNoActiveConditions = (wire: Wire) =>
 	!wireHasActiveConditions(wire)
 
 export const wireHasChanges = (wire: Wire, changedFields?: string[]) => {
-	const changes = wire.getChanges()
 	if (changedFields && changedFields?.length > 0) {
+		const changes = wire.getChanges()
 		if (!changes || !changes.length) return false
 		return changes.some((change) =>
 			changedFields.some((fieldId) => fieldId in change.source)
 		)
 	}
-	return changes.length > 0 || wire.getDeletes().length > 0
+	return wire.hasChanged()
 }
 
 function should(condition: DisplayCondition, context: Context): boolean {
