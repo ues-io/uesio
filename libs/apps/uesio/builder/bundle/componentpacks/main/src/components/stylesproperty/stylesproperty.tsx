@@ -77,7 +77,11 @@ const StylesProperty: definition.UC<Props> = (props) => {
 				"tailwind-classes.json"
 			)
 			platform.platform
-				.memoizedGetJSON<string[][]>(context, tailwindClassesUrl)
+				.memoizedGetJSON<string[][]>(context, tailwindClassesUrl, {
+					// This will only change when the app is restarted, so no need to refetch every time,
+					// reuse it if it's in memory cache
+					refetch: false,
+				})
 				.then(setTailwindTokens)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
