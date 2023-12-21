@@ -64,7 +64,7 @@ const getPackUrlsForDeps = (
 			context,
 			pack.namespace,
 			pack.name,
-			pack.updatedAt
+			`${pack.updatedAt || 0}`
 		)
 	)
 }

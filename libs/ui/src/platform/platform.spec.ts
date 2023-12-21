@@ -1,7 +1,7 @@
 import { BundleDependencyDefMap, SiteState } from "../bands/site"
 import { getSiteBundleAssetVersion, setStaticAssetsPath } from "./platform"
 
-const PackUpdatedAt = 123456789
+const PackUpdatedAt = `${123456789}`
 const UesioAppGitSha = "/abcd1234"
 
 const getSiteBundleAssetVersionTests = [

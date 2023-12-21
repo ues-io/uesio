@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/env"
@@ -81,11 +82,16 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// If we have gitsha, append that to the prefixes to enable us to have versioned assets
 	gitsha := os.Getenv("GITSHA")
-	cacheStaticAssets := gitsha != ""
+	cacheSiteBundles := os.Getenv("UESIO_CACHE_SITE_BUNDLES")
+	cacheStaticAssets := false
 	staticAssetsPath := ""
-
-	if cacheStaticAssets {
+	if gitsha != "" {
 		staticAssetsPath = "/" + gitsha
+	} else if cacheSiteBundles == "true" {
+		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
+	}
+	if staticAssetsPath != "" {
+		cacheStaticAssets = true
 		file.SetAssetsPath(staticAssetsPath)
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
