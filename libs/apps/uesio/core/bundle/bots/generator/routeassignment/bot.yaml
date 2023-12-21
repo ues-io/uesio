@@ -1,0 +1,20 @@
+name: routeassignment
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: collection
+    prompt: Select a collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+  - name: type
+    prompt: Assignment Type
+    type: SELECT
+    selectList: uesio/core.routeassignmenttype
+    required: true
+  - name: route
+    prompt: Route
+    type: METADATA
+    metadataType: ROUTE
+    required: true
+public: true

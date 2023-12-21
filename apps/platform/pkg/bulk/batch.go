@@ -22,6 +22,11 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	err := datasource.PlatformLoadOne(
 		&job,
 		&datasource.PlatformLoadOptions{
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "uesio/core.spec",
+				},
+			},
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: wire.ID_FIELD,
