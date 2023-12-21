@@ -173,3 +173,10 @@ func getRequiredParameter(params map[string]interface{}, paramName string) (stri
 	}
 	return "", exceptions.NewInvalidParamException("system bot: missing required parameter "+paramName, paramName)
 }
+
+func isTextAlike(fieldType string) bool {
+	if fieldType == "TEXT" || fieldType == "AUTONUMBER" || fieldType == "EMAIL" || fieldType == "LONGTEXT" || fieldType == "SELECT" || fieldType == "DATE" {
+		return true
+	}
+	return false
+}
