@@ -191,9 +191,9 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	return nil
 }
 
-func getSubParams(viewDef *yaml.Node, parentParamValues map[string]string, session *sess.Session) (map[string]string, error) {
+func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, session *sess.Session) (map[string]interface{}, error) {
 
-	subParams := map[string]string{}
+	subParams := map[string]interface{}{}
 	// Process the params
 	for i, prop := range viewDef.Content {
 
@@ -226,7 +226,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]string, sessi
 	return subParams, nil
 }
 
-func processView(key string, viewInstanceID string, deps *PreloadMetadata, params map[string]string, session *sess.Session) error {
+func processView(key string, viewInstanceID string, deps *PreloadMetadata, params map[string]interface{}, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {

@@ -1,0 +1,40 @@
+name: view_params
+definition:
+  # Wires connect to data in collections
+  wires:
+    wire1:
+      collection: uesio/tests.wire_condition
+      init:
+        query: true
+        create: false
+      batchsize: 5
+      order:
+        - field: uesio/tests.name
+          desc: false
+      fields:
+        uesio/tests.name:
+        uesio/tests.checkbox:
+        uesio/tests.number:
+      conditions:
+        - field: uesio/tests.checkbox
+          operator: EQ
+          valueSource: PARAM
+          param: checkboxvalue
+        - field: uesio/tests.number
+          operator: GTE
+          valueSource: PARAM
+          param: numbervalue
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.table:
+        wire: wire1
+        uesio.id: table1
+        columns:
+          - field: uesio/tests.name
+          - field: uesio/tests.checkbox
+          - field: uesio/tests.number
+  params:
+    checkboxvalue:
+      type: CHECKBOX
+    numbervalue:
+      type: NUMBER

@@ -32,8 +32,8 @@ func (fm *wsFileMeta) LastModified() *time.Time {
 	return &t
 }
 
-func getParamsFromWorkspace(workspace *meta.Workspace) map[string]string {
-	return map[string]string{
+func getParamsFromWorkspace(workspace *meta.Workspace) map[string]interface{} {
+	return map[string]interface{}{
 		"workspaceid": workspace.ID,
 	}
 }

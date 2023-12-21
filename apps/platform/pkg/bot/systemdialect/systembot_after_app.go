@@ -40,7 +40,7 @@ func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessio
 			Collection: "uesio/studio.workspace",
 			Wire:       "RunAppAfterSaveBot",
 			Deletes:    &meta.WorkspaceCollection{workspace},
-			Params: map[string]string{
+			Params: map[string]interface{}{
 				"workspaceid": workspace.ID,
 			},
 			Options: &wire.SaveOptions{IgnoreMissingRecords: true},
