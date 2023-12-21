@@ -42,6 +42,10 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 
 	wsKeyInfo := workspace.NewKeyInfo(appName, workspaceName, workspaceID)
 
+	if siteAdminSession := session.GetSiteAdminSession(); siteAdminSession != nil {
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, true, nil)
+	}
+
 	if appName != "" && workspaceName != "" {
 		workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
 	}
@@ -64,7 +68,7 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		accessErr = errors.New("your profile does not allow you to edit workspace metadata")
 	}
 	if accessErr != nil {
-		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, accessErr)
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, accessErr)
 	}
 	// 2. does the user have the workspace-specific write permission,
 	// or is this a Studio Super-User (such as the  Anonymous Admin Session which we use for Workspace Bundle Store?)
@@ -95,7 +99,7 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 	params["workspaceid"] = wsKeyInfo.GetWorkspaceID()
 	params["workspacename"] = wsKeyInfo.GetWorkspaceName()
 	params["app"] = wsKeyInfo.GetAppName()
-	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, accessErr)
+	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, false, accessErr)
 }
 
 func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {

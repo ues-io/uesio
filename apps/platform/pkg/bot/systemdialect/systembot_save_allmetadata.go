@@ -43,12 +43,14 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 
 	var changedMetadataItemKeys []string
 
-	if err := op.LoopChanges(func(change *wire.ChangeItem) error {
-		return change.SetField("uesio/studio.workspace", &wire.Item{
-			wire.ID_FIELD: wsAccessResult.GetWorkspaceID(),
-		})
-	}); err != nil {
-		return err
+	if !wsAccessResult.IsSiteAdmin() {
+		if err := op.LoopChanges(func(change *wire.ChangeItem) error {
+			return change.SetField("uesio/studio.workspace", &wire.Item{
+				wire.ID_FIELD: wsAccessResult.GetWorkspaceID(),
+			})
+		}); err != nil {
+			return err
+		}
 	}
 
 	if err := datasource.SaveOp(op, connection, session); err != nil {

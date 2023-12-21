@@ -551,3 +551,65 @@ jsonpath "$.wires[0].data" count == {{total-routes}}
 jsonpath "$.wires[0].batchsize" == {{total-routes}}
 jsonpath "$.wires[0].batchnumber" == 0
 jsonpath "$.wires[0].more" == false
+
+#Login as Ben he has access to the studio site
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "ben"
+}
+
+#Site admin all metadata in studio contex
+#make sure we can read data as the siteadmin for the studio site
+POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.bot",
+            "name": "views",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                }
+            ],
+            "batchsize": 5
+        }
+    ]
+}
+HTTP 200
+[Captures]
+last-bot-id: jsonpath "$.wires[0].data[4]['uesio/core.id']"
+[Asserts]
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].more" == true
+
+#Site admin all metadata in studio context 
+#Change the label of one bot to make sure we got write access
+POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+{
+  "wires": [
+    {
+      "wire": "siteAdminStudioSave",
+      "collection": "uesio/studio.bot",
+      "changes": {
+        "1": {
+          "uesio/studio.label": "Nice Label For a Bot",
+          "uesio/core.id": "{{last-bot-id}}"
+        }
+      },
+      "params": {
+        "app": "uesio/studio",
+        "collectionname": "bot",
+        "namespace": "uesio/studio",
+        "sitename": "prod"
+      }
+    }
+  ]
+}
+
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].changes['1']['uesio/studio.label']" == "Nice Label For a Bot"
+jsonpath "$.wires[0].changes['1']['uesio/core.id']" == "{{last-bot-id}}"
+jsonpath "$.wires[0].errors" == null
