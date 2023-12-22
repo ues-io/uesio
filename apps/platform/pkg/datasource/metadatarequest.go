@@ -202,7 +202,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 			referenceMetadata := fieldMetadata.ReferenceMetadata
 
 			// Only add to additional requests if we don't already have that metadata
-			refCollection, _ := metadataResponse.GetCollection(referenceMetadata.Collection)
+			refCollection, _ := metadataResponse.GetCollection(referenceMetadata.GetCollection())
 			for _, fieldID := range specialRef.Fields {
 				if refCollection != nil {
 					_, err := refCollection.GetField(fieldID)
@@ -210,7 +210,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 						continue
 					}
 				}
-				err := additionalRequests.AddField(referenceMetadata.Collection, fieldID, nil)
+				err := additionalRequests.AddField(referenceMetadata.GetCollection(), fieldID, nil)
 				if err != nil {
 					return err
 				}
@@ -227,16 +227,11 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 				}
 			}
 
-			referenceMetadata := fieldMetadata.ReferenceMetadata
-			if referenceMetadata.MultiCollection {
-				//Let's go and load the common collection
-				referenceMetadata = &wire.ReferenceMetadata{Collection: constant.CommonCollection}
-			}
-
+			relatedCollection := fieldMetadata.ReferenceMetadata.GetCollection()
 			// Only add to additional requests if we don't already have that metadata
-			refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
+			refCollection, err := metadataResponse.GetCollection(relatedCollection)
 			if err != nil {
-				err := additionalRequests.AddCollection(referenceMetadata.Collection)
+				err := additionalRequests.AddCollection(relatedCollection)
 				if err != nil {
 					return err
 				}
@@ -253,7 +248,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 						continue
 					}
 				}
-				err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &nestedSubFields)
+				err := additionalRequests.AddField(relatedCollection, fieldKey, &nestedSubFields)
 				if err != nil {
 					return err
 				}
@@ -391,7 +386,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			if err != nil {
 				return err
 			}
-			err = additionalRequests.AddCollection(accessFieldMetadata.ReferenceMetadata.Collection)
+			err = additionalRequests.AddCollection(accessFieldMetadata.ReferenceMetadata.GetCollection())
 			if err != nil {
 				return err
 			}

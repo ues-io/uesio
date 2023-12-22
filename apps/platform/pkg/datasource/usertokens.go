@@ -32,7 +32,7 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 			if fieldMetadata.ReferenceMetadata == nil {
 				return nil, errors.New("Access field is not a reference field")
 			}
-			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 			if err != nil {
 				return nil, err
 			}
