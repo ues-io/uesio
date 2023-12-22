@@ -558,7 +558,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "ben"
 }
 
-#Site admin all metadata in studio contex
+#Site admin all metadata in studio context
 #make sure we can read data as the siteadmin for the studio site
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
 Accept: application/json
@@ -566,11 +566,37 @@ Accept: application/json
     "wires": [
         {
             "collection": "uesio/studio.bot",
-            "name": "views",
+            "name": "bots",
             "query": true,
             "fields": [
                 {
                     "id": "uesio/core.id"
+                },
+                {
+                    "id": "uesio/studio.label"
+                },
+                {
+                    "id": "uesio/studio.workspace",
+                    "fields": [
+                        {
+                            "id": "uesio/core.id"
+                        },
+                        {
+                            "id": "uesio/studio.app",
+                            "fields": [
+                                {
+                                    "id": "uesio/studio.name"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/studio.workspace->uesio/studio.app->uesio/studio.name",
+                    "operator": "EQ",
+                    "value": "tests"
                 }
             ],
             "batchsize": 5
@@ -580,6 +606,8 @@ Accept: application/json
 HTTP 200
 [Captures]
 last-bot-id: jsonpath "$.wires[0].data[4]['uesio/core.id']"
+last-bot-label: jsonpath "$.wires[0].data[4]['uesio/studio.label']"
+last-bot-workspace-id: jsonpath "$.wires[0].data[4]['uesio/studio.workspace']['uesio/core.id']"
 [Asserts]
 jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].more" == true
@@ -613,3 +641,40 @@ HTTP 200
 jsonpath "$.wires[0].changes['1']['uesio/studio.label']" == "Nice Label For a Bot"
 jsonpath "$.wires[0].changes['1']['uesio/core.id']" == "{{last-bot-id}}"
 jsonpath "$.wires[0].errors" == null
+
+# Fetch the bot using workspace mode to make sure the label was changed and cache invalidated
+POST https://{{host}}:{{port}}/site/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection": "uesio/studio.bot",
+            "name": "bots",
+            "query": true,
+            "fields": [
+                {
+                    "id": "uesio/core.id"
+                },
+                {
+                    "id": "uesio/studio.label"
+                }
+            ],
+            "batchsize": 1,
+            "conditions": [
+                {
+                    "field": "uesio/core.id",
+                    "value": "{{last-bot-id}}"
+                }
+            ],
+            "params": {
+                "app": "uesio/tests",
+                "workspaceid": "{{last-bot-workspace-id}}"
+            }
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 1
+jsonpath "$.wires[0].data[0]['uesio/core.id']" == "{{last-bot-id}}"
+jsonpath "$.wires[0].data[0]['uesio/studio.label']" == "Nice Label For a Bot"

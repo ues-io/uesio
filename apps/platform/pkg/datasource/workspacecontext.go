@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/types/workspace"
 )
@@ -44,6 +45,11 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 	wsKeyInfo := workspace.NewKeyInfo(appName, workspaceName, workspaceID)
 
 	if siteAdminSession := session.GetSiteAdminSession(); siteAdminSession != nil {
+		site := siteAdminSession.GetSite()
+		if site.GetAppFullName() != "uesio/studio" || site.Name != "prod" {
+			return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, exceptions.NewForbiddenException(
+				"you do not have permission to perform the requested operation"))
+		}
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, true, nil)
 	}
 
