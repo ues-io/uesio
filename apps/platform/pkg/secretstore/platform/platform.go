@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -22,7 +23,7 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: wire.UNIQUE_KEY_FIELD,
+					Field: commonfields.UniqueKey,
 					Value: key,
 				},
 			},

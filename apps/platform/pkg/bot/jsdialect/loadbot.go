@@ -6,6 +6,7 @@ import (
 	"github.com/teris-io/shortid"
 
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -139,9 +140,9 @@ func (lb *LoadBotAPI) AddRecord(record interface{}) {
 			item.SetField(key, typedField)
 		}
 		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
-		if val, err := item.GetField(wire.ID_FIELD); err == nil || val == nil || val == "" {
+		if val, err := item.GetField(commonfields.Id); err == nil || val == nil || val == "" {
 			if shortId, shortIdErr := shortid.Generate(); shortIdErr != nil {
-				item.SetField(wire.ID_FIELD, shortId)
+				item.SetField(commonfields.Id, shortId)
 			}
 		}
 		lb.loadOp.Collection.AddItem(item)

@@ -12,6 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -278,7 +279,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		// to overwrite the other fields
 		workspaceItem.SetItemMeta(&meta.ItemMeta{
 			ValidFields: map[string]bool{
-				wire.ID_FIELD:                true,
+				commonfields.Id:              true,
 				"uesio/studio.loginroute":    true,
 				"uesio/studio.signuproute":   true,
 				"uesio/studio.homeroute":     true,

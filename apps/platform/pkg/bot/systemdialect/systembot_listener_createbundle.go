@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
@@ -34,12 +35,12 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 
-	app, err := datasource.QueryAppForWrite(appID, wire.UNIQUE_KEY_FIELD, session, connection)
+	app, err := datasource.QueryAppForWrite(appID, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
 	}
 
-	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, wire.UNIQUE_KEY_FIELD, session, connection)
+	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}

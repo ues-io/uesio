@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -107,7 +108,7 @@ func PlatformLoadByID(item meta.CollectionableItem, id string, session *sess.Ses
 			Connection: connection,
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: wire.ID_FIELD,
+					Field: commonfields.Id,
 					Value: id,
 				},
 			},

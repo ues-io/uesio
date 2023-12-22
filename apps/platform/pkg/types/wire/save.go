@@ -8,6 +8,7 @@ import (
 
 	"github.com/francoispqt/gojay"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -152,13 +153,13 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 		// Skip marshalling builtin fields
 		switch fieldID {
 		case
-			ID_FIELD,
-			UNIQUE_KEY_FIELD,
-			OWNER_FIELD,
-			CREATED_BY_FIELD,
-			CREATED_AT_FIELD,
-			UPDATED_BY_FIELD,
-			UPDATED_AT_FIELD:
+			commonfields.Id,
+			commonfields.UniqueKey,
+			commonfields.Owner,
+			commonfields.CreatedBy,
+			commonfields.CreatedAt,
+			commonfields.UpdatedBy,
+			commonfields.UpdatedAt:
 			return nil
 		}
 
@@ -292,21 +293,21 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 		return ci.GetProposedOwnerID()
 	}
 
-	return ci.GetOldReferenceKey(OWNER_FIELD)
+	return ci.GetOldReferenceKey(commonfields.Owner)
 
 }
 
 // This get the owner id that may be changing
 func (ci *ChangeItem) GetProposedOwnerID() (string, error) {
-	return ci.GetReferenceKey(OWNER_FIELD)
+	return ci.GetReferenceKey(commonfields.Owner)
 }
 
 func (ci *ChangeItem) GetCreatedByID() (string, error) {
-	return ci.GetReferenceKey(CREATED_BY_FIELD)
+	return ci.GetReferenceKey(commonfields.CreatedBy)
 }
 
 func (ci *ChangeItem) GetUpdatedByID() (string, error) {
-	return ci.GetReferenceKey(UPDATED_BY_FIELD)
+	return ci.GetReferenceKey(commonfields.UpdatedBy)
 }
 
 type SaveOptions struct {
@@ -387,7 +388,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 		return valueString, nil
 	}
 
-	fk, err := GetFieldValue(value, ID_FIELD)
+	fk, err := GetFieldValue(value, commonfields.Id)
 	if err != nil {
 		return "", err
 	}

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/timeutils"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -63,7 +64,7 @@ func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wi
 		value := getValue(data, mapping, index)
 		if value != "" {
 			change[fieldMetadata.GetFullName()] = map[string]interface{}{
-				wire.UNIQUE_KEY_FIELD: value,
+				commonfields.UniqueKey: value,
 			}
 		}
 		return nil

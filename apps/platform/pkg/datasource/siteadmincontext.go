@@ -5,6 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -104,11 +105,11 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 }
 
 func QuerySiteByID(siteid string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
-	return querySite(siteid, wire.ID_FIELD, session, connection)
+	return querySite(siteid, commonfields.Id, session, connection)
 }
 
 func QuerySiteByKey(sitekey string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
-	return querySite(sitekey, wire.UNIQUE_KEY_FIELD, session, connection)
+	return querySite(sitekey, commonfields.UniqueKey, session, connection)
 }
 
 func querySite(value, field string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
@@ -120,10 +121,10 @@ func querySite(value, field string, session *sess.Session, connection wire.Conne
 			Connection: connection,
 			Fields: []wire.LoadRequestField{
 				{
-					ID: wire.ID_FIELD,
+					ID: commonfields.Id,
 				},
 				{
-					ID: wire.UNIQUE_KEY_FIELD,
+					ID: commonfields.UniqueKey,
 				},
 				{
 					ID: "uesio/studio.name",
@@ -138,10 +139,10 @@ func querySite(value, field string, session *sess.Session, connection wire.Conne
 					ID: "uesio/studio.app",
 					Fields: []wire.LoadRequestField{
 						{
-							ID: wire.ID_FIELD,
+							ID: commonfields.Id,
 						},
 						{
-							ID: wire.UNIQUE_KEY_FIELD,
+							ID: commonfields.UniqueKey,
 						},
 					},
 				},
@@ -152,10 +153,10 @@ func querySite(value, field string, session *sess.Session, connection wire.Conne
 							ID: "uesio/studio.app",
 							Fields: []wire.LoadRequestField{
 								{
-									ID: wire.ID_FIELD,
+									ID: commonfields.Id,
 								},
 								{
-									ID: wire.UNIQUE_KEY_FIELD,
+									ID: commonfields.UniqueKey,
 								},
 							},
 						},

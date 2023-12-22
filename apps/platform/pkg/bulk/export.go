@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
@@ -68,7 +68,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 	batch.Status = "completed"
 	batch.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			wire.ID_FIELD:       true,
+			commonfields.Id:     true,
 			"uesio/core.status": true,
 		},
 	})

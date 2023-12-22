@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -32,7 +33,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 				ID: fieldMetadata.GetFullName(),
 				Fields: []wire.LoadRequestField{
 					{
-						ID: wire.ID_FIELD,
+						ID: commonfields.Id,
 					},
 				},
 			})

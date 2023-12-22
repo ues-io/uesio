@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -15,7 +16,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 		BatchSize:      adapt.MAX_SAVE_BATCH_SIZE,
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 		},
 	}

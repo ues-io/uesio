@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -72,10 +73,10 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 
 	if !haveAccess {
 		// Otherwise we need to query the workspace for write
-		queryField := wire.ID_FIELD
+		queryField := commonfields.Id
 		queryValue := workspaceID
 		if workspaceID == "" && workspaceUniqueKey != "" {
-			queryField = wire.UNIQUE_KEY_FIELD
+			queryField = commonfields.UniqueKey
 			queryValue = workspaceUniqueKey
 		}
 		ws, err := queryWorkspaceForWriteFn(queryValue, queryField, session, connection)
@@ -190,7 +191,7 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 		return session, nil
 	}
 	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(workspaceKey, wire.UNIQUE_KEY_FIELD, sessClone, connection)
+	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
 	if err != nil {
 		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
 	}
@@ -204,7 +205,7 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 		return session, nil
 	}
 	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(workspaceID, wire.ID_FIELD, sessClone, connection)
+	workspace, err := QueryWorkspaceForWrite(workspaceID, commonfields.Id, sessClone, connection)
 	if err != nil {
 		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
 	}

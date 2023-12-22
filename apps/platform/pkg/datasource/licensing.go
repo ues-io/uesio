@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -58,7 +59,7 @@ func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, erro
 		Fields:     []wire.LoadRequestField{},
 		Conditions: []wire.LoadRequestCondition{
 			{
-				Field:    wire.UNIQUE_KEY_FIELD,
+				Field:    commonfields.UniqueKey,
 				Value:    namespace,
 				Operator: "=",
 			},

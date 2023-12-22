@@ -3,6 +3,7 @@ package bulk
 import (
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -29,7 +30,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 			},
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: wire.ID_FIELD,
+					Field: commonfields.Id,
 					Value: jobID,
 				},
 			},

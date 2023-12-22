@@ -4,6 +4,7 @@ import (
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v5"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -46,12 +47,12 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 			return err
 		}
 
-		createdAt, err := change.GetFieldAsInt(wire.CREATED_AT_FIELD)
+		createdAt, err := change.GetFieldAsInt(commonfields.CreatedAt)
 		if err != nil {
 			return err
 		}
 
-		updatedAt, err := change.GetFieldAsInt(wire.UPDATED_AT_FIELD)
+		updatedAt, err := change.GetFieldAsInt(commonfields.UpdatedAt)
 		if err != nil {
 			return err
 		}

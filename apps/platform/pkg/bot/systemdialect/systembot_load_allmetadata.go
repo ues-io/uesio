@@ -8,6 +8,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -158,11 +159,11 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	if len(op.Order) == 0 || isDefaultOrder(op.Order) {
 		op.Order = []wire.LoadRequestOrder{
 			{
-				Field: wire.UPDATED_AT_FIELD,
+				Field: commonfields.UpdatedAt,
 				Desc:  true,
 			},
 			{
-				Field: wire.ID_FIELD,
+				Field: commonfields.Id,
 				Desc:  true,
 			},
 		}
@@ -317,7 +318,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		// Do this here, before the loop over the requested fields,
 		// to ensure it doesn't get overridden.
 		opItem.SetField("uesio/studio.label", groupableItem.GetLabel())
-		opItem.SetField(wire.UNIQUE_KEY_FIELD, key)
+		opItem.SetField(commonfields.UniqueKey, key)
 		return nil
 	})
 	if err != nil {
@@ -346,13 +347,13 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	}
 
 	for _, item := range itemsSlice[startIdx:endIdx] {
-		realID, err := item.GetField(wire.ID_FIELD)
+		realID, err := item.GetField(commonfields.Id)
 		if err != nil {
 			return err
 		}
 		if realID == "" {
 			fakeID, _ := shortid.Generate()
-			item.SetField(wire.ID_FIELD, fakeID)
+			item.SetField(commonfields.Id, fakeID)
 		}
 		op.Collection.AddItem(item)
 	}

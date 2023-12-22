@@ -3,6 +3,7 @@ package datasource
 import (
 	"context"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -27,7 +28,7 @@ func GetAppData(ctx context.Context, namespaces []string) (map[string]NamespaceI
 	err := PlatformLoad(&apps, &PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
-				Field:    wire.UNIQUE_KEY_FIELD,
+				Field:    commonfields.UniqueKey,
 				Operator: "IN",
 				Value:    namespaces,
 			},

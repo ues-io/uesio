@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -65,12 +66,12 @@ func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
-				wire.ID_FIELD:          user.ID,
-				wire.UNIQUE_KEY_FIELD:  user.UniqueKey, //TO-DO this not sure should be UUIIDD
+				commonfields.Id:        user.ID,
+				commonfields.UniqueKey: user.UniqueKey, //TO-DO this not sure should be UUIIDD
 				"uesio/core.firstname": user.FirstName,
 				"uesio/core.lastname":  user.LastName,
 				"uesio/core.picture": map[string]interface{}{
-					wire.ID_FIELD: user.GetPictureID(),
+					commonfields.Id: user.GetPictureID(),
 				},
 			})
 			if err != nil {

@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -141,7 +142,7 @@ func clearHostCacheForSite(request *wire.SaveOp, connection wire.Connection, ses
 	}
 	domainIds := []string{}
 	err = domains.Loop(func(item meta.Item, index string) error {
-		id, err := item.GetField(wire.UNIQUE_KEY_FIELD)
+		id, err := item.GetField(commonfields.UniqueKey)
 		if err != nil {
 			return err
 		}

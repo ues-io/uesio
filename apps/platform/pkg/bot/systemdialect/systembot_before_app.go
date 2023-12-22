@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -14,7 +15,7 @@ func runAppBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 
 		if user == nil {
 			// Use the owner if no user was provided
-			user, err = change.GetField(wire.OWNER_FIELD)
+			user, err = change.GetField(commonfields.Owner)
 			if err != nil {
 				return err
 			}

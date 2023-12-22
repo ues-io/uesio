@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -12,7 +13,7 @@ var COMMON_COLLECTION_METADATA = wire.CollectionMetadata{
 	PluralLabel: "Common",
 	Fields:      map[string]*wire.FieldMetadata{},
 	Type:        "DYNAMIC",
-	NameField:   wire.UNIQUE_KEY_FIELD,
+	NameField:   commonfields.UniqueKey,
 }
 
 var ID_FIELD_DEF = meta.Field{
@@ -104,25 +105,25 @@ var COLLECTION_FIELD_DEF = meta.Field{
 }
 
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
-	wire.ID_FIELD:         ID_FIELD_DEF,
-	wire.UNIQUE_KEY_FIELD: UNIQUE_KEY_FIELD_DEF,
-	wire.OWNER_FIELD:      OWNER_FIELD_DEF,
-	wire.CREATED_BY_FIELD: CREATEDBY_FIELD_DEF,
-	wire.UPDATED_BY_FIELD: UPDATEDBY_FIELD_DEF,
-	wire.CREATED_AT_FIELD: CREATEDAT_FIELD_DEF,
-	wire.UPDATED_AT_FIELD: UPDATEDAT_FIELD_DEF,
-	wire.COLLECTION_FIELD: COLLECTION_FIELD_DEF,
+	commonfields.Id:         ID_FIELD_DEF,
+	commonfields.UniqueKey:  UNIQUE_KEY_FIELD_DEF,
+	commonfields.Owner:      OWNER_FIELD_DEF,
+	commonfields.CreatedBy:  CREATEDBY_FIELD_DEF,
+	commonfields.UpdatedBy:  UPDATEDBY_FIELD_DEF,
+	commonfields.CreatedAt:  CREATEDAT_FIELD_DEF,
+	commonfields.UpdatedAt:  UPDATEDAT_FIELD_DEF,
+	commonfields.Collection: COLLECTION_FIELD_DEF,
 }
 
 var BUILTIN_FIELD_KEYS = []string{
-	wire.ID_FIELD,
-	wire.UNIQUE_KEY_FIELD,
-	wire.OWNER_FIELD,
-	wire.CREATED_BY_FIELD,
-	wire.UPDATED_BY_FIELD,
-	wire.CREATED_AT_FIELD,
-	wire.UPDATED_AT_FIELD,
-	wire.COLLECTION_FIELD,
+	commonfields.Id,
+	commonfields.UniqueKey,
+	commonfields.Owner,
+	commonfields.CreatedBy,
+	commonfields.UpdatedBy,
+	commonfields.CreatedAt,
+	commonfields.UpdatedAt,
+	commonfields.Collection,
 }
 
 func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {

@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -21,7 +22,7 @@ func runUserBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		if err != nil {
 			return err
 		}
-		return change.SetField(wire.OWNER_FIELD, &meta.User{
+		return change.SetField(commonfields.Owner, &meta.User{
 			BuiltIn: meta.BuiltIn{
 				UniqueKey: username,
 			},

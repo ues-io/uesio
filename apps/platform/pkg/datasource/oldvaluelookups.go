@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -20,7 +21,7 @@ func GetUniqueKeyPart(change *wire.ChangeItem, fieldName string) (string, error)
 		return "", err
 	}
 	if wire.IsReference(fieldMetadata.Type) {
-		return wire.GetFieldValueString(value, wire.UNIQUE_KEY_FIELD)
+		return wire.GetFieldValueString(value, commonfields.UniqueKey)
 	}
 	if fieldMetadata.Type == "NUMBER" {
 		intValue, err := wire.GetValueInt(value)
@@ -36,7 +37,7 @@ func GetUniqueKeyPart(change *wire.ChangeItem, fieldName string) (string, error)
 func GetUniqueKeyValue(change *wire.ChangeItem) (string, error) {
 	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
-		keyFields = []string{wire.ID_FIELD}
+		keyFields = []string{commonfields.Id}
 	}
 	keyValues := make([]string, len(keyFields))
 	for i, keyField := range keyFields {
@@ -56,7 +57,7 @@ func SetUniqueKey(change *wire.ChangeItem) error {
 		return err
 	}
 	change.UniqueKey = uniqueKey
-	return change.SetField(wire.UNIQUE_KEY_FIELD, uniqueKey)
+	return change.SetField(commonfields.UniqueKey, uniqueKey)
 }
 
 func HandleOldValuesLookup(
@@ -106,7 +107,7 @@ func HandleOldValuesLookup(
 					ID: fieldID,
 					Fields: []wire.LoadRequestField{
 						{
-							ID: wire.UNIQUE_KEY_FIELD,
+							ID: commonfields.UniqueKey,
 						},
 					},
 				})
@@ -144,7 +145,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, wire.ID_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, commonfields.Id, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		if item == nil {
 			// This should result in an error, unless we have explicitly indicated that

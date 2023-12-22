@@ -3,6 +3,7 @@ package filesource
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -16,7 +17,7 @@ func Delete(userFileID string, session *sess.Session) error {
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: wire.ID_FIELD,
+					Field: commonfields.Id,
 					Value: userFileID,
 				},
 			},
@@ -59,8 +60,8 @@ func Delete(userFileID string, session *sess.Session) error {
 				Wire:       "filefieldupdate",
 				Changes: &wire.Collection{
 					{
-						fieldID:       nil,
-						wire.ID_FIELD: userFile.RecordID,
+						fieldID:         nil,
+						commonfields.Id: userFile.RecordID,
 					},
 				},
 			},
