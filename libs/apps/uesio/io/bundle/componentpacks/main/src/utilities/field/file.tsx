@@ -1,4 +1,4 @@
-import { definition, context, wire, api, collection } from "@uesio/ui"
+import { definition, context, wire, api, collection, styles } from "@uesio/ui"
 import FileText from "../filetext/filetext"
 import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
@@ -21,6 +21,18 @@ interface FileUtilityProps {
 	markdownOptions?: MarkdownFieldOptions
 }
 
+const StyleDefaults = Object.freeze({
+	messagearea: [
+		"border(& dashed slate-200)",
+		"rounded-lg",
+		"p-10",
+		"text-xs",
+		"text-slate-400",
+		"align-center",
+		"cursor-no-drop",
+	],
+})
+
 const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const {
 		displayAs,
@@ -34,6 +46,15 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 		fieldId,
 		path,
 	} = props
+
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+
+	if (record.isNew())
+		return (
+			<div className={classes.messagearea}>
+				<div>Must save record before uploading a file.</div>
+			</div>
+		)
 
 	const userFile = value as UserFileMetadata | undefined
 	const userFileId = userFile?.[collection.ID_FIELD]
