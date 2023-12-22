@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/oauth2"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -75,7 +76,7 @@ func ResolveTokenType(token *oauth2.Token) string {
 func BuildIntegrationCredential(integrationName string, userId string, token *oauth2.Token) *wire.Item {
 	integrationCredential := &wire.Item{}
 	userReference := &wire.Item{}
-	userReference.SetField(wire.ID_FIELD, userId)
+	userReference.SetField(commonfields.Id, userId)
 	integrationCredential.SetField(IntegrationField, integrationName)
 	integrationCredential.SetField(UserField, userReference)
 	if token != nil {
@@ -86,7 +87,7 @@ func BuildIntegrationCredential(integrationName string, userId string, token *oa
 
 // UpsertIntegrationCredential performs an upsert on the provided integration credential item
 func UpsertIntegrationCredential(integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
-	integrationCredential.SetField(wire.UPDATED_AT_FIELD, time.Now().Unix())
+	integrationCredential.SetField(commonfields.UpdatedAt, time.Now().Unix())
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
@@ -136,7 +137,7 @@ func GetIntegrationCredential(
 		Query:          true,
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 			{
 				ID: AccessTokenField,

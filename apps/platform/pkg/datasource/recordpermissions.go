@@ -3,6 +3,7 @@ package datasource
 import (
 	"fmt"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -190,7 +191,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 		}
 	}
 
-	ownerObj, err := accessItem.GetField(wire.OWNER_FIELD)
+	ownerObj, err := accessItem.GetField(commonfields.Owner)
 	if err != nil {
 		return err
 	}

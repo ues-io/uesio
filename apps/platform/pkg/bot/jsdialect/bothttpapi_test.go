@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -643,7 +644,7 @@ func Test_Request(t *testing.T) {
 						assert.Equal(t, "bearer", tokenType)
 						userReference, _ := item.GetField(oauth2.UserField)
 						expectUserReference := &wire.Item{}
-						expectUserReference.SetField(wire.ID_FIELD, "user123")
+						expectUserReference.SetField(commonfields.Id, "user123")
 						assert.Equal(t, expectUserReference, userReference)
 						integrationKey, _ := item.GetField(oauth2.IntegrationField)
 						assert.Equal(t, "luigi/foo.someservice", integrationKey)

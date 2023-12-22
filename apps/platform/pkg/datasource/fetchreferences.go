@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -28,7 +29,7 @@ func processLocalReferences(
 			if err != nil {
 				return false, err
 			}
-			return true, concreteItem.SetField(wire.ID_FIELD, change.IDValue)
+			return true, concreteItem.SetField(commonfields.Id, change.IDValue)
 		}
 		// As a final Fallback check to see if any of the changes have that id
 		foundMatch := false
@@ -45,7 +46,7 @@ func processLocalReferences(
 				if err != nil {
 					return err
 				}
-				return concreteItem.SetField(wire.ID_FIELD, innerChange.IDValue)
+				return concreteItem.SetField(commonfields.Id, innerChange.IDValue)
 			}
 			return nil
 		})
@@ -88,11 +89,11 @@ func FetchReferences(
 
 			refIDReq := referencedIDCollections.Get(referencedCollection)
 			refIDReq.Metadata = refCollectionMetadata
-			refIDReq.MatchField = wire.ID_FIELD
+			refIDReq.MatchField = commonfields.Id
 
 			refUniqueKeyReq := referencedUniqueKeyCollections.Get(referencedCollection)
 			refUniqueKeyReq.Metadata = refCollectionMetadata
-			refUniqueKeyReq.MatchField = wire.UNIQUE_KEY_FIELD
+			refUniqueKeyReq.MatchField = commonfields.UniqueKey
 
 			err = op.LoopChanges(func(change *wire.ChangeItem) error {
 
@@ -101,12 +102,12 @@ func FetchReferences(
 					return nil
 				}
 
-				idFieldValue, err := wire.GetFieldValueString(refValue, wire.ID_FIELD)
+				idFieldValue, err := wire.GetFieldValueString(refValue, commonfields.Id)
 				if err != nil {
 					idFieldValue = ""
 				}
 
-				uniqueKeyFieldValue, err := wire.GetFieldValueString(refValue, wire.UNIQUE_KEY_FIELD)
+				uniqueKeyFieldValue, err := wire.GetFieldValueString(refValue, commonfields.UniqueKey)
 				if err != nil {
 					uniqueKeyFieldValue = ""
 				}

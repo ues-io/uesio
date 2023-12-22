@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -47,7 +48,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 
 				Conditions: []wire.LoadRequestCondition{
 					{
-						Field: wire.UNIQUE_KEY_FIELD,
+						Field: commonfields.UniqueKey,
 						Value: pairKey,
 					},
 				},
@@ -73,7 +74,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 				Connection: connection,
 				Conditions: []wire.LoadRequestCondition{
 					{
-						Field: wire.UNIQUE_KEY_FIELD,
+						Field: commonfields.UniqueKey,
 						Value: app,
 					},
 				},
@@ -84,10 +85,10 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 		if lt.AutoCreate {
 			LicenseTemplateDeps = append(LicenseTemplateDeps, &wire.Item{
 				"uesio/studio.app": map[string]interface{}{
-					wire.UNIQUE_KEY_FIELD: app,
+					commonfields.UniqueKey: app,
 				},
 				"uesio/studio.applicensed": map[string]interface{}{
-					wire.UNIQUE_KEY_FIELD: applicensed,
+					commonfields.UniqueKey: applicensed,
 				},
 				"uesio/studio.active":       true,
 				"uesio/studio.monthlyprice": lt.MonthlyPrice,

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -73,7 +74,7 @@ func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableIte
 			Params:     getParamsFromWorkspace(b.Workspace),
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    wire.UNIQUE_KEY_FIELD,
+					Field:    commonfields.UniqueKey,
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
@@ -151,7 +152,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 	if err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
-				Field: wire.UNIQUE_KEY_FIELD,
+				Field: commonfields.UniqueKey,
 				Value: itemUniqueKey,
 			},
 		},
@@ -229,7 +230,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		Connection: b.Connection,
 		LoadAll:    true,
 		Orders: []wire.LoadRequestOrder{{
-			Field: wire.UNIQUE_KEY_FIELD,
+			Field: commonfields.UniqueKey,
 		}},
 	}, b.getStudioAnonSession())
 
@@ -240,7 +241,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	if err != nil {
 		return "", err
 	}
-	recordID, err := item.GetField(wire.ID_FIELD)
+	recordID, err := item.GetField(commonfields.Id)
 	if err != nil {
 		return "", err
 	}
@@ -333,7 +334,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 							ID: "uesio/studio.app",
 							Fields: []wire.LoadRequestField{
 								{
-									ID: wire.UNIQUE_KEY_FIELD,
+									ID: commonfields.UniqueKey,
 								},
 							},
 						},

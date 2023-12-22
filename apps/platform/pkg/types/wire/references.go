@@ -1,6 +1,10 @@
 package wire
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
+)
 
 type LocatorMap map[string][]ReferenceLocator
 
@@ -50,7 +54,7 @@ func (rr *ReferenceRequest) GetMatchField() string {
 	if rr.MatchField != "" {
 		return rr.MatchField
 	}
-	return ID_FIELD
+	return commonfields.Id
 }
 
 func (rr *ReferenceRequest) AddID(value string, locator ReferenceLocator) error {

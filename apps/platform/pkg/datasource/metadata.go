@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -41,7 +42,7 @@ func GetNameField(c *meta.Collection) string {
 	if c.NameField != "" {
 		return c.NameField
 	}
-	return wire.ID_FIELD
+	return commonfields.Id
 }
 
 func GetFieldLabel(f *meta.Field, session *sess.Session) string {
@@ -356,7 +357,7 @@ func LoadSelectListMetadata(key string, metadataCache *wire.MetadataCache, sessi
 
 	fieldMetadata, err := collectionMetadata.GetField(fieldKey)
 	if err != nil {
-		return errors.New("Field not Found for Select List: " + fieldKey)
+		return errors.New("Id not Found for Select List: " + fieldKey)
 	}
 
 	fieldMetadata.SelectListMetadata = selectListMetadata

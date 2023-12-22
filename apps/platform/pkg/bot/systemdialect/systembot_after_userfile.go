@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -53,7 +54,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 			if pathString, ok := pathField.(string); ok {
 				studioFileUpdates = append(studioFileUpdates, &wire.Item{
 					"uesio/studio.path": pathString,
-					wire.ID_FIELD:       relatedRecordId,
+					commonfields.Id:     relatedRecordId,
 				})
 			} else {
 				return nil
@@ -62,8 +63,8 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 			// Increment the timestamp on the parent Bot,
 			// so that we are able to achieve cache invalidation
 			studioBotUpdates = append(studioBotUpdates, &wire.Item{
-				wire.UPDATED_AT_FIELD: time.Now().Unix(),
-				wire.ID_FIELD:         relatedRecordId,
+				commonfields.UpdatedAt: time.Now().Unix(),
+				commonfields.Id:        relatedRecordId,
 			})
 		}
 		return nil

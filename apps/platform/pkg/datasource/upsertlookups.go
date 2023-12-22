@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -28,7 +29,7 @@ func HandleUpsertLookup(
 		// For upserts, if you provide the actual unique key we will
 		// use that as a higher priority than the constructed unique
 		// key to get a match.
-		existingKey, err := change.GetFieldAsString(wire.UNIQUE_KEY_FIELD)
+		existingKey, err := change.GetFieldAsString(commonfields.UniqueKey)
 		if err != nil || existingKey == "" {
 			// As a fallback, we'll construct the unique key for you
 			constructedKey, err := GetUniqueKeyValue(change)
@@ -52,12 +53,12 @@ func HandleUpsertLookup(
 
 	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, []wire.LoadRequestField{
 		{
-			ID: wire.ID_FIELD,
+			ID: commonfields.Id,
 		},
 		{
-			ID: wire.UNIQUE_KEY_FIELD,
+			ID: commonfields.UniqueKey,
 		},
-	}, wire.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	}, commonfields.UniqueKey, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.
@@ -80,11 +81,11 @@ func HandleUpsertLookup(
 		// Cast item to a change
 		change := match.(*wire.ChangeItem)
 
-		idValue, err := item.GetField(wire.ID_FIELD)
+		idValue, err := item.GetField(commonfields.Id)
 		if err != nil {
 			return err
 		}
-		err = change.SetField(wire.ID_FIELD, idValue)
+		err = change.SetField(commonfields.Id, idValue)
 		if err != nil {
 			return err
 		}

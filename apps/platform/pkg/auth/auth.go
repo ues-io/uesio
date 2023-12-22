@@ -11,6 +11,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -202,10 +203,10 @@ func getUser(field, value string, session *sess.Session, connection wire.Connect
 					ID: "uesio/core.picture",
 					Fields: []wire.LoadRequestField{
 						{
-							ID: wire.ID_FIELD,
+							ID: commonfields.Id,
 						},
 						{
-							ID: wire.UPDATED_AT_FIELD,
+							ID: commonfields.UpdatedAt,
 						},
 					},
 				},
@@ -232,11 +233,11 @@ func getUser(field, value string, session *sess.Session, connection wire.Connect
 }
 
 func GetUserByKey(username string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(wire.UNIQUE_KEY_FIELD, username, session, connection)
+	return getUser(commonfields.UniqueKey, username, session, connection)
 }
 
 func GetUserByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(wire.ID_FIELD, id, session, connection)
+	return getUser(commonfields.Id, id, session, connection)
 }
 
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
