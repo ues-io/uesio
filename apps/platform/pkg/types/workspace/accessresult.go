@@ -1,8 +1,9 @@
 package workspace
 
-func NewWorkspaceAccessResult(workspaceKeyInfo KeyInfo, hasWriteAccess bool, err error) *AccessResult {
+func NewWorkspaceAccessResult(workspaceKeyInfo KeyInfo, hasWriteAccess, isSiteAdmin bool, err error) *AccessResult {
 	return &AccessResult{
 		hasWriteAccess: hasWriteAccess,
+		isSiteAdmin:    isSiteAdmin,
 		err:            err,
 		KeyInfo:        workspaceKeyInfo,
 	}
@@ -10,6 +11,7 @@ func NewWorkspaceAccessResult(workspaceKeyInfo KeyInfo, hasWriteAccess bool, err
 
 type AccessResult struct {
 	hasWriteAccess bool
+	isSiteAdmin    bool
 	err            error
 	KeyInfo
 }
@@ -20,4 +22,8 @@ func (t *AccessResult) Error() error {
 
 func (t *AccessResult) HasWriteAccess() bool {
 	return t.hasWriteAccess
+}
+
+func (t *AccessResult) IsSiteAdmin() bool {
+	return t.isSiteAdmin
 }

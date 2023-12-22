@@ -105,6 +105,7 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 	// Get the workspace ID from params, and verify that the user performing the query
 	// has write access to the requested workspace
+
 	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {
 		return wsAccessResult.Error()
@@ -116,10 +117,12 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
 
-	op.Conditions = append(op.Conditions, wire.LoadRequestCondition{
-		Field: "uesio/studio.workspace",
-		Value: wsAccessResult.GetWorkspaceID(),
-	})
+	if !wsAccessResult.IsSiteAdmin() {
+		op.Conditions = append(op.Conditions, wire.LoadRequestCondition{
+			Field: "uesio/studio.workspace",
+			Value: wsAccessResult.GetWorkspaceID(),
+		})
+	}
 
 	return datasource.LoadOp(op, connection, session)
 

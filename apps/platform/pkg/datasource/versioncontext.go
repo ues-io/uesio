@@ -1,11 +1,10 @@
 package datasource
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -34,15 +33,11 @@ func AddVersionContext(app, version string, session *sess.Session, connection wi
 
 	// 1. Make sure we're in a site that can work with metadata
 	if site.GetAppFullName() != "uesio/studio" {
-		return nil, errors.New("this site does not allow working with versions")
+		return nil, exceptions.NewForbiddenException("this site does not allow working with versions")
 	}
 	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasPermission(&meta.PermissionSet{
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
-	}) {
-		return nil, errors.New("your profile does not allow you to work with versions")
+	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
+		return nil, exceptions.NewForbiddenException("your profile does not allow you to work with versions")
 	}
 	sessClone := session.RemoveWorkspaceContext()
 	return sessClone, addVersionContext(app, version, sessClone, connection)

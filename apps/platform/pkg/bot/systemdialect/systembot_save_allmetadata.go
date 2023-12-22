@@ -43,13 +43,17 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 	}
 
 	var changedMetadataItemKeys []string
+	// This is only needed when metadata is being edited from the Studio Site Admin context
+	var changedWorkspaceIds []string
 
-	if err := op.LoopChanges(func(change *wire.ChangeItem) error {
-		return change.SetField("uesio/studio.workspace", &wire.Item{
-			commonfields.Id: wsAccessResult.GetWorkspaceID(),
-		})
-	}); err != nil {
-		return err
+	if !wsAccessResult.IsSiteAdmin() {
+		if err := op.LoopChanges(func(change *wire.ChangeItem) error {
+			return change.SetField("uesio/studio.workspace", &wire.Item{
+				commonfields.Id: wsAccessResult.GetWorkspaceID(),
+			})
+		}); err != nil {
+			return err
+		}
 	}
 
 	if err := datasource.SaveOp(op, connection, session); err != nil {
@@ -59,6 +63,15 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 	// Invalidate our metadata caches - now that we've saved, UniqueKey should be populated
 	if err := op.LoopChanges(func(change *wire.ChangeItem) error {
 		changedMetadataItemKeys = append(changedMetadataItemKeys, change.UniqueKey)
+		wsObject, err := change.GetField("uesio/studio.workspace")
+		if err != nil {
+			return err
+		}
+		wsId, err := wire.GetReferenceKey(wsObject)
+		if err != nil {
+			return err
+		}
+		changedWorkspaceIds = append(changedWorkspaceIds, wsId)
 		return nil
 	}); err != nil {
 		return err
@@ -69,15 +82,29 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 		return nil
 	}
 
+	// If we are in Studio site admin context (which is a very rare edge case)
+	// editing workspace metadata on behalf of someone else,
+	// we are almost certainly editing only a few records,
+	// but either way, there could be multiple workspaces involved, and we need to pull them directly
+	// from the changed records themselves, so we'll invalidate one item at a time.
+	itemsPerChunk := maxItemsPerChunk
+	if wsAccessResult.IsSiteAdmin() {
+		itemsPerChunk = 1
+	}
+
 	// Chunk the messages to avoid hitting the max Postgres NOTIFY size limit
-	for i := 0; i < totalChangedKeys; i += maxItemsPerChunk {
+	for i := 0; i < totalChangedKeys; i += itemsPerChunk {
 		end := i + maxItemsPerChunk
 		if end > totalChangedKeys {
 			end = totalChangedKeys
 		}
+		useWorkspaceId := wsAccessResult.GetWorkspaceID()
+		if wsAccessResult.IsSiteAdmin() {
+			useWorkspaceId = changedWorkspaceIds[i]
+		}
 		messagePayload, err := json.Marshal(&workspacebundlestore.WorkspaceMetadataChange{
 			AppName:        wsAccessResult.GetAppName(),
-			WorkspaceID:    wsAccessResult.GetWorkspaceID(),
+			WorkspaceID:    useWorkspaceId,
 			CollectionName: op.Metadata.GetFullName(),
 			ChangedItems:   changedMetadataItemKeys[i:end],
 		})
