@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -123,7 +124,7 @@ func runWorkspaceAfterSaveBot(request *wire.SaveOp, connection wire.Connection, 
 
 	// If we are deleting workspaces, also truncate their data
 	return request.LoopDeletes(func(change *wire.ChangeItem) error {
-		workspaceUniqueKey, err := change.GetOldFieldAsString(wire.UNIQUE_KEY_FIELD)
+		workspaceUniqueKey, err := change.GetOldFieldAsString(commonfields.UniqueKey)
 		if err != nil {
 			return err
 		}

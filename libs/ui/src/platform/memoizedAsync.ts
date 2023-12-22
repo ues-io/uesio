@@ -5,13 +5,17 @@ const cache = new Map()
 
 const defaultOptions: AsyncOptions = {
 	cacheKey: "",
-	refetch: false,
+	refetch: true,
 	timeout: 5000,
 }
 
 export interface AsyncOptions {
-	cacheKey: string
+	cacheKey?: string
+	// By default, cache entries will only be used if a request is already in flight.
+	// Set to false to allow the cache to be used indefinitely, which is only suitable
+	// for items which are not expected to change, e.g. static files compiled into the app.
 	refetch?: boolean
+	// the timeout to wait before rejecting the promise for the asynchronous request.
 	timeout?: number
 }
 
@@ -105,19 +109,23 @@ export const memoizedAsync = <T>(
 				handleSuccess(cacheEntry.result)
 				return
 			}
-		} else {
-			// There's either nothing in cache yet, or there was but we requeseted to refetch,
-			// so we need to create a new entry and kick off a fetch of the data and cache it
-			cache.set(cacheKey, {
-				loading: true,
-				promise: asyncFn().then(handleSuccess).catch(handleError),
-			} as CacheEntry<T>)
 		}
+		// There's either nothing in cache yet, or there was but we requested to refetch,
+		// so we need to create a new entry and kick off a fetch of the data and cache it
+		cache.set(cacheKey, {
+			loading: true,
+			promise: asyncFn().then(handleSuccess).catch(handleError),
+		} as CacheEntry<T>)
 	})
 
-export const memoizedGetJSON = <T>(context: Context, url: string) => {
+export const memoizedGetJSON = <T>(
+	context: Context,
+	url: string,
+	options = defaultOptions
+) => {
 	const cacheKey = `getJSON:${url}`
 	return memoizedAsync<T>(() => getJSON(context, url), {
+		...options,
 		cacheKey,
 	})
 		.then((res: AsyncResult<T>) => res.data)

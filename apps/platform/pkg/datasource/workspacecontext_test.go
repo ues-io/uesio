@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -128,7 +129,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 			},
 			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 				assert.Equal(testInstance, queryValue, ws.UniqueKey)
-				assert.Equal(testInstance, queryField, wire.UNIQUE_KEY_FIELD)
+				assert.Equal(testInstance, queryField, commonfields.UniqueKey)
 				return ws, nil
 			},
 			expectHasAccess: true,
@@ -142,7 +143,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 			},
 			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 				assert.Equal(testInstance, queryValue, ws.ID)
-				assert.Equal(testInstance, queryField, wire.ID_FIELD)
+				assert.Equal(testInstance, queryField, commonfields.Id)
 				return nil, errors.New("no access to this workspace")
 			},
 			expectHasAccess: false,

@@ -184,6 +184,10 @@ definition:
                                     operator: NOT_EQUALS
                                     value: true
                             - uesio/io.field:
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    operator: NOT_EQUALS
+                                    value: FILE
                                 fieldId: uesio/studio.required
                                 displayAs: TOGGLE
                             - uesio/io.box:

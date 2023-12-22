@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -23,7 +24,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	fields := []wire.LoadRequestField{
 		{
-			ID: wire.ID_FIELD,
+			ID: commonfields.Id,
 		},
 	}
 

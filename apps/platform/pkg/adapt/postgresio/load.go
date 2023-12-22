@@ -8,6 +8,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -38,21 +39,21 @@ func getJSONBFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) str
 	fieldName := fieldMetadata.GetFullName()
 
 	switch fieldName {
-	case wire.ID_FIELD:
+	case commonfields.Id:
 		return getAliasedName("id", tableAlias)
-	case wire.UNIQUE_KEY_FIELD:
+	case commonfields.UniqueKey:
 		return getAliasedName("uniquekey", tableAlias)
-	case wire.OWNER_FIELD:
+	case commonfields.Owner:
 		return getAliasedName("owner", tableAlias)
-	case wire.CREATED_BY_FIELD:
+	case commonfields.CreatedBy:
 		return getAliasedName("createdby", tableAlias)
-	case wire.CREATED_AT_FIELD:
+	case commonfields.CreatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
-	case wire.UPDATED_BY_FIELD:
+	case commonfields.UpdatedBy:
 		return getAliasedName("updatedby", tableAlias)
-	case wire.UPDATED_AT_FIELD:
+	case commonfields.UpdatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
-	case wire.COLLECTION_FIELD:
+	case commonfields.Collection:
 		return getAliasedName("collection", tableAlias)
 	}
 
@@ -87,21 +88,21 @@ func getFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
 
 	switch fieldName {
-	case wire.ID_FIELD:
+	case commonfields.Id:
 		return getIDFieldName(tableAlias)
-	case wire.UNIQUE_KEY_FIELD:
+	case commonfields.UniqueKey:
 		return getAliasedName("uniquekey", tableAlias)
-	case wire.OWNER_FIELD:
+	case commonfields.Owner:
 		return castFieldToText(getAliasedName("owner", tableAlias))
-	case wire.CREATED_BY_FIELD:
+	case commonfields.CreatedBy:
 		return castFieldToText(getAliasedName("createdby", tableAlias))
-	case wire.CREATED_AT_FIELD:
+	case commonfields.CreatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
-	case wire.UPDATED_BY_FIELD:
+	case commonfields.UpdatedBy:
 		return castFieldToText(getAliasedName("updatedby", tableAlias))
-	case wire.UPDATED_AT_FIELD:
+	case commonfields.UpdatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
-	case wire.COLLECTION_FIELD:
+	case commonfields.Collection:
 		return getAliasedName("collection", tableAlias)
 	}
 

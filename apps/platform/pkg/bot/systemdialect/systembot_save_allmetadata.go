@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -46,7 +47,7 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 	if !wsAccessResult.IsSiteAdmin() {
 		if err := op.LoopChanges(func(change *wire.ChangeItem) error {
 			return change.SetField("uesio/studio.workspace", &wire.Item{
-				wire.ID_FIELD: wsAccessResult.GetWorkspaceID(),
+				commonfields.Id: wsAccessResult.GetWorkspaceID(),
 			})
 		}); err != nil {
 			return err

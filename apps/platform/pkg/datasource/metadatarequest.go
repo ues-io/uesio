@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -61,7 +62,7 @@ func (fm *FieldsMap) getRequestFields() []wire.LoadRequestField {
 	}
 	fields := []wire.LoadRequestField{
 		{
-			ID: wire.ID_FIELD,
+			ID: commonfields.Id,
 		},
 	}
 
@@ -105,7 +106,7 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 			// fields in the token from being fully loaded.
 			// It shouldn't affect other fields
 			fieldsMap[fieldKey] = FieldsMap{
-				wire.ID_FIELD: nil,
+				commonfields.Id: nil,
 			}
 		} else {
 			fieldsMap[fieldParts[0]] = *getFieldsMap([]string{strings.Join(fieldParts[1:], constant.RefSep)})
@@ -220,7 +221,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 
 			// If we only have one field, and it's the id field, skip getting metadata
 			if len(collection[fieldKey]) == 1 {
-				_, ok := collection[fieldKey][wire.ID_FIELD]
+				_, ok := collection[fieldKey][commonfields.Id]
 				if ok {
 					continue
 				}
@@ -363,7 +364,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			metadata.HasAllFields = true
 		} else {
 			// Automagically add the id field and the name field whether they were requested or not.
-			fieldsToLoad := []string{wire.ID_FIELD, wire.UNIQUE_KEY_FIELD, metadata.NameField}
+			fieldsToLoad := []string{commonfields.Id, commonfields.UniqueKey, metadata.NameField}
 			if metadata.AccessField != "" {
 				collection.merge(&FieldsMap{
 					metadata.AccessField: nil,

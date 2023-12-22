@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -71,7 +72,7 @@ func getCascadeDeletes(
 					ids = append(ids, deletion.IDValue)
 				}
 
-				fields := []wire.LoadRequestField{{ID: wire.ID_FIELD}}
+				fields := []wire.LoadRequestField{{ID: commonfields.Id}}
 				op := &wire.LoadOp{
 					CollectionName: referenceGroupMetadata.Collection,
 					WireName:       "CascadeDelete",
@@ -101,7 +102,7 @@ func getCascadeDeletes(
 
 				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
-					refRK, err := refItem.GetField(wire.ID_FIELD)
+					refRK, err := refItem.GetField(commonfields.Id)
 					if err != nil {
 						return err
 					}
@@ -138,7 +139,7 @@ func getCascadeDeletes(
 			i := 0
 			for id := range idsMap {
 				collectionItems[i] = &wire.Item{
-					wire.ID_FIELD: id,
+					commonfields.Id: id,
 				}
 				i++
 			}

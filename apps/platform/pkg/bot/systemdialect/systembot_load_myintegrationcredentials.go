@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -58,11 +59,11 @@ func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connect
 			if expiry, err := existingCred.GetField(oauthlib.AccessTokenExpirationField); err == nil {
 				item.SetField("uesio/core.accesstokenexpiration", expiry)
 			}
-			if updatedAt, err := existingCred.GetField(wire.UPDATED_AT_FIELD); err == nil {
-				item.SetField(wire.UPDATED_AT_FIELD, updatedAt)
+			if updatedAt, err := existingCred.GetField(commonfields.UpdatedAt); err == nil {
+				item.SetField(commonfields.UpdatedAt, updatedAt)
 			}
-			if createdAt, err := existingCred.GetField(wire.CREATED_AT_FIELD); err == nil {
-				item.SetField(wire.CREATED_AT_FIELD, createdAt)
+			if createdAt, err := existingCred.GetField(commonfields.CreatedAt); err == nil {
+				item.SetField(commonfields.CreatedAt, createdAt)
 			}
 			if tokenType, err := existingCred.GetField(oauthlib.TokenTypeField); err == nil {
 				item.SetField(oauthlib.TokenTypeField, tokenType)
@@ -167,8 +168,8 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 			{ID: oauthlib.TokenTypeField},
 			{ID: oauthlib.AccessTokenExpirationField},
 			{ID: oauthlib.IntegrationField},
-			{ID: wire.CREATED_AT_FIELD},
-			{ID: wire.UPDATED_AT_FIELD},
+			{ID: commonfields.CreatedAt},
+			{ID: commonfields.UpdatedAt},
 		},
 		Query:   true,
 		LoadAll: true,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -86,7 +87,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	fields := []wire.LoadRequestField{
 		{
-			ID: wire.ID_FIELD,
+			ID: commonfields.Id,
 		},
 	}
 	conditions := parseLoadRequestConditionsFromQueryValues(r.URL.Query())

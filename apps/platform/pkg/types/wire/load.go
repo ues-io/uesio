@@ -141,15 +141,6 @@ func (fm *FieldsMap) GetKeys() []string {
 	return fieldIDs
 }
 
-var ID_FIELD = "uesio/core.id"
-var UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
-var OWNER_FIELD = "uesio/core.owner"
-var CREATED_BY_FIELD = "uesio/core.createdby"
-var UPDATED_BY_FIELD = "uesio/core.updatedby"
-var CREATED_AT_FIELD = "uesio/core.createdat"
-var UPDATED_AT_FIELD = "uesio/core.updatedat"
-var COLLECTION_FIELD = "uesio/core.collection"
-
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {
 		return nil, errors.New("No fields selected")

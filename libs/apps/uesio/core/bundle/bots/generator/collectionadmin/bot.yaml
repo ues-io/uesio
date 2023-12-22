@@ -1,0 +1,10 @@
+name: collectionadmin
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+public: true

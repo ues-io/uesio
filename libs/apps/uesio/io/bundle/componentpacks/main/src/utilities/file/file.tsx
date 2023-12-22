@@ -16,11 +16,10 @@ interface FileUtilityProps {
 
 const StyleDefaults = Object.freeze({
 	uploadarea: [
-		"border(& dashed slate-200)",
+		"border(& dashed slate-300)",
 		"rounded-lg",
 		"p-10",
 		"text-xs",
-		"text-slate-400",
 		"align-center",
 	],
 

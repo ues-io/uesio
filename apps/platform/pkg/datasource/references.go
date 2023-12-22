@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -109,16 +110,16 @@ func HandleReferences(
 
 		refFields := []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 			{
-				ID: wire.UNIQUE_KEY_FIELD,
+				ID: commonfields.UniqueKey,
 			},
 		}
 
 		if collectionNameField != nil {
 			nameFieldID := collectionNameField.GetFullName()
-			if nameFieldID != "" && nameFieldID != wire.UNIQUE_KEY_FIELD && nameFieldID != wire.ID_FIELD {
+			if nameFieldID != "" && nameFieldID != commonfields.UniqueKey && nameFieldID != commonfields.Id {
 				refFields = append(refFields, wire.LoadRequestField{ID: nameFieldID})
 			}
 		}
@@ -200,13 +201,13 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 
 	common.AddFields([]wire.LoadRequestField{
 		{
-			ID: wire.ID_FIELD,
+			ID: commonfields.Id,
 		},
 		{
-			ID: wire.UNIQUE_KEY_FIELD,
+			ID: commonfields.UniqueKey,
 		},
 		{
-			ID: wire.COLLECTION_FIELD,
+			ID: commonfields.Collection,
 		},
 	})
 
@@ -224,12 +225,12 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 			return nil
 		}
 
-		collectionName, err := refItem.GetField(wire.COLLECTION_FIELD)
+		collectionName, err := refItem.GetField(commonfields.Collection)
 		if err != nil {
 			return err
 		}
 
-		refID, err := refItem.GetField(wire.ID_FIELD)
+		refID, err := refItem.GetField(commonfields.Id)
 		if err != nil {
 			return err
 		}

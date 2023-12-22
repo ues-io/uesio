@@ -106,6 +106,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 						memoizedAsync(() => fetchFile(uri), {
 							cacheKey: `fetch-file-as-text-${uri}`,
 							timeout: 5000,
+							refetch: false,
 						}).then((result: AsyncResult) => {
 							const { data } = result
 							setLoadedModels({

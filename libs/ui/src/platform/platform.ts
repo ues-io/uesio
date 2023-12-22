@@ -200,7 +200,7 @@ export const isSystemBundle = (namespace: string) =>
 export const getSiteBundleAssetVersion = (
 	site: SiteState | undefined,
 	namespace: string,
-	assetModstamp?: number
+	assetModstamp?: string
 ) => {
 	const staticAssetsPath = getStaticAssetsPath()
 
@@ -244,6 +244,25 @@ export const getSiteBundleAssetVersion = (
 	}
 
 	return siteBundleVersion
+}
+
+const pageLoadTime = new Date().getTime()
+
+const getDefaultModstamp = (namespace: string) => {
+	if (isSystemBundle(namespace)) {
+		// By default, use the static assets path, if there is one,
+		// which should be equivalent to the app start time or the Docker image hash.
+		// If not, use page load time.
+		const staticAssetsPath = getStaticAssetsPath()
+		if (staticAssetsPath) {
+			// Trim off the leading "/"
+			return staticAssetsPath.substring(1)
+		} else {
+			return `${pageLoadTime}`
+		}
+	} else {
+		return `${new Date().getTime()}`
+	}
 }
 
 const platform = {
@@ -373,12 +392,12 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		modstamp?: number
+		modstamp = context.getStaticFileModstamp(`${namespace}.${name}`)
 	) => {
 		const version = getSiteBundleAssetVersion(
 			context.getSite(),
 			namespace,
-			modstamp || context.getStaticFileModstamp(`${namespace}.${name}`)
+			modstamp ? `${modstamp}` : getDefaultModstamp(namespace)
 		)
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}${version}/${name}`
@@ -430,7 +449,7 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		modstamp = new Date().getTime(),
+		modstamp = getDefaultModstamp(namespace),
 		path = "runtime.js"
 	) => {
 		const workspace = context.getWorkspace()

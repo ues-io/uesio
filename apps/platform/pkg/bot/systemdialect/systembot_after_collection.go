@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -24,7 +25,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 
 	var collectionUniqueKeys []string
 	for i := range request.Deletes {
-		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(wire.UNIQUE_KEY_FIELD); err == nil {
+		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(commonfields.UniqueKey); err == nil {
 			collectionUniqueKeys = append(collectionUniqueKeys, collectionUniqueKey)
 		} else {
 			return err
@@ -55,7 +56,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	if err := datasource.PlatformLoad(&fc, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 		},
 		Conditions: []wire.LoadRequestCondition{
@@ -75,7 +76,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	if err := datasource.PlatformLoad(&rac, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 		},
 		Conditions: []wire.LoadRequestCondition{
@@ -95,7 +96,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	if err := datasource.PlatformLoad(&rct, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 		},
 		Conditions: []wire.LoadRequestCondition{

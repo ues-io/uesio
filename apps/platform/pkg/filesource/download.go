@@ -3,6 +3,7 @@ package filesource
 import (
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -72,7 +73,7 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 			},
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: wire.ID_FIELD,
+					Field: commonfields.Id,
 					Value: userFileID,
 				},
 			},

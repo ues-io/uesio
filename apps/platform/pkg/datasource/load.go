@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -503,10 +504,10 @@ func GetMetadataForLoad(
 			if fieldMetadata.ReferenceMetadata.MultiCollection {
 				op.Fields[i].Fields = []wire.LoadRequestField{
 					{
-						ID: wire.ID_FIELD,
+						ID: commonfields.Id,
 					},
 					{
-						ID: wire.COLLECTION_FIELD,
+						ID: commonfields.Collection,
 					},
 				}
 			} else {
@@ -519,7 +520,7 @@ func GetMetadataForLoad(
 						ID: refCollectionMetadata.NameField,
 					},
 					{
-						ID: wire.ID_FIELD,
+						ID: commonfields.Id,
 					},
 				}
 			}
@@ -573,7 +574,7 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 
 func GetDefaultOrder() wire.LoadRequestOrder {
 	return wire.LoadRequestOrder{
-		Field: wire.ID_FIELD,
+		Field: commonfields.Id,
 		Desc:  false,
 	}
 }
@@ -603,24 +604,24 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		hasIDField := false
 		hasUniqueKeyField := false
 		for i := range op.Fields {
-			if op.Fields[i].ID == wire.ID_FIELD {
+			if op.Fields[i].ID == commonfields.Id {
 				hasIDField = true
 				break
 			}
-			if op.Fields[i].ID == wire.UNIQUE_KEY_FIELD {
+			if op.Fields[i].ID == commonfields.UniqueKey {
 				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
 			op.Fields = append(op.Fields, wire.LoadRequestField{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			})
 		}
 
 		if !hasUniqueKeyField {
 			op.Fields = append(op.Fields, wire.LoadRequestField{
-				ID: wire.UNIQUE_KEY_FIELD,
+				ID: commonfields.UniqueKey,
 			})
 		}
 

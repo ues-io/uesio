@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -44,7 +45,7 @@ func HandleReferencesGroup(
 		fieldIDIndex := 0
 
 		err := collection.Loop(func(item meta.Item, index string) error {
-			idValue, err := item.GetField(wire.ID_FIELD)
+			idValue, err := item.GetField(commonfields.Id)
 			if err != nil {
 				return err
 			}
@@ -65,7 +66,7 @@ func HandleReferencesGroup(
 
 		ref.AddFields([]wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 			{
 				ID: ref.Field.ReferenceGroupMetadata.Field,
@@ -133,7 +134,7 @@ func HandleReferencesGroup(
 
 		err = collection.Loop(func(item meta.Item, index string) error {
 
-			id, err := item.GetField(wire.ID_FIELD)
+			id, err := item.GetField(commonfields.Id)
 			if err != nil {
 				return err
 			}

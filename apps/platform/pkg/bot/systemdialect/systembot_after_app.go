@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -14,7 +15,7 @@ func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessio
 	err := datasource.PlatformLoad(&wc, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 			{
 				ID: "uesio/studio.name",

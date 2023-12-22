@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -25,7 +26,7 @@ func TestNewGenericSaveException(t *testing.T) {
 			},
 			&exceptions.SaveException{
 				RecordID: "uesio/tests:dev:uesio/builder",
-				FieldID:  UNIQUE_KEY_FIELD,
+				FieldID:  commonfields.UniqueKey,
 				Message:  "Unable to create duplicate uesio/studio.bundledependency record: uesio/tests:dev:uesio/builder",
 			},
 		},

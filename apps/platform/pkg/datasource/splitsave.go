@@ -4,7 +4,9 @@ import (
 	"errors"
 
 	"github.com/gofrs/uuid"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -83,14 +85,14 @@ func splitSave(request *SaveRequest, collectionMetadata *wire.CollectionMetadata
 
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
-			idValue, err := item.GetField(wire.ID_FIELD)
+			idValue, err := item.GetField(commonfields.Id)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				newID, err := uuid.NewV7()
 				if err != nil {
 					return err
 				}
 				newIDString := newID.String()
-				err = item.SetField(wire.ID_FIELD, newIDString)
+				err = item.SetField(commonfields.Id, newIDString)
 				if err != nil {
 					return err
 				}
@@ -108,7 +110,7 @@ func splitSave(request *SaveRequest, collectionMetadata *wire.CollectionMetadata
 
 	if request.Deletes != nil {
 		err := request.Deletes.Loop(func(item meta.Item, _ string) error {
-			idValue, err := item.GetField(wire.ID_FIELD)
+			idValue, err := item.GetField(commonfields.Id)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
 			}

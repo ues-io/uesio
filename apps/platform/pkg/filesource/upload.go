@@ -6,6 +6,7 @@ import (
 	"mime"
 	"path"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -85,12 +86,12 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		idMap := idMaps[collectionKey]
 		err := datasource.LoadLooper(connection, collectionKey, idMap, []wire.LoadRequestField{
 			{
-				ID: wire.ID_FIELD,
+				ID: commonfields.Id,
 			},
 			{
-				ID: wire.UNIQUE_KEY_FIELD,
+				ID: commonfields.UniqueKey,
 			},
-		}, wire.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+		}, commonfields.UniqueKey, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			if item == nil {
 				return errors.New("Could not match upload on unique key: " + ID)
@@ -99,7 +100,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
 				op := match.(*FileUploadOp)
-				idValue, err := item.GetField(wire.ID_FIELD)
+				idValue, err := item.GetField(commonfields.Id)
 				if err != nil {
 					return err
 				}
@@ -175,9 +176,9 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 				Changes: &wire.Collection{
 					{
 						ufm.FieldID: map[string]interface{}{
-							wire.ID_FIELD: ufm.ID,
+							commonfields.Id: ufm.ID,
 						},
-						wire.ID_FIELD: ufm.RecordID,
+						commonfields.Id: ufm.RecordID,
 					},
 				},
 				Params: params,

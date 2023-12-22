@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -80,10 +81,10 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 		for _, ptc := range lptc {
 			licensePricingItemDeps = append(licensePricingItemDeps, &wire.Item{
 				"uesio/studio.app": map[string]interface{}{
-					wire.ID_FIELD: appID,
+					commonfields.Id: appID,
 				},
 				"uesio/studio.license": map[string]interface{}{
-					wire.ID_FIELD: licenseID,
+					commonfields.Id: licenseID,
 				},
 				"uesio/studio.metadatatype": ptc.MetadataType,
 				"uesio/studio.actiontype":   ptc.ActionType,
@@ -109,7 +110,7 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 			Connection: connection,
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    wire.ID_FIELD,
+					Field:    commonfields.Id,
 					Operator: "IN",
 					Value:    ids,
 				},

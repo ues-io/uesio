@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -25,7 +26,7 @@ func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, 
 		err := datasource.PlatformLoad(&ufmc, &datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field:    wire.ID_FIELD,
+					Field:    commonfields.Id,
 					Value:    userFileIdsBeingDeleted,
 					Operator: "IN",
 				},
