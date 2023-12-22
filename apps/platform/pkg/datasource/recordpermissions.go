@@ -21,11 +21,10 @@ func getChallengeCollection(metadata *wire.MetadataCache, collectionMetadata *wi
 	if err != nil {
 		return nil, err
 	}
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 	if err != nil {
 		return nil, err
 	}
-
 	return getChallengeCollection(metadata, refCollectionMetadata)
 }
 
@@ -51,7 +50,7 @@ func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire
 		return nil, err
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 	if err != nil {
 		return err
 	}
@@ -87,7 +86,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
+	refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.GetCollection())
 	refReq.Metadata = refCollectionMetadata
 
 	refReq.AddFields(fields.getRequestFields())
@@ -185,7 +184,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 		if err != nil {
 			return err
 		}
-		challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+		challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 		if err != nil {
 			return err
 		}
