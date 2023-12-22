@@ -165,7 +165,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
-			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 			if err != nil {
 				return err
 			}

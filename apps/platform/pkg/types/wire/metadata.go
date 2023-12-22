@@ -109,7 +109,7 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 		if metadata == nil {
 			return nil, errors.New("no metadata found for reference field: " + mainFieldName)
 		}
-		if refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection); err != nil {
+		if refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection()); err != nil {
 			return nil, err
 		} else {
 			return refCollectionMetadata.GetFieldWithMetadata(strings.Join(names[1:], constant.RefSep), metadata)
@@ -201,6 +201,9 @@ type ReferenceMetadata struct {
 }
 
 func (m *ReferenceMetadata) GetCollection() string {
+	if m.MultiCollection {
+		return constant.CommonCollection
+	}
 	return m.Collection
 }
 

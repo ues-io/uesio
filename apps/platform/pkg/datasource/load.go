@@ -272,7 +272,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			if !wire.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
 				return errors.New("field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName() + " is not a valid Reference field")
 			}
-			relatedCollectionName := referenceField.ReferenceMetadata.Collection
+			relatedCollectionName := referenceField.ReferenceMetadata.GetCollection()
 			subCollectionMetadata, err := metadata.GetCollection(relatedCollectionName)
 			if err != nil {
 				return errors.New("unable to find metadata for collection " + relatedCollectionName)
@@ -511,7 +511,7 @@ func GetMetadataForLoad(
 					},
 				}
 			} else {
-				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 				if err != nil {
 					return err
 				}
