@@ -1,0 +1,4 @@
+name: multi_collection_reference_fields
+label: Enable multi-collection reference fields
+type: CHECKBOX
+defaultValue: false
