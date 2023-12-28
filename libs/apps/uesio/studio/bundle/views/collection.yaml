@@ -985,10 +985,15 @@ definition:
                     - uesio/io.field:
                         fieldId: uesio/studio.reference->uesio/studio.multicollection
                         displayAs: TOGGLE
+                        uesio.display:
+                          - type: featureFlag
+                            name: multi_collection_reference_fields
                     - uesio/io.field:
                         uesio.display:
                           - field: uesio/studio.reference->uesio/studio.multicollection
                             value: true
+                          - type: featureFlag
+                            name: multi_collection_reference_fields
                         fieldId: uesio/studio.reference->uesio/studio.collections
                     - uesio/io.field:
                         uesio.display:
