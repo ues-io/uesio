@@ -1,13 +1,13 @@
 import { styles, api, definition } from "@uesio/ui"
 import { default as IOCodeField } from "../../utilities/codefield/codefield"
 
-type CodeFieldDefinition = {
-	language?: CodeFieldLanguage
+type CodeComponentDefinition = {
+	language?: CodeComponentLanguage
 	file: string
 	theme?: string
 }
 
-type CodeFieldLanguage =
+type CodeComponentLanguage =
 	| "yaml"
 	| "json"
 	| "javascript"
@@ -19,7 +19,7 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
-const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
+const CodeComponent: definition.UC<CodeComponentDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -43,4 +43,4 @@ const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	)
 }
 
-export default CodeField
+export default CodeComponent
