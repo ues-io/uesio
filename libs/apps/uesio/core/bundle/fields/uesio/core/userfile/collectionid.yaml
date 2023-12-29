@@ -1,4 +1,4 @@
 name: collectionid
 type: "TEXT"
 label: "Collection Id"
-readOnly: true
+createOnly: true

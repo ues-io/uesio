@@ -307,7 +307,7 @@ func (b *WorkspaceBundleStoreConnection) StoreItem(path string, reader io.Reader
 }
 
 func (b *WorkspaceBundleStoreConnection) DeleteBundle() error {
-	return errors.New("Tried to delete bundle in the workspace bundle store")
+	return errors.New("tried to delete bundle in the workspace bundle store")
 }
 
 func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {

@@ -1,4 +1,4 @@
 name: fieldid
 type: "TEXT"
 label: "Field Id"
-readOnly: true
+createOnly: true

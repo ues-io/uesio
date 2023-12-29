@@ -27,6 +27,7 @@ definition:
         uesio/core.id:
         uesio/core.path:
         uesio/core.recordid:
+        uesio/core.contentlength:
         uesio/core.collectionid:
         uesio/core.mimetype:
         uesio/core.updatedat:
@@ -108,6 +109,14 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.path
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdby}
                       - uesio/io.list:
                           id: Attachments
                           wire: attachments
@@ -117,6 +126,13 @@ definition:
                               operator: EQUALS
                               value: $Param{namespace}
                           components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.mimetype
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.contentlength
                             - uesio/io.fileattachment:
                                 displayAs: PREVIEW
                                 mode: EDIT

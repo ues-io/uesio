@@ -1,4 +1,4 @@
 name: recordid
 type: "TEXT"
 label: "Record Id"
-readOnly: true
+createOnly: true

@@ -49,6 +49,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	err = datasource.PlatformLoad(
 		&bundles,
 		&datasource.PlatformLoadOptions{
+			BatchSize: 1,
 			Orders: []wire.LoadRequestOrder{
 				{
 					Field: "uesio/studio.major",
