@@ -6,6 +6,9 @@ pack: main
 entrypoint: components/table/table
 variants:
   - uesio/io.tile:uesio/io.default
+  - uesio/io.field:uesio/io.default
+  - uesio/io.markdownfield:uesio/io.default
+  - uesio/io.codefield:uesio/io.default
   - uesio/io.titlebar:uesio/io.infotag
   - uesio/io.table:uesio/io.default
   - uesio/io.button:uesio/io.rowaction
