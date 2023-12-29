@@ -1,0 +1,9 @@
+name: two_column
+label: Two Column
+extends: uesio/io.deck:uesio/io.one_column
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - md:grid-cols-2
+public: true

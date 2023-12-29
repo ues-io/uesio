@@ -1,0 +1,11 @@
+name: four_column
+label: Four Column
+extends: uesio/io.deck:uesio/io.one_column
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - sm:grid-cols-2
+      - md:grid-cols-3
+      - lg:grid-cols-4
+public: true

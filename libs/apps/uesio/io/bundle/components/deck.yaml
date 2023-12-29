@@ -14,6 +14,14 @@ slots:
         modeProperty: mode
 defaultDefinition:
   mode: READ
+  uesio.variant: uesio/io.four_column
+  components:
+    - uesio/io.box:
+        uesio.variant: uesio/io.box:uesio/io.card
+        components:
+          - uesio/io.titlebar:
+              title: ${uesio/core.uniquekey}
+              subtitle: ${uesio/core.createdat}
 properties:
   - name: wire
     label: Wire

@@ -1,0 +1,12 @@
+name: one_column
+label: One Column
+extends: uesio/io.deck:uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - gap-6
+      - max-w-6xl
+      - w-full
+      - auto-cols-max
+public: true

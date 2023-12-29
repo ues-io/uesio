@@ -5,10 +5,15 @@ category: LAYOUT
 pack: main
 entrypoint: components/scrollpanel/scrollpanel
 slots:
-  - name: components
-    label: Contents
+  - name: content
+    label: Content
   - name: header
     label: Header
   - name: footer
     label: Footer
+sections:
+  - type: STYLES
+styleRegions:
+  root:
+  inner:
 discoverable: true
