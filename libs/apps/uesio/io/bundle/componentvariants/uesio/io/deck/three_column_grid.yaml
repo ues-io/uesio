@@ -1,0 +1,5 @@
+name: three_column_grid
+label: Three Column Responsive Grid
+definition:
+  gridVariant: uesio/io.grid:uesio/io.three_columns
+public: true

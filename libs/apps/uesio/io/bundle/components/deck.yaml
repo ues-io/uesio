@@ -39,6 +39,12 @@ properties:
         label: Read
       - value: EDIT
         label: Edit
+  - name: gridVariant
+    label: Grid layout
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      component: uesio/io.grid
 sections:
   - type: HOME
     properties:

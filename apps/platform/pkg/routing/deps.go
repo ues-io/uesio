@@ -589,15 +589,30 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 	}
 
 	slotDefinitions := compDef.GetSlotDefinitions()
+	variantPropertyNames := compDef.GetVariantPropertyNames()
 
 	foundComponentVariant := false
 
 	for i, prop := range compDefinitionMap.Content {
-		if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
+		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || variantPropertyNames[prop.Value] != "") {
 			if len(compDefinitionMap.Content) > i {
 				valueNode := compDefinitionMap.Content[i+1]
 				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-					if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
+					useComponentName := compName
+					useVariantName := valueNode.Value
+					if prop.Value != "uesio.variant" {
+						// Check if the value contains a fully-qualified variant name, e.g. "uesio/io.grid:uesio/io.two_columns",
+						// vs "uesio/io.two_columns"
+						variantNameParts := strings.Split(useVariantName, ":")
+						if len(variantNameParts) > 1 {
+							useComponentName = variantNameParts[0]
+							useVariantName = variantNameParts[1]
+						} else {
+							useComponentName = variantPropertyNames[prop.Value]
+							useVariantName = variantNameParts[0]
+						}
+					}
+					if err = addComponentVariantDep(depMap, useVariantName, useComponentName); err == nil {
 						foundComponentVariant = true
 					}
 				}

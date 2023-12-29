@@ -1,12 +1,5 @@
 name: one_column
-label: One Column
-extends: uesio/io.deck:uesio/io.default
+label: One Column Grid
 definition:
-  uesio.styleTokens:
-    root:
-      - grid-cols-1
-      - gap-6
-      - max-w-6xl
-      - w-full
-      - auto-cols-max
+  gridVariant: uesio/io.grid:uesio/io.one_column
 public: true

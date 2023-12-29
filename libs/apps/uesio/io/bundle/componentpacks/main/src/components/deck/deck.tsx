@@ -1,4 +1,4 @@
-import { api, component, definition, styles } from "@uesio/ui"
+import { api, definition, metadata, styles } from "@uesio/ui"
 import List, { ListDefinition } from "../list/list"
 
 import { default as IOGrid } from "../../utilities/grid/grid"
@@ -7,13 +7,17 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
-const Deck: definition.UC<ListDefinition> = (props) => {
+type DeckDefinition = {
+	gridVariant?: metadata.MetadataType
+} & ListDefinition
+
+const Deck: definition.UC<DeckDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<IOGrid
-			variant={definition[component.STYLE_VARIANT]}
+			variant={definition.gridVariant}
 			classes={classes}
 			context={context}
 			id={api.component.getComponentIdFromProps(props)}
