@@ -1,4 +1,4 @@
 name: mimetype
 type: "TEXT"
 label: "Mime Type"
-readOnly: true
+createOnly: true

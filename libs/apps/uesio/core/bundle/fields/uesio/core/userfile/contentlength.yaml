@@ -1,5 +1,6 @@
 name: contentlength
 type: NUMBER
-label: "Content Length"
+label: "Content Length (bytes)"
+createOnly: true
 number:
   decimals: 0

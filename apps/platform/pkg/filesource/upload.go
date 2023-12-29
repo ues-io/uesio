@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -54,7 +55,7 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 
 func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]interface{}) ([]*meta.UserFileMetadata, error) {
 
-	ufms := meta.UserFileMetadataCollection{}
+	var userFileCollection meta.UserFileMetadataCollection
 	idMaps := map[string]wire.LocatorMap{}
 	var fieldUpdates []datasource.SaveRequest
 	metadataResponse := &wire.MetadataCache{}
@@ -79,6 +80,8 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		}
 
 	}
+
+	fileSourceConnections := map[string]file.Connection{}
 
 	// Go get any Record IDs that we're missing
 	for collectionKey := range idMaps {
@@ -131,11 +134,16 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			ContentLength: op.ContentLength,
 			FileSourceID:  PLATFORM_FILE_SOURCE,
 		}
-		ufms = append(ufms, ufm)
+		userFileCollection = append(userFileCollection, ufm)
 
-		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
-		if err != nil {
-			return nil, err
+		conn, isPresent := fileSourceConnections[ufm.FileSourceID]
+		if !isPresent {
+			newConn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
+			if err != nil {
+				return nil, err
+			}
+			conn = newConn
+			fileSourceConnections[ufm.FileSourceID] = newConn
 		}
 		err = conn.Upload(op.Data, ufm.GetFullPath(tenantID))
 		if err != nil {
@@ -147,7 +155,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &ufms,
+		Collection: &userFileCollection,
 		Options: &wire.SaveOptions{
 			Upsert: true,
 		},
@@ -157,7 +165,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		return nil, err
 	}
 
-	for _, ufm := range ufms {
+	for _, ufm := range userFileCollection {
 
 		_, fieldMetadata, err := getUploadMetadata(metadataResponse, ufm.CollectionID, ufm.FieldID)
 		if err != nil {
@@ -168,7 +176,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		if fieldMetadata != nil {
 
 			if fieldMetadata.Type != "FILE" {
-				return nil, errors.New("Can only attach files to FILE fields")
+				return nil, errors.New("can only attach files to FILE fields")
 			}
 			fieldUpdates = append(fieldUpdates, datasource.SaveRequest{
 				Collection: ufm.CollectionID,
@@ -195,5 +203,5 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		return nil, errors.New("Failed to update field for the given file: " + err.Error())
 	}
 
-	return ufms, nil
+	return userFileCollection, nil
 }

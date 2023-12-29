@@ -1,4 +1,4 @@
 name: type
 type: "TEXT"
 label: "Type"
-readOnly: true
+createOnly: true
