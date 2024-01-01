@@ -3,11 +3,17 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"os"
+	"os/signal"
 	"strings"
+	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/concurrent"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/formula"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
+	"github.com/thecloudmasters/uesio/pkg/graph"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -70,7 +76,7 @@ func processConditions(
 	conditions []wire.LoadRequestCondition,
 	params map[string]interface{},
 	metadata *wire.MetadataCache,
-	ops []*wire.LoadOp,
+	allOpsByName map[string]*wire.LoadOp,
 	session *sess.Session,
 ) ([]wire.LoadRequestCondition, error) {
 
@@ -115,7 +121,7 @@ func processConditions(
 				nestedCollection = condition.SubCollection
 			}
 			if condition.SubConditions != nil {
-				if useSubConditions, err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session); err != nil {
+				if useSubConditions, err := processConditions(nestedCollection, condition.SubConditions, params, metadata, allOpsByName, session); err != nil {
 					return nil, err
 				} else {
 					condition.SubConditions = useSubConditions
@@ -177,36 +183,26 @@ func processConditions(
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 			// If we weren't provided ops to lookup, just don't process Lookups
-			if ops == nil {
-				useConditions = append(useConditions, condition)
+			if allOpsByName == nil {
 				continue
 			}
 			// Look through the previous wires to find the one to look up on.
-			var lookupOp *wire.LoadOp
-			for _, lop := range ops {
-				if lop.WireName == condition.LookupWire {
-					lookupOp = lop
-					break
-				}
-			}
-
-			if lookupOp == nil {
+			lookupOp, isPresent := allOpsByName[condition.LookupWire]
+			if !isPresent || lookupOp == nil {
 				return nil, exceptions.NewBadRequestException("Could not find lookup wire: " + condition.LookupWire)
 			}
 
 			values := make([]interface{}, 0, lookupOp.Collection.Len())
-			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
+			if err = lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
 					return exceptions.NewBadRequestException("could not get value of specific Lookup field from record: " + condition.LookupField)
 				}
 				values = append(values, value)
 				return nil
-			})
-			if err != nil {
+			}); err != nil {
 				return nil, err
 			}
-
 			condition.Values = values
 			//default "IN"
 			if condition.Operator == "" {
@@ -580,10 +576,13 @@ func GetDefaultOrder() wire.LoadRequestOrder {
 }
 
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
+
 	if options == nil {
 		options = &LoadOptions{}
 	}
-	allOps := []*wire.LoadOp{}
+	opsGraph := graph.NewDepGraph[string]()
+	allOpsByName := map[string]*wire.LoadOp{}
+	var allOpsToQuery []*wire.LoadOp
 	metadataResponse := &wire.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
@@ -635,13 +634,23 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		}
 
 		if op.Query {
-			allOps = append(allOps, op)
+			allOpsToQuery = append(allOpsToQuery, op)
+			allOpsByName[op.WireName] = op
+			opsGraph.AddNode(op.WireName)
+			// Determine which ops this op depends on
+			dependentWireNames := getWireDependencies(op.Conditions, []string{})
+			if len(dependentWireNames) > 0 {
+				for _, dependsOnWireName := range dependentWireNames {
+					// This may return a circular dependency error
+					if err := opsGraph.AddNodeDependency(op.WireName, dependsOnWireName); err != nil {
+						return nil, err
+					}
+				}
+			}
 		}
-
 	}
 
 	// 3. Get metadata for each datasource and collection
-
 	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
 	if err != nil {
 		return nil, err
@@ -650,68 +659,202 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	if err = GenerateUserAccessTokens(connection, session); err != nil {
 		return nil, err
 	}
-
-	for _, op := range allOps {
-
-		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
-		// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
-		// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
-		// etc. will also only include active condiitons).
-		// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
-		// conditions, and then we will, at the end of the operation, restore them back.
-		// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
-		// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
-		originalConditions := op.Conditions
-		activeConditions, err := processConditions(op.CollectionName, originalConditions, op.Params, metadataResponse, allOps, session)
-		if err != nil {
+	// Shortcuts
+	// 1. No wires - we are done!
+	if len(allOpsToQuery) == 0 {
+		return metadataResponse, nil
+	}
+	// 2 Only one wire - just run it and be done!
+	if len(allOpsToQuery) == 1 {
+		if err = loadOpExecutor(allOpsToQuery[0], metadataResponse, allOpsByName, session, connection); err != nil {
 			return nil, err
 		}
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
-		}
-
-		if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
-			return nil, err
-		}
-
-		collectionKey := collectionMetadata.GetFullName()
-
-		integrationName := collectionMetadata.GetIntegrationName()
-
-		// Attach the collection metadata to the LoadOp so that Load Bots can access it
-		op.AttachMetadataCache(metadataResponse)
-
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
-
-		// Mutate the conditions immediately before handing off to the load implementations
-		op.Conditions = activeConditions
-
-		// 3 branches:
-		// 1. Dynamic collections
-		// 2. External integration collections
-		// 3. Native Uesio DB collections
-		var loadErr error
-		if collectionMetadata.IsDynamic() {
-			// Dynamic collection loads
-			loadErr = runDynamicCollectionLoadBots(op, connection, session)
-		} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
-			// external integration loads
-			loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
-		} else {
-			// native Uesio DB loads
-			loadErr = LoadOp(op, connection, session)
-		}
-		// Regardless of what happened with the load, restore the original conditions list now that we're done
-		op.Conditions = originalConditions
-
-		if loadErr != nil {
-			return nil, loadErr
-		}
+		return metadataResponse, nil
 	}
 
+	// Setup two maps to keep track of operations done and pending
+	doneChan := make(chan string)
+	errChan := make(chan error)
+
+	jobs := concurrent.NewJobs[string](goutils.MapKeys[string](allOpsByName))
+
+	// Load timeout
+	timeout := time.After(60 * time.Second)
+	// OS Signal interrupt
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+
+	// kick off initial loads
+	loadOpsWithNoUnresolvedDeps(jobs, opsGraph, allOpsByName, metadataResponse, session, connection, doneChan, errChan)
+
+	var loadErr error
+
+Outer:
+	for {
+		select {
+		case <-sigChan:
+			// TODO: Allow in progress loads to finish when app is terminated
+			loadErr = errors.New("application terminated")
+			break Outer
+		case <-timeout:
+			loadErr = errors.New("load operation timed out")
+			break Outer
+		case errMsg := <-errChan:
+			fmt.Println("*Got err loading a wire: " + errMsg.Error())
+			loadErr = errMsg
+			break Outer
+		case doneWire := <-doneChan:
+			fmt.Println("Wire is DONE LOADING: " + doneWire)
+			jobs.Finish(doneWire)
+			// If we have no more jobs pending or unstarted, we are done!
+			if !jobs.HasPendingOrUnstarted() {
+				break Outer
+			}
+			// Otherwise, now that this wire is done, see if there are any wires that depend on it,
+			// and see if we can kick off their load ops now
+			loadOpsWithNoUnresolvedDeps(jobs, opsGraph, allOpsByName, metadataResponse, session, connection, doneChan, errChan)
+		}
+	}
+	if loadErr != nil {
+		fmt.Println("ERRRRRR --- " + loadErr.Error())
+		return nil, loadErr
+	}
+	fmt.Println("Returning metadata response")
 	return metadataResponse, nil
+}
+
+func loadOpsWithNoUnresolvedDeps(
+	jobs *concurrent.Jobs[string],
+	opsGraph *graph.DepGraph[string],
+	opsMap map[string]*wire.LoadOp,
+	metadataResponse *wire.MetadataCache,
+	session *sess.Session,
+	connection wire.Connection,
+	doneChan chan string,
+	errChan chan error,
+) {
+	loadOps := findLoadOpsWithNoUnresolvedDeps(jobs, opsGraph)
+	if len(loadOps) > 0 {
+		runLoadOps(loadOps, jobs, opsMap, metadataResponse, session, connection, doneChan, errChan)
+	}
+}
+
+// find load ops which are ready to kick off by looping over unstarted ops,
+// finding ones with no unresolved dependencies,
+// and initiating those loads.
+func findLoadOpsWithNoUnresolvedDeps(jobs *concurrent.Jobs[string], opsGraph *graph.DepGraph[string]) []string {
+	var opsReadyToLoad []string
+	for _, wireName := range jobs.Unstarted() {
+		if opCanBeLoaded(wireName, jobs, opsGraph) {
+			opsReadyToLoad = append(opsReadyToLoad, wireName)
+		}
+	}
+	return opsReadyToLoad
+}
+
+func runLoadOps(opsToLoad []string, jobs *concurrent.Jobs[string], opsMap map[string]*wire.LoadOp, metadataResponse *wire.MetadataCache, session *sess.Session, connection wire.Connection, doneChan chan string, errChan chan error) {
+	// Kick it off!
+	for _, opName := range opsToLoad {
+		jobs.Start(opName)
+		fmt.Println("LAUNCHING Goroutine for " + opName)
+		// Clone the metadata cache to prevent any concurrency issues.
+		// TODO: make all of the metadata cache safe for concurrent use
+		clonedCache := &wire.MetadataCache{}
+		t := time.Now()
+		if err := meta.Copy(clonedCache, metadataResponse); err != nil {
+			fmt.Printf("ERROR COPYING METADATA: %s\n", err.Error())
+			errChan <- err
+			break
+		}
+		fmt.Printf("time to copy: %s\n", time.Since(t).String())
+		go func(wireName string, metadataCache *wire.MetadataCache) {
+			for {
+				select {
+				// If any error occurs on any other channel, we need to terminate this goroutine
+				case <-errChan:
+					return
+				default:
+					fmt.Println("[in GOROUTINE], initiating load of: " + wireName)
+					if err := loadOpExecutor(opsMap[wireName], metadataCache, opsMap, session, connection); err != nil {
+						errChan <- err
+					} else {
+						doneChan <- wireName
+					}
+					return
+				}
+			}
+		}(opName, clonedCache)
+	}
+}
+
+func opCanBeLoaded(opName string, jobs *concurrent.Jobs[string], opsGraph *graph.DepGraph[string]) bool {
+	// This wire has no deps. Run it!
+	if !opsGraph.HasDependencies(opName) {
+		return true
+	}
+	// Okay, it has deps. Check if any of them are still pending or unstarted
+	for dep := range opsGraph.Dependencies(opName) {
+		if jobs.IsUnstartedOrPending(dep) {
+			return false
+		}
+	}
+	return true
+}
+
+func loadOpExecutor(op *wire.LoadOp, metadataResponse *wire.MetadataCache, allOpsByName map[string]*wire.LoadOp, session *sess.Session, connection wire.Connection) error {
+	// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
+	// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
+	// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
+	// etc. will also only include active condiitons).
+	// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
+	// conditions, and then we will, at the end of the operation, restore them back.
+	// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
+	// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
+	originalConditions := op.Conditions
+	activeConditions, err := processConditions(op.CollectionName, op.Conditions, op.Params, metadataResponse, allOpsByName, session)
+	if err != nil {
+		return err
+	}
+	collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+	if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
+		return err
+	}
+	collectionKey := collectionMetadata.GetFullName()
+	integrationName := collectionMetadata.GetIntegrationName()
+
+	// Attach the collection metadata to the LoadOp so that Load Bots can access it
+	op.AttachMetadataCache(metadataResponse)
+
+	usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
+	usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
+
+	// Mutate the conditions immediately before handing off to the load implementations
+	op.Conditions = activeConditions
+
+	// 3 branches:
+	// 1. Dynamic collections
+	// 2. External integration collections
+	// 3. Native Uesio DB collections
+	var loadErr error
+	if collectionMetadata.IsDynamic() {
+		// Dynamic collection loads
+		loadErr = runDynamicCollectionLoadBots(op, connection, session)
+	} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+		// external integration loads
+		loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
+	} else {
+		// native Uesio DB loads
+		loadErr = LoadOp(op, connection, session)
+	}
+	// Regardless of what happened with the load, restore the original conditions list now that we're done
+	op.Conditions = originalConditions
+	if loadErr != nil {
+		return loadErr
+	}
+	return nil
 }
 
 func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
@@ -751,4 +894,15 @@ func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) 
 	}
 
 	return LoadOp(op, connection, session)
+}
+
+func getWireDependencies(conditions []wire.LoadRequestCondition, deps []string) []string {
+	for _, condition := range conditions {
+		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" {
+			deps = append(deps, condition.LookupWire)
+		} else if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
+			deps = getWireDependencies(condition.SubConditions, deps)
+		}
+	}
+	return deps
 }
