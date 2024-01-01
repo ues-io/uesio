@@ -127,15 +127,18 @@ func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetContextUser()
 	userPicture := userInfo.GetPicture()
+	userProfile := userInfo.GetProfileRef()
 	userMergeData := &routing.UserMergeData{
-		ID:           userInfo.ID,
-		Username:     userInfo.UniqueKey,
-		FirstName:    userInfo.FirstName,
-		LastName:     userInfo.LastName,
-		Profile:      userInfo.Profile,
-		ProfileLabel: userInfo.ProfileRef.Label,
-		Site:         session.GetSite().ID,
-		Language:     userInfo.Language,
+		ID:        userInfo.ID,
+		Username:  userInfo.UniqueKey,
+		FirstName: userInfo.FirstName,
+		LastName:  userInfo.LastName,
+		Profile:   userInfo.Profile,
+		Site:      session.GetSite().ID,
+		Language:  userInfo.Language,
+	}
+	if userProfile != nil {
+		userMergeData.ProfileLabel = userProfile.Label
 	}
 	if userPicture != nil {
 		userMergeData.Picture = &routing.UserPictureMergeData{

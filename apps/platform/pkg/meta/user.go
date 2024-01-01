@@ -15,6 +15,10 @@ type User struct {
 	ProfileRef  *Profile          `json:"-"`
 }
 
+func (u *User) GetProfileRef() *Profile {
+	return u.ProfileRef
+}
+
 func (u *User) GetPicture() *UserFileMetadata {
 	return u.Picture
 }
