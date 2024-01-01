@@ -25,18 +25,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: routes
-                itemIcon: map
-                itemName: $Param{routename}
-                itemNameSpace: $Param{namespace}
-                itemNameSpaceIcon: ${routes:uesio/studio.appicon}
-                itemNameSpaceColor: ${routes:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -44,6 +32,12 @@ definition:
               view: workspacenav
               params:
                 selected: routes
+                itemType: routes
+                itemIcon: map
+                itemName: $Param{routename}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${routes:uesio/studio.appicon}
+                itemNameSpaceColor: ${routes:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: routesList

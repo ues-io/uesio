@@ -1,27 +1,28 @@
 import { definition, hooks, component, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
-import { useBuilderState, useBuildMode } from "../../api/stateapi"
-import CodePanel from "./codepanel"
-import AdjustableWidthArea from "../../utilities/adjustablewidtharea/adjustablewidtharea"
+import { useBuildMode, useBuilderState } from "../../api/stateapi"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
-import MainHeader from "./mainheader"
-import RightToolbar from "./righttoolbar"
 import IndexPanel from "./indexpanel"
 import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
+import MainHeader from "./mainheader"
+import ProfileTag from "./profiletag"
+import CodePanel from "./codepanel"
+import RightToolbar from "./righttoolbar"
+import SaveCancelArea from "./savecancelarea"
 
 const StyleDefaults = Object.freeze({
 	root: [
 		"bg-slate-50",
-		"px-2",
-		"pb-2",
-		"gap-2",
 		"h-full",
 		"grid-cols-[auto_1fr]",
 		"auto-cols-auto",
 		"grid-rows-[100%]",
 	],
-	configarea: ["auto-rows-fr", "gap-2"],
+	leftpanel: ["grid-rows-[auto_auto_1fr_1fr_auto]", "gap-3", "p-3"],
+	rightpanel: ["col-start-3", "p-3"],
+	canvaswrap: ["grid-rows-1", "auto-rows-auto", "gap-3"],
+	canvaswrapinner: ["relative", "grid", "grid-rows-1", "grid-cols-1"],
 })
 
 const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
@@ -29,7 +30,6 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 ) => {
 	const { context, definition, path } = props
 	const Grid = component.getUtility("uesio/io.grid")
-	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
@@ -66,8 +66,22 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		)
 	})
 
+	const toggleCode = api.signal.getHandler(
+		[
+			{
+				signal: "component/CALL",
+				component: "uesio/builder.mainwrapper",
+				componentsignal: "TOGGLE_CODE",
+			},
+		],
+		context
+	)
+
+	hooks.useHotKeyCallback("meta+y", () => {
+		toggleCode?.()
+	})
+
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
-	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
 	if (!buildMode) {
 		return (
@@ -81,50 +95,32 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		)
 	}
 
-	const indexPanelIndex = 3
-	const codePanelIndex = indexPanelIndex + (showIndex ? 1 : 0)
-	const rightPanelIndex = codePanelIndex + (showCode ? 1 : 0)
-
 	return (
-		<ScrollPanel
-			variant="uesio/io.default"
-			context={context}
-			header={<MainHeader context={builderContext} />}
-		>
-			<Grid className={classes.root} context={context}>
-				<Grid context={context} className={classes.configarea}>
-					<PropertiesPanel context={builderContext} />
-					<ViewInfoPanel context={builderContext} />
-				</Grid>
-				<Canvas context={canvasContext}>
-					<component.ViewArea
-						context={canvasContext}
-						definition={definition}
-						path={path}
-					/>
-				</Canvas>
-				{showIndex && (
-					<AdjustableWidthArea
-						className={`col-start-${indexPanelIndex}`}
-						context={context}
-					>
-						<IndexPanel context={builderContext} />
-					</AdjustableWidthArea>
-				)}
-				{showCode && (
-					<AdjustableWidthArea
-						className={`col-start-${codePanelIndex}`}
-						context={context}
-					>
-						<CodePanel context={builderContext} />
-					</AdjustableWidthArea>
-				)}
-				<RightToolbar
-					className={`col-start-${rightPanelIndex}`}
-					context={context}
-				/>
+		<Grid className={classes.root} context={context}>
+			<Grid context={context} className={classes.leftpanel}>
+				<MainHeader context={builderContext} />
+				<PropertiesPanel context={builderContext} />
+				<ViewInfoPanel context={builderContext} />
+				<ProfileTag context={builderContext} />
 			</Grid>
-		</ScrollPanel>
+			<Grid className={classes.canvaswrap} context={builderContext}>
+				<div className={classes.canvaswrapinner}>
+					<Canvas context={canvasContext}>
+						<component.ViewArea
+							context={canvasContext}
+							definition={definition}
+							path={path}
+						/>
+					</Canvas>
+					<SaveCancelArea context={context} />
+					<RightToolbar context={context} />
+				</div>
+				{showCode && <CodePanel context={builderContext} />}
+			</Grid>
+			<Grid context={context} className={classes.rightpanel}>
+				<IndexPanel context={builderContext} />
+			</Grid>
+		</Grid>
 	)
 }
 

@@ -4,7 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     icon:
-      - text-slate-900
+      - text-slate-800
       - hover:bg-slate-100
       - rounded-full
-      - p-1.5
+      - p-1

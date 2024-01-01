@@ -9,9 +9,6 @@ definition:
           left:
             - block
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
         left:
           - uesio/core.view:
               view: homeleftnav

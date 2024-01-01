@@ -1,0 +1,29 @@
+name: profiletag
+definition:
+  components:
+    - uesio/io.titlebar:
+        uesio.variant: uesio/builder.profile
+        title: $User{username}
+        subtitle: $User{profilelabel}
+        avatar:
+          - uesio/io.avatar:
+              uesio.styleTokens:
+                root:
+                  - h-8
+                  - w-8
+              text: $User{initials}
+              image: $User{picture}
+        actions:
+          - uesio/io.button:
+              uesio.variant: uesio/studio.headernavicon
+              icon: logout
+              uesio.id: logout
+              signals:
+                - signal: "user/LOGOUT"
+          - uesio/io.button:
+              uesio.variant: uesio/studio.headernavicon
+              uesio.id: user-profile
+              icon: account_circle
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: myprofile

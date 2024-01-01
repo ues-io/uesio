@@ -74,207 +74,228 @@ definition:
           lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
-    - uesio/studio.navsection:
-        title: App Admin
+    - uesio/io.scrollpanel:
+        uesio.variant: uesio/studio.left
+        header:
+          - uesio/core.view:
+              view: appcrumb
+          - uesio/core.view:
+              view: crumbsbar
+              params:
+                itemType: $Param{itemType}
+                itemIcon: $Param{itemIcon}
+                itemName: $Param{itemName}
+                itemNameSpace: $Param{itemNameSpace}
+                itemNameSpaceIcon: $Param{itemNameSpaceIcon}
+                itemNameSpaceColor: $Param{itemNameSpaceColor}
+                subItemType: $Param{subItemType}
+                subItemName: $Param{subItemName}
+                subItemNameSpace: $Param{subItemNameSpace}
         content:
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: home
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: home
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${apps:uesio/core.uniquekey}
+          - uesio/studio.navsection:
+              title: App Admin
               content:
-                - uesio/io.text:
-                    text: Home
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: home
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.id: settings
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: settings
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${apps:uesio/core.uniquekey}/settings
-              content:
-                - uesio/io.text:
-                    text: Settings
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: settings
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: publish
-              signals:
-                - signal: route/NAVIGATE
-                  path: app/${apps:uesio/core.uniquekey}/publish
-              content:
-                - uesio/io.text:
-                    text: Publish
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: outbox
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: teams
-              signals:
-                - signal: route/NAVIGATE
-                  path: app/${apps:uesio/core.uniquekey}/teams
-              content:
-                - uesio/io.text:
-                    text: Teams
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: groups
-    - uesio/studio.navsection:
-        title: Workspaces
-        actions:
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-workspace
-              uesio.variant: uesio/studio.navctawithpointer
-              uesio.display:
-                - type: wireHasNoRecords
-                  wire: workspaces
-              signals:
-                - signal: panel/TOGGLE
-                  panel: newWorkspace
-          - uesio/io.button:
-              uesio.variant: uesio/studio.navcta
-              icon: add
-              uesio.id: add-workspace-2
-              uesio.display:
-                - type: wireHasRecords
-                  wire: workspaces
-              signals:
-                - signal: panel/TOGGLE
-                  panel: newWorkspace
-        content:
-          - uesio/io.box:
-              uesio.variant: uesio/studio.calloutsection
-              uesio.display:
-                - type: wireHasNoRecords
-                  wire: workspaces
-                - type: wireHasNoRecords
-                  wire: sites
-              components:
-                - uesio/io.text:
-                    text: To get started building your app, you will need a workspace. This is where you can build and preview new functionality for your app.
-                    element: p
-                    uesio.styleTokens:
-                      root:
-                        - mb-4
-                - uesio/io.text:
-                    text: Click the
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: home
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: home
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${apps:uesio/core.uniquekey}
+                    content:
+                      - uesio/io.text:
+                          text: Home
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: home
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: settings
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: settings
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${apps:uesio/core.uniquekey}/settings
+                    content:
+                      - uesio/io.text:
+                          text: Settings
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: settings
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: publish
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: app/${apps:uesio/core.uniquekey}/publish
+                    content:
+                      - uesio/io.text:
+                          text: Publish
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: outbox
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: teams
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: app/${apps:uesio/core.uniquekey}/teams
+                    content:
+                      - uesio/io.text:
+                          text: Teams
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: groups
+          - uesio/studio.navsection:
+              title: Workspaces
+              actions:
+                - uesio/io.button:
+                    icon: add
+                    uesio.id: add-workspace
+                    uesio.variant: uesio/studio.navctawithpointer
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: workspaces
+                    signals:
+                      - signal: panel/TOGGLE
+                        panel: newWorkspace
                 - uesio/io.button:
                     uesio.variant: uesio/studio.navcta
-                    icon: +
-                    uesio.styleTokens:
-                      root:
-                        - px-2
-                - uesio/io.text:
-                    text: to create a workspace.
-          - uesio/io.list:
-              uesio.id: workspaceslist
-              wire: workspaces
-              components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.id: "open-workspace-$Record{uesio/studio.name}"
+                    icon: add
+                    uesio.id: add-workspace-2
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: workspaces
                     signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/$Param{app}/workspace/${uesio/studio.name}"
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/studio.name}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: handyman
-    - uesio/studio.navsection:
-        title: Sites
-        actions:
-          - uesio/io.button:
-              icon: add
-              uesio.id: add-site
-              uesio.variant: uesio/studio.navcta
-              signals:
-                - signal: panel/TOGGLE
-                  panel: newSite
-        content:
-          - uesio/io.list:
-              uesio.id: siteslist
-              wire: sites
-              components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/$Param{app}/site/${uesio/studio.name}"
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/studio.name}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: public
-    - uesio/studio.navsection:
-        title: Licenses
-        uesio.display:
-          - type: featureFlag
-            name: manage_billing_licensing
-        content:
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{app}/licensesused"
+                      - signal: panel/TOGGLE
+                        panel: newWorkspace
               content:
-                - uesio/io.text:
-                    text: "Billing & Costs"
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: receipt_long
+                - uesio/io.box:
+                    uesio.variant: uesio/studio.calloutsection
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: workspaces
+                      - type: wireHasNoRecords
+                        wire: sites
+                    components:
+                      - uesio/io.text:
+                          text: To get started building your app, you will need a workspace. This is where you can build and preview new functionality for your app.
+                          element: p
+                          uesio.styleTokens:
+                            root:
+                              - mb-4
+                      - uesio/io.text:
+                          text: Click the
+                      - uesio/io.button:
+                          uesio.variant: uesio/studio.navcta
+                          icon: +
+                          uesio.styleTokens:
+                            root:
+                              - px-2
+                      - uesio/io.text:
+                          text: to create a workspace.
+                - uesio/io.list:
+                    uesio.id: workspaceslist
+                    wire: workspaces
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          uesio.id: "open-workspace-$Record{uesio/studio.name}"
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{app}/workspace/${uesio/studio.name}"
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/studio.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: handyman
+          - uesio/studio.navsection:
+              title: Sites
+              actions:
+                - uesio/io.button:
+                    icon: add
+                    uesio.id: add-site
+                    uesio.variant: uesio/studio.navcta
+                    signals:
+                      - signal: panel/TOGGLE
+                        panel: newSite
+              content:
+                - uesio/io.list:
+                    uesio.id: siteslist
+                    wire: sites
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{app}/site/${uesio/studio.name}"
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/studio.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: public
+          - uesio/studio.navsection:
+              title: Licenses
               uesio.display:
                 - type: featureFlag
                   name: manage_billing_licensing
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{app}/licensesprovided"
               content:
-                - uesio/io.text:
-                    text: "Pricing & Income"
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: payments
-              uesio.display:
-                - type: featureFlag
-                  name: manage_billing_licensing
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "app/$Param{app}/licensesused"
+                    content:
+                      - uesio/io.text:
+                          text: "Billing & Costs"
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: receipt_long
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_billing_licensing
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "app/$Param{app}/licensesprovided"
+                    content:
+                      - uesio/io.text:
+                          text: "Pricing & Income"
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: payments
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_billing_licensing
+        footer:
+          - uesio/core.view:
+              view: profiletag
   panels:
     newWorkspace:
       uesio.type: uesio/io.dialog

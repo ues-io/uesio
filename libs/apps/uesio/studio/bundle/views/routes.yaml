@@ -59,14 +59,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: routes
-                itemIcon: map
         left:
           - uesio/core.view:
               uesio.context:
@@ -74,6 +66,8 @@ definition:
               view: workspacenav
               params:
                 selected: routes
+                itemType: routes
+                itemIcon: map
         content:
           - uesio/io.list:
               uesio.id: editRoutes

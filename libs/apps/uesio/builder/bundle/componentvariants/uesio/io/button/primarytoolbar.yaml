@@ -4,7 +4,8 @@ extends: uesio/builder.secondarytoolbar
 definition:
   uesio.styleTokens:
     root:
-      - text-white
-      - bg-[$Theme{color.primary}]
-      - border-transparent
+      - text-slate-800
+      - border-slate-800
+      - hover:border-slate-800
+
 public: true

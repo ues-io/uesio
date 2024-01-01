@@ -1,0 +1,9 @@
+name: appcrumb
+label: App Crumb Box
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - gap-3
+      - grid-cols-[auto_1fr]
+public: true

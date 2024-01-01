@@ -4,8 +4,24 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.list:
-        components:
+    - uesio/io.scrollpanel:
+        uesio.variant: uesio/studio.left
+        header:
+          - uesio/core.view:
+              view: appcrumb
+          - uesio/core.view:
+              view: crumbsbar
+              params:
+                itemType: $Param{itemType}
+                itemIcon: $Param{itemIcon}
+                itemName: $Param{itemName}
+                itemNameSpace: $Param{itemNameSpace}
+                itemNameSpaceIcon: $Param{itemNameSpaceIcon}
+                itemNameSpaceColor: $Param{itemNameSpaceColor}
+                subItemType: $Param{subItemType}
+                subItemName: $Param{subItemName}
+                subItemNameSpace: $Param{subItemNameSpace}
+        content:
           - uesio/studio.navsection:
               title: Workspace Admin
               content:
@@ -482,3 +498,6 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: translate
+        footer:
+          - uesio/core.view:
+              view: profiletag

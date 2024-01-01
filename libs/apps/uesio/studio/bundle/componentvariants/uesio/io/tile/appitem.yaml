@@ -1,0 +1,12 @@
+name: appitem
+label: App Item
+extends: uesio/io.nav
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-3
+    content:
+    avatar:
+      - p-1
+
+public: true

@@ -22,6 +22,7 @@ bots:
 views:
   uesio/studio.bundlestore: true
   uesio/studio.app: true
+  uesio/studio.appcrumb: true
   uesio/studio.appedit: true
   uesio/studio.appsettings: true
   uesio/studio.bot: true
@@ -38,6 +39,7 @@ views:
   uesio/studio.credential: true
   uesio/studio.credentialentrieseditor: true
   uesio/studio.credentials: true
+  uesio/studio.crumbsbar: true
   uesio/studio.domains: true
   uesio/studio.field: true
   uesio/studio.file: true
@@ -58,6 +60,7 @@ views:
   uesio/studio.permissionsetcollection: true
   uesio/studio.permissionsetintegration: true
   uesio/studio.profile: true
+  uesio/studio.profiletag: true
   uesio/studio.profiles: true
   uesio/studio.route: true
   uesio/studio.routes: true
@@ -73,7 +76,6 @@ views:
   uesio/studio.teams: true
   uesio/studio.theme: true
   uesio/studio.themes: true
-  uesio/studio.topbar: true
   uesio/studio.user: true
   uesio/studio.users: true
   uesio/studio.usertokens: true

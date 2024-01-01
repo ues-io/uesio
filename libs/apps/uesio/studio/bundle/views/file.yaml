@@ -51,18 +51,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: files
-                itemIcon: collections
-                itemName: $Param{filename}
-                itemNameSpace: $Param{namespace}
-                itemNameSpaceIcon: ${files:uesio/studio.appicon}
-                itemNameSpaceColor: ${files:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -70,6 +58,12 @@ definition:
               view: workspacenav
               params:
                 selected: files
+                itemType: files
+                itemIcon: collections
+                itemName: $Param{filename}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${files:uesio/studio.appicon}
+                itemNameSpaceColor: ${files:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: filesList

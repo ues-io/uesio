@@ -62,27 +62,59 @@ definition:
           valueSource: VALUE
           value: uesio/studio.standard
   components:
-    - uesio/io.grid:
+    - uesio/io.scrollpanel:
+        uesio.variant: uesio/studio.left
         uesio.styleTokens:
-          root:
+          inner:
+            - grid
             - grid-rows-3
-            - h-full
-            - -m-3
-        items:
+        header:
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - grid
+                  - gap-3
+                  - grid-cols-[auto_1fr]
+              components:
+                - uesio/io.image:
+                    uesio.styleTokens:
+                      root:
+                        - bg-slate-800
+                        - rounded
+                        - py-1.5
+                        - px-2
+                    uesio.id: img-uesio-logo
+                    height: 32
+                    file: uesio/core.logowhite
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "home"
+                - uesio/io.searchbox:
+                    uesio.variant: uesio/studio.appsearch
+                    wire: apps
+                    placeholder: Search Apps
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.description
+        content:
           - uesio/io.box:
               uesio.styleTokens:
                 root:
                   - row-span-2
-                  - border-b-1
-                  - border-slate-200
               components:
                 - uesio/io.scrollpanel:
                     uesio.variant: uesio/io.default
+                    uesio.styleTokens:
+                      root:
+                        - rounded
+                        - bg-white
+                        - overflow-hidden
+                        - shadow-sm
+                        - border-1
+                        - border-slate-300
                     header:
                       - uesio/io.titlebar:
-                          uesio.styleTokens:
-                            root:
-                              - m-3
                           uesio.variant: uesio/io.nav
                           title: My Apps
                           actions:
@@ -91,12 +123,6 @@ definition:
                                   root:
                                     - gap-3
                                 components:
-                                  - uesio/io.searchbox:
-                                      wire: apps
-                                      focusOnRender: true
-                                      searchFields:
-                                        - uesio/studio.name
-                                        - uesio/studio.description
                                   - uesio/io.button:
                                       icon: add
                                       uesio.id: add-app
@@ -134,67 +160,64 @@ definition:
                                           panel: newApp
                     content:
                       - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - mx-3
+                          uesio.variant: uesio/studio.calloutsection
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: apps
+                            - type: wireHasNoSearchCondition
+                              wire: apps
+                            - type: wireIsNotLoading
+                              wire: apps
                           components:
-                            - uesio/io.box:
-                                uesio.variant: uesio/studio.calloutsection
-                                uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: apps
-                                  - type: wireHasNoSearchCondition
-                                    wire: apps
-                                  - type: wireIsNotLoading
-                                    wire: apps
-                                components:
+                            - uesio/io.text:
+                                text: Welcome to the ues.io studio!
+                                element: p
+                            - uesio/io.text:
+                                text: Click the
+                            - uesio/io.button:
+                                uesio.variant: uesio/studio.navcta
+                                icon: +
+                                uesio.styleTokens:
+                                  root:
+                                    - px-2
+                            - uesio/io.text:
+                                text: to create your first app.
+                      - uesio/io.list:
+                          uesio.id: appslist
+                          wire: apps
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/studio.appitem
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/${uesio/core.uniquekey}"
+                                content:
                                   - uesio/io.text:
-                                      text: Welcome to the ues.io studio!
-                                      element: p
+                                      text: ${uesio/core.uniquekey}
+                                      element: div
                                   - uesio/io.text:
-                                      text: Click the
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/studio.navcta
-                                      icon: +
-                                      uesio.styleTokens:
-                                        root:
-                                          - px-2
+                                      text: ${uesio/studio.description}
+                                      element: div
+                                      uesio.variant: uesio/io.aside
+                                avatar:
                                   - uesio/io.text:
-                                      text: to create your first app.
-                            - uesio/io.list:
-                                uesio.id: appslist
-                                wire: apps
-                                components:
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/io.nav
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/${uesio/core.uniquekey}"
-                                      content:
-                                        - uesio/io.text:
-                                            text: ${uesio/core.uniquekey}
-                                            element: div
-                                        - uesio/io.text:
-                                            text: ${uesio/studio.description}
-                                            element: div
-                                            uesio.variant: uesio/io.aside
-                                      avatar:
-                                        - uesio/io.text:
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-lg
-                                            uesio.variant: uesio/io.icon
-                                            color: "${uesio/studio.color}"
-                                            text: ${uesio/studio.icon}
+                                      uesio.variant: uesio/io.icon
+                                      color: "${uesio/studio.color}"
+                                      text: ${uesio/studio.icon}
           - uesio/io.box:
               components:
                 - uesio/io.scrollpanel:
                     uesio.variant: uesio/io.default
+                    uesio.styleTokens:
+                      root:
+                        - rounded
+                        - bg-white
+                        - overflow-hidden
+                        - shadow-sm
+                        - border-1
+                        - border-slate-300
                     header:
                       - uesio/io.titlebar:
-                          uesio.styleTokens:
-                            root:
-                              - m-3
                           uesio.variant: uesio/io.nav
                           title: My Organizations
                           actions:
@@ -206,32 +229,30 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newOrg
                     content:
-                      - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - mx-3
+                      - uesio/io.list:
+                          uesio.id: orglist
+                          wire: orgs
                           components:
-                            - uesio/io.list:
-                                uesio.id: orglist
-                                wire: orgs
-                                components:
-                                  - uesio/io.tile:
-                                      uesio.variant: uesio/io.nav
-                                      content:
-                                        - uesio/io.text:
-                                            text: ${uesio/core.uniquekey}
-                                            element: div
-                                      avatar:
-                                        - uesio/io.text:
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-lg
-                                            uesio.variant: uesio/io.icon
-                                            color: "#21242D"
-                                            text: domain
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "organization/${uesio/core.uniquekey}"
+                            - uesio/io.tile:
+                                uesio.variant: uesio/studio.appitem
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/core.uniquekey}
+                                      element: div
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-lg
+                                      uesio.variant: uesio/io.icon
+                                      color: "#21242D"
+                                      text: domain
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "organization/${uesio/core.uniquekey}"
+        footer:
+          - uesio/core.view:
+              view: profiletag
   panels:
     newApp:
       uesio.type: uesio/io.dialog
