@@ -82,6 +82,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	})
 
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
+	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
 	if (!buildMode) {
 		return (
@@ -117,9 +118,11 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 				</div>
 				{showCode && <CodePanel context={builderContext} />}
 			</Grid>
-			<Grid context={context} className={classes.rightpanel}>
-				<IndexPanel context={builderContext} />
-			</Grid>
+			{showIndex && (
+				<Grid context={context} className={classes.rightpanel}>
+					<IndexPanel context={builderContext} />
+				</Grid>
+			)}
 		</Grid>
 	)
 }
