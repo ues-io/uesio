@@ -6,9 +6,8 @@ definition:
     left:
       - md:w-80
       - from-white
-      - to-slate-100
+      - to-slate-50
       - bg-gradient-to-br
-      - p-3
       - gap-3
       - grid
       - auto-rows-min

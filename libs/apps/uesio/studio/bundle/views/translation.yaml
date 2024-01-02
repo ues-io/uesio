@@ -38,17 +38,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: translations
-                itemIcon: translate
-                itemName: $Param{translationname}
-                itemNameSpaceIcon: ${translations:uesio/studio.appicon}
-                itemNameSpaceColor: ${translations:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -56,6 +45,11 @@ definition:
               view: workspacenav
               params:
                 selected: translations
+                itemType: translations
+                itemIcon: translate
+                itemName: $Param{translationname}
+                itemNameSpaceIcon: ${translations:uesio/studio.appicon}
+                itemNameSpaceColor: ${translations:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: translationsDeck

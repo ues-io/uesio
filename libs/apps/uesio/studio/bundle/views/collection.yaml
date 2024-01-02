@@ -177,18 +177,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: collections
-                itemIcon: list
-                itemName: $Param{collectionname}
-                itemNameSpace: $Param{namespace}
-                itemNameSpaceIcon: ${collections:uesio/studio.appicon}
-                itemNameSpaceColor: ${collections:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -196,6 +184,12 @@ definition:
               view: workspacenav
               params:
                 selected: collections
+                itemType: collections
+                itemIcon: list
+                itemName: $Param{collectionname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${collections:uesio/studio.appicon}
+                itemNameSpaceColor: ${collections:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: collectionsDeck
@@ -985,10 +979,15 @@ definition:
                     - uesio/io.field:
                         fieldId: uesio/studio.reference->uesio/studio.multicollection
                         displayAs: TOGGLE
+                        uesio.display:
+                          - type: featureFlag
+                            name: multi_collection_reference_fields
                     - uesio/io.field:
                         uesio.display:
                           - field: uesio/studio.reference->uesio/studio.multicollection
                             value: true
+                          - type: featureFlag
+                            name: multi_collection_reference_fields
                         fieldId: uesio/studio.reference->uesio/studio.collections
                     - uesio/io.field:
                         uesio.display:

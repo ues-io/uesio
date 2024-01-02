@@ -65,16 +65,13 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: sites
         left:
           - uesio/core.view:
               view: sitenav
               uesio.context:
                 wire: sites
+              params:
+                selected: home
         content:
           - uesio/io.list:
               uesio.id: siteDeck

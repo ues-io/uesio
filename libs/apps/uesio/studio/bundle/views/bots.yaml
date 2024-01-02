@@ -45,14 +45,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: bots
-                itemIcon: smart_toy
         left:
           - uesio/core.view:
               uesio.context:
@@ -60,6 +52,8 @@ definition:
               view: workspacenav
               params:
                 selected: bots
+                itemType: bots
+                itemIcon: smart_toy
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

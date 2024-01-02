@@ -47,7 +47,7 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const value = props.value as number | string
 	const readOnly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
-	const decimals = numberOptions?.decimals || 2
+	const decimals = numberOptions?.decimals ?? 2
 
 	const controlledInputProps = useControlledInputNumber({
 		value,

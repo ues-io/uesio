@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
@@ -126,6 +127,7 @@ func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetContextUser()
 	userPicture := userInfo.GetPicture()
+	userProfile := userInfo.GetProfileRef()
 	userMergeData := &routing.UserMergeData{
 		ID:        userInfo.ID,
 		Username:  userInfo.UniqueKey,
@@ -134,6 +136,9 @@ func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 		Profile:   userInfo.Profile,
 		Site:      session.GetSite().ID,
 		Language:  userInfo.Language,
+	}
+	if userProfile != nil {
+		userMergeData.ProfileLabel = userProfile.Label
 	}
 	if userPicture != nil {
 		userMergeData.Picture = &routing.UserPictureMergeData{

@@ -1,14 +1,6 @@
-import { api, definition, component, styles } from "@uesio/ui"
-import SaveCancelArea from "./savecancelarea"
+import { api, definition, component } from "@uesio/ui"
 import HeaderCrumbs from "./headercrumbs"
-import { useBuildMode } from "../../api/stateapi"
-
-const StyleDefaults = Object.freeze({
-	root: ["border-transparent"],
-	logo: ["px-4"],
-	avatar: ["px-3"],
-	avatarInner: ["border-2", "border-white", "h-9", "w-9"],
-})
+import { getBuilderNamespace } from "../../api/stateapi"
 
 // Yes, navigator.platform is deprecated, but according to MDN in 2023
 // it's still the least bad way to detect what meta key means
@@ -19,15 +11,14 @@ export const metaKey =
 		: "^" // Ctrl
 
 const MainHeader: definition.UtilityComponent = (props) => {
-	const { context, id } = props
+	const { context } = props
 	const IOImage = component.getUtility("uesio/io.image")
-	const Avatar = component.getUtility("uesio/io.avatar")
-	const Button = component.getUtility("uesio/io.button")
-	const Icon = component.getUtility("uesio/io.icon")
-	const ViewHeader = component.getUtility("uesio/io.viewheader")
+	const Group = component.getUtility("uesio/io.group")
 
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-	const [buildMode, setBuildMode] = useBuildMode(context)
+	const workspace = context.getWorkspace()
+	if (!workspace) throw new Error("No Workspace Context Provided")
+	const nsInfo = getBuilderNamespace(context, workspace.app)
+
 	const [homeLogoLink, homeLogoOnClick] = api.signal.useLinkHandler(
 		[
 			{
@@ -41,53 +32,53 @@ const MainHeader: definition.UtilityComponent = (props) => {
 		context
 	)
 	return (
-		<ViewHeader
-			classes={classes}
-			logo={
+		<>
+			<Group context={context} variant="uesio/builder.appcrumb">
 				<IOImage
-					height="34"
-					file="uesio/core.logo"
+					height="32"
+					variant="uesio/builder.logo"
+					file="uesio/core.logowhite"
 					context={context}
 					onClick={homeLogoOnClick}
 					link={homeLogoLink}
 				/>
-			}
-			left={<HeaderCrumbs context={context} />}
-			right={
-				<>
-					<Button
-						context={context}
-						label={"Preview"}
-						icon={
-							<Icon
-								context={context}
-								weight={300}
-								fill={false}
-								icon={"visibility"}
-							/>
-						}
-						variant="uesio/builder.secondarytoolbar"
-						onClick={() => {
-							api.builder.getBuilderDeps(context).then(() => {
-								setBuildMode(!buildMode)
-							})
-						}}
-						tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
-						tooltipPlacement="left"
-					/>
-					<SaveCancelArea id={id} context={context} />
-				</>
-			}
-			avatar={
-				<Avatar
-					className={classes.avatarInner}
-					image="$User{picture}"
-					text="$User{initials}"
-					context={context}
+				<component.Component
+					componentType={"uesio/io.tile"}
+					path=""
+					definition={{
+						title: workspace.app,
+						icon: nsInfo?.icon,
+						iconcolor: nsInfo?.color,
+						["uesio.variant"]: "uesio/builder.apptag",
+						content: [
+							{
+								"uesio/io.text": {
+									text: workspace.app,
+								},
+							},
+						],
+						avatar: [
+							{
+								"uesio/io.text": {
+									["uesio.variant"]: "uesio/io.icon",
+									text: nsInfo?.icon,
+									color: nsInfo?.color,
+								},
+							},
+						],
+						signals: [
+							{
+								signal: "route/NAVIGATE",
+								path: `/app/${workspace.app}`,
+								namespace: "uesio/studio",
+							},
+						],
+					}}
+					context={context.deleteWorkspace()}
 				/>
-			}
-			context={context}
-		/>
+			</Group>
+			<HeaderCrumbs context={context} />
+		</>
 	)
 }
 

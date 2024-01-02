@@ -4,18 +4,21 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-600
-      - px-3
+      - text-slate-500
       - py-1
+      - px-2.5
       - rounded
       - text-xs
       - text-[8pt]
       - uppercase
       - border
-      - border-slate-200
+      - border-slate-50
       - whitespace-nowrap
       - bg-slate-50
       - leading-none
       - tracking-wider
-      - gap-3
+      - gap-2
+      - hover:bg-slate-200
+      - hover:text-slate-800
+      - hover:border-slate-200
 public: true

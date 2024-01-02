@@ -7,7 +7,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -29,11 +28,13 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 
 	site := session.GetSite()
 
-	profile, err := datasource.LoadAndHydrateProfile(user.Profile, session)
+	err := auth.HydrateUserPermissions(user, session)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
+
+	profile := user.ProfileRef
 
 	redirectKey := site.GetAppBundle().HomeRoute
 

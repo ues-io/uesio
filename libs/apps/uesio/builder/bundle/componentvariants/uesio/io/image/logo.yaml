@@ -1,0 +1,10 @@
+name: logo
+label: Logo
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-800
+      - rounded
+      - py-1.5
+      - px-2
+public: true

@@ -8,6 +8,8 @@ interface ScrollPanelProps extends definition.UtilityProps {
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	header: [],
+	footer: [],
 	inner: [],
 })
 
@@ -20,9 +22,9 @@ const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 		)
 		return (
 			<div id={props.id} ref={ref} className={classes.root}>
-				{props.header}
+				<div className={classes.header}>{props.header}</div>
 				<div className={classes.inner}>{props.children}</div>
-				{props.footer}
+				<div className={classes.footer}>{props.footer}</div>
 			</div>
 		)
 	}

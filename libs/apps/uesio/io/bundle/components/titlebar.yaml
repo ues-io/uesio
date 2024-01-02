@@ -6,6 +6,9 @@ entrypoint: components/titlebar/titlebar
 category: CONTENT
 discoverable: true
 slots:
+  - name: avatar
+    label: Title Bar Avatar
+    direction: HORIZONTAL
   - name: actions
     label: Title Bar Actions
     direction: HORIZONTAL
@@ -27,6 +30,7 @@ sections:
   - type: DISPLAY
 styleRegions:
   root:
+  avatar:
   content:
   title:
   subtitle:

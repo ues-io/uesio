@@ -1,4 +1,4 @@
 name: filesourceid
 type: "TEXT"
 label: "File Source Id"
-readOnly: true
+createOnly: true

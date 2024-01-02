@@ -1,12 +1,14 @@
-import { DragEvent } from "react"
+import { DragEvent, RefObject } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface UploadAreaProps {
 	accept?: string
 	onUpload: (files: FileList | null) => void
 	onDelete?: () => void
+	onClick?: () => void
 	uploadLabelId?: string
 	deleteLabelId?: string
+	fileInputRef?: RefObject<HTMLInputElement>
 }
 
 const StyleDefaults = Object.freeze({
@@ -24,6 +26,7 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
 		onUpload,
 		onDelete,
 		accept,
+		fileInputRef,
 	} = props
 
 	const onDrop = (e: DragEvent) => {
@@ -55,6 +58,13 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
 				onDragEnter={onDragEnter}
 				onDragLeave={onDragLeave}
 				className={classes.root}
+				onClick={(e) => {
+					if (props.onClick) {
+						e.preventDefault()
+						e.stopPropagation()
+						props.onClick()
+					}
+				}}
 			>
 				{children}
 			</div>
@@ -65,6 +75,7 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
 				onChange={(e) => {
 					onUpload(e.target.files)
 				}}
+				ref={fileInputRef}
 				id={uploadLabelId}
 			/>
 			{onDelete && (

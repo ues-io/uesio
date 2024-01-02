@@ -1,0 +1,35 @@
+name: breadcrumb
+label: Bread Crumb
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - relative
+      - px-1
+      - py-0.5
+      - text-sm
+      - text-slate-700
+      - max-width=[180px]
+      - items-center
+      - rounded
+      - tracking-wide
+      - gap-1.5
+      - ml-3.5
+      - after:text-slate-200
+      - after:-left-2.5
+      - after:content-["/"]
+      - after:text-xl
+      - after:font-light
+      - after:absolute
+      - after:top-1/2
+      - after:translate-y-[-50%]
+      - after:pointer-events-none
+    content:
+      - whitespace-nowrap
+      - text-ellipsis
+      - text-xs
+    avatar:
+      - flex
+      - text-xs
+
+public: true

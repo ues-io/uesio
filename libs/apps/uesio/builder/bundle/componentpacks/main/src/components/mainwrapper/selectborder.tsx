@@ -36,14 +36,14 @@ const StyleDefaults = Object.freeze({
 		"after:inset-0",
 		"after:pointer-events-none",
 		"after:outline-dashed",
-		"after:outline-2",
-		"after:outline-blue-600",
+		"after:outline-1",
+		"after:outline-[$Theme{color.primary}]",
 		"after:-outline-offset-[2px]",
 		"after:z-10",
 	],
 	selectedAlways: ["relative"],
-	arrow: ["fill-blue-600"],
-	popper: ["bg-blue-600", "rounded"],
+	arrow: ["fill-[$Theme{color.primary}]"],
+	popper: ["bg-[$Theme{color.primary}]", "rounded"],
 	dragging: ["opacity-20"],
 	empty: [
 		"bg-blue-50",
@@ -123,6 +123,8 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
 
+	const selectedClasses = classes.selected.split(" ")
+
 	const [
 		selectedChildIndex,
 		selectedParentPath,
@@ -134,7 +136,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		// Selected component handling
 		if (selectedChildren?.current) {
 			selectedChildren.current.forEach((child) => {
-				child.classList.remove(...StyleDefaults.selected)
+				child.classList.remove(...selectedClasses)
 			})
 		}
 
@@ -149,7 +151,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		)
 
 		selectedChildren.current.forEach((target) => {
-			target.classList.add(...StyleDefaults.selected)
+			target.classList.add(...selectedClasses)
 			if (!target.classList.contains("absolute")) {
 				target.classList.add(...StyleDefaults.selectedAlways)
 			}

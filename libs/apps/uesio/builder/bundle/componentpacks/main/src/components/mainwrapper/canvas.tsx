@@ -26,7 +26,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["overflow-hidden", "h-full", "relative"],
+			root: ["overflow-hidden", "h-full", "relative", "bg-white", "p-12"],
 
 			scrollwrapper: ["overflow-auto", "h-full", "w-full"],
 
@@ -38,16 +38,22 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				`h-[${height ? height + "px" : "100%"}]`,
 				"mx-auto",
 				"transition-all",
-				"border",
-				"border-slate-500",
-				"rounded-md",
 			],
 			contentwrapper: [
 				"overflow-auto",
 				"h-full",
 				"[container-type:inline-size]",
+				height && "border-y",
+				width && "border-x",
+				"border-dashed",
+				"border-slate-300",
 				"pointer-events-none",
 			],
+			line: ["absolute", "border-dashed", "border-slate-300", "z-10"],
+			top: ["right-0", "left-0", "border-t"],
+			bottom: ["right-0", "left-0", "bottom-12", "border-b"],
+			left: ["top-0", "bottom-0", "border-l"],
+			right: ["top-0", "bottom-0", "right-12", "border-r"],
 		},
 		props
 	)
@@ -127,6 +133,18 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onClick={onClick}
 			className={classes.root}
 		>
+			{!height && (
+				<>
+					<div className={styles.cx(classes.line, classes.top)} />
+					<div className={styles.cx(classes.line, classes.bottom)} />
+				</>
+			)}
+			{!width && (
+				<>
+					<div className={styles.cx(classes.line, classes.left)} />
+					<div className={styles.cx(classes.line, classes.right)} />
+				</>
+			)}
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
 					<div ref={contentRef} className={classes.contentwrapper}>

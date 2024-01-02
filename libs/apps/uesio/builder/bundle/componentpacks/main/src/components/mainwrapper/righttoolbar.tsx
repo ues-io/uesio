@@ -3,8 +3,16 @@ import DeviceSizer from "./devicesizer"
 import { metaKey } from "./mainheader"
 
 const StyleDefaults = Object.freeze({
-	root: ["w-9", "grid", "gap-4", "auto-rows-min"],
-	panel: ["grid", "justify-center"],
+	root: [
+		"grid",
+		"gap-4",
+		"grid-flow-col",
+		"auto-cols-min",
+		"absolute",
+		"bottom-2.5",
+		"right-14",
+	],
+	panel: ["grid", "justify-center", "grid-flow-col"],
 })
 
 const RightToolbar: definition.UtilityComponent = (props) => {

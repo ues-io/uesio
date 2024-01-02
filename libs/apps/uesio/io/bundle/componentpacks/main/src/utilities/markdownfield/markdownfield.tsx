@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import CodeField from "../codefield/codefield"
 
 export interface MarkdownComponentOptions {
 	attachmentsWire?: string
@@ -17,6 +18,7 @@ interface MarkDownFieldProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
+	readonly?: boolean
 	options?: MarkdownFieldOptions
 }
 
@@ -79,7 +81,7 @@ const findAttachmentMatch = (
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 	props
 ) => {
-	const { options = {}, context, value = "" } = props
+	const { options = {}, context, mode, readonly, setValue } = props
 	const { attachments } = options
 
 	const classes = styles.useUtilityStyleTokens(
@@ -87,10 +89,24 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 		props,
 		"uesio/io.markdownfield"
 	)
+	const value = context.merge((props.value || "") as string) as string
+
+	if (!readonly && mode === "EDIT") {
+		return (
+			<CodeField
+				language="markdown"
+				className={classes.root}
+				value={value}
+				context={context}
+				setValue={(v) => setValue?.(v)}
+				mode="EDIT"
+			/>
+		)
+	}
 
 	return (
 		<ReactMarkdown
-			children={context.merge(value as string) as string}
+			children={value}
 			remarkPlugins={[remarkGfm]}
 			className={classes.root}
 			components={{

@@ -1,0 +1,12 @@
+name: appsearch
+label: App Search
+definition:
+  uesio.styleTokens:
+    root:
+      - py-0
+      - "[&_input]:border-2"
+      - "[&_input]:border-slate-800"
+      - "[&_input]:w-[100%]"
+      - "[&_input]:py-1.5"
+      - "[&_input]:text-xs"
+public: true

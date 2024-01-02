@@ -4,6 +4,7 @@ import Tile from "../tile/tile"
 import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
 import { UserFileMetadata } from "../../components/field/field"
+import { useRef } from "react"
 
 interface FileUtilityProps {
 	id?: string
@@ -16,13 +17,12 @@ interface FileUtilityProps {
 
 const StyleDefaults = Object.freeze({
 	uploadarea: [
-		"border(& dashed slate-300)",
+		"border(& dashed slate-300 4)",
 		"rounded-lg",
 		"p-10",
 		"text-xs",
 		"align-center",
 	],
-
 	filetag: [
 		"p-1",
 		"my-2",
@@ -31,6 +31,11 @@ const StyleDefaults = Object.freeze({
 		"inline-block",
 		"rounded",
 		"bg-slate-100",
+	],
+	emptystate: [
+		"hover:border(& dashed blue-500 4)",
+		"text-md",
+		"cursor-pointer",
 	],
 	filename: ["text-xs", "text-slate-700", "px-2", "py1"],
 	download: [],
@@ -50,6 +55,8 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
 
+	const fileInputRef = useRef<HTMLInputElement>(null)
+
 	return (
 		<>
 			{mode === "EDIT" && (
@@ -58,11 +65,18 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 					onDelete={onDelete}
 					context={context}
 					accept={accept}
-					className={classes.uploadarea}
+					className={styles.cx(
+						classes.uploadarea,
+						!userFileId && classes.emptystate
+					)}
 					uploadLabelId={uploadLabelId}
 					deleteLabelId={deleteLabelId}
+					fileInputRef={fileInputRef}
+					onClick={() => {
+						fileInputRef.current?.click()
+					}}
 				>
-					<div>Drag your file here to upload.</div>
+					<div>Click or drag your file here to upload.</div>
 				</UploadArea>
 			)}
 

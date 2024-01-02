@@ -9,6 +9,8 @@ type Props = {
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	header: [],
+	footer: [],
 	inner: [],
 })
 

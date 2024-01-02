@@ -1,0 +1,16 @@
+name: left
+label: Left Sidebar
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    header:
+      - p-3
+      - gap-3
+      - grid
+    inner:
+      - px-3
+      - grid
+      - gap-3
+      - auto-rows-max
+    footer:
+      - p-3

@@ -25,18 +25,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: selectlists
-                itemIcon: playlist_add_check
-                itemName: $Param{selectlistname}
-                itemNameSpace: $Param{namespace}
-                itemNameSpaceIcon: ${selectlists:uesio/studio.appicon}
-                itemNameSpaceColor: ${selectlists:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -44,6 +32,12 @@ definition:
               view: workspacenav
               params:
                 selected: selectlists
+                itemType: selectlists
+                itemIcon: playlist_add_check
+                itemName: $Param{selectlistname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${selectlists:uesio/studio.appicon}
+                itemNameSpaceColor: ${selectlists:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: selectlistsList

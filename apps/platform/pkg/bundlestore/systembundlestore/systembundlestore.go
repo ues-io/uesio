@@ -213,7 +213,7 @@ func (b *SystemBundleStoreConnection) StoreItem(path string, reader io.Reader) e
 }
 
 func (b *SystemBundleStoreConnection) DeleteBundle() error {
-	return errors.New("Tried to delete bundle in System Bundle Store")
+	return errors.New("tried to delete bundle in System Bundle Store")
 }
 
 func (b *SystemBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
