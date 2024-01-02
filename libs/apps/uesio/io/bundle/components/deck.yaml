@@ -44,7 +44,7 @@ properties:
     type: METADATA
     metadata:
       type: COMPONENTVARIANT
-      component: uesio/io.grid
+      grouping: uesio/io.grid
 sections:
   - type: HOME
     properties:

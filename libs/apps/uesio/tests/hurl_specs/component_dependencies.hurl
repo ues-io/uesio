@@ -110,3 +110,16 @@ jsonpath "$.dependencies.componenttype[8].slots[0].name" == "header"
 jsonpath "$.dependencies.componenttype[8].slots[0].defaultContent" count == 1
 jsonpath "$.dependencies.componenttype[8].slots[1].name" == "footer"
 jsonpath "$.dependencies.componenttype[8].slots[1].defaultContent" not exists
+
+# Test that components with variant properties, and variants with definitions containing variant properties,
+# are propertly parsed to load these variants
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/variant_definition_dependencies
+HTTP 200
+[Asserts]
+# Because we specify "uesio/io.three_column_grid" as the DECK variant,
+# and this variant has a definition with a gridVariant property,
+# we should load the corresponding "uesio/io.grid" component variant
+jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant['uesio/io.grid:uesio/io.three_columns'].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant['uesio/io.deck:uesio/io.three_column_grid'].component" == "uesio/io.deck"
