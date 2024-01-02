@@ -53,7 +53,7 @@ definition:
                           value: settings
                     signals:
                       - signal: "route/NAVIGATE"
-                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configuration
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/settings
                     content:
                       - uesio/io.text:
                           text: Settings

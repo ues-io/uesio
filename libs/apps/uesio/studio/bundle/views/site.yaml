@@ -70,6 +70,8 @@ definition:
               view: sitenav
               uesio.context:
                 wire: sites
+              params:
+                selected: home
         content:
           - uesio/io.list:
               uesio.id: siteDeck

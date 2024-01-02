@@ -16,7 +16,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 	return (
 		<Group context={context} variant="uesio/builder.crumbsbox">
 			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
 					title: workspace.name,
@@ -32,7 +32,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
 					title: "views",
@@ -48,7 +48,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
 					title: viewName,

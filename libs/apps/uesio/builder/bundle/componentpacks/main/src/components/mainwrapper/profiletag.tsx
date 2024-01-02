@@ -10,7 +10,7 @@ const ProfileTag: definition.UtilityComponent = (props) => {
 			context={context}
 			variant="uesio/builder.profile"
 			title="$User{username}"
-			subtitle="$User{profilelabel}"
+			subtitle="$User{profileLabel}"
 			avatar={
 				<Avatar
 					image="$User{picture}"

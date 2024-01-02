@@ -66,21 +66,6 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		)
 	})
 
-	const toggleCode = api.signal.getHandler(
-		[
-			{
-				signal: "component/CALL",
-				component: "uesio/builder.mainwrapper",
-				componentsignal: "TOGGLE_CODE",
-			},
-		],
-		context
-	)
-
-	hooks.useHotKeyCallback("meta+y", () => {
-		toggleCode?.()
-	})
-
 	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
 	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
 
@@ -106,7 +91,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 			</Grid>
 			<Grid className={classes.canvaswrap} context={builderContext}>
 				<div className={classes.canvaswrapinner}>
-					<Canvas context={canvasContext}>
+					<Canvas context={builderContext}>
 						<component.ViewArea
 							context={canvasContext}
 							definition={definition}

@@ -35,7 +35,7 @@ type UserMergeData struct {
 	FirstName    string                `json:"firstname"`
 	LastName     string                `json:"lastname"`
 	Profile      string                `json:"profile"`
-	ProfileLabel string                `json:"profilelabel"`
+	ProfileLabel string                `json:"profileLabel"`
 	Site         string                `json:"site"`
 	ID           string                `json:"id"`
 	Username     string                `json:"username"`

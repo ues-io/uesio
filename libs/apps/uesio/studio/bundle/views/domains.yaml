@@ -82,6 +82,8 @@ definition:
                 wire: sites
               params:
                 selected: domains
+                itemType: domains
+                itemIcon: verified_user
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

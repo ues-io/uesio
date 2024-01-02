@@ -50,6 +50,8 @@ definition:
                 wire: sites
               params:
                 selected: collections
+                itemType: collections
+                itemIcon: list
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

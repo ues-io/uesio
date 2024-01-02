@@ -17,16 +17,17 @@ definition:
       - border-2
       - border-slate-800
       - hover:border-slate-900
-      - relative
-      - after:right-2
-      - after:content-["expand\\_all"]
-      - after:font-[Material_Icons]
-      - after:text-xs
-      - after:text-slate-900
-      - after:absolute
-      - after:top-1/2
-      - after:translate-y-[-50%]
-      - after:pointer-events-none
+      # TODO: Add this expand icon back when we implement the app picker
+      # - relative
+      # - after:right-2
+      # - after:content-["expand\\_all"]
+      # - after:font-[Material_Icons]
+      # - after:text-xs
+      # - after:text-slate-900
+      # - after:absolute
+      # - after:top-1/2
+      # - after:translate-y-[-50%]
+      # - after:pointer-events-none
     content:
       - whitespace-nowrap
       - text-ellipsis

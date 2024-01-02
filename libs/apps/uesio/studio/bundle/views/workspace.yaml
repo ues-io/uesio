@@ -28,8 +28,6 @@ definition:
               view: workspacenav
               params:
                 selected: home
-                itemType: home
-                itemIcon: home
         content:
           - uesio/io.list:
               wire: workspaces

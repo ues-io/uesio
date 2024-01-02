@@ -11,10 +11,17 @@ definition:
             collection: uesio/studio.site
         uesio.id: sitestag
         components:
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               title: ${uesio/studio.name}
               icon: public
               path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
+          - uesio/builder.breadcrumb:
+              uesio.display:
+                - type: paramIsSet
+                  param: itemType
+              title: $Param{itemType}
+              icon: $Param{itemIcon}
+              path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/$Param{itemType}
     - uesio/io.group:
         uesio.variant: uesio/builder.crumbsbox
         uesio.display:
@@ -22,7 +29,7 @@ definition:
             collection: uesio/studio.bundle
         uesio.id: sitestag
         components:
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               title: ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
               icon: inventory_2
               path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
@@ -33,7 +40,7 @@ definition:
             collection: uesio/studio.team
         uesio.id: teamstag
         components:
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               title: ${uesio/studio.name}
               icon: groups
               path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
@@ -44,11 +51,11 @@ definition:
             collection: uesio/studio.workspace
         uesio.id: workspaceapptag
         components:
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               title: ${uesio/studio.name}
               icon: handyman
               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               uesio.display:
                 - type: paramIsSet
                   param: itemType
@@ -56,7 +63,7 @@ definition:
               icon: $Param{itemIcon}
               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
           #Buttons for all views with updated URL's
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               uesio.display:
                 - type: paramIsSet
                   param: itemName
@@ -66,7 +73,7 @@ definition:
               icon: $Param{itemNameSpaceIcon}
               iconcolor: $Param{itemNameSpaceColor}
               path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
-          - uesio/io.navtile:
+          - uesio/builder.breadcrumb:
               uesio.display:
                 - type: paramIsSet
                   param: itemName

@@ -25,6 +25,24 @@ definition:
           - uesio/studio.navsection:
               title: Site Admin
               content:
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.id: home
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: home
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
+                    content:
+                      - uesio/io.text:
+                          text: Home
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: home
                 - uesio/studio.sitenavtile:
                     title: Users
                     icon: person

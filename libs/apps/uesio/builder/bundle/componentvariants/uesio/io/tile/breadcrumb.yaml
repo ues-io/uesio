@@ -1,8 +1,5 @@
-# This is currently only used in the studio.
-# If more general use cases are not found for this,
-# we should move it to the studio app.
-name: tag
-label: Tag
+name: breadcrumb
+label: Bread Crumb
 extends: uesio/io.default
 definition:
   uesio.styleTokens:

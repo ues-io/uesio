@@ -85,6 +85,8 @@ definition:
                 wire: sites
               params:
                 selected: users
+                itemType: users
+                itemIcon: person
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

@@ -4,7 +4,7 @@ definition:
     - uesio/io.titlebar:
         uesio.variant: uesio/builder.profile
         title: $User{username}
-        subtitle: $User{profilelabel}
+        subtitle: $User{profileLabel}
         avatar:
           - uesio/io.avatar:
               uesio.styleTokens:
