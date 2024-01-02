@@ -21,6 +21,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				definition={{
 					title: workspace.name,
 					icon: "handyman",
+					tileVariant: "uesio/builder.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",
@@ -37,6 +38,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				definition={{
 					title: "views",
 					icon: "view_quilt",
+					tileVariant: "uesio/builder.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",
@@ -54,6 +56,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 					title: viewName,
 					icon: itemNSInfo?.icon,
 					iconcolor: itemNSInfo?.color,
+					tileVariant: "uesio/builder.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",

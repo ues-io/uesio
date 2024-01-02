@@ -43,36 +43,14 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					link={homeLogoLink}
 				/>
 				<component.Component
-					componentType={"uesio/io.tile"}
+					componentType={"uesio/builder.breadcrumb"}
 					path=""
 					definition={{
 						title: workspace.app,
 						icon: nsInfo?.icon,
 						iconcolor: nsInfo?.color,
-						["uesio.variant"]: "uesio/builder.apptag",
-						content: [
-							{
-								"uesio/io.text": {
-									text: workspace.app,
-								},
-							},
-						],
-						avatar: [
-							{
-								"uesio/io.text": {
-									["uesio.variant"]: "uesio/io.icon",
-									text: nsInfo?.icon,
-									color: nsInfo?.color,
-								},
-							},
-						],
-						signals: [
-							{
-								signal: "route/NAVIGATE",
-								path: `/app/${workspace.app}`,
-								namespace: "uesio/studio",
-							},
-						],
+						tileVariant: "uesio/builder.apptag",
+						path: `/app/${workspace.app}`,
 					}}
 					context={context.deleteWorkspace()}
 				/>

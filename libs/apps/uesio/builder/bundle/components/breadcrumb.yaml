@@ -15,6 +15,13 @@ properties:
   - type: TEXT
     name: path
     label: Link navigate path
+  - name: tileVariant
+    label: Tile Variant
+    type: METADATA
+    defaultValue: uesio/builder.breadcrumb
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.tile
 definition:
   - uesio/builder.icontile:
       signals:
@@ -23,3 +30,4 @@ definition:
       title: $Prop{title}
       icon: $Prop{icon}
       iconcolor: $Prop{iconcolor}
+      tileVariant: $Prop{tileVariant}

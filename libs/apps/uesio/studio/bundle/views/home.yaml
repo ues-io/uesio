@@ -5,27 +5,11 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
-        uesio.styleTokens:
-          left:
-            - block
         uesio.variant: uesio/studio.main
         left:
           - uesio/core.view:
               view: homeleftnav
               uesio.id: orglist
-              wire: orgs
-              components:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    content:
-                      - uesio/io.text:
-                          text: ${uesio/core.uniquekey}
-                          element: div
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          color: "#21242D"
-                          text: domain
         content:
           - uesio/core.view:
               view: homecontent

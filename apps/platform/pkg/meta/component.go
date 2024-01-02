@@ -53,7 +53,7 @@ type Component struct {
 
 	// Internal only
 	slotDefs             []*SlotDefinition
-	variantPropertyNames map[string]string
+	variantPropertyNames map[string]*PropertyDefinition
 	defaultVariant       string
 }
 
@@ -71,9 +71,10 @@ type SlotDefinition struct {
 // to extract variant dependencies from properties of type "METADATA"
 // with metadata.type="COMPONENTVARIANT"
 type PropertyDefinition struct {
-	Name     string                 `yaml:"name"`
-	Type     string                 `yaml:"type"`
-	Metadata *MetadataFieldMetadata `yaml:"metadata"`
+	Name         string                 `yaml:"name"`
+	Type         string                 `yaml:"type"`
+	DefaultValue string                 `yaml:"defaultValue"`
+	Metadata     *MetadataFieldMetadata `yaml:"metadata"`
 }
 
 // GetFullPath returns a JSONPointer for extracting a component slot within an instance of this component
@@ -99,7 +100,7 @@ func (c *Component) GetSlotDefinitions() []*SlotDefinition {
 
 // GetVariantPropertyNames returns a map/set of component properties of type: METADATA
 // with metadata.type = "COMPONENTVARIANT"
-func (c *Component) GetVariantPropertyNames() map[string]string {
+func (c *Component) GetVariantPropertyNames() map[string]*PropertyDefinition {
 	if c.variantPropertyNames == nil && c.Properties != nil {
 		parsedProps := make([]*PropertyDefinition, 0)
 		// Decode the properties
@@ -108,12 +109,12 @@ func (c *Component) GetVariantPropertyNames() map[string]string {
 			parsedProps = []*PropertyDefinition{}
 		}
 		// Now extract out just the properties of type METADATA with subtype COMPONENTVARIANT
-		c.variantPropertyNames = map[string]string{}
+		c.variantPropertyNames = map[string]*PropertyDefinition{}
 		for _, prop := range parsedProps {
 			// TODO: Consider METADATA properties nested within "LIST" / "STRUCT" Properties.
 			// For now just handling top-level
 			if prop.Type == "METADATA" && prop.Metadata != nil && prop.Metadata.Type == "COMPONENTVARIANT" && prop.Metadata.Grouping != "" {
-				c.variantPropertyNames[prop.Name] = prop.Metadata.Grouping
+				c.variantPropertyNames[prop.Name] = prop
 			}
 		}
 	}

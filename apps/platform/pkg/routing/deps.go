@@ -591,8 +591,18 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 
 	foundComponentVariant := false
 
+	// Load in default variants just in case
+	for _, propDef := range variantPropertyNames {
+		if propDef.DefaultValue != "" {
+			if err := addComponentVariantDep(depMap, propDef.DefaultValue, propDef.Metadata.Grouping, session); err != nil {
+				return err
+			}
+		}
+	}
+
 	for i, prop := range compDefinitionMap.Content {
-		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || variantPropertyNames[prop.Value] != "") {
+		propDef := variantPropertyNames[prop.Value]
+		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || propDef != nil) {
 			if len(compDefinitionMap.Content) > i {
 				valueNode := compDefinitionMap.Content[i+1]
 				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
@@ -606,7 +616,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 							useComponentName = variantNameParts[0]
 							useVariantName = variantNameParts[1]
 						} else {
-							useComponentName = variantPropertyNames[prop.Value]
+							useComponentName = propDef.Metadata.Grouping
 							useVariantName = variantNameParts[0]
 						}
 					}
