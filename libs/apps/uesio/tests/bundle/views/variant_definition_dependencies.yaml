@@ -1,0 +1,9 @@
+name: variant_definition_dependencies
+definition:
+  components:
+    - uesio/io.deck:
+        uesio.variant: uesio/io.three_column_grid
+        components:
+          - uesio/io.text:
+            text: Foo bar
+  panels:

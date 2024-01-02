@@ -59,6 +59,16 @@ properties:
         #   name: onselect
         #   label: On-select Signals
         # - type: DISPLAY
+  - name: labelsVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.tablabels
+  - name: panelVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.scrollpanel
 sections:
   - label: Tabs
     id: tabs

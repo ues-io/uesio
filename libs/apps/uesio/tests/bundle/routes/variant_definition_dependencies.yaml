@@ -1,0 +1,4 @@
+name: variant_definition_dependencies
+path: variant_definition_dependencies
+view: variant_definition_dependencies
+title: Tests loading of variants specified via variant properties and variant definition YAML

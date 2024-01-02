@@ -52,8 +52,9 @@ type Component struct {
 	StyleRegions      *YAMLDef `yaml:"styleRegions,omitempty" json:"uesio/studio.styleregions"`
 
 	// Internal only
-	slotDefs       []*SlotDefinition
-	defaultVariant string
+	slotDefs             []*SlotDefinition
+	variantPropertyNames map[string]string
+	defaultVariant       string
 }
 
 var no_default_variant = "--no-default--"
@@ -64,6 +65,15 @@ type SlotDefinition struct {
 	DefaultContent *YAMLDef `yaml:"defaultContent,omitempty"`
 	Label          string   `yaml:"label,omitempty"`
 	Direction      string   `yaml:"direction,omitempty"`
+}
+
+// PropertyDefinition is used (currently) only during view dependency processing
+// to extract variant dependencies from properties of type "METADATA"
+// with metadata.type="COMPONENTVARIANT"
+type PropertyDefinition struct {
+	Name     string                 `yaml:"name"`
+	Type     string                 `yaml:"type"`
+	Metadata *MetadataFieldMetadata `yaml:"metadata"`
 }
 
 // GetFullPath returns a JSONPointer for extracting a component slot within an instance of this component
@@ -85,6 +95,29 @@ func (c *Component) GetSlotDefinitions() []*SlotDefinition {
 		c.slotDefs = parsedSlots
 	}
 	return c.slotDefs
+}
+
+// GetVariantPropertyNames returns a map/set of component properties of type: METADATA
+// with metadata.type = "COMPONENTVARIANT"
+func (c *Component) GetVariantPropertyNames() map[string]string {
+	if c.variantPropertyNames == nil && c.Properties != nil {
+		parsedProps := make([]*PropertyDefinition, 0)
+		// Decode the properties
+		err := c.Properties.Decode(&parsedProps)
+		if err != nil {
+			parsedProps = []*PropertyDefinition{}
+		}
+		// Now extract out just the properties of type METADATA with subtype COMPONENTVARIANT
+		c.variantPropertyNames = map[string]string{}
+		for _, prop := range parsedProps {
+			// TODO: Consider METADATA properties nested within "LIST" / "STRUCT" Properties.
+			// For now just handling top-level
+			if prop.Type == "METADATA" && prop.Metadata != nil && prop.Metadata.Type == "COMPONENTVARIANT" && prop.Metadata.Grouping != "" {
+				c.variantPropertyNames[prop.Name] = prop.Metadata.Grouping
+			}
+		}
+	}
+	return c.variantPropertyNames
 }
 
 // GetDefaultVariant returns the default variant for a Component by inspecting the default definition

@@ -71,35 +71,6 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 	return "", errors.New("Invalid Variant Key: " + fullName)
 }
 
-func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) error {
-	variantDep, err := loadVariant(key, session)
-	if err != nil {
-		return err
-	}
-	if variantDep.Extends != "" && key != variantDep.GetExtendsKey() {
-		qualifiedKey, err := getFullyQualifiedVariantKey(variantDep.Extends, variantDep.Component)
-		if err != nil {
-			return err
-		}
-		err = addVariantDep(deps, qualifiedKey, session)
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, key := range variantDep.Variants {
-		variantDep, err := loadVariant(key, session)
-		if err != nil {
-			return err
-		}
-		deps.ComponentVariant.AddItem(variantDep)
-	}
-
-	deps.ComponentVariant.AddItem(variantDep)
-	return nil
-
-}
-
 func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, session *sess.Session) {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
 	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
@@ -111,8 +82,7 @@ func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName strin
 		}
 	}
 	if pack.UpdatedAt == 0 {
-		err := bundle.Load(pack, session, nil)
-		if err != nil || pack.UpdatedAt == 0 {
+		if err := bundle.Load(pack, session, nil); err != nil || pack.UpdatedAt == 0 {
 			pack.UpdatedAt = time.Now().Unix()
 		}
 	}
@@ -131,8 +101,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 	utility := meta.NewBaseUtility(namespace, name)
 
-	err = bundle.Load(utility, session, nil)
-	if err != nil {
+	if err = bundle.Load(utility, session, nil); err != nil {
 		return err
 	}
 
@@ -156,38 +125,28 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	// so that we can send down their runtime definition metadata into the View HTML.
 	deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
 
-	// need an admin session for retrieving config values
-	// in order to prevent users from having to have read on the uesio/core.configvalue table
-	adminSession := datasource.GetSiteAdminSession(session)
-
-	for _, key := range component.ConfigValues {
-
-		value, err := configstore.GetValueFromKey(key, adminSession)
-		if err != nil {
-			return err
-		}
-		configvalue, err := meta.NewConfigValue(key)
-		if err != nil {
-			return err
-		}
-		configvalue.Value = value
-		deps.ConfigValue.AddItem(configvalue)
-	}
-
-	for _, key := range component.Variants {
-		err := addVariantDep(deps, key, session)
-		if err != nil {
-			return err
+	if component.ConfigValues != nil && len(component.ConfigValues) > 0 {
+		// need an admin session for retrieving config values
+		// in order to prevent users from having to have read on the uesio/core.configvalue table
+		adminSession := datasource.GetSiteAdminSession(session)
+		for _, key := range component.ConfigValues {
+			value, err := configstore.GetValueFromKey(key, adminSession)
+			if err != nil {
+				return err
+			}
+			configvalue, err := meta.NewConfigValue(key)
+			if err != nil {
+				return err
+			}
+			configvalue.Value = value
+			deps.ConfigValue.AddItem(configvalue)
 		}
 	}
-
 	for _, key := range component.Utilities {
-		err := getDepsForUtilityComponent(key, deps, session)
-		if err != nil {
-			return err
+		if utilityErr := getDepsForUtilityComponent(key, deps, session); utilityErr != nil {
+			return utilityErr
 		}
 	}
-
 	return nil
 }
 
@@ -240,18 +199,14 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		return err
 	}
 
-	for key := range depMap.Variants {
-		err := addVariantDep(deps, key, session)
-		if err != nil {
-			return err
+	for _, component := range depMap.Components {
+		if compDepsErr := getDepsForComponent(component, deps, session); compDepsErr != nil {
+			return compDepsErr
 		}
 	}
 
-	for _, component := range depMap.Components {
-		err := getDepsForComponent(component, deps, session)
-		if err != nil {
-			return err
-		}
+	for _, variant := range depMap.Variants {
+		deps.ComponentVariant.AddItemIfNotExists(variant)
 	}
 
 	for viewKey, viewCompDef := range depMap.Views {
@@ -536,13 +491,56 @@ func addStaticFileModstampsForWorkspaceToDeps(deps *PreloadMetadata, workspace *
 	return nil
 }
 
-func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string) error {
+func addComponentVariantDep(depMap *ViewDepMap, variantName string, compName string, session *sess.Session) error {
 	qualifiedKey, err := getFullyQualifiedVariantKey(variantName, compName)
 	if err != nil {
 		// TODO: We should probably return an error here at some point
 		return err
 	}
-	depMap.Variants[qualifiedKey] = true
+	// Only load if we don't have it already
+	if _, isPresent := depMap.Variants[qualifiedKey]; isPresent {
+		return nil
+	}
+	// Otherwise load the variant
+	variant, loadErr := loadVariant(qualifiedKey, session)
+	if loadErr != nil {
+		return loadErr
+	}
+	// Mark that we have loaded this variant, so that we won't try to double-load it as part of dep processing
+	depMap.Variants[qualifiedKey] = variant
+	// Process the parent variant, if we haven't done that yet.
+	if variant.Extends != "" && qualifiedKey != variant.GetExtendsKey() {
+		extendsKey, extendsErr := getFullyQualifiedVariantKey(variant.Extends, variant.Component)
+		if extendsErr != nil {
+			return extendsErr
+		}
+		extendsErr = addComponentVariantDep(depMap, extendsKey, compName, session)
+		if extendsErr != nil {
+			return extendsErr
+		}
+	}
+
+	// Process dependency variants
+	for _, key := range variant.Variants {
+		// Parse the dependency name to get the dependent component type
+		parts := strings.Split(key, ":")
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid dependent variant '%s' specified for parent component %s", key, compName)
+		}
+		depCompName := parts[0]
+		depVariantKey := parts[1]
+		depErr := addComponentVariantDep(depMap, depVariantKey, depCompName, session)
+		if depErr != nil {
+			return err
+		}
+	}
+	// Finally, process the definition itself as a "component" area
+	if variant.Definition != nil && variant.Definition.Content != nil && len(variant.Definition.Content) > 0 {
+		if compDefErr := getComponentDeps(compName, (*yaml.Node)(variant.Definition), depMap, session); compDefErr != nil {
+			return compDefErr
+		}
+	}
+
 	return nil
 }
 
@@ -589,15 +587,30 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 	}
 
 	slotDefinitions := compDef.GetSlotDefinitions()
+	variantPropertyNames := compDef.GetVariantPropertyNames()
 
 	foundComponentVariant := false
 
 	for i, prop := range compDefinitionMap.Content {
-		if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
+		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || variantPropertyNames[prop.Value] != "") {
 			if len(compDefinitionMap.Content) > i {
 				valueNode := compDefinitionMap.Content[i+1]
 				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-					if err = addComponentVariantDep(depMap, valueNode.Value, compName); err == nil {
+					useComponentName := compName
+					useVariantName := valueNode.Value
+					if prop.Value != "uesio.variant" {
+						// Check if the value contains a fully-qualified variant name, e.g. "uesio/io.grid:uesio/io.two_columns",
+						// vs "uesio/io.two_columns"
+						variantNameParts := strings.Split(useVariantName, ":")
+						if len(variantNameParts) > 1 {
+							useComponentName = variantNameParts[0]
+							useVariantName = variantNameParts[1]
+						} else {
+							useComponentName = variantPropertyNames[prop.Value]
+							useVariantName = variantNameParts[0]
+						}
+					}
+					if err = addComponentVariantDep(depMap, useVariantName, useComponentName, session); err == nil {
 						foundComponentVariant = true
 					}
 				}
@@ -615,7 +628,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 	if !foundComponentVariant {
 		defaultVariant := compDef.GetDefaultVariant()
 		if defaultVariant != "" {
-			if err := addComponentVariantDep(depMap, defaultVariant, compName); err == nil {
+			if err := addComponentVariantDep(depMap, defaultVariant, compName, session); err == nil {
 				compDefinitionMap.Content = append(compDefinitionMap.Content,
 					&yaml.Node{
 						Kind:  yaml.ScalarNode,
@@ -677,7 +690,7 @@ func isComponentLike(node *yaml.Node) bool {
 
 type ViewDepMap struct {
 	Components map[string]*meta.Component
-	Variants   map[string]bool
+	Variants   map[string]*meta.ComponentVariant
 	Views      map[string]*yaml.Node
 	Wires      []meta.NodePair
 }
@@ -703,13 +716,22 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 			return nil, err
 		}
 	}
+	// Process any variants now
+	if len(component.Variants) > 0 {
+		for _, variantKey := range component.Variants {
+			if variantErr := addComponentVariantDep(vdm, variantKey, key, session); variantErr != nil {
+				return nil, variantErr
+			}
+		}
+
+	}
 	return component, nil
 }
 
 func NewViewDefMap() *ViewDepMap {
 	return &ViewDepMap{
 		Components: map[string]*meta.Component{},
-		Variants:   map[string]bool{},
+		Variants:   map[string]*meta.ComponentVariant{},
 		Views:      map[string]*yaml.Node{},
 		Wires:      []meta.NodePair{},
 	}

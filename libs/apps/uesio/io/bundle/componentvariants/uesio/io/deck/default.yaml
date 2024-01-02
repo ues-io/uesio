@@ -1,0 +1,7 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+public: true
