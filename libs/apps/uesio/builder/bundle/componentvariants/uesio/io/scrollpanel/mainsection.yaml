@@ -6,8 +6,9 @@ definition:
     root:
       - bg-white
       - relative
-      - rounded-md
+      - rounded
       - overflow-hidden
-      - shadow-lg
-      - shadow-slate-200
+      - shadow-sm
+      - border
+      - border-slate-300
 public: true

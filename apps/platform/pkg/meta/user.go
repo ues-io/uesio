@@ -12,6 +12,11 @@ type User struct {
 	Picture     *UserFileMetadata `json:"uesio/core.picture"`
 	Language    string            `json:"uesio/core.language"`
 	Permissions *PermissionSet    `json:"-"`
+	ProfileRef  *Profile          `json:"-"`
+}
+
+func (u *User) GetProfileRef() *Profile {
+	return u.ProfileRef
 }
 
 func (u *User) GetPicture() *UserFileMetadata {

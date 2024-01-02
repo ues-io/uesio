@@ -3,15 +3,13 @@ label: mainsection
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-50
+      - bg-slate-100
       - p-2
       - gap-x-2
       - gap-y-1
       - flex
       - flex-wrap
       - leading-none
-      - border-b-1
-      - border-slate-300
     tab:
       - uppercase
       - p-1.5
@@ -22,5 +20,5 @@ definition:
       - whitespace-nowrap
     tabSelected:
       - text-white
-      - bg-[$Theme{color.primary}]
+      - bg-slate-800
 public: true

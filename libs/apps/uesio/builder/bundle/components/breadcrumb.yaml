@@ -1,9 +1,9 @@
-name: navtile
+name: breadcrumb
 category: LAYOUT
 pack: main
 type: DECLARATIVE
 slots: null
-description: A tile with a navigate link and icon
+description: A breadcrumb tile with a navigate link and icon
 properties:
   - type: TEXT
     name: title
@@ -16,7 +16,7 @@ properties:
     name: path
     label: Link navigate path
 definition:
-  - uesio/io.icontile:
+  - uesio/builder.icontile:
       signals:
         - signal: "route/NAVIGATE"
           path: $Prop{path}

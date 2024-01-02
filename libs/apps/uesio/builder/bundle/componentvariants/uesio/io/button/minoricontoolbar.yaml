@@ -3,8 +3,14 @@ label: Minor Icon Toolbar Button
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-700
-      - p-2
-      - text-sm
+      - text-slate-500
+      - px-1.5
+      - py-1
+      - text-xs
       - leading-1
+      - rounded
+      - bg-slate-50
+      - m-0.5
+      - hover:bg-slate-200
+      - hover:text-slate-800
 public: true

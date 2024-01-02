@@ -1,5 +1,5 @@
 name: workspaceconfig
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/configuration
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/settings
 view: workspaceconfig
 theme: default
 title: "Workspace Config: $Param{workspacename}"

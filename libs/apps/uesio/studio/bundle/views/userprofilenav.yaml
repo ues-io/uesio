@@ -4,8 +4,12 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.list:
-        components:
+    - uesio/io.scrollpanel:
+        uesio.variant: uesio/studio.left
+        header:
+          - uesio/core.view:
+              view: appcrumb
+        content:
           - uesio/studio.navsection:
               title: User Profile
               content:
@@ -63,3 +67,6 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: token
+        footer:
+          - uesio/core.view:
+              view: profiletag

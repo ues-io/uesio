@@ -1,0 +1,10 @@
+name: crumbsbox
+label: CrumbsBox
+definition:
+  uesio.styleTokens:
+    root:
+      - flex
+      - gap-x-0
+      - gap-y-1
+      - flex-wrap
+public: true

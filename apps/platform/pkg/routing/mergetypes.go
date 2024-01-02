@@ -32,14 +32,15 @@ type UserPictureMergeData struct {
 }
 
 type UserMergeData struct {
-	FirstName string                `json:"firstname"`
-	LastName  string                `json:"lastname"`
-	Profile   string                `json:"profile"`
-	Site      string                `json:"site"`
-	ID        string                `json:"id"`
-	Username  string                `json:"username"`
-	Picture   *UserPictureMergeData `json:"picture"`
-	Language  string                `json:"language"`
+	FirstName    string                `json:"firstname"`
+	LastName     string                `json:"lastname"`
+	Profile      string                `json:"profile"`
+	ProfileLabel string                `json:"profileLabel"`
+	Site         string                `json:"site"`
+	ID           string                `json:"id"`
+	Username     string                `json:"username"`
+	Picture      *UserPictureMergeData `json:"picture"`
+	Language     string                `json:"language"`
 }
 
 type SiteMergeData struct {

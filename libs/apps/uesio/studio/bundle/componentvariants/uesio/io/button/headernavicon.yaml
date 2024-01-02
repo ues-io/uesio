@@ -3,9 +3,11 @@ label: Header Nav Icon
 extends: uesio/io.nav
 definition:
   uesio.styleTokens:
+    root:
+      - p-0
     icon:
-      - text-xl
-      - text-slate-700
+      - text-base
+      - text-slate-800
       - hover:bg-slate-200
       - hover:text-slate-900
       - px-2

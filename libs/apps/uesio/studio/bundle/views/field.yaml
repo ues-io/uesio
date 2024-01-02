@@ -16,21 +16,11 @@ definition:
           value: $Param{app}:$Param{workspacename}
     collections:
       collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.namefield:
-        uesio/studio.workspace:
-        uesio/studio.type:
-        uesio/studio.integration:
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: collectionname
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{collectionname}
     fields:
       collection: uesio/studio.field
       conditions:
@@ -42,19 +32,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: collections
-                itemIcon: list
-                itemName: $Param{collectionname}
-                itemNameSpace: $Param{namespace}
-                subItemType: fields
-                subItemName: $Param{fieldname}
-                subItemNameSpace: $Param{fieldNamespace}
         left:
           - uesio/core.view:
               uesio.context:
@@ -62,6 +39,15 @@ definition:
               view: workspacenav
               params:
                 selected: collections
+                itemType: collections
+                itemIcon: list
+                itemName: $Param{collectionname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${collections:uesio/studio.appicon}
+                itemNameSpaceColor: ${collections:uesio/studio.appcolor}
+                subItemType: fields
+                subItemName: $Param{fieldname}
+                subItemNameSpace: $Param{fieldNamespace}
         content:
           - uesio/io.list:
               uesio.id: fieldsList

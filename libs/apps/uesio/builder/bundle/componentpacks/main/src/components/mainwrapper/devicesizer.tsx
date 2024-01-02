@@ -1,4 +1,4 @@
-import { definition, component, api } from "@uesio/ui"
+import { definition, component, api, styles } from "@uesio/ui"
 
 type SizerProps = {
 	icon: string
@@ -42,12 +42,17 @@ const SizerButton: definition.UtilityComponent<SizerProps> = ({
 	)
 }
 
+const StyleDefaults = Object.freeze({
+	root: ["grid-cols-auto", "grid-flow-col"],
+})
+
 const DeviceSizer: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const Grid = component.getUtility("uesio/io.grid")
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	return (
-		<Grid className="grid-rows-auto" context={context}>
+		<Grid className={classes.root} context={context}>
 			<SizerButton
 				icon="desktop_windows"
 				height={0}

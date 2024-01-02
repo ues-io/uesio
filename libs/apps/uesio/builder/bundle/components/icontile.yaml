@@ -18,7 +18,7 @@ properties:
 definition:
   - uesio/io.tile:
       signals: $Prop{signals}
-      uesio.variant: uesio/io.tag
+      uesio.variant: uesio/builder.breadcrumb
       content:
         - uesio/io.text:
             text: $Prop{title}

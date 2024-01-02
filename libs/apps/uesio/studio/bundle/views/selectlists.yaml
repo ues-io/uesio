@@ -41,14 +41,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: selectlists
-                itemIcon: playlist_add_check
         left:
           - uesio/core.view:
               uesio.context:
@@ -56,6 +48,8 @@ definition:
               view: workspacenav
               params:
                 selected: selectlists
+                itemType: selectlists
+                itemIcon: playlist_add_check
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

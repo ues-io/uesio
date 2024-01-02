@@ -26,16 +26,21 @@ func GetUserFromBrowserSession(browserSession session.Session, site *meta.Site) 
 
 func GetSessionFromUser(sessionID string, user *meta.User, site *meta.Site) (*sess.Session, error) {
 	s := sess.New(sessionID, user, site)
-	profileKey := s.GetContextProfile()
+	return s, HydrateUserPermissions(user, s)
+}
+
+func HydrateUserPermissions(user *meta.User, session *sess.Session) error {
+	profileKey := user.Profile
 	if profileKey == "" {
-		return nil, errors.New("No profile found in session")
+		return errors.New("No profile found in session")
 	}
-	profile, err := datasource.LoadAndHydrateProfile(profileKey, s)
+	profile, err := datasource.LoadAndHydrateProfile(profileKey, session)
 	if err != nil {
-		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+		return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 	}
-	s.GetContextUser().Permissions = profile.FlattenPermissions()
-	return s, nil
+	user.Permissions = profile.FlattenPermissions()
+	user.ProfileRef = profile
+	return nil
 }
 
 func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {

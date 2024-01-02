@@ -1,9 +1,0 @@
-name: navarea
-label: Nav Area
-definition:
-  uesio.styleTokens:
-    root:
-      - rounded-lg
-      - bg-white
-      - border-1
-      - border-slate-200

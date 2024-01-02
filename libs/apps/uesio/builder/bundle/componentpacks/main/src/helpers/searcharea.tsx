@@ -11,7 +11,7 @@ interface Props {
 }
 
 const StyleDefaults = Object.freeze({
-	root: ["flex", "p-2", "relative", "bg-slate-50", "align-center", "gap-2"],
+	root: ["flex", "p-2", "relative", "bg-slate-100", "align-center", "gap-2"],
 	input: [
 		"grow",
 		"text-xs",
@@ -20,7 +20,7 @@ const StyleDefaults = Object.freeze({
 		"font-light",
 		"rounded",
 		"border",
-		"border-slate-200",
+		"border-slate-300",
 		"text-slate-700",
 		"outline-offset-0",
 	],

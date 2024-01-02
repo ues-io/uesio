@@ -26,6 +26,7 @@ definition:
               fields:
                 uesio/studio.color:
                 uesio/studio.icon:
+                uesio/studio.name:
                 uesio/core.uniquekey:
             uesio/studio.major:
             uesio/studio.minor:
@@ -57,15 +58,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: installed
-                itemIcon: backpack
-                itemName: $Param{bundledep}
         left:
           - uesio/core.view:
               uesio.context:
@@ -73,6 +65,12 @@ definition:
               view: workspacenav
               params:
                 selected: installed
+                itemType: installed
+                itemIcon: backpack
+                itemName: ${installedapp:bundle->app->name}
+                itemNameSpace: ${installedapp:bundle->app-uesio/core.uniquekey}
+                itemNameSpaceIcon: ${installedapp:bundle->app->icon}
+                itemNameSpaceColor: ${installedapp:bundle->app->color}
         content:
           - uesio/io.list:
               uesio.id: installedDeck

@@ -41,19 +41,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: permissionsets
-                itemIcon: rule
-                itemName: $Param{permissionsetname}
-                itemNameSpace: $Param{namespace}
-                subItemType: integration
-                subItemName: $Param{integrationName}
-                subItemNameSpace: $Param{integrationNamespace}
         left:
           - uesio/core.view:
               uesio.context:
@@ -61,6 +48,13 @@ definition:
               view: workspacenav
               params:
                 selected: permissionsets
+                itemType: permissionsets
+                itemIcon: rule
+                itemName: $Param{permissionsetname}
+                itemNameSpace: $Param{namespace}
+                subItemType: integration
+                subItemName: $Param{integrationName}
+                subItemNameSpace: $Param{integrationNamespace}
         content:
           - uesio/io.list:
               uesio.id: permissionsetsList

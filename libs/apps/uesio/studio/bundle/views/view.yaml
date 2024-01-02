@@ -25,18 +25,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: views
-                itemIcon: view_quilt
-                itemName: $Param{viewname}
-                itemNameSpace: $Param{namespace}
-                itemNameSpaceIcon: ${views:uesio/studio.appicon}
-                itemNameSpaceColor: ${views:uesio/studio.appcolor}
         left:
           - uesio/core.view:
               uesio.context:
@@ -44,6 +32,12 @@ definition:
               view: workspacenav
               params:
                 selected: views
+                itemType: views
+                itemIcon: view_quilt
+                itemName: $Param{viewname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${views:uesio/studio.appicon}
+                itemNameSpaceColor: ${views:uesio/studio.appcolor}
         content:
           - uesio/io.list:
               uesio.id: viewsDeck

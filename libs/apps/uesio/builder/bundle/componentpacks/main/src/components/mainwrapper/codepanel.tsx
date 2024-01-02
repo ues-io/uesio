@@ -46,6 +46,7 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 
 const StyleDefaults = Object.freeze({
 	lineDecoration: ["bg-blue-100"],
+	root: ["h-[300px]", "mb-3"],
 })
 
 const CodePanel: definition.UtilityComponent = (props) => {
@@ -186,6 +187,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	return (
 		<ScrollPanel
 			variant="uesio/builder.mainsection"
+			className={classes.root}
 			header={
 				<TitleBar
 					variant="uesio/builder.primary"

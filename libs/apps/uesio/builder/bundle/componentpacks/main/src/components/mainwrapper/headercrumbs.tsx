@@ -7,35 +7,16 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 
 	const workspace = context.getWorkspace()
 	if (!workspace) throw new Error("No Workspace Context Provided")
-
 	const viewKey = context.getViewDefId()
-	const nsInfo = getBuilderNamespace(context, workspace.app)
 
 	const [viewNamespace, viewName] = component.path.parseKey(viewKey || "")
 
 	const itemNSInfo = getBuilderNamespace(context, viewNamespace)
 
 	return (
-		<Group context={context}>
+		<Group context={context} variant="uesio/builder.crumbsbox">
 			<component.Component
-				componentType={"uesio/io.icontile"}
-				path=""
-				definition={{
-					title: workspace.app,
-					icon: nsInfo?.icon,
-					iconcolor: nsInfo?.color,
-					signals: [
-						{
-							signal: "route/NAVIGATE",
-							path: `/app/${workspace.app}`,
-							namespace: "uesio/studio",
-						},
-					],
-				}}
-				context={context.deleteWorkspace()}
-			/>
-			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
 					title: workspace.name,
@@ -51,10 +32,10 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
-					title: "Views",
+					title: "views",
 					icon: "view_quilt",
 					signals: [
 						{
@@ -67,7 +48,7 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/io.icontile"}
+				componentType={"uesio/builder.icontile"}
 				path=""
 				definition={{
 					title: viewName,

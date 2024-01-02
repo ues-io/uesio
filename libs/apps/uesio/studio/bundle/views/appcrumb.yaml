@@ -1,0 +1,65 @@
+name: appcrumb
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.group:
+        uesio.variant: uesio/builder.appcrumb
+        components:
+          - uesio/io.image:
+              uesio.variant: uesio/builder.logo
+              uesio.id: img-uesio-logo
+              height: 32
+              file: uesio/core.logowhite
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "home"
+          - uesio/io.box:
+              uesio.display:
+                - type: collectionContext
+                  collection: uesio/studio.app
+              components:
+                - uesio/io.tile:
+                    uesio.variant: uesio/builder.apptag
+                    content:
+                      - uesio/io.text:
+                          text: ${uesio/core.uniquekey}
+                    avatar:
+                      - uesio/io.text:
+                          uesio.display:
+                            - type: hasValue
+                              value: ${uesio/studio.icon}
+                          uesio.variant: uesio/io.icon
+                          color: ${uesio/studio.color}
+                          text: ${uesio/studio.icon}
+          - uesio/io.box:
+              uesio.display:
+                - type: group
+                  conjunction: OR
+                  conditions:
+                    - type: collectionContext
+                      collection: uesio/studio.site
+                    - type: collectionContext
+                      collection: uesio/studio.bundle
+                    - type: collectionContext
+                      collection: uesio/studio.team
+                    - type: collectionContext
+                      collection: uesio/studio.workspace
+              components:
+                - uesio/io.tile:
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}
+                    uesio.variant: uesio/builder.apptag
+                    content:
+                      - uesio/io.text:
+                          text: ${uesio/studio.app->uesio/core.uniquekey}
+                    avatar:
+                      - uesio/io.text:
+                          uesio.display:
+                            - type: hasValue
+                              value: ${uesio/studio.app->uesio/studio.icon}
+                          uesio.variant: uesio/io.icon
+                          color: ${uesio/studio.app->uesio/studio.color}
+                          text: ${uesio/studio.app->uesio/studio.icon}

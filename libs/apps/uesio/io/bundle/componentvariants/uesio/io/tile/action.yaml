@@ -10,5 +10,5 @@ definition:
       - border-1
       - border-slate-200
       - hover:bg-slate-100
-      - hover:border-slate-500
+      - hover:border-slate-700
 public: true

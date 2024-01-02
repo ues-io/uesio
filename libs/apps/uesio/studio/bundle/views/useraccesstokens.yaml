@@ -51,14 +51,6 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
-        header:
-          - uesio/core.view:
-              view: topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: useraccesstokens
-                itemIcon: token
         left:
           - uesio/core.view:
               uesio.context:
@@ -66,6 +58,8 @@ definition:
               view: workspacenav
               params:
                 selected: useraccesstokens
+                itemType: useraccesstokens
+                itemIcon: token
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
