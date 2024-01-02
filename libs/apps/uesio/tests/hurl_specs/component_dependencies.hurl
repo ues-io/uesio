@@ -23,10 +23,20 @@ HTTP 200
 jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 jsonpath "$.dependencies.viewdef[0].definition.wires.animals.collection" == "uesio/tests.animal"
-jsonpath "$.dependencies.componentvariant[6].component" == "uesio/io.tabs"
 # test loading of component variant dependencies
-jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.tablabels"
 jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[4].name" == "default"
+jsonpath "$.dependencies.componentvariant[4].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[5].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[5].name" == "tabpanel"
+jsonpath "$.dependencies.componentvariant[6].component" == "uesio/io.tablabels"
+jsonpath "$.dependencies.componentvariant[6].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[6].name" == "default"
+jsonpath "$.dependencies.componentvariant[7].component" == "uesio/io.tabs"
+jsonpath "$.dependencies.componentvariant[7].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[7].name" == "default"
+
 # test defaulting of variant for tabs component when not set in YAML
 jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" == "uesio/io.default"
 # verify that the default variant is loaded for button without a variant
@@ -118,8 +128,16 @@ HTTP 200
 [Asserts]
 # Because we specify "uesio/io.three_column_grid" as the DECK variant,
 # and this variant has a definition with a gridVariant property,
-# we should load the corresponding "uesio/io.grid" component variant
+# we should load the corresponding "uesio/io.grid" component variant,
+# along with its dependencies
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.deck"
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant['uesio/io.grid:uesio/io.three_columns'].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant['uesio/io.deck:uesio/io.three_column_grid'].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[0].name" == "three_column_grid"
+jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[0].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
+jsonpath "$.dependencies.componentvariant[1].name" == "one_column"
+jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[2].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[2].extends" == "uesio/io.one_column"
