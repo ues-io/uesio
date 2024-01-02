@@ -1,0 +1,5 @@
+name: one_column
+label: One Column Grid
+definition:
+  gridVariant: uesio/io.grid:uesio/io.one_column
+public: true

@@ -9,6 +9,7 @@ definition:
         uesio/tests.species:
         uesio/tests.genus:
         uesio/tests.total_population:
+      batchsize: 2
       order:
         - field: uesio/tests.genus
           desc: false

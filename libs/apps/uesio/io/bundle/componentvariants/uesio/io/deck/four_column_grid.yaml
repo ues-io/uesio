@@ -1,0 +1,5 @@
+name: four_column_grid
+label: Four Column Responsive Grid
+definition:
+  gridVariant: uesio/io.grid:uesio/io.four_columns
+public: true

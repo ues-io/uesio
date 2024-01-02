@@ -1,0 +1,5 @@
+name: tablabels
+title: Tab Labels
+description: Labels area for tabs component
+pack: main
+entrypoint: components/tablabels/tablabels

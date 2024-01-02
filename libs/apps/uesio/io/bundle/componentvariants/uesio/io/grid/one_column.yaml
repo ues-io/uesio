@@ -1,0 +1,8 @@
+name: one_column
+label: One Column
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - gap-2.5
+public: true

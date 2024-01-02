@@ -1,0 +1,5 @@
+name: two_column_grid
+label: Two Column Responsive Grid
+definition:
+  gridVariant: uesio/io.grid:uesio/io.two_columns
+public: true

@@ -3,6 +3,7 @@ definition:
   wires:
     animals:
       collection: uesio/tests.animal
+      batchsize: 2
       fields:
         uesio/core.id:
         uesio/tests.species:

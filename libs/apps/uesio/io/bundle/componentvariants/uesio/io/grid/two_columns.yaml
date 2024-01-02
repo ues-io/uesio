@@ -1,9 +1,9 @@
 name: two_columns
-label: Two Column Responsive
+label: Two Columns Responsive
+extends: uesio/io.one_column
 definition:
   uesio.styleTokens:
     root:
       - grid-cols-1
       - md:grid-cols-2
-      - gap-x-2.5
 public: true

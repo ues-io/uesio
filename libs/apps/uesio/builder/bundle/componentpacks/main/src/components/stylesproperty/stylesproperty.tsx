@@ -59,7 +59,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 	const addRegionToken = (token: string) => {
 		setRegionTokens(
 			contextRegionName,
-			addTokenToList(token, tokensByRegion[contextRegionName])
+			addTokenToList(token, tokensByRegion[contextRegionName] || [])
 		)
 	}
 	const [tailwindTokens, setTailwindTokens] = useState<string[][]>(
@@ -177,11 +177,11 @@ const escapeTokenForMerge = (token = "") =>
 // using the same Tailwind class merging rules that are used at runtime.
 export const addTokenToList = (
 	newToken: string,
-	existingTokens: string[] = []
+	existingTokens: string[]
 ): string[] =>
 	styles
 		.mergeClasses([
-			...existingTokens.map(escapeTokenForMerge),
+			...(existingTokens || []).map(escapeTokenForMerge),
 			escapeTokenForMerge(newToken),
 		])
 		.split(/\s/)
