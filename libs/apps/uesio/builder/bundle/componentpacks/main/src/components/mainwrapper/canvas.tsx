@@ -1,4 +1,10 @@
-import { DragEvent, FunctionComponent, MouseEvent, useRef } from "react"
+import {
+	DragEvent,
+	FunctionComponent,
+	MouseEvent,
+	RefObject,
+	useRef,
+} from "react"
 import { definition, styles, api } from "@uesio/ui"
 import {
 	useBuilderState,
@@ -12,6 +18,16 @@ import { FullPath } from "../../api/path"
 import SelectBorder from "./selectborder"
 import { getDragOverHandler, getDropHandler } from "../../helpers/dragdrop"
 import { get } from "../../api/defapi"
+
+const classesToPreventDOMInteraction = ["pointer-events-none"]
+
+const disableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
+	ref.current?.classList.add(...classesToPreventDOMInteraction)
+}
+
+const enableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
+	ref.current?.classList.remove(...classesToPreventDOMInteraction)
+}
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
@@ -47,7 +63,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				width && "border-x",
 				"border-dashed",
 				"border-slate-300",
-				"pointer-events-none",
+				...classesToPreventDOMInteraction,
 			],
 			line: ["absolute", "border-dashed", "border-slate-300", "z-10"],
 			top: ["right-0", "left-0", "border-t"],
@@ -71,9 +87,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		// Step 1: Find the closest slot that is accepting the current dragpath.
-		contentRef.current?.classList.remove("pointer-events-none")
+		enableDOMInteraction(contentRef)
 		let target = document.elementFromPoint(e.clientX, e.clientY)
-		contentRef.current?.classList.add("pointer-events-none")
+		disableDOMInteraction(contentRef)
 		if (!target) return
 		let validPath = ""
 		while (target !== null && target !== e.currentTarget) {
@@ -100,7 +116,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
 			setDropPath(context)
-			contentRef.current?.classList.add("pointer-events-none")
+			disableDOMInteraction(contentRef)
 			return
 		}
 		const currentTarget = e.currentTarget as HTMLDivElement
@@ -111,17 +127,17 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		const outsideBottom = e.pageY > bounds.bottom
 		if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
 			setDropPath(context)
-			contentRef.current?.classList.add("pointer-events-none")
+			disableDOMInteraction(contentRef)
 		}
 	}
 
 	const onDragEnter = () => {
-		contentRef.current?.classList.remove("pointer-events-none")
+		enableDOMInteraction(contentRef)
 	}
 
 	const onDrop = (e: DragEvent) => {
 		getDropHandler(context, dragPath, dropPath)(e)
-		contentRef.current?.classList.add("pointer-events-none")
+		disableDOMInteraction(contentRef)
 	}
 
 	return (
