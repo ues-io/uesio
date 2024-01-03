@@ -445,10 +445,10 @@ func GetMetadataForLoad(
 		return err
 	}
 
-	for _, requestField := range op.Fields {
+	for i, requestField := range op.Fields {
 
 		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
-			return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID))
+			op.Fields[i].InAccessible = true
 		}
 
 		subFields := getSubFields(requestField.Fields)

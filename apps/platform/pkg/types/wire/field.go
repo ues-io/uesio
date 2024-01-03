@@ -35,8 +35,9 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 }
 
 type LoadRequestField struct {
-	ID     string             `json:"id" bot:"id"`
-	Fields []LoadRequestField `json:"fields,omitempty" bot:"fields"`
+	ID           string             `json:"id" bot:"id"`
+	Fields       []LoadRequestField `json:"fields,omitempty" bot:"fields"`
+	InAccessible bool
 }
 
 func (lrf *LoadRequestField) UnmarshalYAML(node *yaml.Node) error {

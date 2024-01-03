@@ -170,6 +170,11 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 	referencedGroupCollections := ReferenceGroupRegistry{}
 	formulaFields := map[string]*FieldMetadata{}
 	for _, field := range fields {
+
+		if field.InAccessible {
+			continue
+		}
+
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
 			return nil, nil, nil, nil, err
