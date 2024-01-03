@@ -593,7 +593,10 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 
 	// Clone the variantPropertyNames map
 	// (we'll remove records from this map as we find values for them)
-	variantPropsWithNoValue := variantPropertyNames
+	variantPropsWithNoValue := make(map[string]*meta.PropertyDefinition, len(variantPropertyNames))
+	for k, v := range variantPropertyNames {
+		variantPropsWithNoValue[k] = v
+	}
 
 	for i, prop := range compDefinitionMap.Content {
 		propDef := variantPropertyNames[prop.Value]

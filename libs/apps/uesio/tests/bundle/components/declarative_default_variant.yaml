@@ -1,0 +1,28 @@
+name: declarative_default_variant
+category: LAYOUT
+type: DECLARATIVE
+properties:
+  - name: buttonVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.button
+    label: Button Variant
+    defaultValue: uesio/io.primary
+  - type: TEXT
+    name: text
+    label: Text
+definition:
+  - uesio/io.button:
+      uesio.variant: $Prop{buttonVariant}
+      text: $Prop{text}
+title: Declarative With Default Variant
+discoverable: true
+description: Testing default variants
+defaultDefinition:
+  text: Hello World
+sections:
+  - type: HOME
+    properties:
+      - text
+  - type: DISPLAY

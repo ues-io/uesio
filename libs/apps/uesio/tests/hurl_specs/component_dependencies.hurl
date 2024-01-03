@@ -141,3 +141,17 @@ jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.grid"
 jsonpath "$.dependencies.componentvariant[2].name" == "three_columns"
 jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.grid"
 jsonpath "$.dependencies.componentvariant[2].extends" == "uesio/io.one_column"
+
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
+HTTP 200
+[Asserts]
+# Because we have a default variant we should load it in
+# since secondary and default are in the extends chain, we will also load those
+
+jsonpath "$.dependencies.componentvariant" count == 3
+jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[0].name" == "default"
+jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[1].name" == "primary"
+jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[2].name" == "secondary"
