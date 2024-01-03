@@ -32,15 +32,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 
 	const [isPending, setPending] = useState(false)
 
-	let { signals } = definition
-
-	// If we have a custom slot context, don't run signals.
-	// TODO: Move this out of runtime, and add a way TO run the signals via a Keyboard Shortcut
-	// or via a property on the button Definition.
-	const slotWrapper = context.getCustomSlotLoader()
-	if (slotWrapper) {
-		signals = []
-	}
+	const { signals, hotkey, text, icon, iconPlacement } = definition
 
 	const [link, handler] = api.signal.useLinkHandler(
 		signals,
@@ -48,7 +40,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		setPending
 	)
 
-	api.signal.useRegisterHotKey(definition.hotkey, signals, context)
+	api.signal.useRegisterHotKey(hotkey, signals, context)
 
 	return (
 		<IOButton
@@ -56,20 +48,20 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
 			disabled={isPending}
-			iconPlacement={definition.iconPlacement}
-			label={definition.text}
+			iconPlacement={iconPlacement}
+			label={text}
 			link={link}
 			onClick={handler}
 			context={context}
 			isSelected={isSelected}
 			icon={
-				definition.icon ? (
+				icon ? (
 					<Icon
 						classes={{
 							root: classes.icon,
 						}}
 						context={context}
-						icon={context.mergeString(definition.icon)}
+						icon={context.mergeString(icon)}
 					/>
 				) : undefined
 			}

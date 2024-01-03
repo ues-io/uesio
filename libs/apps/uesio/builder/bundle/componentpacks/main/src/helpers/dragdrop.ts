@@ -77,24 +77,6 @@ const getDragEndHandler =
 		}
 	}
 
-const getDragLeaveHandler =
-	(context: context.Context): DragEventHandler =>
-	(e) => {
-		if (e.target === e.currentTarget) {
-			setDropPath(context)
-		} else {
-			const currentTarget = e.currentTarget as HTMLDivElement
-			const bounds = currentTarget.getBoundingClientRect()
-			const outsideLeft = e.pageX < bounds.left
-			const outsideRight = e.pageX > bounds.right
-			const outsideTop = e.pageY < bounds.top
-			const outsideBottom = e.pageY > bounds.bottom
-			if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
-				setDropPath(context)
-			}
-		}
-	}
-
 const addComponentToCanvas = (
 	context: context.Context,
 	componentType: string,
@@ -206,7 +188,6 @@ const getDropHandler =
 export {
 	getDragStartHandler,
 	getDragEndHandler,
-	getDragLeaveHandler,
 	getDragOverHandler,
 	getDropHandler,
 	standardAccepts,

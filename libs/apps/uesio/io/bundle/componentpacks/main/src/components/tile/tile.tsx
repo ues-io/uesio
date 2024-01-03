@@ -25,9 +25,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 	)
 
 	const [link, handler] = api.signal.useLinkHandler(
-		// Don't run tile actions in View Builder
-		// TODO: Find way to avoid this builder-specific check
-		context.getCustomSlotLoader() ? [] : definition.signals,
+		definition.signals,
 		context
 	)
 
