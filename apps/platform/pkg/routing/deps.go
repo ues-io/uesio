@@ -591,14 +591,9 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 
 	foundComponentVariant := false
 
-	// Load in default variants just in case
-	for _, propDef := range variantPropertyNames {
-		if propDef.DefaultValue != "" {
-			if err := addComponentVariantDep(depMap, propDef.DefaultValue, propDef.Metadata.Grouping, session); err != nil {
-				return err
-			}
-		}
-	}
+	// Clone the variantPropertyNames map
+	// (we'll remove records from this map as we find values for them)
+	variantPropsWithNoValue := variantPropertyNames
 
 	for i, prop := range compDefinitionMap.Content {
 		propDef := variantPropertyNames[prop.Value]
@@ -606,6 +601,9 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 			if len(compDefinitionMap.Content) > i {
 				valueNode := compDefinitionMap.Content[i+1]
 				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+					// We found a value, so remove the prop from the
+					// variantPropsWithNoValue map
+					delete(variantPropsWithNoValue, prop.Value)
 					useComponentName := compName
 					useVariantName := valueNode.Value
 					if prop.Value != "uesio.variant" {
@@ -631,6 +629,16 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 			}
 		}
 	}
+
+	// Load in default variants for props that had no value specified
+	for _, propDef := range variantPropsWithNoValue {
+		if propDef.DefaultValue != "" {
+			if err := addComponentVariantDep(depMap, propDef.DefaultValue, propDef.Metadata.Grouping, session); err != nil {
+				return err
+			}
+		}
+	}
+
 	// If we did not find a specific component variant,
 	// see if this component type has a default variant,
 	// and if so, request it, and populate it in the View YAML
