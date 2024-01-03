@@ -65,10 +65,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"border-slate-300",
 				...classesToPreventDOMInteraction,
 			],
-			line: ["absolute", "border-dashed", "border-slate-300", "z-10"],
-			top: ["right-0", "left-0", "border-t"],
+			line: ["absolute", "border-dashed", "border-slate-300"],
+			top: ["right-0", "left-0", "top-12", "border-t"],
 			bottom: ["right-0", "left-0", "bottom-12", "border-b"],
-			left: ["top-0", "bottom-0", "border-l"],
+			left: ["top-0", "bottom-0", "left-12", "border-l"],
 			right: ["top-0", "bottom-0", "right-12", "border-r"],
 		},
 		props
@@ -149,6 +149,14 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onClick={onClick}
 			className={classes.root}
 		>
+			<div className={classes.scrollwrapper}>
+				<div className={classes.outerwrapper}>
+					<div ref={contentRef} className={classes.contentwrapper}>
+						{props.children}
+						<SelectBorder viewdef={viewDef} context={context} />
+					</div>
+				</div>
+			</div>
 			{!height && (
 				<>
 					<div className={styles.cx(classes.line, classes.top)} />
@@ -161,14 +169,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					<div className={styles.cx(classes.line, classes.right)} />
 				</>
 			)}
-			<div className={classes.scrollwrapper}>
-				<div className={classes.outerwrapper}>
-					<div ref={contentRef} className={classes.contentwrapper}>
-						{props.children}
-						<SelectBorder viewdef={viewDef} context={context} />
-					</div>
-				</div>
-			</div>
 			{/*<DebugPanel context={context} />*/}
 		</div>
 	)

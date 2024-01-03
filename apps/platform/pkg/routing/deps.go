@@ -591,11 +591,22 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 
 	foundComponentVariant := false
 
+	// Clone the variantPropertyNames map
+	// (we'll remove records from this map as we find values for them)
+	variantPropsWithNoValue := make(map[string]*meta.PropertyDefinition, len(variantPropertyNames))
+	for k, v := range variantPropertyNames {
+		variantPropsWithNoValue[k] = v
+	}
+
 	for i, prop := range compDefinitionMap.Content {
-		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || variantPropertyNames[prop.Value] != "") {
+		propDef := variantPropertyNames[prop.Value]
+		if prop.Kind == yaml.ScalarNode && (prop.Value == "uesio.variant" || propDef != nil) {
 			if len(compDefinitionMap.Content) > i {
 				valueNode := compDefinitionMap.Content[i+1]
 				if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+					// We found a value, so remove the prop from the
+					// variantPropsWithNoValue map
+					delete(variantPropsWithNoValue, prop.Value)
 					useComponentName := compName
 					useVariantName := valueNode.Value
 					if prop.Value != "uesio.variant" {
@@ -606,7 +617,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 							useComponentName = variantNameParts[0]
 							useVariantName = variantNameParts[1]
 						} else {
-							useComponentName = variantPropertyNames[prop.Value]
+							useComponentName = propDef.Metadata.Grouping
 							useVariantName = variantNameParts[0]
 						}
 					}
@@ -621,6 +632,16 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 			}
 		}
 	}
+
+	// Load in default variants for props that had no value specified
+	for _, propDef := range variantPropsWithNoValue {
+		if propDef.DefaultValue != "" {
+			if err := addComponentVariantDep(depMap, propDef.DefaultValue, propDef.Metadata.Grouping, session); err != nil {
+				return err
+			}
+		}
+	}
+
 	// If we did not find a specific component variant,
 	// see if this component type has a default variant,
 	// and if so, request it, and populate it in the View YAML

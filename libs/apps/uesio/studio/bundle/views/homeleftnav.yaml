@@ -69,26 +69,14 @@ definition:
             - grid
             - grid-rows-3
         header:
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - grid
-                  - gap-3
-                  - grid-cols-[auto_1fr]
+          - uesio/io.group:
+              uesio.variant: uesio/builder.appcrumb
               components:
                 - uesio/io.image:
-                    uesio.styleTokens:
-                      root:
-                        - bg-slate-800
-                        - rounded
-                        - py-1.5
-                        - px-2
+                    uesio.variant: uesio/builder.logo
                     uesio.id: img-uesio-logo
                     height: 32
                     file: uesio/core.logowhite
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "home"
                 - uesio/io.searchbox:
                     uesio.variant: uesio/studio.appsearch
                     wire: apps
@@ -119,9 +107,6 @@ definition:
                           title: My Apps
                           actions:
                             - uesio/io.group:
-                                uesio.styleTokens:
-                                  root:
-                                    - gap-3
                                 components:
                                   - uesio/io.button:
                                       icon: add
