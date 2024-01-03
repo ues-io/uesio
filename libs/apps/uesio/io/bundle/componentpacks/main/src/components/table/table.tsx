@@ -185,10 +185,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 							)
 							.map((action, i) => {
 								const handler = api.signal.getHandler(
-									// Don't run row action signals in View Builder
-									context.getCustomSlotLoader()
-										? []
-										: action.signals,
+									action.signals,
 									recordContext.context
 								)
 								return (

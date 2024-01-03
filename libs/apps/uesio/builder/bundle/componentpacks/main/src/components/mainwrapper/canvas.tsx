@@ -1,4 +1,10 @@
-import { FunctionComponent, MouseEvent } from "react"
+import {
+	DragEvent,
+	FunctionComponent,
+	MouseEvent,
+	RefObject,
+	useRef,
+} from "react"
 import { definition, styles, api } from "@uesio/ui"
 import {
 	useBuilderState,
@@ -6,15 +12,22 @@ import {
 	useDropPath,
 	setSelectedPath,
 	getSelectedComponentPath,
+	setDropPath,
 } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 import SelectBorder from "./selectborder"
-import {
-	getDragLeaveHandler,
-	getDragOverHandler,
-	getDropHandler,
-} from "../../helpers/dragdrop"
+import { getDragOverHandler, getDropHandler } from "../../helpers/dragdrop"
 import { get } from "../../api/defapi"
+
+const classesToPreventDOMInteraction = ["pointer-events-none"]
+
+const disableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
+	ref.current?.classList.add(...classesToPreventDOMInteraction)
+}
+
+const enableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
+	ref.current?.classList.remove(...classesToPreventDOMInteraction)
+}
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
@@ -50,6 +63,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				width && "border-x",
 				"border-dashed",
 				"border-slate-300",
+				...classesToPreventDOMInteraction,
 			],
 			line: ["absolute", "border-dashed", "border-slate-300", "z-10"],
 			top: ["right-0", "left-0", "border-t"],
@@ -67,12 +81,16 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const viewDef = api.view.useViewDef(viewDefId)
 	const route = context.getRoute()
 
+	const contentRef = useRef<HTMLDivElement>(null)
+
 	if (!route || !viewDefId || !viewDef) return null
 
 	const onClick = (e: MouseEvent) => {
 		// Step 1: Find the closest slot that is accepting the current dragpath.
-		let target = e.target as Element | null
-
+		enableDOMInteraction(contentRef)
+		let target = document.elementFromPoint(e.clientX, e.clientY)
+		disableDOMInteraction(contentRef)
+		if (!target) return
 		let validPath = ""
 		while (target !== null && target !== e.currentTarget) {
 			const index = target.getAttribute("data-index") || ""
@@ -95,11 +113,39 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		}
 	}
 
+	const onDragLeave = (e: DragEvent) => {
+		if (e.target === e.currentTarget) {
+			setDropPath(context)
+			disableDOMInteraction(contentRef)
+			return
+		}
+		const currentTarget = e.currentTarget as HTMLDivElement
+		const bounds = currentTarget.getBoundingClientRect()
+		const outsideLeft = e.pageX < bounds.left
+		const outsideRight = e.pageX > bounds.right
+		const outsideTop = e.pageY < bounds.top
+		const outsideBottom = e.pageY > bounds.bottom
+		if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
+			setDropPath(context)
+			disableDOMInteraction(contentRef)
+		}
+	}
+
+	const onDragEnter = () => {
+		enableDOMInteraction(contentRef)
+	}
+
+	const onDrop = (e: DragEvent) => {
+		getDropHandler(context, dragPath, dropPath)(e)
+		disableDOMInteraction(contentRef)
+	}
+
 	return (
 		<div
-			onDragLeave={getDragLeaveHandler(context)}
 			onDragOver={getDragOverHandler(context, dragPath, dropPath)}
-			onDrop={getDropHandler(context, dragPath, dropPath)}
+			onDragLeave={onDragLeave}
+			onDragEnter={onDragEnter}
+			onDrop={onDrop}
 			onClick={onClick}
 			className={classes.root}
 		>
@@ -117,7 +163,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			)}
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
-					<div className={classes.contentwrapper}>
+					<div ref={contentRef} className={classes.contentwrapper}>
 						{props.children}
 						<SelectBorder viewdef={viewDef} context={context} />
 					</div>

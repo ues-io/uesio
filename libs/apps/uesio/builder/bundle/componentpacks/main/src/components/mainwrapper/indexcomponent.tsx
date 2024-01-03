@@ -55,9 +55,9 @@ const IndexComponent: definition.UC = (props) => {
 		componentId?.includes(searchTerm)
 
 	const slotsNode =
-		componentDef.slots?.map((slot) => (
+		componentDef.slots?.map((slot, index) => (
 			<IndexSlot
-				key={slot.name}
+				key={slot.name + index}
 				slot={slot}
 				indent={true}
 				parentSelected={isSelected}
