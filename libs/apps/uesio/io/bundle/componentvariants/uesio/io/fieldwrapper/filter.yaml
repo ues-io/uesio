@@ -1,0 +1,12 @@
+name: filter
+label: Default
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    labelLeft:
+      - grid
+      - justify-start
+      - grid-flow-col-dense
+      - items-center
+      - grid-cols-none
+public: true

@@ -126,17 +126,19 @@ definition:
                               - lg:col-span-2
                           components:
                             - uesio/io.group:
+                                uesio.styleTokens:
+                                  root:
+                                    - justify-between
                                 components:
                                   - uesio/io.searchbox:
                                       wire: allcollections
                                       focusOnRender: true
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-4
                                   - uesio/io.filter:
                                       wire: allcollections
+                                      wrapperVariant: uesio/io.filter
                                       conditionId: localCollectionsOnly
                                       displayAs: TOGGLE
+                                      labelPosition: left
                                       label: Only local collections
                             - uesio/io.table:
                                 wire: allcollections

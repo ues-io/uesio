@@ -200,6 +200,11 @@ properties:
             - name: desc
               type: CHECKBOX
               label: Descending
+  - name: wrapperVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.fieldwrapper
 sections:
   - type: HOME
     properties:
