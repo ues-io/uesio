@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localConfigValuesOnly
+          valueSource: PARAM
+          param: app
     newconfigvalue:
       collection: uesio/studio.configvalue
       fields:
@@ -78,6 +84,21 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: configvalues
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: configvalues
+                          conditionId: localConfigValuesOnly
+                          displayAs: TOGGLE
+                          label: Only local Config Values
                 - uesio/io.table:
                     uesio.id: configvaluesTable
                     wire: configvalues
