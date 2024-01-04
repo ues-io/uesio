@@ -17,9 +17,9 @@ import MultiSelectFilter from "../../utilities/multiselectfilter/multiselectfilt
 import TextFilter from "../../utilities/textfilter/textfilter"
 import TimestampFilter from "../../utilities/timestampfilter/timestampfilter"
 import ReferenceFilter from "../../utilities/referencefilter/referencefilter"
-import GroupFilter, {
-	GroupFilterProps,
-} from "../../utilities/groupfilter/groupfilter"
+import ToggleFilter, {
+	ToggleFilterProps,
+} from "../../utilities/togglefilter/togglefilter"
 import { LabelPosition, ReferenceFieldOptions } from "../field/field"
 
 type FilterDefinition = {
@@ -43,8 +43,7 @@ type CommonProps = {
 	isGroup: boolean
 } & definition.UtilityProps
 
-const isValueCondition = wire.isValueCondition
-const isGroupCondition = wire.isGroupCondition
+const { isValueCondition, isGroupCondition, isParamCondition } = wire
 
 const getFilterContent = (
 	common: CommonProps,
@@ -53,6 +52,16 @@ const getFilterContent = (
 	const { displayAs, placeholder } = definition
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
+
+	// Any condition type should be displayable as a TOGGLE optionally, to enable/disable the condition
+	if (displayAs === "TOGGLE") {
+		return (
+			<ToggleFilter
+				{...(common as ToggleFilterProps & definition.UtilityProps)}
+			/>
+		)
+	}
+
 	switch (type) {
 		case "TEXT":
 		case "LONGTEXT":
@@ -89,65 +98,54 @@ const getFilterContent = (
 	}
 }
 
+const getDefaultOperator = (
+	type: wire.FieldType,
+	displayAs: string
+): wire.ConditionOperators => {
+	switch (type) {
+		case "DATE":
+			return !displayAs ? "EQ" : "IN"
+		case "SELECT":
+			return displayAs === "MULTISELECT" ? "IN" : "EQ"
+		case "MULTISELECT":
+			return "HAS_ANY"
+		case "USER":
+		case "REFERENCE":
+			return "EQ"
+		case "TEXT":
+		case "LONGTEXT":
+		case "EMAIL":
+			return "CONTAINS"
+		default:
+			return "EQ"
+	}
+}
+
 const getDefaultCondition = (
 	path: string,
 	fieldMetadata: collection.Field,
 	operator: wire.ConditionOperators,
 	displayAs: string
+): wire.ValueConditionState => ({
+	id: path,
+	field: fieldMetadata.getId(),
+	valueSource: "VALUE",
+	operator:
+		operator || getDefaultOperator(fieldMetadata.getType(), displayAs),
+})
+
+const getFieldId = (
+	existingCondition: wire.WireConditionState | undefined,
+	fieldId: string
 ) => {
-	const type = fieldMetadata.getType()
-	const fieldName = fieldMetadata.getId()
-	switch (type) {
-		case "DATE": {
-			return !displayAs
-				? {
-						id: path,
-						operator: "EQ",
-						field: fieldName,
-				  }
-				: {
-						id: path,
-						operator: "IN",
-						field: fieldName,
-				  }
+	if (existingCondition) {
+		if (isParamCondition(existingCondition)) {
+			return (existingCondition as wire.ParamConditionState).field
+		} else if (isValueCondition(existingCondition)) {
+			return (existingCondition as wire.ValueConditionState).field
 		}
-		case "SELECT": {
-			return {
-				id: path,
-				operator:
-					operator || (displayAs === "MULTISELECT" ? "IN" : "EQ"),
-				field: fieldName,
-			}
-		}
-		case "MULTISELECT": {
-			return {
-				id: path,
-				operator: operator || "HAS_ANY",
-				field: fieldName,
-			}
-		}
-		case "USER":
-		case "REFERENCE": {
-			return {
-				id: path,
-				operator: "EQ",
-				field: fieldName,
-			}
-		}
-		case "TEXT":
-		case "LONGTEXT":
-		case "EMAIL":
-			return {
-				id: path,
-				operator: "CONTAINS",
-				field: fieldName,
-			}
-		default:
-			return {
-				id: path,
-				field: fieldName,
-			}
 	}
+	return fieldId
 }
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
@@ -159,10 +157,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const existingCondition =
 		wire.getCondition(conditionId || path) || undefined
 	// Field metadata is not needed for group conditions
-	const fieldMetadata = collection.getField(
-		isValueCondition(existingCondition) ? existingCondition.field : fieldId
-	)
-
+	const useFieldId = getFieldId(existingCondition, fieldId)
+	const fieldMetadata = collection.getField(useFieldId)
 	if (!fieldMetadata) return null
 
 	let condition = existingCondition
@@ -172,7 +168,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			fieldMetadata,
 			operator,
 			displayAs || ""
-		) as wire.ValueConditionState
+		)
 	}
 
 	if (!condition) return null
@@ -202,8 +198,8 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
-				<GroupFilter
-					{...(common as GroupFilterProps & definition.UtilityProps)}
+				<ToggleFilter
+					{...(common as ToggleFilterProps & definition.UtilityProps)}
 				/>
 			) : (
 				getFilterContent(common as CommonProps, definition)

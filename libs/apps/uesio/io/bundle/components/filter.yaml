@@ -119,6 +119,8 @@ properties:
     options:
       - value: ""
         label: "Default"
+      - value: "TOGGLE"
+        label: Toggle
       - label: Month
         value: MONTH
         validFor:
@@ -134,13 +136,6 @@ properties:
         validFor:
           - field: fieldDisplayType
             value: SELECT
-    displayConditions:
-      - type: fieldValue
-        field: fieldDisplayType
-        operator: IN
-        values:
-          - DATE
-          - SELECT
   - name: label
     type: TEXT
     label: Label
