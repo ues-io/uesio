@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localBotsOnly
+          valueSource: PARAM
+          param: app
     newbot:
       collection: uesio/studio.bot
       fields:
@@ -86,11 +92,22 @@ definition:
                           searchFields:
                             - uesio/studio.name
                             - uesio/studio.type
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
                       - uesio/io.filter:
                           wire: bots
                           fieldId: uesio/studio.type
                           labelPosition: none
                           displayAs: "MULTISELECT"
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: bots
+                          conditionId: localBotsOnly
+                          displayAs: TOGGLE
+                          label: Only local bots
                 - uesio/io.table:
                     uesio.id: botsTable
                     wire: bots
