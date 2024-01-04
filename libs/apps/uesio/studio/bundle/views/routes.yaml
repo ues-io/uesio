@@ -24,6 +24,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localRoutesOnly
+          valueSource: PARAM
+          param: app
       order:
         - field: uesio/core.updatedat
           desc: true
@@ -178,12 +184,22 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: allroutes
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/studio.name
-                      - uesio/studio.path
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: allroutes
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                            - uesio/studio.path
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: allroutes
+                          conditionId: localRoutesOnly
+                          displayAs: TOGGLE
+                          label: Only local routes
                 - uesio/io.table:
                     uesio.id: routesTable
                     wire: allroutes
