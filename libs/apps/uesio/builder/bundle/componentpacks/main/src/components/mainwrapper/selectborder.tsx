@@ -40,24 +40,12 @@ const StyleDefaults = Object.freeze({
 		"after:outline-[$Theme{color.primary}]",
 		"after:-outline-offset-[2px]",
 		"after:z-10",
+		"empty:block",
 	],
 	selectedAlways: ["relative"],
 	arrow: ["fill-[$Theme{color.primary}]"],
 	popper: ["bg-[$Theme{color.primary}]", "rounded"],
 	dragging: ["opacity-20"],
-	empty: [
-		"bg-blue-50",
-		"py-2",
-		"px-3",
-		"my-1",
-		"text-blue-400",
-		"text-[8pt]",
-		"font-light",
-		"rounded",
-		"uppercase",
-		"before:content-[attr(data-empty-label)]",
-	],
-	emptyRemove: ["contents"],
 })
 
 const nonComponentPaths = ["wires", "params"]
@@ -96,7 +84,6 @@ const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
 			})
 			return null
 		}
-		target.classList.remove("contents")
 		targets.push(target)
 	})
 	return targets

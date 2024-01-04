@@ -4,33 +4,7 @@ import { useDropPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 
 const StyleDefaults = Object.freeze({
-	root: [
-		"contents",
-		"relative",
-		"empty:block",
-		"empty:bg-blue-50",
-		"empty:py-2",
-		"empty:px-4",
-		"empty:my-1",
-		"empty:border-1",
-		"empty:border-blue-400",
-		"empty:text-blue-400",
-		"empty:text-[8pt]",
-		"empty:font-light",
-		"empty:rounded",
-		"empty:uppercase",
-		"empty:before:block",
-		"empty:before:pl-6",
-		"empty:before:content-[attr(data-component)]",
-		"empty:after:absolute",
-		"empty:after:inset-0",
-		"empty:after:pointer-events-none",
-		"empty:after:content-['visibility\\_off']",
-		"empty:after:py-1",
-		"empty:after:px-3",
-		"empty:after:font-[Material_Icons]",
-		"empty:after:text-base",
-	],
+	root: ["contents", "relative"],
 })
 
 const usePlaceHolders = (
