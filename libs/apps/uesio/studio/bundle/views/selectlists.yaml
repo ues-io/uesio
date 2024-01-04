@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localSelectListsOnly
+          valueSource: PARAM
+          param: app
     newselectlist:
       collection: uesio/studio.selectlist
       fields:
@@ -72,11 +78,21 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: selectlists
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/studio.name
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: selectlists
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: selectlists
+                          conditionId: localSelectListsOnly
+                          displayAs: TOGGLE
+                          label: Only local select lists
                 - uesio/io.table:
                     uesio.id: selectListsTable
                     wire: selectlists
