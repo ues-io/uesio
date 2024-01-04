@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localIntegrationsOnly
+          valueSource: PARAM
+          param: app
     newintegration:
       collection: uesio/studio.integration
       fields:
@@ -76,6 +82,19 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: integrations
+                          focusOnRender: true
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: integrations
+                          conditionId: localIntegrationsOnly
+                          displayAs: TOGGLE
+                          label: Only local integrations
                 - uesio/io.table:
                     uesio.id: integrationsTable
                     wire: integrations
