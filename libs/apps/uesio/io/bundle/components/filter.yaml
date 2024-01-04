@@ -221,3 +221,5 @@ sections:
       - reference
   - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:

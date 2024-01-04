@@ -5,6 +5,7 @@ import {
 	wire,
 	definition,
 	metadata,
+	styles,
 } from "@uesio/ui"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
@@ -148,6 +149,10 @@ const getFieldId = (
 	return fieldId
 }
 
+const StyleDefaults = Object.freeze({
+	root: [],
+})
+
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
 	const { fieldId, conditionId, operator, displayAs } = definition
@@ -189,12 +194,14 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 			definition[component.STYLE_VARIANT] ||
 			"uesio/io.field:uesio/io.default",
 	}
+	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	return (
 		<FieldWrapper
 			label={label}
 			labelPosition={definition.labelPosition}
 			context={context}
+			classes={classes}
 			variant={definition.wrapperVariant}
 		>
 			{isGroup ? (
