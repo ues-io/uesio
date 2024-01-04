@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localPermissionSetsOnly
+          valueSource: PARAM
+          param: app
     newpermissionset:
       collection: uesio/studio.permissionset
       fields:
@@ -71,10 +77,21 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
-                    wire: allpermissionsets
-                    searchFields:
-                      - uesio/studio.name
+                - uesio/io.group:
+                    components:
+                      - uesio/io.searchbox:
+                          wire: allpermissionsets
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
+                          uesio.styleTokens:
+                            root:
+                              - mt-4
+                      - uesio/io.filter:
+                          wire: allpermissionsets
+                          conditionId: localPermissionSetsOnly
+                          displayAs: TOGGLE
+                          label: Only local permission sets
                 - uesio/io.table:
                     uesio.id: permissionsetsTable
                     wire: allpermissionsets
