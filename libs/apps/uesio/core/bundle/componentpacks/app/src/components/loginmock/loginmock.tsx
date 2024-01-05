@@ -1,12 +1,13 @@
 import { definition, api, component } from "@uesio/ui"
 
-const MockUsernames = ["ben", "abel", "wessel", "baxter", "zach", "uesio"]
-
 const LoginMock: definition.UC = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Grid = component.getUtility("uesio/io.grid")
 	const { context, path } = props
 	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
+	const MockUsernames = api.view
+		.useConfigValue("uesio/core.mock_auth_usernames")
+		.split(",")
 
 	if (useMock !== "true") {
 		return null
