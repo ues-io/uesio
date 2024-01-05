@@ -6,13 +6,6 @@ export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 
-if [[ -z "${APP_IMAGE}" ]]; then
-    if [[ -z "${GITSHA}" ]]; then
-        export GITSHA=$(git rev-parse --short HEAD)
-    fi
-    export APP_IMAGE="$GITSHA"
-fi
-
 #Navigate
 cd libs/apps/uesio/tests
 
@@ -38,6 +31,3 @@ cd libs/apps/uesio/tests
 uesio workspace delete -n truncatetests
 uesio workspace delete -n dev
 cd - >> /dev/null
-
-# Kill all Docker containers
-docker compose -f docker-compose-tests.yaml down
