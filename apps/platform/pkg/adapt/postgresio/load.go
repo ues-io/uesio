@@ -267,9 +267,15 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 				if err != nil {
 					return err
 				}
+				if refObj == nil {
+					continue
+				}
 				refKey, err := wire.GetReferenceKey(refObj)
 				if err != nil {
 					return err
+				}
+				if refKey == "" {
+					continue
 				}
 				refCol.AddID(refKey, wire.ReferenceLocator{
 					Item:  item,

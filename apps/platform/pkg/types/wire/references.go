@@ -21,7 +21,7 @@ func (lm *LocatorMap) GetIDs() []string {
 func (lm *LocatorMap) AddID(value string, locator ReferenceLocator) error {
 
 	if value == "" {
-		return errors.New("Cannot add blank id to locator map")
+		return errors.New("cannot add blank id to locator map")
 	}
 	items, ok := (*lm)[value]
 	if !ok {

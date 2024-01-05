@@ -22,10 +22,10 @@ func getCascadeDeletes(
 	}
 
 	deleteIds := op.Deletes.GetIDs()
-	ufmcToDelete := &wire.Collection{}
-	loadop := &wire.LoadOp{
+	userFilesToDelete := &wire.Collection{}
+	loadOp := &wire.LoadOp{
 		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
-		Collection:     ufmcToDelete,
+		Collection:     userFilesToDelete,
 		WireName:       "deleteUserFiles",
 		Conditions: []wire.LoadRequestCondition{
 			{
@@ -38,7 +38,7 @@ func getCascadeDeletes(
 		LoadAll: true,
 	}
 
-	_, err := Load([]*wire.LoadOp{loadop}, session, &LoadOptions{
+	_, err := Load([]*wire.LoadOp{loadOp}, session, &LoadOptions{
 		Connection: connection,
 		Metadata:   GetConnectionMetadata(connection),
 	})
@@ -46,8 +46,8 @@ func getCascadeDeletes(
 		return nil, err
 	}
 
-	if ufmcToDelete.Len() > 0 {
-		cascadeDeleteFKs[meta.USERFILEMETADATA_COLLECTION_NAME] = *ufmcToDelete
+	if userFilesToDelete.Len() > 0 {
+		cascadeDeleteFKs[meta.USERFILEMETADATA_COLLECTION_NAME] = *userFilesToDelete
 	}
 
 	metadata := connection.GetMetadata()
@@ -151,7 +151,12 @@ func getCascadeDeletes(
 }
 
 func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	deletes, err := getCascadeDeletes(op, connection, session)
+
+	// Perform cascade deletes as an Admin to make sure we find all the records we need to
+	// and to avoid unnecessary security logic
+	adminSession := GetSiteAdminSession(session)
+
+	deletes, err := getCascadeDeletes(op, connection, adminSession)
 	if err != nil {
 		return err
 	}
@@ -159,7 +164,7 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 	if len(deletes) == 0 {
 		return nil
 	}
-	saves := []SaveRequest{}
+	var saves []SaveRequest
 	for collectionKey := range deletes {
 		ids := deletes[collectionKey]
 		if ids.Len() > 0 {
@@ -174,5 +179,5 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 			})
 		}
 	}
-	return SaveWithOptions(saves, session, GetConnectionSaveOptions(connection))
+	return SaveWithOptions(saves, adminSession, GetConnectionSaveOptions(connection))
 }

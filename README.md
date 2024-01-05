@@ -457,7 +457,19 @@ bash apps/platform/migrations_test/test_migrations.sh
 
 ## End-to-end Testing and Integration testing
 
-All E2E and integration tests can be run exactly as they would in CI using `npm run tests-all`. This will spin up all dependencies, and a Dockerized version of the app, run integration and E2E tests against the app, and then spin down dependencies.
+To run E2E and Integration tests locally, there are a number of commands available:
+
+1. `npm run tests-all`
+    - Runs all Integration and E2E tests against your local Uesio app.
+    - Use this when writing and debugging tests locally
+1. `npm run tests-ci`
+    - This is what we run in Github Actions on `master` branch builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
+1. `npm run tests-integration`
+    - Runs _just_ the Integration Tests (against your local app).
+1. `npm run tests-e2e`
+    - Runs _just_ the E2E Tests (against your local app).
+
+TO run just an individual E2E or Integration test, see the sections below.
 
 ### E2E testing with Cypress
 
@@ -467,10 +479,28 @@ E2E tests are the most expensive and most brittle, and as such should be used sp
 
 If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run the tests in a headless runner.
 
-To simulate how Cypress tests are run in CI, run `npm run tests-e2e`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
+#### Running a single E2E spec
+
+If you want to _visually_ run a single spec, use the Cypress visual UI and then select the individual spec.
+
+Or, use `npx cypress run --spec <path to spec>` to run a specific file in a headless Electron instance, e.g.
+
+```
+npx cypress run --spec cypress/e2e/builder.cy.ts
+```
 
 ### Integration / API testing with Hurl
 
 We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
 
 To run API integration tests locally against your running Uesio container, use `npm run tests-integration`
+
+#### Running a single Integration Test
+
+The easiest way to run a single Integration Test is to go into the `run-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here:
+
+```
+hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
+```
+
+You could run this from the CLI, but you would have to make sure that you are (a) in the right directory (b) have the right environment variables set up. (See the top of this `run-integration-tests.sh` for a better understanding).
