@@ -13,11 +13,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
+
+var primaryDomain = ""
 
 func init() {
 	session.Global.Close()
@@ -40,6 +43,7 @@ func init() {
 	}
 
 	session.Global = session.NewCookieManagerOptions(store, options)
+	primaryDomain = env.GetPrimaryDomain()
 }
 
 type AuthenticationType interface {
@@ -99,19 +103,34 @@ func RegisterAuthType(name string, authType AuthenticationType) {
 	authTypeMap[name] = authType
 }
 
-func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
-	stringParts := strings.Split(host, ".")
-	if len(stringParts) == 3 {
-		// Example: ben.ues.io
-		return "subdomain", stringParts[0], stringParts[1] + "." + stringParts[2], stringParts[0]
+func removePort(host string) string {
+	parts := strings.Split(host, ":")
+	return parts[0]
+}
+
+func parseHost(host string) (string, string, string, bool) {
+
+	hostWithoutPort := removePort(host)
+
+	if hostWithoutPort == primaryDomain {
+		return "domain", host, "", false
 	}
-	//
-	hostParts := strings.Split(host, ":")
-	return "domain", hostParts[0], host, ""
+
+	if strings.Contains(hostWithoutPort, primaryDomain) {
+		hostParts := strings.Split(host, ".")
+		return "subdomain", hostParts[1] + "." + hostParts[2], hostParts[0], true
+	}
+
+	return "domain", host, "", false
 }
 
 func GetSiteFromHost(host string) (*meta.Site, error) {
-	domainType, domainValue, domain, subdomain := parseHost(host)
+
+	domainType, domain, subdomain, isSubDomain := parseHost(host)
+	domainValue := removePort(domain)
+	if isSubDomain {
+		domainValue = subdomain
+	}
 	site, err := getSiteFromDomain(domainType, domainValue)
 	if err != nil {
 		return nil, err
