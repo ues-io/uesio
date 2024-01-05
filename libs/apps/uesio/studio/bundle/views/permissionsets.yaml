@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
     newpermissionset:
       collection: uesio/studio.permissionset
       fields:
@@ -71,10 +77,8 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
+                - uesio/studio.listheader:
                     wire: allpermissionsets
-                    searchFields:
-                      - uesio/studio.name
                 - uesio/io.table:
                     uesio.id: permissionsetsTable
                     wire: allpermissionsets

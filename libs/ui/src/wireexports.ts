@@ -30,6 +30,7 @@ import {
 	WireConditionState,
 	isValueCondition,
 	isGroupCondition,
+	isParamCondition,
 	ConditionOperators,
 } from "./bands/wire/conditions/conditions"
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
@@ -71,4 +72,4 @@ export type {
 	WireRecord,
 }
 
-export { isValueCondition, isGroupCondition }
+export { isValueCondition, isGroupCondition, isParamCondition }

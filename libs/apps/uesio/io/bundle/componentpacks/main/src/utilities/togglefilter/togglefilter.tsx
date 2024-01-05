@@ -1,13 +1,15 @@
 import { definition, api, wire } from "@uesio/ui"
 import ToggleField from "../field/toggle"
 
-export interface GroupFilterProps {
+export interface ToggleFilterProps {
 	path: string
 	wire: wire.Wire
 	condition: wire.ValueConditionState
 }
 
-const GroupFilter: definition.UtilityComponent<GroupFilterProps> = (props) => {
+const ToggleFilter: definition.UtilityComponent<ToggleFilterProps> = (
+	props
+) => {
 	const { wire, context, condition } = props
 	const wireId = wire.getId()
 
@@ -15,7 +17,7 @@ const GroupFilter: definition.UtilityComponent<GroupFilterProps> = (props) => {
 		<ToggleField
 			context={context}
 			variant={"uesio/io.filter"}
-			value={condition.inactive}
+			value={!condition.inactive}
 			setValue={() => {
 				api.signal.runMany(
 					[
@@ -36,4 +38,4 @@ const GroupFilter: definition.UtilityComponent<GroupFilterProps> = (props) => {
 	)
 }
 
-export default GroupFilter
+export default ToggleFilter

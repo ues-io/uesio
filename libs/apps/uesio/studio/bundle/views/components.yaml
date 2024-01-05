@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -56,10 +62,12 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
+                - uesio/studio.listheader:
                     wire: components
+                    showTypeFilter: true
                     searchFields:
-                      - uesio/core.uniquekey
+                      - uesio/studio.name
+                      - uesio/studio.type
                 - uesio/io.table:
                     uesio.id: componentsTable
                     wire: components

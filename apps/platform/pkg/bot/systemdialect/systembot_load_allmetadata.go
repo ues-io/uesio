@@ -87,6 +87,7 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 const (
 	itemField          = "uesio/studio.item"
 	groupingField      = "uesio/studio.grouping"
+	namespaceField     = "uesio/studio.namespace"
 	allMetadataField   = "uesio/studio.allmetadata"
 	isCommonFieldField = "uesio/studio.iscommonfield"
 )
@@ -140,6 +141,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
 	groupingCondition := extractConditionByField(op.Conditions, groupingField)
+	namespaceCondition := extractConditionByField(op.Conditions, namespaceField)
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
 	isCommonFieldCondition := extractConditionByField(op.Conditions, isCommonFieldField)
 
@@ -202,7 +204,17 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		Label:      "App Color",
 	})
 
-	namespaces := session.GetContextNamespaces()
+	// Determine the namespaces to request using a namespace condition, if present and active,
+	// otherwise use all context namespaces
+	var namespaces []string
+	if namespaceCondition != nil && !namespaceCondition.Inactive {
+		if namespacesVal, ok := goutils.StringSliceValue(getConditionValue(namespaceCondition)); ok {
+			namespaces = namespacesVal
+		}
+	}
+	if namespaces == nil {
+		namespaces = session.GetContextNamespaces()
+	}
 
 	if itemCondition != nil {
 		itemKey := goutils.StringValue(getConditionValue(itemCondition))
@@ -223,7 +235,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		conditions := meta.BundleConditions{}
 		for _, condition := range op.Conditions {
 			// Ignore the special conditions
-			if condition.Field == allMetadataField || condition.Type == "SEARCH" || condition.Field == isCommonFieldField {
+			if condition.Field == allMetadataField ||
+				condition.Type == "SEARCH" ||
+				condition.Field == isCommonFieldField ||
+				condition.Field == namespaceField {
 				continue
 			}
 			// Special handling for the grouping condition
