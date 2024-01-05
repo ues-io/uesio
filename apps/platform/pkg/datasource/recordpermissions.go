@@ -96,6 +96,9 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		if err != nil {
 			return err
 		}
+		if fk == "" {
+			return nil
+		}
 		return refReq.AddID(fk, wire.ReferenceLocator{
 			Item:  change.FieldChanges,
 			Field: fieldMetadata,
