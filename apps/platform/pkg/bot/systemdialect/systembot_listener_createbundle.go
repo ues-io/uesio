@@ -5,6 +5,8 @@ import (
 	"io"
 	"strconv"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -115,12 +117,19 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
+	eg := errgroup.Group{}
+
 	creator := func(path string) (io.WriteCloser, error) {
 		r, w := io.Pipe()
-		go func() {
-			dest.StoreItem(path, r)
-			w.Close()
-		}()
+		eg.Go(func() error {
+			err := dest.StoreItem(path, r)
+			if err != nil {
+				w.Close()
+				return err
+			} else {
+				return w.Close()
+			}
+		})
 		return w, nil
 	}
 
@@ -128,7 +137,11 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	if err != nil {
 		return nil, err
 	}
-
+	// Wait for all goroutines spawned in the error group to complete,
+	// or return the first error
+	if err = eg.Wait(); err != nil {
+		return nil, err
+	}
 	return map[string]interface{}{
 		"major":       major,
 		"minor":       minor,
