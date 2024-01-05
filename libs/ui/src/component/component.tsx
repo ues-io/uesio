@@ -31,6 +31,7 @@ import {
 } from "../definition/component"
 import { COMPONENT_CONTEXT, DISPLAY_CONDITIONS } from "../componentexports"
 import Slot, { DefaultSlotName } from "../utilities/slot"
+import { MergeType } from "../context/merge"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -105,6 +106,10 @@ const stripSlotsFromDefinition = (
 	return props as BaseDefinition
 }
 
+const propMergeOptions = {
+	types: ["Prop" as MergeType],
+}
+
 /**
  * Constructs a DefinitionList to use for rendering a Declarative Component
  * by merging the provided properties, and then injecting them into the component type's definition's
@@ -127,7 +132,8 @@ const resolveDeclarativeComponentDefinition = (
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
-			componentTypeDef.definition as Record<string, string>[]
+			componentTypeDef.definition as Record<string, string>[],
+			propMergeOptions
 		) as DefinitionList) || []
 
 function addDefaultPropertyAndSlotValues(
