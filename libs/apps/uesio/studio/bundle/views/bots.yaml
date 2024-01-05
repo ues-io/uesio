@@ -22,7 +22,7 @@ definition:
         - field: uesio/studio.namespace
           operator: EQ
           inactive: false
-          id: localBotsOnly
+          id: localMetadataOnly
           valueSource: PARAM
           param: app
     newbot:
@@ -84,30 +84,12 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.searchbox:
-                          wire: bots
-                          focusOnRender: true
-                          searchFields:
-                            - uesio/studio.name
-                            - uesio/studio.type
-                          uesio.styleTokens:
-                            root:
-                              - mt-4
-                      - uesio/io.filter:
-                          wire: bots
-                          fieldId: uesio/studio.type
-                          labelPosition: none
-                          displayAs: "MULTISELECT"
-                          uesio.styleTokens:
-                            root:
-                              - mt-4
-                      - uesio/io.filter:
-                          wire: bots
-                          conditionId: localBotsOnly
-                          displayAs: TOGGLE
-                          label: Only local bots
+                - uesio/studio.listheader:
+                    wire: bots
+                    showTypeFilter: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.type
                 - uesio/io.table:
                     uesio.id: botsTable
                     wire: bots

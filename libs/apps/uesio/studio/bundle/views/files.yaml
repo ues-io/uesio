@@ -22,7 +22,7 @@ definition:
         - field: uesio/studio.namespace
           operator: EQ
           inactive: false
-          id: localFilesOnly
+          id: localMetadataOnly
           valueSource: PARAM
           param: app
     newfile:
@@ -78,21 +78,8 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.searchbox:
-                          wire: files
-                          focusOnRender: true
-                          searchFields:
-                            - uesio/studio.name
-                          uesio.styleTokens:
-                            root:
-                              - mt-4
-                      - uesio/io.filter:
-                          wire: files
-                          conditionId: localFilesOnly
-                          displayAs: TOGGLE
-                          label: Only local files
+                - uesio/studio.listheader:
+                    wire: files
                 - uesio/io.table:
                     uesio.id: filesTable
                     wire: files

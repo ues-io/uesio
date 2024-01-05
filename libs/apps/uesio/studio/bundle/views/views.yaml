@@ -23,7 +23,7 @@ definition:
         - field: uesio/studio.namespace
           operator: EQ
           inactive: false
-          id: localViewsOnly
+          id: localMetadataOnly
           valueSource: PARAM
           param: app
     newview:
@@ -93,19 +93,8 @@ definition:
                               - col-span-1
                               - lg:col-span-2
                           components:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.searchbox:
-                                      wire: allviews
-                                      focusOnRender: true
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-4
-                                  - uesio/io.filter:
-                                      wire: allviews
-                                      conditionId: localViewsOnly
-                                      displayAs: TOGGLE
-                                      label: Only local views
+                            - uesio/studio.listheader:
+                                wire: allviews
                             - uesio/io.table:
                                 uesio.id: viewsTable
                                 wire: allviews

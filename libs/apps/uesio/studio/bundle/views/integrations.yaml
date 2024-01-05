@@ -22,7 +22,7 @@ definition:
         - field: uesio/studio.namespace
           operator: EQ
           inactive: false
-          id: localIntegrationsOnly
+          id: localMetadataOnly
           valueSource: PARAM
           param: app
     newintegration:
@@ -82,19 +82,11 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.searchbox:
-                          wire: integrations
-                          focusOnRender: true
-                          uesio.styleTokens:
-                            root:
-                              - mt-4
-                      - uesio/io.filter:
-                          wire: integrations
-                          conditionId: localIntegrationsOnly
-                          displayAs: TOGGLE
-                          label: Only local integrations
+                - uesio/studio.listheader:
+                    wire: integrations
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.type
                 - uesio/io.table:
                     uesio.id: integrationsTable
                     wire: integrations

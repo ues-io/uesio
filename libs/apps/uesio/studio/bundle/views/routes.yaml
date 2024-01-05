@@ -27,7 +27,7 @@ definition:
         - field: uesio/studio.namespace
           operator: EQ
           inactive: false
-          id: localRoutesOnly
+          id: localMetadataOnly
           valueSource: PARAM
           param: app
       order:
@@ -184,22 +184,13 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.searchbox:
-                          wire: allroutes
-                          focusOnRender: true
-                          searchFields:
-                            - uesio/studio.name
-                            - uesio/studio.path
-                          uesio.styleTokens:
-                            root:
-                              - mt-4
-                      - uesio/io.filter:
-                          wire: allroutes
-                          conditionId: localRoutesOnly
-                          displayAs: TOGGLE
-                          label: Only local routes
+                - uesio/studio.listheader:
+                    wire: allroutes
+                    showTypeFilter: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.type
+                      - uesio/studio.path
                 - uesio/io.table:
                     uesio.id: routesTable
                     wire: allroutes
