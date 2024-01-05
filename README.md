@@ -345,8 +345,14 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
   </tr>
   <tr>
     <td>UESIO_MOCK_AUTH</td>
-    <td>Enables you to login with mock user accounts (currently a hardcoded list)</td>
+    <td>Enables you to login with mock user accounts (which can be specified with `UESIO_MOCK_AUTH_USERNAMES`)</td>
     <td>false</td>
+    <td>Only for local dev / unit tests</td>
+  </tr>
+  <tr>
+    <td>UESIO_MOCK_AUTH_USERNAMES</td>
+    <td>A comma-separated list of usernames to use for mock authentication (requires `UESIO_MOCK_AUTH=true`)</td>
+    <td>ben,abel,wessel,baxter,zach,uesio</td>
     <td>Only for local dev / unit tests</td>
   </tr>
   <tr>
