@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -10,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -142,6 +145,33 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	if err = eg.Wait(); err != nil {
 		return nil, err
 	}
+
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
+	create := retrieve.NewWriterCreator(zipWriter.Create)
+	err = retrieve.RetrieveBundle("", create, source)
+	if err != nil {
+		return nil, err
+	}
+
+	err = zipWriter.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = filesource.Upload([]*filesource.FileUploadOp{
+		{
+			Data:         buf,
+			Path:         bundle.GetVersionString() + ".zip",
+			CollectionID: "uesio/studio.bundle",
+			RecordID:     bundle.ID,
+			FieldID:      "uesio/studio.contents",
+		},
+	}, nil, session, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	return map[string]interface{}{
 		"major":       major,
 		"minor":       minor,
