@@ -19,7 +19,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
-		Repository:  os.Getenv("UESIO_BUNDLE_STORE_HOST"),
+		Repository:  os.Getenv("UESIO_BUNDLE_STORE_DOMAIN"),
 	}, nil
 }
 
