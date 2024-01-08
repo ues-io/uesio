@@ -40,6 +40,7 @@ definition:
             components:
               - uesio/io.filter:
                   wire: $Prop{wire}
+                  wrapperVariant: uesio/io.filter
                   fieldId: uesio/studio.type
                   labelPosition: top
                   displayAs: "MULTISELECT"
@@ -52,6 +53,4 @@ definition:
                   conditionId: localMetadataOnly
                   displayAs: TOGGLE
                   labelPosition: top
-                  label: Only local $Collection{pluralLabel}
-slots:
-  - name: extraFilters
+                  label: Only local $Collection{$Prop{wire}:pluralLabel}

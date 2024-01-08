@@ -1,0 +1,3 @@
+name: primary_domain
+managedBy: app
+store: environment
