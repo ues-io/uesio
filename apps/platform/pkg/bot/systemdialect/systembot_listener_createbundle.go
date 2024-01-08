@@ -51,7 +51,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	}
 
 	var bundles meta.BundleCollection
-	err = datasource.PlatformLoad(
+	if err = datasource.PlatformLoad(
 		&bundles,
 		&datasource.PlatformLoadOptions{
 			BatchSize: 1,
@@ -77,8 +77,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 			},
 		},
 		session,
-	)
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 
@@ -95,8 +94,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	err = datasource.PlatformSaveOne(bundle, nil, nil, session)
-	if err != nil {
+	if err = datasource.PlatformSaveOne(bundle, nil, connection, session); err != nil {
 		return nil, err
 	}
 
@@ -146,20 +144,19 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
+	// Also upload the entire bundle as a ZIP file attached as a user file,
+	// so that we can easily download everything when needed rather than having to get the individual bundle files.
 	buf := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(buf)
 	create := retrieve.NewWriterCreator(zipWriter.Create)
-	err = retrieve.RetrieveBundle("", create, source)
-	if err != nil {
+	if err = retrieve.RetrieveBundle("", create, source); err != nil {
+		return nil, err
+	}
+	if err = zipWriter.Close(); err != nil {
 		return nil, err
 	}
 
-	err = zipWriter.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = filesource.Upload([]*filesource.FileUploadOp{
+	if _, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
 			Data:         buf,
 			Path:         bundle.GetVersionString() + ".zip",
@@ -167,8 +164,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 			RecordID:     bundle.ID,
 			FieldID:      "uesio/studio.contents",
 		},
-	}, nil, session, nil)
-	if err != nil {
+	}, connection, session, params); err != nil {
 		return nil, err
 	}
 
