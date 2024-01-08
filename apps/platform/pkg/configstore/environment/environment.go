@@ -42,7 +42,7 @@ var configValues = map[string]string{
 	"uesio/core.db_host":                          GetRequiredEnv("UESIO_DB_HOST"),
 	"uesio/core.db_port":                          GetRequiredEnv("UESIO_DB_PORT"),
 	"uesio/core.bundlestore_bucket":               GetRequiredEnv("UESIO_BUNDLES_BUCKET_NAME"),
-	"uesio/core.bundle_store_host":                os.Getenv("UESIO_BUNDLE_STORE_HOST"),
+	"uesio/core.bundle_store_domain":                os.Getenv("UESIO_BUNDLE_STORE_DOMAIN"),
 	"uesio/core.primary_domain":                             GetEnvWithDefault("UESIO_PRIMARY_DOMAIN", "localhost"),
 }
 
