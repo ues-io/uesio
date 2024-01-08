@@ -42,6 +42,8 @@ var configValues = map[string]string{
 	"uesio/core.db_host":                          GetRequiredEnv("UESIO_DB_HOST"),
 	"uesio/core.db_port":                          GetRequiredEnv("UESIO_DB_PORT"),
 	"uesio/core.bundlestore_bucket":               GetRequiredEnv("UESIO_BUNDLES_BUCKET_NAME"),
+	"uesio/core.bundle_store_host":                os.Getenv("UESIO_BUNDLE_STORE_HOST"),
+	"uesio/core.host":                             GetEnvWithDefault("UESIO_HOST", "localhost"),
 }
 
 func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {

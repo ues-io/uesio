@@ -1,0 +1,3 @@
+name: bundle_store_host
+managedBy: app
+store: environment
