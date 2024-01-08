@@ -76,7 +76,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			)}
 			{component.getSlotProps(props).map((props, index) => {
 				let childrenContext = context
-				// When rendering a Declarative Component, use a custom slot laoder for the children
+				// When rendering a Declarative Component, use a custom slot loader for the children
 				if (
 					getComponentDef(props.componentType)?.type ===
 					component.Declarative
@@ -86,7 +86,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					)
 				}
 				// If we're using a subview
-				if (props.componentType === "uesio/core.view") {
+				if (props.componentType === component.ViewComponentId) {
 					childrenContext = context.setCustomSlotLoader(
 						InnerViewSlotLoaderId
 					)
