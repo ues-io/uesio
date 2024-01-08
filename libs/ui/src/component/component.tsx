@@ -156,7 +156,12 @@ function addDefaultPropertyAndSlotValues(
 	if (havePropsWithDefaults) {
 		propsWithDefaults.forEach((prop: ComponentProperty) => {
 			const { defaultValue, name } = prop
-			if (typeof def[name] === "undefined" || def[name] === null) {
+			const value = def[name]
+			if (
+				typeof value === "undefined" ||
+				value === null ||
+				value === ""
+			) {
 				defaults[name] = defaultValue
 			}
 		})
