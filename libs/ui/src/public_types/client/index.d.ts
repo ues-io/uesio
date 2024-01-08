@@ -230,6 +230,15 @@ export const styles = {
 // COMPONENT
 //
 
+interface SlotUtilityProps extends UtilityProps {
+	path: string
+	definition?: DefinitionMap
+	listName?: string
+	// componentType will be populated if we're coming from a Declarative Component,
+	// where we need to be able to lookup the Slot metadata.
+	componentType?: MetadataKey
+}
+
 export namespace component {
 	export namespace registry {
 		export function register(key: MetadataKey, componentType: UC): void
@@ -238,6 +247,10 @@ export namespace component {
 			componentType: FC<UtilityProps>
 		): void
 	}
+	export function Component(...args: Parameters<UC>): ReturnType<UC>
+	export function Slot(
+		...args: Parameters<FC<SlotUtilityProps>>
+	): ReturnType<FC>
 }
 
 //
@@ -623,6 +636,11 @@ interface SignalDefinition {
 	stepId?: string
 }
 
+// SIGNAL
+export namespace signal {
+	export { SignalDefinition }
+}
+
 // API
 export namespace api {
 	export namespace signal {
@@ -695,4 +713,5 @@ export default {
 	component,
 	definition,
 	styles,
+	signal,
 }
