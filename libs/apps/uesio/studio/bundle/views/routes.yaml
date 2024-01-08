@@ -24,6 +24,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
       order:
         - field: uesio/core.updatedat
           desc: true
@@ -178,11 +184,12 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
+                - uesio/studio.listheader:
                     wire: allroutes
-                    focusOnRender: true
+                    showTypeFilter: true
                     searchFields:
                       - uesio/studio.name
+                      - uesio/studio.type
                       - uesio/studio.path
                 - uesio/io.table:
                     uesio.id: routesTable

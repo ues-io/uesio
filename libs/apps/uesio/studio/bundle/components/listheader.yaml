@@ -1,0 +1,57 @@
+name: listheader
+category: DATA
+title: List Header
+type: DECLARATIVE
+discoverable: true
+description: Header area for collection list views with filters and searchbox
+properties:
+  - type: WIRE
+    name: wire
+    label: Wire
+  - type: CHECKBOX
+    name: showTypeFilter
+    label: Show Type Filter
+  - type: LIST
+    subtype: TEXT
+    name: searchFields
+    label: Search Fields
+    defaultValue:
+      - uesio/studio.name
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - showTypeFilter
+  - type: DISPLAY
+definition:
+  - uesio/io.group:
+      uesio.styleTokens:
+        root:
+          - justify-between
+      components:
+        - uesio/io.searchbox:
+            wire: $Prop{wire}
+            searchFields: $Prop{searchFields}
+            focusOnRender: true
+            uesio.styleTokens:
+              root:
+                - mt-4
+        - uesio/io.group:
+            components:
+              - uesio/io.filter:
+                  wire: $Prop{wire}
+                  fieldId: uesio/studio.type
+                  labelPosition: top
+                  displayAs: "MULTISELECT"
+                  uesio.display:
+                    - type: hasValue
+                      value: $Prop{showTypeFilter}
+              - uesio/io.filter:
+                  wire: $Prop{wire}
+                  wrapperVariant: uesio/io.filter
+                  conditionId: localMetadataOnly
+                  displayAs: TOGGLE
+                  labelPosition: top
+                  label: Only local $Collection{pluralLabel}
+slots:
+  - name: extraFilters

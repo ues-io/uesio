@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
     newcollection:
       collection: uesio/studio.collection
       fields:
@@ -119,11 +125,8 @@ definition:
                               - col-span-1
                               - lg:col-span-2
                           components:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.searchbox:
-                                      wire: allcollections
-                                      focusOnRender: true
+                            - uesio/studio.listheader:
+                                wire: allcollections
                             - uesio/io.table:
                                 wire: allcollections
                                 columns:

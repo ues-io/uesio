@@ -3,6 +3,7 @@ pack: app
 entrypoint: components/loginmock/loginmock
 configvalues:
   - uesio/core.mock_auth
+  - uesio/core.mock_auth_usernames
 utilities:
   - uesio/io.button
 variants:

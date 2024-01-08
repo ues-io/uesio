@@ -111,8 +111,9 @@ jobs:
           curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/4.0.0/hurl_4.0.0_amd64.deb
           sudo apt update && sudo apt install ./hurl_4.0.0_amd64.deb
 
-          # Run E2E and Integration tests
-          npm run tests-all
+          # Start up the Uesio app, and dependencies, in Docker
+          # then run all Integration and E2E tests against the app
+          npm run tests-ci
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'master'

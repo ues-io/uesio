@@ -23,6 +23,7 @@ type ConditionOperators =
 	| "IS_NOT_BLANK"
 	| "HAS_ANY"
 	| "HAS_ALL"
+	| "CONTAINS"
 
 type WireConditionState =
 	| ParamConditionState
@@ -96,11 +97,16 @@ const isValueCondition = (
 	!condition.type &&
 	(condition.valueSource === "VALUE" || !condition.valueSource)
 
+const isParamCondition = (
+	condition: WireConditionState | undefined
+): condition is ParamConditionState =>
+	!!condition && !condition.type && condition.valueSource === "PARAM"
+
 const isGroupCondition = (
 	condition: WireConditionState | undefined
 ): condition is ValueConditionState => condition?.type === "GROUP"
 
-export { isValueCondition, isGroupCondition }
+export { isValueCondition, isGroupCondition, isParamCondition }
 
 export type {
 	ConditionOperators,

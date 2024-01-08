@@ -20,6 +20,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
     newview:
       collection: uesio/studio.view
       fields:
@@ -87,9 +93,8 @@ definition:
                               - col-span-1
                               - lg:col-span-2
                           components:
-                            - uesio/io.searchbox:
+                            - uesio/studio.listheader:
                                 wire: allviews
-                                focusOnRender: true
                             - uesio/io.table:
                                 uesio.id: viewsTable
                                 wire: allviews

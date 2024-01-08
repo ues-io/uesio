@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
     newintegration:
       collection: uesio/studio.integration
       fields:
@@ -76,6 +82,11 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
+                - uesio/studio.listheader:
+                    wire: integrations
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.type
                 - uesio/io.table:
                     uesio.id: integrationsTable
                     wire: integrations

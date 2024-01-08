@@ -19,6 +19,12 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
+        - field: uesio/studio.namespace
+          operator: EQ
+          inactive: false
+          id: localMetadataOnly
+          valueSource: PARAM
+          param: app
     newfile:
       collection: uesio/studio.file
       fields:
@@ -72,11 +78,8 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.searchbox:
+                - uesio/studio.listheader:
                     wire: files
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/studio.name
                 - uesio/io.table:
                     uesio.id: filesTable
                     wire: files
