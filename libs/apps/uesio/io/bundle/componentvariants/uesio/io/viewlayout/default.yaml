@@ -28,7 +28,7 @@ definition:
       - md:overflow-auto
       - md:col-start-2
       - md:col-end-2
-      - "[container-type:inline-size]"
+      - "[container-type:size]"
       - h-max
       - md:row-start-2
       - md:grid-rows-[100%]

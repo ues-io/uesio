@@ -58,7 +58,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			contentwrapper: [
 				"overflow-auto",
 				"h-full",
-				"[container-type:inline-size]",
+				"[container-type:size]",
 				height && "border-y",
 				width && "border-x",
 				"border-dashed",
