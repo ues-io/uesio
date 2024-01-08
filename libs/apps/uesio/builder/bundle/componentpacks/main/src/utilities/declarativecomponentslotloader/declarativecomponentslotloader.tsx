@@ -41,7 +41,9 @@ const getSlotProps = (slotProps: component.SlotUtilityProps) =>
 			}
 			return {
 				...props,
-				context: context.setCustomSlotLoader(SlotBuilderComponentId),
+				context: context.setCustomSlotLoader(
+					customSlotLoader || SlotBuilderComponentId
+				),
 			} as definition.BaseProps
 		} else {
 			// If we are rendering a Declarative Component, we need to set a special slot loader.
