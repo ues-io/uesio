@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -18,6 +19,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
+		Repository:  os.Getenv("UESIO_BUNDLE_STORE_HOST"),
 	}, nil
 }
 
@@ -41,6 +43,7 @@ type Bundle struct {
 	App         *App   `json:"uesio/studio.app"`
 	Description string `json:"uesio/studio.description"`
 	Version     string `json:"uesio/studio.version"`
+	Repository  string `json:"uesio/studio.repository"`
 }
 
 func (b *Bundle) GetVersionString() string {

@@ -1,6 +1,7 @@
 name: bundle
 uniqueKey:
   - uesio/studio.app
+  - uesio/studio.repository
   - uesio/studio.major
   - uesio/studio.minor
   - uesio/studio.patch
