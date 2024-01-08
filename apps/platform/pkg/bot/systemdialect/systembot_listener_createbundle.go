@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -10,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -48,7 +51,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	}
 
 	var bundles meta.BundleCollection
-	err = datasource.PlatformLoad(
+	if err = datasource.PlatformLoad(
 		&bundles,
 		&datasource.PlatformLoadOptions{
 			BatchSize: 1,
@@ -74,8 +77,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 			},
 		},
 		session,
-	)
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 
@@ -92,8 +94,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	err = datasource.PlatformSaveOne(bundle, nil, nil, session)
-	if err != nil {
+	if err = datasource.PlatformSaveOne(bundle, nil, connection, session); err != nil {
 		return nil, err
 	}
 
@@ -142,6 +143,31 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 	if err = eg.Wait(); err != nil {
 		return nil, err
 	}
+
+	// Also upload the entire bundle as a ZIP file attached as a user file,
+	// so that we can easily download everything when needed rather than having to get the individual bundle files.
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
+	create := retrieve.NewWriterCreator(zipWriter.Create)
+	if err = retrieve.RetrieveBundle("", create, source); err != nil {
+		return nil, err
+	}
+	if err = zipWriter.Close(); err != nil {
+		return nil, err
+	}
+
+	if _, err = filesource.Upload([]*filesource.FileUploadOp{
+		{
+			Data:         buf,
+			Path:         bundle.GetVersionString() + ".zip",
+			CollectionID: "uesio/studio.bundle",
+			RecordID:     bundle.ID,
+			FieldID:      "uesio/studio.contents",
+		},
+	}, connection, session, params); err != nil {
+		return nil, err
+	}
+
 	return map[string]interface{}{
 		"major":       major,
 		"minor":       minor,
