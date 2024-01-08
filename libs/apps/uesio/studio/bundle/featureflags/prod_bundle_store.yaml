@@ -1,0 +1,4 @@
+name: prod_bundle_store
+label: Prod Bundle Store
+type: CHECKBOX
+defaultValue: false
