@@ -104,8 +104,7 @@ func RegisterAuthType(name string, authType AuthenticationType) {
 }
 
 func removePort(host string) string {
-	parts := strings.Split(host, ":")
-	return parts[0]
+	return strings.Split(host, ":")[0]
 }
 
 func parseHost(host string) (string, string, string, bool) {
