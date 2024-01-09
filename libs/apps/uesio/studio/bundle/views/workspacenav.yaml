@@ -334,9 +334,6 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: group
                 - uesio/io.tile:
-                    uesio.display:
-                      - type: featureFlag
-                        name: manage_config_values
                     uesio.variant: uesio/io.nav
                     uesio.id: config-values
                     uesio.classes:
@@ -355,9 +352,6 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: tune
                 - uesio/io.tile:
-                    uesio.display:
-                      - type: featureFlag
-                        name: manage_secrets
                     uesio.variant: uesio/io.nav
                     uesio.id: secrets
                     uesio.classes:
@@ -376,9 +370,6 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: lock
                 - uesio/io.tile:
-                    uesio.display:
-                      - type: featureFlag
-                        name: manage_credentials
                     uesio.variant: uesio/io.nav
                     uesio.id: credentials
                     uesio.classes:
@@ -434,6 +425,24 @@ definition:
                     content:
                       - uesio/io.text:
                           text: Auth Sources
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: dynamic_feed
+                - uesio/io.tile:
+                    uesio.id: signup-methods
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: signupmethods
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/signupmethods
+                    content:
+                      - uesio/io.text:
+                          text: Signup Methods
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
