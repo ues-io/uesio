@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource/fieldvalidations"
@@ -191,7 +190,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Check for population errors here
 	if op.HasErrors() {
-		return wire.NewGenericSaveException(errors.New("Error with field population"))
+		return wire.NewGenericSaveException(exceptions.NewBadRequestException("error with field population"))
 	}
 
 	err = runBeforeSaveBots(op, connection, session)
