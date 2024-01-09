@@ -20,7 +20,7 @@ import WireRecord from "../bands/wirerecord/class"
 import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
-import { handlers, MergeType } from "./merge"
+import { handlers, MergeOptions, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
 
 const ERROR = "ERROR",
@@ -232,6 +232,8 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
+const defaultMergeRegex = /\$([.\w]*){(.*?)}/g
+
 function injectDynamicContext(
 	context: Context,
 	additional: ContextOptions | undefined
@@ -268,6 +270,9 @@ function injectDynamicContext(
 
 	return context
 }
+
+const getMergeRegexForTypes = (types: MergeType[]) =>
+	new RegExp(`\\$(${types.join("|")}){(.*?)}`, "g")
 
 const newContext = () => new Context()
 
@@ -600,14 +605,16 @@ class Context {
 
 	#addFrame = (frame: ContextFrame) => this.clone([frame].concat(this.stack))
 
-	merge = (template: Mergeable) => {
+	merge = (template: Mergeable, options?: MergeOptions) => {
 		if (typeof template !== "string" || !template.length) {
 			return template
 		}
-
+		const mergeRegex = options?.types
+			? getMergeRegexForTypes(options.types)
+			: defaultMergeRegex
 		const expressionResults = [] as FieldValue[]
 		const mergedString = template.replace(
-			/\$([.\w]*){(.*?)}/g,
+			mergeRegex,
 			(x, mergeType, expression) => {
 				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
 				const mergeTypeName = mergeSplit.pop() as MergeType
@@ -640,8 +647,8 @@ class Context {
 		return mergedString
 	}
 
-	mergeString = (template: Mergeable) => {
-		const result = this.merge(template)
+	mergeString = (template: Mergeable, options?: MergeOptions) => {
+		const result = this.merge(template, options)
 		if (typeof result === "object") {
 			return JSON.stringify(result)
 		}
@@ -653,42 +660,57 @@ class Context {
 		return `${result ?? ""}`
 	}
 
-	mergeBoolean = (template: Mergeable, defaultValue: boolean) => {
-		const result = this.merge(template)
+	mergeBoolean = (
+		template: Mergeable,
+		defaultValue: boolean,
+		options?: MergeOptions
+	) => {
+		const result = this.merge(template, options)
 		if (typeof result === "boolean") {
 			return result
 		}
 		return defaultValue
 	}
 
-	mergeDeep = (value: DeepMergeable) => {
+	mergeDeep = (value: DeepMergeable, options?: MergeOptions) => {
 		if (!value) return value
 		if (Array.isArray(value)) {
-			return this.mergeList(value)
+			return this.mergeList(value, options)
 		}
 		if (typeof value === "object" && value !== null) {
-			return this.mergeMap(value)
+			return this.mergeMap(value, options)
 		}
-		return this.merge(value)
+		return this.merge(value, options)
 	}
 
-	mergeList = (list: DeepMergeable[] | undefined): unknown[] | undefined => {
+	mergeList = (
+		list: DeepMergeable[] | undefined,
+		options?: MergeOptions
+	): unknown[] | undefined => {
 		if (!Array.isArray(list)) return list
-		return list.map((item) => this.mergeDeep(item))
+		return list.map((item) => this.mergeDeep(item, options))
 	}
 
-	mergeMap = <T extends Record<string, unknown> | undefined>(map: T): T =>
+	mergeMap = <T extends Record<string, unknown> | undefined>(
+		map: T,
+		options?: MergeOptions
+	): T =>
 		(map
 			? Object.fromEntries(
 					Object.entries(map).map((entry) => {
 						const [key, value] = entry
-						return [key, this.mergeDeep(value as DeepMergeable)]
+						return [
+							key,
+							this.mergeDeep(value as DeepMergeable, options),
+						]
 					})
 			  )
 			: {}) as T
 
-	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
-		this.mergeMap(map) as Record<string, string>
+	mergeStringMap = (
+		map: Record<string, Mergeable> | undefined,
+		options?: MergeOptions
+	) => this.mergeMap(map, options) as Record<string, string>
 
 	getCurrentErrors = () =>
 		this.stack.length && isErrorContextFrame(this.stack[0])

@@ -14,6 +14,9 @@ properties:
   - type: TEXT
     name: text2
     label: Text 2
+  - type: WIRE
+    name: wire
+    label: Wire
 definition:
   - uesio/core.slot:
       name: header
@@ -27,6 +30,8 @@ definition:
             text: $Prop{text1}
         - uesio/io.text:
             text: $Prop{text2}
+        - uesio/io.text:
+            text: "Collection Label: $Collection{$Prop{wire}:label}"
         - uesio/core.view:
             view: declarative_components
   - uesio/core.slot:
