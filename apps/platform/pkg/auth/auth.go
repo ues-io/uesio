@@ -20,8 +20,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-var primaryDomain = ""
-
 func init() {
 	session.Global.Close()
 	allowInsecureCookies := os.Getenv("UESIO_ALLOW_INSECURE_COOKIES")
@@ -43,7 +41,6 @@ func init() {
 	}
 
 	session.Global = session.NewCookieManagerOptions(store, options)
-	primaryDomain = env.GetPrimaryDomain()
 }
 
 type AuthenticationType interface {
@@ -109,6 +106,7 @@ func removePort(host string) string {
 
 func parseHost(host string) (string, string, string, bool) {
 
+	primaryDomain := env.GetPrimaryDomain()
 	hostWithoutPort := removePort(host)
 
 	if hostWithoutPort == primaryDomain {
@@ -117,6 +115,7 @@ func parseHost(host string) (string, string, string, bool) {
 
 	if strings.Contains(hostWithoutPort, "."+primaryDomain) {
 		hostParts := strings.Split(host, ".")
+		println(hostParts)
 		return "subdomain", hostParts[1] + "." + hostParts[2], hostParts[0], true
 	}
 

@@ -4,9 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 func TestParseHost(t *testing.T) {
+
+	env.SetPrimaryDomain("ues.io")
 
 	type testCase struct {
 		name                string
