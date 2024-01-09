@@ -148,7 +148,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 							if (match) {
 								src = api.file.getUserFileURL(
 									context,
-									match.getId(),
+									match.getIdFieldValue(),
 									match.getFieldValue<string>(
 										collection.UPDATED_AT_FIELD
 									)
