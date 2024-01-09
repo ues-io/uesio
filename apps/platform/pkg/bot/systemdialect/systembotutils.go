@@ -158,7 +158,15 @@ func requireValue(change *wire.ChangeItem, fieldName string) (string, error) {
 	isMissingInsert := change.IsNew && (valueIsUndefined || valueIsEmpty)
 	isMissingUpdate := !change.IsNew && !valueIsUndefined && valueIsEmpty
 	if isMissingInsert || isMissingUpdate {
-		return "", errors.New(fieldName + " is required")
+		msg := fieldName + " is required"
+		if change.Metadata != nil {
+			if isMissingInsert {
+				msg = "unable to insert new record into collection " + change.Metadata.GetFullName() + " at index " + change.RecordKey + ": " + msg
+			} else {
+				msg = "unable to update existing record of collection " + change.Metadata.GetFullName() + " with key " + change.RecordKey + ": " + msg
+			}
+		}
+		return "", exceptions.NewSaveException(change.RecordKey, fieldName, msg)
 	}
 
 	return value, nil

@@ -26,5 +26,5 @@ func NewGenericSaveException(err error) *exceptions.SaveException {
 			return exceptions.NewSaveException(recordID, commonfields.UniqueKey, fmt.Sprintf(formattedUesioDupError, parts[1], recordID))
 		}
 	}
-	return exceptions.NewSaveException("", "", err.Error())
+	return exceptions.NewSaveExceptionForError("", "", err)
 }

@@ -1,11 +1,11 @@
 package datasource
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -49,8 +49,9 @@ func PlatformSaves(psrs []PlatformSaveRequest, connection wire.Connection, sessi
 }
 
 func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
+
 	uniqueErrorStrings := map[string]bool{}
-	errorStrings := []string{}
+	var errorStrings []string
 	if err != nil {
 		errString := err.Error()
 		uniqueErrorStrings[errString] = true
@@ -67,7 +68,7 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	}
 
 	if len(uniqueErrorStrings) > 0 {
-		return errors.New(strings.Join(errorStrings, " : "))
+		return exceptions.NewBadRequestException(strings.Join(errorStrings, " : "))
 	}
 
 	return nil
