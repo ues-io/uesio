@@ -1,10 +1,10 @@
 name: bundle
 uniqueKey:
   - uesio/studio.app
-  - uesio/studio.repository
   - uesio/studio.major
   - uesio/studio.minor
   - uesio/studio.patch
+  - uesio/studio.repository
 nameField: uesio/core.uniquekey
 access: protected
 accessField: uesio/studio.app
