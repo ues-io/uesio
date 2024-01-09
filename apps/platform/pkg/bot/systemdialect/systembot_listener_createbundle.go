@@ -20,6 +20,31 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+type multi struct {
+	io.Writer
+	cs []io.Closer
+}
+
+func MultiWriteCloser(ws ...io.Writer) io.WriteCloser {
+	m := &multi{Writer: io.MultiWriter(ws...)}
+	for _, w := range ws {
+		if c, ok := w.(io.Closer); ok {
+			m.cs = append(m.cs, c)
+		}
+	}
+	return m
+}
+
+func (m *multi) Close() error {
+	var first error
+	for _, c := range m.cs {
+		if err := c.Close(); err != nil && first == nil {
+			first = err
+		}
+	}
+	return first
+}
+
 func runCreateBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID, err := getRequiredParameter(params, "app")
@@ -120,18 +145,21 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 
 	eg := errgroup.Group{}
 
+	// Also upload the entire bundle as a ZIP file attached as a user file,
+	// so that we can easily download everything when needed rather than having to get the individual bundle files.
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
+
 	creator := func(path string) (io.WriteCloser, error) {
 		r, w := io.Pipe()
 		eg.Go(func() error {
-			err := dest.StoreItem(path, r)
-			if err != nil {
-				w.Close()
-				return err
-			} else {
-				return w.Close()
-			}
+			return dest.StoreItem(path, r)
 		})
-		return w, nil
+		zip, err := zipWriter.Create(path)
+		if err != nil {
+			return nil, err
+		}
+		return MultiWriteCloser(w, zip), nil
 	}
 
 	err = retrieve.RetrieveBundle("", creator, source)
@@ -144,14 +172,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	// Also upload the entire bundle as a ZIP file attached as a user file,
-	// so that we can easily download everything when needed rather than having to get the individual bundle files.
-	buf := new(bytes.Buffer)
-	zipWriter := zip.NewWriter(buf)
-	create := retrieve.NewWriterCreator(zipWriter.Create)
-	if err = retrieve.RetrieveBundle("", create, source); err != nil {
-		return nil, err
-	}
 	if err = zipWriter.Close(); err != nil {
 		return nil, err
 	}
