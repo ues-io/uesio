@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -252,7 +253,7 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 		if err == nil {
 			havePropWithDefault := false
 			for _, prop := range props {
-				if prop.DefaultValue != "" {
+				if prop.DefaultValue != nil {
 					havePropWithDefault = true
 					break
 				}
@@ -269,17 +270,9 @@ func (cdw *RuntimeComponentMetadata) GetType() string {
 }
 
 type PropertyDef struct {
-	Name         string `yaml:"name"`
-	DefaultValue string `yaml:"defaultValue,omitempty"`
-}
-
-func (p *PropertyDef) IsNil() bool {
-	return p == nil
-}
-
-func (p *PropertyDef) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddStringKey("name", p.Name)
-	enc.AddStringKeyOmitEmpty("defaultValue", p.DefaultValue)
+	Name         string      `yaml:"name" json:"name"`
+	DefaultValue interface{} `yaml:"defaultValue" json:"defaultValue"`
+	Type         string      `yaml:"type" json:"type"`
 }
 
 type PropertyDefs []*PropertyDef
@@ -292,8 +285,13 @@ func (props *PropertyDefs) MarshalJSONArray(enc *gojay.Encoder) {
 	if props != nil {
 		for _, prop := range *props {
 			// Only serialize props with default values, since that's all we need them for (runtime)
-			if prop.DefaultValue != "" {
-				enc.AddObject(prop)
+			if prop.DefaultValue != nil {
+				// use default marshaller and just write it, so that we don't have to go through Gojay
+				// serialization nonsense
+				if rawJson, err := json.Marshal(prop); err == nil {
+					embeddedJSON := (gojay.EmbeddedJSON)(rawJson)
+					enc.AddEmbeddedJSON(&embeddedJSON)
+				}
 			}
 		}
 	}

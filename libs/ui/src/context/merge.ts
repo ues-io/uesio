@@ -32,6 +32,12 @@ type MergeType =
 	| "ComponentOutput"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
+interface MergeOptions {
+	// A list of allowed merge types to be resolved as part of the merge.
+	// If specified, then ONLY these merge types will be resolved, and any
+	// other merge types will be left untouched.
+	types?: MergeType[]
+}
 
 export const InvalidSignalOutputMergeMsg =
 	"Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{stepId:propertyPath}"
@@ -272,4 +278,4 @@ const parseTwoPartExpression = (expression: string) => {
 }
 
 export { handlers, parseTwoPartExpression }
-export type { MergeType }
+export type { MergeType, MergeHandler, MergeOptions }

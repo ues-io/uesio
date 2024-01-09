@@ -180,7 +180,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 
 	const isGroup = isGroupCondition(condition)
 
-	let label = definition.label
+	let label = context.mergeString(definition.label)
 	if (!label && isGroup) label = `Toggle group: ${condition?.id}`
 	if (!label) label = fieldMetadata?.getLabel()
 

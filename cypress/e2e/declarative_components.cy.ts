@@ -23,6 +23,8 @@ describe("Declarative Components", () => {
 		cy.get("div#root").should("contain", "I am on the left")
 		cy.get("div#root").should("contain", "I am on the right")
 		cy.get("div#root").should("contain", "This is the header")
+		cy.get("div#root").should("contain", "Collection Label: SUCH A LABEL")
+		cy.get("div#root").should("contain", "Subtitle: SUCH A LABEL")
 		cy.get("div#root").should("contain", "And this is the footer")
 		cy.get("div#root").should("contain", "This is a default header")
 		cy.clickButtonIfExists("btn-update-fields")
@@ -31,6 +33,8 @@ describe("Declarative Components", () => {
 		cy.get("div#root").should("contain", "This is the cabeza")
 		cy.get("div#root").should("contain", "And this is the pie")
 		cy.get("div#root").should("contain", "This is a default header")
+		cy.get("div#root").should("contain", "Collection Label: SUCH A LABEL")
+		cy.get("div#root").should("contain", "Subtitle: SUCH A LABEL")
 	}
 
 	const runTests = () => {

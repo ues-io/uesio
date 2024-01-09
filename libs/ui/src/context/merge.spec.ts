@@ -2,6 +2,7 @@ import { Context } from "./context"
 import {
 	InvalidComponentOutputMsg,
 	InvalidSignalOutputMergeMsg,
+	MergeOptions,
 	parseTwoPartExpression,
 } from "./merge"
 
@@ -72,6 +73,7 @@ type MergeWithContextTestCase = {
 	expected: string | undefined
 	input: string
 	expectError: string | undefined
+	options?: MergeOptions
 }
 
 type MergeBooleanTestCase = {
@@ -478,6 +480,32 @@ const mergeTestCases = [
 	},
 ] as MergeWithContextTestCase[]
 
+const mergeOptionsTestCases = [
+	{
+		name: "only merge specific types",
+		context: new Context().addSignalOutputFrame("step1", {
+			foo: "bar",
+		}),
+		input: "$Collection{$SignalOutput{step1:foo}:pluralLabel}",
+		expected: "$Collection{bar:pluralLabel}",
+		options: {
+			types: ["SignalOutput"],
+		} as MergeOptions,
+	},
+	{
+		name: "only merge specific types",
+		context: new Context().addPropsFrame({
+			foo: "bar",
+			baz: "qux",
+		}),
+		input: "$Collection{$Prop{foo}:pluralLabel} $Prop{baz}",
+		expected: "$Collection{bar:pluralLabel} qux",
+		options: {
+			types: ["Prop"],
+		} as MergeOptions,
+	},
+] as MergeWithContextTestCase[]
+
 describe("merge", () => {
 	describe("$SignalOutput context", () => {
 		signalOutputMergeTestCases.forEach((tc) => {
@@ -545,6 +573,16 @@ describe("merge", () => {
 				expect(
 					tc.context.mergeBoolean(tc.input, tc.defaultValue)
 				).toEqual(tc.expected)
+			})
+		})
+	})
+
+	describe("merge options", () => {
+		mergeOptionsTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				expect(tc.context.merge(tc.input, tc.options)).toEqual(
+					tc.expected
+				)
 			})
 		})
 	})

@@ -41,7 +41,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				"rounded",
 				"pointer-events-auto",
 				"bg-white",
-				"[container-type:inline-size]",
+				"[container-type:size]",
 			],
 		},
 		props,
