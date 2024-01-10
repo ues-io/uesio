@@ -68,8 +68,7 @@ definition:
                               subtitle: ${uesio/studio.namespace}
                               icon: ${uesio/studio.appicon}
                               color: ${uesio/studio.appcolor}
-                      - field: uesio/studio.type
-                      - field: uesio/studio.credentials
+                      - field: uesio/studio.authsource
                         uesio.context:
                           workspace:
                             name: $Param{workspacename}

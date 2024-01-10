@@ -5,6 +5,6 @@ usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
 usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
 landingRoute: signuplanding
-createLoginBot: createlogin
-signupBot: signup
-forgotPasswordBot: forgotpassword
+createLoginBot: ${signupMethodName}_createlogin
+signupBot: ${signupMethodName}_signup
+forgotPasswordBot: ${signupMethodName}_forgotpassword

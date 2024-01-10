@@ -1,7 +1,9 @@
 function signupmethod(bot) {
 	const params = bot.params.getAll()
-	// In order to avoid conflicts with JS merge templates,
-	// we need to just duplicate all params in the template files
+	const { signupMethodName } = params
+	// In order to avoid conflicts with Generator merges clobbering JS variable merges
+	// inside of our Bot template files, we will just replace all JS merges in the template files,
+	// e.g. we will just have "code" => "${code}", "link" => "${link}", etc.
 	const escapeMerges = [
 		"code",
 		"username",
@@ -21,7 +23,8 @@ function signupmethod(bot) {
 	// Create the 3 bots TS and YAML files
 	const botNames = ["signup", "createlogin", "forgotpassword"]
 	botNames.forEach((name) => {
-		const path = `bots/listener/${name}/bot`
+		const botName = `${signupMethodName}_${name}`
+		const path = `bots/listener/${botName}/bot`
 		bot.generateFile(
 			`${path}.ts`,
 			newBotParams,
@@ -29,7 +32,7 @@ function signupmethod(bot) {
 		)
 		bot.generateFile(
 			`${path}.yaml`,
-			{ ...params, name },
+			{ ...params, name: botName },
 			"templates/bot.template.yaml"
 		)
 	})
@@ -42,7 +45,7 @@ function signupmethod(bot) {
 	)
 	// Finally generate the signup method itself
 	bot.generateFile(
-		`signupmethods/${params.signupMethodName}.yaml`,
+		`signupmethods/${signupMethodName}.yaml`,
 		{ ...params, username: "${username}" },
 		"templates/signupmethod.template.yaml"
 	)

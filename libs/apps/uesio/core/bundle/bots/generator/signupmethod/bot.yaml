@@ -11,11 +11,11 @@ params:
     metadataType: PROFILE
   - name: fromEmail
     prompt: From email address (for password emails)
-    defaultValue: "noreply@ues.io"
+    default: "noreply@ues.io"
   - name: fromName
     prompt: From name (for password emails)
-    defaultValue: "ues.io"
+    default: "ues.io"
   - name: companyName
     prompt: Company name (for password emails)
-    defaultValue: "ues.io"
+    default: "ues.io"
 public: true
