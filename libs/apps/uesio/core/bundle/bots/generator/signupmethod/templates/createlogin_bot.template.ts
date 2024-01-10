@@ -1,12 +1,12 @@
 import { ListenerBotApi } from "@uesio/bots"
 
 export default function ${signupMethodName}_createlogin(bot: ListenerBotApi) {
-	const redirect = "/site/app/uesio/core/changepassword"
+	const redirect = "/site/app/uesio/core/changepassword?signupmethod=${signupMethodName}"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
 	const host = bot.params.get("host")
-	const link = host + redirect + "?code=" + code + "&username=" + username
+	const link = host + redirect + "&code=" + code + "&username=" + username
 	const contentType = "text/html"
 	const from = "${fromEmail}"
 	const fromName = "${fromName}"
