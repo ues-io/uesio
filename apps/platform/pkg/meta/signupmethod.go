@@ -26,6 +26,7 @@ type SignupMethod struct {
 	UsernameTemplate          string `yaml:"usernameTemplate,omitempty" json:"uesio/studio.usernametemplate"`
 	LandingRoute              string `yaml:"landingRoute,omitempty" json:"uesio/studio.landingroute"`
 	AutoLogin                 bool   `yaml:"autoLogin" json:"uesio/studio.autologin"`
+	EnableSelfSignup          bool   `yaml:"enableSelfSignup" json:"uesio/studio.enableselfsignup"`
 	UsernameRegex             string `yaml:"usernameRegex,omitempty" json:"uesio/studio.usernameregex"`
 	UsernameFormatExplanation string `yaml:"usernameFormatExplanation,omitempty" json:"uesio/studio.usernameformatexplanation"`
 	CreateLoginBot            string `yaml:"createLoginBot,omitempty" json:"uesio/studio.createloginbot"`

@@ -29,7 +29,7 @@ export default function ${signupMethodName}_signup(bot: ListenerBotApi) {
 			<br/>
 			Cheers!<br/>
 			<br/>
-			The team at ${companyName}
+			the ${companyName} team
 		</body>
 	</html>`
 

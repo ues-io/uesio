@@ -160,17 +160,8 @@ definition:
                                 fieldId: uesio/studio.createloginbot
                             - uesio/io.field:
                                 fieldId: uesio/studio.signupbot
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-                          uesio.display:
-                            - wire: authsource
-                              field: uesio/studio.type
-                              value: uesio/core.platform
-                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.enableselfsignup
                             - uesio/io.field:
                                 fieldId: uesio/studio.forgotpasswordbot
                             - uesio/io.field:

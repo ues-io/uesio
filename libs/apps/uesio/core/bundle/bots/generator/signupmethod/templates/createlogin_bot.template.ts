@@ -15,7 +15,7 @@ export default function ${signupMethodName}_createlogin(bot: ListenerBotApi) {
 	<!DOCTYPE html>
 	<html>
 		<body>
-			A user account has been created for you in ${companyName}).<br/>
+			A user account has been created for you in ${companyName}.<br/>
 			Your username is: ${username}.<br/>
 			<br/>
 			You can set your password and log in using the link below:<br/>

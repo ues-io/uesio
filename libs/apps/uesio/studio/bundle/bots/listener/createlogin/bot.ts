@@ -15,7 +15,7 @@ export default function createlogin(bot: ListenerBotApi) {
 	<!DOCTYPE html>
 	<html>
 		<body>
-			A user account has been created for you in ues.io studio).<br/>
+			A user account has been created for you in ues.io studio.<br/>
 			Your username is: ${username}.<br/>
 			<br/>
 			You can set your password and log in using the link below:<br/>
