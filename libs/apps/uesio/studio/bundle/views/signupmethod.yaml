@@ -20,6 +20,15 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{signupmethodname}
+    authsource:
+      collection: uesio/studio.authsource
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          valueSource: LOOKUP
+          lookupWire: signupmethods
+          lookupField: uesio/studio.authsource
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -32,7 +41,7 @@ definition:
               params:
                 selected: signupmethods
                 itemType: signupmethods
-                itemIcon: dynamic_feed
+                itemIcon: person_add
                 itemName: $Param{signupmethodname}
                 itemNameSpace: $Param{namespace}
                 itemNameSpaceIcon: ${signupmethods:uesio/studio.appicon}
@@ -122,14 +131,51 @@ definition:
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
-                                fieldId: uesio/studio.type
+                                fieldId: uesio/studio.label
                             - uesio/io.field:
-                                fieldId: uesio/studio.credentials
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.field:
+                                fieldId: uesio/studio.authsource
+                            - uesio/io.field:
+                                fieldId: uesio/studio.profile
+                            - uesio/io.field:
+                                fieldId: uesio/studio.landingroute
+                            - uesio/io.field:
+                                fieldId: uesio/studio.autologin
+                            - uesio/io.field:
+                                fieldId: uesio/studio.createloginbot
+                            - uesio/io.field:
+                                fieldId: uesio/studio.signupbot
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          uesio.display:
+                            - wire: authsource
+                              field: uesio/studio.type
+                              value: uesio/core.platform
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.forgotpasswordbot
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernametemplate
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernameregex
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernameformatexplanation

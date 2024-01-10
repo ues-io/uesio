@@ -1,0 +1,6 @@
+name: type
+type: SELECT
+label: Signup Method type
+selectList: uesio/core.signupmethodtypes
+required: false
+createOnly: true

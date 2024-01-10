@@ -1,7 +1,9 @@
 import { ListenerBotApi } from "@uesio/bots"
 
 export default function signup(bot: ListenerBotApi) {
-	const redirect = `/site/auth/${bot.getNamespace()}/platform/signup/confirm`
+	const namespace = bot.getNamespace()
+	const redirect =
+		"/site/auth/" + namespace + "/${signupMethodName}/signup/confirm"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
@@ -11,23 +13,23 @@ export default function signup(bot: ListenerBotApi) {
 	const toName = firstName && lastName ? `${firstName} ${lastName}` : username
 	const link = `${host}${redirect}?code=${code}&username=${username}`
 	const contentType = "text/html"
-	const from = "info@ues.io"
-	const fromName = "the ues.io team"
-	const subject = "Welcome to the ues.io studio!"
+	const from = "${fromEmail}"
+	const fromName = "${fromName}"
+	const subject = "Welcome to ${companyName}!"
 	const body = `
 	<!DOCTYPE html>
 	<html>
 		<body>
 			Hi ${toName},<br/>
 			<br/>
-			Thank you for registering for an account with the ues.io studio!<br/>
+			Thank you for registering for an account with ${companyName}!<br/>
 			<br/>
 			To complete your account set up, please confirm using the link below:<br/>
 			${link}<br/>
 			<br/>
 			Cheers!<br/>
 			<br/>
-			The team at ues.io
+			The team at ${companyName}
 		</body>
 	</html>`
 
@@ -40,26 +42,4 @@ export default function signup(bot: ListenerBotApi) {
 		plainBody: body,
 		contentType,
 	})
-
-	/*
-	// FOR LOCAL TESTING WITH RESEND
-	const response = bot.http.request({
-		headers: {
-			Authorization: "Bearer [your-bearer-token]",
-			"Content-Type": "application/json",
-		},
-		method: "POST",
-		url: "https://api.resend.com/emails",
-		body: {
-			from: "onboarding@resend.dev",
-			to: [email],
-			subject,
-			html: body,
-		},
-	})
-
-	if (response.code != 200) {
-		throw new Error(response.body + "")
-	}
-	*/
 }

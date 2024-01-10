@@ -446,7 +446,7 @@ definition:
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
-                          text: dynamic_feed
+                          text: person_add
                 - uesio/io.tile:
                     uesio.display:
                       - type: featureFlag

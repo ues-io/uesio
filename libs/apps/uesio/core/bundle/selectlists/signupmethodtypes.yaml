@@ -1,0 +1,9 @@
+name: signupmethodtypes
+options:
+  - label: "Username/Password"
+    value: "uesio/core.password"
+  - label: "Google"
+    value: "uesio/core.google"
+  - label: "Custom"
+    value: "uesio/core.custom"
+public: true

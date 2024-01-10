@@ -19,26 +19,6 @@ definition:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
-    newsignupmethod:
-      collection: uesio/studio.signup
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.workspace:
-        uesio/studio.type:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-      init:
-        query: false
-        create: true
-      defaults:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -51,7 +31,7 @@ definition:
               params:
                 selected: signupmethods
                 itemType: signupmethods
-                itemIcon: dynamic_feed
+                itemIcon: person_add
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
@@ -60,17 +40,19 @@ definition:
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
-                    text: dynamic_feed
+                    text: person_add
               actions:
                 - uesio/io.group:
                     components:
-                      - uesio/io.button:
-                          text: Create a new Signup Method
-                          uesio.variant: uesio/io.primary
+                      - uesio/studio.generatorbutton:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          buttonVariant: uesio/io.primary
                           hotkey: "n"
-                          signals:
-                            - signal: panel/TOGGLE
-                              panel: newSignupMethod
+                          label: Create a new Signup Method
+                          generator: uesio/core.signupmethod
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -116,17 +98,34 @@ definition:
             uesio.id: newsignupmethod
             wire: newsignupmethod
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
               - uesio/io.field:
-                  fieldId: uesio/studio.type
+                  fieldId: uesio/studio.authsource
               - uesio/io.field:
-                  fieldId: uesio/studio.credentials
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
+                  fieldId: uesio/studio.profile
+              - uesio/io.field:
+                  fieldId: uesio/studio.landingroute
+              - uesio/io.field:
+                  fieldId: uesio/studio.autologin
+              - uesio/io.field:
+                  fieldId: uesio/studio.usernametemplate
+              - uesio/io.field:
+                  fieldId: uesio/studio.usernameformatexplanation
+              - uesio/io.field:
+                  fieldId: uesio/studio.usernameregex
+              - uesio/io.field:
+                  fieldId: uesio/studio.createloginbot
+              - uesio/io.field:
+                  fieldId: uesio/studio.signupbot
+              - uesio/io.field:
+                  fieldId: uesio/studio.forgotpasswordbot
+
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
