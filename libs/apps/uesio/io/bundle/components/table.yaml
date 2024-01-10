@@ -30,8 +30,6 @@ slots:
         wireProperty: wire
       - type: FIELD_MODE
         modeProperty: mode
-  - name: header
-  - name: footer
 properties:
   - name: wire
     label: Wire

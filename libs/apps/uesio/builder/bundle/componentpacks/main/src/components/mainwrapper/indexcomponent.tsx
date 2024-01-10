@@ -2,6 +2,8 @@ import { definition, component, styles } from "@uesio/ui"
 import {
 	getBuilderNamespaces,
 	getComponentDef,
+	getSlotsFromPath,
+	replaceSlotPath,
 	setSelectedPath,
 	useSelectedComponentOrSlotPath,
 } from "../../api/stateapi"
@@ -55,18 +57,20 @@ const IndexComponent: definition.UC = (props) => {
 		componentId?.includes(searchTerm)
 
 	const slotsNode =
-		componentDef.slots?.map((slot, index) => (
-			<IndexSlot
-				key={slot.name + index}
-				slot={slot}
-				indent={true}
-				parentSelected={isSelected}
-				selectedPath={selectedPath}
-				definition={definition}
-				path={path}
-				context={context}
-			/>
-		)) || null
+		componentDef.slots?.map((slot) =>
+			getSlotsFromPath(slot.path, definition)?.map((innerdef, index) => (
+				<IndexSlot
+					key={slot.name + index}
+					slot={slot}
+					indent={true}
+					parentSelected={isSelected}
+					selectedPath={selectedPath}
+					definition={innerdef as definition.DefinitionMap}
+					path={path + replaceSlotPath(slot.path, index)}
+					context={context}
+				/>
+			))
+		) || null
 
 	return isVisible ? (
 		<PropNodeTag
