@@ -4,8 +4,9 @@ import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
 import { get, useDefinition } from "./defapi"
-import pointer from "json-pointer"
+
 const { COMPONENT_ID } = component
+const WILDCARD_PATH_TOKEN = "~{}"
 const {
 	getAllComponentTypes,
 	getComponentType,
@@ -159,6 +160,29 @@ const useSelectedComponentOrSlotPath = (context: ctx.Context) => {
 	return getSelectedComponentOrSlotPath(selectedPath, selectedDef)
 }
 
+const getSelectedSlotPath = (
+	selectedPath: FullPath,
+	selectedComponentPath: FullPath,
+	slotDef: SlotDef
+) => {
+	const parts = parseSlotPath(slotDef.path)
+	let slotPath = selectedComponentPath.clone()
+	for (const part of parts) {
+		if (part === WILDCARD_PATH_TOKEN) {
+			const [index] = selectedPath.trimToSize(slotPath.size() + 1).pop()
+			if (!index) break
+			slotPath = slotPath.addLocal(index)
+		} else {
+			slotPath = slotPath.addLocal(part)
+		}
+		if (!selectedPath.startsWith(slotPath)) {
+			break
+		}
+	}
+	slotPath = slotPath.addLocal(slotDef.name)
+	return selectedPath.startsWith(slotPath) ? slotPath : undefined
+}
+
 const getSelectedComponentOrSlotPath = (
 	selectedPath: FullPath,
 	selectedDef: unknown
@@ -167,18 +191,23 @@ const getSelectedComponentOrSlotPath = (
 		selectedPath,
 		selectedDef
 	)
+	if (selectedComponentPath.equals(selectedPath)) return selectedPath
 
 	const [componentType] = selectedComponentPath.pop()
 	const slotsDef = getComponentDef(componentType)?.slots
 	if (!slotsDef) return selectedComponentPath
 
-	const selectedSlot = slotsDef.find((slotDef) =>
-		selectedPath.startsWith(selectedComponentPath.addLocal(slotDef.name))
-	)
-
-	return selectedSlot
-		? selectedComponentPath.addLocal(selectedSlot.name)
-		: selectedComponentPath
+	for (const slotDef of slotsDef) {
+		const selectedSlotPath = getSelectedSlotPath(
+			selectedPath,
+			selectedComponentPath,
+			slotDef
+		)
+		if (selectedSlotPath) {
+			return selectedSlotPath
+		}
+	}
+	return selectedComponentPath
 }
 
 const getSelectedComponentPath = (
@@ -382,18 +411,7 @@ const walkComponentsArray = (
 		if (!componentDef?.slots?.length) continue
 		// Okay we have slots, so we need to traverse and recurse
 		for (const slot of componentDef.slots) {
-			// If there is not a path, then use name as path
-			const { path = slot.name } = slot
-			if (!path) continue
-			let slotComponents: ComponentEntry[] | undefined
-			try {
-				slotComponents = pointer.get(
-					props,
-					path.startsWith("/") ? path : `/${path}`
-				) as ComponentEntry[]
-			} catch (e) {
-				// eslint-disable-next-line no-empty
-			}
+			const slotComponents = getSlotComponents(slot, props)
 			if (!slotComponents?.length) continue
 			const keepWalking = walkComponentsArray(
 				slotComponents,
@@ -405,6 +423,45 @@ const walkComponentsArray = (
 	}
 	return true
 }
+
+const traverseSlotPath = (
+	pathArray: string[],
+	def: definition.Definition
+): definition.Definition => {
+	const [token, ...rest] = pathArray
+	if (Array.isArray(def)) {
+		if (!token) return def
+		if (token !== WILDCARD_PATH_TOKEN)
+			throw new Error("Invalid token for array")
+		return def.flatMap((innerDef) => traverseSlotPath(rest, innerDef))
+	}
+	if (!token) return def
+	return traverseSlotPath(rest, (def as definition.DefinitionMap)[token])
+}
+
+const trimSlotPath = (path: string | undefined) =>
+	path?.startsWith("/") ? path.substring(1) : path || ""
+
+const parseSlotPath = (path: string | undefined) =>
+	path ? trimSlotPath(path).split("/") : []
+
+const replaceSlotPath = (path: string | undefined, index: number) =>
+	component.path.fromPath(
+		parseSlotPath(path).map((token) =>
+			token.replace(WILDCARD_PATH_TOKEN, index + "")
+		)
+	)
+
+const getSlotsFromPath = (
+	path: string | undefined,
+	def: definition.Definition
+) =>
+	(path
+		? traverseSlotPath(parseSlotPath(path), def)
+		: [def]) as ComponentEntry[]
+
+const getSlotComponents = (slot: SlotDef, def: definition.Definition) =>
+	getSlotsFromPath(slot.path ? slot.path + "/" + slot.name : slot.name, def)
 
 export {
 	getBuildMode,
@@ -437,6 +494,9 @@ export {
 	getSelectedComponentOrSlotPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
+	getSlotsFromPath,
+	replaceSlotPath,
+	getSelectedSlotPath,
 	walkViewComponents,
 }
 
