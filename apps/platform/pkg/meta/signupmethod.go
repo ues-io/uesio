@@ -22,15 +22,16 @@ type SignupMethod struct {
 	BuiltIn                   `yaml:",inline"`
 	BundleableBase            `yaml:",inline"`
 	AuthSource                string `yaml:"authsource" json:"uesio/studio.authsource"`
-	Profile                   string `yaml:"profile" json:"uesio/studio.profile"`
-	UsernameTemplate          string `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
-	LandingRoute              string `yaml:"landingRoute" json:"uesio/studio.landingroute"`
+	Profile                   string `yaml:"profile,omitempty" json:"uesio/studio.profile"`
+	UsernameTemplate          string `yaml:"usernameTemplate,omitempty" json:"uesio/studio.usernametemplate"`
+	LandingRoute              string `yaml:"landingRoute,omitempty" json:"uesio/studio.landingroute"`
 	AutoLogin                 bool   `yaml:"autoLogin" json:"uesio/studio.autologin"`
-	UsernameRegex             string `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
-	UsernameFormatExplanation string `yaml:"usernameFormatExplanation" json:"uesio/studio.usernameformatexplanation"`
-	CreateLoginBot            string `yaml:"createLoginBot" json:"uesio/studio.createloginbot"`
-	SignupBot                 string `yaml:"signupBot" json:"uesio/studio.signupbot"`
-	ForgotPasswordBot         string `yaml:"forgotPasswordBot" json:"uesio/studio.forgotpasswordbot"`
+	EnableSelfSignup          bool   `yaml:"enableSelfSignup" json:"uesio/studio.enableselfsignup"`
+	UsernameRegex             string `yaml:"usernameRegex,omitempty" json:"uesio/studio.usernameregex"`
+	UsernameFormatExplanation string `yaml:"usernameFormatExplanation,omitempty" json:"uesio/studio.usernameformatexplanation"`
+	CreateLoginBot            string `yaml:"createLoginBot,omitempty" json:"uesio/studio.createloginbot"`
+	SignupBot                 string `yaml:"signupBot,omitempty" json:"uesio/studio.signupbot"`
+	ForgotPasswordBot         string `yaml:"forgotPasswordBot,omitempty" json:"uesio/studio.forgotpasswordbot"`
 }
 
 type SignupMethodWrapper SignupMethod
@@ -64,9 +65,27 @@ func (sm *SignupMethod) Len() int {
 }
 
 func (sm *SignupMethod) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, sm.Name)
-	if err != nil {
+	if err := validateNodeName(node, sm.Name); err != nil {
 		return err
 	}
-	return node.Decode((*SignupMethodWrapper)(sm))
+	if err := node.Decode((*SignupMethodWrapper)(sm)); err != nil {
+		return err
+	}
+	sm.AuthSource = GetFullyQualifiedKey(sm.AuthSource, sm.Namespace)
+	sm.CreateLoginBot = GetFullyQualifiedKey(sm.CreateLoginBot, sm.Namespace)
+	sm.SignupBot = GetFullyQualifiedKey(sm.SignupBot, sm.Namespace)
+	sm.ForgotPasswordBot = GetFullyQualifiedKey(sm.ForgotPasswordBot, sm.Namespace)
+	sm.LandingRoute = GetFullyQualifiedKey(sm.LandingRoute, sm.Namespace)
+	sm.Profile = GetFullyQualifiedKey(sm.Profile, sm.Namespace)
+	return nil
+}
+
+func (sm *SignupMethod) MarshalYAML() (interface{}, error) {
+	sm.AuthSource = GetLocalizedKey(sm.AuthSource, sm.Namespace)
+	sm.CreateLoginBot = GetLocalizedKey(sm.CreateLoginBot, sm.Namespace)
+	sm.SignupBot = GetLocalizedKey(sm.SignupBot, sm.Namespace)
+	sm.ForgotPasswordBot = GetLocalizedKey(sm.ForgotPasswordBot, sm.Namespace)
+	sm.LandingRoute = GetLocalizedKey(sm.LandingRoute, sm.Namespace)
+	sm.Profile = GetLocalizedKey(sm.Profile, sm.Namespace)
+	return (*SignupMethodWrapper)(sm), nil
 }

@@ -1,5 +1,6 @@
 name: view
 dialect: "JAVASCRIPT"
+label: View
 type: "GENERATOR"
 params:
   - name: name

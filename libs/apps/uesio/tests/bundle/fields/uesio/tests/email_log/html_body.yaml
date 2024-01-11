@@ -1,0 +1,4 @@
+name: html_body
+label: Email HTML Body
+type: TEXT
+required: true

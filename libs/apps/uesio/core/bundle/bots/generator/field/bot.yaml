@@ -1,5 +1,6 @@
 name: field
 dialect: "JAVASCRIPT"
+label: Collection Field
 type: "GENERATOR"
 params:
   - name: collection

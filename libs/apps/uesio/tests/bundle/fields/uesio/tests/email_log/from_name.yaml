@@ -1,0 +1,4 @@
+name: from_name
+label: From Display Name
+type: TEXT
+required: true

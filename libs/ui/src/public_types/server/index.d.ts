@@ -168,6 +168,10 @@ interface ListenerBotApi {
 	getCollectionMetadata: getCollectionMetadata
 	getSession: () => SessionApi
 	getUser: () => UserApi
+	// Returns the fully-qualified namespace of the Bot, e.g. "acme/recruiting"
+	getNamespace: () => string
+	// Returns the name of the Bot, e.g "add_numbers"
+	getName: () => string
 	log: LogApi
 	http: HttpApi
 }

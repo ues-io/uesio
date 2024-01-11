@@ -74,6 +74,7 @@ func loginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
+		SessionId:              session.GetSessionId(),
 	})
 }
 

@@ -27,6 +27,7 @@ type ParamBase = {
 	required?: boolean
 	prompt?: string
 	conditions?: ParamCondition[]
+	default?: unknown
 }
 
 type RecordParam = ParamBase & {

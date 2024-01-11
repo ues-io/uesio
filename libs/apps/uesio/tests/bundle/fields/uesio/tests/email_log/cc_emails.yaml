@@ -1,0 +1,4 @@
+name: cc_emails
+label: CC Email Addresses
+type: LIST
+subtype: TEXT

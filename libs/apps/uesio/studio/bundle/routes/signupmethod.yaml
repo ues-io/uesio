@@ -1,0 +1,5 @@
+name: signupmethod
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/signupmethods/{namespace:\w*\/\w*}/{signupmethodname}
+view: signupmethod
+theme: default
+title: "Signup Method: $Param{signupmethodname}"

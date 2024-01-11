@@ -20,7 +20,8 @@ HTTP 200
 jsonpath "$.error" == ""
 jsonpath "$.success" == true
 
-# Invoke with all required parameters this will fail because we already have a view with the name test_list_view_generator
+# Invoke with all required parameters this should succeed
+# because we allow overwriting existing views
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/listview
 {
     "collection": "uesio/tests.account",
@@ -29,5 +30,4 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio
 }
 HTTP 200
 [Asserts]
-jsonpath "$.error" == "Unable to create duplicate uesio/studio.view record: uesio/tests:dev:test_list_view_generator"
-jsonpath "$.success" == false
+jsonpath "$.success" == true
