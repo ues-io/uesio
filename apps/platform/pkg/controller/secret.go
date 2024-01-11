@@ -26,12 +26,11 @@ type SecretResponse struct {
 
 func getSecrets(session *sess.Session) ([]SecretResponse, error) {
 	var secrets meta.SecretCollection
-	err := bundle.LoadAllFromAny(&secrets, nil, session, nil)
-	if err != nil {
+	if err := bundle.LoadAllFromAny(&secrets, nil, session, nil); err != nil {
 		return nil, err
 	}
 
-	response := []SecretResponse{}
+	var response []SecretResponse
 
 	for _, s := range secrets {
 		if s.ManagedBy == "app" || s.Store == "environment" {
@@ -69,12 +68,11 @@ func SetSecret(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 	var setRequest SecretSetRequest
-	err := json.NewDecoder(r.Body).Decode(&setRequest)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&setRequest); err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body"))
 		return
 	}
-	if err = datasource.SetSecretFromKey(namespace+"."+name, setRequest.Value, session); err != nil {
+	if err := datasource.SetSecretFromKey(namespace+"."+name, setRequest.Value, session); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}

@@ -21,8 +21,7 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 	}
 
 	_, err = auth.GetUserByKey(username, systemSession, nil)
-	_, recordNotFound := err.(*exceptions.NotFoundException)
-	if recordNotFound {
+	if exceptions.IsNotFoundException(err) {
 		return map[string]interface{}{
 			"message": "That username is available",
 		}, nil

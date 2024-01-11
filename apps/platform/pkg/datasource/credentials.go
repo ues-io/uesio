@@ -1,11 +1,14 @@
 package datasource
 
 import (
+	"log/slog"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/credentials"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -62,7 +65,14 @@ func getEntryValue(entry *credentials.CredentialEntry, session *sess.Session) (s
 func addCredentialEntries(credentialsMap wire.Credentials, entriesSpec credentials.CredentialEntriesMap, session *sess.Session) error {
 	for entryName, entry := range entriesSpec {
 		if value, err := getEntryValue(entry, session); err != nil {
-			return err
+			// If the error is that the value was not found, just don't add an entry to the map,
+			// but record a warning log
+			if exceptions.IsNotFoundException(err) {
+				slog.WarnContext(session.Context(), "credential entry not found: "+entry.Name)
+				continue
+			} else {
+				return err
+			}
 		} else {
 			credentialsMap[entryName] = value
 		}

@@ -2,11 +2,14 @@ package sendgrid
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 
+	"github.com/sendgrid/rest"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -14,17 +17,32 @@ import (
 )
 
 type connection struct {
-	client      *sendgrid.Client
+	client      EmailClient
 	integration *wire.IntegrationConnection
+}
+
+type EmailClient interface {
+	Send(email *mail.SGMailV3) (*rest.Response, error)
 }
 
 func newSendGridConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
+	var client EmailClient
 	if err != nil || apikey == "" {
-		return nil, exceptions.NewUnauthorizedException("SendGrid API Key not provided")
+		// Since we use SendGrid for user signup / password resets / etc.,
+		// in local development we want to allow for this to work without you having to set-up SendGrid,
+		// so we will populate a mock API Key and just log the emails to the console
+		if env.InDevMode() && ic.GetIntegration().Namespace == "uesio/core" && ic.GetIntegration().Name == "sendgrid" {
+			slog.Warn("[SendGrid mock client] SendGrid API Key not configured, using mock implementation for local dev")
+			client = &devClient{}
+		} else {
+			return nil, exceptions.NewUnauthorizedException("SendGrid API Key not provided")
+		}
+	} else {
+		client = sendgrid.NewSendClient(apikey)
 	}
 	return &connection{
-		client:      sendgrid.NewSendClient(apikey),
+		client:      client,
 		integration: ic,
 	}, nil
 }
