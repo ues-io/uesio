@@ -1,7 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
 export default function ${signupMethodName}_forgotpassword(bot: ListenerBotApi) {
-	const redirect = "/site/app/uesio/core/changepassword?signupmethod=${signupMethodName}"
+	const namespace = bot.getNamespace()
+	const redirect = "/site/app/uesio/core/changepassword?signupmethod=" + namespace + "${signupMethodName}"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
