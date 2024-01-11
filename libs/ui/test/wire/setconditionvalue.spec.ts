@@ -268,7 +268,7 @@ const tests: WireSignalTest[] = [
 				signal: "wire/SET_CONDITION_VALUE",
 				wire: "$SignalOutput{namesFetcher:wirename}",
 				conditionId: "$SignalOutput{namesFetcher:conditionName}",
-				values: "$SignalOutput{namesFetcher:names})",
+				values: "$SignalOutput{namesFetcher:names}",
 			},
 		],
 		run: () => (wire) => {
