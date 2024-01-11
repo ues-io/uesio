@@ -1,5 +1,6 @@
 name: detailview
 dialect: "JAVASCRIPT"
+label: Detail View
 type: "GENERATOR"
 params:
   - name: headerview

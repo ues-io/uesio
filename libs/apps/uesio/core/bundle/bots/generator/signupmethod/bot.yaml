@@ -1,5 +1,6 @@
 name: signupmethod
 dialect: "JAVASCRIPT"
+label: Signup Method
 type: "GENERATOR"
 params:
   - name: signupMethodName

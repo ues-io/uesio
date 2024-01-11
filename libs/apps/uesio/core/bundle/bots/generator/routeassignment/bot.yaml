@@ -1,5 +1,6 @@
 name: routeassignment
 dialect: "JAVASCRIPT"
+label: Route Assignment
 type: "GENERATOR"
 params:
   - name: collection
