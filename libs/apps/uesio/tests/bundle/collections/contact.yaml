@@ -4,6 +4,6 @@ pluralLabel: Contacts
 uniqueKey:
   - firstname
   - lastname
+nameField: lastname
 access: protected
 accessField: uesio/tests.account
-nameField: lastname

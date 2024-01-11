@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -106,6 +107,9 @@ func (b *SystemBundleStoreConnection) GetItem(item meta.BundleableItem) error {
 
 	file, err := getFile(b.Namespace, b.Version, collectionName, item.GetPath())
 	if err != nil {
+		if _, isPathErr := err.(*fs.PathError); isPathErr {
+			return exceptions.NewNotFoundException("could not find item " + key + " in collection " + fullCollectionName)
+		}
 		return err
 	}
 

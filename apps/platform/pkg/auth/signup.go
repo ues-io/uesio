@@ -29,6 +29,13 @@ func matchesRegex(usarname string, regex string) bool {
 }
 
 func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
+
+	// If the Signup Method does not have self-signup enabled,
+	// then block the request, unless we are in a Site Admin context
+	if !signupMethod.EnableSelfSignup && session.GetSiteAdminSession() == nil {
+		return nil, exceptions.NewForbiddenException("this site does not support self-signup")
+	}
+
 	connection, err := datasource.GetPlatformConnection(nil, session, nil)
 	if err != nil {
 		return nil, err

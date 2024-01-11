@@ -325,39 +325,47 @@ func IsNilGroupingValue(groupingValue interface{}) bool {
 	return groupingValue == nil
 }
 
+const requiredGroupingValueError = "metadata type %s requires grouping value"
+
+// A map of metadata types to the field that is required to be present in order to group.
+// All types in requiredGroupingConditionFields REQUIRE a grouping condition field,
+// whereas all types in optionalGroupingConditionFields do not.
+var requiredGroupingConditionFields, optionalGroupingConditionFields map[string]string
+
+func init() {
+	requiredGroupingConditionFields = map[string]string{
+		"fields":                "uesio/studio.collection",
+		"integrationactions":    "uesio/studio.integrationtype",
+		"recordchallengetokens": "uesio/studio.collection",
+	}
+	optionalGroupingConditionFields = map[string]string{
+		"authsources":       "uesio/studio.authsource",
+		"bots":              "uesio/studio.type",
+		"componentvariants": "uesio/studio.component",
+		"credentials":       "uesio/studio.type",
+		"integrations":      "uesio/studio.type",
+	}
+}
+
 func GetGroupingConditions(metadataType, grouping interface{}) (BundleConditions, error) {
-	conditions := BundleConditions{}
-	if metadataType == "fields" {
+	metadataTypeString, ok := metadataType.(string)
+	if !ok {
+		return nil, errors.New("metadata type must be a string")
+	}
+	// First check if this is metadata type has a required condition value
+	if conditionField, isPresent := requiredGroupingConditionFields[metadataTypeString]; isPresent {
 		if IsNilGroupingValue(grouping) {
-			return nil, errors.New("metadata type fields requires grouping value")
-		}
-		conditions["uesio/studio.collection"] = grouping
-	} else if metadataType == "bots" {
-		conditions["uesio/studio.type"] = grouping
-	} else if metadataType == "componentvariants" {
-		conditions["uesio/studio.component"] = grouping
-	} else if metadataType == "integrationactions" {
-		if IsNilGroupingValue(grouping) {
-			return nil, errors.New("metadata type integration action requires grouping value")
-		}
-		conditions["uesio/studio.integrationtype"] = grouping
-	} else if metadataType == "recordchallengetokens" {
-		if IsNilGroupingValue(grouping) {
-			return nil, errors.New("metadata type record challenge token requires grouping value")
-		}
-		conditions["uesio/studio.collection"] = grouping
-	} else if metadataType == "credentials" {
-		// grouping is optional for credentials
-		if !IsNilGroupingValue(grouping) {
-			conditions["uesio/studio.type"] = grouping
-		}
-	} else if metadataType == "integrations" {
-		// grouping is optional for integrations
-		if !IsNilGroupingValue(grouping) {
-			conditions["uesio/studio.type"] = grouping
+			return nil, fmt.Errorf(requiredGroupingValueError, metadataType)
+		} else {
+			return BundleConditions{conditionField: grouping}, nil
 		}
 	}
-	return conditions, nil
+	// Next check for optional condition values
+	if conditionField, isPresent := optionalGroupingConditionFields[metadataTypeString]; isPresent && !IsNilGroupingValue(grouping) {
+		return BundleConditions{conditionField: grouping}, nil
+	}
+	// Otherwise just return empty conditions
+	return BundleConditions{}, nil
 }
 
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {

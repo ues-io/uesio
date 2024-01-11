@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
@@ -32,11 +33,14 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
 	buf := new(bytes.Buffer)
-
 	zipWriter := zip.NewWriter(buf)
-	if err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, nil, session); err != nil {
+	if err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session); err != nil {
 		zipWriter.Close()
 		file.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
@@ -46,7 +50,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 	zipWriter.Close()
 
-	if err = deploy.DeployWithOptions(io.NopCloser(buf), session, &deploy.DeployOptions{Upsert: false}); err != nil {
+	if err = deploy.DeployWithOptions(io.NopCloser(buf), session, &deploy.DeployOptions{Upsert: true, Connection: connection}); err != nil {
 		file.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
 			Error:   err.Error(),
