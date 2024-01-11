@@ -1,10 +1,12 @@
 name: tester
 authsource: uesio/core.platform
-profile: uesio/tests.rep
+profile: rep
 usernameTemplate: ${username}
-usernameRegex: "^[a-z0-9_]+$"
-usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
 landingRoute: signuplanding
+autoLogin: false
+enableSelfSignup: false
+usernameRegex: ^[a-z0-9_]+$
+usernameFormatExplanation: lowercase a-z, 0-9, and underscore only
 createLoginBot: tester_createlogin
 signupBot: tester_signup
 forgotPasswordBot: tester_forgotpassword
