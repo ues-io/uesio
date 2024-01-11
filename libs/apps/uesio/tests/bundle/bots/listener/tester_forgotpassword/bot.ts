@@ -1,14 +1,17 @@
-import { ListenerBotApi } from "@uesio/bots"
+import { ListenerBotApi, WireRecord } from "@uesio/bots"
 
 export default function tester_forgotpassword(bot: ListenerBotApi) {
 	const namespace = bot.getNamespace()
-	const redirect = "/site/app/uesio/core/changepassword?signupmethod=" + namespace + "tester"
+	const redirect =
+		"/site/app/uesio/core/changepassword?signupmethod=" +
+		namespace +
+		"tester"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
 	const host = bot.params.get("host")
 	const link = host + redirect + "&code=" + code + "&username=" + username
-	const contenttype = "text/html"
+	const contentType = "text/html"
 	const from = "noreply@ues.io"
 	const subject = "Password change requested in tests"
 	const body = `
@@ -25,11 +28,17 @@ export default function tester_forgotpassword(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
-	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-		to: [email],
-		from,
-		subject,
-		plainbody: body,
-		contenttype,
-	})
+	bot.asAdmin.save(`${namespace}/email_log`, [
+		{
+			[`${namespace}/to_emails`]: [email],
+			[`${namespace}/to_names`]: [email],
+			[`${namespace}/from_email`]: from,
+			[`${namespace}/from_name`]: from,
+			[`${namespace}/subject`]: subject,
+			[`${namespace}/html_body`]: body,
+			[`${namespace}/content_type`]: contentType,
+			[`${namespace}/verification_code`]: code,
+			[`${namespace}/link`]: link,
+		} as unknown as WireRecord,
+	])
 }

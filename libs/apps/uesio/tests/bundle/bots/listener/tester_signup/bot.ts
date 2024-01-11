@@ -1,8 +1,9 @@
-import { ListenerBotApi } from "@uesio/bots"
+import { ListenerBotApi, WireRecord } from "@uesio/bots"
 
 export default function tester_signup(bot: ListenerBotApi) {
-	const namespace = bot.getNamespace().replace(".", "/")
-	const redirect = "/site/auth/" + namespace + "/tester/signup/confirm"
+	const namespace = bot.getNamespace()
+	const redirect =
+		"/site/auth/" + namespace.replace(".", "/") + "/tester/signup/confirm"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
@@ -32,13 +33,17 @@ export default function tester_signup(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
-	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-		to: [email],
-		toNames: [toName],
-		from,
-		fromName,
-		subject,
-		plainBody: body,
-		contentType,
-	})
+	bot.asAdmin.save(`${namespace}/email_log`, [
+		{
+			[`${namespace}/to_emails`]: [email],
+			[`${namespace}/to_names`]: [toName],
+			[`${namespace}/from_email`]: from,
+			[`${namespace}/from_name`]: fromName,
+			[`${namespace}/subject`]: subject,
+			[`${namespace}/html_body`]: body,
+			[`${namespace}/content_type`]: contentType,
+			[`${namespace}/verification_code`]: code,
+			[`${namespace}/link`]: link,
+		} as unknown as WireRecord,
+	])
 }
