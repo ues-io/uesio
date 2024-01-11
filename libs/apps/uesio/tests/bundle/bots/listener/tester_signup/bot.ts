@@ -33,17 +33,17 @@ export default function tester_signup(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
-	bot.asAdmin.save(`${namespace}/email_log`, [
+	bot.asAdmin.save(`${namespace}.email_log`, [
 		{
-			[`${namespace}/to_emails`]: [email],
-			[`${namespace}/to_names`]: [toName],
-			[`${namespace}/from_email`]: from,
-			[`${namespace}/from_name`]: fromName,
-			[`${namespace}/subject`]: subject,
-			[`${namespace}/html_body`]: body,
-			[`${namespace}/content_type`]: contentType,
-			[`${namespace}/verification_code`]: code,
-			[`${namespace}/link`]: link,
+			[`${namespace}.to_emails`]: [email],
+			[`${namespace}.to_names`]: [toName],
+			[`${namespace}.from_email`]: from,
+			[`${namespace}.from_name`]: fromName,
+			[`${namespace}.subject`]: subject,
+			[`${namespace}.html_body`]: body,
+			[`${namespace}.content_type`]: contentType,
+			[`${namespace}.verification_code`]: code,
+			[`${namespace}.link`]: link,
 		} as unknown as WireRecord,
 	])
 }

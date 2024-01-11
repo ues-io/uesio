@@ -1,10 +1,10 @@
-name: tester
+name: noselfsignup
 authsource: uesio/core.platform
 profile: rep
 usernameTemplate: ${username}
 landingRoute: signuplanding
-autoLogin: true
-enableSelfSignup: true
+autoLogin: false
+enableSelfSignup: false
 usernameRegex: ^[a-z0-9_]+$
 usernameFormatExplanation: lowercase a-z, 0-9, and underscore only
 createLoginBot: tester_createlogin
