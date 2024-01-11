@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -14,11 +13,10 @@ import (
 )
 
 type BundlesListResponse struct {
-	App           string `json:"app"`
-	Description   string `json:"description"`
-	Icon          string `json:"icon"`
-	Color         string `json:"color"`
-	LatestVersion string `json:"latestVersion"`
+	App         string `json:"app"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+	Color       string `json:"color"`
 }
 
 func BundlesList(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +39,20 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 				},
 				{
 					ID: "uesio/studio.app",
+					Fields: []wire.LoadRequestField{
+						{
+							ID: "uesio/studio.fullname",
+						},
+						{
+							ID: "uesio/studio.description",
+						},
+						{
+							ID: "uesio/studio.icon",
+						},
+						{
+							ID: "uesio/studio.color",
+						},
+					},
 				},
 			},
 			Conditions: []wire.LoadRequestCondition{
@@ -60,89 +72,8 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	appIds := []string{}
+	responses := []BundlesListResponse{}
 	err = bundlelistings.Loop(func(item meta.Item, index string) error {
-		id, err := item.GetField("uesio/studio.app->uesio/core.id")
-		if err != nil {
-			return err
-		}
-		appIds = append(appIds, id.(string))
-		return nil
-	})
-	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List: "+err.Error()))
-		return
-	}
-
-	var bundles meta.BundleCollection
-	if err := datasource.PlatformLoad(
-		&bundles,
-		&datasource.PlatformLoadOptions{
-			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/studio.major",
-				},
-				{
-					ID: "uesio/studio.minor",
-				},
-				{
-					ID: "uesio/studio.patch",
-				},
-				{
-					ID: "uesio/studio.published",
-				},
-				{
-					ID: "uesio/studio.app",
-					Fields: []wire.LoadRequestField{
-						{
-							ID: "uesio/studio.fullname",
-						},
-						{
-							ID: "uesio/studio.description",
-						},
-						{
-							ID: "uesio/studio.icon",
-						},
-						{
-							ID: "uesio/studio.color",
-						},
-					},
-				},
-			},
-			Orders: []wire.LoadRequestOrder{
-				{
-					Field: "uesio/studio.major",
-					Desc:  true,
-				},
-				{
-					Field: "uesio/studio.minor",
-					Desc:  true,
-				},
-				{
-					Field: "uesio/studio.patch",
-					Desc:  true,
-				},
-			},
-			Conditions: []wire.LoadRequestCondition{
-				{
-					Field: "uesio/studio.published",
-					Value: true,
-				},
-				{
-					Field:    "uesio/studio.app",
-					Value:    appIds,
-					Operator: "IN",
-				},
-			},
-		},
-		session,
-	); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List: "+err.Error()))
-		return
-	}
-
-	responses := map[string]BundlesListResponse{}
-	err = bundles.Loop(func(item meta.Item, index string) error {
 		app, err := item.GetField("uesio/studio.app->uesio/studio.fullname")
 		if err != nil {
 			return err
@@ -160,24 +91,7 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
-		major, err := item.GetField("uesio/studio.major")
-		if err != nil {
-			return err
-		}
-
-		minor, err := item.GetField("uesio/studio.minor")
-		if err != nil {
-			return err
-		}
-
-		patch, err := item.GetField("uesio/studio.patch")
-		if err != nil {
-			return err
-		}
-
-		if _, ok := responses[app.(string)]; !ok {
-			responses[app.(string)] = BundlesListResponse{App: app.(string), Description: description.(string), Icon: icon.(string), Color: color.(string), LatestVersion: fmt.Sprintf("v%v.%v.%v", major, minor, patch)}
-		}
+		responses = append(responses, BundlesListResponse{App: app.(string), Description: description.(string), Icon: icon.(string), Color: color.(string)})
 
 		return nil
 	})
