@@ -326,6 +326,7 @@ func IsNilGroupingValue(groupingValue interface{}) bool {
 }
 
 const requiredGroupingValueError = "metadata type %s requires grouping value"
+
 // A map of metadata types to the field that is required to be present in order to group.
 // All types in requiredGroupingConditionFields REQUIRE a grouping condition field,
 // whereas all types in optionalGroupingConditionFields do not.
@@ -338,16 +339,16 @@ func init() {
 		"recordchallengetokens": "uesio/studio.collection",
 	}
 	optionalGroupingConditionFields = map[string]string{
-		"authsources":           "uesio/studio.authsource",
-		"bots":                  "uesio/studio.type",
-		"componentvariants":     "uesio/studio.component",
-		"credentials":           "uesio/studio.type",
-		"integrations":          "uesio/studio.type",
+		"authsources":       "uesio/studio.authsource",
+		"bots":              "uesio/studio.type",
+		"componentvariants": "uesio/studio.component",
+		"credentials":       "uesio/studio.type",
+		"integrations":      "uesio/studio.type",
 	}
 }
 
 func GetGroupingConditions(metadataType, grouping interface{}) (BundleConditions, error) {
-	metadataTypeString, ok := metadataType.(string);
+	metadataTypeString, ok := metadataType.(string)
 	if !ok {
 		return nil, errors.New("metadata type must be a string")
 	}
