@@ -612,10 +612,10 @@ class Context {
 		const mergeRegex = options?.types
 			? getMergeRegexForTypes(options.types)
 			: defaultMergeRegex
-		const expressionResults = [] as FieldValue[]
+		let expressionReturnValue: FieldValue
 		const mergedString = template.replace(
 			mergeRegex,
-			(x, mergeType, expression) => {
+			(match, mergeType, expression, offset) => {
 				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
 				const mergeTypeName = mergeSplit.pop() as MergeType
 
@@ -625,7 +625,11 @@ class Context {
 						? this.removeRecordFrame(mergeSplit.length)
 						: this
 				)
-				expressionResults.push(expressionResult)
+
+				if (offset === 0 && match.length === template.length) {
+					expressionReturnValue = expressionResult
+					return ""
+				}
 
 				// Don't merge "undefined" into a string --- put empty string instead
 				if (
@@ -638,11 +642,8 @@ class Context {
 			}
 		)
 		// If we only have one expression result, and it is not a string, then return it as its value
-		if (
-			expressionResults.length === 1 &&
-			typeof expressionResults[0] !== "string"
-		) {
-			return expressionResults[0]
+		if (expressionReturnValue !== undefined) {
+			return expressionReturnValue
 		}
 		return mergedString
 	}
