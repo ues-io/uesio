@@ -100,6 +100,8 @@ class FullPath {
 
 	clone = () => new FullPath(this.itemType, this.itemName, this.localPath)
 
+	getBase = () => new FullPath(this.itemType, this.itemName, "")
+
 	// Trims any path to the last element that is fully namespaced
 	// (meaning the path element contains a dot)
 	trim = (): FullPath => {

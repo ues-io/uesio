@@ -81,7 +81,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 
 	const viewDef = useViewDef(viewDefId)
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentId(uesioId, ViewComponentId, path, context),
+		componentApi.getComponentIdFromProps(props),
 		context.mergeStringMap(params)
 	)
 

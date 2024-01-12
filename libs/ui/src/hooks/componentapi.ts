@@ -26,13 +26,6 @@ import { MetadataKey } from "../metadata/types"
 import { COMPONENT_ID } from "../componentexports"
 import { hash } from "@twind/core"
 
-const getComponentId = (
-	namedId: string | undefined,
-	componentType: string,
-	path: string | undefined,
-	context: Context
-) => makeComponentId(context, componentType, namedId || path || "")
-
 const getComponentIdFromProps = (props: BaseProps) => {
 	// "props.definition.id" here is TEMPORARY - for backwards compatibility
 	// on components like Table/List/Deck that initially had "id"
@@ -162,7 +155,6 @@ const useMode = (id: string, initialMode: FieldMode | undefined) =>
 	useStateSlice<FieldMode>("mode", id, initialMode || "READ")
 
 export {
-	getComponentId,
 	getComponentIdFromProps,
 	getAllComponentTypes,
 	getComponentType,

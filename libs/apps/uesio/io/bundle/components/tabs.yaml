@@ -10,6 +10,9 @@ slots:
   - name: components
     path: /tabs/~{}
     label: Tab Contents
+    onSelectSignals:
+      - componentsignal: SELECT_TAB
+        id: ${id}
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:

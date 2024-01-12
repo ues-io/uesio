@@ -33,7 +33,13 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
-	const builderContext = context.addThemeFrame("uesio/studio.default")
+	// Add a view frame to our builder context so that our component ids work right
+	const builderContext = context
+		.addThemeFrame("uesio/studio.default")
+		.addViewFrame({
+			view: context.getViewId(),
+			viewDef: context.getViewDefId() || "",
+		})
 	const canvasContext = context.setCustomSlotLoader(SlotBuilderComponentId)
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
