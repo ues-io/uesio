@@ -539,7 +539,7 @@ const traverseSlotPath = (
 			throw new Error("Invalid token for array")
 		return def.flatMap((innerDef) => traverseSlotPath(rest, innerDef))
 	}
-	if (!token) return def
+	if (!token || !def) return def
 	return traverseSlotPath(rest, (def as definition.DefinitionMap)[token])
 }
 
