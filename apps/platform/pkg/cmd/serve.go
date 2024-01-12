@@ -375,6 +375,10 @@ func serve(cmd *cobra.Command, args []string) {
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 
+	// Bundles
+	bundleVersionsListPath := fmt.Sprintf("/bundles/v1/versions/%s/list", appParam)
+	sr.HandleFunc(bundleVersionsListPath, controller.BundleVersionsList).Methods("GET")
+
 	// Dev Only Route for running usage worker
 	if env.InDevMode() {
 		sr.HandleFunc("/worker/usage", controller.RunUsageWorker).Methods("POST")
