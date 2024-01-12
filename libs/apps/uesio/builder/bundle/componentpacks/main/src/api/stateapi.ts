@@ -1,4 +1,13 @@
-import { api, component, context as ctx, definition, metadata } from "@uesio/ui"
+import {
+	api,
+	component,
+	context as ctx,
+	definition,
+	metadata,
+	signal,
+	styles,
+	wire,
+} from "@uesio/ui"
 import { ComponentProperty } from "../properties/componentproperty"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
@@ -49,6 +58,7 @@ type SlotDef = {
 	defaultContent?: definition.DefinitionList
 	label?: string
 	direction?: SlotDirection
+	onSelectSignals?: signal.SignalDefinition[]
 }
 
 type StyleRegion = {
@@ -160,7 +170,7 @@ const useSelectedComponentOrSlotPath = (context: ctx.Context) => {
 	return getSelectedComponentOrSlotPath(selectedPath, selectedDef)
 }
 
-const getSelectedSlotPath = (
+const getSelectedSlotBasePath = (
 	selectedPath: FullPath,
 	selectedComponentPath: FullPath,
 	slotDef: SlotDef
@@ -179,8 +189,45 @@ const getSelectedSlotPath = (
 			break
 		}
 	}
+	return slotPath
+}
+
+const getSelectedSlotPath = (
+	selectedPath: FullPath,
+	selectedComponentPath: FullPath,
+	slotDef: SlotDef
+) => {
+	let slotPath = getSelectedSlotBasePath(
+		selectedPath,
+		selectedComponentPath,
+		slotDef
+	)
 	slotPath = slotPath.addLocal(slotDef.name)
 	return selectedPath.startsWith(slotPath) ? slotPath : undefined
+}
+
+const getSelectedSlotIndex = (
+	selectedPath: FullPath,
+	selectedComponentPath: FullPath,
+	slotDef: SlotDef
+) => {
+	const parts = parseSlotPath(slotDef.path)
+	let slotPath = selectedComponentPath.clone()
+	for (const part of parts) {
+		if (part === WILDCARD_PATH_TOKEN) {
+			const [index] = selectedPath
+				.trimToSize(slotPath.size() + 1)
+				.popIndex()
+			if (index === undefined) break
+			return index
+		} else {
+			slotPath = slotPath.addLocal(part)
+		}
+		if (!selectedPath.startsWith(slotPath)) {
+			break
+		}
+	}
+	return undefined
 }
 
 const getSelectedComponentOrSlotPath = (
@@ -243,26 +290,83 @@ const getSelectedViewPath = (context: ctx.Context) => {
 
 const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
 	// If the selected path is a panel, make sure it's opened
+	const signals: signal.SignalDefinition[] = [
+		{
+			signal: "panel/CLOSE_ALL",
+		},
+	]
 	if (path) {
 		const pathArray = component.path.toPath(path.localPath)
 		const isPanel = path.itemType === "viewdef" && pathArray[0] === "panels"
 		if (isPanel) {
 			const panelId = pathArray[1]
-			api.signal.run(
-				{
-					signal: "panel/CLOSE_ALL",
-				},
-				context
-			)
-			api.signal.run(
-				{
-					signal: "panel/OPEN",
-					panel: panelId,
-				},
-				context
-			)
+			signals.push({
+				signal: "panel/OPEN",
+				panel: panelId,
+			})
+		}
+		// Walk up the path and find any components along the way.
+		let basePath = path.getBase()
+		for (const token of pathArray) {
+			basePath = basePath.addLocal(token)
+			if (!component.path.isComponentIndex(token)) continue
+			const componentDef = getComponentDef(token)
+			if (!componentDef || !componentDef.slots) continue
+
+			for (const slotDef of componentDef.slots) {
+				if (!slotDef.onSelectSignals) continue
+				const selectedSlotIndex = getSelectedSlotIndex(
+					path,
+					basePath,
+					slotDef
+				)
+
+				const selectedSlotBasePath = getSelectedSlotBasePath(
+					path,
+					basePath,
+					slotDef
+				)
+
+				if (
+					selectedSlotIndex !== undefined &&
+					selectedSlotBasePath !== undefined
+				) {
+					const compDef = get(
+						context,
+						basePath
+					) as definition.DefinitionMap
+
+					const componentType = metadata.getKey(componentDef)
+
+					const componentId =
+						(compDef[COMPONENT_ID] as string) ||
+						styles.hash(basePath.localPath)
+
+					const mergeContext = context.addRecordDataFrame(
+						get(
+							context,
+							selectedSlotBasePath
+						) as wire.PlainWireRecord,
+						selectedSlotIndex
+					)
+
+					slotDef.onSelectSignals.forEach((signal) =>
+						signals.push(
+							mergeContext.mergeMap({
+								...signal,
+								signal: "component/CALL",
+								component: componentType,
+								targettype: "multiple",
+								target: componentId,
+							})
+						)
+					)
+				}
+			}
 		}
 	}
+
+	api.signal.runMany(signals, context)
 
 	setBuilderState<string>(context, "selected", combinePath(path))
 }

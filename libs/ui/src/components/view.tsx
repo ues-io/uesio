@@ -11,6 +11,7 @@ import { UC } from "../definition/definition"
 import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 import { getFullyQualifiedKey } from "../bands/collection/class"
+import { hash } from "@twind/core"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -74,14 +75,18 @@ const View: UC<ViewComponentDefinition> = (props) => {
 
 	// Backwards compatibility for definition.id
 	// TODO: Remove when all instances of this are fixed
-	const uesioId = definition[COMPONENT_ID] || definition.id || path || "$root"
+	const uesioId =
+		definition[COMPONENT_ID] ||
+		definition.id ||
+		(path && hash(path)) ||
+		"$root"
 	const viewId = makeViewId(viewDefId, uesioId)
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentId(uesioId, ViewComponentId, path, context),
+		componentApi.getComponentIdFromProps(props),
 		context.mergeStringMap(params)
 	)
 
