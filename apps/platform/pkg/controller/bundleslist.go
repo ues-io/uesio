@@ -2,10 +2,12 @@ package controller
 
 import (
 	"net/http"
+	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -22,15 +24,15 @@ type BundlesListResponse struct {
 func BundlesList(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-	// To fetch bundlelisting, enter an admin context.
+	// to expose bundle listings to guest users, who don't have access, we will enter an admin context.
 	adminSession := datasource.GetSiteAdminSession(session)
 
-	//check if the uesio/studio.bundlelisting is published and uesio approved
-	bundlelistings := &wire.Collection{}
+	// fetch uesio/studio.bundlelisting records that are published and uesio approved
+	bundleListings := &wire.Collection{}
 	_, err := datasource.Load([]*wire.LoadOp{
 		{
 			CollectionName: "uesio/studio.bundlelisting",
-			Collection:     bundlelistings,
+			Collection:     bundleListings,
 			Query:          true,
 			Fields: []wire.LoadRequestField{
 				{
@@ -74,8 +76,8 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses := []BundlesListResponse{}
-	err = bundlelistings.Loop(func(item meta.Item, index string) error {
+	var responses []*BundlesListResponse
+	if err = bundleListings.Loop(func(item meta.Item, index string) error {
 		app, err := item.GetField("uesio/studio.app->uesio/studio.fullname")
 		if err != nil {
 			return err
@@ -92,16 +94,19 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-
-		responses = append(responses, BundlesListResponse{App: app.(string), Description: description.(string), Icon: icon.(string), Color: color.(string)})
-
+		responses = append(responses, &BundlesListResponse{
+			App:         goutils.StringValue(app),
+			Description: goutils.StringValue(description),
+			Icon:        goutils.StringValue(icon),
+			Color:       goutils.StringValue(color),
+		})
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List: "+err.Error()))
 		return
 	}
-
+	sort.Slice(responses, func(i, j int) bool {
+		return responses[i].App < responses[j].App
+	})
 	file.RespondJSON(w, r, responses)
-
 }
