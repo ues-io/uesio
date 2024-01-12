@@ -45,7 +45,10 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		if (!parentElem) return
 		parentElem.setAttribute("data-accepts", standardAccepts.join(","))
 		parentElem.setAttribute("data-direction", direction)
-		parentElem.setAttribute("data-path", listPath)
+		parentElem.setAttribute(
+			"data-path",
+			component.path.toDataAttrPath(listPath)
+		)
 		parentElem.setAttribute("data-title", label)
 	}, [listPath, listName, label, direction])
 

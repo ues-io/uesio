@@ -37,6 +37,11 @@ const fromPath = (pathArray: string[]) => {
 	return `["${pathArray.join(`"]["`)}"]`
 }
 
+const toDataAttrPath = (path: string) => toPath(path).join(":")
+
+const fromDataAttrPath = (path: string | null | undefined) =>
+	path ? fromPath(path.split(":")) : ""
+
 // Removes the last item from a path
 const getParentPath = (path: string) => getAncestorPath(path, 1)
 
@@ -86,6 +91,8 @@ export {
 	parseFieldKey,
 	fromPath,
 	toPath,
+	toDataAttrPath,
+	fromDataAttrPath,
 	getParentPath,
 	getGrandParentPath,
 	getAncestorPath,

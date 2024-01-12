@@ -70,7 +70,7 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
 	const targetWrappers = document.querySelectorAll(
 		`[data-path="${CSS.escape(
-			slotPath.localPath
+			component.path.toDataAttrPath(slotPath.localPath)
 		)}"]>[data-index="${index}"]`
 	)
 	const targets: Element[] = []

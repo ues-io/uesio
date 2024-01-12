@@ -210,7 +210,7 @@ describe("Uesio Builder Tests", () => {
 			)
 
 			// Select the box
-			getCanvasElement('["components"]', 0).click({ force: true })
+			getCanvasElement("components", 0).click({ force: true })
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
@@ -263,7 +263,7 @@ describe("Uesio Builder Tests", () => {
 			getBuilderState("indexpanel").should("not.be.ok")
 
 			// Select the button
-			getCanvasElement('["components"]', 0).click({ force: true })
+			getCanvasElement("components", 0).click({ force: true })
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
@@ -300,7 +300,7 @@ describe("Uesio Builder Tests", () => {
 				addButtonPageDef
 			)
 			// Select the button
-			getCanvasElement('["components"]', 0).click({ force: true })
+			getCanvasElement("components", 0).click({ force: true })
 			// Verify the selection
 			getBuilderState("selected").should(
 				"eq",
@@ -320,7 +320,7 @@ describe("Uesio Builder Tests", () => {
 				cloneButtonPageDef
 			)
 			// Select the second button
-			getCanvasElement('["components"]', 1).click({
+			getCanvasElement("components", 1).click({
 				force: true,
 			})
 			// Change the text property again

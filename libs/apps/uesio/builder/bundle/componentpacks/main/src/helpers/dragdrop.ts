@@ -145,7 +145,9 @@ const getDragOverHandler =
 		while (slotTarget !== null && slotTarget !== e.currentTarget) {
 			const accepts = slotTarget.getAttribute("data-accepts")?.split(",")
 			if (accepts && isDropAllowed(accepts, dragPath)) {
-				validPath = slotTarget.getAttribute("data-path") || ""
+				validPath = component.path.fromDataAttrPath(
+					slotTarget.getAttribute("data-path")
+				)
 				break
 			}
 			slotTarget = slotTarget.parentElement || null
