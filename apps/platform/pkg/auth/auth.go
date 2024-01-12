@@ -115,7 +115,6 @@ func parseHost(host string) (string, string, string, bool) {
 
 	if strings.Contains(hostWithoutPort, "."+primaryDomain) {
 		hostParts := strings.Split(host, ".")
-		println(hostParts)
 		return "subdomain", hostParts[1] + "." + hostParts[2], hostParts[0], true
 	}
 

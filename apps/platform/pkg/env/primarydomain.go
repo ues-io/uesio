@@ -1,23 +1,27 @@
 package env
 
-import "os"
+import (
+	"os"
+)
 
 var (
-	UESIO_PRIMARY_DOMAIN string
+	uesioPrimaryDomain string
 )
 
 func init() {
-	var UESIO_PRIMARY_DOMAIN_VALUE, isSet = os.LookupEnv("UESIO_PRIMARY_DOMAIN")
-	if !isSet && InDevMode() {
-		UESIO_PRIMARY_DOMAIN = "uesio-dev.com"
+	if primaryDomainValue, isSet := os.LookupEnv("UESIO_PRIMARY_DOMAIN"); isSet {
+		uesioPrimaryDomain = primaryDomainValue
+	} else if InDevMode() {
+		uesioPrimaryDomain = "uesio-dev.com"
+	} else {
+		uesioPrimaryDomain = "localhost"
 	}
-	UESIO_PRIMARY_DOMAIN = UESIO_PRIMARY_DOMAIN_VALUE
 }
 
 func GetPrimaryDomain() string {
-	return UESIO_PRIMARY_DOMAIN
+	return uesioPrimaryDomain
 }
 
-func SetPrimaryDomain(uesio_primary_domain string) {
-	UESIO_PRIMARY_DOMAIN = uesio_primary_domain
+func SetPrimaryDomain(newPrimaryDomain string) {
+	uesioPrimaryDomain = newPrimaryDomain
 }
