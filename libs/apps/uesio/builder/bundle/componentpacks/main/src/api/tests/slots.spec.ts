@@ -84,6 +84,18 @@ const getSlotsTests = [
 		},
 		expected: ["foo", "bar"],
 	},
+	{
+		name: "undefined def",
+		path: "/tabs/~{}/a",
+		def: undefined,
+		expected: undefined,
+	},
+	{
+		name: "undefined array",
+		path: "/tabs/~{}/a",
+		def: {},
+		expected: undefined,
+	},
 ]
 
 describe("Get Slots From Path", () => {
