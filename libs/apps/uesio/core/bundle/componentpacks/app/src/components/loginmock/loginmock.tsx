@@ -24,7 +24,7 @@ const LoginMock: definition.UC = (props) => {
 					key={user}
 					id={`${api.component.getComponentIdFromProps(
 						props
-					)}:mock-logi-${user}`}
+					)}:mock-login-${user}`}
 					context={context}
 					onClick={(): void => {
 						api.signal.run(
