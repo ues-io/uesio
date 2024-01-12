@@ -5,10 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -42,6 +44,9 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 				},
 				{
 					ID: "uesio/studio.patch",
+				},
+				{
+					ID: "uesio/studio.version",
 				},
 				{
 					ID: "uesio/studio.published",
@@ -84,35 +89,24 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responses := []BundleVersionsListResponse{}
-	err := bundles.Loop(func(item meta.Item, index string) error {
+	var responses []BundleVersionsListResponse
+	if err := bundles.Loop(func(item meta.Item, index string) error {
 		description, err := item.GetField("uesio/studio.description")
 		if err != nil {
 			return err
 		}
-		major, err := item.GetField("uesio/studio.major")
+		version, err := item.GetField("uesio/studio.version")
 		if err != nil {
 			return err
 		}
-
-		minor, err := item.GetField("uesio/studio.minor")
-		if err != nil {
-			return err
-		}
-
-		patch, err := item.GetField("uesio/studio.patch")
-		if err != nil {
-			return err
-		}
-
-		responses = append(responses, BundleVersionsListResponse{Description: description.(string), Version: fmt.Sprintf("v%v.%v.%v", major, minor, patch)})
-
+		responses = append(responses, BundleVersionsListResponse{
+			Description: goutils.StringValue(description),
+			Version:     fmt.Sprintf("v%s", goutils.StringValue(version)),
+		})
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle Versions List: "+err.Error()))
 		return
 	}
-
 	file.RespondJSON(w, r, responses)
 }
