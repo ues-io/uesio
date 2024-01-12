@@ -23,6 +23,8 @@ type BundleVersionsListResponse struct {
 func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
+	// To fetch bundles, enter an admin context.
+	adminSession := datasource.GetSiteAdminSession(session)
 	vars := mux.Vars(r)
 	app := vars["app"]
 
@@ -76,7 +78,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 				},
 			},
 		},
-		session,
+		adminSession,
 	); err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle Versions List: "+err.Error()))
 		return
