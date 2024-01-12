@@ -1,3 +1,5 @@
 name: landingroute
 label: Landing Route
-type: TEXT
+type: METADATA
+metadata:
+  type: ROUTE

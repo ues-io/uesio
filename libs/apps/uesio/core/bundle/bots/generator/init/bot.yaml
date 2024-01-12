@@ -1,5 +1,6 @@
 name: init
 dialect: "JAVASCRIPT"
+label: App
 type: "GENERATOR"
 params:
   - name: name

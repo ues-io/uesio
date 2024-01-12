@@ -1,0 +1,22 @@
+name: signupmethod
+dialect: "JAVASCRIPT"
+label: Signup Method
+type: "GENERATOR"
+params:
+  - name: signupMethodName
+    prompt: Signup Method name
+    type: METADATANAME
+  - name: defaultProfileName
+    prompt: Profile to assign to new users
+    type: METADATA
+    metadataType: PROFILE
+  - name: fromEmail
+    prompt: From email address (for password emails)
+    default: "noreply@ues.io"
+  - name: fromName
+    prompt: From name (for password emails)
+    default: "ues.io"
+  - name: companyName
+    prompt: Company name (for password emails)
+    default: "ues.io"
+public: true

@@ -1,5 +1,6 @@
 name: componentpack
 dialect: "JAVASCRIPT"
+label: Component Pack
 type: "GENERATOR"
 params:
   - name: name

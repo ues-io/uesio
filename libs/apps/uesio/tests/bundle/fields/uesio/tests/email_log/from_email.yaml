@@ -1,0 +1,4 @@
+name: from_email
+label: From Email Address
+type: TEXT
+required: true

@@ -1,5 +1,6 @@
 name: route
 dialect: "JAVASCRIPT"
+label: Route
 type: "GENERATOR"
 params:
   - name: name

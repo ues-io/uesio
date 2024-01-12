@@ -1,5 +1,6 @@
 name: collection
 dialect: "JAVASCRIPT"
+label: Collection
 type: "GENERATOR"
 params:
   - name: name

@@ -103,6 +103,17 @@ const getWireFieldsFromParams = (
 	)
 }
 
+const getInitialValueFromParams = (
+	params: param.ParamDefinition[] | undefined
+) => {
+	if (!params || !params.length) return {}
+	return Object.fromEntries(
+		params
+			.filter((def) => def.default !== undefined)
+			.map((def) => [def.name, def.default])
+	)
+}
+
 interface FormProps {
 	setOpen: (value: boolean) => void
 	onSubmit: (wire: wire.Wire | undefined) => void
@@ -233,6 +244,6 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	)
 }
 
-export { getParamValues, getWireFieldsFromParams }
+export { getInitialValueFromParams, getParamValues, getWireFieldsFromParams }
 
 export default PreviewButton
