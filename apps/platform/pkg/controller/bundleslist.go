@@ -22,6 +22,8 @@ type BundlesListResponse struct {
 func BundlesList(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
+	// To fetch bundlelisting, enter an admin context.
+	adminSession := datasource.GetSiteAdminSession(session)
 
 	//check if the uesio/studio.bundlelisting is published and uesio approved
 	bundlelistings := &wire.Collection{}
@@ -66,7 +68,7 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 				},
 			},
 		},
-	}, session, nil)
+	}, adminSession, nil)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List: "+err.Error()))
 		return
