@@ -1,0 +1,7 @@
+name: licensetemplates
+type: REFERENCEGROUP
+label: License Templates
+referenceGroup:
+  collection: licensetemplate
+  field: app
+  onDelete: CASCADE
