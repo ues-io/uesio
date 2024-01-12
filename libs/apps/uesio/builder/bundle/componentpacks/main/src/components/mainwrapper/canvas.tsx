@@ -5,7 +5,7 @@ import {
 	RefObject,
 	useRef,
 } from "react"
-import { definition, styles, api } from "@uesio/ui"
+import { definition, styles, api, component } from "@uesio/ui"
 import {
 	useBuilderState,
 	useDragPath,
@@ -96,7 +96,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			const index = target.getAttribute("data-index") || ""
 			target = target.parentElement
 			if (!target) break
-			const path = target.getAttribute("data-path") || ""
+			const path = component.path.fromDataAttrPath(
+				target.getAttribute("data-path")
+			)
 			if (index && path) {
 				validPath = `${path}["${index}"]`
 				break
