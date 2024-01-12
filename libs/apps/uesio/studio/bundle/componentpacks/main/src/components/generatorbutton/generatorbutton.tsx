@@ -10,6 +10,7 @@ import {
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
+	getInitialValueFromParams,
 	getParamValues,
 	getWireFieldsFromParams,
 } from "../previewbutton/previewbutton"
@@ -125,6 +126,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					fields={getWireFieldsFromParams(params)}
 					submitLabel="Generate"
 					wireRef={wireRef}
+					initialValue={getInitialValueFromParams(params)}
 				/>
 			</Dialog>
 		</FloatingPortal>

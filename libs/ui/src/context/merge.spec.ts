@@ -431,6 +431,22 @@ const mergeTestCases = [
 		expected: 1,
 	},
 	{
+		name: "value is number 1 but the template starts with string contents",
+		context: new Context().addRecordDataFrame({
+			foo: 1,
+		}),
+		input: "Some Text ${foo}",
+		expected: "Some Text 1",
+	},
+	{
+		name: "value is number 1 but the template ends with string contents",
+		context: new Context().addRecordDataFrame({
+			foo: 1,
+		}),
+		input: "${foo} Some Text",
+		expected: "1 Some Text",
+	},
+	{
 		name: "value is object, merge is a nested piece of it",
 		context: new Context().addRecordDataFrame({
 			foo: {

@@ -20,7 +20,6 @@ bots:
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
 views:
-  uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appcrumb: true
   uesio/studio.appedit: true
@@ -29,6 +28,7 @@ views:
   uesio/studio.bots: true
   uesio/studio.bundle: true
   uesio/studio.bundlelisting: true
+  uesio/studio.bundlestore: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collections: true
@@ -116,6 +116,8 @@ views:
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
   uesio/studio.userprofilenav: true
+  uesio/studio.signupmethod: true
+  uesio/studio.signupmethods: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -163,6 +165,8 @@ routes:
   uesio/studio.secrets: true
   uesio/studio.selectlist: true
   uesio/studio.selectlists: true
+  uesio/studio.signupmethod: true
+  uesio/studio.signupmethods: true
   uesio/studio.site: true
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true

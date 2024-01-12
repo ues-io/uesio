@@ -1,0 +1,4 @@
+name: email_log
+label: Email Log
+pluralLabel: Email Logs
+access: protected

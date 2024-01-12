@@ -1,5 +1,6 @@
 name: listview
 dialect: "JAVASCRIPT"
+label: List View
 type: "GENERATOR"
 params:
   - name: headerview

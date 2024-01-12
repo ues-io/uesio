@@ -1,0 +1,172 @@
+name: signupmethod
+definition:
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    signupmethods:
+      collection: uesio/studio.signupmethod
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{signupmethodname}
+    authsource:
+      collection: uesio/studio.authsource
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          valueSource: LOOKUP
+          lookupWire: signupmethods
+          lookupField: uesio/studio.authsource
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: workspacenav
+              params:
+                selected: signupmethods
+                itemType: signupmethods
+                itemIcon: person_add
+                itemName: $Param{signupmethodname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${signupmethods:uesio/studio.appicon}
+                itemNameSpaceColor: ${signupmethods:uesio/studio.appcolor}
+        content:
+          - uesio/io.list:
+              uesio.id: signupmethodsList
+              wire: signupmethods
+              mode: READ
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: ${uesio/studio.name}
+                    subtitle: Signup Method
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: ${uesio/studio.appicon}
+                          color: ${uesio/studio.appcolor}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: signupmethodsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: signupmethods
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - signupmethods
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    componentid: signupmethodsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.cancel}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: signupmethods
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    target: signupmethodsList
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                  - type: paramValue
+                                    param: app
+                                    operator: EQUALS
+                                    value: $Param{namespace}
+                                signals:
+                                  - signal: wire/MARK_FOR_DELETE
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - signupmethods
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/signupmethods
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.label
+                            - uesio/io.field:
+                                fieldId: uesio/core.createdby
+                                user:
+                                  subtitle: $Time{uesio/core.createdat}
+                            - uesio/io.field:
+                                fieldId: uesio/core.updatedby
+                                user:
+                                  subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.field:
+                                fieldId: uesio/studio.authsource
+                            - uesio/io.field:
+                                fieldId: uesio/studio.profile
+                            - uesio/io.field:
+                                fieldId: uesio/studio.landingroute
+                            - uesio/io.field:
+                                fieldId: uesio/studio.autologin
+                            - uesio/io.field:
+                                fieldId: uesio/studio.createloginbot
+                            - uesio/io.field:
+                                fieldId: uesio/studio.signupbot
+                            - uesio/io.field:
+                                fieldId: uesio/studio.enableselfsignup
+                            - uesio/io.field:
+                                fieldId: uesio/studio.forgotpasswordbot
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernametemplate
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernameregex
+                            - uesio/io.field:
+                                fieldId: uesio/studio.usernameformatexplanation
