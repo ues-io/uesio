@@ -350,8 +350,8 @@ const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
 						selectedSlotIndex
 					)
 
-					const mergedSignals = slotDef.onSelectSignals.map(
-						(signal) =>
+					slotDef.onSelectSignals.forEach((signal) =>
+						signals.push(
 							mergeContext.mergeMap({
 								...signal,
 								signal: "component/CALL",
@@ -359,11 +359,8 @@ const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
 								targettype: "multiple",
 								target: componentId,
 							})
+						)
 					)
-
-					mergedSignals.forEach((signal) => {
-						signals.push(signal)
-					})
 				}
 			}
 		}
