@@ -24,6 +24,7 @@ import {
 } from "../context/context"
 import { MetadataKey } from "../metadata/types"
 import { COMPONENT_ID } from "../componentexports"
+import { hash } from "@twind/core"
 
 const getComponentId = (
 	namedId: string | undefined,
@@ -46,7 +47,7 @@ const getComponentIdFromProps = (props: BaseProps) => {
 	return makeComponentId(
 		props.context,
 		props.componentType as string,
-		userDefinedId || props.path || ""
+		userDefinedId || hash(props.path) || ""
 	)
 }
 
