@@ -288,7 +288,12 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
     <td>""</td>
     <td>Set to "localhost" for local development</td>
   </tr>
-
+  <tr>
+    <td>UESIO_PRIMARY_DOMAIN</td>
+    <td>The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")</td>
+    <td>localhost (or "uesio-dev.com" if `UESIO_DEV=true`)</td>
+    <td>If running ues.io on your own infrastructure, set to a 2-part TLD that you own.</td>
+  </tr>
   <tr>
     <td>UESIO_SESSION_STORE</td>
     <td>Allows you to specify the storage location for user sessions</td>
