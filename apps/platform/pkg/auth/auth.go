@@ -304,7 +304,7 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 		session,
 	)
 	if err != nil {
-		if _, ok := err.(*exceptions.NotFoundException); ok {
+		if exceptions.IsNotFoundException(err) {
 			// Login method not found. Log as a warning.
 			slog.LogAttrs(session.Context(),
 				slog.LevelWarn,

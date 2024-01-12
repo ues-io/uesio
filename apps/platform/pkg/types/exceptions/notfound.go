@@ -10,3 +10,8 @@ func NewNotFoundException(msg string) *NotFoundException {
 func (e *NotFoundException) Error() string {
 	return e.msg
 }
+
+func IsNotFoundException(err error) bool {
+	_, isNotFound := err.(*NotFoundException)
+	return isNotFound
+}

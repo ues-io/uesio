@@ -5,6 +5,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -18,7 +19,7 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = datasource.PlatformLoadOne(
+	if err = datasource.PlatformLoadOne(
 		&s,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -34,9 +35,8 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 			},
 		},
 		versionSession,
-	)
-	if err != nil {
-		return "", nil
+	); err != nil {
+		return "", exceptions.NewNotFoundException("Secret Value not found: " + key)
 	}
 	return s.Value, nil
 }
