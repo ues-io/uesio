@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"io/ioutil"
 
 	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -29,7 +28,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := ioutil.ReadAll(body)
+	bodybytes, err := io.ReadAll(body)
 	if err != nil {
 		return nil, err
 	}
