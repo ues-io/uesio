@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -398,4 +399,8 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 		}
 		return nil
 	})
+}
+
+func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, session *sess.Session) error {
+	return retrieve.Retrieve(writer, session)
 }

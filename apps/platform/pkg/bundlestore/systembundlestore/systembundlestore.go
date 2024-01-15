@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 )
@@ -243,4 +244,8 @@ func (b *SystemBundleStoreConnection) HasAllItems(items []meta.BundleableItem) e
 		}
 	}
 	return nil
+}
+
+func (b *SystemBundleStoreConnection) GetBundleZip(writer io.Writer, session *sess.Session) error {
+	return errors.New("tried to download bundle zip in System Bundle Store")
 }

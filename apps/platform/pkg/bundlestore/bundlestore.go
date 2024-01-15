@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -65,6 +66,7 @@ type BundleStoreConnection interface {
 	GetBundleDef() (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem) error
 	DeleteBundle() error
+	GetBundleZip(writer io.Writer, session *sess.Session) error
 }
 
 func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, error) {

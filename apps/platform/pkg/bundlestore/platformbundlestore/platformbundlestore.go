@@ -7,16 +7,21 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var doCache bool
@@ -269,5 +274,46 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 			return err
 		}
 	}
+	return nil
+}
+
+func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, session *sess.Session) error {
+
+	//adminSession := datasource.GetSiteAdminSession(session)
+	app := session.GetContextAppBundle()
+	version := session.GetContextVersionName()
+	major, minor, patch, err := meta.ParseVersionString(version)
+	if err != nil {
+		return err
+	}
+
+	bundleUniqueKey := strings.Join([]string{app.Name, major, minor, patch}, ":")
+
+	var bundle meta.Bundle
+	if err := datasource.PlatformLoadOne(
+		&bundle,
+		&datasource.PlatformLoadOptions{
+			BatchSize: 1,
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "uesio/studio.contents",
+				},
+			},
+			Conditions: []wire.LoadRequestCondition{
+				{
+					Field: commonfields.UniqueKey,
+					Value: bundleUniqueKey,
+				},
+			},
+		},
+		session.SetVersionSession(nil), //TO-DO ASK this
+	); err != nil {
+		return err
+	}
+
+	if _, err := filesource.Download(writer, bundle.Contents.ID, session); err != nil {
+		return err
+	}
+
 	return nil
 }
