@@ -1,0 +1,6 @@
+name: uesio
+label: Uesio
+public: true
+type: uesio
+credentials: uesio
+authentication: API_KEY

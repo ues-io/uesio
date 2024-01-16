@@ -5,3 +5,6 @@ label: bundlelisting
 pluralLabel: Bundle Listings
 access: protected
 accessField: uesio/studio.app
+type: EXTERNAL
+integration: uesio/core.uesio
+loadBot: loadbundlelisting
