@@ -121,21 +121,13 @@ npm run build-all
 ## Build a dedicated app (no watcher and no source map)
 
 ```
-cd ./libs/apps/uesio/crm && uesio pack
+cd ./libs/apps/uesio/studio && uesio pack
 
 // or
-npm run nx -- build apps-uesio-crm
+npm run nx -- build apps-uesio-studio
 
 // or, if you have nx installed globally (or aliased)
-nx build apps-uesio-crm
-```
-
-## Build a dedicated app (with watcher and source map)
-
-On the frontend, the `source map` is enabled in webpack in `dev` mode. While developing you might want to rebuild on saving with the source map in the browser :
-
-```
-cd ./libs/apps/uesio/core && uesio pack --develop
+nx build apps-uesio-studio
 ```
 
 # Watch mode
@@ -151,26 +143,6 @@ npm run watch-all
 ```
 
 As a side note, the `dev` npm script does include this `watch-all` npm script.
-
-# Uesio apps deployment
-
-**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `apps` directory which is located under the `libs` folder.
-
-For plugging such an application into uesio, you have to deploy it, **obviously after having built it**. This deployment process is done by the `cli`.
-
-```
-cd ./libs/apps/uesio/crm && uesio deploy
-
-// or
-npm run nx -- deploy apps-uesio-crm
-
-// or, if you have nx installed globally (or aliased)
-nx deploy apps-uesio-crm
-```
-
-The `uesio` lib under `apps/uesio` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
-
-An **app bundle** is a screenshot or version of a specific uesio app.
 
 # Continous integration (CI)
 
@@ -221,7 +193,7 @@ docker compose up -d
 2. Seed your local Postgres database with everything Uesio needs for local development
 
 ```
-npm run nx -- seed platform
+npm run seeds
 ```
 
 # <a id="dependencies"></a>Run the (web) application locally
@@ -229,15 +201,15 @@ npm run nx -- seed platform
 To run the app locally:
 
 ```
-npm run nx -- serve platform
-open https://uesio-dev.com:3000
+npm start
+open https://studio.uesio-dev.com:3000
 ```
 
 To run the app in Docker locally:
 
 ```
 npm run in-docker
-open https://uesio-dev.com:3000
+open https://studio.uesio-dev.com:3000
 ```
 
 **NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:

@@ -94,7 +94,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 	var bundles meta.BundleCollection
 	var licensetemplate meta.LicenseTemplateCollection
 	var licensepricingtemplate meta.LicensePricingTemplateCollection
-	var workspaces meta.WorkspaceCollection
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
@@ -107,7 +106,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		&bundles,
 		&licensetemplate,
 		&licensepricingtemplate,
-		&workspaces,
 		&sites,
 		&sitedomains,
 		&loginmethods,
@@ -146,7 +144,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		getPlatformSeedSR(&licensepricingtemplate),
 		getPlatformSeedSR(&licenses),
 		getPlatformSeedSR(&bundles),
-		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
 		getSeedSR("uesio/core.organizationuser", &organizationusers),

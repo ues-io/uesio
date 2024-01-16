@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
@@ -18,6 +20,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
+		Repository:  env.GetPrimaryDomain(),
 	}, nil
 }
 
@@ -42,6 +45,7 @@ type Bundle struct {
 	Description string            `json:"uesio/studio.description"`
 	Version     string            `json:"uesio/studio.version"`
 	Contents    *UserFileMetadata `json:"uesio/studio.contents"`
+	Repository  string            `json:"uesio/studio.repository"`
 }
 
 func (b *Bundle) GetVersionString() string {
