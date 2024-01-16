@@ -96,7 +96,7 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 	var users meta.UserCollection
 	var loginmethods meta.LoginMethodCollection
 
-	err = populateSeedData(
+	if err = populateSeedData(
 		&users,
 		&apps,
 		&licenses,
@@ -106,8 +106,12 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		&sites,
 		&sitedomains,
 		&loginmethods,
-	)
-	if err != nil {
+	); err != nil {
+		return err
+	}
+	// We have to manually populate the repo field on all seed sites,
+	// otherwise we'd have to hardcode the primary domain into the seed files.
+	if err = populateRepoFieldOnSites(&sites); err != nil {
 		return err
 	}
 
@@ -178,4 +182,20 @@ func seed(cmd *cobra.Command, args []string) {
 
 	slog.Info("Successfully ran seeds")
 
+}
+
+func populateRepoFieldOnSites(sites *meta.SiteCollection) error {
+	return sites.Loop(func(item meta.Item, index string) error {
+		bundleObj, err := item.GetField("uesio/studio.bundle")
+		if err != nil || bundleObj == nil {
+			return err
+		}
+		// If the site's associated bundle's unique key does not have the "repository" at the end of it,
+		// we need to fix that to ensure that it is correct
+		bundleItem, ok := bundleObj.(meta.Item)
+		if !ok {
+			return nil
+		}
+		return meta.RebuildBundleUniqueKey(bundleItem)
+	})
 }

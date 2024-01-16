@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/env"
+	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
 func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
@@ -100,4 +102,27 @@ func (b *Bundle) Len() int {
 func (b *Bundle) UnmarshalJSON(data []byte) error {
 	type alias Bundle
 	return refScanner((*alias)(b), data)
+}
+
+// RebuildBundleUniqueKey ensures that if a bundle's unique key does not have a repository at the end of it,
+// we fix that to ensure that it does
+func RebuildBundleUniqueKey(bundle Item) error {
+	primaryDomain := env.GetPrimaryDomain()
+
+	bundleKey, err := bundle.GetField(commonfields.UniqueKey)
+	if err != nil || bundleKey == "" {
+		return nil
+	}
+	bundleKeyString := goutils.StringValue(bundleKey)
+	// Make sure that the key has the repository in it
+	keyParts := strings.Split(bundleKeyString, ":")
+	if len(keyParts) != 5 {
+		if err = bundle.SetField(commonfields.UniqueKey, bundleKeyString+":"+primaryDomain); err != nil {
+			return err
+		}
+		if err = bundle.SetField("uesio/studio.repository", primaryDomain); err != nil {
+			return err
+		}
+	}
+	return nil
 }
