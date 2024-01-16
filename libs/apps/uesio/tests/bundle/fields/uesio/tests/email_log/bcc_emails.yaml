@@ -1,0 +1,4 @@
+name: bcc_emails
+label: BCC Email Addresses
+type: LIST
+subtype: TEXT

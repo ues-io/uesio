@@ -1,5 +1,6 @@
 name: component
 dialect: "JAVASCRIPT"
+label: Component
 type: "GENERATOR"
 params:
   - name: type

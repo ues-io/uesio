@@ -1,5 +1,6 @@
 name: queueview
 dialect: "JAVASCRIPT"
+label: Queue View
 type: "GENERATOR"
 params:
   - name: name

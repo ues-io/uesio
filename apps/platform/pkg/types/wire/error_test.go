@@ -56,9 +56,9 @@ func TestNewGenericSaveException(t *testing.T) {
 		testName := "it should " + tt.name
 		t.Run(testName, func(t *testing.T) {
 			actual := NewGenericSaveException(tt.input)
-			if !assert.ObjectsAreEqual(tt.want, actual) {
-				assert.Fail(t, testName)
-			}
+			assert.Equal(t, actual.RecordID, tt.want.RecordID)
+			assert.Equal(t, actual.FieldID, tt.want.FieldID)
+			assert.Equal(t, actual.Error(), tt.want.Error())
 		})
 	}
 }

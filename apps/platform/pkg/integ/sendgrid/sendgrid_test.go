@@ -3,9 +3,82 @@ package sendgrid
 import (
 	"testing"
 
+	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/thecloudmasters/uesio/pkg/env"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
+
+func Test_newConnection(t *testing.T) {
+
+	uesioCoreSendGridIntegration, _ := meta.NewIntegration("uesio/core.sendgrid")
+	otherIntegration, _ := meta.NewIntegration("luigi/foo.sendgrid")
+
+	sampleCreds := (wire.Credentials)(map[string]string{
+		"apikey": "abcd",
+	})
+	emptyCreds := (wire.Credentials)(map[string]string{})
+
+	tests := []struct {
+		name        string
+		ic          *wire.IntegrationConnection
+		wantClient  EmailClient
+		wantErr     string
+		mockDevMode bool
+	}{
+		{
+			name:       "happy path: Send Grid API key is in credentials",
+			ic:         wire.NewIntegrationConnection(otherIntegration, nil, nil, &sampleCreds, nil),
+			wantClient: sendgrid.NewSendClient("abcd"),
+			wantErr:    "",
+		},
+		{
+			name:       "happy path: uesio core Sned Grid integration, and Send Grid API key is in credentials",
+			ic:         wire.NewIntegrationConnection(uesioCoreSendGridIntegration, nil, nil, &sampleCreds, nil),
+			wantClient: sendgrid.NewSendClient("abcd"),
+			wantErr:    "",
+		},
+		{
+			name:        "Dev Mode: use default client if using Core Send Grid integration and API key not in credentials",
+			ic:          wire.NewIntegrationConnection(uesioCoreSendGridIntegration, nil, nil, &emptyCreds, nil),
+			mockDevMode: true,
+			wantClient:  &devClient{},
+			wantErr:     "",
+		},
+		{
+			name:        "NON Dev Mode: should fail if using Core Send Grid integration and API key not in credentials",
+			ic:          wire.NewIntegrationConnection(uesioCoreSendGridIntegration, nil, nil, &emptyCreds, nil),
+			mockDevMode: false,
+			wantClient:  nil,
+			wantErr:     "SendGrid API Key not provided",
+		},
+		{
+			name:        "Dev Mode, NON-Core Send Grid integration, API key not in credentials",
+			ic:          wire.NewIntegrationConnection(otherIntegration, nil, nil, &emptyCreds, nil),
+			mockDevMode: true,
+			wantClient:  nil,
+			wantErr:     "SendGrid API Key not provided",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			defer env.ResetDevMode()
+			env.SetDevMode(tt.mockDevMode)
+			got, err := newSendGridConnection(tt.ic)
+			if tt.wantErr != "" {
+				assert.NotNil(t, tt.wantErr)
+				assert.Equal(t, err.Error(), tt.wantErr, "expected error message")
+				return
+			}
+			assert.Nil(t, err, "did not expect error, but got one")
+			assert.True(t, assert.ObjectsExportedFieldsAreEqual(tt.ic, got.integration), "did not get expected value: integration connection")
+			assert.True(t, assert.ObjectsExportedFieldsAreEqual(tt.wantClient, got.client), "did not get expected value: client")
+		})
+	}
+}
 
 func Test_createMessage(t *testing.T) {
 	tests := []struct {

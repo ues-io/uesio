@@ -369,8 +369,15 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 
+	// Bundles
+	sr.HandleFunc("/bundles/v1/list", controller.BundlesList).Methods("GET")
+
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
+
+	// Bundles
+	bundleVersionsListPath := fmt.Sprintf("/bundles/v1/versions/%s/list", appParam)
+	sr.HandleFunc(bundleVersionsListPath, controller.BundleVersionsList).Methods("GET")
 
 	// Dev Only Route for running usage worker
 	if env.InDevMode() {

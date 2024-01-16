@@ -56,11 +56,19 @@ func (as *AuthSource) Len() int {
 }
 
 func (as *AuthSource) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, as.Name)
-	if err != nil {
+	if err := validateNodeName(node, as.Name); err != nil {
 		return err
 	}
-	return node.Decode((*AuthSourceWrapper)(as))
+	if err := node.Decode((*AuthSourceWrapper)(as)); err != nil {
+		return err
+	}
+	as.Credentials = GetFullyQualifiedKey(as.Credentials, as.Namespace)
+	return nil
+}
+
+func (as *AuthSource) MarshalYAML() (interface{}, error) {
+	as.Credentials = GetLocalizedKey(as.Credentials, as.Namespace)
+	return (*AuthSourceWrapper)(as), nil
 }
 
 func (as *AuthSource) UnmarshalJSON(data []byte) error {

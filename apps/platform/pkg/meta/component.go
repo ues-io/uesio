@@ -61,11 +61,12 @@ type Component struct {
 var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
-	Name           string   `yaml:"name"`
-	Path           string   `yaml:"path,omitempty"`
-	DefaultContent *YAMLDef `yaml:"defaultContent,omitempty"`
-	Label          string   `yaml:"label,omitempty"`
-	Direction      string   `yaml:"direction,omitempty"`
+	Name            string   `yaml:"name"`
+	Path            string   `yaml:"path,omitempty"`
+	DefaultContent  *YAMLDef `yaml:"defaultContent,omitempty"`
+	Label           string   `yaml:"label,omitempty"`
+	Direction       string   `yaml:"direction,omitempty"`
+	OnSelectSignals *YAMLDef `yaml:"onSelectSignals,omitempty"`
 }
 
 // PropertyDefinition is used (currently) only during view dependency processing

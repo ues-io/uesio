@@ -266,7 +266,7 @@ To run the worker process, use `npm run nx -- worker platform` (Or `nx worker pl
 
 # <a id="environment-variables"></a> (Optional) Environment Variables
 
-Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
+The following environment variables can optionally be configured in your Shell (e.g. in `~/.zshenv` if you are using Zsh)
 
 <table>
   <tr>
@@ -288,7 +288,12 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
     <td>""</td>
     <td>Set to "localhost" for local development</td>
   </tr>
-
+  <tr>
+    <td>UESIO_PRIMARY_DOMAIN</td>
+    <td>The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")</td>
+    <td>localhost (or "uesio-dev.com" if `UESIO_DEV=true`)</td>
+    <td>If running ues.io on your own infrastructure, set to a 2-part TLD that you own.</td>
+  </tr>
   <tr>
     <td>UESIO_SESSION_STORE</td>
     <td>Allows you to specify the storage location for user sessions</td>
@@ -368,6 +373,10 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
     <td>Usage data (stored in Redis) will only be aggregated and committed to Postgres as often as this job is run by the worker process. Set to a lower window for more frequent checks.</td>
   </tr>
 </table>
+
+In addition, all Uesio Secrets can have their default value set by setting a corresponding `UESIO_SECRET_<namespace>_<name>` environment variable. Any value set for these secrets in a Site/Workspace will override the environment variable default, but it can often be useful, especially for local development, to configure a default value, so that you don't have to populate these secrets in every site. (Note: there is no corresponding feature for Config Values, because you can define a Config Value's default directly in the metadata definition).
+
+For example, the `uesio/core.sendgridkey` secret's default value can be configured with `export UESIO_SECRET_UESIO_CORE_SENDGRIDKEY=your-send-grid-key`
 
 # npm dependencies
 

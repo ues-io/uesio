@@ -107,7 +107,7 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 				selected ? classes.slotSelected : classes.slot
 			)}
 			data-accepts={standardAccepts.join(",")}
-			data-path={listPath}
+			data-path={component.path.toDataAttrPath(listPath)}
 		>
 			<div data-placeholder="true">
 				<div className={classes.slotHeader}>

@@ -3,6 +3,7 @@ package command
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
@@ -17,7 +18,7 @@ import (
 
 func Generate(key string) error {
 
-	fmt.Println("Running generator: " + key)
+	//fmt.Println("Running generator: " + key)
 
 	namespace, name, err := meta.ParseKeyWithDefault(key, "uesio/core")
 	if err != nil {
@@ -54,9 +55,8 @@ func Generate(key string) error {
 	paramsURL := fmt.Sprintf("version/%s/%s/bots/params/generator/%s/%s", namespace, version, namespace, name)
 
 	botParams := &meta.BotParamsResponse{}
-	err = call.GetJSON(paramsURL, sessionId, botParams)
-	if err != nil {
-		return err
+	if err = call.GetJSON(paramsURL, sessionId, botParams); err != nil {
+		return errors.New("unable to retrieve metadata for generator '" + key + "': " + err.Error())
 	}
 
 	answers, err := param.AskMany(botParams, app, version, sessionId)
@@ -68,18 +68,15 @@ func Generate(key string) error {
 
 	payloadBytes := &bytes.Buffer{}
 
-	err = json.NewEncoder(payloadBytes).Encode(&answers)
-	if err != nil {
+	if err = json.NewEncoder(payloadBytes).Encode(&answers); err != nil {
 		return err
 	}
-	resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, appContext)
-	if err != nil {
+	if resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, appContext); err != nil {
 		return err
-	}
-
-	err = zip.Unzip(resp.Body, "bundle")
-	if err != nil {
-		return err
+	} else {
+		if err = zip.Unzip(resp.Body, "bundle"); err != nil {
+			return err
+		}
 	}
 
 	fmt.Println("Generator completed successfully.")

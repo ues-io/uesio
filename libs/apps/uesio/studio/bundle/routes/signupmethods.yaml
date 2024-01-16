@@ -1,0 +1,5 @@
+name: signupmethods
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/signupmethods
+view: signupmethods
+theme: default
+title: Signup Methods

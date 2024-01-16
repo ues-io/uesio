@@ -50,6 +50,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 			connection: connection,
 		},
 		connection: connection,
+		bot:        bot,
 		Results:    map[string]interface{}{},
 		LogApi:     NewBotLogAPI(bot, session.Context()),
 		Http:       NewBotHttpAPI(bot, wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
@@ -60,6 +61,7 @@ type CallBotAPI struct {
 	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
 	connection wire.Connection
+	bot        *meta.Bot
 	Results    map[string]interface{}
 	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
 	LogApi     *BotLogAPI      `bot:"log"`
@@ -100,6 +102,14 @@ func (cba *CallBotAPI) GetSession() *SessionAPI {
 
 func (cba *CallBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(cba.Session.GetContextUser())
+}
+
+func (cba *CallBotAPI) GetNamespace() string {
+	return cba.bot.GetNamespace()
+}
+
+func (cba *CallBotAPI) GetName() string {
+	return cba.bot.Name
 }
 
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {

@@ -7,6 +7,8 @@
 /apps/platform/platform/platform.js
 /apps/platform/userfiles
 /apps/platform/localbundlestore
+/apps/platform/uesiobundlestore-dev
+/apps/platform/uesiofiles-dev
 /pgdata
 /.vscode
 package-lock.json
@@ -14,6 +16,8 @@ package.json
 nx.json
 workspace.json
 **/*.template.yaml
+**/*.template.ts
+**/dist/**
 
 # Ignore because it uses Go template variables and as such fails prettier CSS parsing
 /libs/vendor/fonts/fonts.css

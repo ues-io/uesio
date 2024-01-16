@@ -1,5 +1,6 @@
 name: headerview
 dialect: "JAVASCRIPT"
+label: Header View
 type: "GENERATOR"
 params:
   - name: logo

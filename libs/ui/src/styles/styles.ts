@@ -9,7 +9,7 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
-import { tw, cx, Class } from "@twind/core"
+import { tw, cx, Class, hash } from "@twind/core"
 import { STYLE_TOKENS } from "../componentexports"
 
 const twMerge = extendTailwindMerge({
@@ -139,4 +139,5 @@ export {
 	useUtilityStyleTokens,
 	useStyleTokens,
 	colors,
+	hash,
 }

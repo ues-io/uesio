@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/config"
@@ -23,54 +24,58 @@ import (
 	w "github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getMetadataList(metadataType, app, version, sessid, grouping string) ([]string, error) {
+func getMetadataList(metadataType, app, version, sessid, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
 
 	if metadataType == "" {
-		return nil, errors.New("No Metadata Type Provided for Prompt")
+		return nil, nil, errors.New("no metadata type provided for prompt")
 	}
 
 	metadataType, ok := meta.METADATA_NAME_MAP[metadataType]
 	if !ok {
-		return nil, errors.New("Invalid Metadata Type Provided for Prompt")
+		return nil, nil, errors.New("invalid metadata type provided for prompt")
 	}
 
 	// First get the local items
 	group, err := meta.GetBundleableGroupFromType(metadataType)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	conditions, err := meta.GetGroupingConditions(metadataType, grouping)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	sbs := &localbundlestore.LocalBundleStore{}
 
 	def, err := sbs.GetBundleDef(app, version, nil, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	err = sbs.GetAllItems(group, app, version, conditions, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	results := []string{}
+	valuesByLabel = map[string]string{}
 
-	err = group.Loop(func(item meta.Item, index string) error {
+	if err = group.Loop(func(item meta.Item, index string) error {
 		bundleableItem := item.(meta.BundleableItem)
 		// Strip off the grouping part of the key
 		key := bundleableItem.GetKey()
+		label := bundleableItem.GetLabel()
 		if grouping != "" {
 			key = strings.TrimPrefix(key, grouping+":")
 		}
-		results = append(results, key)
+		if label == "" {
+			label = key
+		}
+		labels = append(labels, label)
+		valuesByLabel[label] = key
 		return nil
-	})
-	if err != nil {
-		return nil, err
+	}); err != nil {
+		return nil, nil, err
 	}
 
 	for depNamespace, dep := range def.Dependencies {
@@ -83,15 +88,23 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
-		for key := range metadataList {
-			results = append(results, key)
+		for key, metadataResponse := range metadataList {
+			label := metadataResponse.Label
+			if label == "" {
+				label = key
+			}
+			labels = append(labels, label)
+			valuesByLabel[label] = key
 		}
 	}
 
-	return results, nil
+	// Sort the labels before returning the list
+	sort.Strings(labels)
+
+	return labels, valuesByLabel, nil
 }
 
 func metadataValidator(val interface{}) error {
@@ -99,7 +112,7 @@ func metadataValidator(val interface{}) error {
 	if meta.IsValidMetadataName(str) {
 		return nil
 	}
-	return errors.New("Invalid Metadata")
+	return errors.New("invalid metadata")
 }
 
 func mergeParam(templateString string, answers map[string]interface{}) (string, error) {
@@ -197,36 +210,39 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
-		items, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
 		if err != nil {
 			return err
 		}
 		err = survey.AskOne(&survey.Select{
 			Message: param.Prompt,
-			Options: items,
+			Options: labels,
 		}, &answer)
 		if err != nil {
 			return err
 		}
-		answers[param.Name] = answer
+		answers[param.Name] = valuesByLabel[answer]
 	case "MULTIMETADATA":
 		var answer []string
 		grouping, err := mergeParam(param.Grouping, answers)
 		if err != nil {
 			return err
 		}
-		items, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
 		if err != nil {
 			return err
 		}
-		err = survey.AskOne(&survey.MultiSelect{
+		if err = survey.AskOne(&survey.MultiSelect{
 			Message: param.Prompt,
-			Options: items,
-		}, &answer)
-		if err != nil {
+			Options: labels,
+		}, &answer); err != nil {
 			return err
 		}
-		answers[param.Name] = answer
+		answerValues := make([]string, len(answer))
+		for i := range answer {
+			answerValues[i] = valuesByLabel[answer[i]]
+		}
+		answers[param.Name] = answerValues
 	case "FIELDTYPE":
 		var answer string
 		options := goutils.MapKeys(meta.GetFieldTypes())

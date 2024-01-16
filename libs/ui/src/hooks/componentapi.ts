@@ -24,13 +24,7 @@ import {
 } from "../context/context"
 import { MetadataKey } from "../metadata/types"
 import { COMPONENT_ID } from "../componentexports"
-
-const getComponentId = (
-	namedId: string | undefined,
-	componentType: string,
-	path: string | undefined,
-	context: Context
-) => makeComponentId(context, componentType, namedId || path || "")
+import { hash } from "@twind/core"
 
 const getComponentIdFromProps = (props: BaseProps) => {
 	// "props.definition.id" here is TEMPORARY - for backwards compatibility
@@ -46,7 +40,7 @@ const getComponentIdFromProps = (props: BaseProps) => {
 	return makeComponentId(
 		props.context,
 		props.componentType as string,
-		userDefinedId || props.path || ""
+		userDefinedId || hash(props.path) || ""
 	)
 }
 
@@ -161,7 +155,6 @@ const useMode = (id: string, initialMode: FieldMode | undefined) =>
 	useStateSlice<FieldMode>("mode", id, initialMode || "READ")
 
 export {
-	getComponentId,
 	getComponentIdFromProps,
 	getAllComponentTypes,
 	getComponentType,

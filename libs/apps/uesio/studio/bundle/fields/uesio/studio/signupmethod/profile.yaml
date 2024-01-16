@@ -1,3 +1,5 @@
 name: profile
-label: Profile
-type: TEXT
+label: Profile to assign to new users
+type: METADATA
+metadata:
+  type: PROFILE

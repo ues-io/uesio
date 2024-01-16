@@ -3,11 +3,12 @@ import { definition, api, component } from "@uesio/ui"
 const LoginMock: definition.UC = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Grid = component.getUtility("uesio/io.grid")
-	const { context, path } = props
+	const { context, componentType } = props
 	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
 	const mockUsernamesString = api.view.useConfigValue(
 		"uesio/core.mock_auth_usernames"
 	)
+	const componentId = api.component.getComponentIdFromProps(props)
 
 	if (
 		useMock !== "true" ||
@@ -22,12 +23,7 @@ const LoginMock: definition.UC = (props) => {
 			{mockUsernamesString.split(",").map((user) => (
 				<Button
 					key={user}
-					id={api.component.getComponentId(
-						`mock-login-${user}`,
-						"uesio/core.loginmock",
-						path,
-						context
-					)}
+					id={`${componentId}:${componentType}:mock-login-${user}`}
 					context={context}
 					onClick={(): void => {
 						api.signal.run(
