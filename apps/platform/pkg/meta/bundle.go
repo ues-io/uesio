@@ -104,9 +104,9 @@ func (b *Bundle) UnmarshalJSON(data []byte) error {
 	return refScanner((*alias)(b), data)
 }
 
-// RebuildBundleUniqueKey ensures that if a bundle's unique key does not have a repository at the end of it,
-// we fix that to ensure that it does
-func RebuildBundleUniqueKey(bundle Item) error {
+// EnsureBundleHasRepository ensures that if a bundle's unique key does not have a repository at the end of it,
+// we fix that to ensure that it does, and we also set the repository field by default
+func EnsureBundleHasRepository(bundle Item) error {
 	primaryDomain := env.GetPrimaryDomain()
 
 	bundleKey, err := bundle.GetField(commonfields.UniqueKey)

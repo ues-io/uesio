@@ -18,6 +18,6 @@ func runSiteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		if !ok {
 			return nil
 		}
-		return meta.RebuildBundleUniqueKey(bundleItem)
+		return meta.EnsureBundleHasRepository(bundleItem)
 	})
 }
