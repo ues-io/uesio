@@ -109,7 +109,22 @@ func (b *Bundle) UnmarshalJSON(data []byte) error {
 func EnsureBundleHasRepository(bundle Item) error {
 	primaryDomain := env.GetPrimaryDomain()
 
+	// If there is no repository, go ahead and set it now.
+	currentRepo, err := bundle.GetField("uesio/studio.repository")
+	if err != nil {
+		return err
+	}
+	if currentRepo == nil || currentRepo == "" {
+		if err := bundle.SetField("uesio/studio.repository", primaryDomain); err != nil {
+			return err
+		}
+	}
+
+	// Now check the unique key
 	bundleKey, err := bundle.GetField(commonfields.UniqueKey)
+
+	// If the unique key has not been set yet, then we should be fine,
+	// it will get set later.
 	if err != nil || bundleKey == "" {
 		return nil
 	}
@@ -118,9 +133,6 @@ func EnsureBundleHasRepository(bundle Item) error {
 	keyParts := strings.Split(bundleKeyString, ":")
 	if len(keyParts) != 5 {
 		if err = bundle.SetField(commonfields.UniqueKey, bundleKeyString+":"+primaryDomain); err != nil {
-			return err
-		}
-		if err = bundle.SetField("uesio/studio.repository", primaryDomain); err != nil {
 			return err
 		}
 	}
