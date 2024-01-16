@@ -26,6 +26,13 @@
 				"cwd": "apps/platform"
 			}
 		},
+		"migrate-db": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "../../dist/platform/uesio migrate",
+				"cwd": "apps/platform"
+			}
+		},
 		"serve": {
 			"executor": "nx:run-commands",
 			"options": {

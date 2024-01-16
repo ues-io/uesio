@@ -24,6 +24,23 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 	}, nil
 }
 
+func ParseBundleUniqueKey(UniqueKey string) (appName, appVersion, repo string) {
+	s := strings.Split(UniqueKey, ":")
+	// (old) Bundle unique keys will have 4 parts (app:major:minor:version)
+	// new Bundle unique keys will have 5 parts (app:major:minor:version:repository)
+	if len(s) != 4 && len(s) != 5 {
+		return "", "", ""
+	}
+	appName = s[0]
+	if len(s) == 5 {
+		repo = s[4]
+	} else {
+		repo = env.GetPrimaryDomain()
+	}
+	appVersion = "v" + s[1] + "." + s[2] + "." + s[3]
+	return appName, appVersion, repo
+}
+
 func ParseVersionString(version string) (string, string, string, error) {
 	//Remove the 'v' and split on dots
 	if !strings.HasPrefix(version, "v") {
@@ -46,6 +63,10 @@ type Bundle struct {
 	Version     string            `json:"uesio/studio.version"`
 	Contents    *UserFileMetadata `json:"uesio/studio.contents"`
 	Repository  string            `json:"uesio/studio.repository"`
+}
+
+func (b *Bundle) GetKey() string {
+	return fmt.Sprintf("v%v.%v.%v", b.Major, b.Minor, b.Patch)
 }
 
 func (b *Bundle) GetVersionString() string {

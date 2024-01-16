@@ -54,6 +54,8 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 		botFunction = runBotBeforeSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppBeforeSaveBot
+	case "uesio/studio.site":
+		botFunction = runSiteBeforeSaveBot
 	case "uesio/studio.usage":
 		botFunction = runUsageBeforeSaveBot
 	case "uesio/core.user":

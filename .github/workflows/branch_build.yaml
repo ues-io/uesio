@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build_and_test:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
       FULL_SHA: ${{ github.sha }}
