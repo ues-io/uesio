@@ -22,13 +22,5 @@
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/io"
 		}
-	},
-	{
-		"uesio/studio.description": "Uesio content management system",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/cms"
-		}
 	}
 ]
