@@ -38,6 +38,8 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 	switch request.Metadata.GetFullName() {
 	case "uesio/core.userfile":
 		botFunction = runUserFileBeforeSaveBot
+	case "uesio/studio.bundle":
+		botFunction = runBundleBeforeSaveBot
 	case "uesio/studio.field":
 		botFunction = runFieldBeforeSaveBot
 	case "uesio/studio.view":
