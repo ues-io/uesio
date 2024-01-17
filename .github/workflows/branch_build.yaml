@@ -30,11 +30,12 @@ jobs:
 
           echo "hurl version is $hurlversion"
 
-          exit 0
+          hurlurl="https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
+          hurlfile="hurl_$hurlversion_amd64.deb"
 
           # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO "https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
-          sudo apt update && sudo apt install "./hurl_$hurlversion_amd64.deb"
+          curl -LO $hurlurl
+          sudo apt update && sudo apt install $hurlfile
       - name: Setup Uesio CLI Symlink
         shell: bash
         run: |
