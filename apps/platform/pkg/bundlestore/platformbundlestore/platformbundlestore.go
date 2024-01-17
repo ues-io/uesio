@@ -1,6 +1,7 @@
 package platformbundlestore
 
 import (
+	"archive/zip"
 	"bytes"
 	"errors"
 	"fmt"
@@ -18,6 +19,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
@@ -277,7 +279,7 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 	return nil
 }
 
-func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer) error {
+func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 
 	session := b.getStudioAnonSession()
 	options := b.ConnectionOptions
@@ -319,6 +321,21 @@ func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer) error {
 		session,
 	); err != nil {
 		return err
+	}
+
+	// For bundles that don't have a contents file saved, we will need to go get each
+	// individual item
+	if bundle.Contents == nil {
+		zipwriter := zip.NewWriter(writer)
+		create := retrieve.NewWriterCreator(zipwriter.Create)
+		// Retrieve bundle contents
+		err = retrieve.RetrieveBundle("", create, b)
+		if err != nil {
+			return err
+		}
+
+		// Return early, don't go download the file because it does not exist.
+		return zipwriter.Close()
 	}
 
 	if _, err := filesource.Download(writer, bundle.Contents.ID, session); err != nil {

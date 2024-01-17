@@ -62,6 +62,10 @@ type BundleStore interface {
 
 type FileCreator func(string) (io.WriteCloser, error)
 
+type BundleZipOptions struct {
+	IncludeGeneratedTypes bool
+}
+
 type BundleStoreConnection interface {
 	GetItem(item meta.BundleableItem) error
 	GetManyItems(items []meta.BundleableItem) error
@@ -73,7 +77,7 @@ type BundleStoreConnection interface {
 	GetBundleDef() (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem) error
 	DeleteBundle() error
-	GetBundleZip(writer io.Writer) error
+	GetBundleZip(writer io.Writer, options *BundleZipOptions) error
 }
 
 func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, error) {

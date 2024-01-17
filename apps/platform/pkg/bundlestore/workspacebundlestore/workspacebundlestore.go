@@ -402,7 +402,7 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 	})
 }
 
-func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer) error {
+func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 
 	workspace := b.Workspace
 	if workspace == nil {
@@ -417,10 +417,12 @@ func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer) error {
 	if err != nil {
 		return err
 	}
-	// Retrieve generated TypeScript files
-	err = retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create)
-	if err != nil {
-		return err
+	if zipoptions != nil && zipoptions.IncludeGeneratedTypes {
+		// Retrieve generated TypeScript files
+		err = retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create)
+		if err != nil {
+			return err
+		}
 	}
 
 	return zipwriter.Close()
