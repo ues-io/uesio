@@ -28,6 +28,10 @@ jobs:
           # Make sure we're using the same Hurl version specified in package.json
           hurlversion=$(bash ./scripts/get-hurl-version.sh)
 
+          echo "hurl version is $hurlversion"
+
+          exit 0
+
           # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
           curl -LO "https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
           sudo apt update && sudo apt install "./hurl_$hurlversion_amd64.deb"
