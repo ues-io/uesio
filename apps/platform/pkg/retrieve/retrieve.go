@@ -1,7 +1,6 @@
 package retrieve
 
 import (
-	"archive/zip"
 	"errors"
 	"fmt"
 	"io"
@@ -9,10 +8,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,51 +34,24 @@ type nopWriterCloser struct {
 func (nopWriterCloser) Close() error { return nil }
 
 const (
-	bundleDirectory = "bundle"
-	generatedDir    = "generated"
+	BundleDirectory = "bundle"
+	GeneratedDir    = "generated"
 	uesioTypesDir   = "@types/@uesio"
 	clientTypesSrc  = "../../dist/ui/types/client"
 )
 
-func Retrieve(writer io.Writer, session *sess.Session) error {
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return errors.New("no Workspace provided for retrieve")
-	}
-	namespace := workspace.GetAppFullName()
-	bs, err := bundle.GetBundleStoreConnection(namespace, session, nil)
-	if err != nil {
-		return err
-	}
-	// Create a new zip archive.
-	zipwriter := zip.NewWriter(writer)
-	create := NewWriterCreator(zipwriter.Create)
-	// Retrieve bundle contents
-	err = RetrieveBundle(bundleDirectory, create, bs)
-	if err != nil {
-		return err
-	}
-	// Retrieve generated TypeScript files
-	err = retrieveGeneratedFiles(generatedDir, create)
-	if err != nil {
-		return err
-	}
-
-	return zipwriter.Close()
-}
-
-func retrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator) error {
+func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator) error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 	// Add all Uesio-provided types
-	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "index.d.ts"), path.Join(generatedDir, uesioTypesDir, "index.d.ts"))
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "index.d.ts"), path.Join(GeneratedDir, uesioTypesDir, "index.d.ts"))
 	if err != nil {
 		return err
 	}
 	// Add package.json to generated directory so that TS will know where to find the types
-	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), path.Join(generatedDir, uesioTypesDir, "package.json"))
+	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), path.Join(GeneratedDir, uesioTypesDir, "package.json"))
 	if err != nil {
 		return err
 	}

@@ -277,17 +277,27 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 	return nil
 }
 
-func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, session *sess.Session) error {
+func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer) error {
 
-	//adminSession := datasource.GetSiteAdminSession(session)
-	app := session.GetContextAppBundle()
-	version := session.GetContextVersionName()
+	session := b.getStudioAnonSession()
+	options := b.ConnectionOptions
+	app := options.GetNamespace()
+	version := options.GetVersion()
+
+	if app == "" {
+		return errors.New("no app provided for retrieve")
+	}
+
+	if version == "" {
+		return errors.New("no version provided for retrieve")
+	}
+
 	major, minor, patch, err := meta.ParseVersionString(version)
 	if err != nil {
 		return err
 	}
 
-	bundleUniqueKey := strings.Join([]string{app.Name, major, minor, patch}, ":")
+	bundleUniqueKey := strings.Join([]string{app, major, minor, patch}, ":")
 
 	var bundle meta.Bundle
 	if err := datasource.PlatformLoadOne(
@@ -306,7 +316,7 @@ func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, session *
 				},
 			},
 		},
-		session.SetVersionSession(nil), //TO-DO ASK this
+		session,
 	); err != nil {
 		return err
 	}

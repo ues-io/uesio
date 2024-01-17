@@ -1,7 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -20,7 +23,13 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := bs.GetBundleZip(w, session); err != nil {
+	appName := strings.ReplaceAll(session.GetContextAppName(), "/", "_")
+	versionName := strings.ReplaceAll(session.GetContextVersionName(), "/", "_")
+	fileName := strings.ReplaceAll(fmt.Sprintf("uesio_retrieve_%s_%s_%s", appName, versionName, time.Now().Format(time.RFC3339)), ":", "_")
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", fileName))
+
+	if err := bs.GetBundleZip(w); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}

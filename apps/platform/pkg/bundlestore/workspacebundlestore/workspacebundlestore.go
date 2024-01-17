@@ -1,6 +1,7 @@
 package workspacebundlestore
 
 import (
+	"archive/zip"
 	"errors"
 	"fmt"
 	"io"
@@ -401,6 +402,27 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 	})
 }
 
-func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, session *sess.Session) error {
-	return retrieve.Retrieve(writer, session)
+func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer) error {
+
+	workspace := b.Workspace
+	if workspace == nil {
+		return errors.New("no Workspace provided for retrieve")
+	}
+
+	// Create a new zip archive.
+	zipwriter := zip.NewWriter(writer)
+	create := retrieve.NewWriterCreator(zipwriter.Create)
+	// Retrieve bundle contents
+	err := retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b)
+	if err != nil {
+		return err
+	}
+	// Retrieve generated TypeScript files
+	err = retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create)
+	if err != nil {
+		return err
+	}
+
+	return zipwriter.Close()
+
 }
