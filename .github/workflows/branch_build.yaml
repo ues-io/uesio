@@ -20,6 +20,12 @@ jobs:
     env:
       FULL_SHA: ${{ github.sha }}
     steps:
+      # Checkout origin/master (so we can use nx:affected)
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: origin/master
+      # Checkout the current branch
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
