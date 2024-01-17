@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -108,9 +108,12 @@ jobs:
         run: bash ./scripts/seed-etc-hosts.sh
       - name: Run E2E and API Integration tests against app in Docker
         run: |
-          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/4.0.0/hurl_4.0.0_amd64.deb
-          sudo apt update && sudo apt install ./hurl_4.0.0_amd64.deb
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating  
+          # Make sure we're using the same Hurl version specified in package.json
+          hurlversion=$(bash ./scripts/get-hurl-version.sh)
+          echo "Installing hurl $hurlversion for Debian..."
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/${hurlversion}/hurl_${hurlversion}_amd64.deb
+          sudo apt update && sudo apt install ./hurl_${hurlversion}_amd64.deb
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
@@ -126,6 +129,7 @@ jobs:
         with:
           repository: TheCloudMasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
+          fetch-depth: 1
       - name: Download image id artifact
         uses: actions/download-artifact@v3
         with:

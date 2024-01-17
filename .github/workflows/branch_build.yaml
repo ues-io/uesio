@@ -20,9 +20,15 @@ jobs:
     env:
       FULL_SHA: ${{ github.sha }}
     steps:
+      # Checkout master (so we can use nx:affected)
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
+          ref: master
+      # Checkout the current branch
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Setup Uesio CLI Symlink
         shell: bash
         run: |
