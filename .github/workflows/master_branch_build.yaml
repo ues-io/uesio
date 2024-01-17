@@ -108,14 +108,12 @@ jobs:
         run: bash ./scripts/seed-etc-hosts.sh
       - name: Run E2E and API Integration tests against app in Docker
         run: |
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating  
           # Make sure we're using the same Hurl version specified in package.json
           hurlversion=$(bash ./scripts/get-hurl-version.sh)
-
-          echo "hurl version is $hurlversion"
-
-          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO "https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
-          sudo apt update && sudo apt install "./hurl_$hurlversion_amd64.deb"
+          echo "Installing hurl $hurlversion for Debian..."
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/${hurlversion}/hurl_${hurlversion}_amd64.deb
+          sudo apt update && sudo apt install ./hurl_${hurlversion}_amd64.deb
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
