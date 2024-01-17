@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -131,6 +131,7 @@ jobs:
         with:
           repository: TheCloudMasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
+          fetch-depth: 1
       - name: Download image id artifact
         uses: actions/download-artifact@v3
         with:

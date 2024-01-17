@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Run E2E and API Integration tests against app in Docker
         run: |
           # Make sure we're using the same Hurl version specified in package.json
@@ -34,8 +34,8 @@ jobs:
           hurlfile="hurl_${hurlversion}_amd64.deb"
 
           # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          curl -LO $hurlurl
-          sudo apt update && sudo apt install $hurlfile
+          curl -LO "$hurlurl"
+          sudo apt update && sudo apt install "$hurlfile"
       - name: Setup Uesio CLI Symlink
         shell: bash
         run: |
