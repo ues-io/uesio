@@ -34,32 +34,5 @@
 		"uesio/studio.major": 0,
 		"uesio/studio.minor": 0,
 		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/docs"
-		},
-		"uesio/studio.description": "Uesio docs",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/web"
-		},
-		"uesio/studio.description": "Uesio website",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/cms"
-		},
-		"uesio/studio.description": "Uesio CMS",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
 	}
 ]

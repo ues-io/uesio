@@ -75,7 +75,7 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/studio.major']" == 5
 jsonpath "$.wires[0].data[0]['uesio/studio.minor']" == 1
 jsonpath "$.wires[0].data[0]['uesio/studio.patch']" == 2
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:5:1:2"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:5:1:2:{{uesio_primary_domain}}"
 
 # Clean up the bundle we just created
 POST https://{{host}}:{{port}}/site/wires/save
