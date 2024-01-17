@@ -111,10 +111,7 @@ func EnsureBundleHasRepository(bundle Item) error {
 
 	// If there is no repository, go ahead and set it now.
 	currentRepo, err := bundle.GetField("uesio/studio.repository")
-	if err != nil {
-		return err
-	}
-	if currentRepo == nil || currentRepo == "" {
+	if err != nil || currentRepo == nil || currentRepo == "" {
 		if err := bundle.SetField("uesio/studio.repository", primaryDomain); err != nil {
 			return err
 		}

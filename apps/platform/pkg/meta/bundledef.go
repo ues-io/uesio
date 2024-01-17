@@ -1,7 +1,18 @@
 package meta
 
+import "github.com/thecloudmasters/uesio/pkg/env"
+
 type BundleDefDep struct {
-	Version string `yaml:"version,omitempty" json:"version"`
+	Version    string `yaml:"version,omitempty" json:"version"`
+	Repository string `yaml:"repo,omitempty" json:"repo"`
+}
+
+func (bdd *BundleDefDep) GetRepository() string {
+	if bdd.Repository != "" {
+		return bdd.Repository
+	}
+	bdd.Repository = env.GetPrimaryDomain()
+	return bdd.Repository
 }
 
 type AppSettings struct {
