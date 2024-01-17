@@ -26,6 +26,7 @@ definition:
             uesio/studio.minor:
             uesio/studio.patch:
             uesio/studio.version:
+            uesio/studio.repository:
         uesio/studio.title:
         uesio/studio.enable_seo:
         uesio/studio.app:
@@ -47,10 +48,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.createdat:
+        uesio/core.uniquekey:
         uesio/studio.major:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.version:
+        uesio/studio.repository:
         uesio/studio.app:
       batchsize: 1
       conditions:
@@ -140,6 +143,20 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.bundle
+                                reference:
+                                  template: "v${uesio/studio.version} (${uesio/studio.repository})"
+                                  returnFields:
+                                    - uesio/studio.major
+                                    - uesio/studio.minor
+                                    - uesio/studio.patch
+                                    - uesio/studio.version
+                                    - uesio/studio.repository
+                                  searchFields:
+                                    - uesio/studio.major
+                                    - uesio/studio.minor
+                                    - uesio/studio.patch
+                                    - uesio/studio.version
+                                    - uesio/studio.repository
                             - uesio/io.field:
                                 fieldId: uesio/studio.title
                             - uesio/io.field:
@@ -215,6 +232,19 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
                   reference:
+                    template: "v${uesio/studio.version} (${uesio/studio.repository})"
+                    returnFields:
+                      - uesio/studio.major
+                      - uesio/studio.minor
+                      - uesio/studio.patch
+                      - uesio/studio.version
+                      - uesio/studio.repository
+                    searchFields:
+                      - uesio/studio.major
+                      - uesio/studio.minor
+                      - uesio/studio.patch
+                      - uesio/studio.version
+                      - uesio/studio.repository
                     conditions:
                       - field: uesio/studio.app
                         value: ${uesio/studio.app->uesio/core.id}

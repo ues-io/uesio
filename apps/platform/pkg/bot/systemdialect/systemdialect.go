@@ -38,6 +38,10 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 	switch request.Metadata.GetFullName() {
 	case "uesio/core.userfile":
 		botFunction = runUserFileBeforeSaveBot
+	case "uesio/studio.bundle":
+		botFunction = runBundleBeforeSaveBot
+	case "uesio/studio.bundledependency":
+		botFunction = runBundleDependencyBeforeSaveBot
 	case "uesio/studio.field":
 		botFunction = runFieldBeforeSaveBot
 	case "uesio/studio.view":
@@ -52,8 +56,12 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 		botFunction = runBotBeforeSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppBeforeSaveBot
+	case "uesio/studio.site":
+		botFunction = runSiteBeforeSaveBot
 	case "uesio/studio.usage":
 		botFunction = runUsageBeforeSaveBot
+	case "uesio/studio.workspace":
+		botFunction = runWorkspaceBeforeSaveBot
 	case "uesio/core.user":
 		botFunction = runUserBeforeSaveBot
 	}

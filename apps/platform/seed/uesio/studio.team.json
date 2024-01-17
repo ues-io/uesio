@@ -1,18 +1,6 @@
 [
 	{
 		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/crm"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/cms"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/studio"
 		},
 		"uesio/studio.name": "maintainers"
@@ -20,18 +8,6 @@
 	{
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/builder"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/docs"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/web"
 		},
 		"uesio/studio.name": "maintainers"
 	},

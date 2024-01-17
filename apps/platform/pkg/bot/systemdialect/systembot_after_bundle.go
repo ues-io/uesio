@@ -2,7 +2,6 @@ package systemdialect
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -16,6 +15,10 @@ func runBundleAfterSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 }
 
 func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+
+	if len(request.Deletes) == 0 {
+		return nil
+	}
 
 	ids := []string{}
 	uniqueKeys := []string{}
@@ -51,18 +54,9 @@ func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session 
 
 }
 
-func parseUniqueKey(UniqueKey string) (appName, appVersion string) {
-	s := strings.Split(UniqueKey, ":")
-	if len(s) != 4 {
-		return "", ""
-	}
-	app := "v" + s[1] + "." + s[2] + "." + s[3]
-	return s[0], app
-}
-
 func clearFilesForBundles(ids []string, session *sess.Session) error {
 	for _, id := range ids {
-		appName, appVersion := parseUniqueKey(id)
+		appName, appVersion, _ := meta.ParseBundleUniqueKey(id)
 		dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 			Namespace: appName,
 			Version:   appVersion,
@@ -71,8 +65,7 @@ func clearFilesForBundles(ids []string, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		err = dest.DeleteBundle()
-		if err != nil {
+		if err = dest.DeleteBundle(); err != nil {
 			return err
 		}
 	}

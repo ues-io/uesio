@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -70,19 +71,15 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 }
 
 func runSeeds(ctx context.Context, connection wire.Connection) error {
-	err := connection.Migrate()
-	if err != nil {
-		return err
-	}
 
-	// After migration, let's get a session with the system user since we have it now.
+	// Get a session with the system user
 	session, err := auth.GetStudioSystemSession(ctx, connection)
 	if err != nil {
 		return err
 	}
 	permissions := session.GetSitePermissions()
 	permissions.NamedRefs = map[string]bool{
-		"uesio/studio.workspace_admin": true,
+		constant.WorkspaceAdminPerm: true,
 	}
 
 	if err != nil {
@@ -94,25 +91,27 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 	var bundles meta.BundleCollection
 	var licensetemplate meta.LicenseTemplateCollection
 	var licensepricingtemplate meta.LicensePricingTemplateCollection
-	var workspaces meta.WorkspaceCollection
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
 	var loginmethods meta.LoginMethodCollection
 
-	err = populateSeedData(
+	if err = populateSeedData(
 		&users,
 		&apps,
 		&licenses,
 		&bundles,
 		&licensetemplate,
 		&licensepricingtemplate,
-		&workspaces,
 		&sites,
 		&sitedomains,
 		&loginmethods,
-	)
-	if err != nil {
+	); err != nil {
+		return err
+	}
+	// We have to manually populate the repo field on all seed bundles and sites,
+	// otherwise we'd have to hardcode the primary domain into the seed files.
+	if err = ensureBundleObjectsHaveRepository(&bundles, &sites); err != nil {
 		return err
 	}
 
@@ -146,7 +145,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		getPlatformSeedSR(&licensepricingtemplate),
 		getPlatformSeedSR(&licenses),
 		getPlatformSeedSR(&bundles),
-		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
 		getSeedSR("uesio/core.organizationuser", &organizationusers),
@@ -184,4 +182,25 @@ func seed(cmd *cobra.Command, args []string) {
 
 	slog.Info("Successfully ran seeds")
 
+}
+
+func ensureBundleObjectsHaveRepository(bundles *meta.BundleCollection, sites *meta.SiteCollection) error {
+	if err := bundles.Loop(func(item meta.Item, index string) error {
+		return meta.EnsureBundleHasRepository(item)
+	}); err != nil {
+		return err
+	}
+	return sites.Loop(func(item meta.Item, index string) error {
+		bundleObj, err := item.GetField("uesio/studio.bundle")
+		if err != nil || bundleObj == nil {
+			return err
+		}
+		// If the site's associated bundle's unique key does not have the "repository" at the end of it,
+		// we need to fix that to ensure that it is correct
+		bundleItem, ok := bundleObj.(meta.Item)
+		if !ok {
+			return nil
+		}
+		return meta.EnsureBundleHasRepository(bundleItem)
+	})
 }

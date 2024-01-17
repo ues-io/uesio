@@ -47,6 +47,7 @@ services:
       UESIO_DEBUG_SQL: "true"
       PORT: 3000
       UESIO_DEV: "true"
+      UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
     volumes:
       - ./apps/platform/ssl:/ssl
-    command: sh -c "./uesio seed && ./uesio serve"
+    command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"

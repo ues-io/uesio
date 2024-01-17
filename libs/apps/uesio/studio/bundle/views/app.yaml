@@ -37,6 +37,7 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.version:
+        uesio/studio.repository:
         uesio/studio.description:
         uesio/studio.published:
         uesio/core.createdat:
