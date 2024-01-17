@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -75,16 +76,21 @@ func deployEmptyWorkspace(workspaceID string, connection wire.Connection, sessio
 		return err
 	}
 
+	// Ensure that the default repository is populated
+	defaultRepo := env.GetPrimaryDomain()
 	defaultDef := &meta.BundleDef{
 		Dependencies: map[string]meta.BundleDefDep{
 			"uesio/builder": {
-				Version: "v0.0.1",
+				Version:    "v0.0.1",
+				Repository: defaultRepo,
 			},
 			"uesio/core": {
-				Version: "v0.0.1",
+				Version:    "v0.0.1",
+				Repository: defaultRepo,
 			},
 			"uesio/io": {
-				Version: "v0.0.1",
+				Version:    "v0.0.1",
+				Repository: defaultRepo,
 			},
 		},
 	}

@@ -240,6 +240,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			if err != nil {
 				return err
 			}
+			repository := dep.GetRepository()
 			deps = append(deps, &meta.BundleDependency{
 				Workspace: workspace,
 				App: &meta.App{
@@ -249,7 +250,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				},
 				Bundle: &meta.Bundle{
 					BuiltIn: meta.BuiltIn{
-						UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+						UniqueKey: strings.Join([]string{key, major, minor, patch, repository}, ":"),
 					},
 				},
 			})
