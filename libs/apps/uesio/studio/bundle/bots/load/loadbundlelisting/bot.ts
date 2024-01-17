@@ -1,9 +1,16 @@
 import { LoadBotApi } from "@uesio/bots"
 
+type ApiResponse = {
+	app: string
+	description: string
+	icon: string
+	color: string
+}
+
 export default function loadbundlelisting(bot: LoadBotApi) {
-	const bundleStoreDomain =
-		bot.getConfigValue("uesio/core.bundle_store_domain") ||
-		"uesio-dev.com:3000"
+	const bundleStoreDomain = bot.getConfigValue(
+		"uesio/core.bundle_store_domain"
+	)
 
 	bot.log.info("bundleStoreDomain --> ", bundleStoreDomain)
 
@@ -24,5 +31,14 @@ export default function loadbundlelisting(bot: LoadBotApi) {
 		method: "GET",
 		url,
 	})
-	bot.log.info("Got Data", JSON.stringify(response.body))
+
+	const apiResponse = response.body as unknown as ApiResponse[]
+	bot.log.info("Got Data", apiResponse)
+	apiResponse.forEach((record) =>
+		bot.addRecord({
+			"uesio/studio.uniquekey": record.app,
+			"uesio/studio.description": record.description,
+			"uesio/studio.approved": true,
+		})
+	)
 }
