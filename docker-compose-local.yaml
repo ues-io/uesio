@@ -28,5 +28,6 @@ services:
       UESIO_MOCK_AUTH: "true"
       UESIO_USE_HTTPS: "true"
       PORT: 3000
+      UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
     volumes:
       - ./apps/platform/ssl:/ssl

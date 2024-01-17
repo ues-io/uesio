@@ -1,5 +1,7 @@
 package meta
 
+import "github.com/thecloudmasters/uesio/pkg/env"
+
 type Workspace struct {
 	BuiltIn     `yaml:",inline"`
 	Name        string `json:"uesio/studio.name"`
@@ -49,5 +51,16 @@ func (w *Workspace) Len() int {
 
 func (w *Workspace) UnmarshalJSON(data []byte) error {
 	type alias Workspace
-	return refScanner((*alias)(w), data)
+	if err := refScanner((*alias)(w), data); err != nil {
+		return err
+	}
+	// Ensure that any bundle dependencies have the default repository populated
+	if w.bundleDef != nil && len(w.bundleDef.Dependencies) > 0 {
+		for _, v := range w.bundleDef.Dependencies {
+			if v.Repository == "" {
+				v.Repository = env.GetPrimaryDomain()
+			}
+		}
+	}
+	return nil
 }

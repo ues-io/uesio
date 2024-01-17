@@ -193,6 +193,7 @@ docker compose up -d
 2. Seed your local Postgres database with everything Uesio needs for local development
 
 ```
+npm run migrations
 npm run seeds
 ```
 
@@ -411,6 +412,8 @@ Most of commmands you might run related to npm modules.
 ### Migrations
 
 We use `golang-migrate` package for running SQL migrations. This package maintains the current state of migration runs via a `schema_migrations` table.
+
+Migrations can be run using `npm run migrations`
 
 #### install
 

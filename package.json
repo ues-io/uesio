@@ -51,7 +51,7 @@
 		"@nx/eslint-plugin": "16.10.0",
 		"@nx/jest": "16.10.0",
 		"@nx/linter": "16.10.0",
-		"@orangeopensource/hurl": "^4.0.0",
+		"@orangeopensource/hurl": "^4.2.0",
 		"@reduxjs/toolkit": "^1.9.7",
 		"@tanem/react-nprogress": "^5.0.46",
 		"@twind/core": "^1.1.3",
