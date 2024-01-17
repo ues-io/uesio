@@ -48,14 +48,6 @@ type ConnectionOptions struct {
 	AllowPrivate bool
 }
 
-func (c *ConnectionOptions) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *ConnectionOptions) GetVersion() string {
-	return c.Version
-}
-
 type BundleStore interface {
 	GetConnection(ConnectionOptions) (BundleStoreConnection, error)
 }

@@ -282,9 +282,9 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 
 	session := b.getStudioAnonSession()
-	options := b.ConnectionOptions
-	app := options.GetNamespace()
-	version := options.GetVersion()
+
+	app := b.Namespace
+	version := b.Version
 
 	if app == "" {
 		return errors.New("no app provided for retrieve")
@@ -305,7 +305,6 @@ func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoption
 	if err := datasource.PlatformLoadOne(
 		&bundle,
 		&datasource.PlatformLoadOptions{
-			BatchSize: 1,
 			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.contents",

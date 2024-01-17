@@ -7,8 +7,6 @@ import (
 	"io"
 	"strconv"
 
-	"golang.org/x/sync/errgroup"
-
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -18,6 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
+	"golang.org/x/sync/errgroup"
 )
 
 type multi struct {
