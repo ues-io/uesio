@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/migrations"
 )
 
 type Connection interface {
@@ -12,7 +13,7 @@ type Connection interface {
 	Save(*SaveOp, *sess.Session) error
 	SetRecordAccessTokens(*SaveOp, *sess.Session) error
 	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
-	Migrate() error
+	Migrate(options *migrations.MigrateOptions) error
 	TruncateTenantData(tenantID string) error
 	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
 	GetMetadata() *MetadataCache
