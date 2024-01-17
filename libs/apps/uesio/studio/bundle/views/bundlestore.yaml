@@ -31,7 +31,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     bundlelistings:
-      collection: uesio/studio.bundlelisting
+      collection: uesio/studio.bundlelistingwrapper
       fields:
         uesio/core.id:
         uesio/studio.description:

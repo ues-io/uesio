@@ -1,0 +1,8 @@
+name: bundlelistingwrapper
+uniqueKey:
+  - uesio/studio.app
+label: bundlelistingwrapper
+pluralLabel: Bundle Listings Wrapper
+type: EXTERNAL
+integration: uesio/core.uesio
+loadBot: loadbundlelisting

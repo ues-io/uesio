@@ -1,53 +1,28 @@
 import { LoadBotApi } from "@uesio/bots"
 
 export default function loadbundlelisting(bot: LoadBotApi) {
-	const bundleStoreDomain = bot.getConfigValue(
-		"uesio/core.bundle_store_domain"
-	)
+	const bundleStoreDomain =
+		bot.getConfigValue("uesio/core.bundle_store_domain") ||
+		"uesio-dev.com:3000"
 
 	bot.log.info("bundleStoreDomain --> ", bundleStoreDomain)
 
-	const {
-		collection,
-		fields,
-		conditions,
-		order,
-		batchSize,
-		batchNumber,
-		collectionMetadata,
-	} = bot.loadRequest
+	if (bundleStoreDomain != "") {
+		//API call
+	}
 
-	bot.log.info(
-		"TEST --> ",
-		collection,
-		fields,
-		conditions,
-		order,
-		batchSize,
-		batchNumber,
-		collectionMetadata
-	)
+	//READ from DB
+	const results = bot.callBot("getbundlelisting", {})
 
-	const results = [
-		{
-			"uesio/studio.description": "Luigi",
-			"uesio/studio.approved": true,
-		},
-		{
-			"uesio/studio.description": "DOS",
-			"uesio/studio.approved": true,
-		},
-	]
-	results.forEach((record) => bot.addRecord(record))
+	Object.entries(results).map(([key, fieldValue], index) => {
+		bot.addRecord({ ...(fieldValue as Object) })
+	})
 
-	// const url =
-	// 	"https://studio." +
-	// 	bundleStoreDomain +
-	// 	"/site/bundles/v1/versions/uesio/crm/list"
+	const url = "https://studio." + bundleStoreDomain + "/site/bundles/v1/list"
 
-	// const response = bot.http.request({
-	// 	method: "GET",
-	// 	url,
-	// })
-	// bot.log.info("Got Data", JSON.stringify(response.body))
+	const response = bot.http.request({
+		method: "GET",
+		url,
+	})
+	bot.log.info("Got Data", JSON.stringify(response.body))
 }
