@@ -30,8 +30,8 @@ jobs:
 
           echo "hurl version is $hurlversion"
 
-          hurlurl="https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
-          hurlfile="hurl_$hurlversion_amd64.deb"
+          hurlurl="https://github.com/Orange-OpenSource/hurl/releases/download/${hurlversion}/hurl_${hurlversion}_amd64.deb"
+          hurlfile="hurl_${hurlversion}_amd64.deb"
 
           # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
           curl -LO $hurlurl
