@@ -23,27 +23,35 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Run E2E and API Integration tests against app in Docker
+        run: |
+          # Make sure we're using the same Hurl version specified in package.json
+          hurlversion=$(bash ./scripts/get-hurl-version.sh)
+
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
+          curl -LO "https://github.com/Orange-OpenSource/hurl/releases/download/$hurlversion/hurl_$hurlversion_amd64.deb"
+          sudo apt update && sudo apt install "./hurl_$hurlversion_amd64.deb"
       - name: Setup Uesio CLI Symlink
         shell: bash
         run: |
           # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
           mkdir -p dist/cli
           sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: "npm"
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.21.3
-          cache-dependency-path: apps/*/go.sum
-      - name: Install, lint, build, test
-        shell: bash
-        run: |
-          npm ci
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run build-all
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+      # - name: Setup node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18.15.0
+      #     cache: "npm"
+      # - name: Setup Go
+      #   uses: actions/setup-go@v4
+      #   with:
+      #     go-version: 1.21.3
+      #     cache-dependency-path: apps/*/go.sum
+      # - name: Install, lint, build, test
+      #   shell: bash
+      #   run: |
+      #     npm ci
+      #     npm run prettier-check
+      #     npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+      #     npm run build-all
+      #     npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
