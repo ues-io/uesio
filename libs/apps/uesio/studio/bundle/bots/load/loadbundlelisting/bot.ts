@@ -39,6 +39,12 @@ export default function loadbundlelisting(bot: LoadBotApi) {
 			"uesio/studio.uniquekey": record.app,
 			"uesio/studio.description": record.description,
 			"uesio/studio.approved": true,
+			"uesio/studio.app": {
+				"uesio/core.uniquekey": record.app,
+				"uesio/studio.color": record.color,
+				"uesio/studio.icon": record.icon,
+				"uesio/studio.fullname": record.app,
+			},
 		})
 	)
 }
