@@ -25,7 +25,6 @@ const StyleDefaults = Object.freeze({
 	],
 	filetag: [
 		"p-1",
-		"my-2",
 		"border",
 		"border-slate-200",
 		"inline-block",

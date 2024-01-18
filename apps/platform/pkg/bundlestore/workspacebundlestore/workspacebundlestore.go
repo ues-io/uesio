@@ -1,6 +1,7 @@
 package workspacebundlestore
 
 import (
+	"archive/zip"
 	"errors"
 	"fmt"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -398,4 +400,31 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 		}
 		return nil
 	})
+}
+
+func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
+
+	workspace := b.Workspace
+	if workspace == nil {
+		return errors.New("no Workspace provided for retrieve")
+	}
+
+	// Create a new zip archive.
+	zipwriter := zip.NewWriter(writer)
+	create := retrieve.NewWriterCreator(zipwriter.Create)
+	// Retrieve bundle contents
+	err := retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b)
+	if err != nil {
+		return err
+	}
+	if zipoptions != nil && zipoptions.IncludeGeneratedTypes {
+		// Retrieve generated TypeScript files
+		err = retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create)
+		if err != nil {
+			return err
+		}
+	}
+
+	return zipwriter.Close()
+
 }
