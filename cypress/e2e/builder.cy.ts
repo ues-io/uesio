@@ -362,6 +362,16 @@ describe("Uesio Builder Tests", () => {
 				"eq",
 				setButtonPageDef
 			)
+			// Toggle into preview mode
+			cy.hotkey("{meta}u")
+			// Verify that the URL and title has changed
+			cy.url().should("contain", `/preview`)
+			cy.title().should("eq", `Preview: ${viewName}`)
+			// Toggle back into edit mode
+			cy.hotkey("{meta}u")
+			// Verify that the URL and title has changed
+			cy.url().should("contain", `/edit`)
+			cy.title().should("eq", `Edit: ${viewName}`)
 		})
 	})
 
