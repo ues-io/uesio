@@ -52,7 +52,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 			})
 		},
 		true,
-		[buildMode]
+		[buildMode, setBuildMode]
 	)
 
 	hooks.useHotKeyCallback("meta+p", () => {
