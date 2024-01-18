@@ -57,7 +57,7 @@ POST https://{{host}}:{{port}}/site/wires/save
                     },
                     "uesio/studio.name": "quickstart",
                     "uesio/studio.sourcebundle": {
-                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}:{{uesio_primary_domain}}"
+                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
                     }
                 }
             }
@@ -83,7 +83,7 @@ POST https://{{host}}:{{port}}/site/wires/save
                     },
                     "uesio/studio.name": "testsite",
                     "uesio/studio.bundle": {
-                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}:{{uesio_primary_domain}}"
+                        "uesio/core.uniquekey": "uesio/tests:{{major}}:{{minor}}:{{patch}}"
                     }
                 }
             }

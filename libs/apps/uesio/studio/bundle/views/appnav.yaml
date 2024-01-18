@@ -63,17 +63,21 @@ definition:
         uesio/studio.bundle:
           fields:
             uesio/core.id:
+            uesio/core.uniquekey:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
             uesio/studio.version:
-            uesio/studio.repository:
       init:
         create: true
       defaults:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.bundle
+          valueSource: LOOKUP
+          lookupWire: bundles
           lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
@@ -368,19 +372,16 @@ definition:
                   fieldId: uesio/studio.bundle
                   uesio.id: "site-bundle-version"
                   reference:
-                    template: "v${uesio/studio.version} (${uesio/studio.repository})"
-                    returnFields:
-                      - uesio/studio.major
-                      - uesio/studio.minor
-                      - uesio/studio.patch
-                      - uesio/studio.version
-                      - uesio/studio.repository
                     searchFields:
+                      - uesio/core.uniquekey
+                    returnFields:
+                      - uesio/core.id
+                      - uesio/core.uniquekey
                       - uesio/studio.major
                       - uesio/studio.minor
                       - uesio/studio.patch
                       - uesio/studio.version
-                      - uesio/studio.repository
+                    template: "v${uesio/studio.version}"
                     conditions:
                       - field: uesio/studio.app
                         value: ${uesio/studio.app->uesio/core.id}

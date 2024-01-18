@@ -8,6 +8,8 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+	"github.com/thecloudmasters/uesio/pkg/types/migrations"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -42,9 +44,20 @@ func getConnectionString(credentials *wire.Credentials) (string, error) {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
 }
 
-func (c *Connection) Migrate() error {
-	slog.Info("Migrating database")
-
+func (c *Connection) Migrate(options *migrations.MigrateOptions) error {
+	if options.Down {
+		if options.Number >= 1 {
+			slog.Info(fmt.Sprintf("Reverting %d previously-run migrations", options.Number))
+		} else {
+			slog.Info("Reverting all previously-run migrations")
+		}
+	} else {
+		if options.Number >= 1 {
+			slog.Info(fmt.Sprintf("Running next %d migrations", options.Number))
+		} else {
+			slog.Info("Running migrations")
+		}
+	}
 	migrationsDir := getMigrationsDirectory()
 
 	connStr, err := getConnectionString(c.credentials)
@@ -59,8 +72,19 @@ func (c *Connection) Migrate() error {
 	if err != nil {
 		return err
 	}
-	err = m.Up()
-
+	if options.Number == 0 {
+		if options.Down {
+			err = m.Down()
+		} else {
+			err = m.Up()
+		}
+	} else {
+		if options.Down {
+			err = m.Steps(options.Number * -1)
+		} else {
+			err = m.Steps(options.Number)
+		}
+	}
 	// If all migrations have run before, "no change" error will be returned, which is fine
 	// so handle this case and move on without error
 	if err != nil && err.Error() != "no change" {

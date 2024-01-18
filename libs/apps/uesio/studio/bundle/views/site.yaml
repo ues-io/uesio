@@ -26,11 +26,11 @@ definition:
             uesio/studio.minor:
             uesio/studio.patch:
             uesio/studio.version:
-            uesio/studio.repository:
         uesio/studio.title:
         uesio/studio.enable_seo:
         uesio/studio.app:
           fields:
+            uesio/core.uniquekey:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
@@ -48,12 +48,10 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.createdat:
-        uesio/core.uniquekey:
         uesio/studio.major:
         uesio/studio.minor:
         uesio/studio.patch:
         uesio/studio.version:
-        uesio/studio.repository:
         uesio/studio.app:
       batchsize: 1
       conditions:
@@ -144,19 +142,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.bundle
                                 reference:
-                                  template: "v${uesio/studio.version} (${uesio/studio.repository})"
-                                  returnFields:
-                                    - uesio/studio.major
-                                    - uesio/studio.minor
-                                    - uesio/studio.patch
-                                    - uesio/studio.version
-                                    - uesio/studio.repository
-                                  searchFields:
-                                    - uesio/studio.major
-                                    - uesio/studio.minor
-                                    - uesio/studio.patch
-                                    - uesio/studio.version
-                                    - uesio/studio.repository
+                                  template: "v${uesio/studio.version}"
                             - uesio/io.field:
                                 fieldId: uesio/studio.title
                             - uesio/io.field:
@@ -232,19 +218,16 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
                   reference:
-                    template: "v${uesio/studio.version} (${uesio/studio.repository})"
-                    returnFields:
-                      - uesio/studio.major
-                      - uesio/studio.minor
-                      - uesio/studio.patch
-                      - uesio/studio.version
-                      - uesio/studio.repository
+                    template: "v${uesio/studio.version}"
                     searchFields:
+                      - uesio/core.uniquekey
+                    returnFields:
+                      - uesio/core.id
+                      - uesio/core.uniquekey
                       - uesio/studio.major
                       - uesio/studio.minor
                       - uesio/studio.patch
                       - uesio/studio.version
-                      - uesio/studio.repository
                     conditions:
                       - field: uesio/studio.app
                         value: ${uesio/studio.app->uesio/core.id}

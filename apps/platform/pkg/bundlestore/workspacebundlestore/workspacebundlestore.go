@@ -349,9 +349,6 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 						{
 							ID: "uesio/studio.patch",
 						},
-						{
-							ID: "uesio/studio.repository",
-						},
 					},
 				},
 			},
@@ -379,8 +376,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 			return nil, errors.New("Error getting bundle dependency, you don't have " + appName + " app installed")
 		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
-			Version:    bdc[i].GetVersionString(),
-			Repository: bdc[i].GetRepository(),
+			Version: bdc[i].GetVersionString(),
 		}
 	}
 

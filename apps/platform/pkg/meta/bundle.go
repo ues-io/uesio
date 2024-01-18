@@ -4,10 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
-	"github.com/thecloudmasters/uesio/pkg/env"
-	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
 func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
@@ -22,25 +18,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Minor:       minor,
 		Patch:       patch,
 		Description: description,
-		Repository:  env.GetPrimaryDomain(),
 	}, nil
-}
-
-func ParseBundleUniqueKey(UniqueKey string) (appName, appVersion, repo string) {
-	s := strings.Split(UniqueKey, ":")
-	// (old) Bundle unique keys will have 4 parts (app:major:minor:version)
-	// new Bundle unique keys will have 5 parts (app:major:minor:version:repository)
-	if len(s) != 4 && len(s) != 5 {
-		return "", "", ""
-	}
-	appName = s[0]
-	if len(s) == 5 {
-		repo = s[4]
-	} else {
-		repo = env.GetPrimaryDomain()
-	}
-	appVersion = "v" + s[1] + "." + s[2] + "." + s[3]
-	return appName, appVersion, repo
 }
 
 func ParseVersionString(version string) (string, string, string, error) {
@@ -64,11 +42,6 @@ type Bundle struct {
 	Description string            `json:"uesio/studio.description"`
 	Version     string            `json:"uesio/studio.version"`
 	Contents    *UserFileMetadata `json:"uesio/studio.contents"`
-	Repository  string            `json:"uesio/studio.repository"`
-}
-
-func (b *Bundle) GetKey() string {
-	return fmt.Sprintf("v%v.%v.%v", b.Major, b.Minor, b.Patch)
 }
 
 func (b *Bundle) GetVersionString() string {
@@ -102,36 +75,4 @@ func (b *Bundle) Len() int {
 func (b *Bundle) UnmarshalJSON(data []byte) error {
 	type alias Bundle
 	return refScanner((*alias)(b), data)
-}
-
-// EnsureBundleHasRepository ensures that if a bundle's unique key does not have a repository at the end of it,
-// we fix that to ensure that it does, and we also set the repository field by default
-func EnsureBundleHasRepository(bundle Item) error {
-	primaryDomain := env.GetPrimaryDomain()
-
-	// If there is no repository, go ahead and set it now.
-	currentRepo, err := bundle.GetField("uesio/studio.repository")
-	if err != nil || currentRepo == nil || currentRepo == "" {
-		if err := bundle.SetField("uesio/studio.repository", primaryDomain); err != nil {
-			return err
-		}
-	}
-
-	// Now check the unique key
-	bundleKey, err := bundle.GetField(commonfields.UniqueKey)
-
-	// If the unique key has not been set yet, then we should be fine,
-	// it will get set later.
-	if err != nil || bundleKey == "" {
-		return nil
-	}
-	bundleKeyString := goutils.StringValue(bundleKey)
-	// Make sure that the key has the repository in it
-	keyParts := strings.Split(bundleKeyString, ":")
-	if len(keyParts) != 5 {
-		if err = bundle.SetField(commonfields.UniqueKey, bundleKeyString+":"+primaryDomain); err != nil {
-			return err
-		}
-	}
-	return nil
 }

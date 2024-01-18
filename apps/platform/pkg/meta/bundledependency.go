@@ -1,10 +1,6 @@
 package meta
 
-import (
-	"fmt"
-
-	"github.com/thecloudmasters/uesio/pkg/env"
-)
+import "fmt"
 
 type BundleDependency struct {
 	BuiltIn   `yaml:",inline"`
@@ -19,19 +15,6 @@ func (b *BundleDependency) GetVersionString() string {
 		return ""
 	}
 	return fmt.Sprintf("v%v.%v.%v", bundle.Major, bundle.Minor, bundle.Patch)
-}
-
-func (b *BundleDependency) GetRepository() string {
-	bundle := b.Bundle
-	if bundle == nil {
-		return ""
-	}
-	if bundle.Repository != "" {
-		return bundle.Repository
-	}
-	// Otherwise return the default repository.
-	// TODO: Should this be the primary bundle store host? Or not?
-	return env.GetPrimaryDomain()
 }
 
 func (b *BundleDependency) GetBundleName() string {

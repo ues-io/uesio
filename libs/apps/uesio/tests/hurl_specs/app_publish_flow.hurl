@@ -258,7 +258,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/core.uniquekey",
-                    "value": "uesio/tests:0:0:1:{{uesio_primary_domain}}"
+                    "value": "uesio/tests:0:0:1"
                 }
             ]
         }
@@ -269,7 +269,7 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/studio.major']" == 0
 jsonpath "$.wires[0].data[0]['uesio/studio.minor']" == 0
 jsonpath "$.wires[0].data[0]['uesio/studio.patch']" == 1
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:0:0:1:{{uesio_primary_domain}}"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:0:0:1"
 [Captures]
 bundle_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 

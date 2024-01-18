@@ -413,13 +413,9 @@ Most of commmands you might run related to npm modules.
 
 We use `golang-migrate` package for running SQL migrations. This package maintains the current state of migration runs via a `schema_migrations` table.
 
-Migrations can be run using `npm run migrations`
+Migrations can be run against your local using `npm run migrations`, or you can use `./uesio migrate [up|down] [NUMBER]` to manually run a specific number of migrations, e.g. to undo the most recent migration, you can run `./uesio migrate down 1`.
 
-#### install
-
-```
-brew install golang-migrate
-```
+To run migrations in ECS, create a new one-off Task, using the latest Task Definition for "uesio", and modify the command to be `./uesio,migrate` (or `./uesio,migrate,down,1`) to undo one migration)
 
 #### adding migrations
 
@@ -427,14 +423,15 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 3), use:
+To forcibly set the migration version to latest (currently 4), you can either use `pgcli` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this (assuming you install `golang-migrate` with brew):
 
 ```
+brew install golang-migrate
 export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
-migrate -path apps/platform/migrations -database "$CONN_STR" force 3
+migrate -path apps/platform/migrations -database "$CONN_STR" force 4
 ```
 
-This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 3
+This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 4
 
 #### testing migrations
 
