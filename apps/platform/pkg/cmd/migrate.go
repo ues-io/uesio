@@ -49,7 +49,6 @@ func migrate(cmd *cobra.Command, args []string) {
 	opts, err := parseMigrateOptions(args)
 	cobra.CheckErr(err)
 
-	slog.Info("Running migrations")
 	ctx := context.Background()
 
 	anonSession := sess.GetStudioAnonSession(ctx)
