@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -54,9 +55,18 @@ func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session 
 
 }
 
+func parseUniqueKey(UniqueKey string) (appName, appVersion string) {
+	s := strings.Split(UniqueKey, ":")
+	if len(s) != 4 {
+		return "", ""
+	}
+	app := "v" + s[1] + "." + s[2] + "." + s[3]
+	return s[0], app
+}
+
 func clearFilesForBundles(ids []string, session *sess.Session) error {
 	for _, id := range ids {
-		appName, appVersion, _ := meta.ParseBundleUniqueKey(id)
+		appName, appVersion := parseUniqueKey(id)
 		dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 			Namespace: appName,
 			Version:   appVersion,

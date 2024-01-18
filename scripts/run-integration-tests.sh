@@ -5,7 +5,6 @@ set -e
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
-export UESIO_PRIMARY_DOMAIN="uesio-dev.com"
 # this enables {{unix_epoch_seconds}} variable to be used within tests to add some uniqueness to seed values
 export HURL_unix_epoch_seconds=$(date +%s)
 export HURL_num_common_fields=8
@@ -13,7 +12,6 @@ export HURL_num_public_core_collections=13
 export HURL_num_tests_collections=10
 # this number should be the sum of the above two variables
 export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections))
-export HURL_uesio_primary_domain="$UESIO_PRIMARY_DOMAIN"
 
 # Initialize and the sample app and seed test data
 bash "scripts/tests-init.sh"

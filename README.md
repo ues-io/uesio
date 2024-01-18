@@ -423,15 +423,15 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 5), you can either use `pgcli` or some other DB tool to manually run the command `update schema_migrations set version = N, dirty = false` against your database, or use this (assuming you install `golang-migrate` with brew):
+To forcibly set the migration version to latest (currently 4), you can either use `pgcli` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this (assuming you install `golang-migrate` with brew):
 
 ```
 brew install golang-migrate
 export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
-migrate -path apps/platform/migrations -database "$CONN_STR" force 5
+migrate -path apps/platform/migrations -database "$CONN_STR" force 4
 ```
 
-This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 5
+This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 4
 
 #### testing migrations
 
