@@ -30,6 +30,7 @@ definition:
         uesio/studio.enable_seo:
         uesio/studio.app:
           fields:
+            uesio/core.uniquekey:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
@@ -140,6 +141,8 @@ definition:
                                 fieldId: uesio/studio.name
                             - uesio/io.field:
                                 fieldId: uesio/studio.bundle
+                                reference:
+                                  template: "v${uesio/studio.version}"
                             - uesio/io.field:
                                 fieldId: uesio/studio.title
                             - uesio/io.field:
@@ -215,6 +218,16 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
                   reference:
+                    template: "v${uesio/studio.version}"
+                    searchFields:
+                      - uesio/core.uniquekey
+                    returnFields:
+                      - uesio/core.id
+                      - uesio/core.uniquekey
+                      - uesio/studio.major
+                      - uesio/studio.minor
+                      - uesio/studio.patch
+                      - uesio/studio.version
                     conditions:
                       - field: uesio/studio.app
                         value: ${uesio/studio.app->uesio/core.id}

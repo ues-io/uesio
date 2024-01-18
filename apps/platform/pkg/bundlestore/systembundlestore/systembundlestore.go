@@ -244,3 +244,7 @@ func (b *SystemBundleStoreConnection) HasAllItems(items []meta.BundleableItem) e
 	}
 	return nil
 }
+
+func (b *SystemBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
+	return errors.New("tried to download bundle zip in System Bundle Store")
+}

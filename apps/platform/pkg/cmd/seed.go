@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -70,19 +71,15 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 }
 
 func runSeeds(ctx context.Context, connection wire.Connection) error {
-	err := connection.Migrate()
-	if err != nil {
-		return err
-	}
 
-	// After migration, let's get a session with the system user since we have it now.
+	// Get a session with the system user
 	session, err := auth.GetStudioSystemSession(ctx, connection)
 	if err != nil {
 		return err
 	}
 	permissions := session.GetSitePermissions()
 	permissions.NamedRefs = map[string]bool{
-		"uesio/studio.workspace_admin": true,
+		constant.WorkspaceAdminPerm: true,
 	}
 
 	if err != nil {
@@ -94,7 +91,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 	var bundles meta.BundleCollection
 	var licensetemplate meta.LicenseTemplateCollection
 	var licensepricingtemplate meta.LicensePricingTemplateCollection
-	var workspaces meta.WorkspaceCollection
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
@@ -107,7 +103,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		&bundles,
 		&licensetemplate,
 		&licensepricingtemplate,
-		&workspaces,
 		&sites,
 		&sitedomains,
 		&loginmethods,
@@ -146,7 +141,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		getPlatformSeedSR(&licensepricingtemplate),
 		getPlatformSeedSR(&licenses),
 		getPlatformSeedSR(&bundles),
-		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
 		getSeedSR("uesio/core.organizationuser", &organizationusers),

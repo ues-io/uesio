@@ -17,6 +17,10 @@ func runBundleAfterSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 
 func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
+	if len(request.Deletes) == 0 {
+		return nil
+	}
+
 	ids := []string{}
 	uniqueKeys := []string{}
 	for i := range request.Deletes {
@@ -71,8 +75,7 @@ func clearFilesForBundles(ids []string, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		err = dest.DeleteBundle()
-		if err != nil {
+		if err = dest.DeleteBundle(); err != nil {
 			return err
 		}
 	}

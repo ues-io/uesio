@@ -26,7 +26,7 @@ HTTP 200
 app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Create a bundle, so that we can create a site
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/createbundle
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createbundle
 {
     "type": "patch",
     "description": "test bundle",

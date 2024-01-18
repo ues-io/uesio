@@ -19,19 +19,5 @@
 		},
 		"uesio/studio.autocreate": true,
 		"uesio/studio.monthlyprice": 0
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/cms"
-		},
-		"uesio/studio.autocreate": true,
-		"uesio/studio.monthlyprice": 10
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/crm"
-		},
-		"uesio/studio.autocreate": true,
-		"uesio/studio.monthlyprice": 10
 	}
 ]

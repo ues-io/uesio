@@ -61,6 +61,13 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.bundle:
+          fields:
+            uesio/core.id:
+            uesio/core.uniquekey:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+            uesio/studio.version:
       init:
         create: true
       defaults:
@@ -365,6 +372,16 @@ definition:
                   fieldId: uesio/studio.bundle
                   uesio.id: "site-bundle-version"
                   reference:
+                    searchFields:
+                      - uesio/core.uniquekey
+                    returnFields:
+                      - uesio/core.id
+                      - uesio/core.uniquekey
+                      - uesio/studio.major
+                      - uesio/studio.minor
+                      - uesio/studio.patch
+                      - uesio/studio.version
+                    template: "v${uesio/studio.version}"
                     conditions:
                       - field: uesio/studio.app
                         value: ${uesio/studio.app->uesio/core.id}

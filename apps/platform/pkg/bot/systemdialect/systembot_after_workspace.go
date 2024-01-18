@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -45,15 +44,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	// Retrieve the bundle zip
 	// Create a new zip archive.
 	buf := new(bytes.Buffer)
-	zipwriter := zip.NewWriter(buf)
-	create := retrieve.NewWriterCreator(zipwriter.Create)
-	// Retrieve bundle contents
-	err = retrieve.RetrieveBundle("", create, bs)
-	if err != nil {
-		return err
-	}
-
-	err = zipwriter.Close()
+	err = bs.GetBundleZip(buf, nil)
 	if err != nil {
 		return err
 	}

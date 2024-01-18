@@ -269,10 +269,14 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
-	wr.HandleFunc("/metadata/retrieve", controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
 	wr.HandleFunc("/data/truncate", controller.Truncate).Methods(http.MethodPost)
+
+	// List All Available Namespaces
+	metadataRetrievePath := "/metadata/retrieve"
+	wr.HandleFunc(metadataRetrievePath, controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
+	vr.HandleFunc(metadataRetrievePath, controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
 	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
@@ -369,15 +373,13 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 
-	// Bundles
-	sr.HandleFunc("/bundles/v1/list", controller.BundlesList).Methods("GET")
-
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 
 	// Bundles
 	bundleVersionsListPath := fmt.Sprintf("/bundles/v1/versions/%s/list", appParam)
 	sr.HandleFunc(bundleVersionsListPath, controller.BundleVersionsList).Methods("GET")
+	sr.HandleFunc("/bundles/v1/list", controller.BundlesList).Methods("GET")
 
 	// Dev Only Route for running usage worker
 	if env.InDevMode() {

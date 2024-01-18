@@ -43,6 +43,7 @@ definition:
         uesio/studio.patch:
         uesio/studio.description:
         uesio/studio.published:
+        uesio/studio.contents:
         uesio/core.createdby:
         uesio/core.createdat:
         uesio/studio.app:
@@ -184,6 +185,8 @@ definition:
                                 fieldId: uesio/studio.patch
                             - uesio/io.field:
                                 fieldId: uesio/studio.description
+                            - uesio/io.field:
+                                fieldId: uesio/studio.contents
                             - uesio/io.field:
                                 fieldId: uesio/core.createdby
                                 user:

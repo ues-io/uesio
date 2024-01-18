@@ -1,22 +1,29 @@
 package platformbundlestore
 
 import (
+	"archive/zip"
 	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 var doCache bool
@@ -269,5 +276,70 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 			return err
 		}
 	}
+	return nil
+}
+
+func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
+
+	session := b.getStudioAnonSession()
+
+	app := b.Namespace
+	version := b.Version
+
+	if app == "" {
+		return errors.New("no app provided for retrieve")
+	}
+
+	if version == "" {
+		return errors.New("no version provided for retrieve")
+	}
+
+	major, minor, patch, err := meta.ParseVersionString(version)
+	if err != nil {
+		return err
+	}
+
+	bundleUniqueKey := strings.Join([]string{app, major, minor, patch}, ":")
+
+	var bundle meta.Bundle
+	if err := datasource.PlatformLoadOne(
+		&bundle,
+		&datasource.PlatformLoadOptions{
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "uesio/studio.contents",
+				},
+			},
+			Conditions: []wire.LoadRequestCondition{
+				{
+					Field: commonfields.UniqueKey,
+					Value: bundleUniqueKey,
+				},
+			},
+		},
+		session,
+	); err != nil {
+		return err
+	}
+
+	// For bundles that don't have a contents file saved, we will need to go get each
+	// individual item
+	if bundle.Contents == nil {
+		zipwriter := zip.NewWriter(writer)
+		create := retrieve.NewWriterCreator(zipwriter.Create)
+		// Retrieve bundle contents
+		err = retrieve.RetrieveBundle("", create, b)
+		if err != nil {
+			return err
+		}
+
+		// Return early, don't go download the file because it does not exist.
+		return zipwriter.Close()
+	}
+
+	if _, err := filesource.Download(writer, bundle.Contents.ID, session); err != nil {
+		return err
+	}
+
 	return nil
 }
