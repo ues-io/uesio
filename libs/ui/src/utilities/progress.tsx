@@ -1,10 +1,7 @@
 import { FunctionComponent } from "react"
 import { useNProgress } from "@tanem/react-nprogress"
-import { UtilityProps } from "../definition/definition"
-
-interface ProgressProps extends UtilityProps {
-	isAnimating: boolean
-}
+import { UtilityComponent, UtilityProps } from "../definition/definition"
+import { useRouteLoading } from "../bands/route/selectors"
 
 interface ContainerProps extends UtilityProps {
 	animationDuration: number
@@ -61,8 +58,9 @@ const Bar: FunctionComponent<BarProps> = ({ animationDuration, progress }) => (
 	</div>
 )
 
-const Progress: FunctionComponent<ProgressProps> = (props) => {
-	const { isAnimating, context } = props
+const Progress: UtilityComponent = (props) => {
+	const { context } = props
+	const isAnimating = useRouteLoading()
 	const { animationDuration, isFinished, progress } = useNProgress({
 		isAnimating,
 	})
