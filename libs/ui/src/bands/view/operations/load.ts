@@ -1,6 +1,8 @@
 import { Context } from "../../../context/context"
 import loadWiresOp from "../../wire/operations/load"
-import initializeWiresOp from "../../wire/operations/initialize"
+import initializeWiresOp, {
+	getWireDefHash,
+} from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
@@ -9,6 +11,7 @@ import { ViewEventsDef } from "../../../definition/view"
 import { ViewDefinition } from "../../../definition/ViewDefinition"
 import { RegularWireDefinition, WireDefinition } from "../../../definition/wire"
 import { WireConditionState } from "../../wire/conditions/conditions"
+import { PlainWire } from "../../wire/types"
 
 const runEvents = async (
 	events: ViewEventsDef | undefined,
@@ -25,8 +28,16 @@ const usePrevious = <T>(value: T): T | undefined => {
 	const ref = useRef<T>()
 	useEffect(() => {
 		ref.current = value
-	})
+	}, [value])
 	return ref.current
+}
+
+const wireDefHasChanged = (
+	wireDef: WireDefinition,
+	existingWire: PlainWire
+) => {
+	const wireDefHash = getWireDefHash(wireDef)
+	return wireDefHash !== existingWire._hash
 }
 
 const useLoadWires = (
@@ -54,25 +65,26 @@ const useLoadWires = (
 				const wireNames = Object.keys(wires)
 				if (!wireNames.length) return
 				const state = getCurrentState()
-
 				const viewId = context.getViewId()
 
-				// Only initialize wires that don't already exist in our redux store.
+				// Only initialize wires that don't already exist in our redux store
+				// or for which the existing definition has changed.
 				// This filters out our pre-loaded wires so they aren't initialized twice.
 				const wiresToInit = Object.fromEntries(
 					wireNames.flatMap((wirename) => {
 						const wireDef = wires[wirename]
 						const foundWire = selectWire(state, viewId, wirename)
-						return foundWire ? [] : [[wirename, wireDef]]
+						return foundWire &&
+							!wireDefHasChanged(wireDef, foundWire)
+							? []
+							: [[wirename, wireDef]]
 					})
 				)
+				const namesOfWiresToInit = Object.keys(wiresToInit)
 
-				if (Object.keys(wiresToInit).length) {
+				if (namesOfWiresToInit.length > 0) {
 					initializeWiresOp(context, wiresToInit)
-				}
-
-				if (wireNames.length) {
-					await loadWiresOp(context, wireNames)
+					await loadWiresOp(context, namesOfWiresToInit)
 				}
 			}
 			await runEvents(events, context)
@@ -121,7 +133,10 @@ const useLoadWires = (
 			const wiresToLoad = new Set(
 				changedWires.concat(wiresWithUpdatedParams)
 			)
-			await loadWiresOp(context, Array.from(wiresToLoad.values()))
+			// Since this is a useEffect hook, we will ALWAYS want to force a query
+			// if we get to this point, because we know that our wire definition has changed.
+			// If we don't force a query, then the wire might not get loaded if, say, it was preloaded.
+			await loadWiresOp(context, Array.from(wiresToLoad.values()), true)
 		})()
 	}, [wires, prevWires, route.path, prevRoute, prevParams, context])
 }

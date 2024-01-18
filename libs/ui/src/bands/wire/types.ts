@@ -43,6 +43,7 @@ type PlainWire = {
 	isLoading?: boolean
 	loadAll?: boolean
 	hasLoadedMetadata?: boolean
+	_hash: string
 }
 
 type ServerWire = Omit<

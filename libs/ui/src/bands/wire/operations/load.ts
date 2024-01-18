@@ -67,7 +67,7 @@ export default async (
 
 	const [preloaded, toLoad] = partition(
 		wires,
-		(wire) => wire.preloaded || wire.viewOnly
+		(wire) => (wire.preloaded && !forceQuery) || wire.viewOnly
 	)
 
 	const [invalidWires, validToLoad] = partition(
