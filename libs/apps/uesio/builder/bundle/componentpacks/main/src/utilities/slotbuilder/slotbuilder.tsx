@@ -49,7 +49,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			"data-path",
 			component.path.toDataAttrPath(listPath)
 		)
-		parentElem.setAttribute("data-title", label)
 	}, [listPath, listName, label, direction])
 
 	if (!buildMode) {

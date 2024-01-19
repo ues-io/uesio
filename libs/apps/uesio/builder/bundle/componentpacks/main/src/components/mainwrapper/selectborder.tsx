@@ -1,4 +1,4 @@
-import { definition, component, styles, context } from "@uesio/ui"
+import { definition, component, styles, context, api, signal } from "@uesio/ui"
 import {
 	useSelectedComponentPath,
 	setDragPath,
@@ -12,6 +12,9 @@ import { FullPath } from "../../api/path"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
 import CloneAction from "../../actions/cloneaction"
+import ActionButton from "../../helpers/actionbutton"
+import { contextMap } from "../../utilities/buildwrapper/buildwrapper"
+import { get } from "../../api/defapi"
 
 const StyleDefaults = Object.freeze({
 	header: [
@@ -225,6 +228,46 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 						path={selectedParentPath}
 						purgeProperties={[component.COMPONENT_ID]}
 					/>
+					{selectedComponentDef.sections?.flatMap((prop) => {
+						console.log(prop)
+						if (prop.type === "SIGNALS") {
+							const label = prop.label || prop.id
+							return (
+								<ActionButton
+									title={`Run ${
+										label ? label + " " : ""
+									}Signals`}
+									onClick={() => {
+										console.log("HEEEEEERRR")
+										const def = get(
+											context,
+											selectedComponentPath
+										) as definition.DefinitionMap
+										console.log(def)
+										if (
+											selectedChildren.current?.[0]
+												.parentElement
+										) {
+											const ctx = contextMap.get(
+												selectedChildren.current[0]
+													.parentElement
+											)
+											console.log(ctx)
+											api.signal.runMany(
+												def[
+													prop.id || "signals"
+												] as signal.SignalDefinition[],
+												ctx
+											)
+										}
+									}}
+									icon="podcasts"
+									context={context}
+								/>
+							)
+						}
+						return []
+					})}
 				</div>
 			</div>
 		</Popper>

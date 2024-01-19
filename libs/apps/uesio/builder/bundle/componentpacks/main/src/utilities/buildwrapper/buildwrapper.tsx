@@ -2,6 +2,7 @@ import { definition, context, styles } from "@uesio/ui"
 import PlaceHolder from "../placeholder/placeholder"
 import { useDropPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
+import { useEffect, useRef } from "react"
 
 const StyleDefaults = Object.freeze({
 	root: ["contents", "relative"],
@@ -33,6 +34,8 @@ const usePlaceHolders = (
 	return [addBefore, addAfter, index]
 }
 
+const contextMap = new WeakMap()
+
 const BuildWrapper: definition.UC = (props) => {
 	const { children, path, context, componentType } = props
 
@@ -40,8 +43,16 @@ const BuildWrapper: definition.UC = (props) => {
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
+	const ref = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (!ref.current) return
+		contextMap.set(ref.current, context)
+	}, [context])
+
 	return (
 		<div
+			ref={ref}
 			className={classes.root}
 			data-placeholder="true"
 			data-index={index}
@@ -62,6 +73,6 @@ const BuildWrapper: definition.UC = (props) => {
 	)
 }
 
-export { usePlaceHolders }
+export { usePlaceHolders, contextMap }
 
 export default BuildWrapper
