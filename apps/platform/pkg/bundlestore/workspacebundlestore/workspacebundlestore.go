@@ -257,7 +257,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return nil, errors.New("Invalid Record ID for attachment")
+		return nil, errors.New("invalid record id for attachment")
 	}
 	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, b.getStudioAnonSession())
 	if err != nil {
@@ -403,28 +403,22 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 }
 
 func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
-
-	workspace := b.Workspace
-	if workspace == nil {
+	if b.Workspace == nil {
 		return errors.New("no Workspace provided for retrieve")
 	}
-
 	// Create a new zip archive.
 	zipwriter := zip.NewWriter(writer)
+	defer zipwriter.Close()
 	create := retrieve.NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	err := retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b)
-	if err != nil {
+	if err := retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b); err != nil {
 		return err
 	}
 	if zipoptions != nil && zipoptions.IncludeGeneratedTypes {
 		// Retrieve generated TypeScript files
-		err = retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create)
-		if err != nil {
+		if err := retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create, b); err != nil {
 			return err
 		}
 	}
-
-	return zipwriter.Close()
-
+	return nil
 }

@@ -197,9 +197,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	File: (expression, context) => getURLFromFullName(context, expression),
 	UserFile: (expression, context) => {
+		const [wireName, fieldName] = parseWireExpression(expression)
 		const file = context
-			.getRecord()
-			?.getFieldValue<PlainWireRecord>(expression)
+			.getRecord(wireName)
+			?.getFieldValue<PlainWireRecord>(fieldName)
 		if (!file) return ""
 		const fileId = file[ID_FIELD] as string
 		if (!fileId) return ""
