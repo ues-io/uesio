@@ -41,6 +41,40 @@ const (
 	clientTypesSrc  = "../../dist/ui/types/client"
 )
 
+// GenerateAppTypeScriptTypes creates a giant file of all app-specific TypeScript type definitions
+func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnection) error {
+
+	// Add app specific metadata types app-specific metadata types
+	for metadataType, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
+		err := bs.GetAllItems(group, group.GetTypescriptableItemConditions())
+		if err != nil {
+			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
+		}
+		err = group.Loop(func(item meta.Item, _ string) error {
+			typedItem, hasTSTypes := item.(meta.TypescriptableItem)
+			if !hasTSTypes {
+				return nil
+			}
+			typeDefinitions, err := typedItem.GenerateTypeDefinitions()
+			if err != nil {
+				return err
+			}
+			if typeDefinitions == "" {
+				return nil
+			}
+			_, err = out.Write([]byte(typeDefinitions))
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -56,41 +90,14 @@ func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreat
 	if err != nil {
 		return err
 	}
-	// Add app specific metadata types app-specific metadata types
-	for metadataType, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
-		if err != nil {
-			return err
-		}
-		err = bs.GetAllItems(group, group.GetTypescriptableItemConditions())
-		if err != nil {
-			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
-		}
-
-		err = group.Loop(func(item meta.Item, _ string) error {
-
-			typedItem, hasTSTypes := item.(meta.TypescriptableItem)
-			if !hasTSTypes || typedItem.GetTypescriptDefinitionFile() == nil {
-				return nil
-			}
-			itemPath := typedItem.GetBasePath()
-			typeFilePath := path.Join(GeneratedDir, uesioTypesDir, metadataType, itemPath, "types.d.ts")
-			f, err := create(typeFilePath)
-
-			if err != nil {
-				return errors.New("failed to create " + metadataType + " types file: " + typeFilePath + ": " + err.Error())
-			}
-			if _, err := bs.GetItemTypeDefinitions(f, typedItem); err != nil {
-				f.Close()
-				return err
-			}
-			return f.Close()
-		})
-		if err != nil {
-			return err
-		}
-
+	// Generate app specific type definitions
+	f, err := create(path.Join(GeneratedDir, uesioTypesDir, "app.d.ts"))
+	if err != nil {
+		return err
 	}
-
+	if err := GenerateAppTypeScriptTypes(f, bs); err != nil {
+		return err
+	}
 	return nil
 }
 

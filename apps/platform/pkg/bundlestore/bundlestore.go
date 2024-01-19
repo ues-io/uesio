@@ -65,7 +65,6 @@ type BundleStoreConnection interface {
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
 	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)
 	GetItemAttachments(creator FileCreator, item meta.AttachableItem) error
-	GetItemTypeDefinitions(w io.Writer, typedItem meta.TypescriptableItem) (file.Metadata, error)
 	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem) error

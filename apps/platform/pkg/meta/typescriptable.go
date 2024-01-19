@@ -10,7 +10,6 @@ type TypescriptableGroup interface {
 
 type TypescriptableItem interface {
 	AttachableItem
-	GetTypescriptDefinitionFile() *UserFileMetadata
 	GenerateTypeDefinitions() (string, error)
 }
 

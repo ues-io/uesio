@@ -196,7 +196,7 @@ definition:
                                 language: $Record{bots:uesio/studio.dialect}
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
-                                  - $UserFile{bots:uesio/studio.type_definitions}
+                                  - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

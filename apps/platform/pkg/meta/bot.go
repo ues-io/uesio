@@ -200,15 +200,14 @@ type BotParams []BotParam
 type BotParamsResponse []BotParamResponse
 
 type Bot struct {
-	BuiltIn                   `yaml:",inline"`
-	BundleableBase            `yaml:",inline"`
-	TypescriptDefinitionsBase `yaml:",inline"`
-	CollectionRef             string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Type                      string    `yaml:"type" json:"uesio/studio.type"`
-	Dialect                   string    `yaml:"dialect" json:"uesio/studio.dialect"`
-	Timeout                   int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
-	Params                    BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
-	FileContents              string    `yaml:"-" json:"-"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
+	CollectionRef  string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Type           string    `yaml:"type" json:"uesio/studio.type"`
+	Dialect        string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Timeout        int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
+	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	FileContents   string    `yaml:"-" json:"-"`
 }
 
 type BotWrapper Bot
@@ -234,10 +233,6 @@ func GetBotDialects() map[string]string {
 		"SYSTEM":     "system",
 		"TYPESCRIPT": "typescript",
 	}
-}
-
-func (b *Bot) GetTypescriptDefinitionFile() *UserFileMetadata {
-	return b.TypeDefinitionsFile
 }
 
 func (b *Bot) GetBotFilePath() string {

@@ -12,10 +12,6 @@ func NewBase(namespace, name string) BundleableBase {
 	}
 }
 
-type TypescriptDefinitionsBase struct {
-	TypeDefinitionsFile *UserFileMetadata `yaml:"-" json:"uesio/studio.type_definitions"`
-}
-
 type BundleableBase struct {
 	Name      string     `yaml:"name" json:"uesio/studio.name"`
 	Label     string     `yaml:"label,omitempty" json:"uesio/studio.label"`

@@ -213,6 +213,9 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
+	// Get app-specific type definition files
+	wr.HandleFunc("/retrieve/types", controller.RetrieveAppTypes).Methods(http.MethodGet)
+
 	// Run Integration Action routes for site and workspace context
 	runIntegrationActionPath := fmt.Sprintf("/integrationactions/run/%s", itemParam)
 	describeActionsPath := fmt.Sprintf("/integrationactions/describe/%s", itemParam)

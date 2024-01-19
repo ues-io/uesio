@@ -208,10 +208,6 @@ func (b *SystemBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.A
 	return filetypes.NewLocalFileMeta(fileInfo), nil
 }
 
-func (b *SystemBundleStoreConnection) GetItemTypeDefinitions(w io.Writer, typedItem meta.TypescriptableItem) (filetypes.Metadata, error) {
-	return nil, nil
-}
-
 func (b *SystemBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
 	return nil
 }

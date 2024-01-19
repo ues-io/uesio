@@ -12,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-	filetypes "github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -108,11 +107,6 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	}
 
 	return nil
-}
-
-func (b *LocalBundleStore) GetItemTypeDefinitions(w io.Writer, item meta.TypescriptableItem) (filetypes.Metadata, error) {
-	// TODO: Do we need to implement this for local bundle store???
-	return nil, nil
 }
 
 func (b *LocalBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {

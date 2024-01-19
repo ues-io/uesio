@@ -254,14 +254,6 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	return recordIDString, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemTypeDefinitions(w io.Writer, typedItem meta.TypescriptableItem) (file.Metadata, error) {
-	userFileMetadata, err := filesource.Download(w, typedItem.GetTypescriptDefinitionFile().ID, b.getStudioAnonSession())
-	if err != nil {
-		return nil, err
-	}
-	return newWorkspaceFileMeta(userFileMetadata), nil
-}
-
 func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
