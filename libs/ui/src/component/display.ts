@@ -363,7 +363,10 @@ function should(condition: DisplayCondition, context: Context): boolean {
 			: hasAllRecords
 	}
 
-	const canHaveMultipleValues = type === "fieldValue" || type === "paramValue"
+	const canHaveMultipleValues =
+		type === "fieldValue" ||
+		type === "paramValue" ||
+		type === "hasConfigValue"
 
 	const compareToValue =
 		typeof condition.value === "string"

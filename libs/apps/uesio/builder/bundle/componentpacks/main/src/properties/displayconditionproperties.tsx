@@ -160,6 +160,10 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 						value: "featureFlag",
 					},
 					{
+						label: "Has Config value",
+						value: "hasConfigValue",
+					},
+					{
 						label: "Field Mode",
 						value: "fieldMode",
 					},
@@ -289,6 +293,22 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				],
 			},
 			{
+				// If type is no longer config value, clear out name
+				conditions: [
+					{
+						field: "type",
+						operator: "NOT_EQUALS",
+						value: "hasConfigValue",
+						type: "fieldValue",
+					},
+				],
+				updates: [
+					{
+						field: "name",
+					},
+				],
+			},
+			{
 				// If type is no longer fieldMode, clear out mode
 				conditions: [
 					{
@@ -407,6 +427,19 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		],
 	},
 	{
+		name: "name",
+		type: "TEXT", //TO-DO Config Value type
+		label: "Name",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "EQUALS",
+				value: "hasConfigValue",
+				type: "fieldValue",
+			},
+		],
+	},
+	{
 		name: "operator",
 		type: "SELECT",
 		label: "Operator",
@@ -436,7 +469,12 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "IN",
-				values: ["fieldValue", "paramValue", "mergeValue"],
+				values: [
+					"fieldValue",
+					"paramValue",
+					"mergeValue",
+					"hasConfigValue",
+				],
 				type: "fieldValue",
 			},
 		],
@@ -506,6 +544,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 					"hasNoValue",
 					"hasValue",
 					"mergeValue",
+					"hasConfigValue",
 				],
 				type: "fieldValue",
 			},
@@ -526,9 +565,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		displayConditions: [
 			{
 				field: "type",
-				operator: "EQUALS",
+				operator: "IN",
 				type: "fieldValue",
-				value: "fieldValue",
+				values: ["fieldValue", "hasConfigValue"],
 			},
 			{
 				field: "operator",
