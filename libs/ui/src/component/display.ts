@@ -154,6 +154,14 @@ type wireHasNoActiveConditions = {
 	wire: string
 }
 
+type HasConfigValue = {
+	type: "hasConfigValue"
+	name: string
+	operator: DisplayOperator
+	value?: string
+	values?: string[]
+}
+
 type HasProfile = {
 	type: "hasProfile"
 	profile: string
@@ -193,6 +201,7 @@ type DisplayCondition =
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
+	| HasConfigValue
 
 type ItemContext<T> = {
 	item: T
@@ -363,6 +372,12 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	if (type === "hasNoValue") return !compareToValue
 	if (type === "hasValue") return !!compareToValue
+	if (type === "hasConfigValue")
+		return compare(
+			compareToValue,
+			context.getConfigValue(condition.name)?.value,
+			operator
+		)
 	if (type === "paramValue")
 		return compare(
 			compareToValue,

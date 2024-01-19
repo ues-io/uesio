@@ -16,6 +16,24 @@ type ConfigStore interface {
 
 var configStoreMap = map[string]ConfigStore{}
 
+func GetConfigValues(session *sess.Session) (*meta.ConfigValueCollection, error) {
+	configValues := meta.ConfigValueCollection{}
+	err := bundle.LoadAllFromAny(&configValues, nil, session, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range configValues {
+		cv := configValues[i]
+		value, err := GetValue(cv, session)
+		if err != nil {
+			continue
+		}
+		cv.Value = value
+	}
+	return &configValues, nil
+}
+
 // GetConfigStore gets an adapter of a certain type
 func GetConfigStore(configStoreType string) (ConfigStore, error) {
 	configStore, ok := configStoreMap[configStoreType]
