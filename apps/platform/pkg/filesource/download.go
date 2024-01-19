@@ -1,6 +1,7 @@
 package filesource
 
 import (
+	"errors"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -88,6 +89,10 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 }
 
 func DownloadItem(w io.Writer, userFile *meta.UserFileMetadata, session *sess.Session) (*meta.UserFileMetadata, error) {
+
+	if userFile == nil {
+		return nil, errors.New("no file provided")
+	}
 
 	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {

@@ -200,29 +200,32 @@ type BotParams []BotParam
 type BotParamsResponse []BotParamResponse
 
 type Bot struct {
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
-	CollectionRef  string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Type           string    `yaml:"type" json:"uesio/studio.type"`
-	Dialect        string    `yaml:"dialect" json:"uesio/studio.dialect"`
-	Timeout        int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
-	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
-	FileContents   string    `yaml:"-" json:"-"`
+	BuiltIn                   `yaml:",inline"`
+	BundleableBase            `yaml:",inline"`
+	TypescriptDefinitionsBase `yaml:",inline"`
+	CollectionRef             string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Type                      string    `yaml:"type" json:"uesio/studio.type"`
+	Dialect                   string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Timeout                   int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
+	Params                    BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	FileContents              string    `yaml:"-" json:"-"`
 }
 
 type BotWrapper Bot
 
+var botTypes = map[string]string{
+	"BEFORESAVE": "beforesave",
+	"AFTERSAVE":  "aftersave",
+	"LISTENER":   "listener",
+	"GENERATOR":  "generator",
+	"LOAD":       "load",
+	"ROUTE":      "route",
+	"SAVE":       "save",
+	"RUNACTION":  "runaction",
+}
+
 func GetBotTypes() map[string]string {
-	return map[string]string{
-		"BEFORESAVE": "beforesave",
-		"AFTERSAVE":  "aftersave",
-		"LISTENER":   "listener",
-		"GENERATOR":  "generator",
-		"LOAD":       "load",
-		"ROUTE":      "route",
-		"SAVE":       "save",
-		"RUNACTION":  "runaction",
-	}
+	return botTypes
 }
 
 func GetBotDialects() map[string]string {
@@ -231,6 +234,10 @@ func GetBotDialects() map[string]string {
 		"SYSTEM":     "system",
 		"TYPESCRIPT": "typescript",
 	}
+}
+
+func (b *Bot) GetTypescriptDefinitionFile() *UserFileMetadata {
+	return b.TypeDefinitionsFile
 }
 
 func (b *Bot) GetBotFilePath() string {
@@ -386,4 +393,54 @@ func isNumericType(val interface{}) bool {
 		return true
 	}
 	return false
+}
+
+func getTSTypeForParam(paramType string) string {
+	switch paramType {
+	case "TEXT":
+		return "string"
+	case "NUMBER":
+		return "number"
+	case "CHECKBOX":
+		return "boolean"
+	case "LIST":
+		return "string[]"
+	default:
+		return "unknown"
+	}
+}
+
+func (b *Bot) GenerateTypeDefinitions() (string, error) {
+	if b.Type != "ROUTE" && b.Type != "LISTENER" {
+		return "", nil
+	}
+	if b.Name == "" || b.Namespace == "" {
+		return "", exceptions.NewBadRequestException("Bot name and namespace must be provided to generate types")
+	}
+	if b.Params == nil {
+		return "", nil
+	}
+	typesFile := `
+declare module "@uesio/app/bots/` + botTypes[b.Type] + "/" + b.GetNamespace() + "/" + b.Name + `" {
+	type Params = {`
+
+	// Add an entry to the Params type for each Param
+	for _, paramDef := range b.Params {
+		joiner := ": "
+		if !paramDef.Required {
+			joiner = "?" + joiner
+		}
+		typesFile = typesFile + `
+		` + paramDef.Name + joiner + getTSTypeForParam(paramDef.Type)
+	}
+
+	// Generate types from the Bots parameters
+	typesFile = typesFile + `
+	}
+
+	export type {
+		Params
+	}
+}`
+	return typesFile, nil
 }

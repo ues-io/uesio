@@ -1,0 +1,5 @@
+name: type_definitions
+type: FILE
+label: TypeScript type definitions
+file:
+  accept: ANY

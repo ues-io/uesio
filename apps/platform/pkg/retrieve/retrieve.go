@@ -8,9 +8,10 @@ import (
 	"path"
 	"path/filepath"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"gopkg.in/yaml.v3"
 )
 
 func NewWriterCreator(creator func(string) (io.Writer, error)) bundlestore.FileCreator {
@@ -40,7 +41,7 @@ const (
 	clientTypesSrc  = "../../dist/ui/types/client"
 )
 
-func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator) error {
+func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -54,6 +55,40 @@ func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreat
 	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), path.Join(GeneratedDir, uesioTypesDir, "package.json"))
 	if err != nil {
 		return err
+	}
+	// Add app specific metadata types app-specific metadata types
+	for metadataType, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
+		if err != nil {
+			return err
+		}
+		err = bs.GetAllItems(group, group.GetTypescriptableItemConditions())
+		if err != nil {
+			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
+		}
+
+		err = group.Loop(func(item meta.Item, _ string) error {
+
+			typedItem, hasTSTypes := item.(meta.TypescriptableItem)
+			if !hasTSTypes || typedItem.GetTypescriptDefinitionFile() == nil {
+				return nil
+			}
+			itemPath := typedItem.GetBasePath()
+			typeFilePath := path.Join(GeneratedDir, uesioTypesDir, metadataType, itemPath, "types.d.ts")
+			f, err := create(typeFilePath)
+
+			if err != nil {
+				return errors.New("failed to create " + metadataType + " types file: " + typeFilePath + ": " + err.Error())
+			}
+			if _, err := bs.GetItemTypeDefinitions(f, typedItem); err != nil {
+				f.Close()
+				return err
+			}
+			return f.Close()
+		})
+		if err != nil {
+			return err
+		}
+
 	}
 
 	return nil

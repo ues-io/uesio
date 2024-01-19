@@ -183,6 +183,10 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 
 }
 
+func (b *PlatformBundleStoreConnection) GetItemTypeDefinitions(w io.Writer, typedItem meta.TypescriptableItem) (file.Metadata, error) {
+	return nil, nil
+}
+
 func (b *PlatformBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
 	return b.download(w, filepath.Join(getBasePath(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
