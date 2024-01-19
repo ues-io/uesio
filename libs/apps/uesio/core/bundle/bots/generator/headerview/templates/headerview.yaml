@@ -9,12 +9,6 @@ components:
             height: ${logoheight}
       left: ${navcollections}
       right:
-        - uesio/io.button:
-            uesio.variant: uesio/io.nav
-            uesio.id: logout
-            text: Log Out
-            signals:
-              - signal: "user/LOGOUT"
       avatar:
         - uesio/io.avatar:
             text: $User{initials}
