@@ -406,7 +406,7 @@ func getTSTypeForParam(paramType string) string {
 }
 
 func (b *Bot) GenerateTypeDefinitions() (string, error) {
-	if b.Type != "ROUTE" && b.Type != "LISTENER" {
+	if b.Type != "ROUTE" && b.Type != "LISTENER" && b.Type != "RUNACTION" {
 		return "", nil
 	}
 	if b.Name == "" || b.Namespace == "" {
