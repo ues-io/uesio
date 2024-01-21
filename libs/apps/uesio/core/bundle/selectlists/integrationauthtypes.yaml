@@ -1,4 +1,5 @@
 name: integrationauthtypes
+label: Integration Auth Type
 blankOptionLabel: "No Authentication"
 options:
   - label: "API Key"

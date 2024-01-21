@@ -1,4 +1,5 @@
 name: collectiontypes
+label: Collection Type
 options:
   - label: "Uesio DB"
     value: ""
