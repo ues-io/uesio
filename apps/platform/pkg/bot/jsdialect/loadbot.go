@@ -12,9 +12,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, connection wire.Connection, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connection, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		// Private
+		session:               session,
 		loadOp:                loadOp,
 		connection:            connection,
 		integrationConnection: integrationConnection,
@@ -71,6 +72,7 @@ type LoadRequestMetadata struct {
 
 type LoadBotAPI struct {
 	// Private
+	session               *sess.Session
 	connection            wire.Connection
 	integrationConnection *wire.IntegrationConnection
 	loadErrors            []string
@@ -79,6 +81,10 @@ type LoadBotAPI struct {
 	Http                *BotHttpAPI          `bot:"http"`
 	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
 	LogApi              *BotLogAPI           `bot:"log"`
+}
+
+func (lb *LoadBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, lb.session, lb.connection)
 }
 
 func (lb *LoadBotAPI) GetLoadErrors() []string {

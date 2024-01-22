@@ -366,6 +366,7 @@ interface LoadBotApi {
 	 * @returns A map of output parameters from the bot.
 	 */
 	callBot: CallBot
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 }
 interface SaveBotApi {
 	addError: (message: string, fieldId: string, recordId: string) => void
