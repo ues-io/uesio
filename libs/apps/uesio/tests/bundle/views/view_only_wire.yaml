@@ -10,6 +10,22 @@ definition:
       fields:
         myField:
           type: TEXT
+        selectOne:
+          type: SELECT
+          selectlist:
+            name: uesio/core.accepttypes
+        selectTwo:
+          type: SELECT
+          selectlist:
+            source: local
+            options:
+              - value: one
+                label: One
+              - value: two
+                label: Two
+              - value: three
+                label: Three
+
   # Components determine the layout and composition of your view
   components:
     - uesio/io.box:
@@ -17,6 +33,12 @@ definition:
           - uesio/io.field:
               wire: myViewOnlyWire
               fieldId: myField
+          - uesio/io.field:
+              wire: myViewOnlyWire
+              fieldId: selectOne
+          - uesio/io.field:
+              wire: myViewOnlyWire
+              fieldId: selectTwo
           - uesio/io.button:
               text: Do Not Disappear
               icon: bolt

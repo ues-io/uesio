@@ -15,13 +15,17 @@ type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
 
+type ViewOnlySelectListMetadata = {
+	source?: "local" | ""
+} & SelectListMetadata
+
 type ViewOnlyField = {
 	type: FieldType
 	subtype?: FieldType // For STRUCT/LIST/MAP types
 	label?: string
 	required?: boolean
 	reference?: ReferenceMetadata
-	selectlist?: SelectListMetadata
+	selectlist?: ViewOnlySelectListMetadata
 	number?: NumberMetadata
 	metadata?: MetadataFieldMetadata
 	fields?: Record<string, ViewOnlyField>

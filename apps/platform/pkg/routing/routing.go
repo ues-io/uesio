@@ -45,7 +45,8 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return GetHomeRoute(session)
 	}
 
-	err := bundle.LoadAll(&routes, namespace, nil, session, connection)
+	// TODO: Figure out why connection has to be nil
+	err := bundle.LoadAll(&routes, namespace, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
