@@ -141,7 +141,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Query:          true,
 			}
 
-			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession, connection)
+			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession)
 			if err != nil {
 				return err
 			}

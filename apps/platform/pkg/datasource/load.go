@@ -435,7 +435,6 @@ func GetMetadataForLoad(
 	metadataResponse *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
-	connection wire.Connection,
 ) error {
 	collectionKey := op.CollectionName
 
@@ -670,8 +669,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			})
 		}
 
-		// TBD: Why does connection have to be nil here?
-		if err = GetMetadataForLoad(op, metadataResponse, ops, session, nil); err != nil {
+		if err = GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
 			return nil, err
 		}
 
