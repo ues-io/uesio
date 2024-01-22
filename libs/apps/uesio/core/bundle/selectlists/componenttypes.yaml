@@ -1,4 +1,5 @@
 name: componenttypes
+label: Component Type
 options:
   - label: "React"
     value: "REACT"

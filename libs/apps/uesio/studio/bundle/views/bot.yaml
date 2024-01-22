@@ -55,8 +55,8 @@ definition:
                 itemNameSpaceIcon: ${bots:uesio/studio.appicon}
                 itemNameSpaceColor: ${bots:uesio/studio.appcolor}
         content:
-          - uesio/io.list:
-              uesio.id: botsDeck
+          - uesio/io.item:
+              uesio.id: botsItem
               wire: bots
               mode: READ
               components:

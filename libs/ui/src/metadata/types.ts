@@ -8,6 +8,7 @@ const METADATA = {
 	COMPONENTVARIANT: "componentvariants",
 	CONFIGVALUE: "configvalues",
 	CREDENTIALS: "credentials",
+	FEATUREFLAG: "featureflags",
 	FIELD: "fields",
 	FILE: "files",
 	FILESOURCE: "filesources",

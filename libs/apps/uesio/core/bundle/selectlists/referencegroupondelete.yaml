@@ -1,4 +1,5 @@
 name: referencegroupondelete
+label: Reference Group On-delete Behavior
 options:
   - label: CASCADE
     value: CASCADE
