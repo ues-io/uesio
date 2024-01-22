@@ -254,7 +254,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	if err != nil {
 		return err
 	}
-	botAPI := NewLoadBotAPI(bot, session, connection, op, integrationConnection)
+	botAPI := NewLoadBotAPI(bot, op, integrationConnection)
 	if err = RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
 		return err
 	}
