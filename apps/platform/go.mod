@@ -20,7 +20,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/golang-migrate/migrate/v4 v4.16.2
+	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/gomodule/redigo v1.8.9
 	github.com/gorilla/mux v1.8.1
 	github.com/icza/session v1.2.0
