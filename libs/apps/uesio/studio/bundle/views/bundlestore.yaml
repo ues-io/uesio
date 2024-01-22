@@ -64,29 +64,79 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
-                - uesio/io.deck:
-                    wire: bundlelistings
-                    uesio.id: bundleListingList
-                    mode: READ
-                    uesio.styleTokens:
-                      root:
-                        - grid
-                        - gap-10
-                        - grid-cols-1
-                        - lg:grid-cols-2
-                        - xl:grid-cols-3
-                    components:
-                      - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - cursor-pointer
-                          signals:
-                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
-                              signal: route/NAVIGATE
-                          components:
-                            - uesio/studio.bundlelistingvisual:
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                icon: ${uesio/studio.app->uesio/studio.icon}
-                                title: ${uesio/studio.app->uesio/studio.fullname}
-                                subtitle: ${uesio/studio.description}
-                                verified: false
+                - uesio/io.tabs:
+                    tabs:
+                      - id: prodbundlestore
+                        label: Prod Bundle Store
+                        components:
+                          - uesio/io.deck:
+                              recordDisplay:
+                                - type: fieldValue
+                                  operator: EQUALS
+                                  wire: bundlelistings
+                                  field: uesio/studio.prodbundle
+                                  value: true
+                              wire: bundlelistings
+                              uesio.id: bundleListingList
+                              mode: READ
+                              uesio.styleTokens:
+                                root:
+                                  - grid
+                                  - gap-10
+                                  - grid-cols-1
+                                  - lg:grid-cols-2
+                                  - xl:grid-cols-3
+                              components:
+                                - uesio/io.box:
+                                    uesio.styleTokens:
+                                      root:
+                                        - cursor-pointer
+                                    signals:
+                                      - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
+                                        signal: route/NAVIGATE
+                                    components:
+                                      - uesio/studio.bundlelistingvisual:
+                                          color: ${uesio/studio.app->uesio/studio.color}
+                                          icon: ${uesio/studio.app->uesio/studio.icon}
+                                          title: ${uesio/studio.app->uesio/studio.fullname}
+                                          subtitle: ${uesio/studio.description}
+                                          verified: false
+                      - id: localbundlestore
+                        label: Local Bundle Store
+                        # uesio.display:
+                        #   - type: featureFlag
+                        #     operator: EQUALS
+                        #     name: TO-DO
+                        components:
+                          - uesio/io.deck:
+                              recordDisplay:
+                                - type: fieldValue
+                                  operator: NOT_EQUALS
+                                  wire: bundlelistings
+                                  field: uesio/studio.prodbundle
+                                  value: true
+                              wire: bundlelistings
+                              uesio.id: bundleListingList
+                              mode: READ
+                              uesio.styleTokens:
+                                root:
+                                  - grid
+                                  - gap-10
+                                  - grid-cols-1
+                                  - lg:grid-cols-2
+                                  - xl:grid-cols-3
+                              components:
+                                - uesio/io.box:
+                                    uesio.styleTokens:
+                                      root:
+                                        - cursor-pointer
+                                    signals:
+                                      - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
+                                        signal: route/NAVIGATE
+                                    components:
+                                      - uesio/studio.bundlelistingvisual:
+                                          color: ${uesio/studio.app->uesio/studio.color}
+                                          icon: ${uesio/studio.app->uesio/studio.icon}
+                                          title: ${uesio/studio.app->uesio/studio.fullname}
+                                          subtitle: ${uesio/studio.description}
+                                          verified: false
