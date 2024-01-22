@@ -60,7 +60,7 @@ func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecReque
 
 	url := fmt.Sprintf("%s/bulk/job/%s/batch", prefix, jobID)
 
-	resp, err := call.Request("POST", url, payload, sessionId, nil)
+	resp, err := call.Post(url, payload, sessionId, nil)
 	if err != nil {
 		return nil, err
 	}

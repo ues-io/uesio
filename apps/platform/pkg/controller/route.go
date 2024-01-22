@@ -10,8 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -28,7 +30,12 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	viewtype := vars["viewtype"]
 
 	session := middleware.GetSession(r)
-	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session, connection)
 	if err != nil {
 		handleApiNotFoundRoute(w, r, "", session)
 		return
@@ -65,7 +72,12 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		prefix = "/workspace/" + workspace.GetAppFullName() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
 	}
 
-	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
 		handleApiNotFoundRoute(w, r, path, session)
 		return
@@ -227,7 +239,12 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
-	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		HandleErrorRoute(w, r, session, path, err, true)
+		return nil, err
+	}
+	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, true)
 		return nil, err

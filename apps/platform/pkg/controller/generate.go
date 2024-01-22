@@ -10,10 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Generate(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
@@ -23,14 +23,22 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	session := middleware.GetSession(r)
-	zipWriter := zip.NewWriter(w)
-
-	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, nil, session); err != nil {
-		zipWriter.Close()
+	s := middleware.GetSession(r)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, s, nil)
+	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	zipWriter.Close()
+	zipWriter := zip.NewWriter(w)
+	defer zipWriter.Close()
 
+	// Inject the workspace name and app name so that we can use them in generator logic
+	wsParams := getWireParamsFromRequestHeaders(r)
+	params["appName"] = wsParams["app"]
+	params["workspaceName"] = wsParams["workspacename"]
+
+	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s); err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
 }

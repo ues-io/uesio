@@ -39,7 +39,7 @@ func Truncate() error {
 
 	url := fmt.Sprintf("workspace/%s/%s/data/truncate", app, workspace)
 
-	resp, err := call.Request("POST", url, nil, sessionId, context.NewWorkspaceContext(app, workspace))
+	resp, err := call.Post(url, nil, sessionId, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}

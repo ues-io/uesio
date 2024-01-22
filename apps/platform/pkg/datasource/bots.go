@@ -123,7 +123,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 		Type: "LOAD",
 	}
 
-	err = bundle.Load(loadBot, session, nil)
+	err = bundle.Load(loadBot, session, connection)
 	// See if there is a SYSTEM bot instead
 	if err != nil {
 		systemDialect, err2 := bot.GetBotDialect("SYSTEM")
@@ -167,7 +167,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 		Type: "SAVE",
 	}
 
-	err = bundle.Load(saveBot, session, nil)
+	err = bundle.Load(saveBot, session, connection)
 	if err != nil {
 		return exceptions.NewNotFoundException("could not find requested SAVE bot: " + botName)
 	}
@@ -189,7 +189,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.type":       "AFTERSAVE",
-	}, session, nil)
+	}, session, connection)
 	if err != nil {
 		return err
 	}
