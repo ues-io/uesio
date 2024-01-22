@@ -10,6 +10,7 @@ import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectByName } from "../bands/featureflag"
+import { selectById } from "../bands/configvalue"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
@@ -418,6 +419,8 @@ class Context {
 		fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
+
+	getConfigValue = (name: string) => selectById(getCurrentState(), name)
 
 	getViewDefId = () =>
 		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef
