@@ -1,4 +1,5 @@
 name: routeassignmenttype
+label: Route Assignment Type
 options:
   - label: "List View"
     value: "list"

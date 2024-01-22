@@ -30,9 +30,9 @@ const signals: Record<string, SignalDescriptor> = {
 					mergedParams || {}
 				)
 
-				// If this invocation was given a stable identifier,
+				// If this invocation was given a stable identifier, and the bot returned outputs,
 				// expose its outputs for later use
-				if (response && signalInvocation.stepId) {
+				if (response && signalInvocation.stepId && response.params) {
 					return context.addSignalOutputFrame(
 						signalInvocation.stepId,
 						response.params

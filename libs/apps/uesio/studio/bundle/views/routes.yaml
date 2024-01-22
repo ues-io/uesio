@@ -240,8 +240,8 @@ definition:
       width: 400px
       height: 500px
       components:
-        - uesio/io.list:
-            uesio.id: newroutelist
+        - uesio/io.item:
+            uesio.id: newRouteItem
             wire: newroute
             mode: EDIT
             uesio.context:
