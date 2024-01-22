@@ -1,4 +1,4 @@
-import { SelectOption } from "./types"
+import { SelectOption } from "../../definition/selectlist"
 
 const addBlankSelectOption = (
 	options: SelectOption[] | undefined,

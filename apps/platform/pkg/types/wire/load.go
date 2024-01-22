@@ -27,6 +27,7 @@ type LoadOp struct {
 	Preloaded          bool                   `json:"preloaded"`
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
+	ViewOnly           bool                   `json:"viewOnly,omitempty"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
 	metadata              *MetadataCache
 	integrationConnection *IntegrationConnection
@@ -77,6 +78,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.Conditions = conditions
 	op.Order = order
 	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
+	op.ViewOnly = meta.GetNodeValueAsBool(node, "viewOnly", false)
 	return nil
 
 }
@@ -114,6 +116,7 @@ type LoadRequestBatch struct {
 type LoadResponseBatch struct {
 	Wires       []*LoadOp                      `json:"wires"`
 	Collections map[string]*CollectionMetadata `json:"collections,omitempty"`
+	SelectLists map[string]*SelectListMetadata `json:"selectlists,omitempty"`
 }
 
 // TrimStructForSerialization removes properties which do not need to be returned to callers
@@ -170,6 +173,9 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 	referencedGroupCollections := ReferenceGroupRegistry{}
 	formulaFields := map[string]*FieldMetadata{}
 	for _, field := range fields {
+		if field.ViewOnlyMetadata != nil {
+			continue
+		}
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
 			return nil, nil, nil, nil, err

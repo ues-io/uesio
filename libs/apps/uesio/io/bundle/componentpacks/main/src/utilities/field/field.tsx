@@ -320,8 +320,10 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 										mapFieldOptions.valueFieldLabel ||
 										"Value",
 									type: subType,
-									selectlist:
-										fieldMetadata.getSelectMetadata(),
+									// It is intentional to just use "source.selectlist" here
+									// because we will be fetching the actual options later on,
+									// right now we just need to get the "raw" definition
+									selectlist: fieldMetadata.source.selectlist,
 									number: fieldMetadata.getNumberMetadata(),
 									subfields: fieldMetadata.getSubFields(),
 									namespace: "",

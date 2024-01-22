@@ -17,7 +17,7 @@ var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 func getTokensForRequest(connection wire.Connection, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
 	metadata := connection.GetMetadata()
 	uatc := meta.UserAccessTokenCollection{}
-	tokens := []meta.BundleableItem{}
+	var tokens []meta.BundleableItem
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
@@ -59,8 +59,8 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 		tokens = append(tokens, token)
 	}
 
-	err := bundle.LoadMany(tokens, session, nil)
-	if err != nil {
+	// TBD: Why is connection nil here??
+	if err := bundle.LoadMany(tokens, session, nil); err != nil {
 		return nil, err
 	}
 
@@ -141,7 +141,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Query:          true,
 			}
 
-			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession)
+			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession, connection)
 			if err != nil {
 				return err
 			}

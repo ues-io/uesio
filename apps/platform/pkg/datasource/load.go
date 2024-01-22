@@ -435,31 +435,36 @@ func GetMetadataForLoad(
 	metadataResponse *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
+	connection wire.Connection,
 ) error {
 	collectionKey := op.CollectionName
 
 	// Keep a running tally of all requested collections
-	collections := MetadataRequest{}
-	err := collections.AddCollection(collectionKey)
-	if err != nil {
+	metadataRequest := &MetadataRequest{}
+	if err := metadataRequest.AddCollection(collectionKey); err != nil {
 		return err
 	}
 
 	for _, requestField := range op.Fields {
+
+		if requestField.ViewOnlyMetadata != nil {
+			getMetadataForViewOnlyField(requestField, metadataRequest)
+			continue
+		}
 
 		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
 			return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID))
 		}
 
 		subFields := getSubFields(requestField.Fields)
-		err := collections.AddField(collectionKey, requestField.ID, subFields)
+		err := metadataRequest.AddField(collectionKey, requestField.ID, subFields)
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, condition := range op.Conditions {
-		innerErr := getMetadataForConditionLoad(&condition, collectionKey, &collections, op, ops)
+		innerErr := getMetadataForConditionLoad(&condition, collectionKey, metadataRequest, op, ops)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -467,14 +472,14 @@ func GetMetadataForLoad(
 
 	if len(op.Order) > 0 {
 		for _, orderField := range op.Order {
-			if err = getMetadataForOrderField(collectionKey, orderField.Field, &collections, session); err != nil {
+			if err := getMetadataForOrderField(collectionKey, orderField.Field, metadataRequest, session); err != nil {
 				return err
 			}
 		}
 	}
 
-	err = collections.Load(metadataResponse, session, nil)
-	if err != nil {
+	// TBD: Why does this have to be nil???
+	if err := metadataRequest.Load(metadataResponse, session, nil); err != nil {
 		return err
 	}
 
@@ -485,6 +490,9 @@ func GetMetadataForLoad(
 
 	// Now loop over fields and do some additional processing for reference & formula fields
 	for i, requestField := range op.Fields {
+		if requestField.ViewOnlyMetadata != nil {
+			continue
+		}
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
 			return err
@@ -540,7 +548,36 @@ func GetMetadataForLoad(
 
 }
 
-func getMetadataForOrderField(collectionKey string, fieldName string, collections *MetadataRequest, session *sess.Session) error {
+func getMetadataForViewOnlyField(
+	field wire.LoadRequestField,
+	metadataRequest *MetadataRequest,
+) {
+	viewOnlyMeta := field.ViewOnlyMetadata
+	if viewOnlyMeta != nil {
+		switch viewOnlyMeta.Type {
+		case "SELECT", "MULTISELECT":
+			if viewOnlyMeta.SelectListMetadata != nil && viewOnlyMeta.SelectListMetadata.Name != "" {
+				metadataRequest.AddSelectList(viewOnlyMeta.SelectListMetadata.Name)
+			}
+		}
+	}
+}
+
+func GetMetadataForViewOnlyWire(
+	op *wire.LoadOp,
+	metadataResponse *wire.MetadataCache,
+	connection wire.Connection,
+	session *sess.Session,
+) error {
+	metadataRequest := &MetadataRequest{}
+	for _, requestField := range op.Fields {
+		getMetadataForViewOnlyField(requestField, metadataRequest)
+	}
+	// TBD : WHY does connection have to be nil?
+	return metadataRequest.Load(metadataResponse, session, nil)
+}
+
+func getMetadataForOrderField(collectionKey string, fieldName string, metadataRequest *MetadataRequest, session *sess.Session) error {
 	isReferenceCrossing := isReferenceCrossingField(fieldName)
 
 	topLevelFieldName := fieldName
@@ -556,9 +593,9 @@ func getMetadataForOrderField(collectionKey string, fieldName string, collection
 
 	if isReferenceCrossing {
 		// Recursively request metadata for all components of the reference-crossing field name
-		return requestMetadataForReferenceCrossingField(collectionKey, fieldName, collections)
+		return requestMetadataForReferenceCrossingField(collectionKey, fieldName, metadataRequest)
 	} else {
-		return collections.AddField(collectionKey, fieldName, nil)
+		return metadataRequest.AddField(collectionKey, fieldName, nil)
 	}
 }
 
@@ -583,20 +620,28 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	if options == nil {
 		options = &LoadOptions{}
 	}
-	allOps := []*wire.LoadOp{}
+	var allOps []*wire.LoadOp
+	var err error
 	metadataResponse := &wire.MetadataCache{}
 	// Use existing metadata if it was passed in
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
 	}
-
 	// We do this so that we're sure that the labels are attached to the session
-	if _, err := translate.GetTranslatedLabels(session); err != nil {
+	if _, err = translate.GetTranslatedLabels(session); err != nil {
 		return nil, err
 	}
 
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
+		// Special processing for View-only wires
+		if op.ViewOnly {
+			if err = GetMetadataForViewOnlyWire(op, metadataResponse, nil, session); err != nil {
+				return nil, err
+			}
+			continue
+		}
+
 		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
 			return nil, exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
 		}
@@ -625,7 +670,8 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			})
 		}
 
-		if err := GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
+		// TBD: Why does connection have to be nil here?
+		if err = GetMetadataForLoad(op, metadataResponse, ops, session, nil); err != nil {
 			return nil, err
 		}
 
@@ -640,8 +686,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 	}
 
-	// 3. Get metadata for each datasource and collection
-
 	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
 	if err != nil {
 		return nil, err
@@ -652,7 +696,9 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	}
 
 	for _, op := range allOps {
-
+		if op.ViewOnly {
+			continue
+		}
 		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
 		// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
 		// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,

@@ -20,7 +20,7 @@ const SelectFilter: definition.UtilityComponent<SelectFilterProps> = (
 		<SelectField
 			context={context}
 			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options || [],
+				fieldMetadata.getSelectOptions(context) || [],
 				"Any " + fieldMetadata.getLabel()
 			)}
 			variant={"uesio/io.filter"}

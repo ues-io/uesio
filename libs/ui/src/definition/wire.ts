@@ -4,8 +4,8 @@ import type {
 	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
-	SelectListMetadata,
 } from "../bands/field/types"
+import { SelectListMetadata } from "./selectlist"
 import type { SignalDefinition } from "./signal"
 import type { WireConditionState } from "../bands/wire/conditions/conditions"
 import type { MetadataKey } from "../metadata/types"
