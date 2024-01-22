@@ -173,9 +173,8 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewLoadBotAPI(bot, connection, op, integrationConnection)
-	err = jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
-	if err != nil {
+	botAPI := jsdialect.NewLoadBotAPI(bot, op, integrationConnection)
+	if err = jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
 	loadErrors := botAPI.GetLoadErrors()

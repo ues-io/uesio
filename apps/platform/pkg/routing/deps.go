@@ -438,6 +438,11 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
 
+	configValues, err := configstore.GetConfigValues(adminSession)
+	if err != nil {
+		return nil, errors.New("Failed to get config values: " + err.Error())
+	}
+
 	for key, value := range labels {
 		label, err := meta.NewLabel(key)
 		if err != nil {
@@ -449,6 +454,10 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	for _, flag := range *featureFlags {
 		deps.FeatureFlag.AddItem(flag)
+	}
+
+	for _, configValue := range *configValues {
+		deps.ConfigValue.AddItem(configValue)
 	}
 
 	workspace := session.GetWorkspace()

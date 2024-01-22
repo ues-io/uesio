@@ -1,3 +1,4 @@
 name: bundle_store_domain
 managedBy: app
 store: environment
+public: true

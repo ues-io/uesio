@@ -1,4 +1,5 @@
 name: apikeylocation
+label: API Key Location
 options:
   - label: "Header"
     value: "header"

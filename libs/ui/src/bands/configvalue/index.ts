@@ -10,6 +10,9 @@ const adapter = createEntityAdapter<ConfigValueState>({
 
 const selectors = adapter.getSelectors((state: RootState) => state.configvalue)
 
+const selectById = (state: RootState, name: string) =>
+	selectors.selectById(state, name)
+
 const metadataSlice = createSlice({
 	name: "configvalue",
 	initialState: adapter.getInitialState(),
@@ -24,7 +27,7 @@ const useConfigValue = (key: string) =>
 
 const useConfigValueKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useConfigValue, useConfigValueKeys, selectors, adapter }
+export { useConfigValue, useConfigValueKeys, selectById, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

@@ -86,9 +86,9 @@ type BotParams = {
 }
 
 type BotResponse = {
-	params: BotParams
+	params?: BotParams
 	success: boolean
-	error: string
+	error?: string
 }
 
 type IntegrationActionMetadata = {
@@ -362,12 +362,20 @@ const platform = {
 		params: BotParams
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(
-			context,
-			`${prefix}/metadata/generate/${namespace}/${name}`,
-			params
-		)
-		return respondJSON(response)
+		try {
+			const response = await postJSON(
+				context,
+				`${prefix}/metadata/generate/${namespace}/${name}`,
+				params
+			)
+			const result = await respondJSON(response)
+			return result
+		} catch (err) {
+			return {
+				success: false,
+				error: err as string,
+			}
+		}
 	},
 	getBotParams: async (
 		context: Context,
