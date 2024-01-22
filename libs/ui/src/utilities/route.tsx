@@ -23,6 +23,20 @@ new FontFaceObserver("Material Icons").load(null, 20000).then(() => {
 	document.documentElement.classList.remove("noicons")
 })
 
+// This is a hack to get webfonts (specifically Gosha) to show up in safari
+// after they've been loaded. I've tried a bunch of different things,
+// including different font-display: swap,block,optional,etc to no avail.
+// All this code does is cause the browser to repaint after Gosha has been loaded.
+const gosha = new FontFaceObserver("Gosha")
+const roboto = new FontFaceObserver("Roboto")
+Promise.all([gosha.load(null, 20000), roboto.load(null, 20000)]).then(() => {
+	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+	if (!isSafari) return
+	document.documentElement.style.display = "none"
+	document.documentElement.offsetHeight
+	document.documentElement.style.display = ""
+})
+
 // This converts all our @media queries to @container queries
 const presetContainerQueries = () =>
 	({
@@ -176,7 +190,7 @@ const Route: UtilityComponent = (props) => {
 					path=""
 				/>
 			)}
-			<Progress isAnimating={!!route.isLoading} context={props.context} />
+			<Progress context={props.context} />
 			<div
 				id="notificationsArea"
 				style={{

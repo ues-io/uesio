@@ -101,22 +101,23 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	useDeepCompareEffect(() => {
 		;(async () => {
 			try {
+				const newModels = {} as Record<string, string>
 				await Promise.all(
-					typeDefinitionFileURIs.map((uri) =>
-						memoizedAsync(() => fetchFile(uri), {
-							cacheKey: `fetch-file-as-text-${uri}`,
-							timeout: 5000,
-							refetch: false,
-						}).then((result: AsyncResult) => {
-							const { data } = result
-							setLoadedModels({
-								...loadedModels,
-								[uri]: data as string,
+					typeDefinitionFileURIs
+						.filter((uri) => !!uri)
+						.map((uri) =>
+							memoizedAsync(() => fetchFile(uri), {
+								cacheKey: `fetch-file-as-text-${uri}`,
+								timeout: 5000,
+								refetch: false,
+							}).then((result: AsyncResult) => {
+								const { data } = result
+								newModels[uri] = data as string
+								return result
 							})
-							return result
-						})
-					)
+						)
 				)
+				setLoadedModels(newModels)
 			} catch (result) {
 				const { error } = result as AsyncResult
 				setLoadingError(error || "")
@@ -125,20 +126,44 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 			}
 		})()
 		return
-	}, [typeDefinitionFileURIs, loadedModels])
+	}, [typeDefinitionFileURIs])
 
 	function handleEditorWillMount(monaco: Monaco) {
 		const loadedTypeModelUris = Object.keys(loadedModels)
 		if (loadedTypeModelUris.length > 0) {
+			// Synchronize our current models with the new models.
+			const existingModels = monaco.editor.getModels()
+			const existingModelsById = {} as Record<
+				string,
+				monaco.editor.ITextModel
+			>
+			existingModels.forEach((model) => {
+				existingModelsById[model.uri.toString()] = model
+			})
 			loadedTypeModelUris.forEach((uri) => {
 				const monacoUri = monaco.Uri.parse(uri)
-				if (!monaco.editor.getModel(monacoUri)) {
+				const id = monacoUri.toString()
+				const model = existingModelsById[id]
+				const modelContents = loadedModels[uri]
+				// If we don't have this Model yet, create it
+				if (!model) {
 					monaco.editor.createModel(
-						loadedModels[uri],
+						modelContents,
 						language,
 						monacoUri
 					)
+				} else {
+					// If we DO have this model already, replace its contents, if changed
+					const currentValue = model.getValue()
+					if (currentValue !== modelContents) {
+						model.setValue(modelContents)
+					}
+					delete existingModelsById[id]
 				}
+			})
+			// Remove any other models
+			Object.values(existingModelsById).forEach((model) => {
+				model.dispose()
 			})
 		}
 		monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)

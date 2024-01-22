@@ -1,5 +1,5 @@
 name: to_emails
 label: To Email Addresses
 type: LIST
-subtype: TEXT
 required: true
+subtype: TEXT

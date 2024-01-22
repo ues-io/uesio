@@ -10,6 +10,7 @@ import ProfileTag from "./profiletag"
 import CodePanel from "./codepanel"
 import RightToolbar from "./righttoolbar"
 import SaveCancelArea from "./savecancelarea"
+import { toggleBuildMode } from "../../helpers/buildmode"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -47,12 +48,10 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	hooks.useHotKeyCallback(
 		"meta+u",
 		() => {
-			api.builder.getBuilderDeps(context).then(() => {
-				setBuildMode(!buildMode)
-			})
+			toggleBuildMode(context, setBuildMode, !!buildMode)
 		},
 		true,
-		[buildMode]
+		[buildMode, setBuildMode]
 	)
 
 	hooks.useHotKeyCallback("meta+p", () => {

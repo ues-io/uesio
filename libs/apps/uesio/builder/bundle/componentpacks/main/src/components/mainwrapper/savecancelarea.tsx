@@ -1,7 +1,8 @@
-import { definition, component, hooks, api, styles } from "@uesio/ui"
+import { definition, component, hooks, styles } from "@uesio/ui"
 import { cancel, save, useHasChanges } from "../../api/defapi"
 import { metaKey } from "./mainheader"
 import { useBuildMode } from "../../api/stateapi"
+import { toggleBuildMode } from "../../helpers/buildmode"
 
 const StyleDefaults = Object.freeze({
 	root: [
@@ -50,9 +51,7 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 					label="Preview"
 					variant="uesio/builder.secondarytoolbar"
 					onClick={() => {
-						api.builder.getBuilderDeps(context).then(() => {
-							setBuildMode(!buildMode)
-						})
+						toggleBuildMode(context, setBuildMode, !!buildMode)
 					}}
 					tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
 					tooltipPlacement="left"

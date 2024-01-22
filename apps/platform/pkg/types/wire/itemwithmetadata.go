@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/francoispqt/gojay"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -17,6 +18,10 @@ func NewItemWithMetadata(metadata *CollectionMetadata, item meta.Item) *ItemWith
 		data:     item,
 		metadata: metadata,
 	}
+}
+
+func (i *ItemWithMetadata) GetData() meta.Item {
+	return i.data
 }
 
 func (i *ItemWithMetadata) ScanBytes(src []byte) error {
