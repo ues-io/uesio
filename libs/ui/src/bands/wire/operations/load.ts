@@ -16,6 +16,13 @@ import partition from "lodash/partition"
 import { batch } from "react-redux"
 import { addError } from "../../../../src/hooks/notificationapi"
 import { WireConditionState } from "../conditions/conditions"
+import { hash } from "@twind/core"
+
+const getParamsHash = (context: Context) => {
+	const params = context.getParams()
+	if (!params) return ""
+	return hash(JSON.stringify(params))
+}
 
 const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 	wires.map(
@@ -64,6 +71,8 @@ export default async (
 ) => {
 	// Turn the list of wires into a load request
 	const wires = getWiresFromDefinitonOrContext(wireNames, context)
+
+	const paramsHash = getParamsHash(context)
 
 	const [preloaded, toLoad] = partition(
 		wires,
@@ -152,6 +161,7 @@ export default async (
 			),
 			original: { ...wire.data },
 			isLoading: false,
+			paramsHash,
 			// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 			// then we can remove the `|| wire.query` branch, because "query" will only indicate whether data was queried,
 			// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
@@ -175,6 +185,7 @@ export default async (
 				...wire,
 				preloaded: false,
 				isLoading: false,
+				paramsHash,
 				// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 				// then we can just set this to true all the time, because "query" will only indicate whether data was queried,
 				// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
@@ -232,4 +243,4 @@ const mergeConditions = (
 	})
 }
 
-export { getWireRequest }
+export { getWireRequest, getParamsHash }
