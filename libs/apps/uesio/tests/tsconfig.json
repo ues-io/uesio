@@ -7,6 +7,7 @@
 			"path": "./tsconfig.lib.json"
 		}
 	],
+	"typeRoots": ["node_modules/@types", "./generated/@types"],
 	"compilerOptions": {
 		"sourceMap": true
 	}

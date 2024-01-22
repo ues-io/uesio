@@ -22,10 +22,20 @@ func GetAnonSessionFrom(session *Session) *Session {
 }
 
 func GetStudioAnonSession(ctx context.Context) *Session {
-	return GetAnonSession(ctx, GetStudioSite())
+	return GetAnonSession(ctx, studioSite)
+}
+
+var studioSite *meta.Site
+
+func init() {
+	studioSite = generateStudioSite()
 }
 
 func GetStudioSite() *meta.Site {
+	return studioSite
+}
+
+func generateStudioSite() *meta.Site {
 	app := &meta.App{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: "uesio/studio",
