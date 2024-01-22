@@ -293,7 +293,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				],
 			},
 			{
-				// If type is no longer config value, clear out name
+				// If type is no longer config value, clear out config value
 				conditions: [
 					{
 						field: "type",
@@ -304,7 +304,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				],
 				updates: [
 					{
-						field: "name",
+						field: "configValue",
 					},
 				],
 			},
@@ -427,9 +427,10 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		],
 	},
 	{
-		name: "name",
-		type: "TEXT", //TO-DO Config Value type
-		label: "Name",
+		name: "configValue",
+		type: "METADATA",
+		label: "Config Value Name",
+		metadataType: "CONFIGVALUE",
 		displayConditions: [
 			{
 				field: "type",
@@ -593,8 +594,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	},
 	{
 		name: "name",
-		type: "TEXT", //TO-DO FFlag type
-		label: "Name",
+		type: "METADATA",
+		label: "Feature Flag",
+		metadataType: "FEATUREFLAG",
 		displayConditions: [
 			{
 				field: "type",
