@@ -1,0 +1,17 @@
+name: view_events
+definition:
+  events:
+    onload:
+      - signal: panel/TOGGLE
+        panel: mypanel
+  components:
+  panels:
+    mypanel:
+      uesio.type: uesio/io.dialog
+      title: View Events Test
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.text:
+            uesio.id: mytext
+            text: This should show up on page load

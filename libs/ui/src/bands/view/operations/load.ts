@@ -43,52 +43,53 @@ const useLoadWires = (
 
 	useEffect(() => {
 		;(async () => {
-			if (!wires) return
-			const wireNames = Object.keys(wires)
-			if (!wireNames.length) return
-			const state = getCurrentState()
+			if (wires) {
+				const wireNames = Object.keys(wires)
+				if (!wireNames.length) return
+				const state = getCurrentState()
 
-			const wiresToInit: Record<string, WireDefinition> = {}
-			const wiresToLoad: string[] = []
+				const wiresToInit: Record<string, WireDefinition> = {}
+				const wiresToLoad: string[] = []
 
-			for (const wireName in wires) {
-				const wireDef = wires[wireName]
-				const foundWire = selectWire(state, viewId, wireName)
+				for (const wireName in wires) {
+					const wireDef = wires[wireName]
+					const foundWire = selectWire(state, viewId, wireName)
 
-				// If we don't have the wire in redux,
-				// OR if we do but the definition of the wire has changed,
-				// then we have to both initialize and load the wire
-				if (
-					!foundWire ||
-					getDefinitionHash(wireDef) !== foundWire.definitionHash
-				) {
-					wiresToInit[wireName] = wireDef
-					wiresToLoad.push(wireName)
-					continue
+					// If we don't have the wire in redux,
+					// OR if we do but the definition of the wire has changed,
+					// then we have to both initialize and load the wire
+					if (
+						!foundWire ||
+						getDefinitionHash(wireDef) !== foundWire.definitionHash
+					) {
+						wiresToInit[wireName] = wireDef
+						wiresToLoad.push(wireName)
+						continue
+					}
+					// If the wire exists in redux, but has no params hash,
+					// that means it's never been loaded and needs to be.
+					// OR, if the params hash DOES exist, but has changed,
+					// then we also need to reload the wire.
+					const wireParamsHash = foundWire.paramsHash
+					if (
+						!wireParamsHash ||
+						(viewParamsHash !== wireParamsHash &&
+							wireHasParamsThatHaveChanged(
+								wireDef,
+								context.getParams()
+							))
+					) {
+						wiresToLoad.push(wireName)
+					}
 				}
-				// If the wire exists in redux, but has no params hash,
-				// that means it's never been loaded and needs to be.
-				// OR, if the params hash DOES exist, but has changed,
-				// then we also need to reload the wire.
-				const wireParamsHash = foundWire.paramsHash
-				if (
-					!wireParamsHash ||
-					(viewParamsHash !== wireParamsHash &&
-						wireHasParamsThatHaveChanged(
-							wireDef,
-							context.getParams()
-						))
-				) {
-					wiresToLoad.push(wireName)
+
+				if (Object.keys(wiresToInit).length) {
+					initializeWiresOp(context, wiresToInit)
 				}
-			}
 
-			if (Object.keys(wiresToInit).length) {
-				initializeWiresOp(context, wiresToInit)
-			}
-
-			if (wiresToLoad.length) {
-				await loadWiresOp(context, Array.from(wiresToLoad.values()))
+				if (wiresToLoad.length) {
+					await loadWiresOp(context, Array.from(wiresToLoad.values()))
+				}
 			}
 
 			if (prevRouteBatch.current !== route.batchid) {
