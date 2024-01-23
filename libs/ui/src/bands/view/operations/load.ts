@@ -39,7 +39,7 @@ const useLoadWires = (
 
 	const viewParamsHash = getParamsHash(context)
 	const viewId = context.getViewId()
-	const hasRunEvents = useRef(false)
+	const prevRouteBatch = useRef<string>()
 
 	useEffect(() => {
 		;(async () => {
@@ -91,8 +91,8 @@ const useLoadWires = (
 				await loadWiresOp(context, Array.from(wiresToLoad.values()))
 			}
 
-			if (!hasRunEvents.current) {
-				hasRunEvents.current = true
+			if (prevRouteBatch.current !== route.batchid) {
+				prevRouteBatch.current = route.batchid
 				await runEvents(events, context)
 			}
 		})()
