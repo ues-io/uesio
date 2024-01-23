@@ -3,7 +3,7 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-50
+      - bg-slate-100
       - grid
       - grid-cols-[auto_1fr_auto]
       - items-center
