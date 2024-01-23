@@ -22,6 +22,7 @@ const StyleDefaults = Object.freeze({
 	root: [],
 	selected: [],
 	disabled: [],
+	label: [],
 })
 
 const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
@@ -60,7 +61,9 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 			)}
 		>
 			{iconPlacement === "start" && icon}
-			{label && <span>{context.merge(label)}</span>}
+			{label && (
+				<span className={classes.label}>{context.merge(label)}</span>
+			)}
 			{iconPlacement === "end" && icon}
 		</Tag>
 	)
