@@ -4,8 +4,8 @@ import type {
 	MetadataFieldMetadata,
 	NumberMetadata,
 	ReferenceMetadata,
-	SelectListMetadata,
 } from "../bands/field/types"
+import { SelectListMetadata } from "./selectlist"
 import type { SignalDefinition } from "./signal"
 import type { WireConditionState } from "../bands/wire/conditions/conditions"
 import type { MetadataKey } from "../metadata/types"
@@ -15,13 +15,17 @@ type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
 
+type ViewOnlySelectListMetadata = {
+	source?: "local" | ""
+} & SelectListMetadata
+
 type ViewOnlyField = {
 	type: FieldType
 	subtype?: FieldType // For STRUCT/LIST/MAP types
 	label?: string
 	required?: boolean
 	reference?: ReferenceMetadata
-	selectlist?: SelectListMetadata
+	selectlist?: ViewOnlySelectListMetadata
 	number?: NumberMetadata
 	metadata?: MetadataFieldMetadata
 	fields?: Record<string, ViewOnlyField>

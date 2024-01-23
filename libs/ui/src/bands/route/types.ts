@@ -1,16 +1,17 @@
+import { Component } from "../componenttype/types"
 import { ComponentPackState } from "../../definition/componentpack"
+import { ComponentState } from "../component/types"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
 import { FeatureFlagState } from "../../definition/featureflag"
+import { FileState } from "../../definition/file"
 import { LabelState } from "../../definition/label"
-import { ThemeState } from "../../definition/theme"
-import { ViewMetadata } from "../../definition/ViewMetadata"
 import { MetadataKey } from "../../metadata/types"
 import { PlainCollection } from "../collection/types"
-import { ComponentState } from "../component/types"
+import { SelectListMetadata } from "../../wireexports"
 import { ServerWire } from "../wire/types"
-import { Component } from "../componenttype/types"
-import { FileState } from "../../definition/file"
+import { ThemeState } from "../../definition/theme"
+import { ViewMetadata } from "../../definition/ViewMetadata"
 
 type WorkspaceState = {
 	name: string
@@ -24,18 +25,19 @@ type SiteAdminState = {
 }
 
 type Dependencies = {
-	theme?: ThemeState[]
-	viewdef?: ViewMetadata[]
-	componentvariant?: ComponentVariant[]
+	collection?: PlainCollection[]
 	component?: ComponentState[]
-	componenttype?: Component[]
 	componentpack?: ComponentPackState[]
+	componenttype?: Component[]
+	componentvariant?: ComponentVariant[]
 	configvalue?: ConfigValueState[]
 	featureflag?: FeatureFlagState[]
-	label?: LabelState[]
-	wire?: ServerWire[]
-	collection?: PlainCollection[]
 	file?: FileState[]
+	label?: LabelState[]
+	selectlist?: SelectListMetadata[]
+	theme?: ThemeState[]
+	viewdef?: ViewMetadata[]
+	wire?: ServerWire[]
 }
 
 type RouteTag = {
