@@ -62,11 +62,11 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) (label
 
 	if err = group.Loop(func(item meta.Item, index string) error {
 		bundleableItem := item.(meta.BundleableItem)
+		label := bundleableItem.GetLabel()
 		// Strip off the grouping part of the key
 		key := bundleableItem.GetKey()
-		label := bundleableItem.GetLabel()
 		if grouping != "" {
-			key = strings.TrimPrefix(key, grouping+":")
+			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
 		}
 		if label == "" {
 			label = key

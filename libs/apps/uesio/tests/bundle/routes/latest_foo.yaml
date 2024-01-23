@@ -1,0 +1,4 @@
+name: latest_foo
+type: bot
+path: foo/latest
+bot: latest_foo

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"strings"
 
 	esbuild "github.com/evanw/esbuild/pkg/api"
@@ -63,8 +64,13 @@ func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreat
 	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
-	return route, nil
+func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	botAPI := jsdialect.NewRouteBotApi(bot, route, request, session, connection)
+	err := jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	if err != nil {
+		return nil, err
+	}
+	return jsdialect.HandleBotResponse(botAPI)
 }
 
 func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {

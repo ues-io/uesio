@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/stripe/stripe-go/v74"
@@ -10,9 +11,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) (*meta.Route, error) {
+func runPaymentSuccessRouteBot(route *meta.Route, request *http.Request, connection wire.Connection, uesioSession *sess.Session) (*meta.Route, error) {
 
 	paymentRoute := &meta.Route{
 		BundleableBase: meta.BundleableBase{

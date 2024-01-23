@@ -17,6 +17,15 @@ uesio login
 echo "Deleting and recreating the tests app and dev workspace..."
 hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/app_and_workspace.hurl
 
+# truncatetests workspace
+echo "Changing to truncatetests workspace..."
+uesio work -n truncatetests
+echo "Deploying tests app to Studio truncatetests workspace..."
+uesio deploy
+
+echo "Upserting seed data into truncatetests workspace..."
+uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
+
 # dev workspace
 echo "Configuring dev workspace..."
 uesio work -n dev
@@ -31,15 +40,6 @@ uesio upsert -f seed_data/tools.csv -s seed_data/tools_import.spec.json
 
 # Populate secrets and config values for the dev workspace
 hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/populate_secrets_and_config_values.hurl
-
-# truncatetests workspace
-echo "Changing to truncatetests workspace..."
-uesio work -n truncatetests
-echo "Deploying tests app to Studio truncatetests workspace..."
-uesio deploy
-
-echo "Upserting seed data into truncatetests workspace..."
-uesio upsert -f seed_data/wire_conditions.csv -s seed_data/wire_conditions_import.spec.json
 
 echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..."
 
