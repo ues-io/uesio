@@ -195,7 +195,10 @@ func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
 }
 
 type SelectListMetadata struct {
-	// Name is expected to be a fully-qualified key, e.g. "uesio/core.some_name"
+	// Name will sometimes be a fully-qualified key, e.g. "uesio/core.some_name",
+	// e.g. when we are requesting Select Lists by name, e.g. in a View Only SELECT field,
+	// but when we serialize it to send to the client,
+	// both name and namespace will be populated as you would expect.
 	Name                     string                  `yaml:"name,omitempty" json:"name"`
 	Namespace                string                  `yaml:"namespace,omitempty" json:"namespace"`
 	Options                  []meta.SelectListOption `yaml:"options,omitempty" json:"options"`
@@ -209,6 +212,10 @@ func (m *SelectListMetadata) GetBytes() ([]byte, error) {
 
 // GetKey satisfies the Depable interface
 func (m *SelectListMetadata) GetKey() string {
+	// Name will sometimes be a fully-qualified key, e.g. "uesio/core.some_name",
+	// e.g. when we are requesting Select Lists by name, e.g. in a View Only SELECT field,
+	// but when we serialize it to send to the client,
+	// both name and namespace will be populated as you would expect.
 	if m.Namespace != "" {
 		return m.Namespace + "." + m.Name
 	}
