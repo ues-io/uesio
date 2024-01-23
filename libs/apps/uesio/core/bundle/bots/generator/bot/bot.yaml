@@ -1,0 +1,25 @@
+name: bot
+dialect: "JAVASCRIPT"
+label: Bot
+type: "GENERATOR"
+params:
+  - name: type
+    type: SELECT
+    prompt: Bot Type
+    selectList: uesio/core.bottype
+    default: LISTENER
+  - name: name
+    prompt: Bot Name
+    type: METADATANAME
+  - name: collection
+    type: METADATA
+    prompt: Collection
+    metadataType: COLLECTION
+    conditions:
+      - param: type
+        type: fieldValue
+        operator: IN
+        values:
+          - BEFORESAVE
+          - AFTERSAVE
+public: true

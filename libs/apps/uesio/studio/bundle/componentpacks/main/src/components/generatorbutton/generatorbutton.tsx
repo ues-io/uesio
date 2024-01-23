@@ -31,19 +31,24 @@ const getDisplayConditionsFromBotParamConditions = (
 	conditions: param.ParamCondition[] = []
 ) => {
 	if (!conditions || !conditions.length) return conditions
-	return conditions.map(({ type, param, value }) => {
-		if (type === "hasValue" || type === "hasNoValue") {
-			return {
-				type,
-				value: "${" + param + "}",
-			}
-		} else {
-			return {
-				field: param,
-				value,
+	return conditions.map(
+		({ type = "fieldValue", operator, param, value, values }) => {
+			if (type === "hasValue" || type === "hasNoValue") {
+				return {
+					type,
+					value: "${" + param + "}",
+				}
+			} else {
+				return {
+					field: param,
+					operator,
+					type,
+					value,
+					values,
+				}
 			}
 		}
-	}) as component.DisplayCondition[]
+	) as component.DisplayCondition[]
 }
 
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({

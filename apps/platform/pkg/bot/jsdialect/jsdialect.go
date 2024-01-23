@@ -25,91 +25,6 @@ func Logger() {
 type JSDialect struct {
 }
 
-const DefaultListenerBotBody = `export default function %s(bot) {
-    const a = bot.params.get("a")
-    const b = bot.params.get("b")
-    bot.addResult("answer", a + b)
-}`
-
-const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
-    const itemNumbers = bot.params.get("itemNumbers")
-    const amount = bot.params.get("amount")
-	const actionName = bot.getActionName()
-
-	if (actionName !== "createOrder") {
-		bot.addError("unsupported action name: " + actionName)
-		return
-	}
-
-	// Call API to create order
-	const result = bot.http.request({
-		method: "POST",
-		url: bot.getIntegration().getBaseURL() + "/api/v1/orders",
-		body: {
-			lineItems: itemNumbers,
-			amount: amount,
-		},
-	})
-	if (result.code !== 200) {
-		bot.addError("could not place order: " + result.status)
-		return
-	}
-	const orderDetails = result.body
-	const { orderNumber } = orderDetails
-
-    bot.addResult("orderNumber", orderNumber)
-}`
-
-const DefaultLoadBotBody = `export default function %s(bot) {
-	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
-	const results = [
-		{
-			"first_name": "Luigi",
-			"last_name": "Vampa"
-		},
-		{
-			"first_name": "Myasia",
-			"last_name": "Harvey"
-		},
-	]
-	results.forEach((record) => bot.addRecord(record))
-}`
-
-const DefaultSaveBotBody = `export default function %s(bot) {
-	const { collection, collectionMetadata, upsert } = bot.saveRequest
-	bot.deletes.get().forEach((deleteApi) => {
-		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
-	})
-	bot.inserts.get().forEach((insertApi) => {
-		bot.log.info("got a record to insert, with id: " + insertApi.getId())
-	})
-	bot.updates.get().forEach((updateApi) => {
-		bot.log.info("got a record to update, with id: " + updateApi.getId())
-	})
-}`
-
-const DefaultBeforeSaveBotBody = `export default function %s(bot) {
-	bot.inserts.get().forEach(function (change) {
-		const recordId = change.get("uesio/core.id");
-	});
-	bot.deletes.get().forEach(function (change) {
-		const recordId = change.getOld("uesio/core.id");
-	});
-}`
-
-const DefaultAfterSaveBotBody = `export default function %s(bot) {
-	bot.inserts.get().forEach(function (change) {
-		const recordId = change.get("uesio/core.id");
-	});
-	bot.deletes.get().forEach(function (change) {
-		const recordId = change.getOld("uesio/core.id");
-	});
-}`
-
-const DefaultBotBody = `export default function %s(bot) {
-
-}`
-
 const MAX_TIMEOUT int = 30
 const DEFAULT_TIMEOUT int = 5
 
@@ -278,23 +193,4 @@ func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationC
 
 func (b *JSDialect) GetFilePath() string {
 	return "bot.js"
-}
-
-func (b *JSDialect) GetDefaultFileBody(botType string) string {
-	switch botType {
-	case "LISTENER":
-		return DefaultListenerBotBody
-	case "BEFORESAVE":
-		return DefaultBeforeSaveBotBody
-	case "AFTERSAVE":
-		return DefaultAfterSaveBotBody
-	case "LOAD":
-		return DefaultLoadBotBody
-	case "SAVE":
-		return DefaultSaveBotBody
-	case "RUNACTION":
-		return DefaultRunIntegrationActionBotBody
-	default:
-		return DefaultBotBody
-	}
 }

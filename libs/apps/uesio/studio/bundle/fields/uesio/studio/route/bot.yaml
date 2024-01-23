@@ -1,0 +1,6 @@
+name: bot
+type: METADATA
+label: Route Bot
+metadata:
+  type: BOT
+  grouping: ROUTE

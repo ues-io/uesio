@@ -1,0 +1,13 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: RUNACTION
+params:
+  - name: amount
+    type: NUMBER
+    label: Amount
+    required: true
+  - name: itemNumbers
+    type: LIST
+    label: Item Numbers
+    required: true
+public: true

@@ -1,0 +1,13 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: LISTENER
+params:
+  - name: a
+    type: NUMBER
+    label: A
+    required: true
+  - name: b
+    type: NUMBER
+    label: B
+    required: true
+public: true

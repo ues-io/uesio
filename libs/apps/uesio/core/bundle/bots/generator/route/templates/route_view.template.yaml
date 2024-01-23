@@ -2,3 +2,4 @@ name: ${name}
 path: ${path}
 view: ${view}
 theme: ${theme}
+title: ${title}

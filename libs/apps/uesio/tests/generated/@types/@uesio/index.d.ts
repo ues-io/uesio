@@ -367,6 +367,7 @@ interface LoadBotApi {
 	 * @returns A map of output parameters from the bot.
 	 */
 	callBot: CallBot
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 }
 interface SaveBotApi {
 	addError: (message: string, fieldId: string, recordId: string) => void
@@ -872,7 +873,7 @@ type Field = {
 	/**
 	 * If this is a "Select" field, returns the Select field specific metadata extensions
 	 */
-	getSelectMetadata: () => SelectListMetadata
+	getSelectMetadata: (context: Context) => SelectListMetadata
 	/**
 	 * If this is a "Select" field, returns a list of SelectOptions,
 	 * including a blank option if a blank option label is defined on the field
