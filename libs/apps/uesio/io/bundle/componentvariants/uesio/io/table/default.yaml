@@ -19,12 +19,15 @@ definition:
       - tracking-wider
       - uppercase
       - text-xs
-      - font-light
       - p-4
-      - text-slate-800
+      - text-slate-700
+      - bg-slate-100
+      - font-normal
       - border-b
-      - border-slate-100
+      - border-slate-200
       - whitespace-nowrap
+      - first:rounded-tl-lg
+      - last:rounded-tr-lg
     headerCellInner:
       - text-left
       - grid

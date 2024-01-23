@@ -12,5 +12,4 @@ definition:
       - uppercase
       - tracking-wider
       - text-xs
-      - font-light
 public: true
