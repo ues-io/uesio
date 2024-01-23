@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -151,8 +152,13 @@ func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreat
 	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
-	return route, nil
+func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	botAPI := NewRouteBotApi(bot, route, request, session, connection)
+	err := RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	if err != nil {
+		return nil, err
+	}
+	return HandleBotResponse(botAPI)
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {

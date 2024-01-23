@@ -405,7 +405,17 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		switch param.Type {
 		case "NUMBER":
 			// Cast to the corresponding type
-			if !isNumericType(paramValue) {
+			isNumeric := isNumericType(paramValue)
+			if !isNumeric {
+				// try to convert if to a Number if it is a string
+				if strVal, isString := paramValue.(string); isString {
+					if float64Val, err := strconv.ParseFloat(strVal, 64); err == nil {
+						isNumeric = true
+						params[param.Name] = float64Val
+					}
+				}
+			}
+			if !isNumeric {
 				return exceptions.NewInvalidParamException("could not convert param to number", param.Name)
 			}
 		case "CHECKBOX":

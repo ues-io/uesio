@@ -99,7 +99,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	}
 	route.Params = params
 
-	return datasource.RunRouteBots(route, session)
+	return datasource.RunRouteBots(route, r, session, connection)
 }
 
 func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
@@ -150,7 +150,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 
 	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
 
-	return datasource.RunRouteBots(route, session)
+	return datasource.RunRouteBots(route, r, session, connection)
 }
 
 func ResolveRouteParams(routeParams map[string]interface{}, s *sess.Session, vars url.Values) (map[string]interface{}, error) {
