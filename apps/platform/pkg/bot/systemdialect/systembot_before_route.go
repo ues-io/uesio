@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -21,9 +22,18 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 	}
 
 	err := request.LoopChanges(func(change *wire.ChangeItem) error {
-
 		routeType, _ := change.GetFieldAsString("uesio/studio.type")
-		if routeType != "redirect" {
+		switch routeType {
+		case "bot":
+			return depMap.AddRequired(change, "bot", "uesio/studio.bot")
+		case "redirect":
+			redirect, _ := change.GetFieldAsString("uesio/studio.redirect")
+			if redirect == "" {
+				return exceptions.NewBadRequestException("redirect field is required")
+			}
+			return nil
+		default:
+			// View
 			if err := depMap.AddOptional(change, "collection", "uesio/studio.collection"); err != nil {
 				return err
 			}

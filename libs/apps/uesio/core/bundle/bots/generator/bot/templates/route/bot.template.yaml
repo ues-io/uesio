@@ -1,0 +1,9 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: ROUTE
+params:
+  - name: promotion_name
+    type: TEXT
+    label: Promotion Name
+    required: true
+public: true

@@ -5,6 +5,7 @@ import { DisplayOperator } from "../component/display"
 export type ParamCondition = {
 	param: string
 	value?: string | boolean | number
+	values?: string[] | boolean[] | number[]
 	type: "fieldValue" | "hasValue" | "hasNoValue"
 	operator?: DisplayOperator
 }

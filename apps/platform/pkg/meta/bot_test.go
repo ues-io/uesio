@@ -274,6 +274,120 @@ func TestIsParamRelevant(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"operator NOT_EQUALS, value match",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Value:    "bar",
+							Operator: "NOT_EQUALS",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "bar",
+				},
+			},
+			false,
+		},
+		{
+			"operator NOT_EQUALS, value does NOT match",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Value:    "bar",
+							Operator: "NOT_EQUALS",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "booo",
+				},
+			},
+			true,
+		},
+		{
+			"operator NOT_IN, none of values match",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Values:   []interface{}{"bar", "baz"},
+							Operator: "NOT_IN",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "jjjjjjj",
+				},
+			},
+			true,
+		},
+		{
+			"operator NOT_IN, one of values matches",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Values:   []interface{}{"bar", "baz"},
+							Operator: "NOT_IN",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "baz",
+				},
+			},
+			false,
+		},
+		{
+			"operator IN, none of values match",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Values:   []interface{}{"bar", "baz"},
+							Operator: "IN",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "jjjjjjj",
+				},
+			},
+			false,
+		},
+		{
+			"operator IN, one of values matches",
+			args{
+				param: BotParam{
+					Name: "foo",
+					Conditions: []BotParamCondition{
+						{
+							Param:    "foo",
+							Values:   []interface{}{"bar", "baz"},
+							Operator: "IN",
+						},
+					},
+				},
+				paramValues: map[string]interface{}{
+					"foo": "baz",
+				},
+			},
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

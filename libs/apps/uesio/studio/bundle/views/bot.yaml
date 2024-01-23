@@ -208,6 +208,7 @@ definition:
                               values:
                                 - LISTENER
                                 - RUNACTION
+                                - ROUTE
                           components:
                             - uesio/io.list:
                                 uesio.id: botParams
