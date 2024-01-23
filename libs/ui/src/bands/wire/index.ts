@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit"
 import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { OrderState, WireConditionState } from "../../wireexports"
-import { ID_FIELD, PlainCollection } from "../collection/types"
+import { ID_FIELD, PlainCollectionMap } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import {
 	FieldValue,
@@ -20,6 +20,7 @@ import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
 import { isValueCondition } from "./conditions/conditions"
+import { SelectListMetadataMap } from "../../definition/selectlist"
 
 type DeletePayload = {
 	recordId: string
@@ -84,7 +85,11 @@ type RemoveConditionPayload = {
 } & EntityPayload
 
 type WireLoadAction = PayloadAction<
-	[PlainWire[], Record<string, PlainCollection> | undefined]
+	[
+		PlainWire[],
+		PlainCollectionMap | undefined,
+		SelectListMetadataMap | undefined
+	]
 >
 
 type SetIsLoadingAction = PayloadAction<PlainWire[]>

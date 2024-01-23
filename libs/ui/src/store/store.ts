@@ -1,22 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit"
 
 import collection from "../bands/collection"
-import route from "../bands/route"
-import user from "../bands/user"
-import session from "../bands/session"
 import component from "../bands/component"
-import wire from "../bands/wire"
-import file from "../bands/file"
-import site, { SiteState } from "../bands/site"
-import panel from "../bands/panel"
-import viewdef from "../bands/viewdef"
-import label from "../bands/label"
-import theme from "../bands/theme"
-import componentvariant from "../bands/componentvariant"
 import componenttype from "../bands/componenttype"
+import componentvariant from "../bands/componentvariant"
 import configvalue from "../bands/configvalue"
 import featureflag from "../bands/featureflag"
+import file from "../bands/file"
+import label from "../bands/label"
 import notification from "../bands/notification"
+import panel from "../bands/panel"
+import route from "../bands/route"
+import selectlist from "../bands/selectlist"
+import session from "../bands/session"
+import site, { SiteState } from "../bands/site"
+import theme from "../bands/theme"
+import user from "../bands/user"
+import viewdef from "../bands/viewdef"
+import wire from "../bands/wire"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { SessionState } from "../bands/session/types"
@@ -37,21 +38,22 @@ const create = (initialState: InitialState) => {
 		reducer: {
 			collection,
 			component,
-			file,
-			route,
-			user,
-			session,
-			theme,
-			panel,
-			notification,
-			wire,
-			viewdef,
-			label,
-			componentvariant,
 			componenttype,
+			componentvariant,
 			configvalue,
 			featureflag,
+			file,
+			label,
+			notification,
+			panel,
+			route,
+			selectlist,
+			session,
 			site,
+			theme,
+			user,
+			viewdef,
+			wire,
 		},
 		devTools: true,
 		preloadedState: {

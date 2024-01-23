@@ -8,9 +8,10 @@ import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
 import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
+import { selectors as selectListSelectors } from "../bands/selectlist"
 import { selectors as themeSelectors } from "../bands/theme"
-import { selectByName } from "../bands/featureflag"
-import { selectById } from "../bands/configvalue"
+import { selectors as featureFlagSelectors } from "../bands/featureflag"
+import { selectors as configValueSelectors } from "../bands/configvalue"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
@@ -418,9 +419,14 @@ class Context {
 	getStaticFileModstamp = (fileKey: string) =>
 		fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
-	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
+	getFeatureFlag = (name: string) =>
+		featureFlagSelectors.selectById(getCurrentState(), name)
 
-	getConfigValue = (name: string) => selectById(getCurrentState(), name)
+	getConfigValue = (name: string) =>
+		configValueSelectors.selectById(getCurrentState(), name)
+
+	getSelectList = (id: string) =>
+		selectListSelectors.selectById(getCurrentState(), id)
 
 	getViewDefId = () =>
 		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef

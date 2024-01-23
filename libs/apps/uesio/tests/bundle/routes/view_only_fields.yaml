@@ -1,0 +1,4 @@
+name: view_only_fields
+path: view_only_fields
+view: view_only_fields
+title: Tests View Only fields on regular or view only wires

@@ -205,7 +205,7 @@ export default (
 		return initWire(viewId, wireName, wireDef)
 	})
 
-	dispatch(init([initializedWires, undefined]))
+	dispatch(init([initializedWires, undefined, undefined]))
 
 	return context
 }

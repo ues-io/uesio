@@ -1,6 +1,6 @@
-import { DisplayCondition } from "../../componentexports"
 import { BundleableBase, MetadataType } from "../../metadataexports"
 import { CollectionFieldKey, CollectionKey } from "../wire/types"
+import { SelectListMetadata } from "../../definition/selectlist"
 
 type FieldMetadataMap = {
 	[key: string]: FieldMetadata
@@ -29,28 +29,8 @@ type FieldType =
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
-type SelectOption = {
-	label: string
-	value: string
-	languageLabel?: string
-	disabled?: boolean
-	// Title is used for acccessibility, it renders as a tooltip
-	// if you hover over a SelectOption for long enough
-	title?: string
-	validFor?: DisplayCondition[]
-	// if a SelectOption has childs then it will be a optgroup
-	options?: SelectOption[] | null
-}
-
 type NumberMetadata = {
 	decimals: number
-}
-
-type SelectListMetadata = {
-	name?: string
-	options: SelectOption[]
-	blank_option_label?: string
-	blank_option_language_label?: string
 }
 
 type FileMetadata = {
@@ -116,8 +96,6 @@ export type {
 	FieldMetadata,
 	FieldMetadataMap,
 	FieldMetadataPropertyPath,
-	SelectOption,
-	SelectListMetadata,
 	FieldType,
 	MetadataFieldMetadata,
 	NumberMetadata,

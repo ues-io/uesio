@@ -1,6 +1,5 @@
 import {
 	FieldType,
-	SelectOption,
 	NumberMetadata,
 	FieldMetadataMap,
 	FieldMetadata,
@@ -20,6 +19,7 @@ import {
 	COLLECTION_FIELD,
 } from "./bands/collection/types"
 import { addBlankSelectOption } from "./bands/field/utils"
+import { SelectOption } from "./definition/selectlist"
 
 export type {
 	PlainCollection,

@@ -101,32 +101,34 @@ func NewItem() *MetadataMergeData {
 
 func NewPreloadMetadata() *PreloadMetadata {
 	return &PreloadMetadata{
+		Collection:       NewItem(),
 		Component:        NewItem(),
-		Theme:            NewItem(),
-		ViewDef:          NewItem(),
 		ComponentPack:    NewItem(),
 		ComponentType:    NewItem(),
 		ComponentVariant: NewItem(),
 		ConfigValue:      NewItem(),
-		Label:            NewItem(),
 		FeatureFlag:      NewItem(),
-		Wire:             NewItem(),
-		Collection:       NewItem(),
+		Label:            NewItem(),
+		SelectList:       NewItem(),
 		StaticFile:       NewItem(),
+		Theme:            NewItem(),
+		ViewDef:          NewItem(),
+		Wire:             NewItem(),
 	}
 }
 
 type PreloadMetadata struct {
-	Theme            *MetadataMergeData `json:"theme,omitempty"`
-	ViewDef          *MetadataMergeData `json:"viewdef,omitempty"`
-	ComponentPack    *MetadataMergeData `json:"componentpack,omitempty"`
-	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
-	ComponentType    *MetadataMergeData `json:"componenttype,omitempty"`
-	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
-	Label            *MetadataMergeData `json:"label,omitempty"`
-	FeatureFlag      *MetadataMergeData `json:"featureflag,omitempty"`
-	Wire             *MetadataMergeData `json:"wire,omitempty"`
 	Collection       *MetadataMergeData `json:"collection,omitempty"`
 	Component        *MetadataMergeData `json:"component,omitempty"`
+	ComponentPack    *MetadataMergeData `json:"componentpack,omitempty"`
+	ComponentType    *MetadataMergeData `json:"componenttype,omitempty"`
+	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
+	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
+	FeatureFlag      *MetadataMergeData `json:"featureflag,omitempty"`
+	Label            *MetadataMergeData `json:"label,omitempty"`
+	SelectList       *MetadataMergeData `json:"selectlist,omitempty"`
 	StaticFile       *MetadataMergeData `json:"file,omitempty"`
+	Theme            *MetadataMergeData `json:"theme,omitempty"`
+	ViewDef          *MetadataMergeData `json:"viewdef,omitempty"`
+	Wire             *MetadataMergeData `json:"wire,omitempty"`
 }
