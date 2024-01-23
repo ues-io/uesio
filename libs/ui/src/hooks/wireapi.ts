@@ -86,7 +86,7 @@ const useDynamicWire = (
 	useDeepCompareEffect(() => {
 		if (!wire || !wireDef) return
 		const initializedWires = initExistingWire(wire.source, wireDef)
-		dispatch(init([[initializedWires], undefined]))
+		dispatch(init([[initializedWires], undefined, undefined]))
 	}, [!!wire, wireDef])
 	return wire
 }

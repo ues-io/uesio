@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -327,40 +326,21 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 }
 
 func LoadSelectListMetadata(key string, metadataCache *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
-
-	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
-
-	selectListMetadata, ok := metadataCache.SelectLists[selectListKey]
-
-	if !ok {
-
-		selectList, err := meta.NewSelectList(selectListKey)
+	if _, err := metadataCache.GetSelectList(key); err != nil {
+		selectList, err := meta.NewSelectList(key)
 		if err != nil {
 			return err
 		}
-		err = bundle.Load(selectList, session, connection)
-		if err != nil {
+		if err = bundle.Load(selectList, session, connection); err != nil {
 			return err
 		}
-		selectListMetadata = &wire.SelectListMetadata{
+		metadataCache.AddSelectList(key, &wire.SelectListMetadata{
 			Name:                     selectList.Name,
+			Namespace:                selectList.Namespace,
 			Options:                  selectList.Options,
 			BlankOptionLabel:         selectList.BlankOptionLabel,
 			BlankOptionLanguageLabel: selectList.BlankOptionLanguageLabel,
-		}
+		})
 	}
-
-	collectionMetadata, err := metadataCache.GetCollection(collectionKey)
-	if err != nil {
-		return errors.New("Collection not Found for Select List: " + collectionKey)
-	}
-
-	fieldMetadata, err := collectionMetadata.GetField(fieldKey)
-	if err != nil {
-		return errors.New("Id not Found for Select List: " + fieldKey)
-	}
-
-	fieldMetadata.SelectListMetadata = selectListMetadata
-
 	return nil
 }

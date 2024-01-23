@@ -4,6 +4,7 @@ import {
 	CollectionKey,
 	OrderState,
 } from "../bands/wire/types"
+import { FieldType, SelectListMetadata } from "../wireexports"
 
 type LoadRequest = {
 	batchid?: string
@@ -23,6 +24,10 @@ type LoadRequest = {
 type LoadRequestField = {
 	id: CollectionFieldKey
 	fields?: LoadRequestField[]
+	// If this is a View Only field (or on a View-only Wire),
+	// then we will have field "metadata" specified inline on the Field
+	type?: FieldType
+	selectlist?: SelectListMetadata
 }
 
 type LoadRequestBatch = {

@@ -239,12 +239,6 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		var ops []*wire.LoadOp
 
 		for _, pair := range depMap.Wires {
-
-			viewOnly := meta.GetNodeValueAsBool(pair.Node, "viewOnly", false)
-			if viewOnly {
-				continue
-			}
-
 			loadOp := &wire.LoadOp{
 				WireName:  pair.Key,
 				View:      view.GetKey() + "(" + viewInstanceID + ")",
@@ -262,6 +256,12 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		if err != nil {
 			return err
 		}
+
+		metadata.LoopSelectLists(func(key string, selectList *wire.SelectListMetadata) {
+			// If this collection is already in the metadata, we need to merge the new and existing
+			// to create a union of all metadata requested by any wires
+			deps.SelectList.AddItemIfNotExists(selectList)
+		})
 
 		for _, collection := range metadata.Collections {
 			// If this collection is already in the metadata, we need to merge the new and existing

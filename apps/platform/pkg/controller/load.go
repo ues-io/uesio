@@ -33,6 +33,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 	// Only include metadata if explicitly requested
 	if batch.IncludeMetadata == true {
 		loadResponse.Collections = metadata.Collections
+		loadResponse.SelectLists = metadata.GetSelectLists()
 	}
 	file.RespondJSON(w, r, loadResponse.TrimStructForSerialization())
 }

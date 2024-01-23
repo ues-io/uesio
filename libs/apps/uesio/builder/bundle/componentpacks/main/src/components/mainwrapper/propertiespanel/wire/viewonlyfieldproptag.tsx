@@ -93,9 +93,46 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 							label: " ",
 							properties: [
 								{
+									name: "source",
+									label: "Options source",
+									type: "SELECT",
+									options: [
+										{
+											value: "",
+											label: "Select List",
+										},
+										{
+											value: "manual",
+											label: "Manually-specified options",
+										},
+									],
+								},
+								{
+									name: "name",
+									label: "Select List name",
+									type: "METADATA",
+									metadataType: "SELECTLIST",
+									displayConditions: [
+										{
+											type: "fieldValue",
+											field: "source",
+											operator: "NOT_EQUALS",
+											value: "local",
+										},
+									],
+								},
+								{
 									name: "blank_option_label",
 									label: "Blank option label",
 									type: "TEXT",
+									displayConditions: [
+										{
+											type: "fieldValue",
+											field: "source",
+											operator: "EQUALS",
+											value: "local",
+										},
+									],
 								},
 								{
 									name: "options",
@@ -127,6 +164,14 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 											},
 										],
 									},
+									displayConditions: [
+										{
+											type: "fieldValue",
+											field: "source",
+											operator: "EQUALS",
+											value: "local",
+										},
+									],
 								},
 							],
 						},
@@ -155,7 +200,7 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 						getHomeSection(["name", "type", "label", "number"]),
 						{
 							id: "selectlist",
-							label: "Select Options",
+							label: "Select List",
 							type: "CUSTOM",
 							properties: ["selectlist"],
 							displayConditions: [
