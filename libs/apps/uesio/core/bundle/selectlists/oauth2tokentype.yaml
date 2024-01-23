@@ -1,4 +1,5 @@
 name: oauth2tokentype
+label: OAuth Token Type
 blankOptionLabel: "(Use Default)"
 options:
   - label: "Bearer"

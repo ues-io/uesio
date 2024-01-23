@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -48,6 +49,9 @@ func extract(zf *zip.File, dest string) error {
 
 	f, err := os.Create(path)
 	if err != nil {
+		if _, isPathErr := err.(*fs.PathError); isPathErr {
+			return nil
+		}
 		return err
 	}
 	defer f.Close()

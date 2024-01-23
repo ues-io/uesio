@@ -10,8 +10,10 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
@@ -24,14 +26,18 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	componentPack := meta.NewBaseComponentPack(namespace, name)
-
-	if err := bundle.Load(componentPack, session, nil); err != nil {
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	if err = bundle.Load(componentPack, session, nil); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
 
 	buf := &bytes.Buffer{}
-	fileMeta, err := bundle.GetItemAttachment(buf, componentPack, "dist/"+path, session)
+	fileMeta, err := bundle.GetItemAttachment(buf, componentPack, "dist/"+path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

@@ -16,7 +16,7 @@ type AfterSaveAPI struct {
 	op         *wire.SaveOp
 	session    *sess.Session
 	connection wire.Connection
-	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
+	AsAdmin    AsAdminApi `bot:"asAdmin"`
 }
 
 func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) *AfterSaveAPI {
@@ -34,7 +34,7 @@ func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connec
 		session:    session,
 		op:         request,
 		connection: connection,
-		AsAdmin: AdminCallBotAPI{
+		AsAdmin: AsAdminApi{
 			session:    session,
 			connection: connection,
 		},

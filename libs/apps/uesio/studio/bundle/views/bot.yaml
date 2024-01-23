@@ -35,6 +35,8 @@ definition:
           valueSource: LOOKUP
           lookupWire: bots
           lookupField: uesio/core.id
+        - field: uesio/core.fieldid
+          operator: IS_BLANK
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -53,8 +55,8 @@ definition:
                 itemNameSpaceIcon: ${bots:uesio/studio.appicon}
                 itemNameSpaceColor: ${bots:uesio/studio.appcolor}
         content:
-          - uesio/io.list:
-              uesio.id: botsDeck
+          - uesio/io.item:
+              uesio.id: botsItem
               wire: bots
               mode: READ
               components:
@@ -102,6 +104,10 @@ definition:
                                     componentsignal: UPLOAD_FILE
                                     targettype: specific
                                     componentid: botcontent
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bots
+                                      - attachments
                                   - signal: component/CALL
                                     component: uesio/io.list
                                     componentsignal: SET_READ_MODE
@@ -190,6 +196,7 @@ definition:
                                 language: $Record{bots:uesio/studio.dialect}
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
+                                  - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

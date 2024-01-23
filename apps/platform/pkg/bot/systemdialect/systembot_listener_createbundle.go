@@ -7,6 +7,8 @@ import (
 	"io"
 	"strconv"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -14,35 +16,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
-	"golang.org/x/sync/errgroup"
 )
-
-type multi struct {
-	io.Writer
-	cs []io.Closer
-}
-
-func MultiWriteCloser(ws ...io.Writer) io.WriteCloser {
-	m := &multi{Writer: io.MultiWriter(ws...)}
-	for _, w := range ws {
-		if c, ok := w.(io.Closer); ok {
-			m.cs = append(m.cs, c)
-		}
-	}
-	return m
-}
-
-func (m *multi) Close() error {
-	var first error
-	for _, c := range m.cs {
-		if err := c.Close(); err != nil && first == nil {
-			first = err
-		}
-	}
-	return first
-}
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
@@ -158,7 +135,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		if err != nil {
 			return nil, err
 		}
-		return MultiWriteCloser(w, zip), nil
+		return types.MultiWriteCloser(w, zip), nil
 	}
 
 	err = retrieve.RetrieveBundle("", creator, source)

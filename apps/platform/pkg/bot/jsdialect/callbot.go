@@ -4,40 +4,10 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
-
-type AdminCallBotAPI struct {
-	session    *sess.Session
-	connection wire.Connection
-}
-
-func (acba *AdminCallBotAPI) Save(collection string, changes wire.Collection) error {
-	return botSave(collection, changes, datasource.GetSiteAdminSession(acba.session), acba.connection)
-}
-
-func (acba *AdminCallBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, datasource.GetSiteAdminSession(acba.session), acba.connection)
-}
-
-func (acba *AdminCallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
-	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(acba.session), acba.connection)
-}
-
-func (acba *AdminCallBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
-	return botCall(botKey, params, acba.session, acba.connection)
-}
-
-func (acba *AdminCallBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(acba.session))
-}
-
-func (acba *AdminCallBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, datasource.GetSiteAdminSession(acba.session), acba.connection)
-}
 
 func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connection, params map[string]interface{}) *CallBotAPI {
 	return &CallBotAPI{
@@ -45,7 +15,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 		Params: &ParamsAPI{
 			Params: params,
 		},
-		AsAdmin: AdminCallBotAPI{
+		AsAdmin: AsAdminApi{
 			session:    session,
 			connection: connection,
 		},
@@ -63,9 +33,9 @@ type CallBotAPI struct {
 	connection wire.Connection
 	bot        *meta.Bot
 	Results    map[string]interface{}
-	AsAdmin    AdminCallBotAPI `bot:"asAdmin"`
-	LogApi     *BotLogAPI      `bot:"log"`
-	Http       *BotHttpAPI     `bot:"http"`
+	AsAdmin    AsAdminApi  `bot:"asAdmin"`
+	LogApi     *BotLogAPI  `bot:"log"`
+	Http       *BotHttpAPI `bot:"http"`
 }
 
 func (cba *CallBotAPI) AddResult(key string, value interface{}) {

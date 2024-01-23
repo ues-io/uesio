@@ -50,7 +50,7 @@ func Deploy(sourceDir string) error {
 
 	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 
-	resp, err := call.Request("POST", url, payload, sessid, context.NewWorkspaceContext(app, workspace))
+	resp, err := call.Post(url, payload, sessid, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}

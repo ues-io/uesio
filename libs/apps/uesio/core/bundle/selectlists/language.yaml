@@ -1,4 +1,5 @@
 name: language
+label: Language
 options:
   - label: English
     value: en

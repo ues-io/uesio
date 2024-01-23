@@ -1,4 +1,5 @@
 name: accepttypes
+label: File types to allow
 options:
   - label: "Any"
     value: "ANY"

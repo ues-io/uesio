@@ -12,11 +12,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, connection wire.Connection, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(bot *meta.Bot, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		// Private
+		bot:                   bot,
 		loadOp:                loadOp,
-		connection:            connection,
 		integrationConnection: integrationConnection,
 		// Public
 		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
@@ -71,7 +71,7 @@ type LoadRequestMetadata struct {
 
 type LoadBotAPI struct {
 	// Private
-	connection            wire.Connection
+	bot                   *meta.Bot
 	integrationConnection *wire.IntegrationConnection
 	loadErrors            []string
 	loadOp                *wire.LoadOp
@@ -79,6 +79,10 @@ type LoadBotAPI struct {
 	Http                *BotHttpAPI          `bot:"http"`
 	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
 	LogApi              *BotLogAPI           `bot:"log"`
+}
+
+func (lb *LoadBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, lb.integrationConnection.GetSession(), lb.integrationConnection.GetPlatformConnection())
 }
 
 func (lb *LoadBotAPI) GetLoadErrors() []string {
@@ -96,10 +100,11 @@ func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
 	return lb.integrationConnection.GetCredentials().GetInterfaceMap()
 }
 func (lb *LoadBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
-	if lb.connection == nil {
+	conn := lb.integrationConnection.GetPlatformConnection()
+	if conn == nil {
 		return nil, errors.New("no collection metadata available for this connection")
 	}
-	collectionMetadata, err := lb.connection.GetMetadata().GetCollection(collectionKey)
+	collectionMetadata, err := conn.GetMetadata().GetCollection(collectionKey)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +134,7 @@ func (lb *LoadBotAPI) AddError(error string) {
 }
 
 func (lb *LoadBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
-	return botCall(botKey, params, lb.getSession(), lb.connection)
+	return botCall(botKey, params, lb.getSession(), lb.integrationConnection.GetPlatformConnection())
 }
 
 func (lb *LoadBotAPI) AddRecord(record interface{}) {

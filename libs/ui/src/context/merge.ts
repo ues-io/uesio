@@ -189,17 +189,17 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	SelectList: (expression, context) => {
 		const fieldMetadata = context.getWireCollection()?.getField(expression)
-		const selectListMetadata = fieldMetadata?.getSelectOptions(context)
+		const options = fieldMetadata?.getSelectOptions(context)
 		const value = context.getRecord()?.getFieldValue(expression)
-		const label =
-			selectListMetadata?.find((el) => el.value === value)?.label || ""
+		const label = options?.find((el) => el.value === value)?.label || ""
 		return context.getLabel(label) || ""
 	},
 	File: (expression, context) => getURLFromFullName(context, expression),
 	UserFile: (expression, context) => {
+		const [wireName, fieldName] = parseWireExpression(expression)
 		const file = context
-			.getRecord()
-			?.getFieldValue<PlainWireRecord>(expression)
+			.getRecord(wireName)
+			?.getFieldValue<PlainWireRecord>(fieldName)
 		if (!file) return ""
 		const fileId = file[ID_FIELD] as string
 		if (!fileId) return ""

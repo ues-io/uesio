@@ -168,8 +168,8 @@ func Load(item meta.BundleableItem, session *sess.Session, connection wire.Conne
 	return bs.GetItem(item)
 }
 
-func GetItemAttachment(w io.Writer, item meta.AttachableItem, path string, session *sess.Session) (file.Metadata, error) {
-	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, nil)
+func GetItemAttachment(w io.Writer, item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (file.Metadata, error) {
+	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		return nil, err
 	}

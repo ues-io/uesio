@@ -8,6 +8,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func GetMapNodeByKey(node *yaml.Node, key string) *yaml.Node {
+	targetNode, err := GetMapNode(node, key)
+	if err != nil {
+		return nil
+	}
+	return targetNode
+}
+
 func GetNodeValueAsString(node *yaml.Node, key string) string {
 	keyNode, err := GetMapNode(node, key)
 	if err != nil {

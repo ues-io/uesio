@@ -3,6 +3,7 @@ package workspace
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -72,7 +73,12 @@ func RetrieveBundleForAppWorkspace(appName, workspaceName, outputDir string) err
 		return err
 	}
 
-	resp, err := call.Request("GET", url, nil, sessionId, context.NewWorkspaceContext(appName, workspaceName))
+	resp, err := call.Request(&call.RequestSpec{
+		Method:     http.MethodGet,
+		Url:        url,
+		SessionId:  sessionId,
+		AppContext: context.NewWorkspaceContext(appName, workspaceName),
+	})
 	if err != nil {
 		return err
 	}

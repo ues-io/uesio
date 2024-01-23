@@ -93,7 +93,7 @@ func AppClone(targetDir string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, nil)
+	resp, err := call.Post(generateURL, payloadBytes, sessionId, nil)
 	if err != nil {
 		return err
 	}

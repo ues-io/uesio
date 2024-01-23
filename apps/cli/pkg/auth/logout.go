@@ -17,7 +17,7 @@ func Logout() (*UserMergeData, error) {
 	if sessionId == "" {
 		return nil, nil
 	}
-	resp, err := call.Request("POST", "site/auth/logout", nil, sessionId, nil)
+	resp, err := call.Post("site/auth/logout", nil, sessionId, nil)
 	if err != nil {
 		return nil, err
 	}

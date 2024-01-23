@@ -1,6 +1,8 @@
 import { Context } from "../../../context/context"
-import loadWiresOp from "../../wire/operations/load"
-import initializeWiresOp from "../../wire/operations/initialize"
+import loadWiresOp, { getParamsHash } from "../../wire/operations/load"
+import initializeWiresOp, {
+	getDefinitionHash,
+} from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
@@ -21,14 +23,6 @@ const runEvents = async (
 	}
 }
 
-const usePrevious = <T>(value: T): T | undefined => {
-	const ref = useRef<T>()
-	useEffect(() => {
-		ref.current = value
-	})
-	return ref.current
-}
-
 const useLoadWires = (
 	context: Context,
 	viewDef: ViewDefinition | undefined
@@ -43,87 +37,67 @@ const useLoadWires = (
 
 	const { wires, events } = viewDef
 
-	// Keeps track of the value of wires from the previous render
-	const prevWires = usePrevious(wires)
-	const prevRoute = usePrevious(route.path)
-	const prevParams = usePrevious(context.getParams())
+	const viewParamsHash = getParamsHash(context)
+	const viewId = context.getViewId()
+	const hasRunEvents = useRef(false)
 
 	useEffect(() => {
 		;(async () => {
-			if (wires) {
-				const wireNames = Object.keys(wires)
-				if (!wireNames.length) return
-				const state = getCurrentState()
+			if (!wires) return
+			const wireNames = Object.keys(wires)
+			if (!wireNames.length) return
+			const state = getCurrentState()
 
-				const viewId = context.getViewId()
+			const wiresToInit: Record<string, WireDefinition> = {}
+			const wiresToLoad: string[] = []
 
-				// Only initialize wires that don't already exist in our redux store.
-				// This filters out our pre-loaded wires so they aren't initialized twice.
-				const wiresToInit = Object.fromEntries(
-					wireNames.flatMap((wirename) => {
-						const wireDef = wires[wirename]
-						const foundWire = selectWire(state, viewId, wirename)
-						return foundWire ? [] : [[wirename, wireDef]]
-					})
-				)
+			for (const wireName in wires) {
+				const wireDef = wires[wireName]
+				const foundWire = selectWire(state, viewId, wireName)
 
-				if (Object.keys(wiresToInit).length) {
-					initializeWiresOp(context, wiresToInit)
+				// If we don't have the wire in redux,
+				// OR if we do but the definition of the wire has changed,
+				// then we have to both initialize and load the wire
+				if (
+					!foundWire ||
+					getDefinitionHash(wireDef) !== foundWire.definitionHash
+				) {
+					wiresToInit[wireName] = wireDef
+					wiresToLoad.push(wireName)
+					continue
 				}
-
-				if (wireNames.length) {
-					await loadWiresOp(context, wireNames)
+				// If the wire exists in redux, but has no params hash,
+				// that means it's never been loaded and needs to be.
+				// OR, if the params hash DOES exist, but has changed,
+				// then we also need to reload the wire.
+				const wireParamsHash = foundWire.paramsHash
+				if (
+					!wireParamsHash ||
+					(viewParamsHash !== wireParamsHash &&
+						wireHasParamsThatHaveChanged(
+							wireDef,
+							context.getParams()
+						))
+				) {
+					wiresToLoad.push(wireName)
 				}
 			}
-			await runEvents(events, context)
-		})()
-		// TODO: There is probably a better way to check than JSON.stringify() on params.
-		// consider useDeepCompareEffect(), or memoization
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [route.batchid, viewDefId])
 
-	useEffect(() => {
-		;(async () => {
-			if (!wires || !prevWires) return
-			if (prevRoute !== route.path) return
-
-			// This filters out any wires whose definition did not change since the
-			// last time this hook was run. That way we only re-initialize and load
-			// wires that need it.
-			const changedWires = Object.entries(wires).flatMap(
-				([wirename, wire]) => {
-					const prev = prevWires[wirename]
-					if (!prev) return [wirename]
-					if (JSON.stringify(wire) !== JSON.stringify(prev))
-						return [wirename]
-					return []
-				}
-			)
-			const newParams = context.getParams()
-			const paramsHaveChanged =
-				JSON.stringify(newParams) !== JSON.stringify(prevParams)
-
-			// We also need to update any wires with Conditions / Defaults params have changed
-			const wiresWithUpdatedParams = paramsHaveChanged
-				? Object.entries(wires).flatMap(([wirename, wire]) =>
-						wireHasParamsThatHaveChanged(wire, newParams)
-							? [wirename]
-							: []
-				  )
-				: []
-			if (!changedWires.length && !wiresWithUpdatedParams.length) return
-			if (changedWires.length) {
-				const wiresToInit = Object.fromEntries(
-					changedWires.map((wirename) => [wirename, wires[wirename]])
-				)
+			if (Object.keys(wiresToInit).length) {
 				initializeWiresOp(context, wiresToInit)
 			}
-			const wiresToLoad = new Set(
-				changedWires.concat(wiresWithUpdatedParams)
-			)
-			await loadWiresOp(context, Array.from(wiresToLoad.values()))
+
+			if (wiresToLoad.length) {
+				await loadWiresOp(context, Array.from(wiresToLoad.values()))
+			}
+
+			if (!hasRunEvents.current) {
+				hasRunEvents.current = true
+				await runEvents(events, context)
+			}
 		})()
-	}, [wires, prevWires, route.path, prevRoute, prevParams, context])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [route.batchid, viewDefId, wires, viewParamsHash])
 }
 
 const wireHasParamsThatHaveChanged = (

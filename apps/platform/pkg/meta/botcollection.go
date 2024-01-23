@@ -35,6 +35,26 @@ func (bc *BotCollection) AddItem(item Item) error {
 	return nil
 }
 
+func (bc *BotCollection) NewItemFromUniqueKey(uniqueKey string) Item {
+	if uniqueKey == "" {
+		return nil
+	}
+	parts := strings.Split(uniqueKey, ":")
+	// "%s:%s:%s:%s", workspace, GetFullyQualifiedKey(b.CollectionRef, b.Namespace), b.Type, b.Name
+	// e.g. zach/foo:dev:collectionKey:LISTENER:dec28
+	return &Bot{
+		BundleableBase: BundleableBase{
+			Name:      parts[4],
+			Namespace: parts[0],
+			Workspace: &Workspace{
+				Name: parts[1],
+			},
+		},
+		CollectionRef: parts[2],
+		Type:          parts[3],
+	}
+}
+
 func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem {
 
 	parts := strings.Split(path, "/")
@@ -150,6 +170,16 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 		}
 		isDefinition := parts[2] == "bot.yaml"
 		return partLength == 3 && (isDefinition || !definitionOnly)
+	}
+}
+
+// GetTypescriptableItemConditions returns BundleConditions to allow filtering a group
+// to only return those items for which
+func (bc *BotCollection) GetTypescriptableItemConditions() BundleConditions {
+	return BundleConditions{
+		"uesio/studio.type": []string{
+			"LISTENER",
+		},
 	}
 }
 

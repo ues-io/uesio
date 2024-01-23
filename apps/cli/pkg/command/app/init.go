@@ -157,7 +157,7 @@ func AppInit() error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Request("POST", generateURL, payloadBytes, sessid, nil)
+	resp, err := call.Post(generateURL, payloadBytes, sessid, nil)
 	if err != nil {
 		return err
 	}

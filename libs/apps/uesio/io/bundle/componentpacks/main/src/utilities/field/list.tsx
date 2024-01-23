@@ -101,7 +101,7 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 				updateable: true,
 				selectlist:
 					subType === "SELECT" || subType === "MULTISELECT"
-						? fieldMetadata?.getSelectMetadata()
+						? fieldMetadata?.getSelectMetadata(context)
 						: undefined,
 				number:
 					subType === "NUMBER"

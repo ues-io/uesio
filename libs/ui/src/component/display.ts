@@ -3,6 +3,7 @@ import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
 import { Wire, WireRecord } from "../wireexports"
 import { DISPLAY_CONDITIONS } from "../componentexports"
+import { metadata } from ".."
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 	T,
@@ -154,6 +155,14 @@ type wireHasNoActiveConditions = {
 	wire: string
 }
 
+type HasConfigValue = {
+	type: "hasConfigValue"
+	configValue: metadata.MetadataKey
+	operator: DisplayOperator
+	value?: string
+	values?: string[]
+}
+
 type HasProfile = {
 	type: "hasProfile"
 	profile: string
@@ -193,6 +202,7 @@ type DisplayCondition =
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
+	| HasConfigValue
 
 type ItemContext<T> = {
 	item: T
@@ -354,7 +364,10 @@ function should(condition: DisplayCondition, context: Context): boolean {
 			: hasAllRecords
 	}
 
-	const canHaveMultipleValues = type === "fieldValue" || type === "paramValue"
+	const canHaveMultipleValues =
+		type === "fieldValue" ||
+		type === "paramValue" ||
+		type === "hasConfigValue"
 
 	const compareToValue =
 		typeof condition.value === "string"
@@ -363,6 +376,12 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	if (type === "hasNoValue") return !compareToValue
 	if (type === "hasValue") return !!compareToValue
+	if (type === "hasConfigValue")
+		return compare(
+			compareToValue,
+			context.getConfigValue(condition.configValue)?.value,
+			operator
+		)
 	if (type === "paramValue")
 		return compare(
 			compareToValue,

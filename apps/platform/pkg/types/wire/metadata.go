@@ -13,7 +13,7 @@ import (
 
 type MetadataCache struct {
 	Collections map[string]*CollectionMetadata
-	SelectLists map[string]*SelectListMetadata
+	selectLists map[string]*SelectListMetadata
 }
 
 func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
@@ -29,6 +29,33 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 		return nil, errors.New("No metadata provided for collection: " + key)
 	}
 	return collectionMetadata, nil
+}
+
+func (mc *MetadataCache) AddSelectList(key string, metadata *SelectListMetadata) {
+	if mc.selectLists == nil {
+		mc.selectLists = map[string]*SelectListMetadata{}
+	}
+	mc.selectLists[key] = metadata
+}
+
+func (mc *MetadataCache) GetSelectList(key string) (*SelectListMetadata, error) {
+	selectListMetadata, ok := mc.selectLists[key]
+	if !ok {
+		return nil, errors.New("No metadata found for select list: " + key)
+	}
+	return selectListMetadata, nil
+}
+
+func (mc *MetadataCache) LoopSelectLists(iter func(key string, metadata *SelectListMetadata)) {
+	if mc.selectLists != nil {
+		for key, md := range mc.selectLists {
+			iter(key, md)
+		}
+	}
+}
+
+func (mc *MetadataCache) GetSelectLists() map[string]*SelectListMetadata {
+	return mc.selectLists
 }
 
 type CollectionMetadata struct {
@@ -168,10 +195,31 @@ func (cm *CollectionMetadata) Merge(other *CollectionMetadata) {
 }
 
 type SelectListMetadata struct {
-	Name                     string                  `json:"name"`
-	Options                  []meta.SelectListOption `json:"options"`
-	BlankOptionLabel         string                  `json:"blank_option_label"`
-	BlankOptionLanguageLabel string                  `json:"blank_option_language_label"`
+	// Name will sometimes be a fully-qualified key, e.g. "uesio/core.some_name",
+	// e.g. when we are requesting Select Lists by name, e.g. in a View Only SELECT field,
+	// but when we serialize it to send to the client,
+	// both name and namespace will be populated as you would expect.
+	Name                     string                  `yaml:"name,omitempty" json:"name"`
+	Namespace                string                  `yaml:"namespace,omitempty" json:"namespace"`
+	Options                  []meta.SelectListOption `yaml:"options,omitempty" json:"options"`
+	BlankOptionLabel         string                  `yaml:"blank_option_label,omitempty" json:"blank_option_label"`
+	BlankOptionLanguageLabel string                  `yaml:"blank_option_language_label,omitempty" json:"blank_option_language_label"`
+}
+
+func (m *SelectListMetadata) GetBytes() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+// GetKey satisfies the Depable interface
+func (m *SelectListMetadata) GetKey() string {
+	// Name will sometimes be a fully-qualified key, e.g. "uesio/core.some_name",
+	// e.g. when we are requesting Select Lists by name, e.g. in a View Only SELECT field,
+	// but when we serialize it to send to the client,
+	// both name and namespace will be populated as you would expect.
+	if m.Namespace != "" {
+		return m.Namespace + "." + m.Name
+	}
+	return m.Name
 }
 
 type FileMetadata struct {

@@ -272,6 +272,11 @@ func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 	return ci.GetOldField(fieldID)
 }
 
+func (ci *ChangeItem) HasFieldChanges(fieldID string) bool {
+	changeVal, err := ci.FieldChanges.GetField(fieldID)
+	return err == nil && changeVal != nil
+}
+
 func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {
 	return ci.FieldChanges.SetField(fieldID, value)
 }

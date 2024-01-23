@@ -61,6 +61,12 @@ export default async (context: Context, wires?: string[]) => {
 		}
 	}
 
-	dispatch(load([Object.values(wiresResponse), response.collections]))
+	dispatch(
+		load([
+			Object.values(wiresResponse),
+			response.collections,
+			response.selectlists,
+		])
+	)
 	return context
 }

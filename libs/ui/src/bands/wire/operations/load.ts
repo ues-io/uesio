@@ -1,5 +1,5 @@
 import { Context } from "../../../context/context"
-import { LoadRequest } from "../../../load/loadrequest"
+import { LoadRequest, LoadRequestField } from "../../../load/loadrequest"
 import { LoadResponseBatch } from "../../../load/loadresponse"
 import { platform } from "../../../platform/platform"
 import { PlainWire } from "../types"
@@ -14,8 +14,17 @@ import { dispatch } from "../../../store/store"
 import { createRecordOp } from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
-import { addError } from "../../../../src/hooks/notificationapi"
+import { addError } from "../../../hooks/notificationapi"
 import { WireConditionState } from "../conditions/conditions"
+import { getKey } from "../../../metadata/metadata"
+import { Bundleable } from "../../../metadata/types"
+import { hash } from "@twind/core"
+
+const getParamsHash = (context: Context) => {
+	const params = context.getParams()
+	if (!params) return ""
+	return hash(JSON.stringify(params))
+}
 
 const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 	wires.map(
@@ -57,6 +66,43 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 		})
 	)
 
+const isSelectField = (f: LoadRequestField) => f.type?.includes("SELECT")
+
+const doesWireNeedMetadataLoaded = (context: Context, wire: PlainWire) => {
+	if (wire.hasLoadedMetadata) return false
+	if (wire.viewOnly) {
+		if (wire.preloaded || !wire.fields?.length) return false
+		const selectFieldsWithoutOptions = wire.fields.filter(
+			(f) =>
+				isSelectField(f) &&
+				f.selectlist &&
+				!f.selectlist.options &&
+				f.selectlist.name
+		)
+		if (!selectFieldsWithoutOptions.length) return false
+		// Otherwise, see if we already have loaded the metadata for each select list.
+		let stillNeedMetadata = false
+		const fetcher = (key: string) => context.getSelectList(key)
+		selectFieldsWithoutOptions.forEach((f) => {
+			const foundReduxMetadata = fetcher(
+				getKey(f.selectlist as Bundleable)
+			)
+			if (!foundReduxMetadata) {
+				stillNeedMetadata = true
+			}
+		})
+		return stillNeedMetadata
+	}
+	// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
+	// then we can remove the && wire.query` branch here, because "query" will only indicate whether data was queried,
+	// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
+	// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
+	return wire.collection && !(wire.preloaded && wire.query !== false)
+}
+
+const isPreloaded = (wire: PlainWire) => wire.preloaded || wire.viewOnly
+const isInvalidWire = (wire: PlainWire) => !wire.collection && !wire.viewOnly
+
 export default async (
 	context: Context,
 	wireNames?: string[],
@@ -65,26 +111,13 @@ export default async (
 	// Turn the list of wires into a load request
 	const wires = getWiresFromDefinitonOrContext(wireNames, context)
 
-	const [preloaded, toLoad] = partition(
-		wires,
-		(wire) => wire.preloaded || wire.viewOnly
-	)
+	const paramsHash = getParamsHash(context)
 
-	const [invalidWires, validToLoad] = partition(
-		toLoad,
-		(wire) => !wire.collection
-	)
+	const [preloaded, toLoad] = partition(wires, isPreloaded)
+	const [invalidWires, validToLoad] = partition(toLoad, isInvalidWire)
 
-	const haveWiresNeedingMetadata = wires?.some(
-		(wire) =>
-			!wire.viewOnly &&
-			// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
-			// then we can remove the && wire.query` branch here, because "query" will only indicate whether data was queried,
-			// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
-			// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
-			!(wire.preloaded && wire.query !== false) &&
-			wire.collection &&
-			!wire.hasLoadedMetadata
+	const haveWiresNeedingMetadata = wires?.some((wire) =>
+		doesWireNeedMetadataLoaded(context, wire)
 	)
 
 	const toLoadWithLookups = addLookupWires(validToLoad, context)
@@ -138,8 +171,9 @@ export default async (
 		}
 		return errContext
 	}
+	const { collections, selectlists, wires: responseWires } = response
 
-	const loadedResults = response.wires.map((wire, index) => {
+	const loadedResults = responseWires.map((wire, index) => {
 		const originalWire = toLoadWithLookups[index]
 		return {
 			...originalWire,
@@ -152,6 +186,7 @@ export default async (
 			),
 			original: { ...wire.data },
 			isLoading: false,
+			paramsHash,
 			// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 			// then we can remove the `|| wire.query` branch, because "query" will only indicate whether data was queried,
 			// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
@@ -175,6 +210,7 @@ export default async (
 				...wire,
 				preloaded: false,
 				isLoading: false,
+				paramsHash,
 				// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 				// then we can just set this to true all the time, because "query" will only indicate whether data was queried,
 				// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
@@ -189,7 +225,7 @@ export default async (
 	)
 
 	batch(() => {
-		dispatch(load([allResults, response.collections]))
+		dispatch(load([allResults, collections, selectlists]))
 		allResults.forEach((wire) => {
 			if (wire.create && !Object.keys(wire.data).length) {
 				createRecordOp({ context, wireName: wire.name })
@@ -232,4 +268,4 @@ const mergeConditions = (
 	})
 }
 
-export { getWireRequest }
+export { getWireRequest, getParamsHash }
