@@ -478,6 +478,7 @@ definition:
                           # to allow for editing prior to save
                           - uesio/io.field:
                               fieldId: uesio/studio.name
+                              wrapperVariant: uesio/io.table
                               labelPosition: "none"
                               uesio.display:
                                 - type: recordIsNew

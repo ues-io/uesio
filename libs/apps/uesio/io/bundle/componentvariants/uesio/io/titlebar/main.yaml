@@ -9,9 +9,9 @@ definition:
       - p-10
       - sticky
       - top-0
-      - bg-white
+      - bg-slate-100
       - border-b-1
-      - border-slate-100
+      - border-slate-200
       - z-10
     title:
       - text-slate-900
@@ -26,6 +26,8 @@ definition:
       - grid
       - items-center
       - justify-center
-      - bg-slate-100
+      - bg-white
       - rounded-full
+      - border-1
+      - border-slate-300
 public: true

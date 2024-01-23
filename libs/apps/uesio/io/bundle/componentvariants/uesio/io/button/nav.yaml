@@ -4,9 +4,10 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-600
+      - text-slate-700
       - hover:text-primary
       - p-2
       - uppercase
       - tracking-wider
+      - font-light
 public: true
