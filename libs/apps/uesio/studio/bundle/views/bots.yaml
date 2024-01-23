@@ -25,28 +25,6 @@ definition:
           id: localMetadataOnly
           valueSource: PARAM
           param: app
-    newbot:
-      collection: uesio/studio.bot
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.collection:
-        uesio/studio.dialect:
-        uesio/studio.type:
-      init:
-        query: false
-        create: true
-      defaults:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.dialect
-          valueSource: VALUE
-          value: TYPESCRIPT
-        - field: uesio/studio.type
-          valueSource: VALUE
-          value: LISTENER
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -72,15 +50,15 @@ definition:
               actions:
                 - uesio/io.group:
                     components:
-                      - uesio/io.button:
-                          text: Create a new Bot
-                          uesio.variant: uesio/io.primary
+                      - uesio/studio.generatorbutton:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
+                          buttonVariant: uesio/io.primary
                           hotkey: "n"
-                          signals:
-                            - signal: wire/RESET
-                              wire: newbot
-                            - signal: panel/TOGGLE
-                              panel: newBot
+                          label: Create a new Bot
+                          generator: uesio/core.bot
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -121,51 +99,3 @@ definition:
                           - signal: route/NAVIGATE
                             path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}?collection=${uesio/studio.collection}
                     pagesize: 10
-  panels:
-    newBot:
-      uesio.type: uesio/io.dialog
-      title: Create a new Bot
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.item:
-            uesio.id: newbotItem
-            wire: newbot
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-              - uesio/io.field:
-                  fieldId: uesio/studio.dialect
-              - uesio/io.field:
-                  fieldId: uesio/studio.collection
-                  uesio.context:
-                    workspace:
-                      name: $Param{workspacename}
-                      app: $Param{app}
-                  uesio.display:
-                    - type: fieldValue
-                      field: uesio/studio.type
-                      operator: IN
-                      values:
-                        - AFTERSAVE
-                        - BEFORESAVE
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: $Label{uesio/io.save}
-            hotkey: meta+s
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - newbot
-              - signal: route/NAVIGATE
-                path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/$Param{app}/${uesio/studio.name}?collection=${uesio/studio.collection}
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
-            text: $Label{uesio/io.cancel}
-            signals:
-              - signal: panel/TOGGLE
-                panel: newBot

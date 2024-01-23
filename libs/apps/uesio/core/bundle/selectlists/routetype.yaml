@@ -4,3 +4,6 @@ options:
     value: ""
   - label: "Redirect"
     value: "redirect"
+  - label: "Run Bot"
+    value: "bot"
+public: true

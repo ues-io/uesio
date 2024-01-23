@@ -1,0 +1,5 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: BEFORESAVE
+collection: ${collection}
+public: true

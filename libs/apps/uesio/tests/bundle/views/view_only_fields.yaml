@@ -46,7 +46,6 @@ definition:
                 label: Two
               - value: three
                 label: Three
-
   # Components determine the layout and composition of your view
   components:
     - uesio/io.box:

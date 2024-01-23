@@ -179,6 +179,8 @@ func (bc *BotCollection) GetTypescriptableItemConditions() BundleConditions {
 	return BundleConditions{
 		"uesio/studio.type": []string{
 			"LISTENER",
+			"ROUTE",
+			"RUNACTION",
 		},
 	}
 }

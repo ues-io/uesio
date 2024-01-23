@@ -1,0 +1,5 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: AFTERSAVE
+collection: ${collection}
+public: true

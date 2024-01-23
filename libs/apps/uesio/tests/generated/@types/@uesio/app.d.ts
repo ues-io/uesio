@@ -97,3 +97,13 @@ declare module "@uesio/app/bots/listener/uesio/tests/tester_signup" {
 		Params
 	}
 }
+declare module "@uesio/app/bots/runaction/uesio/tests/get_weather_forecast" {
+	type Params = {
+		latitude: number
+		longitude: number
+	}
+
+	export type {
+		Params
+	}
+}

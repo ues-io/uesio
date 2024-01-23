@@ -6,14 +6,56 @@ params:
   - name: name
     prompt: Route name
     type: METADATANAME
+  - name: type
+    prompt: Route type
+    type: SELECT
+    selectList: uesio/core.routetype
+    default: ""
   - name: path
-    prompt: Path
+    prompt: Enter the Route URL path (e.g. "some/path")
+  - name: redirect
+    prompt: Enter the URL to redirect to
+    conditions:
+      - param: type
+        value: redirect
+  - name: bot
+    prompt: Select a Route Bot
+    type: METADATA
+    metadataType: BOT
+    grouping: ROUTE
+    conditions:
+      - param: type
+        value: bot
   - name: view
-    prompt: select a view
+    prompt: Select a view to display for this route
     type: METADATA
     metadataType: VIEW
+    conditions:
+      - param: type
+        type: fieldValue
+        operator: NOT_IN
+        values:
+          - bot
+          - redirect
+  - name: title
+    prompt: Enter a title for this route (optional)
+    conditions:
+      - param: type
+        type: fieldValue
+        operator: NOT_IN
+        values:
+          - bot
+          - redirect
   - name: theme
-    prompt: select a theme
+    prompt: Select the theme to use for the route
     type: METADATA
     metadataType: THEME
+    default: uesio/core.default
+    conditions:
+      - param: type
+        type: fieldValue
+        operator: NOT_IN
+        values:
+          - bot
+          - redirect
 public: true

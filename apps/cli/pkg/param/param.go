@@ -214,6 +214,9 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
+		if len(labels) == 0 {
+			return errors.New("there are no metadata items of this type available to choose from")
+		}
 		err = survey.AskOne(&survey.Select{
 			Message: param.Prompt,
 			Options: labels,
@@ -231,6 +234,9 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		labels, valuesByLabel, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
 		if err != nil {
 			return err
+		}
+		if len(labels) == 0 {
+			return errors.New("there are no metadata items of this type available to choose from")
 		}
 		if err = survey.AskOne(&survey.MultiSelect{
 			Message: param.Prompt,
