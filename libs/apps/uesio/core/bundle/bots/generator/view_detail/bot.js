@@ -1,6 +1,6 @@
 function view(bot) {
 	var collection = bot.params.get("collection")
-	var headerView = bot.params.get("headerview")
+	var navView = bot.params.get("navview")
 	var lastPartOfCollection = collection?.split(".")[1]
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name") || `${lastPartOfCollection}_detail`
@@ -11,12 +11,12 @@ function view(bot) {
 		"- uesio/io.field:\n    fieldId: ${key}\n"
 	)
 
-	var headerContent = headerView
+	var navContent = navView
 		? bot.mergeYamlTemplate(
 				{
-					headerView,
+					navView,
 				},
-				"templates/header.yaml"
+				"templates/nav.yaml"
 		  )
 		: ""
 
@@ -36,7 +36,7 @@ function view(bot) {
 		{
 			collection,
 			innerView: innerViewName,
-			headerContent,
+			navContent,
 		},
 		"templates/detailview.yaml"
 	)

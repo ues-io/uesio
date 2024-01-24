@@ -1,0 +1,44 @@
+# Wires connect to data in collections
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+# Components determine the layout and composition of your view
+# Wires connect to data in collections
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/io.scrollpanel:
+            uesio.variant: uesio/io.default
+            uesio.styleTokens:
+              inner:
+                - p-3
+            header:
+              - uesio/core.view:
+                  view: apptag
+            content:
+              - uesio/io.box:
+                  components:
+                    - uesio/io.list:
+                        wire: ${wirename}
+                        components:
+                          - uesio/io.tile:
+                              uesio.variant: uesio/io.item
+                              content: ${cardcontents}
+                              signals:
+                                - signal: component/CALL
+                                  component: uesio/core.view
+                                  componentsignal: SET_PARAM
+                                  targettype: specific
+                                  target: detailview
+                                  param: recordid
+                                  value: ${uesio/core.id}
+            footer:
+              - uesio/core.view:
+                  view: profiletag
+      content:
+        - uesio/core.view:
+            uesio.id: detailview
+            view: ${detailviewname}
+            params:
+              recordid: ""

@@ -5,7 +5,8 @@ wires:
     fields: ${fields}
     conditions:
       - field: uesio/core.id
-        value: $Param{recordid}
+        valueSource: PARAM
+        param: recordid
 # Components determine the layout and composition of your view
 components:
   - uesio/io.box:

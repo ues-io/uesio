@@ -6,7 +6,7 @@ wires:
 # Components determine the layout and composition of your view
 components:
   - uesio/io.viewlayout:
-      header: ${headerContent}
+      left: ${navContent}
       content:
         - uesio/io.titlebar:
             title: $Collection{${wirename}:pluralLabel}

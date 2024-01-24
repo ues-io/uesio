@@ -1,12 +1,8 @@
-name: listview
+name: view_queue
 dialect: "JAVASCRIPT"
-label: List View
+label: Queue View
 type: "GENERATOR"
 params:
-  - name: headerview
-    prompt: Header View
-    type: METADATA
-    metadataType: VIEW
   - name: collection
     prompt: Collection
     type: METADATA
@@ -21,8 +17,13 @@ params:
       - param: collection
         type: hasValue
     required: true
+  - name: detailview
+    prompt: Detail View
+    type: METADATA
+    metadataType: VIEW
+    required: true
   - name: name
     prompt: View Name (optional)
     type: METADATANAME
-    default: ${collection}_list
+    default: ${collection}_queue
 public: true

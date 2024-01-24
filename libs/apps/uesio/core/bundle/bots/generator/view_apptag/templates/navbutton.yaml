@@ -1,6 +1,8 @@
-- uesio/io.button:
-    text: ${label}
+- uesio/io.tile:
     uesio.variant: uesio/io.nav
+    content:
+      - uesio/io.text:
+          text: ${label}
     signals:
       - signal: route/NAVIGATE_TO_ASSIGNMENT
         collection: ${key}

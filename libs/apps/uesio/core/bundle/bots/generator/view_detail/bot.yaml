@@ -1,10 +1,10 @@
-name: detailview
+name: view_detail
 dialect: "JAVASCRIPT"
 label: Detail View
 type: "GENERATOR"
 params:
-  - name: headerview
-    prompt: Header View
+  - name: navview
+    prompt: Nav View
     type: METADATA
     metadataType: VIEW
   - name: collection

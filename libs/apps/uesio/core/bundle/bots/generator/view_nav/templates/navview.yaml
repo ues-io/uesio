@@ -1,0 +1,16 @@
+# Wires are how we pull in data
+wires:
+# Components are how we describe the layout of our view
+components:
+  - uesio/io.scrollpanel:
+      uesio.variant: uesio/io.default
+      uesio.styleTokens:
+        inner:
+          - p-3
+      header:
+        - uesio/core.view:
+            view: apptag
+      content:
+      footer:
+        - uesio/core.view:
+            view: profiletag

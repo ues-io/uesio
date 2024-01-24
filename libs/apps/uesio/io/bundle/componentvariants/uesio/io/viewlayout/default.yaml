@@ -23,12 +23,18 @@ definition:
       - md:w-72
       - md:row-start-2
       - md:grid-rows-[100%]
+      - border-slate-200
+      - border-r-1
+      - from-white
+      - to-slate-50
+      - bg-gradient-to-br
     content:
       - md:h-full
       - md:overflow-auto
       - md:col-start-2
       - md:col-end-2
-      - "[container-type:size]"
+      - "md:[container-type:size]"
+      - "[container-type:inline-size]"
       - h-max
       - md:row-start-2
       - md:grid-rows-[100%]

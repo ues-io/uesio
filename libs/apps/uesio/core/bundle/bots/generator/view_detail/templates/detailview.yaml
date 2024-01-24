@@ -1,7 +1,7 @@
 # Components determine the layout and composition of your view
 components:
   - uesio/io.viewlayout:
-      header: ${headerContent}
+      left: ${navContent}
       content:
         - uesio/core.view:
             view: ${innerView}

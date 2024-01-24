@@ -1,20 +1,16 @@
 function view(bot) {
-	var name = bot.params.get("name")
 	var collection = bot.params.get("collection")
+	var lastPartOfCollection = collection?.split(".")[1]
 	var fields = bot.params.get("fields")
-	var wirename = collection?.split(".")[1] || name
+	var name = bot.params.get("name")
+	var fields = bot.params.get("fields")
+	var name = bot.params.get("name") || `${lastPartOfCollection}_queue`
+	var wirename = lastPartOfCollection || name
 	var detailviewname = bot.params.get("detailview")
-	var addheaderview = bot.params.get("addheaderview")
-	var headerviewname = bot.params.get("headerview")
 
 	var fieldsyaml = bot.repeatString(fields, "${key}:\n")
-	var cardcontents = bot.repeatString(
-		fields,
-		"- uesio/io.text:\n    text: ${start}${key}${end}\n    element: div\n"
-	)
-	var headercontents = addheaderview
-		? "- uesio/core.view:\n    view: " + headerviewname + "\n"
-		: ""
+	var cardcontents =
+		"- uesio/io.text:\n    text: $RecordMeta{name}\n    element: div\n"
 
 	var definition = bot.mergeYamlTemplate(
 		{
@@ -23,7 +19,6 @@ function view(bot) {
 			cardcontents,
 			wirename,
 			detailviewname,
-			headercontents,
 		},
 		"templates/queueview.yaml"
 	)

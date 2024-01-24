@@ -99,7 +99,7 @@ definition:
                 subItemName: $Param{subItemName}
                 subItemNameSpace: $Param{subItemNameSpace}
         content:
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: App Admin
               content:
                 - uesio/io.tile:
@@ -172,7 +172,7 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: groups
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Workspaces
               actions:
                 - uesio/io.button:
@@ -237,7 +237,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 text: handyman
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Sites
               actions:
                 - uesio/io.button:
@@ -264,7 +264,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 text: public
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Licenses
               uesio.display:
                 - type: featureFlag

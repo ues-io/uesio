@@ -1,0 +1,10 @@
+name: view_apptag
+dialect: "JAVASCRIPT"
+label: App Header Tag View
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: View Name (optional)
+    type: METADATANAME
+    default: apptag
+public: true

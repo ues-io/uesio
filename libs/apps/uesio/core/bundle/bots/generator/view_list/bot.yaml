@@ -1,0 +1,28 @@
+name: view_list
+dialect: "JAVASCRIPT"
+label: List View
+type: "GENERATOR"
+params:
+  - name: navview
+    prompt: Nav View
+    type: METADATA
+    metadataType: VIEW
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+  - name: fields
+    prompt: Fields
+    type: MULTIMETADATA
+    metadataType: FIELD
+    grouping: ${collection}
+    conditions:
+      - param: collection
+        type: hasValue
+    required: true
+  - name: name
+    prompt: View Name (optional)
+    type: METADATANAME
+    default: ${collection}_list
+public: true

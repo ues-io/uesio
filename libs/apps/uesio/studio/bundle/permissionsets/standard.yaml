@@ -5,12 +5,14 @@ bots:
   uesio/core.collection: true
   uesio/core.component: true
   uesio/core.componentpack: true
-  uesio/core.detailview: true
+  uesio/core.view_detail: true
+  uesio/core.view_apptag: true
+  uesio/core.view_profiletag: true
   uesio/core.field: true
-  uesio/core.headerview: true
+  uesio/core.view_nav: true
   uesio/core.init: true
-  uesio/core.listview: true
-  uesio/core.queueview: true
+  uesio/core.view_list: true
+  uesio/core.view_queue: true
   uesio/core.route: true
   uesio/core.theme: true
   uesio/core.view: true

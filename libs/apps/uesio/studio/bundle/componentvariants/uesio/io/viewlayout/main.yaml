@@ -5,11 +5,6 @@ definition:
   uesio.styleTokens:
     left:
       - md:w-80
-      - from-white
-      - to-slate-50
-      - bg-gradient-to-br
       - gap-3
       - grid
       - auto-rows-min
-      - border-slate-200
-      - border-r-1

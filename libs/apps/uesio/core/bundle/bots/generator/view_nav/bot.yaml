@@ -1,6 +1,6 @@
-name: headerview
+name: view_nav
 dialect: "JAVASCRIPT"
-label: Header View
+label: Nav View
 type: "GENERATOR"
 params:
   - name: logo

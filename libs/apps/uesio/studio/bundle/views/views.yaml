@@ -130,17 +130,17 @@ definition:
                                 uesio.variant: uesio/io.section
                                 title: View Generators
                             - uesio/studio.generatoractiontile:
-                                label: Generate Header View
-                                description: Create a standard header view with a logo, navigation, and user avatar
-                                generator: uesio/core.headerview
+                                label: Generate Nav View
+                                description: Create a standard navigation view with a logo, navigation, and user avatar
+                                generator: uesio/core.view_nav
                             - uesio/studio.generatoractiontile:
                                 label: Generate List View
                                 description: Create a view for listing records in a collection
-                                generator: uesio/core.listview
+                                generator: uesio/core.view_list
                             - uesio/studio.generatoractiontile:
                                 label: Generate Detail Views
                                 description: Create views for viewing data for a single record
-                                generator: uesio/core.detailview
+                                generator: uesio/core.view_detail
   panels:
     newView:
       uesio.type: uesio/io.dialog
