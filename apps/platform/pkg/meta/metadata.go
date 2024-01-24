@@ -84,6 +84,10 @@ type AttachableItem interface {
 	GetBasePath() string
 }
 
+// BundleLoader is a function which loads metadata for a given BundleableItem,
+// presumably from a Bundle Store (or from a mock implementation)
+type BundleLoader func(item BundleableItem) error
+
 type BundleableItem interface {
 	CollectionableItem
 	GetBundleFolderName() string

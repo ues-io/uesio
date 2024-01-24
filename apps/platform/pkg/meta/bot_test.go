@@ -572,3 +572,188 @@ func TestBotCollectionPathFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestBot_ValidateParams(t *testing.T) {
+	tests := []struct {
+		name            string
+		params          BotParams
+		input           map[string]interface{}
+		wantErr         string
+		bundleLoader    BundleLoader
+		inputAssertions func(t *testing.T, input map[string]interface{})
+	}{
+		{
+			name: "should enforce required fields",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+				},
+			},
+			input:   map[string]interface{}{},
+			wantErr: "missing required param: foo",
+		},
+		{
+			name: "should validate number fields",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+					Type:     "NUMBER",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "abcdef",
+			},
+			wantErr: "could not convert param to number: foo",
+		},
+		{
+			name: "should coerce valid number fields in the input",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+					Type:     "NUMBER",
+				},
+				{
+					Name:     "bar",
+					Required: true,
+					Type:     "NUMBER",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": 1.34,
+				"bar": "7.89",
+			},
+			wantErr: "",
+			inputAssertions: func(t *testing.T, input map[string]interface{}) {
+				assert.Equalf(t, 1.34, input["foo"], "expected value for foo")
+				assert.Equalf(t, 7.89, input["bar"], "expected value for bar")
+			},
+		},
+		{
+			name: "should validate CHECKBOX fields",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+					Type:     "CHECKBOX",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "blah",
+			},
+			wantErr: "param value must either be 'true' or 'false': foo",
+		},
+		{
+			name: "should validate CHECKBOX fields (valid case)",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+					Type:     "CHECKBOX",
+				},
+				{
+					Name:     "bar",
+					Required: true,
+					Type:     "CHECKBOX",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "true",
+				"bar": "false",
+			},
+			wantErr: "",
+		},
+		{
+			name: "should error if SELECT param has no SelectList defined",
+			params: []BotParam{
+				{
+					Name:     "foo",
+					Required: true,
+					Type:     "SELECT",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "blah",
+			},
+			wantErr: "no Select List provided for SELECT parameter: foo",
+		},
+		{
+			name: "should validate SELECT params (invalid case)",
+			params: []BotParam{
+				{
+					Name:       "foo",
+					Required:   true,
+					Type:       "SELECT",
+					SelectList: "luigi/some.selectlist",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "alpha",
+			},
+			wantErr: "invalid value for param: foo",
+			bundleLoader: func(item BundleableItem) error {
+				selectList := item.(*SelectList)
+				selectList.Options = []SelectListOption{
+					{
+						Value: "one",
+					},
+					{
+						Value: "two",
+					},
+				}
+				return nil
+			},
+		},
+		{
+			name: "should validate SELECT params (valid case)",
+			params: []BotParam{
+				{
+					Name:       "foo",
+					Required:   true,
+					Type:       "SELECT",
+					SelectList: "luigi/some.selectlist",
+				},
+			},
+			input: map[string]interface{}{
+				"foo": "two",
+			},
+			wantErr: "",
+			bundleLoader: func(item BundleableItem) error {
+				selectList := item.(*SelectList)
+				selectList.Options = []SelectListOption{
+					{
+						Value: "one",
+					},
+					{
+						Value: "two",
+					},
+				}
+				return nil
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := &Bot{
+				Params: tt.params,
+			}
+			err := b.ValidateParams(tt.input, tt.bundleLoader)
+			if tt.wantErr != "" {
+				if err == nil {
+					assert.Fail(t, "expected error "+tt.wantErr, tt.name)
+				} else {
+					assert.Equalf(t, tt.wantErr, err.Error(), tt.name)
+				}
+			} else {
+				if err != nil {
+					assert.Fail(t, "no error expected, but got: "+err.Error(), tt.name)
+				}
+			}
+			if tt.inputAssertions != nil {
+				tt.inputAssertions(t, tt.input)
+			}
+		})
+	}
+}

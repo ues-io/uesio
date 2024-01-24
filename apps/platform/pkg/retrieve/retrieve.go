@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -43,12 +44,18 @@ const (
 
 // GenerateAppTypeScriptTypes creates a giant file of all app-specific TypeScript type definitions
 func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnection) error {
-
 	// Add app specific metadata types app-specific metadata types
-	for metadataType, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
-		err := bs.GetAllItems(group, group.GetTypescriptableItemConditions())
+	for _, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
+		metadataType := group.GetName()
+		genOptions := group.GetTypeGenerationOptions()
+		err := bs.GetAllItems(group, genOptions.GetTypescriptableItemConditions())
 		if err != nil {
 			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
+		}
+		var typeDefsByNamespace map[string]*strings.Builder
+		// If needed, generate a wrapper module around all types for this group
+		if genOptions.GenerateModuleForNamespace {
+			typeDefsByNamespace = map[string]*strings.Builder{}
 		}
 		err = group.Loop(func(item meta.Item, _ string) error {
 			typedItem, hasTSTypes := item.(meta.TypescriptableItem)
@@ -62,14 +69,48 @@ func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnect
 			if typeDefinitions == "" {
 				return nil
 			}
-			_, err = out.Write([]byte(typeDefinitions))
-			if err != nil {
-				return err
+			if typeDefsByNamespace != nil {
+				namespaceBuilder, exists := typeDefsByNamespace[typedItem.GetNamespace()]
+				if !exists {
+					namespaceBuilder = &strings.Builder{}
+					typeDefsByNamespace[typedItem.GetNamespace()] = namespaceBuilder
+				}
+				_, err = namespaceBuilder.WriteString(typeDefinitions)
+				if err != nil {
+					return err
+				}
+			} else {
+				_, err = out.Write([]byte(typeDefinitions))
+				if err != nil {
+					return err
+				}
 			}
 			return nil
 		})
 		if err != nil {
 			return err
+		}
+		// If we need to output types grouped by namespace, iterate over each namespace
+		if typeDefsByNamespace != nil {
+			for ns, stringBuilder := range typeDefsByNamespace {
+				// Write the wrapper
+				_, err = out.Write([]byte(`
+declare module "@uesio/app/` + group.GetBundleFolderName() + "/" + ns + "\" {"))
+				if err != nil {
+					return err
+				}
+				// write all types for the namespace
+				typesForNS := stringBuilder.String()
+				_, err = out.Write([]byte(typesForNS))
+				if err != nil {
+					return err
+				}
+				// Write the end of the module
+				_, err = out.Write([]byte(`}`))
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
 	return nil
@@ -92,6 +133,7 @@ func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreat
 	}
 	// Generate app specific type definitions
 	f, err := create(path.Join(GeneratedDir, uesioTypesDir, "app.d.ts"))
+	defer f.Close()
 	if err != nil {
 		return err
 	}

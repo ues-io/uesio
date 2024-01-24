@@ -9,6 +9,21 @@ type SelectListCollection []*SelectList
 var SELECTLIST_COLLECTION_NAME = "uesio/studio.selectlist"
 var SELECTLIST_FOLDER_NAME = "selectlists"
 var SELECTLIST_FIELDS = StandardGetFields(&SelectList{})
+var selectListGetTypescriptableItemConditions func() BundleConditions
+
+func init() {
+	selectListGetTypescriptableItemConditions = func() BundleConditions {
+		return BundleConditions{}
+	}
+}
+
+// GetTypeGenerationOptions configures how SelectList type definitions should be generated
+func (slc *SelectListCollection) GetTypeGenerationOptions() *TypeGenerationOptions {
+	return &TypeGenerationOptions{
+		GenerateModuleForNamespace:      true,
+		GetTypescriptableItemConditions: selectListGetTypescriptableItemConditions,
+	}
+}
 
 func (slc *SelectListCollection) GetName() string {
 	return SELECTLIST_COLLECTION_NAME

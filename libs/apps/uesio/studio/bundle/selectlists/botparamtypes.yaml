@@ -8,3 +8,5 @@ options:
     value: "NUMBER"
   - label: "Text"
     value: "TEXT"
+  - label: "Select"
+    value: "SELECT"

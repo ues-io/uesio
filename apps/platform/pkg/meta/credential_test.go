@@ -1,13 +1,13 @@
 package meta
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/types/credentials"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 var apiKeyLocalMetadataNames = TrimYamlString(`
@@ -168,7 +168,7 @@ func TestCredentialUnmarshal(t *testing.T) {
 			"somecredential_badname.yaml",
 			"my/namespace",
 			nil,
-			errors.New("Metadata name does not match filename: somecredential, somecredential_badname"),
+			exceptions.NewBadRequestException("Metadata name does not match filename: somecredential, somecredential_badname"),
 		},
 	}
 

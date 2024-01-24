@@ -5,6 +5,7 @@ import "fmt"
 type InvalidParamException struct {
 	Message string
 	Param   string
+	Details string
 }
 
 func (e *InvalidParamException) Error() string {
@@ -13,4 +14,8 @@ func (e *InvalidParamException) Error() string {
 
 func NewInvalidParamException(message string, param string) error {
 	return &InvalidParamException{Param: param, Message: message}
+}
+
+func NewInvalidParamExceptionWithDetails(message, param, details string) error {
+	return &InvalidParamException{Param: param, Message: message, Details: details}
 }

@@ -225,7 +225,7 @@ definition:
                                 - RUNACTION
                                 - ROUTE
                           components:
-                            - uesio/io.list:
+                            - uesio/io.item:
                                 uesio.id: botParams
                                 wire: bots
                                 mode: READ
@@ -235,6 +235,10 @@ definition:
                                       title: Bot Parameters
                                   - uesio/io.field:
                                       uesio.id: paramsField
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.params
                                       label: " "
   panels:

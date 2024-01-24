@@ -13,3 +13,8 @@ subfields:
   - name: required
     label: Required
     type: CHECKBOX
+  - name: selectList
+    label: Select List
+    type: METADATA
+    metadata:
+      type: SELECTLIST

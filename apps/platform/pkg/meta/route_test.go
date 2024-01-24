@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 var route_local_view_local_theme = TrimYamlString(`
@@ -157,7 +159,7 @@ func TestRouteUnmarshal(t *testing.T) {
 			"myroute_badname.yaml",
 			"my/namespace",
 			nil,
-			errors.New("Metadata name does not match filename: myroute, myroute_badname"),
+			exceptions.NewBadRequestException("Metadata name does not match filename: myroute, myroute_badname"),
 		},
 	}
 

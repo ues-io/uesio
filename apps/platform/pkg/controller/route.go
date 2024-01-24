@@ -178,9 +178,10 @@ func GetErrorRoute(path string, err string) *meta.Route {
 }
 
 type errorResponse struct {
-	Code   int    `json:"code"`
-	Status string `json:"status"`
-	Error  string `json:"error"`
+	Code    int    `json:"code"`
+	Status  string `json:"status"`
+	Error   string `json:"error"`
+	Details string `json:"details,omitempty"`
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
@@ -228,11 +229,19 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	}
 	// Respond with a structured JSON error response
 	w.WriteHeader(statusCode)
-	file.RespondJSON(w, r, &errorResponse{
+	file.RespondJSON(w, r, getErrorResponse(err, statusCode))
+}
+
+func getErrorResponse(err error, statusCode int) *errorResponse {
+	resp := &errorResponse{
 		Code:   statusCode,
 		Status: strings.Replace(http.StatusText(statusCode), fmt.Sprintf("%d", statusCode), "", 1),
 		Error:  err.Error(),
-	})
+	}
+	if paramException, ok := err.(*exceptions.InvalidParamException); ok && paramException.Details != "" {
+		resp.Details = paramException.Details
+	}
+	return resp
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
