@@ -31,7 +31,6 @@ function collectionadmin(bot) {
 		.join(",")
 
 	var collectionLabel = collectionMeta[0]["uesio/core.label"]
-	bot.log.info("blah", collectionLabel)
 
 	bot.runGenerator("uesio/core", "view_nav", {
 		collections: collection,
