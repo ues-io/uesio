@@ -1,0 +1,51 @@
+name: bundlestoreprod
+definition:
+  # Wires are how we pull in data
+  wires:
+    bundlelistings:
+      collection: uesio/studio.bundlelistingwrapper
+      fields:
+        uesio/core.id:
+        uesio/studio.description:
+        uesio/studio.status:
+        uesio/studio.approved:
+        uesio/studio.app:
+          fields:
+            uesio/core.id:
+            uesio/studio.fullname:
+            uesio/studio.color:
+            uesio/studio.icon:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        content:
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.deck:
+                    wire: bundlelistings
+                    uesio.id: bundleListingList
+                    mode: READ
+                    uesio.styleTokens:
+                      root:
+                        - grid
+                        - gap-10
+                        - grid-cols-1
+                        - lg:grid-cols-2
+                        - xl:grid-cols-3
+                    components:
+                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - cursor-pointer
+                          signals:
+                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}?prodbundle=true
+                              signal: route/NAVIGATE
+                          components:
+                            - uesio/studio.bundlelistingvisual:
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                icon: ${uesio/studio.app->uesio/studio.icon}
+                                title: ${uesio/studio.app->uesio/studio.fullname}
+                                subtitle: ${uesio/studio.description}
+                                verified: false
