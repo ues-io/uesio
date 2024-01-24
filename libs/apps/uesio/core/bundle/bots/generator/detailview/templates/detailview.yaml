@@ -5,6 +5,7 @@ components:
       content:
         - uesio/core.view:
             view: ${innerView}
+            uesio.id: detailcontent
             params:
               recordid: $Param{recordid}
 params:

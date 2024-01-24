@@ -177,7 +177,7 @@ func Login() (*UserMergeData, error) {
 
 	url := fmt.Sprintf("site/auth/%s/%s/login", methodNamespace, methodName)
 
-	resp, err := call.Request("POST", url, payloadBytes, "", nil)
+	resp, err := call.Post(url, payloadBytes, "", nil)
 	if err != nil {
 		return nil, err
 	}

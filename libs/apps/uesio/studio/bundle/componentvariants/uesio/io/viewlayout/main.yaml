@@ -11,3 +11,5 @@ definition:
       - gap-3
       - grid
       - auto-rows-min
+      - border-slate-200
+      - border-r-1

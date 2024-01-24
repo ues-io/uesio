@@ -1,0 +1,4 @@
+name: latest_foo
+public: true
+type: ROUTE
+dialect: TYPESCRIPT

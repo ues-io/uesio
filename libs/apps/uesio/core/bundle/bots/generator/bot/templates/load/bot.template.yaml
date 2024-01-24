@@ -1,0 +1,4 @@
+name: ${name}
+dialect: TYPESCRIPT
+type: LOAD
+public: true

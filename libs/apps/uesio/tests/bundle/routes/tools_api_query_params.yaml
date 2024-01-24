@@ -1,0 +1,4 @@
+name: tools_api_query_params
+type: bot
+path: api/tools
+bot: tools_api_query_params

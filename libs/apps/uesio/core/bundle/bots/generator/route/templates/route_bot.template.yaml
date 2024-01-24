@@ -1,0 +1,5 @@
+name: ${name}
+type: bot
+path: ${path}
+bot: ${bot}
+

@@ -14,9 +14,8 @@ import {
 	FieldMetadata,
 	FieldMetadataPropertyPath,
 	FieldType,
-	SelectOption,
-	SelectListMetadata,
 } from "./bands/field/types"
+import { SelectListMetadata, SelectOption } from "./definition/selectlist"
 import WireRecord from "./bands/wirerecord/class"
 import {
 	FieldValue,

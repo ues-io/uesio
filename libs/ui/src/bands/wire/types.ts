@@ -43,6 +43,8 @@ type PlainWire = {
 	isLoading?: boolean
 	loadAll?: boolean
 	hasLoadedMetadata?: boolean
+	paramsHash?: string
+	definitionHash?: string
 }
 
 type ServerWire = Omit<

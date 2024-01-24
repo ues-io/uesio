@@ -10,22 +10,53 @@ definition:
       fields:
         myField:
           type: TEXT
+        selectOne:
+          type: SELECT
+          selectlist:
+            name: uesio/core.accepttypes
+        selectTwo:
+          type: SELECT
+          selectlist:
+            source: local
+            options:
+              - value: one
+                label: One
+              - value: two
+                label: Two
+              - value: three
+                label: Three
   # Components determine the layout and composition of your view
   components:
     - uesio/io.box:
         components:
-          - uesio/io.field:
+          - uesio/io.item:
               wire: myViewOnlyWire
-              fieldId: myField
-          - uesio/io.button:
-              text: Do Not Disappear
-              icon: bolt
-              uesio.variant: uesio/io.primary
-              iconPlacement: start
-              uesio.id: do-not-disappear
-              signals:
-                - signal: route/NAVIGATE
-                  path: view_only_wire
+              mode: EDIT
+              components:
+                - uesio/io.field:
+                    fieldId: myField
+                - uesio/io.field:
+                    fieldId: selectOne
+                - uesio/io.field:
+                    fieldId: selectTwo
+                - uesio/io.button:
+                    text: Do Not Disappear
+                    icon: bolt
+                    uesio.variant: uesio/io.primary
+                    iconPlacement: start
+                    uesio.id: do-not-disappear
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: view_only_wire
+                - uesio/io.button:
+                    text: Load other route
+                    icon: bolt
+                    uesio.variant: uesio/io.primary
+                    iconPlacement: start
+                    uesio.id: load-other-route
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: view_only_fields
         uesio.styleTokens:
           root:
             - p-10

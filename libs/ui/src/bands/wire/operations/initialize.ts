@@ -12,6 +12,7 @@ import { CollectionFieldKey, PlainWire } from "../types"
 import { ID_FIELD, PlainCollection } from "../../collection/types"
 import { FieldMetadataMap, FieldMetadata } from "../../field/types"
 import { LoadRequestField } from "../../../load/loadrequest"
+import { hash } from "@twind/core"
 
 const getFieldsRequest = (
 	fields?: WireFieldDefinitionMap | Record<CollectionFieldKey, ViewOnlyField>
@@ -29,12 +30,16 @@ const getFieldsRequest = (
 	})
 }
 
+const getDefinitionHash = (wireDef: WireDefinition) =>
+	hash(JSON.stringify(wireDef))
+
 const getBaseWireDefInfo = (wireDef: WireDefinition) => ({
 	query: !wireDef.init || wireDef.init.query || false,
 	create: wireDef.init ? wireDef.init.create || false : false,
 	defaults: wireDef.defaults,
 	events: wireDef.events,
 	fields: getFieldsRequest(wireDef.fields) || [],
+	definitionHash: getDefinitionHash(wireDef),
 })
 
 const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
@@ -184,7 +189,7 @@ const initWire = (
 				...addViewOnlyFields(wireDef),
 		  }
 
-export { initExistingWire }
+export { initExistingWire, getDefinitionHash }
 
 export default (
 	context: Context,
@@ -200,7 +205,7 @@ export default (
 		return initWire(viewId, wireName, wireDef)
 	})
 
-	dispatch(init([initializedWires, undefined]))
+	dispatch(init([initializedWires, undefined, undefined]))
 
 	return context
 }

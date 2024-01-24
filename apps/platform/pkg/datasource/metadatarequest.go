@@ -14,11 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func ParseSelectListKey(key string) (string, string, string) {
-	keyParts := strings.Split(key, ":")
-	return keyParts[0], keyParts[1], keyParts[2]
-}
-
 func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
@@ -167,19 +162,14 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 	return nil
 }
 
-func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListName string) {
+func (mr *MetadataRequest) AddSelectList(selectListName string) {
 	if mr.SelectLists == nil {
 		mr.SelectLists = map[string]bool{}
 	}
-	selectListKey := GetSelectListKey(collectionName, fieldName, selectListName)
-	_, ok := mr.SelectLists[selectListKey]
+	_, ok := mr.SelectLists[selectListName]
 	if !ok {
-		mr.SelectLists[selectListKey] = true
+		mr.SelectLists[selectListName] = true
 	}
-}
-
-func GetSelectListKey(collectionName, fieldName, selectListName string) string {
-	return collectionName + ":" + fieldName + ":" + selectListName
 }
 
 func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *wire.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
@@ -296,7 +286,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 		if fieldMetadata.Type == "SELECT" || fieldMetadata.Type == "MULTISELECT" {
 			selectListMetadata := fieldMetadata.SelectListMetadata
 			if selectListMetadata.Options == nil {
-				additionalRequests.AddSelectList(collectionKey, newKey, selectListMetadata.Name)
+				additionalRequests.AddSelectList(selectListMetadata.Name)
 			}
 		}
 
@@ -400,12 +390,10 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 	}
 
 	for selectListKey := range mr.SelectLists {
-		err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection)
-		if err != nil {
+		if err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection); err != nil {
 			return err
 		}
 	}
-
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
 		return additionalRequests.Load(metadataResponse, session, connection)

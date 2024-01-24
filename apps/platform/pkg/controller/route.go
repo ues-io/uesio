@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -10,8 +12,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -28,7 +32,12 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	viewtype := vars["viewtype"]
 
 	session := middleware.GetSession(r)
-	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session, connection)
 	if err != nil {
 		handleApiNotFoundRoute(w, r, "", session)
 		return
@@ -65,7 +74,12 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		prefix = "/workspace/" + workspace.GetAppFullName() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
 	}
 
-	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
 		handleApiNotFoundRoute(w, r, path, session)
 		return
@@ -163,8 +177,16 @@ func GetErrorRoute(path string, err string) *meta.Route {
 	}
 }
 
+type errorResponse struct {
+	Code   int    `json:"code"`
+	Status string `json:"status"`
+	Error  string `json:"error"`
+}
+
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
 	slog.Debug("Error Getting Route: " + err.Error())
+
+	// If this is an invalid param exception
 
 	// If our profile is the public profile, redirect to the login route
 	if redirect && session.IsPublicProfile() {
@@ -175,12 +197,12 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	var route *meta.Route
 	if redirect {
-		showButtton := "false"
+		showButton := "false"
 		switch err.(type) {
 		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
-			showButtton = "true"
+			showButton = "true"
 		}
-		route = getNotFoundRoute(path, err.Error(), showButtton)
+		route = getNotFoundRoute(path, err.Error(), showButton)
 	} else {
 		route = GetErrorRoute(path, err.Error())
 	}
@@ -204,7 +226,13 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
 		return
 	}
-	http.Error(w, "Not Found", statusCode)
+	// Respond with a structured JSON error response
+	w.WriteHeader(statusCode)
+	file.RespondJSON(w, r, &errorResponse{
+		Code:   statusCode,
+		Status: strings.Replace(http.StatusText(statusCode), fmt.Sprintf("%d", statusCode), "", 1),
+		Error:  err.Error(),
+	})
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
@@ -227,7 +255,12 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
-	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		HandleErrorRoute(w, r, session, path, err, true)
+		return nil, err
+	}
+	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, err, true)
 		return nil, err
@@ -237,26 +270,66 @@ func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, n
 
 func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, route *meta.Route) {
 	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
-	// Handle redirect routes
-	if route.Type == "redirect" {
+	var err error
+	switch route.Type {
+	case "redirect":
+		// Handle redirect routes
 		w.Header().Set("Cache-Control", "no-cache")
-
 		mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
 			Session: session,
 		})
 		if err != nil {
 			HandleErrorRoute(w, r, session, path, err, true)
+			return
 		}
-
 		http.Redirect(w, r, mergedRouteRedirect, http.StatusFound)
 		return
-	}
-	// Handle view routes
-	depsCache, err := routing.GetMetadataDeps(route, session)
-	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, false)
+	case "bot":
+		response := route.GetResponse()
+		statusCode := response.StatusCode
+		if statusCode == 0 {
+			statusCode = http.StatusOK
+		}
+		// For the future: also support response.RedirectRoute
+		// load the route, find its path, and redirect the user there
+		if response.RedirectURL != "" {
+			if statusCode < 300 {
+				statusCode = http.StatusFound
+			}
+			http.Redirect(w, r, response.RedirectURL, statusCode)
+			return
+		} else if response.Body != nil {
+			// Perform appropriate serialization if needed
+			contentType := response.Headers.Get(contentTypeHeader)
+			var marshalled []byte
+			if strings.Contains(contentType, "json") {
+				if _, isString := response.Body.(string); !isString {
+					marshalled, err = json.Marshal(response.Body)
+					if err != nil {
+						ctlutil.HandleError(w, err)
+						return
+					}
+				}
+			} else {
+				// Otherwise, just write the thing as text
+				marshalled = []byte(fmt.Sprintf("%v", response.Body))
+			}
+			if marshalled != nil {
+				if _, err = w.Write(marshalled); err != nil {
+					ctlutil.HandleError(w, err)
+					return
+				}
+			}
+		}
+		w.WriteHeader(statusCode)
 		return
+	default:
+		// Handle view routes
+		depsCache, err := routing.GetMetadataDeps(route, session)
+		if err != nil {
+			HandleErrorRoute(w, r, session, path, err, false)
+			return
+		}
+		ExecuteIndexTemplate(w, route, depsCache, false, session)
 	}
-
-	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }

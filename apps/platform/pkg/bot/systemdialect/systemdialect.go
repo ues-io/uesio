@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"fmt"
+	"net/http"
 	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -24,7 +25,7 @@ type LoadBotFunc func(request *wire.LoadOp, connection wire.Connection, session 
 
 type SaveBotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
-type RouteBotFunc func(*meta.Route, *sess.Session) (*meta.Route, error)
+type RouteBotFunc func(*meta.Route, *http.Request, wire.Connection, *sess.Session) (*meta.Route, error)
 
 type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
 
@@ -90,8 +91,6 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connectio
 		botFunction = runBundleDependencyAfterSaveBot
 	case "uesio/studio.license":
 		botFunction = runLicenseAfterSaveBot
-	case "uesio/studio.bot":
-		botFunction = runBotAfterSaveBot
 	case "uesio/studio.app":
 		botFunction = runAppAfterSaveBot
 	case "uesio/studio.integrationtype":
@@ -167,7 +166,7 @@ func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileC
 	return nil
 }
 
-func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
+func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
 	var botFunction RouteBotFunc
 
 	routeKey := route.GetKey()
@@ -185,7 +184,7 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
-	return botFunction(route, session)
+	return botFunction(route, request, connection, session)
 
 }
 
@@ -244,10 +243,5 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.
 
 // Unused by System Dialects, there is no actual file to load since they're all defined in Go code
 func (b *SystemDialect) GetFilePath() string {
-	return ""
-}
-
-// UNUSED for System Dialect
-func (b *SystemDialect) GetDefaultFileBody(botType string) string {
 	return ""
 }

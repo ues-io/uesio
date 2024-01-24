@@ -97,3 +97,34 @@ declare module "@uesio/app/bots/listener/uesio/tests/tester_signup" {
 		Params
 	}
 }
+declare module "@uesio/app/bots/route/uesio/tests/tools_api_by_brand" {
+	type Params = {
+		brand_name: string
+	}
+
+	export type {
+		Params
+	}
+}
+declare module "@uesio/app/bots/route/uesio/tests/tools_api_query_params" {
+	type Params = {
+		brand_name: string
+		category?: string
+		type?: string
+		limit?: number
+	}
+
+	export type {
+		Params
+	}
+}
+declare module "@uesio/app/bots/runaction/uesio/tests/get_weather_forecast" {
+	type Params = {
+		latitude: number
+		longitude: number
+	}
+
+	export type {
+		Params
+	}
+}

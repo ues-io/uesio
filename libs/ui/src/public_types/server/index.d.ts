@@ -391,6 +391,102 @@ interface SaveBotApi {
 	http: HttpApi
 	callBot: CallBot
 }
+
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+
+interface ReadableStringMap {
+	get: (key: string) => string | undefined
+	has: (key: string) => boolean
+}
+
+interface HttpRequestApi {
+	// The path portion of the current request URL
+	path: string
+	// Return a composite of any path/query string parameters for the current request
+	params: BotParamsApi
+	// Return the request method for the current request, e.g. GET/POST
+	method: HttpMethod
+	// Return the request headers for the current request
+	headers: ReadableStringMap
+	// Return the request body for the current request, if any
+	body: unknown
+}
+
+type Enumerate<
+	N extends number,
+	Acc extends number[] = []
+> = Acc["length"] extends N
+	? Acc[number]
+	: Enumerate<N, [...Acc, Acc["length"]]>
+
+type IntRange<F extends number, T extends number> = Exclude<
+	Enumerate<T>,
+	Enumerate<F>
+>
+
+type StatusCode = IntRange<200, 500>
+
+interface RouteResponseApi {
+	// Initiates a redirect to the provided URL, using response code 301 by default
+	redirectToURL: (
+		// the absolute/relative URL to redirect to
+		url: string
+	) => void
+	// Set the response status code to return to the client.
+	// If this is NOT called, the default status code will be 200.
+	setStatusCode: (statusCode: StatusCode) => void
+	// Sets the response body to return to the client,
+	// and optionally sets the content type of the response
+	// (sets the Content-Type header as well)
+	setBody: (data: unknown, contentType?: string) => void
+	// Sets a single response header
+	setHeader: (headerName: string, headerValue: string) => void
+	// Sets multiple response headers at a time
+	setHeaders: (headers: Record<string, string>) => void
+}
+
+interface RouteBotApi {
+	// Return an API into all Params for the current request,
+	// containing both the route path params and query string params
+	params: BotParamsApi
+	// Get information about the current Bot request
+	request: HttpRequestApi
+	// Determine what response is sent to the client
+	response: RouteResponseApi
+
+	// Fetch data from a collection
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
+	// Delete records from a collection
+	delete: (collectionName: string, records: WireRecord[]) => void
+	// Insert/update collection records
+	save: (collectionName: string, records: WireRecord[]) => void
+	// Run a specific integration action
+	runIntegrationAction: RunIntegrationAction
+	// Go into "admin" mode, elevating the session to have unrestricted admin access
+	// to perform collection operations that the current session is not authorized to do.
+	asAdmin: AsAdminApi
+	// Returns the fully-qualified namespace of the Bot, e.g. "acme/recruiting"
+	getNamespace: () => string
+	// Returns the name of the Bot, e.g "add_numbers"
+	getName: () => string
+
+	/**
+	 * Returns the resolved value for any config value available in this app.
+	 * @param configValueKey The fully-qualified config value id, e.g. "uesio/salesforce.base_url"
+	 */
+	getConfigValue: (configValueKey: string) => string
+	getSession: () => SessionApi
+	getUser: () => UserApi
+	log: LogApi
+	http: HttpApi
+	/**
+	 * Call a Listener Bot
+	 * @param botName The fully-qualified bot name, e.g. "luigi/foo.add_numbers"
+	 * @param params A map of input parameters for the bot.
+	 * @returns A map of output parameters from the bot.
+	 */
+	callBot: CallBot
+}
 export type {
 	AfterSaveBotApi,
 	BeforeSaveBotApi,
@@ -402,13 +498,19 @@ export type {
 	DeleteApi,
 	FieldRequest,
 	FieldValue,
+	HttpMethod,
+	HttpRequestApi,
+	RouteResponseApi,
 	InsertApi,
 	ListenerBotApi,
 	LoadBotApi,
 	LoadOrder,
 	LoadRequest,
 	LoadRequestMetadata,
+	ReadableStringMap,
+	RouteBotApi,
 	RunActionBotApi,
 	SaveBotApi,
+	StatusCode,
 	WireRecord,
 }

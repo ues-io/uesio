@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -15,7 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
-	"gopkg.in/yaml.v3"
 )
 
 func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
@@ -26,27 +27,70 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 	return template.Execute(file, params)
 }
 
+func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
+	return &GeneratorBotAPI{
+		Params: &ParamsAPI{
+			Params: params,
+		},
+		LogApi:     NewBotLogAPI(bot, session.Context()),
+		session:    session,
+		create:     create,
+		bot:        bot,
+		connection: connection,
+	}
+}
+
 type GeneratorBotAPI struct {
-	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	Create     bundlestore.FileCreator
-	Bot        *meta.Bot
-	Connection wire.Connection
 	LogApi     *BotLogAPI `bot:"log"`
+	bot        *meta.Bot
+	create     bundlestore.FileCreator
+	session    *sess.Session
+	connection wire.Connection
+}
+
+// GetAppName returns the key of the current workspace's app
+func (gba *GeneratorBotAPI) GetAppName() string {
+	ws := gba.session.GetWorkspace()
+	if ws != nil {
+		return ws.GetAppFullName()
+	} else {
+		return gba.Params.Get("appName").(string)
+	}
+}
+
+// GetWorkspaceName returns the name of the current workspace
+func (gba *GeneratorBotAPI) GetWorkspaceName() string {
+	ws := gba.session.GetWorkspace()
+	if ws != nil {
+		return ws.GetAppFullName()
+	} else {
+		return gba.Params.Get("workspaceName").(string)
+	}
+}
+
+// GetName returns the name of the bot
+func (gba *GeneratorBotAPI) GetName() string {
+	return gba.bot.Name
+}
+
+// GetNamespace returns the namespace of the bot
+func (gba *GeneratorBotAPI) GetNamespace() string {
+	return gba.bot.GetNamespace()
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
-	return botCall(botKey, params, gba.Session, gba.Connection)
+	return botCall(botKey, params, gba.session, gba.connection)
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
-	return datasource.CallGeneratorBot(gba.Create, namespace, name, params, gba.Connection, gba.Session)
+	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
 }
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
 	buf := &bytes.Buffer{}
-	_, err := bundle.GetItemAttachment(buf, gba.Bot, templateFile, gba.Session)
+	_, err := bundle.GetItemAttachment(buf, gba.bot, templateFile, gba.session, gba.connection)
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +140,7 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 		gba.AddFile(filename, strings.NewReader(templateString))
 		return nil
 	}
-	f, err := gba.Create(filename)
+	f, err := gba.create(filename)
 	if err != nil {
 		return err
 	}
@@ -104,7 +148,7 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 }
 
 func (gba *GeneratorBotAPI) AddFile(filename string, r io.Reader) error {
-	f, err := gba.Create(filename)
+	f, err := gba.create(filename)
 	if err != nil {
 		return err
 	}
@@ -146,7 +190,7 @@ func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateStri
 }
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, gba.Session, gba.Connection)
+	return botLoad(request, gba.session, gba.connection)
 }
 
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {

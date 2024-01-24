@@ -89,6 +89,11 @@ definition:
                                     componentsignal: TOGGLE_MODE
                                     targettype: multiple
                                     target: bot
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    target: botsItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: $Label{uesio/io.save}
@@ -113,6 +118,11 @@ definition:
                                     componentsignal: SET_READ_MODE
                                     targettype: multiple
                                     target: bot
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    target: botsItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -128,6 +138,11 @@ definition:
                                     componentsignal: SET_READ_MODE
                                     targettype: multiple
                                     target: bot
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    target: botsItem
                                   - signal: component/CALL
                                     component: uesio/io.fileattachment
                                     componentsignal: CANCEL_FILE
@@ -208,6 +223,7 @@ definition:
                               values:
                                 - LISTENER
                                 - RUNACTION
+                                - ROUTE
                           components:
                             - uesio/io.list:
                                 uesio.id: botParams

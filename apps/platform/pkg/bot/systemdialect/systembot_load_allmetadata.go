@@ -227,7 +227,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, session, connection)
+		err = bundle.Load(item, session, nil)
 		if err != nil {
 			return err
 		}

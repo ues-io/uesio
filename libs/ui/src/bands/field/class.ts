@@ -1,7 +1,9 @@
-import { FieldMetadata, SelectOption } from "./types"
+import { FieldMetadata } from "./types"
 import { Context } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 import { getKey } from "../../metadata/metadata"
+import { SelectOption } from "../../definition/selectlist"
+import { Bundleable } from "../../metadataexports"
 
 const referenceTypes = ["REFERENCE", "USER", "FILE"]
 
@@ -33,14 +35,34 @@ class Field {
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getSelectMetadata = () => this.source.selectlist
+	getSelectMetadata = (context: Context) => {
+		let selectMetadata = this.source.selectlist
+		if (!selectMetadata) {
+			return undefined
+		}
+		// If we have a name, but no options, we need to grab the full metadata from redux
+		if (!selectMetadata.options && selectMetadata.name) {
+			const key = getKey(selectMetadata as Bundleable)
+			const reduxMetadata = context.getSelectList(key)
+			if (reduxMetadata) {
+				selectMetadata = reduxMetadata
+			}
+		}
+		return selectMetadata
+	}
 	getSelectOptions = (context: Context) => {
-		const selectMetadata = this.getSelectMetadata()
-		if (!selectMetadata) return []
-		if (selectMetadata.blank_option_label === undefined)
-			return selectMetadata.options || []
+		const selectMetadata = this.getSelectMetadata(context)
+		if (!selectMetadata) {
+			return []
+		}
+		const {
+			blank_option_label: blankOptionLabel,
+			blank_option_language_label: blankOptionLanguageLabel,
+			options,
+		} = selectMetadata
+		if (blankOptionLabel === undefined) return options || []
 
-		const mergedOptions = selectMetadata.options.map(
+		const mergedOptions = options?.map(
 			({ label, languageLabel, value, disabled, title }) =>
 				({
 					label: languageLabel
@@ -53,9 +75,7 @@ class Field {
 		)
 
 		const mergedBlankLabel =
-			context.getLabel(
-				selectMetadata.blank_option_language_label || ""
-			) || selectMetadata.blank_option_label
+			context.getLabel(blankOptionLanguageLabel || "") || blankOptionLabel
 		return this.source?.type === "MULTISELECT"
 			? mergedOptions
 			: addBlankSelectOption(mergedOptions, mergedBlankLabel)

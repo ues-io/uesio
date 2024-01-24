@@ -88,6 +88,8 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 type IBotParamCondition interface {
 	GetParam() string
 	GetValue() interface{}
+	GetValues() []interface{}
+	GetOperator() string
 	GetType() string
 }
 
@@ -97,10 +99,11 @@ type IBotParam interface {
 }
 
 type BotParamCondition struct {
-	Param    string      `yaml:"param" json:"param"`
-	Value    interface{} `yaml:"value" json:"value"`
-	Type     string      `yaml:"type,omitempty" json:"type"`
-	Operator string      `yaml:"operator,omitempty" json:"operator"`
+	Param    string        `yaml:"param" json:"param"`
+	Value    interface{}   `yaml:"value,omitempty" json:"value"`
+	Values   []interface{} `yaml:"values,omitempty" json:"values"`
+	Type     string        `yaml:"type,omitempty" json:"type"`
+	Operator string        `yaml:"operator,omitempty" json:"operator"`
 }
 
 func (b BotParamCondition) GetParam() string {
@@ -111,15 +114,24 @@ func (b BotParamCondition) GetValue() interface{} {
 	return b.Value
 }
 
+func (b BotParamCondition) GetValues() []interface{} {
+	return b.Values
+}
+
 func (b BotParamCondition) GetType() string {
 	return b.Type
 }
 
+func (b BotParamCondition) GetOperator() string {
+	return b.Operator
+}
+
 type BotParamConditionResponse struct {
-	Param    string      `json:"param"`
-	Value    interface{} `json:"value"`
-	Type     string      `json:"type"`
-	Operator string      `json:"operator"`
+	Param    string        `json:"param"`
+	Value    interface{}   `json:"value"`
+	Values   []interface{} `json:"values"`
+	Type     string        `json:"type"`
+	Operator string        `json:"operator"`
 }
 
 func (b BotParamConditionResponse) GetParam() string {
@@ -128,6 +140,10 @@ func (b BotParamConditionResponse) GetParam() string {
 
 func (b BotParamConditionResponse) GetValue() interface{} {
 	return b.Value
+}
+
+func (b BotParamConditionResponse) GetValues() []interface{} {
+	return b.Values
 }
 
 func (b BotParamConditionResponse) GetOperator() string {
@@ -318,6 +334,10 @@ func (b *Bot) MarshalYAML() (interface{}, error) {
 	return (*BotWrapper)(b), nil
 }
 
+func isMultiValueOperator(operator string) bool {
+	return operator == "IN" || operator == "NOT_IN"
+}
+
 func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 	conditions := param.GetConditions()
 	if len(conditions) < 1 {
@@ -326,6 +346,7 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 	for _, condition := range conditions {
 		value := paramValues[condition.GetParam()]
 		conditionType := condition.GetType()
+		operator := condition.GetOperator()
 		if conditionType == "hasValue" || conditionType == "hasNoValue" {
 			hasValue := value != nil && value != ""
 			if conditionType == "hasValue" && !hasValue {
@@ -333,8 +354,28 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 			} else if conditionType == "hasNoValue" && hasValue {
 				return false
 			}
-		} else if value != condition.GetValue() {
-			return false
+		} else {
+			if isMultiValueOperator(operator) && len(condition.GetValues()) > 0 {
+				valueIsOneOfValues := false
+				for _, v := range condition.GetValues() {
+					if v == value {
+						valueIsOneOfValues = true
+						break
+					}
+				}
+				if operator == "NOT_IN" {
+					return !valueIsOneOfValues
+				} else {
+					return valueIsOneOfValues
+				}
+			} else {
+				valueMatches := value == condition.GetValue()
+				if operator == "NOT_EQUALS" {
+					return !valueMatches
+				} else {
+					return valueMatches
+				}
+			}
 		}
 	}
 	return true
@@ -364,7 +405,17 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 		switch param.Type {
 		case "NUMBER":
 			// Cast to the corresponding type
-			if !isNumericType(paramValue) {
+			isNumeric := isNumericType(paramValue)
+			if !isNumeric {
+				// try to convert if to a Number if it is a string
+				if strVal, isString := paramValue.(string); isString {
+					if float64Val, err := strconv.ParseFloat(strVal, 64); err == nil {
+						isNumeric = true
+						params[param.Name] = float64Val
+					}
+				}
+			}
+			if !isNumeric {
 				return exceptions.NewInvalidParamException("could not convert param to number", param.Name)
 			}
 		case "CHECKBOX":

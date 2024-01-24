@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
@@ -14,25 +15,64 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
+func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 
-	// For now, route bots are only available as system bots
-	// So we just check if one exists. If it doesn't we just return
-	// the route unchanged.
+	namespace := route.GetNamespace()
+	name := route.Name
 
-	dialect, err := bot.GetBotDialect("SYSTEM")
+	// First try to run a system bot
+	routeBot := meta.NewRouteBot(namespace, name)
+	routeBot.Dialect = "SYSTEM"
+
+	systemDialect, err := bot.GetBotDialect(routeBot.Dialect)
 	if err != nil {
 		return nil, err
 	}
-	modifiedRoute, err := dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
+
+	modifiedRoute, err := systemDialect.RouteBot(routeBot, route, request, connection, session)
+	_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
+	if !isNotFoundError {
+		// If we found a system bot, we can go ahead and just return the results of
+		// that bot, no need to look for another bot to run.
+		return modifiedRoute, err
+	}
+	// If not found, check if this is a "bot" type Route, and that it has an associated Bot
+	if route.Type != "bot" || route.BotRef == "" {
+		// Nothing else to do, just return the original route unchanged
+		return route, nil
+	}
+	// Otherwise, we need to look up the Route bot
+	botNamespace, botName, err := meta.ParseKey(route.BotRef)
 	if err != nil {
-		_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
-		if isNotFoundError {
-			return route, nil
-		}
+		return nil, exceptions.NewNotFoundException("invalid bot specified for route: " + route.GetKey())
+	}
+	routeBot = meta.NewRouteBot(botNamespace, botName)
+	// TODO: Why does connection have to be nil
+	if err = bundle.Load(routeBot, session, nil); err != nil {
+		return nil, exceptions.NewNotFoundException("route bot not found: " + routeBot.GetKey())
+	}
+
+	// route.Params will contain the composite of path and query string parameters
+	if err = routeBot.ValidateParams(route.Params); err != nil {
+		// This will already be a typed ParamError, so no need to convert the error type here
 		return nil, err
 	}
 
+	// Verify the dialect
+	dialect, err := bot.GetBotDialect(routeBot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	// Enter a version context for the bot being called
+	versionSession, err := EnterVersionContext(botNamespace, session, connection)
+	if err != nil {
+		return nil, exceptions.NewExecutionException("unable to invoke bot in context of app " + botNamespace)
+	}
+	modifiedRoute, err = dialect.RouteBot(routeBot, route, request, connection, versionSession)
+	if err != nil {
+		return nil, exceptions.NewExecutionException("error while running route bot: " + err.Error())
+	}
 	return modifiedRoute, nil
 }
 
@@ -42,6 +82,7 @@ func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session
 
 	var robots meta.BotCollection
 
+	// TODO why does connection have to be nil
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.type":       "BEFORESAVE",
@@ -122,7 +163,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 		},
 		Type: "LOAD",
 	}
-
+	// TODO: Figure out why connection has to be nil
 	err = bundle.Load(loadBot, session, nil)
 	// See if there is a SYSTEM bot instead
 	if err != nil {
@@ -166,7 +207,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 		},
 		Type: "SAVE",
 	}
-
+	// TODO: Figure out why connection has to be nil
 	err = bundle.Load(saveBot, session, nil)
 	if err != nil {
 		return exceptions.NewNotFoundException("could not find requested SAVE bot: " + botName)
@@ -186,6 +227,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 
 	var robots meta.BotCollection
 
+	// TODO: Figure out why connection has to be nil
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.type":       "AFTERSAVE",
@@ -309,7 +351,8 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	}
 
 	robot := meta.NewListenerBot(namespace, name)
-	err = bundle.Load(robot, session, connection)
+	// TODO: WHY DOES connection have to be nil here
+	err = bundle.Load(robot, session, nil)
 	if err != nil {
 		return nil, exceptions.NewNotFoundException("listener bot not found: " + fmt.Sprintf("%s.%s", namespace, name))
 	}

@@ -1,0 +1,75 @@
+name: view_only_fields
+definition:
+  # Wires connect to data in collections
+  wires:
+    viewOnlyWire:
+      init:
+        query: false
+        create: true
+      viewOnly: true
+      fields:
+        selectOne:
+          type: SELECT
+          selectlist:
+            name: uesio/core.accepttypes
+        selectTwo:
+          type: SELECT
+          selectlist:
+            source: local
+            options:
+              - value: one
+                label: One
+              - value: two
+                label: Two
+              - value: three
+                label: Three
+    regularWire:
+      init:
+        query: false
+        create: true
+      collection: uesio/tests.animal
+      fields:
+        selectOne:
+          viewOnly: true
+          type: SELECT
+          selectlist:
+            name: uesio/core.accepttypes
+        selectTwo:
+          type: SELECT
+          viewOnly: true
+          selectlist:
+            source: local
+            options:
+              - value: one
+                label: One
+              - value: two
+                label: Two
+              - value: three
+                label: Three
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.box:
+        components:
+          - uesio/io.item:
+              wire: viewOnlyWire
+              mode: EDIT
+              components:
+                - uesio/io.field:
+                    fieldId: selectOne
+                    uesio.id: view-only-one
+                - uesio/io.field:
+                    fieldId: selectTwo
+                    uesio.id: view-only-two
+          - uesio/io.item:
+              wire: regularWire
+              mode: EDIT
+              components:
+                - uesio/io.field:
+                    fieldId: selectOne
+                    uesio.id: regular-one
+                - uesio/io.field:
+                    fieldId: selectTwo
+                    uesio.id: regular-two
+        uesio.styleTokens:
+          root:
+            - p-10

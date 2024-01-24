@@ -5,6 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
@@ -64,22 +68,59 @@ func Generate(key string) error {
 		return err
 	}
 
-	generateURL := fmt.Sprintf("version/%s/%s/metadata/generate/%s/%s", namespace, version, namespace, name)
+	generateURL := fmt.Sprintf("workspace/%s/%s/metadata/generate/%s/%s", app, workspace, namespace, name)
 
 	payloadBytes := &bytes.Buffer{}
 
 	if err = json.NewEncoder(payloadBytes).Encode(&answers); err != nil {
 		return err
 	}
-	if resp, err := call.Request("POST", generateURL, payloadBytes, sessionId, appContext); err != nil {
+	if resp, err := call.Request(&call.RequestSpec{
+		Method:     http.MethodPost,
+		Url:        generateURL,
+		SessionId:  sessionId,
+		AppContext: appContext,
+		Body:       payloadBytes,
+		AdditionalHeaders: map[string]string{
+			"Accept": "application/zip",
+		},
+	}); err != nil {
 		return err
 	} else {
 		if err = zip.Unzip(resp.Body, "bundle"); err != nil {
 			return err
 		}
 	}
+	fmt.Println("Generator completed successfully. Rebuilding type definitions for app...")
+	if err = GenerateAppTypeDefinitions(app, workspace, sessionId, appContext); err != nil {
+		return err
+	}
+	fmt.Println("Type definitions successfully updated.")
+	return nil
+}
 
-	fmt.Println("Generator completed successfully.")
-
+// GenerateAppTypeDefinitions refetches app-specific type definitions from the server,
+// and writes them to disk in the "generated" folder
+func GenerateAppTypeDefinitions(app, workspace, sessionId string, appContext *context.AppContext) error {
+	typeDefinitionsUrl := fmt.Sprintf("workspace/%s/%s/retrieve/types", app, workspace)
+	resp, err := call.Request(&call.RequestSpec{
+		Method:     http.MethodGet,
+		Url:        typeDefinitionsUrl,
+		SessionId:  sessionId,
+		AppContext: appContext,
+	})
+	if err != nil {
+		return err
+	}
+	filePath := filepath.Join("generated", "@types", "@uesio", "app.d.ts")
+	outFile, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer outFile.Close()
+	_, err = io.Copy(outFile, resp.Body)
+	if err != nil {
+		return err
+	}
 	return nil
 }

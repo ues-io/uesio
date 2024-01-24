@@ -8,6 +8,8 @@ definition:
       - hover:text-primary
       - py-2
       - px-4
+    label:
       - uppercase
       - tracking-wider
+      - text-xs
 public: true

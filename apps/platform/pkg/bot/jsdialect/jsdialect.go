@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -24,91 +25,6 @@ func Logger() {
 
 type JSDialect struct {
 }
-
-const DefaultListenerBotBody = `export default function %s(bot) {
-    const a = bot.params.get("a")
-    const b = bot.params.get("b")
-    bot.addResult("answer", a + b)
-}`
-
-const DefaultRunIntegrationActionBotBody = `export default function %s(bot) {
-    const itemNumbers = bot.params.get("itemNumbers")
-    const amount = bot.params.get("amount")
-	const actionName = bot.getActionName()
-
-	if (actionName !== "createOrder") {
-		bot.addError("unsupported action name: " + actionName)
-		return
-	}
-
-	// Call API to create order
-	const result = bot.http.request({
-		method: "POST",
-		url: bot.getIntegration().getBaseURL() + "/api/v1/orders",
-		body: {
-			lineItems: itemNumbers,
-			amount: amount,
-		},
-	})
-	if (result.code !== 200) {
-		bot.addError("could not place order: " + result.status)
-		return
-	}
-	const orderDetails = result.body
-	const { orderNumber } = orderDetails
-
-    bot.addResult("orderNumber", orderNumber)
-}`
-
-const DefaultLoadBotBody = `export default function %s(bot) {
-	const { collection, fields, conditions, order, batchSize, batchNumber, collectionMetadata } = bot.loadRequest
-	const results = [
-		{
-			"first_name": "Luigi",
-			"last_name": "Vampa"
-		},
-		{
-			"first_name": "Myasia",
-			"last_name": "Harvey"
-		},
-	]
-	results.forEach((record) => bot.addRecord(record))
-}`
-
-const DefaultSaveBotBody = `export default function %s(bot) {
-	const { collection, collectionMetadata, upsert } = bot.saveRequest
-	bot.deletes.get().forEach((deleteApi) => {
-		bot.log.info("got a record to delete, with id: " + deleteApi.getId())
-	})
-	bot.inserts.get().forEach((insertApi) => {
-		bot.log.info("got a record to insert, with id: " + insertApi.getId())
-	})
-	bot.updates.get().forEach((updateApi) => {
-		bot.log.info("got a record to update, with id: " + updateApi.getId())
-	})
-}`
-
-const DefaultBeforeSaveBotBody = `export default function %s(bot) {
-	bot.inserts.get().forEach(function (change) {
-		const recordId = change.get("uesio/core.id");
-	});
-	bot.deletes.get().forEach(function (change) {
-		const recordId = change.getOld("uesio/core.id");
-	});
-}`
-
-const DefaultAfterSaveBotBody = `export default function %s(bot) {
-	bot.inserts.get().forEach(function (change) {
-		const recordId = change.get("uesio/core.id");
-	});
-	bot.deletes.get().forEach(function (change) {
-		const recordId = change.getOld("uesio/core.id");
-	});
-}`
-
-const DefaultBotBody = `export default function %s(bot) {
-
-}`
 
 const MAX_TIMEOUT int = 30
 const DEFAULT_TIMEOUT int = 5
@@ -132,16 +48,16 @@ func init() {
 	}
 }
 
-func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
+func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
 	buf := &bytes.Buffer{}
-	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session); err != nil {
+	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session, connection); err != nil {
 		return err
 	}
 	bot.FileContents = string(buf.Bytes())
 	return nil
 }
 
-func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot func(*meta.Bot, *sess.Session) error, errorFunc func(string)) error {
+func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot func(*meta.Bot, *sess.Session, wire.Connection) error, errorFunc func(string)) error {
 	cacheKey := bot.GetKey()
 	// In workspace mode, we need to cache by the database id (the Unique Key),
 	// to ensure we don't have cross-workspace collisions.
@@ -160,7 +76,7 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 	}
 	if program == nil {
 		// We need to hydrate using the dialect-specific hydration mechanism
-		if hydrateErr := hydrateBot(bot, session); hydrateErr != nil {
+		if hydrateErr := hydrateBot(bot, session, connection); hydrateErr != nil {
 			return hydrateErr
 		}
 		if compiledProgram, compileErr := goja.Compile(cacheKey, strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function"), true); compileErr != nil {
@@ -215,38 +131,34 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, hydrateBot fu
 
 func (b *JSDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := NewBeforeSaveAPI(bot, request, connection, session)
-	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
+	return RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botAPI := NewAfterSaveAPI(bot, request, connection, session)
-	return RunBot(bot, botAPI, session, b.hydrateBot, botAPI.AddError)
+	return RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := NewCallBotAPI(bot, session, connection, params)
-	if err := RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
+	if err := RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return nil, err
 	}
 	return botAPI.Results, nil
 }
 
 func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	botAPI := &GeneratorBotAPI{
-		Session: session,
-		Params: &ParamsAPI{
-			Params: params,
-		},
-		Create:     create,
-		Bot:        bot,
-		Connection: connection,
-		LogApi:     NewBotLogAPI(bot, session.Context()),
-	}
-	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
+	botAPI := NewGeneratorBotAPI(bot, params, create, session, connection)
+	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) (*meta.Route, error) {
-	return route, nil
+func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	botAPI := NewRouteBotApi(bot, route, request, session, connection)
+	err := RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	if err != nil {
+		return nil, err
+	}
+	return HandleBotResponse(botAPI)
 }
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
@@ -255,7 +167,7 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 		return err
 	}
 	botAPI := NewLoadBotAPI(bot, op, integrationConnection)
-	if err = RunBot(bot, botAPI, session, b.hydrateBot, nil); err != nil {
+	if err = RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
 	if len(botAPI.loadErrors) > 0 {
@@ -270,12 +182,12 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Conn
 		return err
 	}
 	botAPI := NewSaveBotAPI(bot, connection, op, integrationConnection)
-	return RunBot(bot, botAPI, session, b.hydrateBot, nil)
+	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
 func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
 	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
-	err := RunBot(bot, botAPI, ic.GetSession(), b.hydrateBot, nil)
+	err := RunBot(bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -287,23 +199,4 @@ func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationC
 
 func (b *JSDialect) GetFilePath() string {
 	return "bot.js"
-}
-
-func (b *JSDialect) GetDefaultFileBody(botType string) string {
-	switch botType {
-	case "LISTENER":
-		return DefaultListenerBotBody
-	case "BEFORESAVE":
-		return DefaultBeforeSaveBotBody
-	case "AFTERSAVE":
-		return DefaultAfterSaveBotBody
-	case "LOAD":
-		return DefaultLoadBotBody
-	case "SAVE":
-		return DefaultSaveBotBody
-	case "RUNACTION":
-		return DefaultRunIntegrationActionBotBody
-	default:
-		return DefaultBotBody
-	}
 }

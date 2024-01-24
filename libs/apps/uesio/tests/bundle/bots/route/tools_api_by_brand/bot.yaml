@@ -1,0 +1,9 @@
+name: tools_api_by_brand
+public: true
+type: ROUTE
+dialect: TYPESCRIPT
+params:
+  - name: brand_name
+    label: Brand Name
+    type: TEXT
+    required: true

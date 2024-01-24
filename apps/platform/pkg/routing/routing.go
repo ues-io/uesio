@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
@@ -36,7 +37,7 @@ func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	return route, nil
 }
 
-func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session) (*meta.Route, error) {
+func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute("", "")
 	var routes meta.RouteCollection
 
@@ -44,6 +45,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return GetHomeRoute(session)
 	}
 
+	// TODO: Figure out why connection has to be nil
 	err := bundle.LoadAll(&routes, namespace, nil, session, nil)
 	if err != nil {
 		return nil, err
@@ -97,10 +99,10 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	}
 	route.Params = params
 
-	return datasource.RunRouteBots(route, session)
+	return datasource.RunRouteBots(route, r, session, connection)
 }
 
-func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
+func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 
 	var routeAssignment *meta.RouteAssignment
 	var routeAssignments meta.RouteAssignmentCollection
@@ -148,7 +150,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 
 	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
 
-	return datasource.RunRouteBots(route, session)
+	return datasource.RunRouteBots(route, r, session, connection)
 }
 
 func ResolveRouteParams(routeParams map[string]interface{}, s *sess.Session, vars url.Values) (map[string]interface{}, error) {

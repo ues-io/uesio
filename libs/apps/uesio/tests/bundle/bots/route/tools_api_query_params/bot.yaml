@@ -1,0 +1,21 @@
+name: tools_api_query_params
+public: true
+type: ROUTE
+dialect: TYPESCRIPT
+params:
+  - name: brand_name
+    label: Brand Name
+    type: TEXT
+    required: true
+  - name: category
+    label: Category
+    type: TEXT
+    required: false
+  - name: type
+    label: Category
+    type: TEXT
+    required: false
+  - name: limit
+    label: Max results
+    type: NUMBER
+    required: false

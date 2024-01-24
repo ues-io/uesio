@@ -9,19 +9,25 @@ definition:
       - border-separate
       - border-spacing-0
       - w-full
+      - border-1
+      - border-slate-300
+      - rounded-lg
     header:
       - border-b
-      - border-slate-150
+      - border-slate-100
     headerCell:
       - tracking-wider
       - uppercase
       - text-xs
-      - font-light
       - p-4
-      - text-slate-800
+      - text-slate-700
+      - bg-slate-100
+      - font-normal
       - border-b
-      - border-slate-150
+      - border-slate-200
       - whitespace-nowrap
+      - first:rounded-tl-lg
+      - last:rounded-tr-lg
     headerCellInner:
       - text-left
       - grid
@@ -43,9 +49,12 @@ definition:
       - "[&:hover>.numbercheck]:block"
     cell:
       - border-b
-      - border-slate-150
+      - border-slate-100
       - p-0
     body:
+      - "[&>tr:last-child>td]:first:rounded-bl-lg"
+      - "[&>tr:last-child>td]:last:rounded-br-lg"
+      - "[&>tr:last-child>td]:border-b-0"
       - "[&.hasRowAction>tr]:hover:cursor-pointer"
       - "[&.hasRowAction>tr]:hover:bg-slate-50"
     rowDeleted:
@@ -60,5 +69,5 @@ definition:
       - bg-slate-50
       - p-6
       - border-b-1
-      - border-slate-150
+      - border-slate-100
 public: true

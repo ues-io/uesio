@@ -344,7 +344,7 @@ const getWireFieldFromPropertyDef = (
 				def,
 				type === "FIELD_VALUES" ? "LIST" : fieldMetadataType,
 				{
-					selectlist: fieldMetadata?.getSelectMetadata(),
+					selectlist: fieldMetadata?.getSelectMetadata(context),
 					subtype:
 						type === "FIELD_VALUES" ? fieldMetadataType : undefined,
 				}

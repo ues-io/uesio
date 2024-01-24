@@ -1,17 +1,14 @@
 function route(bot) {
-	var name = bot.params.get("name")
-	var path = bot.params.get("path")
-	var view = bot.params.get("view")
-	var theme = bot.params.get("theme")
-
+	const contextApp = bot.getAppName()
+	let params = bot.params.getAll()
+	// Strip off the context app name from the bot key
+	// if it is the same as the current app
+	if (params.bot && params.bot.startsWith(contextApp)) {
+		params.bot = params.bot.slice(contextApp.length + 1)
+	}
 	bot.generateFile(
-		"routes/" + name + ".yaml",
-		{
-			name: name,
-			path: path,
-			view: view,
-			theme: theme,
-		},
-		"templates/route.yaml"
+		`routes/${params.name}.yaml`,
+		params,
+		`templates/route_${params.type || "view"}.template.yaml`
 	)
 }

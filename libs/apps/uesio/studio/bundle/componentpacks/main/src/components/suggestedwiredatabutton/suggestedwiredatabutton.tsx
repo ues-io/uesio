@@ -1,11 +1,15 @@
-import { definition, api, wire, collection } from "@uesio/ui"
+import { definition, api, wire, collection, context } from "@uesio/ui"
 import SuggestDataButton from "../../utilities/suggestdatabutton/suggestdatabutton"
 
 type ComponentDefinition = {
 	wire: string
 }
 
-const handleResults = (wire: wire.Wire, results: wire.PlainWireRecord[]) => {
+const handleResults = (
+	ctx: context.Context,
+	wire: wire.Wire,
+	results: wire.PlainWireRecord[]
+) => {
 	const collection = wire.getCollection()
 	const selectOrMSFields = [] as collection.Field[]
 	// const referenceFields = []
@@ -26,7 +30,7 @@ const handleResults = (wire: wire.Wire, results: wire.PlainWireRecord[]) => {
 			{
 				...result,
 				// Populate values for all SELECT/MULTISELECT fields
-				...getSelectFieldValues(selectOrMSFields),
+				...getSelectFieldValues(ctx, selectOrMSFields),
 				// ...getReferenceFieldValue(referenceFields),
 			},
 			true
@@ -35,15 +39,14 @@ const handleResults = (wire: wire.Wire, results: wire.PlainWireRecord[]) => {
 }
 
 const getSelectFieldValues = (
+	ctx: context.Context,
 	selectFields: collection.Field[]
 ): wire.PlainWireRecord => {
 	if (!selectFields.length) return {}
 	return Object.fromEntries(
 		selectFields.map((field) => [
 			field.getId(),
-			getRandomSelectOptionValue(
-				field.getSelectMetadata()?.options || []
-			),
+			getRandomSelectOptionValue(field.getSelectOptions(ctx) || []),
 		])
 	)
 }
@@ -114,11 +117,11 @@ const getSQLDataTypeForField = (
 
 const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 	const {
-		context,
+		context: ctx,
 		definition: { wire: wireName },
 	} = props
 
-	const wire = api.wire.useWire(wireName, context)
+	const wire = api.wire.useWire(wireName, ctx)
 	const fields = wire?.getFields()
 	const collection = wire?.getCollection()
 	const pluralLabel = collection?.getPluralLabel()
@@ -130,13 +133,13 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 
 	return (
 		<SuggestDataButton
-			context={context.deleteWorkspace()}
+			context={ctx.deleteWorkspace()}
 			prompt={prompt}
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
 			handleResults={(results: wire.PlainWireRecord[]) => {
 				if (!wire || !results.length) return
-				handleResults(wire, results)
+				handleResults(ctx, wire, results)
 			}}
 		/>
 	)

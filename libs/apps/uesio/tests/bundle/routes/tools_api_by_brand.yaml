@@ -1,0 +1,4 @@
+name: tools_api_by_brand
+type: bot
+path: tools/by-brand/{brand_name}
+bot: tools_api_by_brand
