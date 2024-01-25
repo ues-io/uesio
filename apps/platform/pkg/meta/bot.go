@@ -326,11 +326,27 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	b.CollectionRef = GetFullyQualifiedKey(b.CollectionRef, b.Namespace)
+	if b.Params != nil {
+		for i := range b.Params {
+			param := b.Params[i]
+			if param.SelectList != "" {
+				b.Params[i].SelectList = GetFullyQualifiedKey(b.Params[i].SelectList, b.Namespace)
+			}
+		}
+	}
 	return nil
 }
 
 func (b *Bot) MarshalYAML() (interface{}, error) {
 	b.CollectionRef = GetLocalizedKey(b.CollectionRef, b.Namespace)
+	if b.Params != nil {
+		for i := range b.Params {
+			param := b.Params[i]
+			if param.SelectList != "" {
+				b.Params[i].SelectList = GetLocalizedKey(b.Params[i].SelectList, b.Namespace)
+			}
+		}
+	}
 	return (*BotWrapper)(b), nil
 }
 
@@ -383,7 +399,7 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 
 // ValidateParams checks validates received a map of provided bot params
 // against any bot parameter metadata defined for the Bot
-func (b *Bot) ValidateParams(params map[string]interface{}) error {
+func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleLoader) error {
 
 	for _, param := range b.Params {
 		// Ignore validations on Params which are not relevant due to conditions
@@ -423,6 +439,37 @@ func (b *Bot) ValidateParams(params map[string]interface{}) error {
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return exceptions.NewInvalidParamException("param value must either be 'true' or 'false'", param.Name)
 			}
+		case "SELECT":
+			// If there is no Select List defined, then the parameter cannot be validated
+			selectList, err := NewSelectList(param.SelectList)
+			if err != nil {
+				return exceptions.NewInvalidParamException("no Select List provided for SELECT parameter", param.Name)
+			}
+			// Ensure that the value provided is one of the valid options
+			stringValue, isString := paramValue.(string)
+			if !isString {
+				return exceptions.NewInvalidParamException("param value must be a string", param.Name)
+			}
+			// Now load in the select list values
+			if err = bundleLoader(selectList); err != nil {
+				return err
+			}
+			// Verify that the provided value is in the select list's options
+			foundValue := false
+			validValues := make([]string, len(selectList.Options))
+			for i, option := range selectList.Options {
+				if stringValue == option.Value {
+					foundValue = true
+				}
+				validValues[i] = option.Value
+			}
+			if !foundValue {
+				return exceptions.NewInvalidParamExceptionWithDetails(
+					"invalid value for param",
+					param.Name,
+					"allowed values: ["+strings.Join(validValues, ", ")+"]",
+				)
+			}
 		case "METADATANAME":
 			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
 			if !ok {
@@ -441,20 +488,52 @@ func isNumericType(val interface{}) bool {
 	return false
 }
 
-func getTSTypeForParam(paramType string) string {
-	switch paramType {
+func getTSTypeNameForParam(param *BotParam) (typeName, importDirective string, err error) {
+	switch param.Type {
 	case "TEXT":
-		return "string"
+		return "string", "", nil
 	case "NUMBER":
-		return "number"
+		return "number", "", nil
 	case "CHECKBOX":
-		return "boolean"
+		return "boolean", "", nil
+	case "SELECT":
+		return getTypeNameAndImportForSelectList(param.SelectList)
 	case "LIST":
-		return "string[]"
+		return "string[]", "", nil
 	default:
-		return "unknown"
+		return "unknown", "", nil
 	}
 }
+
+func getSelectListImport(namespace, typeName string) string {
+	return fmt.Sprintf("	declare type %[2]s = import(\"@uesio/app/selectlists/%[1]s\").%[2]s", namespace, typeName)
+}
+
+func getTypeNameAndImportForSelectList(selectListKey string) (typeName, importDirective string, err error) {
+	ns, name, err := ParseKey(selectListKey)
+	if err != nil {
+		return "", "", err
+	}
+	typeName = GetTypeNameFromMetaName(name)
+	return typeName, getSelectListImport(ns, typeName), nil
+}
+
+func getParamDef(p *BotParam) (typeOutput, importOutput string, err error) {
+	joiner := ": "
+	if !p.Required {
+		joiner = "?" + joiner
+	}
+	typeOutput, importOutput, err = getTSTypeNameForParam(p)
+	if err != nil {
+		return "", "", exceptions.NewBadRequestException("Could not generate type for parameter: " + p.Name + ": " + err.Error())
+	}
+	// example: "foo: string", "bar?: number", "baz: CustomType"
+	typeOutput = p.Name + joiner + typeOutput
+	return typeOutput, importOutput, nil
+}
+
+const NEWLINE = `
+`
 
 func (b *Bot) GenerateTypeDefinitions() (string, error) {
 	if b.Type != "ROUTE" && b.Type != "LISTENER" && b.Type != "RUNACTION" {
@@ -466,22 +545,32 @@ func (b *Bot) GenerateTypeDefinitions() (string, error) {
 	if b.Params == nil {
 		return "", nil
 	}
-	typesFile := `
-declare module "@uesio/app/bots/` + botTypes[b.Type] + "/" + b.GetNamespace() + "/" + b.Name + `" {
-	type Params = {`
+	var imports []string
+	var params []string
 
 	// Add an entry to the Params type for each Param
 	for _, paramDef := range b.Params {
-		joiner := ": "
-		if !paramDef.Required {
-			joiner = "?" + joiner
+		paramType, importTypes, err := getParamDef(&paramDef)
+		if err != nil {
+			return "", err
 		}
-		typesFile = typesFile + `
-		` + paramDef.Name + joiner + getTSTypeForParam(paramDef.Type)
+		if importTypes != "" {
+			imports = append(imports, importTypes)
+		}
+		if paramType != "" {
+			params = append(params, paramType)
+		}
 	}
 
 	// Generate types from the Bots parameters
+	typesFile := `
+declare module "@uesio/app/bots/` + botTypes[b.Type] + "/" + b.GetNamespace() + "/" + b.Name + `" {` + NEWLINE
+	if len(imports) > 0 {
+		typesFile += strings.Join(imports, NEWLINE)
+	}
 	typesFile = typesFile + `
+	type Params = {
+		` + strings.Join(params, NEWLINE+`		`) + `
 	}
 
 	export type {
