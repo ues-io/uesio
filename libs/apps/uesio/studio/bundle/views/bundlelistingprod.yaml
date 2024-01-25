@@ -33,7 +33,7 @@ definition:
 
     # The details of the listing, nothing special going on here
     listing:
-      collection: uesio/studio.bundlelistingwrapper
+      collection: uesio/studio.externalbundlelisting
       fields:
         uesio/core.uniquekey:
         uesio/studio.description:
@@ -46,7 +46,7 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{id}
-          id: bundleListingWrapperUniquekey
+          id: externalBundleListingUniquekey
 
     # All bundle versions of the listing
     versions:

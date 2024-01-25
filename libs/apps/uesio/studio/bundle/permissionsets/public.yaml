@@ -12,4 +12,4 @@ files:
 bots:
   uesio/studio.checkavailability: true
 collections:
-  uesio/studio.bundlelistingwrapper: true
+  uesio/studio.externalbundlelisting: true

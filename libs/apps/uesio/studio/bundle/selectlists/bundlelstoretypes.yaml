@@ -1,6 +1,6 @@
 name: bundlelstoretypes
 options:
-  - label: Local
+  - label: Local Bundle Store
     value: LOCAL
-  - label: Production
+  - label: Production Bundle Store
     value: PROD

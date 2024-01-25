@@ -153,6 +153,19 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
 
+    licensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: app
+          lookupField: uesio/core.id
+
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
@@ -231,8 +244,22 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Pricing
-                    subtitle: cooming soon
+                - uesio/io.list:
+                    uesio.id: licensetemplateList
+                    wire: licensetemplate
+                    mode: READ
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.monthlyprice
+                            - uesio/io.field:
+                                fieldId: uesio/studio.autocreate
                 - uesio/io.titlebar:
+                    uesio.styleTokens:
+                      root:
+                        - pt-8
                     uesio.variant: uesio/io.section
                     title: Ratings & Reviews
                     subtitle: cooming soon

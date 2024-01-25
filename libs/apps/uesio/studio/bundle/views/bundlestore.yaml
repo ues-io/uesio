@@ -58,7 +58,7 @@ definition:
                     components:
                       - uesio/io.field:
                           fieldId: bundlelstoretype
-                          labelPosition: left
+                          labelPosition: none
           - uesio/core.view:
               uesio.display:
                 - type: fieldValue

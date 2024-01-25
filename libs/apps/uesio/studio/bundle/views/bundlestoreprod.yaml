@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     bundlelistings:
-      collection: uesio/studio.bundlelistingwrapper
+      collection: uesio/studio.externalbundlelisting
       fields:
         uesio/core.id:
         uesio/studio.description:

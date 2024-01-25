@@ -22,13 +22,13 @@ export default function loadbundlelisting(bot: LoadBotApi) {
 
 	let apiResponse = response.body as unknown as ApiResponse[]
 
-	const bundleListingWrapperUniquekey = conditions?.find(
-		(condition) => condition.id === "bundleListingWrapperUniquekey"
+	const externalBundleListingUniquekey = conditions?.find(
+		(condition) => condition.id === "externalBundleListingUniquekey"
 	)
 
-	if (bundleListingWrapperUniquekey) {
+	if (externalBundleListingUniquekey) {
 		apiResponse = apiResponse.filter(
-			(record) => record.app === bundleListingWrapperUniquekey.value
+			(record) => record.app === externalBundleListingUniquekey.value
 		)
 	}
 
