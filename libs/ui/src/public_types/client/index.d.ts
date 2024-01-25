@@ -414,6 +414,12 @@ type ReferenceGroupMetadata = {
 	field: string
 }
 
+type GetSelectOptionsProps = {
+	context: Context
+	// A blank option is added by default, but can be disabled by setting this to false
+	addBlankOption?: boolean
+}
+
 /**
  * API for interacting with the Fields on a Collection
  */
@@ -459,10 +465,11 @@ type Field = {
 	 */
 	getSelectMetadata: (context: Context) => SelectListMetadata
 	/**
-	 * If this is a "Select" field, returns a list of SelectOptions,
-	 * including a blank option if a blank option label is defined on the field
+	 * If this is a "Select" field, returns a list of the options defined for the field.
+	 * By default, this list will include a blank option, using the Select List's defined Blank Option Label,
+	 * but this can be disabled by setting the addBlankOption parameter to false.
 	 */
-	getSelectOptions: (context: Context) => SelectOption[]
+	getSelectOptions: (props: GetSelectOptionsProps) => SelectOption[]
 	/**
 	 * If this is a "Number" field, returns the Number field specific metadata extensions
 	 */

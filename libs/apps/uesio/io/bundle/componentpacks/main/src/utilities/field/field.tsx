@@ -179,7 +179,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			break
 		case "SELECT": {
 			selectOptions = addSelectedValueToOptions(
-				fieldMetadata.getSelectOptions(context),
+				fieldMetadata.getSelectOptions({ context }),
 				common.value as string
 			)
 			content =
@@ -197,7 +197,10 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			multiSelectProps = {
 				...common,
 				options: addSelectedValuesToOptions(
-					fieldMetadata.getSelectOptions(context),
+					fieldMetadata.getSelectOptions({
+						addBlankOption: false,
+						context,
+					}),
 					values
 				),
 				// Storage of Multiselect values in DB is a Map[string]boolean containing the values which are selected,

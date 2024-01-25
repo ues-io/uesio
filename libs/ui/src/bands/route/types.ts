@@ -48,17 +48,17 @@ type RouteTag = {
 }
 
 type RouteState = {
-	view: string
-	params?: Record<string, string>
-	namespace: string
-	path: string
-	workspace?: WorkspaceState
-	theme: string
-	title: string
-	isLoading?: boolean
-	dependencies?: Dependencies
-	tags: RouteTag[]
 	batchid?: string
+	dependencies?: Dependencies
+	isLoading?: boolean
+	namespace: string
+	params?: Record<string, string>
+	path: string
+	tags?: RouteTag[]
+	theme: string
+	title?: string
+	view: string
+	workspace?: WorkspaceState
 }
 
 export type {
