@@ -2,35 +2,6 @@ name: bundlelistingprod
 definition:
   # Wires are how we pull in data
   wires:
-    workspaces:
-      collection: uesio/studio.workspace
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.app:
-          fields:
-            uesio/studio.color:
-            uesio/studio.icon:
-      conditions:
-        - field: uesio/core.uniquekey
-          value: $Param{app}:$Param{workspacename}
-    # The app associated with this listing
-    # Used for:
-    # 1. Looking up versions and latestVersion
-    # 2. Installing the bundle
-    app:
-      collection: uesio/studio.app
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.description:
-        uesio/studio.color:
-        uesio/studio.icon:
-      conditions:
-        - field: uesio/core.uniquekey
-          valueSource: PARAM
-          param: id
-
     # The details of the listing, nothing special going on here
     listing:
       collection: uesio/studio.externalbundlelisting
@@ -47,7 +18,6 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{id}
           id: externalBundleListingUniquekey
-
     # All bundle versions of the listing
     versions:
       collection: uesio/studio.externalbundleversion
@@ -58,88 +28,6 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{id}
           id: externalBundleVersionUniquekey
-    # Latest bundle versions of the listing
-    # Used for showing + installing latest version
-    latestversion:
-      collection: uesio/studio.bundle
-      fields:
-        uesio/core.id:
-        uesio/studio.app:
-          fields:
-            uesio/core.id:
-        uesio/studio.major:
-        uesio/studio.minor:
-        uesio/studio.patch:
-        uesio/studio.version:
-        uesio/studio.published:
-      conditions:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: app
-          lookupField: uesio/core.id
-        - field: uesio/studio.published
-          value: true
-      order:
-        - field: uesio/core.id
-          desc: true
-      batchsize: 1
-
-    # The current app's dependencies
-    # Used for installing the bundle
-    dependencies:
-      collection: uesio/studio.bundledependency
-      fields:
-        uesio/core.id:
-        uesio/studio.workspace:
-        uesio/studio.app:
-        uesio/studio.bundle:
-          fields:
-            uesio/studio.app:
-            uesio/studio.major:
-            uesio/studio.minor:
-            uesio/studio.patch:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-      defaults:
-        - field: uesio/studio.bundle
-          valueSource: LOOKUP
-          lookupWire: latestversion
-          lookupField: uesio/core.id
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: app
-          lookupField: uesio/core.id
-
-    # The current app's dependency
-    # Used for the install button
-    dependencyAlreadyInstalled:
-      collection: uesio/studio.bundledependency
-      fields:
-        uesio/core.id:
-        uesio/studio.workspace:
-        uesio/studio.app:
-          fields:
-            uesio/core.uniquekey:
-        uesio/studio.bundle:
-          fields:
-            uesio/studio.app:
-            uesio/studio.major:
-            uesio/studio.minor:
-            uesio/studio.patch:
-      conditions:
-        - field: uesio/studio.app->uesio/core.uniquekey
-          value: $Param{id}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
 
   components:
     - uesio/io.viewlayout:
@@ -158,48 +46,6 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: ${uesio/studio.app->uesio/studio.icon}
                           color: ${uesio/studio.app->uesio/studio.color}
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            # Install Button
-                            - uesio/io.button:
-                                uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: dependencyAlreadyInstalled
-                                  - field: uesio/core.uniquekey
-                                    wire: listing
-                                    value: $Param{app}
-                                    operator: NOT_EQUALS
-                                uesio.variant: uesio/io.primary
-                                text: Install
-                                signals:
-                                  - signal: wire/CREATE_RECORD
-                                    wire: dependencies
-                                  - signal: wire/SAVE
-                                  - signal: wire/LOAD
-                                    wires:
-                                      - workspaces
-                                      - dependencies
-                                      - dependencyAlreadyInstalled
-
-                            # Uninstall Button
-                            - uesio/io.list:
-                                wire: dependencies
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Uninstall
-                                      uesio.display:
-                                        - field: uesio/studio.app->uesio/core.uniquekey
-                                          value: $Param{id}
-                                      signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - dependencies
-                                            - dependencyAlreadyInstalled
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
