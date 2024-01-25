@@ -7,7 +7,7 @@ type ApiResponse = {
 	color: string
 }
 
-export default function loadbundlelisting(bot: LoadBotApi) {
+export default function loadexternalbundlelisting(bot: LoadBotApi) {
 	const { conditions } = bot.loadRequest
 
 	const bundleStoreDomain = bot.getConfigValue(
