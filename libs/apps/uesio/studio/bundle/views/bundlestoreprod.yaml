@@ -40,7 +40,7 @@ definition:
                             root:
                               - cursor-pointer
                           signals:
-                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}?prodbundle=true
+                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
                               signal: route/NAVIGATE
                           components:
                             - uesio/studio.bundlelistingvisual:

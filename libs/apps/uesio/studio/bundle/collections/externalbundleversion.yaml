@@ -1,0 +1,6 @@
+name: externalbundleversion
+label: External Bundle Version
+pluralLabel: External Bundle Versions
+type: EXTERNAL
+integration: uesio/studio.externalbundlestore
+loadBot: loadexternalbundleversion

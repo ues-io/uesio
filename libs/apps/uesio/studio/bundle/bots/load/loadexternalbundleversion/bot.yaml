@@ -1,0 +1,3 @@
+name: loadexternalbundleversion
+type: LOAD
+dialect: TYPESCRIPT

@@ -14,6 +14,20 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
+    listing:
+      collection: uesio/studio.bundlelisting
+      fields:
+        uesio/core.uniquekey:
+        uesio/studio.description:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+            uesio/studio.fullname:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{id}
 
   components:
     - uesio/io.viewlayout:
@@ -26,8 +40,8 @@ definition:
         content:
           - uesio/core.view:
               uesio.display:
-                - type: paramIsNotSet
-                  param: prodbundle
+                - type: wireHasRecords
+                  wire: listing
               uesio.id: bundlelistinglocalview
               view: bundlelistinglocal
               params:
@@ -36,14 +50,11 @@ definition:
                 id: $Param{id}
           - uesio/core.view:
               uesio.display:
-                - type: paramIsSet
-                  param: prodbundle
+                - type: wireHasNoRecords
+                  wire: listing
               uesio.id: bundlelistingprodview
               view: bundlelistingprod
               params:
                 app: $Param{app}
                 workspacename: $Param{workspacename}
                 id: $Param{id}
-  params:
-    prodbundle:
-      type: CHECKBOX

@@ -13,3 +13,4 @@ bots:
   uesio/studio.checkavailability: true
 collections:
   uesio/studio.externalbundlelisting: true
+  uesio/studio.externalbundleversion: true
