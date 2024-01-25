@@ -46,7 +46,11 @@ const getSelectFieldValues = (
 	return Object.fromEntries(
 		selectFields.map((field) => [
 			field.getId(),
-			getRandomSelectOptionValue(field.getSelectOptions(ctx) || []),
+			getRandomSelectOptionValue(
+				field.getSelectOptions({
+					context: ctx,
+				})
+			),
 		])
 	)
 }
