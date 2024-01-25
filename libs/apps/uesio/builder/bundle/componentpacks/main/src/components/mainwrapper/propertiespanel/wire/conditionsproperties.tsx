@@ -209,7 +209,7 @@ function getValueProperty(
 		return {
 			...baseValueProp,
 			type: "SELECT",
-			options: fieldMetadata?.getSelectOptions(context),
+			options: fieldMetadata?.getSelectOptions({ context }),
 		} as SelectProperty
 	}
 
@@ -571,7 +571,7 @@ const getItemPropertiesFunction =
 								{ label: "True", value: "true" },
 								{ label: "False", value: "false" },
 						  ]
-						: fieldMetadata?.getSelectOptions(context),
+						: fieldMetadata?.getSelectOptions({ context }),
 				displayConditions: [
 					{
 						field: "valueSource",

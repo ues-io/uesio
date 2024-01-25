@@ -7,6 +7,12 @@ import { Bundleable } from "../../metadataexports"
 
 const referenceTypes = ["REFERENCE", "USER", "FILE"]
 
+export type GetSelectOptionsProps = {
+	context: Context
+	// A blank option is added by default, but can be disabled by setting this to false
+	addBlankOption?: boolean
+}
+
 class Field {
 	constructor(source: FieldMetadata) {
 		this.source = source
@@ -50,7 +56,8 @@ class Field {
 		}
 		return selectMetadata
 	}
-	getSelectOptions = (context: Context) => {
+	getSelectOptions = (props: GetSelectOptionsProps) => {
+		const { context, addBlankOption = true } = props
 		const selectMetadata = this.getSelectMetadata(context)
 		if (!selectMetadata) {
 			return []
@@ -60,25 +67,26 @@ class Field {
 			blank_option_language_label: blankOptionLanguageLabel,
 			options,
 		} = selectMetadata
-		if (blankOptionLabel === undefined) return options || []
 
-		const mergedOptions = options?.map(
-			({ label, languageLabel, value, disabled, title }) =>
-				({
-					label: languageLabel
-						? context.getLabel(languageLabel) || label
-						: label,
-					value,
-					disabled,
-					title,
-				} as SelectOption)
-		)
+		const mergedOptions =
+			options?.map(
+				({ label, languageLabel, value, disabled, title }) =>
+					({
+						label: languageLabel
+							? context.getLabel(languageLabel) || label
+							: label,
+						value,
+						disabled,
+						title,
+					} as SelectOption)
+			) || []
 
+		if (!addBlankOption) {
+			return mergedOptions
+		}
 		const mergedBlankLabel =
 			context.getLabel(blankOptionLanguageLabel || "") || blankOptionLabel
-		return this.source?.type === "MULTISELECT"
-			? mergedOptions
-			: addBlankSelectOption(mergedOptions, mergedBlankLabel)
+		return addBlankSelectOption(mergedOptions, mergedBlankLabel)
 	}
 	getAccept = () => {
 		switch (this.source.file?.accept) {
