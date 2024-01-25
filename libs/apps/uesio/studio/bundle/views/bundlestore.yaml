@@ -48,11 +48,11 @@ definition:
                     text: shop
               actions:
                 - uesio/io.item:
-                    # uesio.display:
-                    #   - type: hasConfigValue
-                    #     name: uesio/core.bundle_store_domain
-                    #     operator: EQUALS
-                    #     value: ues.io
+                    uesio.display:
+                      - type: hasConfigValue
+                        configValue: uesio/core.bundle_store_domain
+                        operator: NOT_EQUALS
+                        value: ues.io
                     mode: EDIT
                     wire: bundlelstoretypes
                     components:
