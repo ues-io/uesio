@@ -1,6 +1,6 @@
 function view(bot) {
 	var collection = bot.params.get("collection")
-	var navView = bot.params.get("navview")
+	var navComponent = bot.params.get("navcomponent")
 	var lastPartOfCollection = collection?.split(".")[1]
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name") || `${lastPartOfCollection}_detail`
@@ -11,14 +11,7 @@ function view(bot) {
 		"- uesio/io.field:\n    fieldId: ${key}\n"
 	)
 
-	var navContent = navView
-		? bot.mergeYamlTemplate(
-				{
-					navView,
-				},
-				"templates/nav.yaml"
-		  )
-		: ""
+	var navContent = navComponent ? `- ${navComponent}:\n` : ""
 
 	var innerViewName = `${name}_content`
 

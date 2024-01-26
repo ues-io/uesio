@@ -197,7 +197,11 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 	if err != nil {
 		return err
 	}
-	return gba.AddFile(filename, strings.NewReader(merged))
+	return gba.GenerateStringFile(filename, merged)
+}
+
+func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) error {
+	return gba.AddFile(filename, strings.NewReader(content))
 }
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {

@@ -1,5 +1,4 @@
-function view(bot) {
-	var name = bot.params.get("name") || "apptag"
+function component_nav(bot) {
 	var logo = bot.params.get("logo")
 	var logoheight = bot.params.get("logoheight") || 34
 
@@ -54,11 +53,11 @@ function view(bot) {
 			navcollections: navButtons,
 			appname: bot.getAppName(),
 		},
-		"templates/apptag.yaml"
+		"templates/nav.yaml"
 	)
-
-	bot.runGenerator("uesio/core", "view", {
-		name: name,
-		definition: definition,
+	bot.runGenerator("uesio/core", "component", {
+		type: "DECLARATIVE",
+		name: "nav",
+		definition,
 	})
 }

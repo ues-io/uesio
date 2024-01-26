@@ -1,6 +1,6 @@
 function view(bot) {
 	var collection = bot.params.get("collection")
-	var navView = bot.params.get("navview")
+	var navComponent = bot.params.get("navcomponent")
 	var lastPartOfCollection = collection?.split(".")[1]
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name") || `${lastPartOfCollection}_list`
@@ -8,14 +8,7 @@ function view(bot) {
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
 	var tableColumnsYaml = bot.repeatString(fields, "- field: ${key}\n")
 
-	var navContent = navView
-		? bot.mergeYamlTemplate(
-				{
-					navView,
-				},
-				"templates/nav.yaml"
-		  )
-		: ""
+	var navContent = navComponent ? `- ${navComponent}:\n` : ""
 
 	var definition = bot.mergeYamlTemplate(
 		{

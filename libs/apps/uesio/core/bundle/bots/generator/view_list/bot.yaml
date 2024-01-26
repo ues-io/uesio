@@ -3,10 +3,10 @@ dialect: "JAVASCRIPT"
 label: List View
 type: "GENERATOR"
 params:
-  - name: navview
-    prompt: Nav View
+  - name: navcomponent
+    prompt: Nav Component
     type: METADATA
-    metadataType: VIEW
+    metadataType: COMPONENT
   - name: collection
     prompt: Collection
     type: METADATA

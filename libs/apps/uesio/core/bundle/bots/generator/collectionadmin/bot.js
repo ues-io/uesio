@@ -32,23 +32,22 @@ function collectionadmin(bot) {
 
 	var collectionLabel = collectionMeta[0]["uesio/core.label"]
 
-	bot.runGenerator("uesio/core", "view_nav", {
-		collections: collection,
-	})
+	bot.runGenerator("uesio/core", "component_nav", {})
 
 	bot.runGenerator("uesio/core", "view_list", {
-		navview: collectionNamespace + ".nav",
+		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
 	})
 
 	bot.runGenerator("uesio/core", "view_detail", {
-		navview: collectionNamespace + ".nav",
+		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
 	})
 
 	bot.runGenerator("uesio/core", "view_queue", {
+		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
 		detailview: collectionName + "_detail_content",
@@ -60,6 +59,14 @@ function collectionadmin(bot) {
 		view: collectionName + "_list",
 		theme: "uesio/core.default",
 		title: collectionLabel + " List View",
+	})
+
+	bot.runGenerator("uesio/core", "route", {
+		name: collectionName + "queue",
+		path: collectionName,
+		view: collectionName + "_queue",
+		theme: "uesio/core.default",
+		title: collectionLabel + " Queue View",
 	})
 
 	bot.runGenerator("uesio/core", "route", {
