@@ -38,6 +38,15 @@ jsonpath "$.code" == 400
 jsonpath "$.status" == "Bad Request"
 jsonpath "$.error" == "could not convert param to number: limit"
 
+# Invoke with a bad select list parameter
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/app/uesio/tests/api/tools?brand_name=Makita&limit=2&category=foooo
+HTTP 400
+[Asserts]
+jsonpath "$.code" == 400
+jsonpath "$.status" == "Bad Request"
+jsonpath "$.error" == "invalid value for param: category"
+jsonpath "$.details" == "allowed values: [Hand, Machine]"
+
 # Invoke with valid parameters
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/app/uesio/tests/api/tools?brand_name=Makita&limit=1&type=drill
 HTTP 200

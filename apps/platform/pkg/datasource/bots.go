@@ -46,14 +46,18 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 	if err != nil {
 		return nil, exceptions.NewNotFoundException("invalid bot specified for route: " + route.GetKey())
 	}
-	routeBot = meta.NewRouteBot(botNamespace, botName)
-	// TODO: Why does connection have to be nil
-	if err = bundle.Load(routeBot, session, nil); err != nil {
-		return nil, exceptions.NewNotFoundException("route bot not found: " + routeBot.GetKey())
+
+	bundleLoader := func(item meta.BundleableItem) error {
+		// TODO: WHY DOES connection have to be nil here
+		return bundle.Load(item, session, nil)
 	}
 
+	routeBot = meta.NewRouteBot(botNamespace, botName)
+	if err = bundleLoader(routeBot); err != nil {
+		return nil, exceptions.NewNotFoundException("route bot not found: " + routeBot.GetKey())
+	}
 	// route.Params will contain the composite of path and query string parameters
-	if err = routeBot.ValidateParams(route.Params); err != nil {
+	if err = routeBot.ValidateParams(route.Params, bundleLoader); err != nil {
 		// This will already be a typed ParamError, so no need to convert the error type here
 		return nil, err
 	}
@@ -269,14 +273,15 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 	}
 
 	robot := meta.NewGeneratorBot(namespace, name)
-
-	err := bundle.Load(robot, session, connection)
-	if err != nil {
-		return exceptions.NewNotFoundException("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+	bundleLoader := func(item meta.BundleableItem) error {
+		// TODO: WHY DOES connection have to be nil here
+		return bundle.Load(item, session, nil)
 	}
 
-	err = robot.ValidateParams(params)
-	if err != nil {
+	if err := bundleLoader(robot); err != nil {
+		return exceptions.NewNotFoundException("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+	}
+	if err := robot.ValidateParams(params, bundleLoader); err != nil {
 		return err
 	}
 
@@ -333,6 +338,11 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
+	bundleLoader := func(item meta.BundleableItem) error {
+		// TODO: WHY DOES connection have to be nil here
+		return bundle.Load(item, session, nil)
+	}
+
 	// First try to run a system bot
 	systemListenerBot := meta.NewListenerBot(namespace, name)
 	systemListenerBot.Dialect = "SYSTEM"
@@ -351,13 +361,11 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	}
 
 	robot := meta.NewListenerBot(namespace, name)
-	// TODO: WHY DOES connection have to be nil here
-	err = bundle.Load(robot, session, nil)
-	if err != nil {
+	if err = bundleLoader(robot); err != nil {
 		return nil, exceptions.NewNotFoundException("listener bot not found: " + fmt.Sprintf("%s.%s", namespace, name))
 	}
 
-	if err = robot.ValidateParams(params); err != nil {
+	if err = robot.ValidateParams(params, bundleLoader); err != nil {
 		// This will already be a typed ParamError, so no need to convert the error type here
 		return nil, err
 	}
@@ -430,7 +438,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return systemBotResults, err
 	}
 
-	// Otherwise, since it is NOT a system bot, parse the bot's name
+	// Otherwise, since it is NOT a system bot, parse the bot name
 	actionBot, err := GetIntegrationActionBotName(action, integrationType)
 	if err != nil {
 		return nil, exceptions.NewNotFoundException(fmt.Sprintf("no bot name could be determined for integration action %s:%s", integrationKey, actionKey))
@@ -440,15 +448,16 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return nil, exceptions.NewNotFoundException(fmt.Sprintf("invalid bot name %s for integration action %s:%s", actionBot, integrationKey, actionKey))
 	}
 
+	bundleLoader := func(item meta.BundleableItem) error {
+		// TODO: WHY DOES connection have to be nil here
+		return bundle.Load(item, session, nil)
+	}
 	robot := meta.NewRunActionBot(botNamespace, botName)
-	err = bundle.Load(robot, session, connection)
-	if err != nil {
+	if err = bundleLoader(robot); err != nil {
 		return nil, exceptions.NewNotFoundException("integration run action bot not found: " + actionBot)
 	}
 
-	// TODO: Make sure that Bot params and Action Params match up!
-
-	if err = robot.ValidateParams(params); err != nil {
+	if err = robot.ValidateParams(params, bundleLoader); err != nil {
 		// This error will already be a BotParamError strongly typed
 		return nil, err
 	}

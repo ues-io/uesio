@@ -9,8 +9,9 @@ params:
     required: true
   - name: category
     label: Category
-    type: TEXT
+    type: SELECT
     required: false
+    selectList: tool_category
   - name: type
     label: Category
     type: TEXT

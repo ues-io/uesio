@@ -82,13 +82,16 @@ const MetadataField: definition.UtilityComponent<MetadataFieldProps> = (
 	}
 
 	// TODO: Find some way to propagate any error up to the FieldWrapper...
-	// const [metadata, error] = api.builder.useMetadataList(
-	const [metadata] = api.builder.useMetadataList(
+	const [metadata, error] = api.builder.useMetadataList(
 		context,
 		type,
 		context.mergeString(namespace || ""),
 		context.mergeString(grouping)
 	)
+
+	if (error) {
+		throw new Error("Failed to load metadata: " + error)
+	}
 
 	const contextApp = context.getApp()
 

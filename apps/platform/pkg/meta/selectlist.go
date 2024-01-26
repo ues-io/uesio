@@ -2,8 +2,11 @@ package meta
 
 import (
 	"errors"
+	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type SelectListOption struct {
@@ -83,4 +86,23 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*SelectListWrapper)(sl))
+}
+
+func (sl *SelectList) GenerateTypeDefinitions() (string, error) {
+	if sl.Name == "" || sl.Namespace == "" {
+		return "", exceptions.NewBadRequestException("Select List name and namespace must be provided to generate types")
+	}
+	if sl.Options == nil {
+		return "", nil
+	}
+
+	values := make([]string, len(sl.Options))
+
+	// Unite the option values into a union string type
+	for i := range sl.Options {
+		values[i] = sl.Options[i].Value
+	}
+	return `
+	export type ` + GetTypeNameFromMetaName(sl.Name) + " = \"" + strings.Join(values, `" | "`) + `"
+`, nil
 }
