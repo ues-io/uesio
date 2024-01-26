@@ -59,7 +59,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Route(w http.ResponseWriter, r *http.Request) {
+func RouteByPath(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	namespace := vars["namespace"]
@@ -99,6 +99,34 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 	file.RespondJSON(w, r, routingMergeData)
 
+}
+
+func RouteByKey(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	namespace := vars["namespace"]
+	routeName := vars["name"]
+	session := middleware.GetSession(r)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	route, err := routing.GetRouteByKey(r, namespace, routeName, session, connection)
+	if err != nil {
+		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), session)
+		return
+	}
+	// Handle redirect routes
+	if route.Type == "redirect" {
+		handleRedirectAPIRoute(w, r, route, session)
+		return
+	}
+	routingMergeData, err := getRouteAPIResult(route, session)
+	if err != nil {
+		handleApiErrorRoute(w, r, route.Path, session, err)
+		return
+	}
+	file.RespondJSON(w, r, routingMergeData)
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
@@ -242,6 +270,24 @@ func getErrorResponse(err error, statusCode int) *errorResponse {
 		resp.Details = paramException.Details
 	}
 	return resp
+}
+
+func ServeRouteByKey(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	namespace := vars["namespace"]
+	routeName := vars["name"]
+	session := middleware.GetSession(r)
+	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	if err != nil {
+		HandleErrorRoute(w, r, session, r.URL.Path, err, true)
+		return
+	}
+	route, err := routing.GetRouteByKey(r, namespace, routeName, session, connection)
+	if err != nil {
+		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), session)
+		return
+	}
+	ServeRouteInternal(w, r, session, route.Path, route)
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {

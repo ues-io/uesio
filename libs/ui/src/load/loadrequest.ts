@@ -19,6 +19,7 @@ type LoadRequest = {
 	requirewriteaccess?: boolean
 	fields: LoadRequestField[]
 	params?: Record<string, string>
+	viewOnly?: boolean
 }
 
 type LoadRequestField = {

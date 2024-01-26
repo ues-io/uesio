@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
@@ -223,15 +222,16 @@ func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, s
 	}
 
 	return &routing.RouteMergeData{
-		View:         route.ViewRef,
-		Params:       route.Params,
-		Namespace:    route.Namespace,
-		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(session.GetWorkspace()),
-		Theme:        route.ThemeRef,
 		Dependencies: metadata,
-		Title:        mergedRouteTitle,
+		Namespace:    route.Namespace,
+		Params:       route.Params,
+		Path:         route.Path,
 		Tags:         mergedRouteTags,
+		Theme:        route.ThemeRef,
+		Title:        mergedRouteTitle,
+		Type:         route.Type,
+		View:         route.ViewRef,
+		Workspace:    GetWorkspaceMergeData(session.GetWorkspace()),
 	}, err
 }
 
