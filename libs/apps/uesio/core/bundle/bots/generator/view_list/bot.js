@@ -7,8 +7,11 @@ function view(bot) {
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name") || `${collectionName}_list`
 	var wirename = collectionName || name
-	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
-	var tableColumnsYaml = bot.repeatString(fields, "- field: ${key}\n")
+	var fieldsArray = fields.split(",")
+	var fieldsYaml = fieldsArray.map((field) => `${field}:\n`).join("")
+	var tableColumnsYaml = fieldsArray
+		.map((field) => `- field: ${field}\n`)
+		.join("")
 
 	if (!navComponent) {
 		bot.runGenerator("uesio/core", "component_nav", {})
