@@ -1,15 +1,22 @@
 function view(bot) {
 	var collection = bot.params.get("collection")
 	var navComponent = bot.params.get("navcomponent")
-	var lastPartOfCollection = collection?.split(".")[1]
+	const collectionParts = collection?.split(".")
+	const collectionNamespace = collectionParts[0]
+	const collectionName = collectionParts[1]
 	var fields = bot.params.get("fields")
-	var name = bot.params.get("name") || `${lastPartOfCollection}_detail`
-	var wirename = lastPartOfCollection || name
+	var name = bot.params.get("name") || `${collectionName}_detail`
+	var wirename = collectionName || name
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
 	var formFieldsYaml = bot.repeatString(
 		fields,
 		"- uesio/io.field:\n    fieldId: ${key}\n"
 	)
+
+	if (!navComponent) {
+		bot.runGenerator("uesio/core", "component_nav", {})
+		navComponent = collectionNamespace + ".nav"
+	}
 
 	var navContent = navComponent ? `- ${navComponent}:\n` : ""
 

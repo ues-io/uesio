@@ -80,9 +80,9 @@ func (s *SessionAPI) GetApp() *AppAPI {
 	appApi := &AppAPI{
 		fullName: appName,
 	}
+	s.appApi = appApi
 	_, name, err := meta.ParseNamespace(appName)
 	if err != nil {
-		s.appApi = appApi
 		return appApi
 	}
 
@@ -90,19 +90,16 @@ func (s *SessionAPI) GetApp() *AppAPI {
 
 	appData, err := datasource.GetAppData(s.session.Context(), []string{appName})
 	if err != nil {
-		s.appApi = appApi
 		return appApi
 	}
 
 	appDataForNamespace, ok := appData[appName]
 	if !ok {
-		s.appApi = appApi
 		return appApi
 	}
 
 	appApi.color = appDataForNamespace.Color
 	appApi.icon = appDataForNamespace.Icon
 
-	s.appApi = appApi
 	return appApi
 }
