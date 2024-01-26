@@ -7,11 +7,11 @@ function view(bot) {
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name") || `${collectionName}_detail`
 	var wirename = collectionName || name
-	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
-	var formFieldsYaml = bot.repeatString(
-		fields,
-		"- uesio/io.field:\n    fieldId: ${key}\n"
-	)
+	var fieldsArray = fields.split(",")
+	var fieldsYaml = fieldsArray.map((field) => `${field}:\n`).join("")
+	var formFieldsYaml = fieldsArray
+		.map((field) => `- uesio/io.field:\n    fieldId: ${field}\n`)
+		.join("")
 
 	if (!navComponent) {
 		bot.runGenerator("uesio/core", "component_nav", {})

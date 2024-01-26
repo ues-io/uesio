@@ -29,13 +29,15 @@ function view(bot) {
 				"templates/queue.yaml"
 		  )
 		: ""
-	var fieldsyaml = bot.repeatString(fields, "${key}:\n")
+
+	var fieldsArray = fields.split(",")
+	var fieldsYaml = fieldsArray.map((field) => `${field}:\n`).join("")
 
 	var definition = bot.mergeYamlTemplate(
 		{
 			collection,
 			navContent,
-			fields: fieldsyaml,
+			fields: fieldsYaml,
 			wirename,
 			detailviewname,
 		},
