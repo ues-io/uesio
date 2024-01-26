@@ -106,7 +106,8 @@ declare module "@uesio/app/` + group.GetBundleFolderName() + "/" + ns + "\" {"))
 					return err
 				}
 				// Write the end of the module
-				_, err = out.Write([]byte(`}`))
+				_, err = out.Write([]byte(`
+}`))
 				if err != nil {
 					return err
 				}
