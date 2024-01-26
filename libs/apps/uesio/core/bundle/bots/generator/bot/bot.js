@@ -1,6 +1,6 @@
 function bot(botapi) {
 	// Get the name of the context workspace's app
-	const app = botapi.getAppFullName()
+	const app = botapi.getAppName()
 	const params = botapi.params.getAll()
 	const { name, collection } = params
 	const type = (params.type || "LISTENER").toLowerCase()

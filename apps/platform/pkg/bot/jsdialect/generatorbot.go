@@ -49,8 +49,8 @@ type GeneratorBotAPI struct {
 	connection wire.Connection
 }
 
-// GetAppFullName returns the key of the current workspace's app
-func (gba *GeneratorBotAPI) GetAppFullName() string {
+// GetAppName returns the key of the current workspace's app
+func (gba *GeneratorBotAPI) GetAppName() string {
 	ws := gba.session.GetWorkspace()
 	if ws != nil {
 		return ws.GetAppFullName()
@@ -58,38 +58,13 @@ func (gba *GeneratorBotAPI) GetAppFullName() string {
 	return gba.Params.Get("appName").(string)
 }
 
+func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
+	return NewSessionAPI(gba.session)
+}
+
 // GetAppName returns the name of the current workspace's app
-func (gba *GeneratorBotAPI) GetAppName() string {
-	ws := gba.session.GetWorkspace()
-	if ws != nil {
-		fullName := ws.GetAppFullName()
-		_, name, err := meta.ParseNamespace(fullName)
-		if err != nil {
-			return ""
-		}
-		return name
-	}
-	return ""
-}
-
-// GetAppColor returns the color of the current workspace's app
-func (gba *GeneratorBotAPI) GetAppColor() string {
-	namespace := gba.GetAppFullName()
-	appData, err := datasource.GetAppData(gba.session.Context(), []string{namespace})
-	if err != nil {
-		return ""
-	}
-	return appData[namespace].Color
-}
-
-// GetAppIcon returns the icon of the current workspace's app
-func (gba *GeneratorBotAPI) GetAppIcon() string {
-	namespace := gba.GetAppFullName()
-	appData, err := datasource.GetAppData(gba.session.Context(), []string{namespace})
-	if err != nil {
-		return ""
-	}
-	return appData[namespace].Icon
+func (gba *GeneratorBotAPI) GetApp() *AppAPI {
+	return gba.GetSession().GetApp()
 }
 
 // GetWorkspaceName returns the name of the current workspace

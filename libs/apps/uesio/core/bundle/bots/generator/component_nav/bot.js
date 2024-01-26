@@ -9,7 +9,7 @@ function component_nav(bot) {
 		conditions: [
 			{
 				field: "uesio/core.namespace",
-				value: bot.getAppFullName(),
+				value: bot.getAppName(),
 			},
 		],
 	})
@@ -31,6 +31,8 @@ function component_nav(bot) {
 		})
 		.join("\n")
 
+	var appData = bot.getApp()
+
 	var logoContent = logo
 		? bot.mergeYamlTemplate(
 				{
@@ -41,8 +43,8 @@ function component_nav(bot) {
 		  )
 		: bot.mergeYamlTemplate(
 				{
-					appicon: bot.getAppIcon(),
-					appcolor: '"' + bot.getAppColor() + '"',
+					appicon: appData.getIcon(),
+					appcolor: '"' + appData.getColor() + '"',
 				},
 				"templates/navicon.yaml"
 		  )
@@ -51,7 +53,7 @@ function component_nav(bot) {
 		{
 			logoContent,
 			navcollections: navButtons,
-			appname: bot.getAppName(),
+			appname: appData.getName(),
 		},
 		"templates/nav.yaml"
 	)
