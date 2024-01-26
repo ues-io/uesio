@@ -9,7 +9,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Invoke with all required parameters this will work and create a new view with the name test_list_view_generator
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/listview
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/view_list
 {
     "collection": "uesio/tests.account",
     "fields": "uesio/tests.name",
@@ -22,7 +22,7 @@ jsonpath "$.success" == true
 
 # Invoke with all required parameters this should succeed
 # because we allow overwriting existing views
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/listview
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/generate/uesio/core/view_list
 {
     "collection": "uesio/tests.account",
     "fields": "uesio/tests.name",

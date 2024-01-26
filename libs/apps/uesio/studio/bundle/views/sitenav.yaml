@@ -22,7 +22,7 @@ definition:
                 subItemName: $Param{subItemName}
                 subItemNameSpace: $Param{subItemNameSpace}
         content:
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Site Admin
               content:
                 - uesio/io.tile:
@@ -73,7 +73,7 @@ definition:
                     title: Collections
                     icon: list
                     id: collections
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Usage
               content:
                 - uesio/studio.sitenavusagetile:

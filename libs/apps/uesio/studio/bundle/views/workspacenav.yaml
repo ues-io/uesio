@@ -22,7 +22,7 @@ definition:
                 subItemName: $Param{subItemName}
                 subItemNameSpace: $Param{subItemNameSpace}
         content:
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Workspace Admin
               content:
                 - uesio/io.tile:
@@ -97,7 +97,7 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: package
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Data Structure & Content
               content:
                 - uesio/io.tile:
@@ -216,7 +216,7 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: collections
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: User Interface
               content:
                 - uesio/io.tile:
@@ -294,7 +294,7 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: palette
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Security & Access
               content:
                 - uesio/io.tile:
@@ -468,7 +468,7 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: token
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: Internationalization
               content:
                 - uesio/io.tile:

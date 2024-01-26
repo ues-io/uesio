@@ -54,9 +54,17 @@ func (gba *GeneratorBotAPI) GetAppName() string {
 	ws := gba.session.GetWorkspace()
 	if ws != nil {
 		return ws.GetAppFullName()
-	} else {
-		return gba.Params.Get("appName").(string)
 	}
+	return gba.Params.Get("appName").(string)
+}
+
+func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
+	return NewSessionAPI(gba.session)
+}
+
+// GetAppName returns the name of the current workspace's app
+func (gba *GeneratorBotAPI) GetApp() *AppAPI {
+	return gba.GetSession().GetApp()
 }
 
 // GetWorkspaceName returns the name of the current workspace
@@ -164,7 +172,11 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 	if err != nil {
 		return err
 	}
-	return gba.AddFile(filename, strings.NewReader(merged))
+	return gba.GenerateStringFile(filename, merged)
+}
+
+func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) error {
+	return gba.AddFile(filename, strings.NewReader(content))
 }
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {

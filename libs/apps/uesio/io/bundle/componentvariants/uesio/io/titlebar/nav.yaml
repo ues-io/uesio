@@ -11,6 +11,10 @@ definition:
       - p-2
       - items-center
       - bg-slate-100
+      - border-b-1
+      - border-slate-200
+    content:
+      - -mb-[1px]
     title:
       - p-1
       - text-xs

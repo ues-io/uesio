@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"fmt"
 
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -12,6 +13,7 @@ import (
 type SessionAPI struct {
 	session *sess.Session
 	wsApi   *WorkspaceAPI
+	appApi  *AppAPI
 }
 type WorkspaceAPI struct {
 	workspace *meta.Workspace
@@ -25,6 +27,23 @@ func (w *WorkspaceAPI) GetName() string {
 }
 func (w *WorkspaceAPI) GetUrlPrefix() string {
 	return fmt.Sprintf("/workspace/%s/%s", w.workspace.GetAppFullName(), w.workspace.Name)
+}
+
+type AppAPI struct {
+	name     string
+	fullName string
+	icon     string
+	color    string
+}
+
+func (a *AppAPI) GetName() string {
+	return a.name
+}
+func (a *AppAPI) GetIcon() string {
+	return a.icon
+}
+func (a *AppAPI) GetColor() string {
+	return a.color
 }
 
 func NewSessionAPI(session *sess.Session) *SessionAPI {
@@ -50,4 +69,37 @@ func (s *SessionAPI) GetWorkspace() *WorkspaceAPI {
 		return s.wsApi
 	}
 	return nil
+}
+
+func (s *SessionAPI) GetApp() *AppAPI {
+	if s.appApi != nil {
+		return s.appApi
+	}
+
+	appName := s.session.GetContextAppName()
+	appApi := &AppAPI{
+		fullName: appName,
+	}
+	s.appApi = appApi
+	_, name, err := meta.ParseNamespace(appName)
+	if err != nil {
+		return appApi
+	}
+
+	appApi.name = name
+
+	appData, err := datasource.GetAppData(s.session.Context(), []string{appName})
+	if err != nil {
+		return appApi
+	}
+
+	appDataForNamespace, ok := appData[appName]
+	if !ok {
+		return appApi
+	}
+
+	appApi.color = appDataForNamespace.Color
+	appApi.icon = appDataForNamespace.Icon
+
+	return appApi
 }

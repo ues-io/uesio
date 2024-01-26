@@ -49,7 +49,7 @@ definition:
       - "[&:hover>.numbercheck]:block"
     cell:
       - border-b
-      - border-slate-100
+      - border-slate-200
       - p-0
     body:
       - "[&>tr:last-child>td]:first:rounded-bl-lg"
