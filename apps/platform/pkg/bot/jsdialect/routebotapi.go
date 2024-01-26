@@ -204,3 +204,18 @@ func (rba *RouteBotAPI) GetNamespace() string {
 func (rba *RouteBotAPI) GetName() string {
 	return rba.bot.Name
 }
+
+// GetAppName returns the key of the context application,
+// which will either be the workspace's app, or the site's app
+func (rba *RouteBotAPI) GetAppName() string {
+	return rba.session.GetContextAppName()
+}
+
+// GetWorkspaceName returns the name of the current workspace, if there is one.
+func (rba *RouteBotAPI) GetWorkspaceName() string {
+	ws := rba.session.GetWorkspace()
+	if ws == nil {
+		return ""
+	}
+	return ws.Name
+}

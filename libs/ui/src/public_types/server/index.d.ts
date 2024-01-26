@@ -87,6 +87,19 @@ interface DeletesApi {
 }
 interface SessionApi {
 	getId: () => string
+	// Returns true only if the Bot is being run in a Workspace context
+	inWorkspaceContext: () => boolean
+	// If in a Workspace context, returns a Workspace Api
+	// to obtain info about the context Workspace
+	getWorkspace: () => WorkspaceApi
+}
+interface WorkspaceApi {
+	// Return the name of the workspace
+	getName: () => string
+	// Return the fully-qualified name of the workspace's app
+	getAppFullName: () => string
+	// Return the URL prefix to use for routes in the workspace
+	getUrlPrefix: () => string
 }
 interface UserApi {
 	getId: () => string
@@ -510,6 +523,8 @@ export type {
 	RouteBotApi,
 	RunActionBotApi,
 	SaveBotApi,
+	SessionApi,
 	StatusCode,
+	WorkspaceApi,
 	WireRecord,
 }
