@@ -1,4 +1,5 @@
 name: selectlist
+label: Select List
 public: true
 options:
   - label: One

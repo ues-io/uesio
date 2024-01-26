@@ -173,15 +173,25 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 	}
 }
 
-// GetTypescriptableItemConditions returns BundleConditions to allow filtering a group
-// to only return those items for which
-func (bc *BotCollection) GetTypescriptableItemConditions() BundleConditions {
-	return BundleConditions{
-		"uesio/studio.type": []string{
-			"LISTENER",
-			"ROUTE",
-			"RUNACTION",
-		},
+var botGetTypescriptableItemConditions func() BundleConditions
+
+func init() {
+	botGetTypescriptableItemConditions = func() BundleConditions {
+		return BundleConditions{
+			"uesio/studio.type": []string{
+				"LISTENER",
+				"ROUTE",
+				"RUNACTION",
+			},
+		}
+	}
+}
+
+// GetTypeGenerationOptions configures how Bot type definitions should be generated
+func (bc *BotCollection) GetTypeGenerationOptions() *TypeGenerationOptions {
+	return &TypeGenerationOptions{
+		GenerateModuleForNamespace:      false,
+		GetTypescriptableItemConditions: botGetTypescriptableItemConditions,
 	}
 }
 

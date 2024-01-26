@@ -19,9 +19,8 @@ export interface AsyncOptions {
 	timeout?: number
 }
 
-export interface AsyncResult<T> {
-	error?: unknown
-	data?: T | undefined
+export type AsyncResult<T> = {
+	data: T
 	loading: boolean
 }
 
@@ -40,7 +39,7 @@ export type AsyncFunc<T> = () => Promise<T>
 export const memoizedAsync = <T>(
 	asyncFn: AsyncFunc<T>,
 	options: AsyncOptions = defaultOptions
-) =>
+): Promise<AsyncResult<T>> =>
 	new Promise((resolve, reject) => {
 		// Merge the default options with the options passed in
 		const { cacheKey, refetch, timeout = -1 } = options
@@ -56,11 +55,7 @@ export const memoizedAsync = <T>(
 		// If we have a timeout, setup a timer to reject the promise to prevent it from hanging forever
 		if (timeout > -1) {
 			timer = setTimeout(
-				() =>
-					reject({
-						error: "Request timed out",
-						loading: false,
-					}),
+				() => reject("Request timed out"),
 				timeout
 			) as unknown as number
 		}
@@ -77,7 +72,7 @@ export const memoizedAsync = <T>(
 			resolve({
 				data: res,
 				loading: false,
-			} as AsyncResult<T>)
+			})
 			// Return the result so that piggybacker Promises will get it too
 			return res
 		}
@@ -88,10 +83,7 @@ export const memoizedAsync = <T>(
 			if (isOriginalFetch) {
 				cache.delete(cacheKey)
 			}
-			reject({
-				error: error?.message,
-				loading: false,
-			})
+			reject(error?.message)
 			// Return the error so that piggybacker Promises will get it too
 			return error
 		}
@@ -118,16 +110,15 @@ export const memoizedAsync = <T>(
 		} as CacheEntry<T>)
 	})
 
-export const memoizedGetJSON = <T>(
+export const memoizedGetJSON = async <T>(
 	context: Context,
 	url: string,
 	options = defaultOptions
-) => {
+): Promise<T> => {
 	const cacheKey = `getJSON:${url}`
-	return memoizedAsync<T>(() => getJSON(context, url), {
+	const res = await memoizedAsync<T>(() => getJSON(context, url), {
 		...options,
 		cacheKey,
 	})
-		.then((res: AsyncResult<T>) => res.data)
-		.catch((res: AsyncResult<T>) => res.error) as Promise<T>
+	return res.data
 }

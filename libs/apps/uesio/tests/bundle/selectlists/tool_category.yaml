@@ -1,0 +1,7 @@
+name: tool_category
+label: Tool Category
+options:
+  - label: Hand
+    value: Hand
+  - label: Machine
+    value: Machine

@@ -1,11 +1,12 @@
 package meta
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
+
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 var localMetadataNames = TrimYamlString(`
@@ -133,7 +134,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 			"somecollection_badname.yaml",
 			"my/namespace",
 			nil,
-			errors.New("Metadata name does not match filename: somecollection, somecollection_badname"),
+			exceptions.NewBadRequestException("Metadata name does not match filename: somecollection, somecollection_badname"),
 		},
 	}
 

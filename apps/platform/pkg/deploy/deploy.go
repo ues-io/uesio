@@ -17,6 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -196,7 +197,11 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				return err
 			}
 			if err = readZipFile(zipFile, collectionItem); err != nil {
-				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
+				// If this is a typed error, just retain it, rather than wrapping it.
+				if exceptions.GetStatusCodeForError(err) < 500 {
+					return err
+				}
+				return exceptions.NewBadRequestException("Unable to read file '" + collectionItem.GetKey() + "': " + err.Error())
 			}
 			continue
 		}
