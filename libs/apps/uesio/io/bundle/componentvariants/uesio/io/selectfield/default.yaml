@@ -13,7 +13,7 @@ definition:
       - after:translate-y-[-50%]
       - after:pointer-events-none
     input:
-      - pr-8
+      - "!pr-8"
       - appearance-none
 
 public: true

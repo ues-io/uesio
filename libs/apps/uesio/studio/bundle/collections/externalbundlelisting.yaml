@@ -1,0 +1,6 @@
+name: externalbundlelisting
+label: External Bundle Listing
+pluralLabel: External Bundle Listings
+type: EXTERNAL
+integration: uesio/studio.externalbundlestore
+loadBot: loadexternalbundlelisting

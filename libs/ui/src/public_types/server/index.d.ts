@@ -23,6 +23,7 @@ type ConditionOperator =
 type FieldValue = string | number | boolean | object | null
 type ConditionType = "SEARCH" | "GROUP" | "SUBQUERY"
 interface ConditionRequest {
+	id?: string
 	field: string
 	operator: ConditionOperator
 	value?: FieldValue

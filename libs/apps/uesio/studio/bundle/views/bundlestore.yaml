@@ -2,6 +2,20 @@ name: bundlestore
 definition:
   # Wires are how we pull in data
   wires:
+    bundlelstoretypes:
+      viewOnly: true
+      fields:
+        bundlelstoretype:
+          type: SELECT
+          selectlist:
+            name: uesio/studio.bundlelstoretypes
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: bundlelstoretype
+          valueSource: VALUE
+          value: LOCAL
     workspaces:
       collection: uesio/studio.workspace
       fields:
@@ -14,40 +28,6 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    dependencies:
-      collection: uesio/studio.bundledependency
-      fields:
-        uesio/core.id:
-        uesio/studio.workspace:
-        uesio/studio.bundle:
-          fields:
-            uesio/studio.app:
-            uesio/studio.major:
-            uesio/studio.minor:
-            uesio/studio.patch:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-    bundlelistings:
-      collection: uesio/studio.bundlelisting
-      fields:
-        uesio/core.id:
-        uesio/studio.description:
-        uesio/studio.status:
-        uesio/studio.approved:
-        uesio/studio.app:
-          fields:
-            uesio/core.id:
-            uesio/studio.fullname:
-            uesio/studio.color:
-            uesio/studio.icon:
-      conditions:
-        - field: uesio/studio.status
-          value: PUBLISHED
-        - field: uesio/studio.approved
-          value: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -60,33 +40,46 @@ definition:
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main
-              title: Add a Bundle
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.deck:
-                    wire: bundlelistings
-                    uesio.id: bundleListingList
-                    mode: READ
-                    uesio.styleTokens:
-                      root:
-                        - grid
-                        - gap-10
-                        - grid-cols-1
-                        - lg:grid-cols-2
-                        - xl:grid-cols-3
+              title: Bundle Store
+              subtitle: search for bundles
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: shop
+              actions:
+                - uesio/io.item:
+                    uesio.display:
+                      - type: mergeValue
+                        sourceValue: $ConfigValue{uesio/core.bundle_store_domain}
+                        operator: NOT_EQUALS
+                        value: $ConfigValue{uesio/core.primary_domain}
+                    mode: EDIT
+                    wire: bundlelstoretypes
                     components:
-                      - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - cursor-pointer
-                          signals:
-                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
-                              signal: route/NAVIGATE
-                          components:
-                            - uesio/studio.bundlelistingvisual:
-                                color: ${uesio/studio.app->uesio/studio.color}
-                                icon: ${uesio/studio.app->uesio/studio.icon}
-                                title: ${uesio/studio.app->uesio/studio.fullname}
-                                subtitle: ${uesio/studio.description}
-                                verified: false
+                      - uesio/io.field:
+                          fieldId: bundlelstoretype
+                          labelPosition: none
+          - uesio/core.view:
+              uesio.display:
+                - type: fieldValue
+                  field: bundlelstoretype
+                  wire: bundlelstoretypes
+                  operator: EQUALS
+                  value: LOCAL
+              uesio.id: bundlelstorelocalview
+              view: bundlestorelocal
+              params:
+                app: $Param{app}
+                workspacename: $Param{workspacename}
+          - uesio/core.view:
+              uesio.display:
+                - type: fieldValue
+                  field: bundlelstoretype
+                  wire: bundlelstoretypes
+                  operator: EQUALS
+                  value: PROD
+              uesio.id: bundlelstoreprodview
+              view: bundlestoreprod
+              params:
+                app: $Param{app}
+                workspacename: $Param{workspacename}
