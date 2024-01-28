@@ -10,7 +10,7 @@ definition:
           - uesio/core.view:
               view: appcrumb
         content:
-          - uesio/studio.navsection:
+          - uesio/io.navsection:
               title: User Profile
               content:
                 - uesio/io.tile:

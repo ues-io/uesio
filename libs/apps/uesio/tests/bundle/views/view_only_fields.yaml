@@ -16,6 +16,7 @@ definition:
           type: SELECT
           selectlist:
             source: local
+            blank_option_label: "Select an option"
             options:
               - value: one
                 label: One

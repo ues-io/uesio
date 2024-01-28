@@ -58,14 +58,20 @@ describe("View Only Wires", () => {
 			})
 			cy.getByIdFragment("select", "view-only-one").select("AUDIO")
 			cy.getByIdFragment("select", "view-only-two").should((select) => {
-				expect(select.children("option")).to.have.length(3)
+				expect(select.children("option")).to.have.length(4)
+				expect(select.children("option").eq(0)).to.have.text(
+					"Select an option"
+				)
+				expect(select.children("option").eq(1)).to.have.text("One")
 			})
 			cy.getByIdFragment("select", "view-only-two").select("two")
 			cy.getByIdFragment("select", "regular-one").should((select) => {
 				expect(select.children("option")).to.have.length(6)
 			})
 			cy.getByIdFragment("select", "regular-two").should((select) => {
-				expect(select.children("option")).to.have.length(3)
+				expect(select.children("option")).to.have.length(4)
+				expect(select.children("option").eq(0)).to.have.text("")
+				expect(select.children("option").eq(1)).to.have.text("One")
 			})
 			cy.getByIdFragment("select", "regular-one").select("IMAGE")
 			cy.getByIdFragment("select", "regular-two").select("three")

@@ -99,6 +99,12 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 	for _, field := range fromCollectionMetadata.Fields {
 		clonedField := *field
 		clonedField.Namespace = c.original
+		// Make and select and reference fields TEXT
+		// This is because they could use metadata items
+		// this new namespace does not have access to.
+		if wire.IsReference(clonedField.Type) || clonedField.Type == "SELECT" || clonedField.Type == "MULTISELECT" {
+			clonedField.Type = "TEXT"
+		}
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {

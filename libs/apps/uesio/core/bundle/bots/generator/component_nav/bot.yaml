@@ -1,6 +1,6 @@
-name: headerview
+name: component_nav
 dialect: "JAVASCRIPT"
-label: Header View
+label: Component
 type: "GENERATOR"
 params:
   - name: logo
@@ -13,11 +13,4 @@ params:
     conditions:
       - param: logo
         type: hasValue
-  - name: collections
-    prompt: Collections
-    type: MULTIMETADATA
-    metadataType: COLLECTION
-  - name: name
-    prompt: View Name (optional)
-    type: METADATANAME
 public: true

@@ -4,16 +4,16 @@ named:
 bots:
   uesio/core.collection: true
   uesio/core.component: true
+  uesio/core.component_nav: true
   uesio/core.componentpack: true
-  uesio/core.detailview: true
   uesio/core.field: true
-  uesio/core.headerview: true
   uesio/core.init: true
-  uesio/core.listview: true
-  uesio/core.queueview: true
   uesio/core.route: true
   uesio/core.theme: true
   uesio/core.view: true
+  uesio/core.view_detail: true
+  uesio/core.view_list: true
+  uesio/core.view_queue: true
   uesio/studio.createbundle: true
   uesio/studio.makepayment: true
   uesio/studio.workspacetruncate: true

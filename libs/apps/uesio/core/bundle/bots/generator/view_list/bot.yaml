@@ -1,12 +1,8 @@
-name: detailview
+name: view_list
 dialect: "JAVASCRIPT"
-label: Detail View
+label: List View
 type: "GENERATOR"
 params:
-  - name: headerview
-    prompt: Header View
-    type: METADATA
-    metadataType: VIEW
   - name: collection
     prompt: Collection
     type: METADATA
@@ -24,5 +20,5 @@ params:
   - name: name
     prompt: View Name (optional)
     type: METADATANAME
-    default: ${collection}_detail
+    default: ${collection}_list
 public: true

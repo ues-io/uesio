@@ -4,7 +4,7 @@ function collectionadmin(bot) {
 	const collectionNamespace = collectionParts[0]
 	const collectionName = collectionParts[1]
 
-	var collectionMeta = bot.load({
+	var collectionFieldsMeta = bot.load({
 		collection: "uesio/core.field",
 		conditions: [
 			{
@@ -14,27 +14,43 @@ function collectionadmin(bot) {
 		],
 	})
 
-	var fields = collectionMeta
+	var collectionMeta = bot.load({
+		collection: "uesio/core.collection",
+		conditions: [
+			{
+				field: "uesio/core.item",
+				value: collection,
+			},
+		],
+	})
+
+	var fields = collectionFieldsMeta
 		.map((field) => {
 			return `${field["uesio/core.namespace"]}.${field["uesio/core.name"]}`
 		})
 		.join(",")
 
-	bot.runGenerator("uesio/core", "headerview", {
-		logo: "uesio/core.logo",
-		collections: collection,
-	})
+	var collectionLabel = collectionMeta[0]["uesio/core.label"]
 
-	bot.runGenerator("uesio/core", "listview", {
-		headerview: collectionNamespace + ".header",
+	bot.runGenerator("uesio/core", "component_nav", {})
+
+	bot.runGenerator("uesio/core", "view_list", {
+		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
 	})
 
-	bot.runGenerator("uesio/core", "detailview", {
-		headerview: collectionNamespace + ".header",
+	bot.runGenerator("uesio/core", "view_detail", {
+		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
+	})
+
+	bot.runGenerator("uesio/core", "view_queue", {
+		navcomponent: collectionNamespace + ".nav",
+		collection: collection,
+		fields: fields,
+		detailview: collectionName + "_detail_content",
 	})
 
 	bot.runGenerator("uesio/core", "route", {
@@ -42,6 +58,15 @@ function collectionadmin(bot) {
 		path: collectionName,
 		view: collectionName + "_list",
 		theme: "uesio/core.default",
+		title: collectionLabel + " List View",
+	})
+
+	bot.runGenerator("uesio/core", "route", {
+		name: collectionName + "queue",
+		path: collectionName,
+		view: collectionName + "_queue",
+		theme: "uesio/core.default",
+		title: collectionLabel + " Queue View",
 	})
 
 	bot.runGenerator("uesio/core", "route", {
@@ -49,6 +74,7 @@ function collectionadmin(bot) {
 		path: collectionName + "/{recordid}",
 		view: collectionName + "_detail",
 		theme: "uesio/core.default",
+		title: collectionLabel + " Detail View",
 	})
 
 	bot.runGenerator("uesio/core", "routeassignment", {

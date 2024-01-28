@@ -54,9 +54,17 @@ func (gba *GeneratorBotAPI) GetAppName() string {
 	ws := gba.session.GetWorkspace()
 	if ws != nil {
 		return ws.GetAppFullName()
-	} else {
-		return gba.Params.Get("appName").(string)
 	}
+	return gba.Params.Get("appName").(string)
+}
+
+func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
+	return NewSessionAPI(gba.session)
+}
+
+// GetAppName returns the name of the current workspace's app
+func (gba *GeneratorBotAPI) GetApp() *AppAPI {
+	return gba.GetSession().GetApp()
 }
 
 // GetWorkspaceName returns the name of the current workspace
@@ -97,29 +105,12 @@ func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	return string(buf.Bytes()), nil
 }
 
-func (gba *GeneratorBotAPI) MergeString(params map[string]interface{}, templateString string) (string, error) {
-	buffer := &bytes.Buffer{}
-	err := mergeTemplate(buffer, params, templateString)
-	if err != nil {
-		return "", err
-	}
-	return buffer.String(), nil
-}
-
 func (gba *GeneratorBotAPI) MergeYamlString(params map[string]interface{}, templateString string) (string, error) {
 	data, err := performYamlMerge(templateString, params)
 	if err != nil {
 		return "", err
 	}
 	return data.String(), nil
-}
-
-func (gba *GeneratorBotAPI) MergeTemplate(params map[string]interface{}, templateFile string) (string, error) {
-	templateString, err := gba.GetTemplate(templateFile)
-	if err != nil {
-		return "", err
-	}
-	return gba.MergeString(params, templateString)
 }
 
 func (gba *GeneratorBotAPI) MergeYamlTemplate(params map[string]interface{}, templateFile string) (string, error) {
@@ -164,29 +155,11 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 	if err != nil {
 		return err
 	}
-	return gba.AddFile(filename, strings.NewReader(merged))
+	return gba.GenerateStringFile(filename, merged)
 }
 
-func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
-	// This allows the repeater input to be either a string or a slice of strings
-	repeater, err := wire.GetStringSlice(repeaterInput)
-	if err != nil {
-		return "", err
-	}
-
-	mergedStrings := []string{}
-	for _, key := range repeater {
-		result, err := gba.MergeString(map[string]interface{}{
-			"key":   key,
-			"start": "${",
-			"end":   "}",
-		}, templateString)
-		if err != nil {
-			return "", err
-		}
-		mergedStrings = append(mergedStrings, result)
-	}
-	return strings.Join(mergedStrings, ""), nil
+func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) error {
+	return gba.AddFile(filename, strings.NewReader(content))
 }
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {

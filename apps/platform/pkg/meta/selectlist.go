@@ -103,6 +103,5 @@ func (sl *SelectList) GenerateTypeDefinitions() (string, error) {
 		values[i] = sl.Options[i].Value
 	}
 	return `
-	export type ` + GetTypeNameFromMetaName(sl.Name) + " = \"" + strings.Join(values, `" | "`) + `"
-`, nil
+	export type ` + GetTypeNameFromMetaName(sl.Name) + " = \"" + strings.Join(values, `" | "`) + `"`, nil
 }
