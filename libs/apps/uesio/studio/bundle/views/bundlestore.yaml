@@ -49,10 +49,10 @@ definition:
               actions:
                 - uesio/io.item:
                     uesio.display:
-                      - type: hasConfigValue
-                        configValue: uesio/core.bundle_store_domain
+                      - type: mergeValue
+                        sourceValue: $ConfigValue{uesio/core.bundle_store_domain}
                         operator: NOT_EQUALS
-                        value: ues.io
+                        value: $ConfigValue{uesio/core.primary_domain}
                     mode: EDIT
                     wire: bundlelstoretypes
                     components:

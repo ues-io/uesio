@@ -64,8 +64,8 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Pricing
-                    subtitle: cooming soon
+                    subtitle: coming soon
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Ratings & Reviews
-                    subtitle: cooming soon
+                    subtitle: coming soon

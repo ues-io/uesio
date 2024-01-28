@@ -30,6 +30,7 @@ type MergeType =
 	| "StaticFile"
 	| "SignalOutput"
 	| "ComponentOutput"
+	| "ConfigValue"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -197,6 +198,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const label = options?.find((el) => el.value === value)?.label || ""
 		return context.getLabel(label) || ""
 	},
+	ConfigValue: (expression, context) =>
+		context.getConfigValue(expression) || "",
 	File: (expression, context) => getURLFromFullName(context, expression),
 	UserFile: (expression, context) => {
 		const [wireName, fieldName] = parseWireExpression(expression)
