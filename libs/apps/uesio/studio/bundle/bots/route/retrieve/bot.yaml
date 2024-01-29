@@ -1,0 +1,13 @@
+name: retrieve
+public: true
+type: ROUTE
+dialect: TYPESCRIPT
+params:
+  - name: app
+    label: App
+    type: TEXT
+    required: true
+  - name: version
+    label: Version
+    type: TEXT
+    required: true

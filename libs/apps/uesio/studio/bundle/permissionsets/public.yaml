@@ -8,9 +8,11 @@ routes:
   uesio/studio.signuplanding: true
   uesio/studio.changepassword: true
   uesio/studio.requestpassword: true
+  uesio/studio.retrieve: true
 files:
 bots:
   uesio/studio.checkavailability: true
+  uesio/studio.retrieve: true
 collections:
   uesio/studio.externalbundlelisting: true
   uesio/studio.externalbundleversion: true
