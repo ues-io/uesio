@@ -198,9 +198,15 @@ definition:
                                 uesio.variant: uesio/io.primary
                                 text: Install
                                 signals:
-                                  - signal: wire/CREATE_RECORD
-                                    wire: dependencies
-                                  - signal: wire/SAVE
+                                  - signal: bot/CALL
+                                    bot: uesio/studio.installbundle
+                                    params:
+                                      version: v0.0.2
+                                      app: $Param{id}
+                                      workspace: $Param{app}:$Param{workspacename}
+                                  # - signal: wire/CREATE_RECORD
+                                  #   wire: dependencies
+                                  # - signal: wire/SAVE
                                   - signal: wire/LOAD
                                     wires:
                                       - workspaces

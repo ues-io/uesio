@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -31,6 +32,34 @@ func ParseVersionString(version string) (string, string, string, error) {
 		return "", "", "", errors.New("Invalid version string")
 	}
 	return parts[0], parts[1], parts[2], nil
+}
+
+func ParseVersionStringToInt(version string) (int, int, int, error) {
+	//Remove the 'v' and split on dots
+	if !strings.HasPrefix(version, "v") {
+		return 0, 0, 0, errors.New("Invalid version string")
+	}
+	parts := strings.Split(strings.Split(version, "v")[1], ".")
+	if len(parts) != 3 {
+		return 0, 0, 0, errors.New("Invalid version string")
+	}
+
+	major, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return 0, 0, 0, errors.New("Invalid version string")
+	}
+
+	minor, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return 0, 0, 0, errors.New("Invalid version string")
+	}
+
+	patch, err := strconv.Atoi(parts[2])
+	if err != nil {
+		return 0, 0, 0, errors.New("Invalid version string")
+	}
+
+	return major, minor, patch, nil
 }
 
 type Bundle struct {
