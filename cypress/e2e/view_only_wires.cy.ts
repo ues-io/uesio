@@ -75,6 +75,25 @@ describe("View Only Wires", () => {
 			})
 			cy.getByIdFragment("select", "regular-one").select("IMAGE")
 			cy.getByIdFragment("select", "regular-two").select("three")
+			// When IMAGE is selected, the Media Sub Type field should only allow selection of Image types
+			cy.getByIdFragment("select", "media-sub-type").should((select) => {
+				// The first option should be a blank option,
+				// and the second should be an <optgroup> with the label "Image Type"
+				expect(select.children()).to.have.length(2)
+				expect(select.children("option").eq(0)).to.have.text("")
+				expect(
+					select.children("optgroup").eq(0).attr("label")
+				).to.equal("Image Type")
+				expect(
+					select.children("optgroup").children("option")
+				).to.have.length(3)
+				expect(
+					select.children("optgroup").children("option").eq(0)
+				).to.have.text("JPG")
+				expect(
+					select.children("optgroup").children("option").eq(0)
+				).to.have.value("jpeg")
+			})
 
 			cy.getWireState(
 				getViewID(username, appName, viewName2),
@@ -96,6 +115,27 @@ describe("View Only Wires", () => {
 					expect(obj[Object.keys(obj)[0]].selectOne).to.equal("IMAGE")
 					expect(obj[Object.keys(obj)[0]].selectTwo).to.equal("three")
 				})
+
+			// When AUDIO is selected, a different set of options should be presented
+			cy.getByIdFragment("select", "regular-one").select("AUDIO")
+			cy.getByIdFragment("select", "media-sub-type").should((select) => {
+				// The first option should be a blank option,
+				// and the second should be an <optgroup> with the label "Audio Type"
+				expect(select.children()).to.have.length(2)
+				expect(select.children("option").eq(0)).to.have.text("")
+				expect(
+					select.children("optgroup").eq(0).attr("label")
+				).to.equal("Audio Type")
+				expect(
+					select.children("optgroup").children("option")
+				).to.have.length(3)
+				expect(
+					select.children("optgroup").children("option").eq(0)
+				).to.have.text("MP3")
+				expect(
+					select.children("optgroup").children("option").eq(0)
+				).to.have.value("mp3")
+			})
 		})
 	})
 })
