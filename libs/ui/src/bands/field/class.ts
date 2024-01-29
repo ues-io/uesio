@@ -70,14 +70,12 @@ class Field {
 
 		const mergedOptions =
 			options?.map(
-				({ label, languageLabel, value, disabled, title }) =>
+				({ label, languageLabel, ...rest }) =>
 					({
+						...rest,
 						label: languageLabel
 							? context.getLabel(languageLabel) || label
 							: label,
-						value,
-						disabled,
-						title,
 					} as SelectOption)
 			) || []
 
