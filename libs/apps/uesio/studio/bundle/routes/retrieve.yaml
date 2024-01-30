@@ -1,6 +1,0 @@
-name: retrieve
-path: retrieve/{app:\w*\/\w*}/{version}
-theme: default
-title: Retrieve Bundle
-bot: retrieve
-type: bot
