@@ -1,10 +1,4 @@
-import {
-	DragEvent,
-	FunctionComponent,
-	MouseEvent,
-	RefObject,
-	useRef,
-} from "react"
+import { DragEvent, FunctionComponent, MouseEvent, useRef } from "react"
 import { definition, styles, api, component } from "@uesio/ui"
 import {
 	useBuilderState,
@@ -18,16 +12,6 @@ import { FullPath } from "../../api/path"
 import SelectBorder from "./selectborder"
 import { getDragOverHandler, getDropHandler } from "../../helpers/dragdrop"
 import { get } from "../../api/defapi"
-
-const classesToPreventDOMInteraction = ["pointer-events-none"]
-
-const disableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
-	ref.current?.classList.add(...classesToPreventDOMInteraction)
-}
-
-const enableDOMInteraction = (ref: RefObject<HTMLDivElement>) => {
-	ref.current?.classList.remove(...classesToPreventDOMInteraction)
-}
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
@@ -63,7 +47,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				width && "border-x",
 				"border-dashed",
 				"border-slate-300",
-				...classesToPreventDOMInteraction,
 			],
 			line: ["absolute", "border-dashed", "border-slate-300"],
 			top: ["right-0", "left-0", "top-12", "border-t"],
@@ -85,11 +68,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	if (!route || !viewDefId || !viewDef) return null
 
-	const onClick = (e: MouseEvent) => {
+	const onClickCapture = (e: MouseEvent) => {
+		e.stopPropagation()
 		// Step 1: Find the closest slot that is accepting the current dragpath.
-		enableDOMInteraction(contentRef)
 		let target = document.elementFromPoint(e.clientX, e.clientY)
-		disableDOMInteraction(contentRef)
 		if (!target) return
 		let validPath = ""
 		while (target !== null && target !== e.currentTarget) {
@@ -118,7 +100,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
 			setDropPath(context)
-			disableDOMInteraction(contentRef)
 			return
 		}
 		const currentTarget = e.currentTarget as HTMLDivElement
@@ -129,33 +110,30 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		const outsideBottom = e.pageY > bounds.bottom
 		if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
 			setDropPath(context)
-			disableDOMInteraction(contentRef)
 		}
-	}
-
-	const onDragEnter = () => {
-		enableDOMInteraction(contentRef)
 	}
 
 	const onDrop = (e: DragEvent) => {
 		getDropHandler(context, dragPath, dropPath)(e)
-		disableDOMInteraction(contentRef)
 	}
 
 	return (
-		<div
-			onDragOver={getDragOverHandler(context, dragPath, dropPath)}
-			onDragLeave={onDragLeave}
-			onDragEnter={onDragEnter}
-			onDrop={onDrop}
-			onClick={onClick}
-			className={classes.root}
-		>
+		<div className={classes.root}>
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
-					<div ref={contentRef} className={classes.contentwrapper}>
+					<div
+						ref={contentRef}
+						className={classes.contentwrapper}
+						onDragOver={getDragOverHandler(
+							context,
+							dragPath,
+							dropPath
+						)}
+						onDragLeave={onDragLeave}
+						onDrop={onDrop}
+						onClickCapture={onClickCapture}
+					>
 						{props.children}
-						<SelectBorder viewdef={viewDef} context={context} />
 					</div>
 				</div>
 			</div>
@@ -171,6 +149,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					<div className={styles.cx(classes.line, classes.right)} />
 				</>
 			)}
+			<SelectBorder viewdef={viewDef} context={context} />
 			{/*<DebugPanel context={context} />*/}
 		</div>
 	)
