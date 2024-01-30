@@ -184,17 +184,17 @@ func (b BotParam) GetConditions() []IBotParamCondition {
 
 type BotParamResponse struct {
 	Name         string                      `json:"name"`
-	Label        string                      `json:"label"`
-	Prompt       string                      `json:"prompt"`
+	Label        string                      `json:"label,omitempty"`
+	Prompt       string                      `json:"prompt,omitempty"`
 	Type         string                      `json:"type"`
 	MetadataType string                      `json:"metadataType,omitempty"`
-	Grouping     string                      `json:"grouping"`
-	Default      string                      `json:"default"`
+	Grouping     string                      `json:"grouping,omitempty"`
+	Default      string                      `json:"default,omitempty"`
 	Required     bool                        `json:"required"`
-	SelectList   string                      `json:"selectList"`
-	Choices      []string                    `json:"choices"`
-	Conditions   []BotParamConditionResponse `json:"conditions"`
-	Collection   string                      `json:"collection"`
+	SelectList   string                      `json:"selectList,omitempty"`
+	Choices      []string                    `json:"choices,omitempty"`
+	Conditions   []BotParamConditionResponse `json:"conditions,omitempty"`
+	Collection   string                      `json:"collection,omitempty"`
 }
 
 func (b BotParamResponse) GetName() string {

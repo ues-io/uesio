@@ -175,7 +175,7 @@ const resolveOptions = (
 	def: SelectProperty,
 	currentValue: wire.PlainWireRecord
 ): wire.SelectOption[] => {
-	const { options } = def
+	const { options = [] } = def
 	return typeof options === "function" ? options(currentValue) : options
 }
 
@@ -183,16 +183,20 @@ const getSelectListMetadata = (
 	def: SelectProperty,
 	currentValue: wire.PlainWireRecord
 ) =>
-	getSelectListMetadataFromOptions(
-		def.name,
-		resolveOptions(def, currentValue).map(
-			(o: wire.SelectOption) =>
-				({
-					...o,
-				} as wire.SelectOption)
-		),
-		def.blankOptionLabel
-	)
+	def.selectList
+		? {
+				name: def.selectList,
+		  }
+		: getSelectListMetadataFromOptions(
+				def.name,
+				resolveOptions(def, currentValue).map(
+					(o: wire.SelectOption) =>
+						({
+							...o,
+						} as wire.SelectOption)
+				),
+				def.blankOptionLabel
+		  )
 
 const getWireSelectListMetadata = (
 	context: context.Context,

@@ -55,6 +55,22 @@ const injectParams = (
 	x.forEach((y) => (y.params = paramsToInject))
 }
 
+// ensures that a possibly un-qualified metadata key is:
+// (1) fully-qualified (has a namespace)
+// (2) has "." replaced with "/"
+const qualifyMetadataKeyForUrl = (key: MetadataKey, context: Context) => {
+	// If the key has a ".", then we assume it's already fully-qualified.
+	if (key.includes(".")) {
+		return key.replace(".", "/")
+	} else if (key.split("/").length === 3) {
+		// If no ".", but it has a namespace, then we can just leave it alone.
+		return key
+	} else {
+		// Otherwise, try to get the default namespace from the context and use that for the route key
+		return `${context.getNamespace()}/${key}`
+	}
+}
+
 // Allows us to load static vendor assets, such as Monaco modules, from custom paths
 // and for us to load Uesio-app-versioned files from the server
 interface UesioWindow extends Window {
@@ -137,10 +153,17 @@ type PathNavigateRequest = {
 	tags?: RouteTag[]
 }
 
+type RouteNavigateRequest = {
+	route: MetadataKey
+	params: Record<string, unknown>
+	newtab?: boolean
+}
+
 type AssignmentNavigateRequest = {
 	collection: string
 	viewtype?: string
 	recordid?: string
+	newtab?: boolean
 }
 
 type MetadataInfo = {
@@ -285,6 +308,27 @@ const platform = {
 			)}`
 		)
 	},
+	getRouteByKey: async (
+		context: Context,
+		request: RouteNavigateRequest
+	): Promise<RouteState> => {
+		const prefix = getPrefix(context)
+		return getJSON(
+			context,
+			`${prefix}/routes/key/${qualifyMetadataKeyForUrl(
+				request.route,
+				context
+			)}${
+				request.params
+					? `?${new URLSearchParams(
+							context.mergeMap(
+								request.params as Record<string, string>
+							)
+					  ).toString()}`
+					: ""
+			}`
+		)
+	},
 	getRouteAssignment: async (
 		context: Context,
 		request: AssignmentNavigateRequest
@@ -321,10 +365,10 @@ const platform = {
 			response
 		)) as ServerWireLoadResponse
 
-		const { collections, wires } = loadResponse
+		const { wires, ...rest } = loadResponse
 
 		return {
-			collections,
+			...rest,
 			wires: wires.map(transformServerWire),
 		}
 	},
@@ -386,6 +430,17 @@ const platform = {
 		getJSON(
 			context,
 			`${getPrefix(context)}/bots/params/${type}/${namespace}/${name}`
+		),
+	getRouteParams: async (
+		context: Context,
+		routeKey: MetadataKey
+	): Promise<ParamDefinition[]> =>
+		getJSON(
+			context,
+			`${getPrefix(context)}/routes/params/${qualifyMetadataKeyForUrl(
+				routeKey,
+				context
+			)}`
 		),
 	getViewParams: async (
 		context: Context,
@@ -768,6 +823,7 @@ export type {
 	NumberFeatureFlag,
 	FeatureFlagResponse,
 	PathNavigateRequest,
+	RouteNavigateRequest,
 	AssignmentNavigateRequest,
 	JobResponse,
 	MetadataInfo,

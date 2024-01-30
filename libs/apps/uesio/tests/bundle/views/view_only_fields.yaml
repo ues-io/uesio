@@ -47,6 +47,40 @@ definition:
                 label: Two
               - value: three
                 label: Three
+        mediaSubType:
+          type: SELECT
+          viewOnly: true
+          selectlist:
+            source: local
+            options:
+              - value: image_type
+                disabled: true
+                label: Image Type
+                validFor:
+                  - type: fieldValue
+                    field: selectOne
+                    value: IMAGE
+                options:
+                  - value: jpeg
+                    label: JPG
+                  - value: png
+                    label: PNG
+                  - value: gif
+                    label: GIF
+              - value: audio_type
+                disabled: true
+                label: Audio Type
+                validFor:
+                  - type: fieldValue
+                    field: selectOne
+                    value: AUDIO
+                options:
+                  - value: mp3
+                    label: MP3
+                  - value: wav
+                    label: WAV
+                  - value: aiff
+                    label: AIFF
   # Components determine the layout and composition of your view
   components:
     - uesio/io.box:
@@ -71,6 +105,9 @@ definition:
                 - uesio/io.field:
                     fieldId: selectTwo
                     uesio.id: regular-two
+                - uesio/io.field:
+                    fieldId: mediaSubType
+                    uesio.id: media-sub-type
         uesio.styleTokens:
           root:
             - p-10

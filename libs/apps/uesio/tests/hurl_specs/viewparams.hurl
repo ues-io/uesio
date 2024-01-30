@@ -8,6 +8,18 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "uesio"
 }
 
+# Test fetching metadata for the view's params
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/views/params/uesio/tests/view_params
+HTTP 200
+[Asserts]
+jsonpath "$" count == 2
+jsonpath "$[0].name" == "checkboxvalue"
+jsonpath "$[0].type" == "CHECKBOX"
+jsonpath "$[1].required" == false
+jsonpath "$[1].name" == "numbervalue"
+jsonpath "$[1].type" == "NUMBER"
+jsonpath "$[1].required" == true
+
 # Test loading a wire with NUMBER and CHECKBOX param types
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json

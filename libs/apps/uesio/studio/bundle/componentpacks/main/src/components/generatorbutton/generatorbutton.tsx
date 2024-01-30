@@ -88,7 +88,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 			context,
 			genNamespace,
 			genName,
-			getParamValues(params, result)
+			getParamValues(params, context, result)
 		)
 		if (!botResp.success && botResp.error) {
 			api.notification.addError(botResp.error, context.deleteWorkspace())

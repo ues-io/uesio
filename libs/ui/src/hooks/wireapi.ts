@@ -71,10 +71,13 @@ const useDynamicWire = (
 	// This Hook handles wireName changes --- there's a lot more work to do here.
 	useEffect(() => {
 		if (!wireDef || !wireName) return
-		initWiresOp(context, {
-			[wireName]: wireDef,
-		})
-		loadWiresOp(context, [wireName])
+		const initAndLoad = async () => {
+			await initWiresOp(context, {
+				[wireName]: wireDef,
+			})
+			await loadWiresOp(context, [wireName])
+		}
+		initAndLoad()
 		return () => {
 			remove(wireName, context)
 		}

@@ -56,16 +56,18 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                hotkey: "meta+p"
-                                text: $Label{uesio/io.preview}
+                            - uesio/studio.previewbutton:
+                                route: $Param{namespace}.${uesio/studio.name}
+                                label: $Label{uesio/io.preview}
+                                uesio.id: preview-route
                                 uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{namespace}/${uesio/studio.path}"
+                                  - type: wireHasNoChanges
+                                    wire: routes
+                                hotkey: "meta+p"
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.edit}
@@ -176,17 +178,6 @@ definition:
                                     values:
                                       - redirect
                                       - bot
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Search Engine Optimization
-                    subtitle: Route <meta> tags
-                    uesio.display:
-                      - field: uesio/studio.type
-                        type: fieldValue
-                        operator: NOT_IN
-                        values:
-                          - redirect
-                          - bot
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.display:
@@ -197,6 +188,10 @@ definition:
                           - redirect
                           - bot
                     components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Search Engine Optimization
+                          subtitle: Route <meta> tags
                       - uesio/io.field:
                           label: " "
                           fieldId: uesio/studio.tags
