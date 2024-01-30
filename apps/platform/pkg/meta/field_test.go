@@ -14,6 +14,20 @@ label: My Label
 type: TEXT
 `)
 
+var field_language_label_local = TrimYamlString(`
+name: myfield
+label: My Label
+type: TEXT
+languageLabel: somelabel
+`)
+
+var field_language_label_qualified = TrimYamlString(`
+name: myfield
+label: My Label
+type: TEXT
+languageLabel: my/namespace.somelabel
+`)
+
 var field_invalid_type = TrimYamlString(`
 name: myfield
 label: My Label
@@ -183,6 +197,42 @@ func TestFieldUnmarshal(t *testing.T) {
 				},
 				CollectionRef: "my/namespace.mycollection",
 				Type:          "TEXT",
+			},
+			nil,
+		},
+		{
+			"language label - local",
+			"",
+			field_language_label_local,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+					Label:     "My Label",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "TEXT",
+				LanguageLabel: "my/namespace.somelabel",
+			},
+			nil,
+		},
+		{
+			"language label - qualified",
+			"",
+			field_language_label_qualified,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+					Label:     "My Label",
+				},
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "TEXT",
+				LanguageLabel: "my/namespace.somelabel",
 			},
 			nil,
 		},
@@ -519,6 +569,23 @@ func TestFieldMarshal(t *testing.T) {
 			"my/namespace",
 		},
 		{
+			"language label",
+			"",
+			&Field{
+				BundleableBase: BundleableBase{
+					Name:      "myfield",
+					Namespace: "my/namespace",
+					Label:     "My Label",
+				},
+				LanguageLabel: "my/namespace.somelabel",
+				CollectionRef: "my/namespace.mycollection",
+				Type:          "TEXT",
+			},
+			field_language_label_local,
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+		},
+		{
 			"reference field",
 			"",
 			&Field{
@@ -680,6 +747,13 @@ func TestFieldRoundTrip(t *testing.T) {
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 			field_basic,
+		},
+		{
+			"roundtrip language label",
+			"",
+			"my/namespace/mycollection/myfield.yaml",
+			"my/namespace",
+			field_language_label_local,
 		},
 		{
 			"roundtrip select field",

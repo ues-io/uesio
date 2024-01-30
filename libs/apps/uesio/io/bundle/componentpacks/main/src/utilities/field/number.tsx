@@ -1,7 +1,6 @@
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 import { useControlledInputNumber } from "../../shared/useControlledFieldValue"
-import ReadOnlyField from "./readonly"
 
 export type NumberFieldOptions = {
 	step?: number
@@ -33,8 +32,6 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const {
 		mode,
 		placeholder,
-		variant,
-		context,
 		fieldMetadata,
 		id,
 		options,
@@ -44,13 +41,17 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		applyChanges,
 	} = props
 
-	const value = props.value as number | string
+	const value = props.value as number
 	const readOnly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals ?? 2
+	const initialValue =
+		typeof value === "number"
+			? (value as number).toFixed(decimals)
+			: parseFloat(value)
 
 	const controlledInputProps = useControlledInputNumber({
-		value,
+		value: initialValue,
 		setValue,
 		applyChanges,
 		readOnly,
@@ -61,40 +62,30 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		props,
 		"uesio/io.field"
 	)
-
-	if (readOnly) {
-		return (
-			<ReadOnlyField variant={variant} context={context}>
-				{typeof value === "number" ? value.toFixed(decimals) : value}
-			</ReadOnlyField>
-		)
-	} else {
-		return (
-			<div className={classes.wrapper}>
-				<input
-					id={id}
-					className={styles.cx(
-						classes.input,
-						readOnly && classes.readonly
-					)}
-					{...controlledInputProps}
-					type={type}
-					disabled={readOnly}
-					placeholder={placeholder}
-					step={options?.step}
-					min={options?.min}
-					max={options?.max}
-					title={`${controlledInputProps.value}`}
-					autoFocus={focusOnRender}
-				/>
-				{type === "range" ? (
-					<span className={classes.rangevalue}>
-						{controlledInputProps.value}
-					</span>
-				) : null}
-			</div>
-		)
-	}
+	return (
+		<div
+			className={styles.cx(classes.wrapper, readOnly && classes.readonly)}
+		>
+			<input
+				id={id}
+				className={classes.input}
+				{...controlledInputProps}
+				type={type}
+				disabled={readOnly}
+				placeholder={placeholder}
+				step={options?.step}
+				min={options?.min}
+				max={options?.max}
+				title={`${controlledInputProps.value}`}
+				autoFocus={focusOnRender}
+			/>
+			{type === "range" ? (
+				<span className={classes.rangevalue}>
+					{controlledInputProps.value}
+				</span>
+			) : null}
+		</div>
+	)
 }
 
 export default NumberField

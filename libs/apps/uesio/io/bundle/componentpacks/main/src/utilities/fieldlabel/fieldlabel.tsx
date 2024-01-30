@@ -2,6 +2,8 @@ import { definition, styles } from "@uesio/ui"
 
 interface FieldLabelProps {
 	label?: string
+	// The id of the input element that this is the label for
+	labelFor?: string
 }
 
 const StyleDefaults = Object.freeze({
@@ -9,13 +11,17 @@ const StyleDefaults = Object.freeze({
 })
 
 const FieldLabel: definition.UtilityComponent<FieldLabelProps> = (props) => {
-	const { label, context } = props
+	const { label, context, labelFor } = props
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.fieldlabel"
 	)
-	return <div className={classes.root}>{context.merge(label)}</div>
+	return (
+		<label className={classes.root} htmlFor={labelFor}>
+			{context.merge(label)}
+		</label>
+	)
 }
 
 export default FieldLabel

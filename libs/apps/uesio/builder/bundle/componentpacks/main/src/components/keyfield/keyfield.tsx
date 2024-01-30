@@ -28,7 +28,7 @@ const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 
 	const value = record.getFieldValue<string>(fieldId)
 
-	const label = props.definition.label || fieldMetadata.getLabel()
+	const label = props.definition.label || fieldMetadata.getLabel(context)
 
 	return (
 		<ConstrainedInput

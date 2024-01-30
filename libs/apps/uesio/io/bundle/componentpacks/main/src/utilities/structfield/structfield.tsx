@@ -78,7 +78,9 @@ const StructField: definition.UtilityComponent<StructFieldUtilityProps> = (
 								// TODO: Do we need a real wire record here???
 								record={{} as wire.WireRecord}
 								path={path}
-								fieldMetadata={new collection.Field(subfield)}
+								fieldMetadata={
+									new collection.Field(subfield, context)
+								}
 								value={subfieldValue}
 								mode={mode}
 								context={context}

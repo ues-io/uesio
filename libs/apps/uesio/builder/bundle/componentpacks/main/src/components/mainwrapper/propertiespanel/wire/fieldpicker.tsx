@@ -113,7 +113,7 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 	) {
 		displayFields = Object.values(
 			parentFieldMetadata.getSubFields() || {}
-		).map((field) => new collection.Field(field))
+		).map((field) => new collection.Field(field, context))
 	} else {
 		displayFields = collectionMetadata.getFields()
 	}

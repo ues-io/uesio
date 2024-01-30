@@ -215,7 +215,7 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
 									record={{} as wire.WireRecord}
 									path={`${path}["${itemIndex}"]`}
 									fieldMetadata={
-										new collection.Field(subfield)
+										new collection.Field(subfield, context)
 									}
 									value={subfieldValue}
 									mode={mode}

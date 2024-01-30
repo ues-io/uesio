@@ -1,4 +1,5 @@
 labels:
   uesio/io.delete: cancelar
   uesio/tests.helloworld: hola mundo
+  uesio/tests.directancestor: antepasado directo
 language: es
