@@ -259,7 +259,7 @@ definition:
               - signal: wire/SAVE
                 wires:
                   - "newapp"
-              - signal: "route/NAVIGATE"
+              - signal: "route/REDIRECT"
                 path: "app/${uesio/core.uniquekey}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
