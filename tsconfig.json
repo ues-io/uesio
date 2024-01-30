@@ -16,11 +16,11 @@
 		"noEmit": true,
 		"jsx": "react-jsx",
 		"noFallthroughCasesInSwitch": true,
-		"types": ["cypress"]
+		"types": ["cypress"],
 	},
 	"include": [
 		"./cypress/e2e/*.cy.{js,ts,jsx,tsx}",
 		"./cypress/support/*.ts",
-		"cypress.d.ts"
-	]
+		"cypress.d.ts",
+	],
 }

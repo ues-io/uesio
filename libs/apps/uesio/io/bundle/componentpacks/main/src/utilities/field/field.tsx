@@ -215,7 +215,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 									}),
 									{}
 								)
-						  )
+							)
 						: common.setValue(null)
 				},
 				value: values,
@@ -265,7 +265,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			referenceMetadata?.multiCollection
 				? (content = (
 						<MultiReferenceField {...common} options={reference} />
-				  ))
+					))
 				: (content = <ReferenceField {...common} options={reference} />)
 			break
 		case "TIMESTAMP":

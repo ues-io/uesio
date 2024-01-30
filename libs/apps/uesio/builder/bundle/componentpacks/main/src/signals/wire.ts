@@ -32,7 +32,7 @@ const getWiresWith = (key: "conditions" | "order") =>
 		type: "WIRE",
 		filter: (def: wire.RegularWireDefinition) => def && !!def[key]?.length,
 		label: "Wire",
-	} as ComponentProperty)
+	}) as ComponentProperty
 
 const getConditionIdsDescriptor = (wire: string): ComponentProperty => ({
 	name: "conditionId",

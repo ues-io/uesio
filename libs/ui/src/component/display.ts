@@ -494,7 +494,7 @@ const useContextFilter = <T>(
 						item,
 						context: newContext,
 					},
-			  ]
+				]
 			: []
 	})
 }

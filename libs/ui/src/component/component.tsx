@@ -216,7 +216,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 						{}
 					),
 					path,
-			  } as DeclarativeComponentSlotContext)
+				} as DeclarativeComponentSlotContext)
 			: context
 	return (
 		<Slot

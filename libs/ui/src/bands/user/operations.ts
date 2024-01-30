@@ -15,7 +15,7 @@ async function responseRedirect(response: LoginResponse, context: Context) {
 					path: response.redirectRouteName,
 					namespace: response.redirectRouteNamespace,
 				}
-		  )
+			)
 }
 
 const signup = async (

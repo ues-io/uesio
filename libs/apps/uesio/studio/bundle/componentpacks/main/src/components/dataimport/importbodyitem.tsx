@@ -60,7 +60,7 @@ const ImportBodyItem: definition.UtilityComponent<Props> = (props) => {
 							: setMapping({
 									...(mapping || {}),
 									type: "IMPORT",
-							  })
+								})
 					}
 					value={!!mapping}
 					mode={"EDIT"}
@@ -88,7 +88,7 @@ const ImportBodyItem: definition.UtilityComponent<Props> = (props) => {
 								? setMapping({
 										...(mapping || {}),
 										type: value,
-								  })
+									})
 								: removeMapping()
 						}}
 					/>

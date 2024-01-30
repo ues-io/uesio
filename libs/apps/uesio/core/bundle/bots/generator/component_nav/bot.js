@@ -40,14 +40,14 @@ function component_nav(bot) {
 					logoheight: logoheight,
 				},
 				"templates/navlogo.yaml"
-		  )
+			)
 		: bot.mergeYamlTemplate(
 				{
 					appicon: appData.getIcon(),
 					appcolor: '"' + appData.getColor() + '"',
 				},
 				"templates/navicon.yaml"
-		  )
+			)
 
 	var definition = bot.mergeYamlTemplate(
 		{

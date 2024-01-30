@@ -24,11 +24,11 @@ export default async (
 						fields,
 					},
 					entity,
-			  })
+				})
 			: removeCondition({
 					conditionId: SEARCH_CONDITION_ID,
 					entity,
-			  })
+				})
 	)
 
 	await loadWiresOp(context, [wireName])

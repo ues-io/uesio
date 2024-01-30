@@ -163,7 +163,7 @@ const signals: SignalBandDefinition = {
 					signal.component && signal.componentsignal
 						? getComponentDef(signal.component)?.signals?.[
 								signal.componentsignal
-						  ]?.properties
+							]?.properties
 						: []
 				) as ComponentProperty[]
 

@@ -74,13 +74,13 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 						<div>{itemRenderer(item)}</div>
 					</Group>
 				)
-		  }
+			}
 		: itemRenderer
 
 	const onSelectFunc = isMulti
 		? (item: unknown) => {
 				isSelected(item) ? onUnSelect(item) : onSelect(item)
-		  }
+			}
 		: onSelect
 
 	return (
