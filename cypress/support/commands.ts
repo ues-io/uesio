@@ -266,7 +266,7 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 	// 	"eq",
 	// 	Cypress.config().baseUrl + getWorkspaceBasePath(appName, workspaceName)
 	// )
-	cy.url().should("include", getWorkspaceBasePath(appName, workspaceName))
+	cy.url().should("include", `workspace/${workspaceName}`)
 }
 
 function createApp(appName: string) {
