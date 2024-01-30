@@ -11,6 +11,11 @@ const paramProperties = [
 		type: "KEY",
 	},
 	{
+		name: "label",
+		label: "Label",
+		type: "TEXT",
+	},
+	{
 		name: "required",
 		label: "Required",
 		required: true,
@@ -26,6 +31,7 @@ const paramProperties = [
 			{ value: "TEXT", label: "Text" },
 			{ value: "CHECKBOX", label: "Checkbox" },
 			{ value: "NUMBER", label: "Number" },
+			{ value: "SELECT", label: "Select List" },
 		],
 	},
 	{
@@ -34,6 +40,13 @@ const paramProperties = [
 		type: "METADATA",
 		metadataType: "COLLECTION",
 		displayConditions: [{ field: "type", operator: "EQ", value: "RECORD" }],
+	},
+	{
+		name: "selectList",
+		label: "Select List",
+		type: "METADATA",
+		metadataType: "SELECTLIST",
+		displayConditions: [{ field: "type", operator: "EQ", value: "SELECT" }],
 	},
 ] as ComponentProperty[]
 

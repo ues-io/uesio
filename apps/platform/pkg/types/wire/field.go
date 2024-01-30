@@ -69,7 +69,7 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 type LoadRequestField struct {
 	ID               string             `json:"id" bot:"id"`
 	Fields           []LoadRequestField `json:"fields,omitempty" bot:"fields"`
-	ViewOnlyMetadata *FieldMetadata     `json:"-"`
+	ViewOnlyMetadata *FieldMetadata     `json:"viewOnlyMetadata,omitempty"`
 }
 
 func (lrf *LoadRequestField) UnmarshalYAML(node *yaml.Node) error {

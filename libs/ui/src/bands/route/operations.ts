@@ -4,6 +4,7 @@ import {
 	PathNavigateRequest,
 	AssignmentNavigateRequest,
 	platform,
+	RouteNavigateRequest,
 } from "../../platform/platform"
 import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
@@ -44,6 +45,9 @@ const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	return "/"
 }
 
+const isRedirect = (routeResponse: RouteState) =>
+	routeResponse.type === "redirect"
+
 const navigateToAssignment = async (
 	context: Context,
 	request: AssignmentNavigateRequest
@@ -51,6 +55,35 @@ const navigateToAssignment = async (
 	dispatch(setLoading())
 	const routeResponse = await platform.getRouteAssignment(context, request)
 	const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+	const isRedirectRoute = isRedirect(routeResponse)
+	if (request.newtab || isRedirectRoute) {
+		const usePath =
+			isRedirectRoute && routeResponse.redirect
+				? routeResponse.redirect
+				: prefix + routeResponse.path
+		redirect(context, usePath, true)
+		return context
+	}
+	pushRouteState(context, routeResponse, prefix + routeResponse.path)
+	return handleNavigateResponse(context, routeResponse)
+}
+
+const navigateToRoute = async (
+	context: Context,
+	request: RouteNavigateRequest
+) => {
+	dispatch(setLoading())
+	const routeResponse = await platform.getRouteByKey(context, request)
+	const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+	const isRedirectRoute = isRedirect(routeResponse)
+	if (request.newtab || isRedirectRoute) {
+		const usePath =
+			isRedirectRoute && routeResponse.redirect
+				? routeResponse.redirect
+				: prefix + routeResponse.path
+		redirect(context, usePath, true)
+		return context
+	}
 	pushRouteState(context, routeResponse, prefix + routeResponse.path)
 	return handleNavigateResponse(context, routeResponse)
 }
@@ -80,13 +113,14 @@ const navigate = async (
 
 const pushRouteState = (context: Context, route: RouteState, url?: string) => {
 	if (!route) return
+	const { namespace, path, title, tags, params } = route
 	window.history.pushState(
 		{
-			namespace: route.namespace,
-			path: route.path,
-			title: route.title,
-			tags: route.tags,
-			params: route.params,
+			namespace,
+			path,
+			title,
+			tags,
+			params,
 			workspace: context.getWorkspace(),
 		},
 		"",
@@ -158,5 +192,6 @@ export {
 	redirect,
 	navigate,
 	navigateToAssignment,
+	navigateToRoute,
 	handleNavigateResponse,
 }

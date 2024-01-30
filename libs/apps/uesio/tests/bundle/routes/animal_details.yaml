@@ -1,0 +1,4 @@
+name: animal_details
+path: animal/{recordid}
+view: animal_details
+title: "Animal: $Record{animal:uesio/tests.genus} $Record{animal:uesio/tests.genus}"

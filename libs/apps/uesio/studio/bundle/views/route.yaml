@@ -56,16 +56,18 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                hotkey: "meta+p"
-                                text: $Label{uesio/io.preview}
+                            - uesio/studio.previewbutton:
+                                route: $Param{namespace}.${uesio/studio.name}
+                                label: $Label{uesio/io.preview}
+                                uesio.id: preview-route
                                 uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{namespace}/${uesio/studio.path}"
+                                  - type: wireHasNoChanges
+                                    wire: routes
+                                hotkey: "meta+p"
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.edit}

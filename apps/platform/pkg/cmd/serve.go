@@ -225,6 +225,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)
 	wr.HandleFunc(viewParamPath, controller.GetViewParams).Methods(http.MethodGet)
+	routeParamPath := fmt.Sprintf("/routes/params/%s", itemParam)
+	wr.HandleFunc(routeParamPath, controller.GetRouteParams).Methods(http.MethodGet)
 
 	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
@@ -242,6 +244,9 @@ func serve(cmd *cobra.Command, args []string) {
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
 	sr.HandleFunc(serveRoutePath, controller.ServeRoute)
 	wr.HandleFunc(serveRoutePath, controller.ServeRoute)
+	serveRouteByKey := fmt.Sprintf("/r/%s", itemParam)
+	sr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
+	wr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
 
 	// Route navigation apis for site and workspace context
 	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
@@ -251,8 +256,12 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
 
 	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
-	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
-	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
+	sr.HandleFunc(pathRoutePath, controller.RouteByPath).Methods(http.MethodGet)
+	wr.HandleFunc(pathRoutePath, controller.RouteByPath).Methods(http.MethodGet)
+
+	routeByKey := fmt.Sprintf("/routes/key/%s", itemParam)
+	sr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
+	wr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 
 	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
 	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt){1}(?:\\.map)?}"
