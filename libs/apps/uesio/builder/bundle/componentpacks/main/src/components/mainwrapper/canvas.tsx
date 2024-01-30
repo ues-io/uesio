@@ -13,6 +13,11 @@ import SelectBorder from "./selectborder"
 import { getDragOverHandler, getDropHandler } from "../../helpers/dragdrop"
 import { get } from "../../api/defapi"
 
+interface BasicEvent {
+	stopPropagation: () => void
+	preventDefault: () => void
+}
+
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
 
@@ -67,6 +72,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const contentRef = useRef<HTMLDivElement>(null)
 
 	if (!route || !viewDefId || !viewDef) return null
+
+	const onChangeCapture = (e: BasicEvent) => {
+		e.stopPropagation()
+		e.preventDefault()
+	}
 
 	const onClickCapture = (e: MouseEvent) => {
 		e.stopPropagation()
@@ -133,6 +143,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 						onDragLeave={onDragLeave}
 						onDrop={onDrop}
 						onClickCapture={onClickCapture}
+						onChangeCapture={onChangeCapture}
 					>
 						{props.children}
 					</div>
