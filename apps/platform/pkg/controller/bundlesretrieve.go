@@ -1,11 +1,14 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -79,7 +82,8 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: Zip File not present"))
 		return
 	}
-
+	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s.zip\"", version))
+	w.Header().Set("Cache-Control", file.CacheFor1Year)
 	if _, err := filesource.Download(w, bundle.Contents.ID, adminSession); err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))
 		return
