@@ -40,7 +40,7 @@ require (
 	golang.org/x/oauth2 v0.16.0
 	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
-	google.golang.org/api v0.159.0
+	google.golang.org/api v0.160.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
