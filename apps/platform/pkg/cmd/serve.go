@@ -392,6 +392,8 @@ func serve(cmd *cobra.Command, args []string) {
 	bundleVersionsListPath := fmt.Sprintf("/bundles/v1/versions/%s/list", appParam)
 	sr.HandleFunc(bundleVersionsListPath, controller.BundleVersionsList).Methods("GET")
 	sr.HandleFunc("/bundles/v1/list", controller.BundlesList).Methods("GET")
+	bundleRetrievePath := fmt.Sprintf("/bundles/v1/retrieve/%s/%s", appParam, versionParam)
+	sr.HandleFunc(bundleRetrievePath, controller.BundlesRetrieve).Methods("GET")
 
 	// Dev Only Route for running usage worker
 	if env.InDevMode() {
