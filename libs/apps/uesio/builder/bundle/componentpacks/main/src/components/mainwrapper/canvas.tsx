@@ -70,6 +70,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const onClickCapture = (e: MouseEvent) => {
 		e.stopPropagation()
+		e.preventDefault()
 		// Step 1: Find the closest slot that is accepting the current dragpath.
 		let target = document.elementFromPoint(e.clientX, e.clientY)
 		if (!target) return
