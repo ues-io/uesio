@@ -25,15 +25,13 @@
 			}
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
-			"options": {
-				"lintFilePatterns": ["libs/apps/uesio/io/**/*.ts*"]
-			}
+			"executor": "@nx/eslint:lint"
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/apps/uesio/io/jest.config.ts"
+				"jestConfig": "libs/apps/uesio/io/jest.config.ts",
+				"passWithNoTests": false
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/io"]
 		}

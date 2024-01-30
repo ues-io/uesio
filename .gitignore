@@ -76,3 +76,4 @@ cypress/videos
 
 # Ad-hoc query results
 queries/results
+.nx/cache
