@@ -42,7 +42,6 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 			}
 			return depMap.AddOptional(change, "theme", "uesio/studio.theme")
 		}
-		return nil
 	})
 	if err != nil {
 		return err
