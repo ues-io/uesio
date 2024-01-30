@@ -9,6 +9,10 @@ HTTP 200
 session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
+# Reset performance stats
+POST https://{{host}}:{{port}}/site/perf/stats/reset
+HTTP 204
+
 # Delete the test site if it already exists
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 x-uesio-app: uesio/tests

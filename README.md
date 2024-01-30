@@ -322,6 +322,18 @@ The following environment variables can optionally be configured in your Shell (
     <td>Must be a fully-qualified Uesio credential name</td>
   </tr>
   <tr>
+    <td>UESIO_DEV</td>
+    <td>Enable various features for use in local development of Uesio</td>
+    <td>false</td>
+    <td>Set to "localhost" for local development</td>
+  </tr>
+  <tr>
+    <td>UESIO_DEBUG_SQL</td>
+    <td>Enable detailed SQL query debugging</td>
+    <td>false</td>
+    <td>If enabled, all Wire loads will return a `debugQueryString` property containing the SQL queries made</td>
+  </tr>
+  <tr>
     <td>UESIO_MOCK_AUTH</td>
     <td>Enables you to login with mock user accounts (which can be specified with `UESIO_MOCK_AUTH_USERNAMES`)</td>
     <td>false</td>
@@ -356,58 +368,6 @@ For example, the `uesio/core.sendgridkey` secret's default value can be configur
 As mentioned in the [monorepo](#monorepo-structure) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
 All npm modules we used are installed as `development` dependency since uesio is not intended to be released as standalone npm module.
-
-Most of commmands you might run related to npm modules.
-
--   Install a new dependency :
-
-```
-  npm install lodash.isempty -D
-```
-
--   Update minor changes (no breaking changes) of an existing dependency :
-
-```
-  npm update react -D
-```
-
--   Major update and latest (with breaking changes) of an existing dependency :
-
-```
-  npm install react@latest -D
-```
-
--   List all dependencies of the monorepo and the related version :
-
-```
-  npm list --depth=0
-```
-
--   Remove a dependency :
-
-```
-  npm uninstall lodash.isempty -D
-```
-
--   List dependencies having newer versions :
-
-```
-  npm outdated
-```
-
--   Update minor changes (no breaking changes) all dependencies :
-
-```
-  npm update
-```
-
-# Create Docker Image and push to GCP
-
-1. `nx build-image platform`
-
-2. `docker tag uesio:latest us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
-
-3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
 ### Migrations
 
