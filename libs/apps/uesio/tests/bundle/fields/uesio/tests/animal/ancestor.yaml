@@ -1,5 +1,6 @@
 name: ancestor
 label: Direct Ancestor
+languageLabel: directancestor
 type: REFERENCE
 reference:
   collection: animal

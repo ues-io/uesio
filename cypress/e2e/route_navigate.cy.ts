@@ -143,6 +143,10 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
 			cy.title().should("include", "Animal: ")
 			cy.getByIdFragment("input", "genusField").should("exist")
 			cy.getByIdFragment("input", "speciesField").should("exist")
+			cy.get("label[for*='ancestorField']").should(
+				"have.text",
+				"Direct ancestor (via Language Label)"
+			)
 			// Initiate a route/NAVIGATE_TO_ROUTE signal via button
 			cy.clickButtonIfExists("go-to-animals-list")
 			cy.url().should("include", "/animals/list")

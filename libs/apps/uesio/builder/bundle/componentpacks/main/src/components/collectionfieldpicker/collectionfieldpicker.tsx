@@ -101,6 +101,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
 			return equalsOrStartsWith(singleValue as string, selectedField)
 		}
 	}
+	const label = fieldMetadata?.getLabel(context)
 
 	return (
 		<>
@@ -127,7 +128,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
 			)}
 			<FieldWrapper
 				ref={anchorEl}
-				label={fieldMetadata?.getLabel()}
+				label={label}
 				labelPosition={labelPosition}
 				context={context}
 				variant={fieldWrapperVariant}
@@ -140,7 +141,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
 								? `${arrayValue.length} selected`
 								: singleValue
 						}
-						label={fieldMetadata?.getLabel()}
+						label={label}
 						context={context}
 						variant="uesio/builder.propfield"
 					/>

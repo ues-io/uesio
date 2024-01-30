@@ -199,6 +199,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	return (
 		<FieldWrapper
 			label={label}
+			labelFor={componentId}
 			classes={{ root: classes.wrapper }}
 			labelPosition={labelPosition}
 			context={context}
