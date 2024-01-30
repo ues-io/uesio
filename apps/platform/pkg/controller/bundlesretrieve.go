@@ -36,7 +36,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	major, minor, patch, err := meta.ParseVersionStringToInt(version)
+	major, minor, patch, err := meta.ParseVersionString(version)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))
 		return
@@ -49,24 +49,17 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/studio.contents",
+					Fields: []wire.LoadRequestField{
+						{
+							ID: commonfields.Id,
+						},
+					},
 				},
 			},
 			Conditions: []wire.LoadRequestCondition{
 				{
-					Field: "uesio/studio.major",
-					Value: major,
-				},
-				{
-					Field: "uesio/studio.minor",
-					Value: minor,
-				},
-				{
-					Field: "uesio/studio.patch",
-					Value: patch,
-				},
-				{
-					Field: "uesio/studio.app->" + commonfields.UniqueKey,
-					Value: appID,
+					Field: commonfields.UniqueKey,
+					Value: fmt.Sprintf("%s:%s:%s:%s", appID, major, minor, patch),
 				},
 			},
 		},
@@ -74,12 +67,13 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewNotFoundException(fmt.Sprintf("could not find bundle: %s/%s", appID, version)))
 		return
 	}
 
+	// TODO: We could regenerate the bundle on demand, if not found
 	if bundle.Contents == nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: Zip File not present"))
+		ctlutil.HandleError(w, exceptions.NewNotFoundException("zip file not found for this bundle"))
 		return
 	}
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s.zip\"", version))
