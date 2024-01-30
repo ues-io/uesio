@@ -1,7 +1,25 @@
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import { api, metadata, param, wire } from "@uesio/ui"
+import {
+	SignalBandDefinition,
+	SignalDefinition,
+	SignalDescriptor,
+} from "../api/signalsapi"
+import {
+	ComponentProperty,
+	StructProperty,
+} from "../properties/componentproperty"
 
 // The key for the entire band
 const BAND = "route"
+
+type RouteSignal = SignalDefinition & {
+	newtab?: boolean
+}
+
+interface RouteNavigateSignal extends RouteSignal {
+	route: metadata.MetadataKey
+	params?: Record<string, string>
+}
 
 // Metadata for all of the signals in the band
 const signals: SignalBandDefinition = {
@@ -29,9 +47,64 @@ const signals: SignalBandDefinition = {
 			description: "Reloads the current route",
 			properties: () => [],
 		},
-		[`${BAND}/NAVIGATE`]: {
+		[`${BAND}/NAVIGATE_TO_ROUTE`]: {
 			label: "Navigate to route",
-			description: "Changes the route based on the path provided",
+			description: "Navigates to the requested route",
+			properties: (signal: RouteNavigateSignal, context) => {
+				const props = [
+					{
+						type: "METADATA",
+						name: "route",
+						metadataType: "ROUTE",
+						label: "Route",
+					},
+				] as ComponentProperty[]
+				// Fetch params for the route
+				if (signal.route) {
+					const [params] = api.route.useParams(context, signal.route)
+					if (params && params.length) {
+						props.push({
+							type: "STRUCT",
+							name: "params",
+							label: "Parameters",
+							properties: params.map(
+								(paramDef: param.ParamDefinition) => {
+									const { name, type, required } = paramDef
+									if (type === "SELECT") {
+										return {
+											type: "SELECT",
+											name,
+											required,
+											selectList: {
+												name: (
+													paramDef as param.SelectParam
+												).selectList,
+											} as wire.SelectListMetadata,
+										} as ComponentProperty
+									}
+									if (type === "METADATA") {
+										return {
+											type: "TEXT",
+											name,
+											required,
+										} as ComponentProperty
+									}
+									return {
+										type: type === "LIST" ? "TEXT" : type,
+										name,
+										required,
+									} as ComponentProperty
+								}
+							) as ComponentProperty[],
+						} as StructProperty)
+					}
+				}
+				return props
+			},
+		},
+		[`${BAND}/NAVIGATE`]: {
+			label: "Navigate to path",
+			description: "Navigates to a route by path",
 			properties: () => [
 				{
 					type: "TEXT",

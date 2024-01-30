@@ -2,6 +2,7 @@ package routing
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -151,6 +152,41 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
 
 	return datasource.RunRouteBots(route, r, session, connection)
+}
+
+func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
+	route := meta.NewBaseRoute(namespace, routeName)
+	// TODO: connection should not have to be nil
+	err := bundle.Load(route, session, nil)
+	if err != nil || route == nil {
+		return nil, exceptions.NewNotFoundException("route not found: " + fmt.Sprintf("%s.%s", namespace, routeName))
+	}
+	if route.Params == nil {
+		route.Params = map[string]interface{}{}
+	}
+	params, err := ResolveRouteParams(route.Params, session, r.URL.Query())
+	if err != nil {
+		return nil, exceptions.NewBadRequestException("unable to resolve route parameters: " + err.Error())
+	}
+	route.Params = params
+	route, err = datasource.RunRouteBots(route, r, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	// If the route path contains merges, we need to evaluate the merge now
+	route.Path = mergeRoutePath(route.Path, params)
+	return route, nil
+}
+
+func mergeRoutePath(path string, params map[string]interface{}) string {
+	if len(path) == 0 || len(params) == 0 {
+		return path
+	}
+	for paramName, paramValue := range params {
+		mergeStr := fmt.Sprintf("{%s}", paramName)
+		path = strings.ReplaceAll(path, mergeStr, fmt.Sprintf("%v", paramValue))
+	}
+	return path
 }
 
 func ResolveRouteParams(routeParams map[string]interface{}, s *sess.Session, vars url.Values) (map[string]interface{}, error) {

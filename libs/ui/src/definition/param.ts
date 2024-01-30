@@ -59,7 +59,7 @@ type CheckboxParam = ParamBase & {
 	default?: boolean
 }
 
-type SelectParam = ParamBase & {
+export type SelectParam = ParamBase & {
 	type: "SELECT"
 	default?: string
 	selectList: string
@@ -98,7 +98,8 @@ export type ParamDefinition =
 	| MultiMetadataParam
 
 type ViewParamBase = {
-	type?: "RECORD" | "TEXT" | "CHECKBOX" | "NUMBER"
+	type?: "RECORD" | "TEXT" | "CHECKBOX" | "NUMBER" | "SELECT"
+	label?: string
 	required?: boolean
 }
 type ViewRecordParam = {
@@ -118,6 +119,11 @@ type ViewNumberParam = {
 	type: "NUMBER"
 	default?: number
 } & ViewParamBase
+type ViewSelectParam = {
+	type: "SELECT"
+	default?: string
+	selectList?: MetadataKey
+} & ViewParamBase
 
 /**
  * Defines a parameter that a view expects to be provided.
@@ -127,3 +133,4 @@ export type ViewParamDefinition =
 	| ViewTextParam
 	| ViewCheckboxParam
 	| ViewNumberParam
+	| ViewSelectParam

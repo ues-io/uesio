@@ -1,0 +1,4 @@
+name: animals_list
+path: animals/list
+view: animals_list
+title: Animals
