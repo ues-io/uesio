@@ -18,7 +18,7 @@ jsonpath "$[0].type" == "CHECKBOX"
 jsonpath "$[1].required" == false
 jsonpath "$[1].name" == "numbervalue"
 jsonpath "$[1].type" == "NUMBER"
-jsonpath "$[1].required" == true
+jsonpath "$[1].required" == false
 
 # Test loading a wire with NUMBER and CHECKBOX param types
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
