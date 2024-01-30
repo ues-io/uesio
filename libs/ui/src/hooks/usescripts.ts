@@ -31,6 +31,7 @@ const getLoadedScripts = () => {
 const initializeScriptCache = () => {
 	if (!Object.keys(cachedScripts).length) {
 		const js = document.scripts
+		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let i = 0; i < js.length; i++) {
 			const scriptNode = js[i]
 			const srcAttribute = scriptNode.getAttribute("src")

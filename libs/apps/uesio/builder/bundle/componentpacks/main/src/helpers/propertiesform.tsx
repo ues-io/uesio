@@ -106,7 +106,7 @@ const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 }
 
 const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
-	const conditions: Array<wire.SelectOption> = []
+	const conditions: wire.SelectOption[] = []
 
 	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
 

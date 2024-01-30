@@ -238,7 +238,7 @@ const signals: SignalBandDefinition = {
 			properties: (
 				signal: ToggleConditionSignal
 			): ComponentProperty[] => [
-				...getWireAndConditionsDescriptor(<string>signal.wire),
+				...getWireAndConditionsDescriptor(signal.wire),
 			],
 		},
 
@@ -248,7 +248,7 @@ const signals: SignalBandDefinition = {
 			properties: (
 				signal: SetConditionValueSignal
 			): ComponentProperty[] => [
-				...getWireAndConditionsDescriptor(<string>signal.wire),
+				...getWireAndConditionsDescriptor(signal.wire),
 				{
 					name: "value",
 					type: "TEXT",
@@ -273,7 +273,7 @@ const signals: SignalBandDefinition = {
 			properties: (
 				signal: RemoveConditionSignal
 			): ComponentProperty[] => [
-				...getWireAndConditionsDescriptor(<string>signal.wire),
+				...getWireAndConditionsDescriptor(signal.wire),
 			],
 		},
 		[`${BAND}/SET_ORDER`]: {
