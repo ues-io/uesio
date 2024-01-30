@@ -1,9 +1,18 @@
 import { getAppBasePath } from "./paths"
 
-let atomic = 0
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+function getRandomLowercaseAlphabetLetter() {
+	const randomIndex = Math.floor(Math.random() * alphabet.length)
+	return alphabet[randomIndex]
+}
 
 export function getUniqueAppName() {
-	return `e2e${Math.round(Math.random() * 1000)}${atomic++}`
+	const randomLetters = Array.from(
+		{ length: 8 },
+		getRandomLowercaseAlphabetLetter
+	).join("")
+	return `e2e${randomLetters}`
 }
 
 export function deleteApp(appName: string) {
