@@ -346,7 +346,7 @@ definition:
               - signal: "wire/SAVE"
                 wires:
                   - newworkspace
-              - signal: "route/NAVIGATE"
+              - signal: "route/REDIRECT"
                 path: "app/$Param{app}/workspace/${newworkspace:uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
