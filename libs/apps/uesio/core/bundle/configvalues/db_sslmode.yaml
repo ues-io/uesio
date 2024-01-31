@@ -1,0 +1,4 @@
+name: db_sslmode
+managedBy: app
+store: environment
+defaultValue: disabled
