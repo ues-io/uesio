@@ -14,7 +14,8 @@ on:
 
 # Request permissions to be able to create releases
 permissions:
-  actions: write # Access to external Github actions
+  id-token: write # Needed to assume role using AWS OIDC provider
+  actions: write # Access to Github actions
   contents: write # This is required for actions/checkout
 
 jobs:
@@ -72,13 +73,8 @@ jobs:
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
-            artifact_name: uesio
+            artifact_name: uesio-linux
             asset_name: uesio-linux-amd64
-          - os: ubuntu-latest
-            goos: linux
-            goarch: arm64
-            artifact_name: uesio
-            asset_name: uesio-linux-arm64
           - os: windows-latest
             goos: windows
             goarch: amd64
@@ -87,12 +83,12 @@ jobs:
           - os: macos-latest
             goos: darwin
             goarch: amd64
-            artifact_name: uesio
+            artifact_name: uesio-macos-amd64
             asset_name: uesio-macos-amd64
           - os: macos-latest
             goos: darwin
             goarch: arm64
-            artifact_name: uesio
+            artifact_name: uesio-macos-arm64
             asset_name: uesio-macos-arm64
     steps:
       - uses: actions/checkout@v3
