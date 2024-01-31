@@ -22,6 +22,7 @@ jobs:
   docker_publish_to_ghcr:
     name: Publish to GitHub Container Registry
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v2
