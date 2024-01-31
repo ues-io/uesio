@@ -101,6 +101,9 @@ func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
 	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
+	if redisPort == "" {
+		redisPort = "6379"
+	}
 
 	if redisTTLSecondsValue != "" {
 		if intVal, err := strconv.Atoi(redisTTLSecondsValue); err != nil {
