@@ -62,7 +62,7 @@ The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there
 ## Optional
 
 -   Set up SSL [here](#set-up-ssl). This is necessary if you want to run multiple sites locally in addition to the ues.io studio. If you don't want to set up ssl, set the `UESIO_USE_HTTPS` environment variable to `false`.
--   Set up local DNS [here](#set-up-local-dns). This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
+-   Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 -   Install [Oh My Zsh](https://ohmyz.sh/)
@@ -122,7 +122,7 @@ npm run nx -- build apps-uesio-studio
 nx build apps-uesio-studio
 ```
 
-# Watch mode
+## Watch mode (for development)
 
 While developing you may want the entire monorepo to rebuild changed files. You can do this with:
 
@@ -130,11 +130,50 @@ While developing you may want the entire monorepo to rebuild changed files. You 
 npm run watch-all
 ```
 
-# Continous integration (CI)
+# <a id="dependencies"></a>Start dependencies
 
-We use **GitHub Actions** for automated builds. All of our workflows live in `./github/workflows`.
+1. Launch all local dependencies (e.g. Postgres) with Docker Compose:
+
+```
+docker compose up -d
+```
+
+2. Seed your local Postgres database with everything Uesio needs for local development
+
+```
+npm run migrations
+npm run seeds
+```
+
+# <a id="run"></a>Run the web application locally
+
+```
+npm start
+open http://localhost:3000
+```
+
+If you have [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) configured, you can access the Studio via the following "local" DNS:
+
+```
+open https://studio.uesio-dev.com:3000
+```
+
+To run the app in Docker locally:
+
+```
+npm run in-docker
+open https://studio.uesio-dev.com:3000
+```
+
+**NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:
+
+```
+npm run in-docker-force-build
+```
 
 # <a id="set-up-ssl"></a> Set up SSL
+
+SSL is optional for local development. It is enabled using by setting the environment variable `UESIO_USE_HTTPS=true`
 
 ```
 npm run setup-ssl
@@ -148,7 +187,9 @@ On Windows/Linux, you will need to manually trust this self-signed certificate. 
 
 # <a id="set-up-local-dns"></a> Set up your local DNS
 
-The Uesio application maps DNS domains and subdomains to Uesio Sites, so the app can't just be accessed via "localhost" as you might expect. You'll need to configure your OS to properly handle the local Uesio domains and subdomains.
+If you just want to work in the Uesio Studio site, local DNS setup is not necessary, you can just access "http://localhost:3000".
+
+However, to simmulate how Uesio routes DNS domains and subdomains to Uesio sites, you need to configure your OS to properly route "local" DNS domains (e.g. "uesio-dev.com") to the Uesio app server running on localhost.
 
 There are two ways to do this, you'll need to pick one:
 
@@ -169,43 +210,6 @@ There are two ways to do this, you'll need to pick one:
     ```
     sudo brew services start dnsmasq
     ```
-
-# <a id="dependencies"></a>Start dependencies
-
-1. Launch all local dependencies (e.g. Postgres) with Docker Compose:
-
-```
-docker compose up -d
-```
-
-2. Seed your local Postgres database with everything Uesio needs for local development
-
-```
-npm run migrations
-npm run seeds
-```
-
-# <a id="dependencies"></a>Run the (web) application locally
-
-To run the app locally:
-
-```
-npm start
-open https://studio.uesio-dev.com:3000
-```
-
-To run the app in Docker locally:
-
-```
-npm run in-docker
-open https://studio.uesio-dev.com:3000
-```
-
-**NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:
-
-```
-npm run in-docker-force-build
-```
 
 ## Worker jobs
 
@@ -439,3 +443,23 @@ hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=ue
 ```
 
 You could run this from the CLI, but you would have to make sure that you are (a) in the right directory (b) have the right environment variables set up. (See the top of this `run-integration-tests.sh` for a better understanding).
+
+# Continous integration (CI)
+
+We use **GitHub Actions** for automated builds. All of our workflows live in `./github/workflows`.
+
+## Creating a new release
+
+We use Github Releases to manage releases of:
+
+(a) the Uesio web/worker app - as a Docker image
+(b) the Uesio CLI - as a platform-specific binary
+
+Here are the steps to create a new release:
+
+1. In Github, go to [Draft a new release](https://github.com/ues-io/uesio/releases/new)
+2. Enter a new tag name, using Semver names (e.g. `v0.5.0`)
+3. Click **Generate release notes**
+4. Click **Publish release**
+
+That's it! This will kick off the "Release" Github Action, which will download the corresponding Docker image from AWS ECR and re-publish it to Github Container Registry with the corresponding version tag, as well as the `latest` tag. It will also generate CLI binaries for Linux, Windows, and Mac OS.
