@@ -61,7 +61,7 @@ The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there
 
 ## Optional
 
--   Set up SSL [here](#set-up-ssl). This is necessary if you want to run multiple sites locally in addition to the ues.io studio.
+-   Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
 -   Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.

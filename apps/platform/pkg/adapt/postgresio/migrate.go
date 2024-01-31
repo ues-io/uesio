@@ -38,10 +38,15 @@ func getConnectionString(credentials *wire.Credentials) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	sslmode, err := credentials.GetRequiredEntry("sslmode")
+	if err != nil {
+		return "", err
+	}
 	// escape invalid url characters in the password
 	password = url.PathEscape(password)
 
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode), nil
 }
 
 func (c *Connection) Migrate(options *migrations.MigrateOptions) error {

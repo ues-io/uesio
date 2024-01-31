@@ -110,7 +110,12 @@ func getConnection(ctx context.Context, credentials *wire.Credentials, hash stri
 		return nil, err
 	}
 
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	sslmode, err := credentials.GetRequiredEntry("sslmode")
+	if err != nil {
+		return nil, err
+	}
+
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=%s", host, port, user, password, dbname, sslmode)
 
 	config, err := pgxpool.ParseConfig(psqlInfo)
 	if err != nil {

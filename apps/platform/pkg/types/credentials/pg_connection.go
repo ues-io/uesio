@@ -6,6 +6,7 @@ type PostgreSQLConnection struct {
 	Database string `yaml:"database" json:"database"`
 	Username string `yaml:"username" json:"username"`
 	Password string `yaml:"password" json:"password"`
+	SSLMode  string `yaml:"sslmode" json:"sslmode"`
 }
 
 func (c *PostgreSQLConnection) IsNil() bool {
@@ -38,5 +39,10 @@ func (c *PostgreSQLConnection) Map(mapper EntryMapper) {
 		Name:  "password",
 		Type:  "secret",
 		Value: c.Password,
+	})
+	c.SSLMode = mapper(&CredentialEntry{
+		Name:  "sslmode",
+		Type:  "configvalue",
+		Value: c.SSLMode,
 	})
 }
