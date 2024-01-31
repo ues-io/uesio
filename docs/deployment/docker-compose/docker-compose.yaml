@@ -1,6 +1,6 @@
-version: "3.4"
+version: "3.2"
 
-name: "uesio_test"
+name: "uesio_dev"
 
 services:
   redis:
@@ -18,7 +18,7 @@ services:
       retries: 4
       start_period: 10s
   app:
-    image: "$APP_IMAGE"
+    image: "ghcr.io/ues-io/uesio:latest"
     depends_on:
       db:
         condition: service_healthy
@@ -29,25 +29,20 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
-      UESIO_CACHE_SITE_BUNDLES: "true"
       UESIO_DB_DATABASE: pgtest
       UESIO_DB_HOST: db
       UESIO_DB_USER: postgres
       UESIO_DB_PASSWORD: postgres
       UESIO_DB_PORT: 5432
       UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.local
+      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.aws
       UESIO_PLATFORM_FILESOURCE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.local
+      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.aws
       UESIO_SESSION_STORE: redis
-      UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
-      UESIO_MOCK_AUTH: "true"
-      UESIO_USE_HTTPS: "true"
-      UESIO_DEBUG_SQL: "true"
+      UESIO_USERFILES_BUCKET_NAME: "uesio-userfiles"
+      UESIO_BUNDLES_BUCKET_NAME: "uesio-bundles"
       PORT: 3000
-      UESIO_DEV: "true"
       UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
-    volumes:
-      - ./apps/platform/ssl:/ssl
-    command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"
+      UESIO_MOCK_AUTH: "true"
+      UESIO_MOCK_AUTH_USERNAMES: "uesio"
+    command: sh -c "./uesio migrate && ./uesio seed -i && ./uesio serve"
