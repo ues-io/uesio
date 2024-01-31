@@ -3,6 +3,7 @@ package reflecttool
 import (
 	"errors"
 	"reflect"
+	"strings"
 	"sync"
 )
 
@@ -72,7 +73,8 @@ func addTags(tagMap map[string]string, objType reflect.Type) {
 			if tag == "-" || tag == "" {
 				continue
 			}
-			tagMap[tag] = structField.Name
+			parts := strings.Split(tag, ",")
+			tagMap[parts[0]] = structField.Name
 		}
 	}
 }
