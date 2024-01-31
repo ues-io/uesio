@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -25,6 +24,8 @@ func init() {
 		Short: "Seed Database",
 		Run:   seed,
 	})
+
+	rootCmd.PersistentFlags().BoolP("ignore-failures", "i", false, "Set to true to ignore seed failures")
 
 }
 
@@ -74,14 +75,6 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 
 	// Get a session with the system user
 	session, err := auth.GetStudioSystemSession(ctx, connection)
-	if err != nil {
-		return err
-	}
-	permissions := session.GetSitePermissions()
-	permissions.NamedRefs = map[string]bool{
-		constant.WorkspaceAdminPerm: true,
-	}
-
 	if err != nil {
 		return err
 	}
@@ -154,6 +147,8 @@ func seed(cmd *cobra.Command, args []string) {
 
 	slog.Info("Running seeds")
 
+	ignoreSeedFailures, _ := cmd.Flags().GetBool("ignore-failures")
+
 	ctx := context.Background()
 
 	anonSession := sess.GetStudioAnonSession(ctx)
@@ -166,8 +161,12 @@ func seed(cmd *cobra.Command, args []string) {
 
 	err = runSeeds(ctx, connection)
 	if err != nil {
-		slog.Error("Seeds failed: " + err.Error())
 		rollbackErr := connection.RollbackTransaction()
+		if ignoreSeedFailures {
+			slog.Info("Ignoring seed failures.")
+			return
+		}
+		slog.Error("Seeds failed: " + err.Error())
 		cobra.CheckErr(rollbackErr)
 		cobra.CheckErr(err)
 		return
