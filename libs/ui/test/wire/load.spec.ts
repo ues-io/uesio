@@ -24,7 +24,7 @@ const defaultPlanetsWireLoadImplementation = (
 					collections: {
 						[collectionId]: getExoplanetCollection(),
 					},
-			  }
+				}
 			: {}),
 		wires: [
 			{
@@ -40,7 +40,7 @@ const defaultPlanetsWireLoadImplementation = (
 							record2: {
 								"ben/planets.name": "foobar",
 							},
-					  }
+						}
 					: {},
 				query: !!requestBody.wires[0].query,
 			} as PlainWire,

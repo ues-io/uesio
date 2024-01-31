@@ -52,7 +52,7 @@ const signals: SignalBandDefinition = {
 										type: type === "LIST" ? "TEXT" : type,
 										name,
 										required,
-									} as ComponentProperty)
+									}) as ComponentProperty
 							) as ComponentProperty[],
 						} as StructProperty)
 					}

@@ -87,7 +87,7 @@ class Field {
 						label: languageLabel
 							? context.getLabel(languageLabel) || label
 							: label,
-					} as SelectOption)
+					}) as SelectOption
 			) || []
 
 		if (!addBlankOption) {

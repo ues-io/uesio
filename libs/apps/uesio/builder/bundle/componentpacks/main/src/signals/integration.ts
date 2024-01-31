@@ -109,7 +109,7 @@ const signals: SignalBandDefinition = {
 											operator,
 										})
 									),
-								} as ComponentProperty)
+								}) as ComponentProperty
 						) as ComponentProperty[],
 						displayConditions: [
 							{

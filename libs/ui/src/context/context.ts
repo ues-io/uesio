@@ -714,7 +714,7 @@ class Context {
 							this.mergeDeep(value as DeepMergeable, options),
 						]
 					})
-			  )
+				)
 			: {}) as T
 
 	mergeStringMap = (

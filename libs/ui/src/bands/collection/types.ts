@@ -14,9 +14,7 @@ export type PlainCollection = {
 	uniqueKey?: string[]
 } & BundleableBase
 
-export type PlainCollectionMap = {
-	[key: string]: PlainCollection
-}
+export type PlainCollectionMap = Record<string, PlainCollection>
 
 const ID_FIELD = "uesio/core.id"
 const UNIQUE_KEY_FIELD = "uesio/core.uniquekey"

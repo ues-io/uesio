@@ -102,11 +102,11 @@ const getWireFieldSelectOptions = (wireDef?: wire.WireDefinition) => {
 
 	return Object.entries(fields)
 		.flatMap(([key, value]) => getFields(key, value))
-		.map((el) => ({ value: el, label: el } as wire.SelectOption))
+		.map((el) => ({ value: el, label: el }) as wire.SelectOption)
 }
 
 const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
-	const conditions: Array<wire.SelectOption> = []
+	const conditions: wire.SelectOption[] = []
 
 	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
 
@@ -169,7 +169,7 @@ const getSelectListMetadataFromOptions = (
 		name: `${propertyName}_options`,
 		blank_option_label: blankOptionLabel,
 		options,
-	} as wire.SelectListMetadata)
+	}) as wire.SelectListMetadata
 
 const resolveOptions = (
 	def: SelectProperty,
@@ -186,17 +186,17 @@ const getSelectListMetadata = (
 	def.selectList
 		? {
 				name: def.selectList,
-		  }
+			}
 		: getSelectListMetadataFromOptions(
 				def.name,
 				resolveOptions(def, currentValue).map(
 					(o: wire.SelectOption) =>
 						({
 							...o,
-						} as wire.SelectOption)
+						}) as wire.SelectOption
 				),
 				def.blankOptionLabel
-		  )
+			)
 
 const getWireSelectListMetadata = (
 	context: context.Context,
@@ -210,7 +210,7 @@ const getWireSelectListMetadata = (
 				({
 					value: wireId,
 					label: wireId,
-				} as wire.SelectOption)
+				}) as wire.SelectOption
 		),
 		addBlankOption ? "No wire selected" : undefined
 	)
@@ -227,7 +227,7 @@ const getNamespaceSelectListMetadata = (
 				({
 					value: ns,
 					label: ns,
-				} as wire.SelectOption)
+				}) as wire.SelectOption
 		) || [],
 		"(Select a namespace)"
 	)
@@ -908,7 +908,7 @@ const onUpdate = (
 		Array.isArray(setter)
 			? setter.forEach((s) => {
 					s(value, setterField, record)
-			  })
+				})
 			: setter(value, setterField, record)
 	}
 	// Finally, once all setters have run, apply any on-Change handlers

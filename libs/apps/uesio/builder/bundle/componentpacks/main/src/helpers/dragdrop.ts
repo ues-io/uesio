@@ -112,7 +112,7 @@ const handleDrop = (
 				drag.itemType === "componentvariant"
 					? {
 							[component.STYLE_VARIANT]: drag.localPath,
-					  }
+						}
 					: {}
 			)
 			break

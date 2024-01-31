@@ -78,7 +78,7 @@ const DataImport: definition.UC<DataImportDefinition> = (props) => {
 									columnname: key,
 									type: "IMPORT",
 								},
-						  }
+							}
 				}, {}),
 			}))
 		}

@@ -34,13 +34,16 @@ const getStructFieldValuesObject = (
 	valueFields: collection.FieldMetadataMap,
 	record: wire.PlainWireRecord
 ) =>
-	Object.entries(valueFields).reduce((newStruct, [subFieldId]) => {
-		const value = record[subFieldId] as string
-		if (value || value === "") {
-			newStruct[subFieldId] = value
-		}
-		return newStruct
-	}, {} as Record<string, wire.FieldValue>)
+	Object.entries(valueFields).reduce(
+		(newStruct, [subFieldId]) => {
+			const value = record[subFieldId] as string
+			if (value || value === "") {
+				newStruct[subFieldId] = value
+			}
+			return newStruct
+		},
+		{} as Record<string, wire.FieldValue>
+	)
 
 const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 	const {
@@ -67,7 +70,7 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 		? {
 				...keys.reduce((obj, key) => ({ ...obj, [key]: null }), {}),
 				...value,
-		  }
+			}
 		: value
 
 	const getDefaultValue = () => ({
@@ -98,10 +101,10 @@ const MapField: definition.UtilityComponent<MapFieldUtilityProps> = (props) => {
 			? getStructFieldValuesObject(
 					valueFields,
 					value as wire.PlainWireRecord
-			  )
+				)
 			: {
 					value,
-			  }),
+				}),
 	}))
 
 	return (

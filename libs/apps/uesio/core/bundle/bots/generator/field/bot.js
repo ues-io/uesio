@@ -7,7 +7,7 @@ function field(bot) {
 				? {
 						...prev,
 						[key]: value,
-				  }
+					}
 				: prev
 		}, null)
 
