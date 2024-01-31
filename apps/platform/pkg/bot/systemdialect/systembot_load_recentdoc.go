@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -65,7 +66,7 @@ func getArticleLoad(op *wire.LoadOp, connection wire.Connection, session *sess.S
 }
 
 func runRecentDocLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	site, err := auth.GetSiteFromHost("docs." + session.GetSite().Domain)
+	site, err := auth.GetSiteFromHost("docs." + env.GetPrimaryDomain())
 	if err != nil {
 		//Ignore the errors if the site is not found
 		return nil
