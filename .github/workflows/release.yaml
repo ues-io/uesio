@@ -1,0 +1,120 @@
+name: Uesio Release
+
+on:
+  push:
+    tags:
+      - "v*"
+    secrets:
+      AWS_ACCOUNT_ID_DEV:
+        required: true
+      AWS_ECR_ROLE_DEV:
+        required: true
+      AWS_REGION_DEV:
+        required: true
+
+# Request permissions to be able to create releases
+permissions:
+  actions: write # Access to external Github actions
+  contents: write # This is required for actions/checkout
+
+jobs:
+  docker_publish_to_ghcr:
+    name: Publish to GitHub Container Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ECR_ROLE_DEV }}
+          role-session-name: ecrpull
+          aws-region: ${{ secrets.AWS_REGION_DEV }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1.6.0
+      - name: Pull the latest Docker image from ECR
+        shell: bash
+        env:
+          FULL_SHA: ${{ github.sha }}
+          REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
+          IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
+          GHCR_IMAGE_TAG_BASE: ghcr.io/${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+
+          # Make sure that the Docker image for this commit exists in ECR
+          image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
+
+          if [[ "$image_exists" == "no" ]]; then
+              echo "Docker image does not exist in ECR"
+              exit 1
+          fi
+
+          echo "Pulling Docker image from ECR..."
+          docker pull $IMAGE_TAG --all-tags
+          echo "Pushing tag $RELEASE_TAG to Github Container Registry..."=
+          docker tag $IMAGE_TAG $GHCR_IMAGE_BASE:$RELEASE_TAG
+          docker push GHCR_IMAGE_TAG_BASE:$RELEASE_TAG
+          echo "Pushing latest tag to Github Container Registry..."
+          docker tag $IMAGE_TAG $GHCR_IMAGE_BASE:latest
+          docker push GHCR_IMAGE_TAG_BASE:latest
+  cli_release_artifacts:
+    name: Build asset for ${{ matrix.goos }} - ${{ matrix.goarch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            artifact_name: uesio
+            asset_name: uesio-linux-amd64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+            artifact_name: uesio
+            asset_name: uesio-linux-arm64
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            artifact_name: uesio.exe
+            asset_name: uesio-windows-amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            artifact_name: uesio
+            asset_name: uesio-macos-amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            artifact_name: uesio
+            asset_name: uesio-macos-arm64
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.3
+          cache-dependency-path: apps/*/go.sum
+      - name: Build CLI
+        shell: bash
+        env:
+          outputPath: "dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}"
+        run: |
+          cd apps/cli
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $outputPath
+          cd ../..
+      - name: Upload release artifact
+        uses: Roang-zero1/github-upload-release-artifacts-action@v2
+        with:
+          args: "apps/cli/dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}"
+          created_tag: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
