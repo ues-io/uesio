@@ -10,8 +10,6 @@ As much as possible, our code style and format is codified with [eslint](https:/
 
 For Redux, we follow the [Redux Style Guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-On the frontend, we prefer functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are **functional components**. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor) are not functional components.
-
 For Go **package naming**, we follow this [guideline](https://blog.golang.org/package-names).
 
 # Tech Stack
@@ -55,8 +53,6 @@ The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there
     -   `hurl` (for integration tests): `brew install hurl`
     -   `jq` (for JSON manipulation in Shell): `brew install jq`
     -   `wget` (for fetching URLs): `brew install wget`
--   Set up SSL [here](#set-up-ssl).
--   Set up local DNS [here](#set-up-local-dns).
 -   Start dependencies [here](#dependencies).
 -   Create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`):
     -   Mac OS: `sudo ln -s ~/git/uesio/dist/cli/uesio /usr/local/bin`
@@ -65,6 +61,8 @@ The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there
 
 ## Optional
 
+-   Set up SSL [here](#set-up-ssl). This is necessary if you want to run multiple sites locally in addition to the ues.io studio. If you don't want to set up ssl, set the `UESIO_USE_HTTPS` environment variable to `false`.
+-   Set up local DNS [here](#set-up-local-dns). This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 -   Install [Oh My Zsh](https://ohmyz.sh/)
