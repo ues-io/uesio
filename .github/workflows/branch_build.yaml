@@ -47,6 +47,8 @@ jobs:
           cache-dependency-path: apps/*/go.sum
       - name: Install, lint, build, test
         shell: bash
+        env:
+          UESIO_DEV: "true"
         run: |
           npm ci
           npm run prettier-check
