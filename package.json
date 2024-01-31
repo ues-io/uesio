@@ -43,7 +43,7 @@
 		"setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
 		"start": "nx serve platform",
 		"test": "nx run-many --target=test --all",
-		"watch-all": "nx run-many --target=watch --all --parallel=12"
+		"watch-all": "nx run-many --target=watch --all --parallel=8"
 	},
 	"files": [],
 	"devDependencies": {
