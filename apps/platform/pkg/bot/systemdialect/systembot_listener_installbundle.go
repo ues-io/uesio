@@ -115,10 +115,6 @@ func runInstallBundleListenerBot(params map[string]interface{}, connection wire.
 		return nil, err
 	}
 
-	if err = datasource.PlatformSaveOne(newBundle, nil, connection, session); err != nil {
-		return nil, err
-	}
-
 	url := fmt.Sprintf("https://studio.%s/site/bundles/v1/retrieve/%s/%s", bundleStoreDomain, appID, version)
 
 	var payloadReader io.Reader
@@ -163,6 +159,11 @@ func runInstallBundleListenerBot(params map[string]interface{}, connection wire.
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	//save the bundle and the dependency
+	if err = datasource.PlatformSaveOne(newBundle, nil, connection, session); err != nil {
+		return nil, err
 	}
 
 	newBundleDependency, err := meta.NewBundleDependency(appID, newBundle.UniqueKey, workspace.UniqueKey)

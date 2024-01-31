@@ -104,6 +104,8 @@ definition:
         uesio/core.id:
         uesio/studio.workspace:
         uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
         uesio/studio.bundle:
           fields:
             uesio/studio.app:
@@ -124,10 +126,8 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: app
-          lookupField: uesio/core.id
+        - field: uesio/studio.app->uesio/core.uniquekey
+          value: $Param{id}
 
     # The current app's dependency
     # Used for the install button
@@ -201,7 +201,7 @@ definition:
                                   - signal: bot/CALL
                                     bot: uesio/studio.installbundle
                                     params:
-                                      version: v1.0.0
+                                      version: v$Record{latestversion:uesio/studio.version}
                                       app: $Param{id}
                                       workspace: $Param{app}:$Param{workspacename}
                                   - signal: wire/LOAD

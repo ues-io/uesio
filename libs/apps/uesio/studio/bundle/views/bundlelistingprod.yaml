@@ -2,6 +2,18 @@ name: bundlelistingprod
 definition:
   # Wires are how we pull in data
   wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     # The details of the listing, nothing special going on here
     listing:
       collection: uesio/studio.externalbundlelisting
@@ -28,6 +40,63 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{id}
           id: externalBundleVersionUniquekey
+
+    # The current app's dependencies
+    # Used for installing the bundle
+    dependencies:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      defaults:
+        - field: uesio/studio.bundle
+          valueSource: LOOKUP
+          lookupWire: latestversion
+          lookupField: uesio/core.id
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+        - field: uesio/studio.app->uesio/core.uniquekey
+          value: $Param{id}
+
+    # The current app's dependency
+    # Used for the install button
+    dependencyAlreadyInstalled:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.app->uesio/core.uniquekey
+          value: $Param{id}
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
 
   components:
     - uesio/io.viewlayout:
@@ -64,7 +133,7 @@ definition:
                                   - signal: bot/CALL
                                     bot: uesio/studio.installbundle
                                     params:
-                                      version: v1.0.0
+                                      version: $Record{versions:uesio/studio.version}
                                       app: $Param{id}
                                       workspace: $Param{app}:$Param{workspacename}
                                   - signal: wire/LOAD
