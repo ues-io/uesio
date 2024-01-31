@@ -14,6 +14,11 @@ on:
         default: "# Bug fixes\n - Fix One\n\n# Features\n - Feature one"
         type: string
 
+# Request permissions to be able to create releases
+permissions:
+  actions: write # Access to external Github actions
+  contents: write # This is required for actions/checkout
+
 jobs:
   validate:
     name: Validate inputs
@@ -84,6 +89,8 @@ jobs:
           cd ../..
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: apps/cli/dist/${{ matrix.asset_name }}/${{ matrix.artifact_name }}
           asset_name: "${{ matrix.asset_name }}-${{ env.releaseTag }}"
