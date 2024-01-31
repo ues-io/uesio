@@ -48,7 +48,7 @@ func runInstallBundleListenerBot(params map[string]interface{}, connection wire.
 
 	workspace, err := datasource.QueryWorkspaceForWrite(workspaceUniqueKey, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceUniqueKey))
+		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to install bundles for workspace %s", workspaceUniqueKey))
 	}
 
 	major, minor, patch, err := meta.ParseVersionString(version)
