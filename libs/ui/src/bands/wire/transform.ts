@@ -8,4 +8,4 @@ export const transformServerWire = (wire: ServerWire): PlainWire =>
 	({
 		...wire,
 		data: Object.fromEntries((wire.data || []).map((r) => [nanoid(), r])),
-	} as PlainWire)
+	}) as PlainWire

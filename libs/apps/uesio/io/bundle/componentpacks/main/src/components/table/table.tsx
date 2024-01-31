@@ -169,7 +169,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					recordContext.context
 				)
 				handler?.()
-		  }
+			}
 		: undefined
 
 	const rowActionsFunc = otherActions.length
@@ -213,7 +213,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 							})}
 					</Group>
 				</FieldWrapper>
-		  )
+			)
 		: undefined
 
 	const isRowOpenFunc = definition.drawer
@@ -230,7 +230,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					path={`${path}["drawer"]`}
 					context={recordContext.context}
 				/>
-		  )
+			)
 		: undefined
 
 	const columnHeaderFunc = (column: ColumnDefinition) =>
@@ -298,7 +298,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					return true
 				}
 				return undefined
-		  }
+			}
 		: undefined
 
 	const onAllSelectChange = definition.selectable
@@ -310,10 +310,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 									itemContext.item.getId(),
 									true,
 								])
-						  )
+							)
 						: {}
 				)
-		  }
+			}
 		: undefined
 
 	const isSelectedFunc = definition.selectable
@@ -326,7 +326,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				recordContext: RecordContext,
 				index: number,
 				isSelected: boolean
-		  ) => {
+			) => {
 				setSelected(
 					isSelected
 						? {
@@ -334,10 +334,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 								...{
 									[recordContext.item.getId()]: true,
 								},
-						  }
+							}
 						: omit(selected, recordContext.item.getId())
 				)
-		  }
+			}
 		: undefined
 
 	const isDeletedFunc = (recordContext: RecordContext) =>
@@ -394,7 +394,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 										},
 										context
 									)
-							  }
+								}
 							: undefined
 					}
 				/>

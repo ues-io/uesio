@@ -19,7 +19,7 @@ const MapFieldDeck: definition.UtilityComponent<MapFieldDeckUtilityProps> = (
 		? Object.entries(value).map(([key, item]) => ({
 				key,
 				value: item,
-		  }))
+			}))
 		: []
 	return (
 		<>

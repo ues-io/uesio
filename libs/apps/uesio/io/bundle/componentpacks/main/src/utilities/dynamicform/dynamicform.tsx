@@ -78,6 +78,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 			definition={{
 				mode: "EDIT",
 				wire: wireId,
+				id,
 				components:
 					content ||
 					wire.getFields().map((field) => ({

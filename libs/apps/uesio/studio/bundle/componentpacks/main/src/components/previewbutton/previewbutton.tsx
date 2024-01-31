@@ -1,18 +1,24 @@
 import { useRef, useState } from "react"
 import {
-	hooks,
 	api,
 	collection,
 	component,
-	wire,
-	param,
+	context,
 	definition,
+	hooks,
+	metadata,
+	param,
 	platform,
+	wire,
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
+const {
+	platform: { getViewParams, getRouteParams },
+} = platform
 
 type PreviewButtonDefinition = {
-	view: string
+	view?: metadata.MetadataKey
+	route?: metadata.MetadataKey
 	label: string
 	buildMode: boolean
 	hotkey: string
@@ -20,43 +26,53 @@ type PreviewButtonDefinition = {
 
 const getValueForParam = (
 	def: param.ParamDefinition,
-	record: wire.WireRecord
+	context: context.Context,
+	record?: wire.WireRecord
 ) => {
 	const fieldKey = def.name
 	switch (def.type) {
 		case "RECORD":
 			return (
-				record.getFieldValue<string>(
+				record?.getFieldValue<string>(
 					`${fieldKey}->${collection.ID_FIELD}`
-				) || ""
+				) || context.mergeString(fieldKey)
 			)
 		case "MULTIMETADATA": {
-			const values = record.getFieldValue<string[]>(fieldKey) || []
+			const values = record?.getFieldValue<string[]>(fieldKey) || []
 			return values.join(",")
 		}
 		default:
-			return record.getFieldValue<string>(fieldKey) || ""
+			return (
+				record?.getFieldValue<string>(fieldKey) ||
+				context.mergeString(fieldKey)
+			)
 	}
 }
 
 const getParamValues = (
 	params: param.ParamDefinition[] | undefined,
-	record: wire.WireRecord
+	context: context.Context,
+	record?: wire.WireRecord
 ) => {
 	if (!params) return {}
 	return Object.fromEntries(
-		params.map((def) => [def.name, getValueForParam(def, record)])
+		params.map((def) => [def.name, getValueForParam(def, context, record)])
 	)
 }
 
 const getWireFieldFromParamDef = (
 	def: param.ParamDefinition
 ): wire.ViewOnlyField => {
+	const baseField = {
+		label: def.prompt || def.label || def.name,
+		required: !!def.required,
+		default: def.default,
+		type: def.type || "TEXT",
+	}
 	switch (def.type) {
 		case "RECORD":
 			return {
-				label: def.prompt || def.name,
-				required: !!def.required,
+				...baseField,
 				type: "REFERENCE" as const,
 				reference: {
 					collection: def.collection,
@@ -65,8 +81,7 @@ const getWireFieldFromParamDef = (
 		case "METADATA":
 		case "MULTIMETADATA":
 			return {
-				label: def.prompt || def.name,
-				required: !!def.required,
+				...baseField,
 				type: def.type,
 				metadata: {
 					type: def.metadataType,
@@ -75,8 +90,7 @@ const getWireFieldFromParamDef = (
 			}
 		case "SELECT":
 			return {
-				label: def.prompt || def.name,
-				required: !!def.required,
+				...baseField,
 				type: def.type,
 				selectlist: {
 					name: def.selectList,
@@ -84,8 +98,7 @@ const getWireFieldFromParamDef = (
 			}
 		default:
 			return {
-				label: def.prompt || def.name,
-				required: !!def.required,
+				...baseField,
 				type: "TEXT" as const,
 			}
 	}
@@ -119,15 +132,20 @@ interface FormProps {
 }
 
 const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
-	const { context, params, setOpen, onSubmit, label } = props
+	const {
+		context,
+		params,
+		setOpen,
+		onSubmit,
+		label,
+		id = "previewform",
+	} = props
 
 	const Dialog = component.getUtility("uesio/io.dialog")
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const Group = component.getUtility("uesio/io.group")
 	const Button = component.getUtility("uesio/io.button")
-
 	const wireRef = useRef<wire.Wire | undefined>()
-
 	if (!params) return null
 
 	return (
@@ -140,8 +158,9 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 				title="Set Preview Parameters"
 			>
 				<DynamicForm
-					id="previewform"
+					id={id}
 					fields={getWireFieldsFromParams(params)}
+					initialValue={getInitialValueFromParams(params)}
 					context={context}
 					wireRef={wireRef}
 				/>
@@ -149,6 +168,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 					<Button
 						context={context}
 						variant="uesio/io.primary"
+						id={`launch-preview`}
 						label={label}
 						onClick={() => onSubmit(wireRef.current)}
 					/>
@@ -161,7 +181,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
-	const { label, view, hotkey, buildMode } = definition
+	const { label, view, route, hotkey, buildMode } = definition
 
 	const record = context.getRecord()
 	if (!record) throw new Error("No Record Context Provided")
@@ -171,24 +191,34 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const appName = workspaceContext.app
 	const workspaceName = workspaceContext.name
 
-	const [viewNamespace, viewName] = component.path.parseKey(
-		context.mergeString(view)
-	)
+	let viewNamespace: string, viewName: string, routeKey: string
+
+	if (view) {
+		;[viewNamespace, viewName] = component.path.parseKey(
+			context.mergeString(view)
+		)
+	} else if (route) {
+		routeKey = context.mergeString(route.replace(".", "/"))
+	} else {
+		throw new Error("No View or Route Provided")
+	}
 
 	const [open, setOpen] = useState<boolean>(false)
 	const [params, setParams] = useState<param.ParamDefinition[]>()
 
 	const togglePreview = async () => {
-		const result = await platform.platform.getViewParams(
-			context,
-			viewNamespace,
-			viewName
-		)
-		if (result.length) {
+		let result
+		if (viewNamespace && viewName) {
+			result = await getViewParams(context, viewNamespace, viewName)
+		} else {
+			result = await getRouteParams(context, routeKey)
+		}
+
+		if (result && result.length) {
 			setOpen(true)
 			setParams(result)
 		} else {
-			previewHandler()
+			previewHandler(context)
 		}
 	}
 
@@ -200,20 +230,24 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 		!!hotkey
 	)
 
-	const previewHandler = (wire?: wire.Wire) => {
-		const record = wire?.getFirstRecord()
-		const urlParams =
-			params?.length && record
-				? new URLSearchParams(getParamValues(params, record))
-				: undefined
+	const previewHandler = (context: context.Context, wire?: wire.Wire) => {
+		const record = context.getRecord(wire?.getId())
+		const urlParams = params?.length
+			? new URLSearchParams(getParamValues(params, context, record))
+			: undefined
 
 		const mode = buildMode ? "edit" : "preview"
+		const prefix = `/workspace/${appName}/${workspaceName}`
+		const queryString = urlParams ? `?${urlParams}` : ""
+		const path = `${prefix}/${
+			routeKey
+				? `r/${routeKey}`
+				: `views/${viewNamespace}/${viewName}/${mode}`
+		}${queryString}`
 		api.signal.run(
 			{
 				signal: "route/REDIRECT",
-				path: `/workspace/${appName}/${workspaceName}/views/${viewNamespace}/${viewName}/${mode}${
-					urlParams ? `?${urlParams}` : ""
-				}`,
+				path,
 			},
 			context
 		)
@@ -231,7 +265,10 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 			{open && (
 				<PreviewForm
 					params={params}
-					onSubmit={previewHandler}
+					onSubmit={(wire: wire.Wire) =>
+						previewHandler(context, wire)
+					}
+					id={api.component.getComponentIdFromProps(props)}
 					setOpen={setOpen}
 					context={context}
 					label={label}

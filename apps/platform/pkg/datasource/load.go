@@ -12,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
-	"github.com/thecloudmasters/uesio/pkg/translate"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
@@ -626,11 +625,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
 	}
-	// We do this so that we're sure that the labels are attached to the session
-	if _, err = translate.GetTranslatedLabels(session); err != nil {
-		return nil, err
-	}
-
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		// Special processing for View-only wires

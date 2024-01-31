@@ -6,19 +6,13 @@ Uesio is a **low-code** application development platform.
 
 # Code style
 
-As much as possible, our code style is embeded in dedicated [eslint](https://eslint.org/) rules.
+As much as possible, our code style and format is codified with [eslint](https://eslint.org/) and [Prettier](https://prettier.io/). We cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
+For Redux, we follow the [Redux Style Guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-[Prettier](https://prettier.io/) is used for **formatting** our source code.
+On the frontend, we prefer functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are **functional components**. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor) are not functional components.
 
-As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
-
-Redux-wise we do follow the [Redux Style Guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
-
-Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are **functional components**. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), are not functional components.
-
-As regards the **package naming** in Go, we do follow this [guideline](https://blog.golang.org/package-names).
+For Go **package naming**, we follow this [guideline](https://blog.golang.org/package-names).
 
 # Tech Stack
 
@@ -30,15 +24,15 @@ As regards the **package naming** in Go, we do follow this [guideline](https://b
 
 ## Frontend
 
--   [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
--   [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
--   [React](https://reactjs.org/). Library for making UI elements.
--   [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
+-   [Node.js](https://www.nodejs.org/). For package management, building process, and development.
+-   [TypeScript](https://www.typescriptlang.org/). For strong typing of JavaScript code.
+-   [React](https://reactjs.org/). Framework for UI components.
+-   [Redux](https://redux.js.org/). State store for the application's frontend data.
 -   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 
 # <a id="redux-architecture"></a> Redux architecture
 
-See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
+See the [Uesio Specific Redux Docs](./docs/redux/README.md).
 
 # <a id="monorepo-structure"></a> Monorepo structure
 
@@ -46,28 +40,21 @@ The present monorepo hosts several standalone **applications**, such as the `cli
 
 Standalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
 
-The monorepo is managed by a tool called [nx](https://nx.dev/).
-`nx` has the particularity of having one single `package.json` for the whole monorepo.
+The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there is a single `package.json` for the whole monorepo.
 
 # Set up dev environment
+
+## Required
 
 -   Install [homebrew](https://brew.sh/) (for macOS user)
 -   Install git
 -   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
--   Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
--   Install the latest version of Node.js _via_ `nvm`: `nvm install node`
+-   Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the version used in the repo): `nvm install`
 -   Install [Go](https://golang.org/dl/)
 -   Install the following brew packages:
     -   `hurl` (for integration tests): `brew install hurl`
     -   `jq` (for JSON manipulation in Shell): `brew install jq`
     -   `wget` (for fetching URLs): `brew install wget`
--   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
--   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
--   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
--   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
--   _Optional_. Install the `nx` cli globally: `npm i -g nx`
--   _Optional_. An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
--   Use Git clone and store this repository in your local machine
 -   Set up SSL [here](#set-up-ssl).
 -   Set up local DNS [here](#set-up-local-dns).
 -   Start dependencies [here](#dependencies).
@@ -76,11 +63,18 @@ The monorepo is managed by a tool called [nx](https://nx.dev/).
     -   Windows: `mklink C:\bin\uesio C:\Users\<USERNAME>\git\uesio\dist\cli\uesio`, and ensure `bin` is on path: `setx PATH "C:\bin;%PATH%`
 -   Build and run [here](#run).
 
----
+## Optional
 
-    ```
+-   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
+-   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+-   Install [Oh My Zsh](https://ohmyz.sh/)
+-   [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+-   Install the `nx` cli globally: `npm i -g nx`
+-   An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
+
+```
     npm run dev
-    ```
+```
 
 -   _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
@@ -106,7 +100,7 @@ The monorepo is managed by a tool called [nx](https://nx.dev/).
 
 # Build
 
--   Download and install the npm module dependencies :
+-   Download and install the npm module dependencies
 
 ```
 npm install
@@ -132,21 +126,15 @@ nx build apps-uesio-studio
 
 # Watch mode
 
-While developing you may want the entire monorepo to rebuild upon file saving.
+While developing you may want the entire monorepo to rebuild changed files. You can do this with:
 
 ```
 npm run watch-all
-
-// terminating that script does not kill
-// the watcher jobs running in background in parallel.
-// For killing all of them, do run `killall node`
 ```
-
-As a side note, the `dev` npm script does include this `watch-all` npm script.
 
 # Continous integration (CI)
 
-The **continous integration** process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
+We use **GitHub Actions** for automated builds. All of our workflows live in `./github/workflows`.
 
 # <a id="set-up-ssl"></a> Set up SSL
 
@@ -154,33 +142,35 @@ The **continous integration** process is done through the cloud service offered 
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. You will need to configure your operating system to trust this self-signed certificate.
+This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory.
 
-In windows, double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
+On Windows/Linux, you will need to manually trust this self-signed certificate. On Mac OS, this is done automatically.
 
-In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com certificate and select "Get Info". Expand the "Trust" section and set it to "Always Trust".
+-   Windows: double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
 
 # <a id="set-up-local-dns"></a> Set up your local DNS
 
-On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
+The Uesio application maps DNS domains and subdomains to Uesio Sites, so the app can't just be accessed via "localhost" as you might expect. You'll need to configure your OS to properly handle the local Uesio domains and subdomains.
 
-```
-bash ./scripts/seed-etc-hosts.sh
-```
+There are two ways to do this, you'll need to pick one:
 
-Mac users can also use a service called dnsmasq for managing local DNS.
+1. Modify /etc/hosts directly
 
-```
-brew install dnsmasq
-```
+    On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
 
-The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
+    `bash ./scripts/seed-etc-hosts.sh`
 
-```
-sudo brew services start dnsmasq
-```
+2. Use DNSMasq
 
-                                                    |
+    ```
+    brew install dnsmasq
+    ```
+
+    The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
+
+    ```
+    sudo brew services start dnsmasq
+    ```
 
 # <a id="dependencies"></a>Start dependencies
 
@@ -322,6 +312,18 @@ The following environment variables can optionally be configured in your Shell (
     <td>Must be a fully-qualified Uesio credential name</td>
   </tr>
   <tr>
+    <td>UESIO_DEV</td>
+    <td>Enable various features for use in local development of Uesio</td>
+    <td>false</td>
+    <td>Set to "localhost" for local development</td>
+  </tr>
+  <tr>
+    <td>UESIO_DEBUG_SQL</td>
+    <td>Enable detailed SQL query debugging</td>
+    <td>false</td>
+    <td>If enabled, all Wire loads will return a `debugQueryString` property containing the SQL queries made</td>
+  </tr>
+  <tr>
     <td>UESIO_MOCK_AUTH</td>
     <td>Enables you to login with mock user accounts (which can be specified with `UESIO_MOCK_AUTH_USERNAMES`)</td>
     <td>false</td>
@@ -356,58 +358,6 @@ For example, the `uesio/core.sendgridkey` secret's default value can be configur
 As mentioned in the [monorepo](#monorepo-structure) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
 All npm modules we used are installed as `development` dependency since uesio is not intended to be released as standalone npm module.
-
-Most of commmands you might run related to npm modules.
-
--   Install a new dependency :
-
-```
-  npm install lodash.isempty -D
-```
-
--   Update minor changes (no breaking changes) of an existing dependency :
-
-```
-  npm update react -D
-```
-
--   Major update and latest (with breaking changes) of an existing dependency :
-
-```
-  npm install react@latest -D
-```
-
--   List all dependencies of the monorepo and the related version :
-
-```
-  npm list --depth=0
-```
-
--   Remove a dependency :
-
-```
-  npm uninstall lodash.isempty -D
-```
-
--   List dependencies having newer versions :
-
-```
-  npm outdated
-```
-
--   Update minor changes (no breaking changes) all dependencies :
-
-```
-  npm update
-```
-
-# Create Docker Image and push to GCP
-
-1. `nx build-image platform`
-
-2. `docker tag uesio:latest us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
-
-3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
 ### Migrations
 

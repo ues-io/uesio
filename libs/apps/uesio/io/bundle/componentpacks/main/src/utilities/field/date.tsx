@@ -34,7 +34,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 					value
 						? new Date(value).toLocaleDateString(undefined, {
 								timeZone: "UTC",
-						  })
+							})
 						: ""
 				}
 				mode="READ"

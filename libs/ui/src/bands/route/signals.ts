@@ -3,21 +3,30 @@ import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import {
 	AssignmentNavigateRequest,
 	PathNavigateRequest,
+	RouteNavigateRequest,
 } from "../../platform/platform"
 import { getCurrentState } from "../../store/store"
-import { navigate, navigateToAssignment, redirect } from "./operations"
+import {
+	navigate,
+	navigateToAssignment,
+	navigateToRoute,
+	redirect,
+} from "./operations"
 
 // The key for the entire band
 const ROUTE_BAND = "route"
 
-interface RedirectSignal extends SignalDefinition {
-	path: string
+type RouteSignal = SignalDefinition & {
 	newtab?: boolean
 }
 
-type PathNavigateSignal = SignalDefinition & PathNavigateRequest
+interface RedirectSignal extends RouteSignal {
+	path: string
+}
 
-type AssignmentNavigateSignal = SignalDefinition & AssignmentNavigateRequest
+type PathNavigateSignal = RouteSignal & PathNavigateRequest
+type RouteNavigateSignal = RouteSignal & RouteNavigateRequest
+type AssignmentNavigateSignal = RouteSignal & AssignmentNavigateRequest
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -44,12 +53,16 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: PathNavigateSignal, context: Context) =>
 			navigate(context, context.mergeMap(signal)),
 	},
+	[`${ROUTE_BAND}/NAVIGATE_TO_ROUTE`]: {
+		dispatcher: (signal: RouteNavigateSignal, context: Context) =>
+			navigateToRoute(context, context.mergeMap(signal)),
+	},
 	[`${ROUTE_BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
 		dispatcher: (signal: AssignmentNavigateSignal, context: Context) =>
 			navigateToAssignment(context, context.mergeMap(signal)),
 	},
 }
 
-export type { PathNavigateSignal }
+export type { PathNavigateSignal, RouteNavigateSignal }
 
 export default signals

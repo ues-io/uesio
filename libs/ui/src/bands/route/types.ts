@@ -47,6 +47,8 @@ type RouteTag = {
 	content: string
 }
 
+type RouteType = "" | "redirect" | "bot"
+
 type RouteState = {
 	batchid?: string
 	dependencies?: Dependencies
@@ -54,9 +56,11 @@ type RouteState = {
 	namespace: string
 	params?: Record<string, string>
 	path: string
+	redirect?: string
 	tags?: RouteTag[]
 	theme: string
 	title?: string
+	type?: RouteType
 	view: string
 	workspace?: WorkspaceState
 }

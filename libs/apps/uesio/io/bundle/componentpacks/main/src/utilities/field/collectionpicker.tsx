@@ -14,10 +14,13 @@ const getOptions = (
 ) => {
 	let useMetadata = metadata
 	if (selectedCollections?.length) {
-		useMetadata = selectedCollections.reduce((acc, collection) => {
-			acc[collection] = metadata[collection]
-			return acc
-		}, {} as Record<string, metadata.MetadataInfo>)
+		useMetadata = selectedCollections.reduce(
+			(acc, collection) => {
+				acc[collection] = metadata[collection]
+				return acc
+			},
+			{} as Record<string, metadata.MetadataInfo>
+		)
 	}
 	return collection.addBlankSelectOption(
 		sortMetadata(useMetadata).map((x: metadata.MetadataInfo) => ({

@@ -2,9 +2,7 @@ import { BundleableBase, MetadataType } from "../../metadataexports"
 import { CollectionFieldKey, CollectionKey } from "../wire/types"
 import { SelectListMetadata } from "../../definition/selectlist"
 
-type FieldMetadataMap = {
-	[key: string]: FieldMetadata
-}
+type FieldMetadataMap = Record<string, FieldMetadata>
 
 type FieldType =
 	| "AUTONUMBER"
@@ -61,6 +59,7 @@ type FieldMetadata = {
 	updateable: boolean
 	type: FieldType
 	label: string
+	languageLabel?: string
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
 	referencegroup?: ReferenceGroupMetadata

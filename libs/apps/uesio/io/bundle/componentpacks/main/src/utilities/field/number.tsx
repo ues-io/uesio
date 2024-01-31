@@ -31,26 +31,30 @@ const StyleDefaults = Object.freeze({
 
 const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const {
-		mode,
-		placeholder,
-		variant,
+		applyChanges,
 		context,
 		fieldMetadata,
+		focusOnRender = false,
 		id,
+		mode,
 		options,
+		placeholder,
 		setValue,
 		type = "number",
-		focusOnRender = false,
-		applyChanges,
+		variant,
 	} = props
 
-	const value = props.value as number | string
+	const value = props.value as number
 	const readOnly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals ?? 2
+	const initialValue =
+		typeof value === "number"
+			? (value as number).toFixed(decimals)
+			: parseFloat(value)
 
 	const controlledInputProps = useControlledInputNumber({
-		value,
+		value: initialValue,
 		setValue,
 		applyChanges,
 		readOnly,
@@ -61,10 +65,9 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 		props,
 		"uesio/io.field"
 	)
-
 	if (readOnly) {
 		return (
-			<ReadOnlyField variant={variant} context={context}>
+			<ReadOnlyField variant={variant} context={context} id={id}>
 				{typeof value === "number" ? value.toFixed(decimals) : value}
 			</ReadOnlyField>
 		)

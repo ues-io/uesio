@@ -162,7 +162,8 @@ type CollectionFieldsProperty = {
 
 type SelectProperty = {
 	type: "SELECT"
-	options:
+	selectList?: string
+	options?:
 		| wire.SelectOption[]
 		| ((record: wire.PlainWireRecord) => wire.SelectOption[])
 	required?: boolean

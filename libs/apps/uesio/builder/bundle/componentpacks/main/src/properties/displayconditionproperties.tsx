@@ -655,7 +655,7 @@ const getShortOperator = (operator: component.DisplayOperator) =>
 		NOT_EQUALS: "!=",
 		IN: "in",
 		NOT_IN: "not in",
-	}[operator || "EQUALS"])
+	})[operator || "EQUALS"]
 
 export const getDisplayConditionLabel = (
 	condition: component.DisplayCondition

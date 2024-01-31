@@ -1,5 +1,5 @@
 import { FieldMetadata } from "./types"
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 import { getKey } from "../../metadata/metadata"
 import { SelectOption } from "../../definition/selectlist"
@@ -8,17 +8,25 @@ import { Bundleable } from "../../metadataexports"
 const referenceTypes = ["REFERENCE", "USER", "FILE"]
 
 export type GetSelectOptionsProps = {
-	context: Context
+	context?: Context
 	// A blank option is added by default, but can be disabled by setting this to false
 	addBlankOption?: boolean
 }
 
 class Field {
-	constructor(source: FieldMetadata) {
+	constructor(source: FieldMetadata, context?: Context) {
 		this.source = source
+		this.context = context
 	}
 
+	context?: Context
 	source: FieldMetadata
+
+	getContext = () => {
+		if (this.context) return this.context
+		this.context = newContext()
+		return this.context
+	}
 
 	/**
 	 * getId - returns the fully-qualified id of the field, with namespace and name (if namespace is defined)
@@ -35,13 +43,16 @@ class Field {
 	 * @returns string
 	 */
 	getNamespace = () => this.source.namespace
-	getLabel = () => this.source.label
+	getLabel = (context: Context = this.getContext()) => {
+		const { label, languageLabel } = this.source
+		return (languageLabel && context.getLabel(languageLabel)) || label
+	}
 	getReferenceMetadata = () => this.source.reference
 	getType = () => this.source.type
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getSelectMetadata = (context: Context) => {
+	getSelectMetadata = (context: Context = this.getContext()) => {
 		let selectMetadata = this.source.selectlist
 		if (!selectMetadata) {
 			return undefined
@@ -57,7 +68,7 @@ class Field {
 		return selectMetadata
 	}
 	getSelectOptions = (props: GetSelectOptionsProps) => {
-		const { context, addBlankOption = true } = props
+		const { addBlankOption = true, context = this.getContext() } = props
 		const selectMetadata = this.getSelectMetadata(context)
 		if (!selectMetadata) {
 			return []
@@ -70,15 +81,13 @@ class Field {
 
 		const mergedOptions =
 			options?.map(
-				({ label, languageLabel, value, disabled, title }) =>
+				({ label, languageLabel, ...rest }) =>
 					({
+						...rest,
 						label: languageLabel
 							? context.getLabel(languageLabel) || label
 							: label,
-						value,
-						disabled,
-						title,
-					} as SelectOption)
+					}) as SelectOption
 			) || []
 
 		if (!addBlankOption) {

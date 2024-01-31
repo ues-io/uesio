@@ -1,0 +1,33 @@
+name: animals_list
+definition:
+  # Wires connect to data in collections
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+        uesio/tests.total_population:
+        uesio/tests.lookalike:
+      order:
+        - field: uesio/tests.genus
+        - field: uesio/tests.species
+      batchsize: 10
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.titlebar:
+        title: Animals
+    - uesio/io.table:
+        wire: animals
+        uesio.id: animalsTable
+        columns:
+          - field: uesio/tests.genus
+          - field: uesio/tests.species
+        rowactions:
+          - text: View (key)
+            type: ""
+            signals:
+              - signal: route/NAVIGATE_TO_ROUTE
+                route: animal_details
+                params:
+                  recordid: ${uesio/core.id}

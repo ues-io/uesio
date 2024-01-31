@@ -40,14 +40,17 @@ const MultiReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 					fieldId={fieldId}
 					record={record}
 					fieldMetadata={
-						new collection.Field({
-							...fieldMetadata.source,
-							reference: {
-								collection: collectionId,
-								multiCollection: false,
-								collections: [],
+						new collection.Field(
+							{
+								...fieldMetadata.source,
+								reference: {
+									collection: collectionId,
+									multiCollection: false,
+									collections: [],
+								},
 							},
-						})
+							context
+						)
 					}
 					mode={mode}
 					context={context}

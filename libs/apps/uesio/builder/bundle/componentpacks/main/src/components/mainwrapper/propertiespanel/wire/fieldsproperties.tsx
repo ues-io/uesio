@@ -112,7 +112,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 									isViewOnlyWire
 										? {
 												type: "TEXT",
-										  }
+											}
 										: { viewOnly: true, type: "TEXT" },
 									true
 								)

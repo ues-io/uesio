@@ -22,4 +22,6 @@ definition:
   params:
     show:
       type: TEXT
+      label: Show
       required: false
+      default: "false"

@@ -1,0 +1,61 @@
+name: animal_details
+definition:
+  # Wires connect to data in collections
+  wires:
+    animal:
+      collection: uesio/tests.animal
+      fields:
+        uesio/tests.genus:
+        uesio/tests.species:
+        uesio/tests.total_population:
+        uesio/tests.lookalike:
+        uesio/tests.ancestor:
+      conditions:
+        - field: uesio/core.id
+          valueSource: PARAM
+          param: recordid
+          operator: EQ
+      batchsize: 1
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.item:
+        wire: animal
+        uesio.id: animalItem
+        components:
+          - uesio/io.titlebar:
+              title: "Animal Details: ${uesio/tests.genus} ${uesio/tests.species}"
+              uesio.variant: uesio/io.main
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          text: Back to animals list
+                          icon: arrow_back
+                          uesio.variant: uesio/io.secondary
+                          uesio.id: "go-to-animals-list"
+                          signals:
+                            - signal: route/NAVIGATE_TO_ROUTE
+                              route: animals_list
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.grid:
+                    uesio.variant: uesio/io.four_columns
+                    items:
+                      - uesio/io.field:
+                          fieldId: uesio/tests.genus
+                          uesio.id: genusField
+                      - uesio/io.field:
+                          fieldId: uesio/tests.species
+                          uesio.id: speciesField
+                      - uesio/io.field:
+                          fieldId: uesio/tests.total_population
+                      - uesio/io.field:
+                          fieldId: uesio/tests.ancestor
+                          uesio.id: ancestorField
+  params:
+    recordid:
+      type: RECORD
+      label: Animal ID
+      required: true
+      collection: uesio/tests.animal

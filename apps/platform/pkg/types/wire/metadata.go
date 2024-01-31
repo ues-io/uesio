@@ -290,6 +290,7 @@ type FieldMetadata struct {
 	Length                 int                       `json:"length" bot:"length"`
 	Type                   string                    `json:"type" bot:"type"`
 	Label                  string                    `json:"label" bot:"label"`
+	LanguageLabel          string                    `json:"languageLabel,omitempty"`
 	SelectListMetadata     *SelectListMetadata       `json:"selectlist,omitempty"`
 	NumberMetadata         *NumberMetadata           `json:"number,omitempty"`
 	ReferenceMetadata      *ReferenceMetadata        `json:"reference,omitempty"`

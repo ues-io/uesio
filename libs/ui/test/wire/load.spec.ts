@@ -24,7 +24,7 @@ const defaultPlanetsWireLoadImplementation = (
 					collections: {
 						[collectionId]: getExoplanetCollection(),
 					},
-			  }
+				}
 			: {}),
 		wires: [
 			{
@@ -40,7 +40,7 @@ const defaultPlanetsWireLoadImplementation = (
 							record2: {
 								"ben/planets.name": "foobar",
 							},
-					  }
+						}
 					: {},
 				query: !!requestBody.wires[0].query,
 			} as PlainWire,
@@ -151,7 +151,7 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
-		name: "Load request should not include view only fields",
+		name: "Load request should include view only field metadata when necessary for server-side processing",
 		wireId,
 		wireDef: {
 			collection: collectionId,
@@ -163,6 +163,15 @@ const tests: WireSignalTest[] = [
 					viewOnly: true,
 					type: "CHECKBOX",
 					label: "View Only",
+				},
+				// View only field
+				viewOnlySelect: {
+					viewOnly: true,
+					type: "SELECT",
+					label: "View Only select",
+					selectlist: {
+						name: "luigi/foo.somelist",
+					},
 				},
 			},
 		},
@@ -184,9 +193,22 @@ const tests: WireSignalTest[] = [
 					expect(loadWire).toHaveProperty("name", wireId)
 					expect(loadWire).toHaveProperty("collection", collectionId)
 					const { fields } = loadWire
-					// Verify that the view only field was NOT included
-					expect(fields).toHaveLength(1)
-					expect(fields[0].id).toBe("name")
+					expect(fields).toHaveLength(3)
+					expect(fields[0]).toEqual({
+						id: "name",
+					})
+					expect(fields[1]).toEqual({
+						id: "viewOnly",
+					})
+					expect(fields[2]).toEqual({
+						id: "viewOnlySelect",
+						viewOnlyMetadata: {
+							type: "SELECT",
+							selectlist: {
+								name: "luigi/foo.somelist",
+							},
+						},
+					})
 				})
 				spy.mockRestore()
 				expect(wire.data).toEqual({

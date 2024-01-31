@@ -5,7 +5,10 @@ import FieldLabel from "../fieldlabel/fieldlabel"
 import Icon from "../icon/icon"
 
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
+	// The label to display
 	label?: string
+	// The id of the element that this is a label for
+	labelFor?: string
 	labelPosition?: LabelPosition
 	errors?: wire.SaveError[]
 }
@@ -23,7 +26,8 @@ const StyleDefaults = Object.freeze({
 
 const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperUtilityProps>(
 	(props, ref) => {
-		const { label, labelPosition, children, context, errors } = props
+		const { label, labelFor, labelPosition, children, context, errors } =
+			props
 		const classes = styles.useUtilityStyleTokens(
 			StyleDefaults,
 			props,
@@ -44,6 +48,7 @@ const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperUtilityProps>(
 					<FieldLabel
 						classes={{ root: classes.label }}
 						label={label}
+						labelFor={labelFor}
 						context={context}
 					/>
 				)}

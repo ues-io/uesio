@@ -44,17 +44,6 @@ func GetNameField(c *meta.Collection) string {
 	return commonfields.Id
 }
 
-func GetFieldLabel(f *meta.Field, session *sess.Session) string {
-	if f.LanguageLabel == "" {
-		return f.Label
-	}
-	translation := session.GetLabel(f.LanguageLabel)
-	if translation == "" {
-		return f.Label
-	}
-	return translation
-}
-
 func GetFieldMetadata(f *meta.Field, session *sess.Session) *wire.FieldMetadata {
 	fieldMetadata := &wire.FieldMetadata{
 		Name:                   f.Name,
@@ -64,7 +53,8 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *wire.FieldMetadata 
 		Updateable:             GetUpdateable(f),
 		Type:                   GetType(f),
 		IsFormula:              f.Type == "FORMULA",
-		Label:                  GetFieldLabel(f, session),
+		Label:                  f.Label,
+		LanguageLabel:          f.LanguageLabel,
 		ReferenceMetadata:      GetReferenceMetadata(f),
 		ReferenceGroupMetadata: GetReferenceGroupMetadata(f),
 		FileMetadata:           GetFileMetadata(f),

@@ -43,6 +43,7 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 			query,
 			requirewriteaccess,
 			view,
+			viewOnly,
 			viewOnlyMetadata,
 		}) => ({
 			batchid,
@@ -51,47 +52,74 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 			collection,
 			// Only send active conditions to the server
 			conditions: conditions?.filter((c) => !c.inactive),
+
 			fields: !viewOnlyMetadata
 				? fields
-				: // Strip out view only fields from when building a load request of regular wires
-				  fields?.filter(
-						(f) => viewOnlyMetadata.fields[f.id] === undefined
-				  ),
+				: // Send any view-only select/multi-select fields to the server,
+					// in case we need to do process metadata for them
+					fields?.map((f) => {
+						const md = viewOnlyMetadata.fields[f.id]
+						if (md === undefined) {
+							return f
+						}
+						const { type, selectlist } = md
+						if (type === "SELECT" || type === "MULTISELECT") {
+							return {
+								...f,
+								viewOnlyMetadata: {
+									type,
+									selectlist,
+								},
+							}
+						} else {
+							return f
+						}
+					}),
 			name,
 			order,
 			query,
 			requirewriteaccess,
 			view,
 			loadAll,
+			viewOnly,
 		})
 	)
 
-const isSelectField = (f: LoadRequestField) => f.type?.includes("SELECT")
+const isViewOnlySelectFieldWithoutOptions = (
+	f: LoadRequestField,
+	wire: PlainWire,
+	context: Context
+): boolean => {
+	const md = wire.viewOnlyMetadata?.fields[f.id]
+	if (!md) {
+		return false
+	}
+	const { selectlist, type } = md
+	if (
+		!(type === "SELECT" || type === "MULTISELECT") ||
+		!selectlist ||
+		selectlist.options ||
+		!selectlist.name
+	)
+		return false
+	if (
+		selectlist.name &&
+		!context.getSelectList(getKey(selectlist as Bundleable))
+	) {
+		return true
+	}
+	return false
+}
 
 const doesWireNeedMetadataLoaded = (context: Context, wire: PlainWire) => {
 	if (wire.hasLoadedMetadata) return false
 	if (wire.viewOnly) {
 		if (wire.preloaded || !wire.fields?.length) return false
-		const selectFieldsWithoutOptions = wire.fields.filter(
-			(f) =>
-				isSelectField(f) &&
-				f.selectlist &&
-				!f.selectlist.options &&
-				f.selectlist.name
+		const selectFieldsWithoutOptions = wire.fields.filter((f) =>
+			isViewOnlySelectFieldWithoutOptions(f, wire, context)
 		)
 		if (!selectFieldsWithoutOptions.length) return false
-		// Otherwise, see if we already have loaded the metadata for each select list.
-		let stillNeedMetadata = false
-		const fetcher = (key: string) => context.getSelectList(key)
-		selectFieldsWithoutOptions.forEach((f) => {
-			const foundReduxMetadata = fetcher(
-				getKey(f.selectlist as Bundleable)
-			)
-			if (!foundReduxMetadata) {
-				stillNeedMetadata = true
-			}
-		})
-		return stillNeedMetadata
+		return true
 	}
 	// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 	// then we can remove the && wire.query` branch here, because "query" will only indicate whether data was queried,
@@ -100,7 +128,9 @@ const doesWireNeedMetadataLoaded = (context: Context, wire: PlainWire) => {
 	return wire.collection && !(wire.preloaded && wire.query !== false)
 }
 
-const isPreloaded = (wire: PlainWire) => wire.preloaded || wire.viewOnly
+const isPreloaded = (context: Context) => (wire: PlainWire) =>
+	wire.preloaded ||
+	(wire.viewOnly && !doesWireNeedMetadataLoaded(context, wire))
 const isInvalidWire = (wire: PlainWire) => !wire.collection && !wire.viewOnly
 
 export default async (
@@ -113,7 +143,7 @@ export default async (
 
 	const paramsHash = getParamsHash(context)
 
-	const [preloaded, toLoad] = partition(wires, isPreloaded)
+	const [preloaded, toLoad] = partition(wires, isPreloaded(context))
 	const [invalidWires, validToLoad] = partition(toLoad, isInvalidWire)
 
 	const haveWiresNeedingMetadata = wires?.some((wire) =>
@@ -143,8 +173,8 @@ export default async (
 			? await platform.loadData(context, {
 					wires: loadRequests,
 					includeMetadata: haveWiresNeedingMetadata,
-			  })
-			: { wires: [], collections: {} }
+				})
+			: { wires: [], collections: {}, selectlists: {} }
 	} catch (e) {
 		const errMessage =
 			((e as unknown as Error)?.message as string) ||
@@ -201,7 +231,7 @@ export default async (
 				...wire,
 				error: addErrorState(wire.errors, "Invalid Wire Definition"),
 				isLoading: false,
-			} as PlainWire)
+			}) as PlainWire
 	)
 
 	const preloadedResults = preloaded.map(
@@ -216,7 +246,7 @@ export default async (
 				// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
 				// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
 				hasLoadedMetadata: wire.query !== false,
-			} as PlainWire)
+			}) as PlainWire
 	)
 
 	const allResults = loadedResults.concat(

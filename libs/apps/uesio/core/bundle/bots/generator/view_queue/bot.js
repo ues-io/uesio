@@ -27,7 +27,7 @@ function view(bot) {
 					wirename,
 				},
 				"templates/queue.yaml"
-		  )
+			)
 		: ""
 
 	var fieldsArray = fields.split(",")

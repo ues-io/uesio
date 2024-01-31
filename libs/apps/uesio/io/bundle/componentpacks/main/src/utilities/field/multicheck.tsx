@@ -48,12 +48,14 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 									setValue(
 										checked
 											? // If we are selecting this value, append it to the array
-											  selectedVals.concat(option.value)
+												selectedVals.concat(
+													option.value
+												)
 											: // If unselecting this value, get the current vals array without the current option
-											  selectedVals.filter(
+												selectedVals.filter(
 													(val) =>
 														val !== option.value
-											  )
+												)
 									)
 								}
 							/>

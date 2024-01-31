@@ -38,7 +38,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 		? materialIcons
 		: materialIcons.filter((icon) =>
 				icon.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-		  )
+			)
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 

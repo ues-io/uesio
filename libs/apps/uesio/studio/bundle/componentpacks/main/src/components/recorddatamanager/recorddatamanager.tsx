@@ -38,7 +38,7 @@ const getWireDefinition = (
 						value: recordID,
 						valueSource: "VALUE",
 					},
-			  ],
+				],
 		init: {
 			query: !createMode,
 			create: createMode,

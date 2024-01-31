@@ -5,17 +5,49 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync/atomic"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/formula"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-var DEBUG_SQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
+// Only used if DEBUG_SQL is enabled - does some counts of SQL queries made
+// so that we can analyze whether performance optimizations are moving us up/down
+// in numbers of total queries.
+var totalWorkspaceQueries atomic.Int64
+var totalQueries atomic.Int64
+
+var debugSQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
+
+func init() {
+	if env.InDevMode() {
+		totalWorkspaceQueries = atomic.Int64{}
+		totalQueries = atomic.Int64{}
+	}
+}
+
+type QueryStatistics struct {
+	TotalWorkspaceQueries int64 `json:"totalWorkspaceQueries"`
+	TotalQueries          int64 `json:"totalQueries"`
+}
+
+func GetQueryStatistics() QueryStatistics {
+	return QueryStatistics{
+		TotalWorkspaceQueries: totalWorkspaceQueries.Load(),
+		TotalQueries:          totalQueries.Load(),
+	}
+}
+
+func ResetQueryStatistics() {
+	totalWorkspaceQueries.Store(0)
+	totalQueries.Store(0)
+}
 
 const (
 	stabby     = "->"
@@ -231,7 +263,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		loadQuery = loadQuery + "\nOFFSET " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
-	if DEBUG_SQL {
+	if debugSQL {
 		op.DebugQueryString = loadQuery
 	}
 
@@ -301,8 +333,13 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return TranslatePGError(err)
 	}
 
-	//fmt.Printf("PG LOAD %v %v\n", op.CollectionName, time.Since(start))
-
+	//fmt.Printf("PG LOAD %v\n", op.CollectionName)
+	if env.InDevMode() {
+		if op.CollectionName == "uesio/studio.workspace" {
+			totalWorkspaceQueries.Add(1)
+		}
+		totalQueries.Add(1)
+	}
 	op.BatchNumber++
 
 	err = datasource.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)

@@ -10,7 +10,7 @@ import {
 import { FieldValueSetter, ApplyChanges } from "./../components/field/field"
 
 export type UseControlledInputOptions<
-	T extends HTMLInputElement | HTMLTextAreaElement
+	T extends HTMLInputElement | HTMLTextAreaElement,
 > = {
 	value: T extends HTMLTextAreaElement ? string : number | string
 	setValue?: FieldValueSetter
@@ -50,7 +50,7 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 	return readOnly
 		? {
 				value: (controlledValue as string) || "",
-		  }
+			}
 		: {
 				value: (controlledValue as string) || "",
 				onChange: (e: ChangeEvent<T>) => {
@@ -74,7 +74,7 @@ const useControlledInput = <T extends HTMLInputElement | HTMLTextAreaElement>(
 						setValue?.(e.currentTarget.value)
 					}
 				},
-		  }
+			}
 }
 
 const useControlledInputNumber = <T extends HTMLInputElement>(
