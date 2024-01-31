@@ -46,6 +46,51 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: ${uesio/studio.app->uesio/studio.icon}
                           color: ${uesio/studio.app->uesio/studio.color}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            # Install Button
+                            - uesio/io.button:
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: dependencyAlreadyInstalled
+                                  - field: uesio/core.uniquekey
+                                    wire: listing
+                                    value: $Param{app}
+                                    operator: NOT_EQUALS
+                                uesio.variant: uesio/io.primary
+                                text: Install
+                                signals:
+                                  - signal: bot/CALL
+                                    bot: uesio/studio.installbundle
+                                    params:
+                                      version: v1.0.0
+                                      app: $Param{id}
+                                      workspace: $Param{app}:$Param{workspacename}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - workspaces
+                                      - dependencies
+                                      - dependencyAlreadyInstalled
+
+                            # Uninstall Button
+                            - uesio/io.list:
+                                wire: dependencies
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Uninstall
+                                      uesio.display:
+                                        - field: uesio/studio.app->uesio/core.uniquekey
+                                          value: $Param{id}
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - workspaces
+                                            - dependencies
+                                            - dependencyAlreadyInstalled
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:

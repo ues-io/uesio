@@ -201,12 +201,9 @@ definition:
                                   - signal: bot/CALL
                                     bot: uesio/studio.installbundle
                                     params:
-                                      version: v0.0.2
+                                      version: v1.0.0
                                       app: $Param{id}
                                       workspace: $Param{app}:$Param{workspacename}
-                                  # - signal: wire/CREATE_RECORD
-                                  #   wire: dependencies
-                                  # - signal: wire/SAVE
                                   - signal: wire/LOAD
                                     wires:
                                       - workspaces
