@@ -9,6 +9,7 @@ definition:
         uesio/tests.species:
         uesio/tests.total_population:
         uesio/tests.lookalike:
+        uesio/tests.ancestor:
       conditions:
         - field: uesio/core.id
           valueSource: PARAM
@@ -50,7 +51,8 @@ definition:
                       - uesio/io.field:
                           fieldId: uesio/tests.total_population
                       - uesio/io.field:
-                          fieldId: uesio/tests.lookalike
+                          fieldId: uesio/tests.ancestor
+                          uesio.id: ancestorField
   params:
     recordid:
       type: RECORD

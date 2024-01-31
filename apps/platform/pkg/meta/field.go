@@ -192,7 +192,13 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 		}
 	}
 
-	return node.Decode((*FieldWrapper)(f))
+	if err = node.Decode((*FieldWrapper)(f)); err != nil {
+		return err
+	}
+
+	f.LanguageLabel = GetFullyQualifiedKey(f.LanguageLabel, f.Namespace)
+
+	return nil
 }
 
 func (f *Field) MarshalYAML() (interface{}, error) {
@@ -212,6 +218,7 @@ func (f *Field) MarshalYAML() (interface{}, error) {
 	}
 
 	f.SelectList = GetLocalizedKey(f.SelectList, f.Namespace)
+	f.LanguageLabel = GetLocalizedKey(f.LanguageLabel, f.Namespace)
 
 	return (*FieldWrapper)(f), nil
 }

@@ -342,7 +342,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	}
 
 	for key, value := range labels {
-
 		label, err := meta.NewLabel(key)
 		if err != nil {
 			return err

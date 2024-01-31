@@ -24,6 +24,8 @@ import (
 // TODO: Eliminate the need to keep this manual list.
 // Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
+	"labels",
+	"translations",
 	"collections",
 	"selectlists",
 	"fields",
@@ -39,8 +41,6 @@ var ORDERED_ITEMS = [...]string{
 	"componentpacks",
 	"components",
 	"utilities",
-	"labels",
-	"translations",
 	"useraccesstokens",
 	"recordchallengetokens",
 	"signupmethods",

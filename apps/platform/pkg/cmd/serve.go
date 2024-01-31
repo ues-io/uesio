@@ -392,10 +392,16 @@ func serve(cmd *cobra.Command, args []string) {
 	bundleVersionsListPath := fmt.Sprintf("/bundles/v1/versions/%s/list", appParam)
 	sr.HandleFunc(bundleVersionsListPath, controller.BundleVersionsList).Methods("GET")
 	sr.HandleFunc("/bundles/v1/list", controller.BundlesList).Methods("GET")
+	bundleRetrievePath := fmt.Sprintf("/bundles/v1/retrieve/%s/%s", appParam, versionParam)
+	sr.HandleFunc(bundleRetrievePath, controller.BundlesRetrieve).Methods("GET")
 
-	// Dev Only Route for running usage worker
+	// Dev Only Routes
 	if env.InDevMode() {
+		// Allow for running the usage worker immediately
 		sr.HandleFunc("/worker/usage", controller.RunUsageWorker).Methods("POST")
+		// Display some stats about the app's performance
+		sr.HandleFunc("/perf/stats", controller.GetPerfStats).Methods("GET")
+		sr.HandleFunc("/perf/stats/reset", controller.ResetPerfStats).Methods("POST")
 	}
 
 	// REST API routes

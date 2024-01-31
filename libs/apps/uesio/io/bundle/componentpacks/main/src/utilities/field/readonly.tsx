@@ -12,7 +12,10 @@ const ReadOnlyField: definition.UtilityComponent = (props) => {
 		"uesio/io.field"
 	)
 	return (
-		<div className={styles.cx(classes.input, classes.readonly)}>
+		<div
+			className={styles.cx(classes.input, classes.readonly)}
+			id={props.id}
+		>
 			{props.children || <>&nbsp;</>}
 		</div>
 	)

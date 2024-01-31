@@ -1,0 +1,17 @@
+############################################################
+# Outputs performance data for the duration of the test run
+############################################################
+
+# Test as a logged-in user so that we don't get redirected to the login page
+POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+{
+    "token": "uesio"
+}
+
+# Run the perf stats job
+GET https://{{host}}:{{port}}/site/perf/stats
+Accept: application/json
+HTTP 200
+[Asserts]
+jsonpath "$.queryStats.totalQueries" > 1
+jsonpath "$.queryStats.totalWorkspaceQueries" > 1

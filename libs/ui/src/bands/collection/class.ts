@@ -1,4 +1,5 @@
 import { parseKey } from "../../component/path"
+import { Context, newContext } from "../../context/context"
 import Field from "../field/class"
 import { FieldMetadataMap } from "../field/types"
 import { CollectionKey } from "../wire/types"
@@ -103,11 +104,18 @@ const getFieldParts = (fieldName: string | null, collection: Collection) =>
 	})
 
 class Collection {
-	constructor(source?: PlainCollection) {
-		this.source = source || ({} as PlainCollection)
+	constructor(source: PlainCollection = {} as PlainCollection) {
+		this.source = source
 	}
 
 	source: PlainCollection
+	context: Context
+
+	getContext = () => {
+		if (this.context) return this.context
+		this.context = newContext()
+		return this.context
+	}
 
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
@@ -142,14 +150,15 @@ class Collection {
 	/**
 	 * Returns an array of Field objects corresponding to all top-level Fields
 	 */
-	getFields = () => Object.values(this.source.fields).map((v) => new Field(v))
+	getFields = () =>
+		Object.values(this.source.fields).map((v) => new Field(v, this.context))
 	/**
 	 * Returns an array of Field objects which are of a searchable field type
 	 */
 	getSearchableFields = () =>
 		Object.values(this.source.fields)
 			.filter((f) => searchableFieldTypes.includes(f.type))
-			.map((v) => new Field(v))
+			.map((v) => new Field(v, this.context))
 	hasAllFields = () => this.source.hasAllFields
 }
 

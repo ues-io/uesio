@@ -13,7 +13,7 @@ params:
     required: false
     selectList: tool_category
   - name: type
-    label: Category
+    label: Type
     type: TEXT
     required: false
   - name: limit

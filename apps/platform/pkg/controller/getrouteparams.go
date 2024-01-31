@@ -27,8 +27,10 @@ func getParamsForRouteBot(routeBotKey string, loader meta.BundleLoader) (*meta.B
 	for _, param := range routeBot.Params {
 		response = append(response, meta.BotParamResponse{
 			Name:       param.Name,
+			Label:      param.Label,
 			Type:       param.Type,
 			Default:    param.Default,
+			Required:   param.Required,
 			SelectList: param.SelectList,
 		})
 	}

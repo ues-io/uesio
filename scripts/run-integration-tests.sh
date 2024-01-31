@@ -30,4 +30,6 @@ hurl --error-format long -k --variable host=studio.uesio-dev.com --variable doma
 # without the "--test" flag, like this
 # hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
 
+hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs_single_run/perf_stats.hurl
+
 cd - >> /dev/null

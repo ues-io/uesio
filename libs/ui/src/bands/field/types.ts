@@ -61,6 +61,7 @@ type FieldMetadata = {
 	updateable: boolean
 	type: FieldType
 	label: string
+	languageLabel?: string
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
 	referencegroup?: ReferenceGroupMetadata
