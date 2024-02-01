@@ -4,13 +4,16 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"path"
+	"slices"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -237,14 +240,20 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		Upsert: options.Upsert,
 	}
 
+	studioSession := session.RemoveWorkspaceContext()
+
 	if by != nil {
 		deps := meta.BundleDependencyCollection{}
+		var bundlesKeys []string
 		for key := range by.Dependencies {
 			dep := by.Dependencies[key]
 			major, minor, patch, err := meta.ParseVersionString(dep.Version)
 			if err != nil {
 				return err
 			}
+
+			bundlesKey := strings.Join([]string{key, major, minor, patch}, ":")
+
 			deps = append(deps, &meta.BundleDependency{
 				Workspace: workspace,
 				App: &meta.App{
@@ -254,10 +263,73 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				},
 				Bundle: &meta.Bundle{
 					BuiltIn: meta.BuiltIn{
-						UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+						UniqueKey: bundlesKey,
 					},
 				},
 			})
+
+			bundlesKeys = append(bundlesKeys, bundlesKey)
+		}
+
+		var bundles meta.BundleCollection
+		err := datasource.PlatformLoad(&bundles, &datasource.PlatformLoadOptions{
+			Conditions: []wire.LoadRequestCondition{
+				{
+					Field:    commonfields.UniqueKey,
+					Operator: "IN",
+					Value:    bundlesKeys,
+				},
+			},
+			Fields: []wire.LoadRequestField{
+				{
+					ID: commonfields.UniqueKey,
+				},
+			},
+		}, studioSession)
+		if err != nil {
+			return err
+		}
+
+		existingDeps := map[string]bool{}
+		if bundles.Len() != len(bundlesKeys) {
+			//we are missing a dependency find it and try to install it from the PRD bundle store
+			err = bundles.Loop(func(item meta.Item, index string) error {
+				uniqueKey, err := item.GetField(commonfields.UniqueKey)
+				if err != nil {
+					return err
+				}
+
+				if slices.Contains(bundlesKeys, uniqueKey.(string)) {
+					existingDeps[uniqueKey.(string)] = true
+				}
+				return nil
+			})
+
+			if err != nil {
+				return err
+			}
+
+			//Try to Install the dependency
+			for _, key := range bundlesKeys {
+				if _, ok := existingDeps[key]; !ok {
+					systembot := meta.NewListenerBot("uesio/studio", "installbundle")
+					dialect, err := bot.GetBotDialect("SYSTEM")
+					if err != nil {
+						return err
+					}
+
+					parts := strings.Split(key, ":")
+
+					params := map[string]interface{}{}
+					params["app"] = parts[0]
+					params["version"] = fmt.Sprintf("v%s.%s.%s", parts[1], parts[2], parts[3])
+					params["workspace"] = workspace.UniqueKey
+					_, err = dialect.CallBot(systembot, params, options.Connection, studioSession)
+					if err != nil {
+						return err
+					}
+				}
+			}
 		}
 
 		// Upload workspace properties like homeRoute and loginRoute
@@ -320,7 +392,6 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		}
 	}
 
-	studioSession := session.RemoveWorkspaceContext()
 	if err = datasource.PlatformSaves(saves, options.Connection, studioSession); err != nil {
 		return err
 	}
