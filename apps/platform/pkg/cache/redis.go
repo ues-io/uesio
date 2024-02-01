@@ -100,6 +100,8 @@ func NewRedisCache[T any](namespace string) *RedisCache[T] {
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
+	redisUser := os.Getenv("REDIS_USER")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
 	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
 	if redisPort == "" {
 		redisPort = "6379"
@@ -113,10 +115,22 @@ func init() {
 
 	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
 
+	options := []redis.DialOption{}
+
+	if redisUser != "" {
+		options = append(options, redis.DialUsername(redisUser))
+	}
+
+	if redisPassword != "" {
+		options = append(options, redis.DialPassword(redisPassword))
+	}
+
 	const maxConnections = 10
 	redisPool = &redis.Pool{
 		MaxIdle: maxConnections,
-		Dial:    func() (redis.Conn, error) { return redis.Dial("tcp", redisAddr) },
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial("tcp", redisAddr, options...)
+		},
 	}
 
 	existingNamespaces = map[string]bool{}
