@@ -102,6 +102,7 @@ func init() {
 	redisPort := os.Getenv("REDIS_PORT")
 	redisUser := os.Getenv("REDIS_USER")
 	redisPassword := os.Getenv("REDIS_PASSWORD")
+	redisTLS := os.Getenv("REDIS_TLS")
 	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
 	if redisPort == "" {
 		redisPort = "6379"
@@ -123,6 +124,10 @@ func init() {
 
 	if redisPassword != "" {
 		options = append(options, redis.DialPassword(redisPassword))
+	}
+
+	if redisTLS == "true" {
+		options = append(options, redis.DialUseTLS(true))
 	}
 
 	const maxConnections = 10
