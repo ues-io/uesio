@@ -29,11 +29,11 @@ type BuiltIn struct {
 	ID        string    `yaml:"-" json:"uesio/core.id"`
 	UniqueKey string    `yaml:"-" json:"uesio/core.uniquekey"`
 	itemMeta  *ItemMeta `yaml:"-" json:"-"`
-	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
+	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby,omitempty"`
+	Owner     *User     `yaml:"-" json:"uesio/core.owner,omitempty"`
+	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby,omitempty"`
+	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat,omitempty"`
+	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat,omitempty"`
 }
 
 func (bi *BuiltIn) SetModified(mod time.Time) {

@@ -47,7 +47,7 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 					? api.file.getURLFromFullName(
 							context,
 							context.mergeString(file)
-					  )
+						)
 					: context.mergeString(src)
 			}
 			loading={loading}

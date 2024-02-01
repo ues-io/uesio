@@ -33,7 +33,7 @@ const MultiSelectFilter: definition.UtilityComponent<MultiSelectFilterProps> = (
 									wire: wireId,
 									conditionId: condition.id,
 								},
-						  ]
+							]
 						: [
 								{
 									signal: "wire/SET_CONDITION",
@@ -44,7 +44,7 @@ const MultiSelectFilter: definition.UtilityComponent<MultiSelectFilterProps> = (
 										inactive: !values,
 									},
 								},
-						  ]
+							]
 				) as signal.SignalDefinition[]
 				signals.push({
 					signal: "wire/LOAD",

@@ -88,7 +88,7 @@ const getBuilderComponentId = (context: ctx.Context, id: string) =>
 				"uesio/builder.mainwrapper",
 				id,
 				true
-		  )
+			)
 		: ""
 
 const getBuilderState = <T extends definition.Definition>(

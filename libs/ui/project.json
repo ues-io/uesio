@@ -23,16 +23,12 @@
 			}
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
-			"options": {
-				"lintFilePatterns": ["libs/ui/**/*.ts*"]
-			}
+			"executor": "@nx/eslint:lint"
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/ui/jest.config.ts",
-				"passWithNoTests": true
+				"jestConfig": "libs/ui/jest.config.ts"
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/ui"]
 		}

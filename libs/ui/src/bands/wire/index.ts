@@ -88,7 +88,7 @@ type WireLoadAction = PayloadAction<
 	[
 		PlainWire[],
 		PlainCollectionMap | undefined,
-		SelectListMetadataMap | undefined
+		SelectListMetadataMap | undefined,
 	]
 >
 
@@ -423,7 +423,7 @@ const wireSlice = createSlice({
 							name: wire.name,
 							view: wire.view,
 							isLoading: true,
-						} as PlainWire)
+						}) as PlainWire
 				)
 			)
 		},
@@ -452,8 +452,8 @@ const getFilteredShallowEqualFunc =
 		const keysB = Object.keys(objB)
 
 		if (keysA.length !== keysB.length) return false
-		for (let i = 0; i < ids.length; i++) {
-			if (!is(objA[ids[i]], objB[ids[i]])) {
+		for (const id of ids) {
+			if (!is(objA[id], objB[id])) {
 				return false
 			}
 		}

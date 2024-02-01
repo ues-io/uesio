@@ -26,7 +26,7 @@ const getInitialState = (wireDef: WireDefinition) =>
 				],
 			},
 		},
-	} as InitialState)
+	}) as InitialState
 
 const wireDef1 = {
 	collection: collectionId,

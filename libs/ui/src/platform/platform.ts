@@ -324,7 +324,7 @@ const platform = {
 							context.mergeMap(
 								request.params as Record<string, string>
 							)
-					  ).toString()}`
+						).toString()}`
 					: ""
 			}`
 		)

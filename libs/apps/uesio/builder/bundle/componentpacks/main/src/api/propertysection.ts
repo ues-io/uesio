@@ -135,7 +135,7 @@ const getHomeSection = (propertyIds: string[]) =>
 		type: HOME_TYPE,
 		icon: HOME_ICON,
 		properties: propertyIds,
-	} as HomeSection)
+	}) as HomeSection
 
 export {
 	DISPLAY_SECTION,

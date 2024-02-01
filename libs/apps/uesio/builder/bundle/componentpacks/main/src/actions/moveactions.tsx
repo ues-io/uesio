@@ -12,7 +12,7 @@ const getArrayMoveParams = (
 	boolean,
 	boolean,
 	(e: SyntheticEvent) => void,
-	(e: SyntheticEvent) => void
+	(e: SyntheticEvent) => void,
 ] => {
 	const index = component.path.getIndexFromPath(path.localPath)
 	const indexPath = component.path.getIndexPath(path.localPath)
@@ -52,7 +52,7 @@ const getMapMoveParams = (
 	boolean,
 	boolean,
 	(e: SyntheticEvent) => void,
-	(e: SyntheticEvent) => void
+	(e: SyntheticEvent) => void,
 ] => {
 	const parentPath = component.path.getParentPath(path.localPath)
 	const itemKey = component.path.getKeyAtPath(path.localPath)

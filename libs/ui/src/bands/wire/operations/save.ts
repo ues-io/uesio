@@ -83,7 +83,7 @@ export default async (context: Context, wires?: string[]) => {
 						changes: serverChanges,
 						deletes: serverDeletes,
 					},
-			  ]
+				]
 			: []
 	})
 
@@ -137,14 +137,17 @@ export default async (context: Context, wires?: string[]) => {
 	dispatch(save(response))
 
 	let resultContext
-	const errorsByWire = response.wires.reduce((acc, wire) => {
-		const errors = getErrorStrings(wire)
-		if (errors.length) {
-			const [, name] = getWireParts(wire.wire)
-			acc[name] = errors
-		}
-		return acc
-	}, {} as Record<string, string[]>)
+	const errorsByWire = response.wires.reduce(
+		(acc, wire) => {
+			const errors = getErrorStrings(wire)
+			if (errors.length) {
+				const [, name] = getWireParts(wire.wire)
+				acc[name] = errors
+			}
+			return acc
+		},
+		{} as Record<string, string[]>
+	)
 
 	// Special handling for saves of just one wire and one record
 	if (response?.wires.length === 1) {

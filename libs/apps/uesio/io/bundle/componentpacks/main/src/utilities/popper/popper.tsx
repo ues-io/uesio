@@ -65,14 +65,14 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
 								})
 							},
 						}),
-				  ]
+					]
 				: []),
 			...(props.arrow
 				? [
 						arrow({
 							element: arrowRef,
 						}),
-				  ]
+					]
 				: []),
 		],
 	})

@@ -69,7 +69,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							text,
 							severity: "error",
 							duration: "10",
-					  }))),
+						}))),
 			]
 			await runMany(signals, newContext())
 			if (!signal.onerror?.continue) break

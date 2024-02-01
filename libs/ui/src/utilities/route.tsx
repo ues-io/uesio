@@ -46,7 +46,7 @@ const presetContainerQueries = () =>
 			}
 			return rule
 		},
-	} as Preset)
+	}) as Preset
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()

@@ -25,10 +25,7 @@
 			}
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
-			"options": {
-				"lintFilePatterns": ["libs/apps/uesio/core/**/*.ts*"]
-			}
+			"executor": "@nx/eslint:lint"
 		},
 		"test": {
 			"executor": "nx:run-commands",

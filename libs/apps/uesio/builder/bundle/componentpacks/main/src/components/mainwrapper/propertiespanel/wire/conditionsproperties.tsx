@@ -157,7 +157,7 @@ function getOperatorOptions(fieldDisplayType: string | undefined) {
 						label: "Starts With",
 						value: "STARTS_WITH",
 					},
-			  ]
+				]
 			: []),
 	]
 }
@@ -261,7 +261,7 @@ const getItemPropertiesFunction =
 						context,
 						wireName as string,
 						itemState.field as string
-				  )
+					)
 				: undefined
 
 		const fieldDisplayType = fieldMetadata?.getType() || undefined
@@ -570,7 +570,7 @@ const getItemPropertiesFunction =
 						? [
 								{ label: "True", value: "true" },
 								{ label: "False", value: "false" },
-						  ]
+							]
 						: fieldMetadata?.getSelectOptions({ context }),
 				displayConditions: [
 					{

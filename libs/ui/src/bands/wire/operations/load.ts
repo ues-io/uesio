@@ -56,8 +56,8 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 			fields: !viewOnlyMetadata
 				? fields
 				: // Send any view-only select/multi-select fields to the server,
-				  // in case we need to do process metadata for them
-				  fields?.map((f) => {
+					// in case we need to do process metadata for them
+					fields?.map((f) => {
 						const md = viewOnlyMetadata.fields[f.id]
 						if (md === undefined) {
 							return f
@@ -74,7 +74,7 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
 						} else {
 							return f
 						}
-				  }),
+					}),
 			name,
 			order,
 			query,
@@ -173,7 +173,7 @@ export default async (
 			? await platform.loadData(context, {
 					wires: loadRequests,
 					includeMetadata: haveWiresNeedingMetadata,
-			  })
+				})
 			: { wires: [], collections: {}, selectlists: {} }
 	} catch (e) {
 		const errMessage =
@@ -231,7 +231,7 @@ export default async (
 				...wire,
 				error: addErrorState(wire.errors, "Invalid Wire Definition"),
 				isLoading: false,
-			} as PlainWire)
+			}) as PlainWire
 	)
 
 	const preloadedResults = preloaded.map(
@@ -246,7 +246,7 @@ export default async (
 				// not data and possibly extra metadata. But right now Dynamic collections can extend metadata as part of their
 				// LOAD code (which is a hack that needs to go away by exposing a GET_COLLECTION_METADATA hook)
 				hasLoadedMetadata: wire.query !== false,
-			} as PlainWire)
+			}) as PlainWire
 	)
 
 	const allResults = loadedResults.concat(

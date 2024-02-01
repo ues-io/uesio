@@ -50,7 +50,7 @@ export const addSelectedValuesToOptions = (
 						label: value,
 						value,
 						disabled: true,
-					} as wire.SelectOption)
+					}) as wire.SelectOption
 			),
 		]
 	} else return options
