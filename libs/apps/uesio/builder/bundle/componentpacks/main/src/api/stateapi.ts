@@ -410,6 +410,7 @@ const getComponentIdsOfType = (
 	const componentIds = [] as string[]
 	if (componentType) {
 		walkViewComponents(context, (type, definition) => {
+			if (!definition) return true
 			const { [COMPONENT_ID]: id } = definition
 			if (type === componentType && id) {
 				componentIds.push(id as string)
@@ -423,6 +424,7 @@ const getComponentIdsOfType = (
 const getComponentById = (context: ctx.Context, componentId: string) => {
 	let targetComponentDef: definition.BaseDefinition | undefined
 	walkViewComponents(context, (_, definition) => {
+		if (!definition) return true
 		const { [COMPONENT_ID]: id } = definition
 		if (id === componentId) {
 			targetComponentDef = definition
