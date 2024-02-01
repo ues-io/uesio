@@ -12,7 +12,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.32.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.48.1
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
 	github.com/evanw/esbuild v0.20.0
@@ -20,6 +19,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
 	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/gomodule/redigo v1.8.9
 	github.com/gorilla/mux v1.8.1
@@ -40,7 +40,7 @@ require (
 	golang.org/x/oauth2 v0.16.0
 	golang.org/x/sync v0.6.0
 	golang.org/x/text v0.14.0
-	google.golang.org/api v0.160.0
+	google.golang.org/api v0.161.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -52,7 +52,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/pprof v0.0.0-20230705174524-200ffdc848b8 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
