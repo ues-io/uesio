@@ -71,8 +71,8 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		)
 	})
 
-	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
-	const [showIndex] = useBuilderState<boolean>(props.context, "indexpanel")
+	const [showCode] = useBuilderState<boolean>(context, "codepanel")
+	const [showIndex] = useBuilderState<boolean>(context, "indexpanel")
 
 	if (!buildMode) {
 		return (
