@@ -1,4 +1,10 @@
-import { DragEvent, FunctionComponent, MouseEvent, useRef } from "react"
+import {
+	DragEvent,
+	FormEvent,
+	FunctionComponent,
+	MouseEvent,
+	useRef,
+} from "react"
 import { definition, styles, api, component } from "@uesio/ui"
 import {
 	useBuilderState,
@@ -12,11 +18,6 @@ import { FullPath } from "../../api/path"
 import SelectBorder from "./selectborder"
 import { getDragOverHandler, getDropHandler } from "../../helpers/dragdrop"
 import { get } from "../../api/defapi"
-
-interface BasicEvent {
-	stopPropagation: () => void
-	preventDefault: () => void
-}
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
@@ -73,7 +74,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	if (!route || !viewDefId || !viewDef) return null
 
-	const onChangeCapture = (e: BasicEvent) => {
+	const onChangeCapture = (e: FormEvent) => {
 		e.stopPropagation()
 		e.preventDefault()
 	}
