@@ -57,15 +57,6 @@ definition:
                       - field: "uesio/studio.app->uesio/core.uniquekey"
                         value: "uesio/studio"
                 - uesio/studio.sitenavtile:
-                    title: Manage Bundles
-                    icon: outbox
-                    id: managebundles
-                    # Should only be visible to those administering a Studio PROD site
-                    # (which should require write access) on that site
-                    uesio.display:
-                      - field: "uesio/studio.app->uesio/core.uniquekey"
-                        value: "uesio/studio"
-                - uesio/studio.sitenavtile:
                     title: Domains
                     icon: verified_user
                     id: domains

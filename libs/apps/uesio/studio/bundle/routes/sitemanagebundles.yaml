@@ -1,5 +1,8 @@
 name: sitemanagebundles
-path: app/{app:\w*\/\w*}/site/{sitename}/managebundles
+path: managebundles
 view: sitemanagebundles
 theme: default
 title: Manage Bundles
+params:
+  app: "uesio/studio"
+  sitename: "prod"
