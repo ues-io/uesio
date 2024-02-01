@@ -66,9 +66,7 @@ definition:
         uesio.variant: uesio/studio.main
         left:
           - uesio/core.view:
-              view: sitenav
-              uesio.context:
-                wire: sites
+              view: adminnav
               params:
                 selected: managebundles
         content:
@@ -120,4 +118,4 @@ definition:
                       - text: Details
                         signals:
                           - signal: "route/NAVIGATE"
-                            path: "app/$Param{app}/site/$Param{sitename}/managebundles/${uesio/studio.app->uesio/core.uniquekey}"
+                            path: "managebundles/${uesio/studio.app->uesio/core.uniquekey}"

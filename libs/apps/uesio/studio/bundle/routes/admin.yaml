@@ -1,0 +1,5 @@
+name: admin
+path: admin
+view: admin
+theme: default
+title: Instance Admin
