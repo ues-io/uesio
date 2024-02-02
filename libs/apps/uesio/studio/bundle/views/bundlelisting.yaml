@@ -166,7 +166,6 @@ definition:
           lookupWire: app
           lookupField: uesio/core.id
 
-
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
@@ -269,4 +268,3 @@ definition:
                     uesio.variant: uesio/io.section
                     title: Ratings & Reviews
                     subtitle: coming soon
-
