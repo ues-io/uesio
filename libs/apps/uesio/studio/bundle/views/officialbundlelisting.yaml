@@ -28,7 +28,35 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{id}
           id: externalBundleVersionUniquekey
-
+    app:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: id
+    localbundle:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+        uesio/studio.version:
+        uesio/studio.published:
+        uesio/studio.description:
+        uesio/core.createdat:
+      conditions:
+        - field: uesio/studio.app->uesio/core.uniquekey
+          value: $Param{id}
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
@@ -51,6 +79,38 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: ${uesio/studio.app->uesio/studio.icon}
                           color: ${uesio/studio.app->uesio/studio.color}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            # Install Button
+                            - uesio/io.button:
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: app
+                                  - type: wireHasNoRecords
+                                    wire: localbundle
+                                uesio.variant: uesio/io.primary
+                                text: Add to local Bundle Store
+                                signals:
+                                  - signal: bot/CALL
+                                    bot: uesio/studio.installbundle
+                                    params:
+                                      version: $Record{versions:uesio/studio.version}
+                                      app: $Param{id}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - localbundle
+                            - uesio/io.button:
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: app
+                                uesio.variant: uesio/io.primary
+                                text: Add to local Bundle Store
+                                signals:
+                                  - signal: notification/ADD
+                                    text: Please create the user and the application ($Param{id}) on your instance before you can add applications from the store.
+                                    severity: info
+                                    duration: "5"
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:

@@ -27,3 +27,5 @@ collections:
     delete: false
     viewall: true
     modifyall: true
+bots:
+  uesio/studio.installbundle: true
