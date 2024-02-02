@@ -1,0 +1,23 @@
+name: admin
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              view: adminnav
+              params:
+                selected: home
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Instance Administration
+              subtitle: You're the boss.
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.text:
+                    text: This is where you manage your ues.io instance. More features are coming here soon.

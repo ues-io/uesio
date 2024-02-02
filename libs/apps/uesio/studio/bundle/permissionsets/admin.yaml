@@ -1,8 +1,11 @@
 name: admin
 views:
+  uesio/studio.admin: true
+  uesio/studio.adminnav: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
 routes:
+  uesio/studio.admin: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
 collections:

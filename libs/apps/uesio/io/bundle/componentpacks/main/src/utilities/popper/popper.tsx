@@ -99,6 +99,13 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
 						? "hidden"
 						: "visible",
 				}}
+				onClick={(e) => {
+					// This is important because it stops events from propagating
+					// under the popper. One example was that the FloatingOverlay
+					// component behind the dialog was causing select boxes to
+					// immediately close if the FloatingOverlay was behind this popper.
+					e.stopPropagation()
+				}}
 				className={classes.popper}
 			>
 				{props.children}

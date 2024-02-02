@@ -68,7 +68,7 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 											componentsignal: "TOGGLE_INDEX",
 										},
 									],
-									context
+									context.getRouteContext()
 								)}
 							/>
 						}

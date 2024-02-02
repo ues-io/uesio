@@ -16,6 +16,16 @@ definition:
         actions:
           - uesio/io.button:
               uesio.variant: uesio/studio.headernavicon
+              icon: settings
+              uesio.id: settings
+              uesio.display:
+                - type: hasProfile
+                  profile: uesio/studio.admin
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "admin"
+          - uesio/io.button:
+              uesio.variant: uesio/studio.headernavicon
               icon: logout
               uesio.id: logout
               signals:

@@ -141,9 +141,7 @@ definition:
         uesio.variant: uesio/studio.main
         left:
           - uesio/core.view:
-              view: sitenav
-              uesio.context:
-                wire: sites
+              view: adminnav
               params:
                 selected: managebundles
         content:

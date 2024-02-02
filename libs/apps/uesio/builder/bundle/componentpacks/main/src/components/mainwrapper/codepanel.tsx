@@ -205,7 +205,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 										componentsignal: "TOGGLE_CODE",
 									},
 								],
-								context
+								context.getRouteContext()
 							)}
 						/>
 					}
