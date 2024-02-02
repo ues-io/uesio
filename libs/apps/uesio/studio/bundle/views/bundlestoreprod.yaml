@@ -19,7 +19,20 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              view: adminnav
+              params:
+                selected: officialbundlestore
         content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Bundle Store
+              subtitle: search for bundles
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: shop
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -40,8 +53,8 @@ definition:
                             root:
                               - cursor-pointer
                           signals:
-                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
-                              signal: route/NAVIGATE
+                            - signal: route/NAVIGATE
+                              path: bundlestore/${uesio/studio.app->uesio/studio.fullname}
                           components:
                             - uesio/studio.bundlelistingvisual:
                                 color: ${uesio/studio.app->uesio/studio.color}

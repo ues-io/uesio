@@ -32,6 +32,11 @@ definition:
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              view: adminnav
+              params:
+                selected: officialbundlestore
         content:
           - uesio/io.item:
               wire: listing

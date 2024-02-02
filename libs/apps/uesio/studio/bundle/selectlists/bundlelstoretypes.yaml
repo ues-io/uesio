@@ -1,6 +1,0 @@
-name: bundlelstoretypes
-options:
-  - label: Local Bundle Store
-    value: LOCAL
-  - label: Official Bundle Store
-    value: PROD
