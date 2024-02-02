@@ -4,7 +4,8 @@ views:
   uesio/studio.adminnav: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
-  uesio/studio.bundlestoreprod: true
+  uesio/studio.officialbundlestore: true
+  uesio/studio.officialbundlelisting: true
 routes:
   uesio/studio.admin: true
   uesio/studio.sitemanagebundles: true

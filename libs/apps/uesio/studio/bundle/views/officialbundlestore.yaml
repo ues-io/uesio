@@ -1,4 +1,4 @@
-name: bundlestoreprod
+name: officialbundlestore
 definition:
   # Wires are how we pull in data
   wires:

@@ -1,4 +1,4 @@
-name: bundlelistingprod
+name: officialbundlelisting
 definition:
   # Wires are how we pull in data
   wires:

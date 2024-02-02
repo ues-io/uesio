@@ -1,6 +1,6 @@
 name: officialbundlestore
 path: bundlestore
-view: bundlestoreprod
+view: officialbundlestore
 theme: default
 title: Official Bundle Store
 params:
