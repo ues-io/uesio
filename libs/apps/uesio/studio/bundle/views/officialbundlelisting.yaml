@@ -93,7 +93,7 @@ definition:
                                 text: Add to local Bundle Store
                                 signals:
                                   - signal: bot/CALL
-                                    bot: uesio/studio.installbundle
+                                    bot: uesio/studio.addexternalbundle
                                     params:
                                       version: $Record{versions:uesio/studio.version}
                                       app: $Param{id}

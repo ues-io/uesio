@@ -21,7 +21,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runInstallBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runAddExternalBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID, err := getRequiredParameter(params, "app")
 	if err != nil {
@@ -99,6 +99,9 @@ func runInstallBundleListenerBot(params map[string]interface{}, connection wire.
 
 	var payloadReader io.Reader
 	httpReq, err := http.NewRequest(http.MethodGet, url, payloadReader)
+	if err != nil {
+		return nil, err
+	}
 
 	httpResp, err := httpClient.Get().Do(httpReq)
 	if err != nil {

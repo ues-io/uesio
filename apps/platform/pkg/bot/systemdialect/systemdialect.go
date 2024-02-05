@@ -128,8 +128,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runSetWorkspaceUserBot
 	case "listener:uesio/studio.checkavailability":
 		botFunction = runCheckAvailabilityBot
-	case "listener:uesio/studio.installbundle":
-		botFunction = runInstallBundleListenerBot
+	case "listener:uesio/studio.addexternalbundle":
+		botFunction = runAddExternalBundleListenerBot
 	}
 
 	if botFunction == nil {

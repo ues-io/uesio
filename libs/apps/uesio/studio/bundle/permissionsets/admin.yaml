@@ -28,4 +28,4 @@ collections:
     viewall: true
     modifyall: true
 bots:
-  uesio/studio.installbundle: true
+  uesio/studio.addexternalbundle: true
