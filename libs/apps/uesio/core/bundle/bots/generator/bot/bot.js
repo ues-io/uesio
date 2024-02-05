@@ -18,7 +18,7 @@ function bot(botapi) {
 	// Create the corresponding bot's TS and YAML files
 	let path = `bots/${type}`
 	if (type === "aftersave" || type === "beforesave") {
-		path += `/${collection.replaceAll(".", "/")}`
+		path += `/${collection.replace(".", "/")}`
 	}
 	path += `/${name}/bot`
 	botapi.generateFile(
