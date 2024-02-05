@@ -30,12 +30,15 @@ const getValueForParam = (
 	record?: wire.WireRecord
 ) => {
 	const fieldKey = def.name
+	const fieldKeyMerge = "${" + fieldKey + "}"
 	switch (def.type) {
 		case "RECORD":
 			return (
 				record?.getFieldValue<string>(
 					`${fieldKey}->${collection.ID_FIELD}`
-				) || context.mergeString(fieldKey)
+				) ??
+				context.mergeString(fieldKeyMerge) ??
+				""
 			)
 		case "MULTIMETADATA": {
 			const values = record?.getFieldValue<string[]>(fieldKey) || []
@@ -43,8 +46,9 @@ const getValueForParam = (
 		}
 		default:
 			return (
-				record?.getFieldValue<string>(fieldKey) ||
-				context.mergeString(fieldKey)
+				record?.getFieldValue<string>(fieldKey) ??
+				context.mergeString(fieldKeyMerge) ??
+				""
 			)
 	}
 }
