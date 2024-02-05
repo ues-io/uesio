@@ -1,0 +1,8 @@
+name: officialbundlestore
+path: bundlestore
+view: officialbundlestore
+theme: default
+title: Official Bundle Store
+params:
+  app: "uesio/studio"
+  sitename: "prod"

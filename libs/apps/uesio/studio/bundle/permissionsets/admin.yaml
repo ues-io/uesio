@@ -4,10 +4,14 @@ views:
   uesio/studio.adminnav: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
+  uesio/studio.officialbundlestore: true
+  uesio/studio.officialbundlelisting: true
 routes:
   uesio/studio.admin: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
+  uesio/studio.officialbundlestore: true
+  uesio/studio.officialbundlelisting: true
 collections:
   uesio/studio.bundlelisting:
     read: true
@@ -23,3 +27,5 @@ collections:
     delete: false
     viewall: true
     modifyall: true
+bots:
+  uesio/studio.addexternalbundle: true

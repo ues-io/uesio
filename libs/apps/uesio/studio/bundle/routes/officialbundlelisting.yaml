@@ -1,0 +1,7 @@
+name: officialbundlelisting
+path: bundlestore/{id:\w*\/\w*}
+view: officialbundlelisting
+theme: default
+params:
+  app: "uesio/studio"
+  sitename: "prod"

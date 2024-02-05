@@ -28,11 +28,7 @@ views:
   uesio/studio.bots: true
   uesio/studio.bundle: true
   uesio/studio.bundlelisting: true
-  uesio/studio.bundlelistinglocal: true
-  uesio/studio.bundlelistingprod: true
   uesio/studio.bundlestore: true
-  uesio/studio.bundlestorelocal: true
-  uesio/studio.bundlestoreprod: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collections: true
