@@ -228,7 +228,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 
 	// special handling for the common collection metadata
 	if key == constant.CommonCollection {
-		collectionMetadata = &COMMON_COLLECTION_METADATA
+		collectionMetadata = GetCommonCollectionMetadata()
 		metadataCache.AddCollection(key, collectionMetadata)
 		return collectionMetadata, nil
 	}
