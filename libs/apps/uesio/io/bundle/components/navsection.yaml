@@ -12,14 +12,6 @@ properties:
     label: Title text
 definition:
   - uesio/io.box:
-      uesio.styleTokens:
-        root:
-          - rounded
-          - bg-white
-          - overflow-hidden
-          - shadow-sm
-          - border-1
-          - border-slate-300
       components:
         - uesio/io.titlebar:
             uesio.variant: uesio/io.nav
@@ -30,7 +22,6 @@ definition:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - p-3
                 - grid
                 - gap-1
             components:

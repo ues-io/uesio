@@ -4,6 +4,6 @@ definition:
   uesio.styleTokens:
     root:
       - grid
-      - gap-3
+      - gap-2
       - grid-cols-[auto_1fr]
 public: true

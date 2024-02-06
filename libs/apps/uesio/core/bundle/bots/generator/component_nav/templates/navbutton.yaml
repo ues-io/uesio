@@ -3,6 +3,10 @@
     content:
       - uesio/io.text:
           text: ${label}
+    avatar:
+      - uesio/io.text:
+          uesio.variant: uesio/io.icon
+          text: view_list
     signals:
       - signal: route/NAVIGATE_TO_ASSIGNMENT
         collection: ${key}

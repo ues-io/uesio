@@ -15,14 +15,14 @@ definition:
       uesio.variant: uesio/io.default
       uesio.styleTokens:
         inner:
-          - p-3
+          - p-4
       header:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - p-3
+                - p-4
                 - grid
-                - gap-3
+                - gap-4
             components:
               - uesio/io.titlebar:
                   uesio.variant: uesio/builder.profile
@@ -38,7 +38,7 @@ definition:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - p-3
+                - p-4
             components:
               - uesio/io.titlebar:
                   uesio.variant: uesio/builder.profile

@@ -4,13 +4,13 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     header:
-      - p-3
-      - gap-3
+      - p-4
+      - gap-4
       - grid
     inner:
-      - px-3
+      - px-4
       - grid
-      - gap-3
+      - gap-4
       - auto-rows-max
     footer:
-      - p-3
+      - p-4

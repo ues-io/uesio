@@ -7,18 +7,16 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - gap-3
-      - p-2
+      - gap-4
+      - py-2
+      - px-0
       - items-center
-      - bg-slate-100
-      - border-b-1
-      - border-slate-200
     content:
-      - -mb-[1px]
     title:
       - p-1
       - text-xs
-      - text-slate-700
+      - text-slate-600
+      - font-light
       - uppercase
       - tracking-wider
     subtitle:
