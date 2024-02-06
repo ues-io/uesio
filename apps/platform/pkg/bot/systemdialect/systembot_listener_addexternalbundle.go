@@ -1,19 +1,14 @@
 package systemdialect
 
 import (
-	"archive/zip"
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -41,64 +36,19 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to install bundles")
 	}
 
-	major, minor, patch, err := meta.ParseVersionString(version)
-	if err != nil {
-		return nil, err
-	}
-
-	//check if the bundle exsits locally
-	var bundle meta.Bundle
-	err = datasource.PlatformLoadOne(
-		&bundle,
-		&datasource.PlatformLoadOptions{
-			Connection: connection,
-			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/studio.major",
-				},
-				{
-					ID: "uesio/studio.minor",
-				},
-				{
-					ID: "uesio/studio.patch",
-				},
-				{
-					ID: "uesio/studio.app",
-					Fields: []wire.LoadRequestField{
-						{
-							ID: commonfields.UniqueKey,
-						},
-					},
-				},
-			},
-			Conditions: []wire.LoadRequestCondition{
-				{
-					Field: commonfields.UniqueKey,
-					Value: strings.Join([]string{appID, major, minor, patch}, ":"),
-				},
-			},
-		},
-		session,
-	)
-
-	if err == nil && bundle.ID != "" {
-		return nil, errors.New("Bundle already exsits")
-	}
-
 	bundleStoreDomain, err := configstore.GetValueFromKey("uesio/core.bundle_store_domain", session)
 	if err != nil {
 		return nil, err
 	}
 
-	newBundle, err := createBundle(appID, major, minor, patch, "")
+	newBundle, err := getBundleFromVersion(appID, version, "")
 	if err != nil {
 		return nil, err
 	}
 
 	url := fmt.Sprintf("https://studio.%s/site/bundles/v1/retrieve/%s/%s", bundleStoreDomain, appID, version)
 
-	var payloadReader io.Reader
-	httpReq, err := http.NewRequest(http.MethodGet, url, payloadReader)
+	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -109,42 +59,14 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 	}
 	defer httpResp.Body.Close()
 
-	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace: appID,
-		Version:   newBundle.GetVersionString(),
-		Context:   session.Context(),
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	// Read the zip file content
 	body, err := io.ReadAll(httpResp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a zip reader from the zip file content
-	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	err = createNewBundle(body, newBundle, params, connection, session)
 	if err != nil {
-		return nil, err
-	}
-
-	// Iterate over the zip files
-	for _, zipFile := range zipReader.File {
-		rc, err := zipFile.Open()
-		if err != nil {
-			return nil, err
-		}
-		defer rc.Close()
-
-		err = dest.StoreItem(zipFile.Name, rc)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if err = datasource.PlatformSaveOne(newBundle, nil, connection, session); err != nil {
 		return nil, err
 	}
 
@@ -152,21 +74,26 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 
 }
 
-func createBundle(namespace, major, minor, patch, description string) (*meta.Bundle, error) {
+func getBundleFromVersion(namespace, version, description string) (*meta.Bundle, error) {
+
+	major, minor, patch, err := meta.ParseVersionString(version)
+	if err != nil {
+		return nil, err
+	}
 
 	majorInt, err := strconv.Atoi(major)
 	if err != nil {
-		return nil, errors.New("Invalid version string")
+		return nil, errors.New("Invalid major version string: " + major)
 	}
 
 	minorInt, err := strconv.Atoi(minor)
 	if err != nil {
-		return nil, errors.New("Invalid version string")
+		return nil, errors.New("Invalid minor version string: " + minor)
 	}
 
 	patchInt, err := strconv.Atoi(patch)
 	if err != nil {
-		return nil, errors.New("Invalid version string")
+		return nil, errors.New("Invalid patch version string: " + patch)
 	}
 
 	newBundle, err := meta.NewBundle(namespace, majorInt, minorInt, patchInt, "")

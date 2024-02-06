@@ -279,6 +279,32 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 	return nil
 }
 
+func (b *PlatformBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+
+	// Create a zip reader from the zip file content
+	zipReader, err := zip.NewReader(reader, size)
+	if err != nil {
+		return err
+	}
+
+	// Iterate over the zip files
+	for _, zipFile := range zipReader.File {
+		rc, err := zipFile.Open()
+		if err != nil {
+			return err
+		}
+		defer rc.Close()
+
+		err = b.StoreItem(zipFile.Name, rc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+
+}
+
 func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 
 	session := b.getStudioAnonSession()
