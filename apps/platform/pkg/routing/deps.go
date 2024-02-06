@@ -442,6 +442,17 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to get config values: " + err.Error())
 	}
 
+	// Add in route assignments
+	var routeAssignments meta.RouteAssignmentCollection
+	err = bundle.LoadAllFromAny(&routeAssignments, nil, session, nil)
+	if err != nil {
+		return nil, errors.New("Failed to load route assignments: " + err.Error())
+	}
+
+	for _, assignment := range routeAssignments {
+		deps.RouteAssignment.AddItem(assignment)
+	}
+
 	for key, value := range labels {
 		label, err := meta.NewLabel(key)
 		if err != nil {
