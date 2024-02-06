@@ -130,7 +130,7 @@ func createNewBundle(data []byte, bundle *meta.Bundle, params map[string]interfa
 	}
 
 	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace: bundle.BuiltIn.UniqueKey,
+		Namespace: bundle.App.UniqueKey,
 		Version:   bundle.GetVersionString(),
 		Context:   session.Context(),
 	})

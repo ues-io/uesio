@@ -222,7 +222,7 @@ func (b *PlatformBundleStoreConnection) GetItemAttachments(creator bundlestore.F
 
 func (b *PlatformBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
 
-	fullFilePath := filepath.Join(getBasePath(b.Namespace, b.Version), path)
+	fullFilePath := filepath.Join(b.Namespace, b.Version, path)
 
 	conn, err := b.getPlatformFileConnection()
 	if err != nil {
