@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -52,6 +53,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
 		Connection: connection,
 		Upsert:     true,
+		Prefix:     retrieve.BundleDirectory,
 	})
 
 }

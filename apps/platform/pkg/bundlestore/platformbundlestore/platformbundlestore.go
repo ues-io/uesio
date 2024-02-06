@@ -354,7 +354,7 @@ func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoption
 		zipwriter := zip.NewWriter(writer)
 		create := retrieve.NewWriterCreator(zipwriter.Create)
 		// Retrieve bundle contents
-		err = retrieve.RetrieveBundle("", create, b)
+		err = retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b)
 		if err != nil {
 			return err
 		}
