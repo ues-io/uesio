@@ -304,10 +304,6 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	return nil
 }
 
-func (b *WorkspaceBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
-	return errors.New("Tried to store items in the workspace bundle store")
-}
-
 func (b *WorkspaceBundleStoreConnection) DeleteBundle() error {
 	return errors.New("tried to delete bundle in the workspace bundle store")
 }
@@ -400,6 +396,10 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 		}
 		return nil
 	})
+}
+
+func (b *WorkspaceBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+	return errors.New("tried to upload bundle zip in Workspace Bundle Store")
 }
 
 func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {

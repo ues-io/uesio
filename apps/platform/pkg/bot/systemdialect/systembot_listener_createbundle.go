@@ -1,22 +1,16 @@
 package systemdialect
 
 import (
-	"archive/zip"
 	"bytes"
 	"fmt"
-	"io"
 	"strconv"
-
-	"golang.org/x/sync/errgroup"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/types"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -95,10 +89,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	if err = datasource.PlatformSaveOne(bundle, nil, connection, session); err != nil {
-		return nil, err
-	}
-
 	source, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Namespace:  appID,
 		Version:    workspace.Name,
@@ -110,57 +100,17 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace: appID,
-		Version:   bundle.GetVersionString(),
-		Context:   session.Context(),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	eg := errgroup.Group{}
-
 	// Also upload the entire bundle as a ZIP file attached as a user file,
 	// so that we can easily download everything when needed rather than having to get the individual bundle files.
 	buf := new(bytes.Buffer)
-	zipWriter := zip.NewWriter(buf)
 
-	creator := func(path string) (io.WriteCloser, error) {
-		r, w := io.Pipe()
-		eg.Go(func() error {
-			return dest.StoreItem(path, r)
-		})
-		zip, err := zipWriter.Create(path)
-		if err != nil {
-			return nil, err
-		}
-		return types.MultiWriteCloser(w, zip), nil
-	}
-
-	err = retrieve.RetrieveBundle("", creator, source)
+	err = source.GetBundleZip(buf, nil)
 	if err != nil {
 		return nil, err
 	}
-	// Wait for all goroutines spawned in the error group to complete,
-	// or return the first error
-	if err = eg.Wait(); err != nil {
-		return nil, err
-	}
 
-	if err = zipWriter.Close(); err != nil {
-		return nil, err
-	}
-
-	if _, err = filesource.Upload([]*filesource.FileUploadOp{
-		{
-			Data:         buf,
-			Path:         bundle.GetVersionString() + ".zip",
-			CollectionID: "uesio/studio.bundle",
-			RecordID:     bundle.ID,
-			FieldID:      "uesio/studio.contents",
-		},
-	}, connection, session, params); err != nil {
+	err = createNewBundle(buf.Bytes(), bundle, params, connection, session)
+	if err != nil {
 		return nil, err
 	}
 
@@ -170,6 +120,42 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		"patch":       patch,
 		"description": description,
 	}, nil
+
+}
+
+func createNewBundle(data []byte, bundle *meta.Bundle, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
+
+	if err := datasource.PlatformSaveOne(bundle, nil, connection, session); err != nil {
+		return err
+	}
+
+	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
+		Namespace: bundle.App.UniqueKey,
+		Version:   bundle.GetVersionString(),
+		Context:   session.Context(),
+	})
+	if err != nil {
+		return err
+	}
+
+	err = dest.SetBundleZip(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		return err
+	}
+
+	if _, err = filesource.Upload([]*filesource.FileUploadOp{
+		{
+			Data:         bytes.NewReader(data),
+			Path:         bundle.GetVersionString() + ".zip",
+			CollectionID: "uesio/studio.bundle",
+			RecordID:     bundle.ID,
+			FieldID:      "uesio/studio.contents",
+		},
+	}, connection, session, params); err != nil {
+		return err
+	}
+
+	return nil
 
 }
 

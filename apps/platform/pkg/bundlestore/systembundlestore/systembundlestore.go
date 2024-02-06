@@ -212,10 +212,6 @@ func (b *SystemBundleStoreConnection) GetItemAttachments(creator bundlestore.Fil
 	return nil
 }
 
-func (b *SystemBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
-	return errors.New("Cannot Write to System Bundle Store")
-}
-
 func (b *SystemBundleStoreConnection) DeleteBundle() error {
 	return errors.New("tried to delete bundle in System Bundle Store")
 }
@@ -243,6 +239,10 @@ func (b *SystemBundleStoreConnection) HasAllItems(items []meta.BundleableItem) e
 		}
 	}
 	return nil
+}
+
+func (b *SystemBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+	return errors.New("tried to upload bundle zip in System Bundle Store")
 }
 
 func (b *SystemBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {

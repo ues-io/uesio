@@ -65,11 +65,11 @@ type BundleStoreConnection interface {
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
 	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)
 	GetItemAttachments(creator FileCreator, item meta.AttachableItem) error
-	StoreItem(path string, reader io.Reader) error
 	GetBundleDef() (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem) error
 	DeleteBundle() error
 	GetBundleZip(writer io.Writer, options *BundleZipOptions) error
+	SetBundleZip(reader io.ReaderAt, size int64) error
 }
 
 func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, error) {

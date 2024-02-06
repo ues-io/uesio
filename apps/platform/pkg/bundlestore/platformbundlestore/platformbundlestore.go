@@ -222,7 +222,7 @@ func (b *PlatformBundleStoreConnection) GetItemAttachments(creator bundlestore.F
 
 func (b *PlatformBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
 
-	fullFilePath := filepath.Join(getBasePath(b.Namespace, b.Version), path)
+	fullFilePath := filepath.Join(b.Namespace, b.Version, path)
 
 	conn, err := b.getPlatformFileConnection()
 	if err != nil {
@@ -277,6 +277,32 @@ func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem)
 		}
 	}
 	return nil
+}
+
+func (b *PlatformBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+
+	// Create a zip reader from the zip file content
+	zipReader, err := zip.NewReader(reader, size)
+	if err != nil {
+		return err
+	}
+
+	// Iterate over the zip files
+	for _, zipFile := range zipReader.File {
+		rc, err := zipFile.Open()
+		if err != nil {
+			return err
+		}
+		defer rc.Close()
+
+		err = b.StoreItem(zipFile.Name, rc)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+
 }
 
 func (b *PlatformBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
