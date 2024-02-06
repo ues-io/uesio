@@ -55,6 +55,7 @@ var ORDERED_ITEMS = [...]string{
 type DeployOptions struct {
 	Upsert     bool
 	Connection wire.Connection
+	Prefix     string
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
@@ -129,6 +130,15 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		dir, fileName := path.Split(zipFile.Name)
 		dirParts := strings.Split(dir, "/")
 		partsLength := len(dirParts)
+
+		if options.Prefix != "" && partsLength > 0 {
+			prefix, rest := dirParts[0], dirParts[1:]
+			if prefix != options.Prefix {
+				continue
+			}
+			dirParts = rest
+			partsLength = len(dirParts)
+		}
 
 		if fileName == "" || partsLength < 1 {
 			continue
