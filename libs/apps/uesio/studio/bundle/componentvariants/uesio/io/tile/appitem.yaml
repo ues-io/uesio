@@ -4,9 +4,17 @@ extends: uesio/io.nav
 definition:
   uesio.styleTokens:
     root:
-      - gap-3
+      - gap-4
     content:
     avatar:
       - p-1
+      - text-sm
+      - bg-white
+      - rounded-full
+      - grid
+      - items-center
+      - justify-center
+      - h-8
+      - w-8
 
 public: true

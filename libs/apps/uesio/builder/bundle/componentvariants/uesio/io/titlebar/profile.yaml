@@ -5,7 +5,7 @@ definition:
   uesio.styleTokens:
     root:
       - items-center
-      - gap-3
+      - gap-4
     title:
       - text-xs
     subtitle:
