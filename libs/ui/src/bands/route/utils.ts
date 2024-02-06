@@ -9,6 +9,7 @@ import { setMany as setFeatureFlag } from "../featureflag"
 import { setMany as setComponent } from "../component"
 import { setMany as setComponentTypes } from "../componenttype"
 import { setMany as setSelectList } from "../selectlist"
+import { setMany as setRouteAssignment } from "../routeassignment"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
 import { ViewMetadata } from "../../definition/ViewMetadata"
@@ -46,6 +47,7 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (deps.configvalue) dispatch(setConfigValue(deps.configvalue))
 	if (deps.featureflag) dispatch(setFeatureFlag(deps.featureflag))
 	if (deps.label) dispatch(setLabel(deps.label))
+	if (deps.routeassignment) dispatch(setRouteAssignment(deps.routeassignment))
 	if (deps.selectlist) dispatch(setSelectList(deps.selectlist))
 	if (deps.theme) dispatch(setTheme(deps.theme))
 	if (deps.viewdef) dispatch(setViewDef(deps.viewdef))

@@ -11,6 +11,7 @@ import label from "../bands/label"
 import notification from "../bands/notification"
 import panel from "../bands/panel"
 import route from "../bands/route"
+import routeassignment from "../bands/routeassignment"
 import selectlist from "../bands/selectlist"
 import session from "../bands/session"
 import site, { SiteState } from "../bands/site"
@@ -47,6 +48,7 @@ const create = (initialState: InitialState) => {
 			notification,
 			panel,
 			route,
+			routeassignment,
 			selectlist,
 			session,
 			site,

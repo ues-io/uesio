@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,6 +30,21 @@ type RouteAssignment struct {
 }
 
 type RouteAssignmentWrapper RouteAssignment
+
+func (r *RouteAssignment) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(r)
+}
+
+func (r *RouteAssignment) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("type", r.Type)
+	enc.AddStringKey("collection", r.Collection)
+	enc.AddStringKey("namespace", r.Namespace)
+	enc.AddStringKey("name", r.Collection+"_"+r.Type)
+}
+
+func (r *RouteAssignment) IsNil() bool {
+	return r == nil
+}
 
 func (r *RouteAssignment) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s", workspace, r.Collection, r.Type)

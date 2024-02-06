@@ -109,6 +109,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		ConfigValue:      NewItem(),
 		FeatureFlag:      NewItem(),
 		Label:            NewItem(),
+		RouteAssignment:  NewItem(),
 		SelectList:       NewItem(),
 		StaticFile:       NewItem(),
 		Theme:            NewItem(),
@@ -126,6 +127,7 @@ type PreloadMetadata struct {
 	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
 	FeatureFlag      *MetadataMergeData `json:"featureflag,omitempty"`
 	Label            *MetadataMergeData `json:"label,omitempty"`
+	RouteAssignment  *MetadataMergeData `json:"routeassignment,omitempty"`
 	SelectList       *MetadataMergeData `json:"selectlist,omitempty"`
 	StaticFile       *MetadataMergeData `json:"file,omitempty"`
 	Theme            *MetadataMergeData `json:"theme,omitempty"`

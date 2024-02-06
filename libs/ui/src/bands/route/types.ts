@@ -12,6 +12,7 @@ import { SelectListMetadata } from "../../wireexports"
 import { ServerWire } from "../wire/types"
 import { ThemeState } from "../../definition/theme"
 import { ViewMetadata } from "../../definition/ViewMetadata"
+import { RouteAssignmentState } from "../../definition/routeassignment"
 
 type WorkspaceState = {
 	name: string
@@ -34,6 +35,7 @@ type Dependencies = {
 	featureflag?: FeatureFlagState[]
 	file?: FileState[]
 	label?: LabelState[]
+	routeassignment?: RouteAssignmentState[]
 	selectlist?: SelectListMetadata[]
 	theme?: ThemeState[]
 	viewdef?: ViewMetadata[]
