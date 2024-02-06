@@ -31,8 +31,8 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				"m-auto",
 				"grid",
 				"pointer-events-none",
-				...(props.width ? [`w-[${props.width}]`] : []),
-				...(props.height ? [`h-[${props.height}]`] : []),
+				...(props.width ? [`w-[${props.width}]`] : ["w-1/2"]),
+				...(props.height ? [`h-[${props.height}]`] : ["h-1/2"]),
 			],
 			inner: [
 				"shadow-md",
