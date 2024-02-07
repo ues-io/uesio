@@ -196,7 +196,8 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
-                    title: App Workspaces with a dependency on this bundle version
+                    title: Workspace Dependencies
+                    subtitle: App Workspaces with a dependency on this bundle version
                 - uesio/io.searchbox:
                     wire: appWorkspacesUsingThisBundle
                     placeholder: Search workspaces...
