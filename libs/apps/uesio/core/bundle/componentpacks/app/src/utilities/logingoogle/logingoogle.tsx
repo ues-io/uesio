@@ -16,12 +16,13 @@ interface GoogleLoginUtilityProps {
 	onLogin?: (response: unknown) => void
 	text?: string
 	minWidth?: number
+	oneTap?: boolean
 }
 
 const LoginGoogleUtility: definition.UtilityComponent<
 	GoogleLoginUtilityProps
 > = (props) => {
-	const { onLogin, minWidth, text } = props
+	const { onLogin, minWidth, text, oneTap } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	window.googleAuthCallback = (response: unknown) => {
@@ -50,18 +51,21 @@ const LoginGoogleUtility: definition.UtilityComponent<
 				id="g_id_onload"
 				data-client_id={clientId}
 				data-callback="googleAuthCallback"
-				data-auto_prompt="false"
+				data-auto_prompt={oneTap ? "true" : "false"}
+				data-cancel_on_tap_outside="false"
 			/>
-			<div
-				className="g_id_signin"
-				data-type="standard"
-				data-text={text}
-				data-width={minWidth}
-				data-size="large"
-				data-theme="outline"
-				data-shape="rectangular"
-				data-logo_alignment="left"
-			/>
+			{!oneTap && (
+				<div
+					className="g_id_signin"
+					data-type="standard"
+					data-text={text}
+					data-width={minWidth}
+					data-size="large"
+					data-theme="outline"
+					data-shape="rectangular"
+					data-logo_alignment="left"
+				/>
+			)}
 		</div>
 	)
 }
