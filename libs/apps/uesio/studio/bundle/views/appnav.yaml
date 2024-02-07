@@ -144,6 +144,23 @@ definition:
                       selected:
                         - type: paramValue
                           param: selected
+                          value: bundles
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: app/${apps:uesio/core.uniquekey}/bundles
+                    content:
+                      - uesio/io.text:
+                          text: Bundles
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: inventory_2
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
                           value: publish
                     signals:
                       - signal: route/NAVIGATE

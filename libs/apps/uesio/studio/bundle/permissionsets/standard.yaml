@@ -27,6 +27,7 @@ views:
   uesio/studio.bot: true
   uesio/studio.bots: true
   uesio/studio.bundle: true
+  uesio/studio.bundles: true
   uesio/studio.bundlelisting: true
   uesio/studio.bundlestore: true
   uesio/studio.collection: true
@@ -128,6 +129,7 @@ routes:
   uesio/studio.bot: true
   uesio/studio.bots: true
   uesio/studio.bundle: true
+  uesio/studio.bundles: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collectionexport: true

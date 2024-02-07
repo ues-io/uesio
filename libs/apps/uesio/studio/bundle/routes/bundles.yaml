@@ -1,0 +1,5 @@
+name: bundles
+path: app/{app:\w*\/\w*}/bundles
+view: bundles
+theme: default
+title: Bundles

@@ -28,32 +28,6 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
       requirewriteaccess: true
-    bundles:
-      collection: uesio/studio.bundle
-      batchsize: 50
-      fields:
-        uesio/core.id:
-        uesio/studio.major:
-        uesio/studio.minor:
-        uesio/studio.patch:
-        uesio/studio.version:
-        uesio/studio.description:
-        uesio/studio.published:
-        uesio/core.createdat:
-        uesio/core.createdby:
-      conditions:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio/core.id
-      order:
-        - field: uesio/studio.major
-          desc: true
-        - field: uesio/studio.minor
-          desc: true
-        - field: uesio/studio.patch
-          desc: true
-      requirewriteaccess: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -105,33 +79,3 @@ definition:
                                 uesio.variant: uesio/io.icon
                                 text: ${uesio/studio.icon}
                                 color: ${uesio/studio.color}
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Bundles
-                          subtitle: Pack it up. Pack it in. Let me begin.
-                      - uesio/io.searchbox:
-                          wire: bundles
-                          searchFields:
-                            - uesio/studio.version
-                            - uesio/studio.description
-                      - uesio/io.table:
-                          uesio.id: bundlesTable
-                          wire: bundles
-                          mode: READ
-                          pagesize: 5
-                          columns:
-                            - field: uesio/studio.version
-                            - field: uesio/studio.description
-                            - field: uesio/studio.published
-                            - field: uesio/core.createdby
-                              user:
-                                subtitle: $Time{uesio/core.createdat}
-                          rowactions:
-                            - text: Details
-                              signals:
-                                - signal: "route/NAVIGATE"
-                                  path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"
-  panels:
