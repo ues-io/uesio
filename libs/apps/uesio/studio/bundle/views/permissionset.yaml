@@ -356,11 +356,11 @@ definition:
                                             signal: route/NAVIGATE
                                         uesio.display:
                                           - type: fieldValue
-                                            field: allowAll
+                                            field: allowAllActions
                                             operator: NOT_EQUALS
                                             value: true
                                     permissionFields:
-                                      - name: allowAll
+                                      - name: allowAllActions
                                         label: Allow all Actions provided by this Integration
                                         type: CHECKBOX
                                       - name: actions
