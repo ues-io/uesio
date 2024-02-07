@@ -27,6 +27,7 @@ definition:
       signals:
         - signal: "route/NAVIGATE"
           path: $Prop{path}
+          namespace: $Prop{namespace}
       title: $Prop{title}
       icon: $Prop{icon}
       iconcolor: $Prop{iconcolor}

@@ -51,6 +51,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 						iconcolor: nsInfo?.color,
 						tileVariant: "uesio/builder.apptag",
 						path: `/app/${workspace.app}`,
+						namespace: "uesio/studio",
 					}}
 					context={context.deleteWorkspace()}
 				/>
