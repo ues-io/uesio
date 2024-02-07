@@ -55,37 +55,11 @@ definition:
                               - col-span-1
                               - lg:col-span-2
                           components:
-                            - uesio/io.box:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid
-                                    - items-center
-                                    - justify-center
-                                    - h-full
-                                    - text-center
+                            - uesio/studio.emptystate:
                                 uesio.display:
                                   - type: wireHasNoRecords
                                     wire: recentmetadata
-                                components:
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.text:
-                                            uesio.variant: uesio/io.icon
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-9xl
-                                                - text-slate-300
-                                            text: handyman
-                                            element: div
-                                        - uesio/io.text:
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-lg
-                                                - text-slate-300
-                                                - font-light
-                                                - p-2
-                                            text: Empty Workspace
-                                            element: div
+                                text: Empty Workspace
                             - uesio/io.box:
                                 uesio.display:
                                   - type: wireHasRecords
