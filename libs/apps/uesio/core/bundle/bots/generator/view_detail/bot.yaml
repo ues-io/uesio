@@ -20,5 +20,4 @@ params:
   - name: name
     prompt: View Name (optional)
     type: METADATANAME
-    default: ${collection}_detail
 public: true
