@@ -459,7 +459,6 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		}
 		routes = append(routes, route)
 		routeMap[assignment.RouteRef] = route
-		deps.RouteAssignment.AddItem(assignment)
 	}
 
 	err = bundle.LoadMany(routes, session, nil)
@@ -477,6 +476,9 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 			continue
 		}
 		assignment.Path = route.Path
+		if route.Path != "" {
+			deps.RouteAssignment.AddItem(assignment)
+		}
 	}
 
 	for key, value := range labels {
