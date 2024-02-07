@@ -63,7 +63,7 @@ function collectionadmin(bot) {
 
 	bot.runGenerator("uesio/core", "route", {
 		name: collectionName + "queue",
-		path: collectionName,
+		path: collectionName + "queue",
 		view: collectionName + "_queue",
 		theme: "uesio/core.default",
 		title: collectionLabel + " Queue View",

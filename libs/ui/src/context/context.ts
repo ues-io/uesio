@@ -9,6 +9,7 @@ import { selectors as labelSelectors } from "../bands/label"
 import { selectors as fileSelectors } from "../bands/file"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as selectListSelectors } from "../bands/selectlist"
+import { selectors as routeAssignmentSelectors } from "../bands/routeassignment"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectByName as selectFeatureFlagByName } from "../bands/featureflag"
 import { selectors as configValueSelectors } from "../bands/configvalue"
@@ -427,6 +428,12 @@ class Context {
 
 	getSelectList = (id: string) =>
 		selectListSelectors.selectById(getCurrentState(), id)
+
+	getRouteAssignment = (id: string) =>
+		routeAssignmentSelectors.selectById(getCurrentState(), id)
+
+	getRouteAssignments = () =>
+		routeAssignmentSelectors.selectAll(getCurrentState())
 
 	getViewDefId = () =>
 		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef

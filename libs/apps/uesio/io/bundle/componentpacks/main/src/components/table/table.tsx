@@ -87,6 +87,31 @@ const StyleDefaults = Object.freeze({
 	root: [],
 })
 
+const RowAction: definition.UtilityComponent<{
+	action: RowAction
+}> = (props) => {
+	const { action, context } = props
+	const [link, handler] = api.signal.useLinkHandler(action.signals, context)
+	return (
+		<Button
+			icon={
+				action.icon ? (
+					<Icon
+						context={context}
+						icon={context.mergeString(action.icon)}
+					/>
+				) : undefined
+			}
+			link={link}
+			variant="uesio/io.rowaction"
+			className="rowaction"
+			label={action.text}
+			context={context}
+			onClick={handler}
+		/>
+	)
+}
+
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
 	const wire = api.wire.useWire(definition.wire, context)
@@ -183,34 +208,13 @@ const Table: definition.UC<TableDefinition> = (props) => {
 									recordContext.context
 								)
 							)
-							.map((action, i) => {
-								const handler = api.signal.getHandler(
-									action.signals,
-									recordContext.context
-								)
-								return (
-									<Button
-										key={action.text + i}
-										icon={
-											action.icon ? (
-												<Icon
-													context={
-														recordContext.context
-													}
-													icon={context.mergeString(
-														action.icon
-													)}
-												/>
-											) : undefined
-										}
-										variant="uesio/io.rowaction"
-										className="rowaction"
-										label={action.text}
-										context={recordContext.context}
-										onClick={handler}
-									/>
-								)
-							})}
+							.map((action, i) => (
+								<RowAction
+									key={action.text + i}
+									action={action}
+									context={recordContext.context}
+								/>
+							))}
 					</Group>
 				</FieldWrapper>
 			)
