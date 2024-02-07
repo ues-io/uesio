@@ -137,6 +137,10 @@ func (b *PlatformBundleStoreConnection) GetManyItems(items []meta.BundleableItem
 	for _, item := range items {
 		err := b.GetItem(item)
 		if err != nil {
+			switch err.(type) {
+			case *exceptions.ForbiddenException:
+				continue
+			}
 			return err
 		}
 	}

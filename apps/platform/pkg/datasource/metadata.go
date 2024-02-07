@@ -310,7 +310,13 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	}
 
 	for _, item := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(item.(*meta.Field), session))
+		field := item.(*meta.Field)
+		// If we don't have a field type that means the field didn't load
+		// because we don't have permission to it.
+		if field.Type == "" {
+			continue
+		}
+		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
 	return nil
 }
