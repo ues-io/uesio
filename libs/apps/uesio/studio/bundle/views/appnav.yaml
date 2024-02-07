@@ -195,20 +195,7 @@ definition:
                 - uesio/io.button:
                     icon: add
                     uesio.id: add-workspace
-                    uesio.variant: uesio/studio.navctawithpointer
-                    uesio.display:
-                      - type: wireHasNoRecords
-                        wire: workspaces
-                    signals:
-                      - signal: panel/TOGGLE
-                        panel: newWorkspace
-                - uesio/io.button:
-                    uesio.variant: uesio/studio.navcta
-                    icon: add
-                    uesio.id: add-workspace-2
-                    uesio.display:
-                      - type: wireHasRecords
-                        wire: workspaces
+                    uesio.variant: uesio/studio.headernavicon
                     signals:
                       - signal: panel/TOGGLE
                         panel: newWorkspace
@@ -223,20 +210,13 @@ definition:
                     components:
                       - uesio/io.text:
                           text: To get started building your app, you will need a workspace. This is where you can build and preview new functionality for your app.
-                          element: p
-                          uesio.styleTokens:
-                            root:
-                              - mb-4
-                      - uesio/io.text:
-                          text: Click the
                       - uesio/io.button:
                           uesio.variant: uesio/studio.navcta
-                          icon: +
-                          uesio.styleTokens:
-                            root:
-                              - px-2
-                      - uesio/io.text:
-                          text: to create a workspace.
+                          icon: add
+                          text: Create a Workspace
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newWorkspace
                 - uesio/io.list:
                     uesio.id: workspaceslist
                     wire: workspaces
@@ -260,7 +240,7 @@ definition:
                 - uesio/io.button:
                     icon: add
                     uesio.id: add-site
-                    uesio.variant: uesio/studio.navcta
+                    uesio.variant: uesio/studio.headernavicon
                     signals:
                       - signal: panel/TOGGLE
                         panel: newSite
