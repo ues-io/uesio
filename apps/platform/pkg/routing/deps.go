@@ -449,8 +449,34 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, errors.New("Failed to load route assignments: " + err.Error())
 	}
 
+	routes := []meta.BundleableItem{}
+	routeMap := map[string]meta.BundleableItem{}
+
 	for _, assignment := range routeAssignments {
+		route, err := meta.NewRoute(assignment.RouteRef)
+		if err != nil {
+			return nil, err
+		}
+		routes = append(routes, route)
+		routeMap[assignment.RouteRef] = route
 		deps.RouteAssignment.AddItem(assignment)
+	}
+
+	err = bundle.LoadMany(routes, session, nil)
+	if err != nil {
+		return nil, errors.New("Failed to load routes for route assignments: " + err.Error())
+	}
+
+	for _, assignment := range routeAssignments {
+		item, ok := routeMap[assignment.RouteRef]
+		if !ok {
+			continue
+		}
+		route, ok := item.(*meta.Route)
+		if !ok {
+			continue
+		}
+		assignment.Path = route.Path
 	}
 
 	for key, value := range labels {

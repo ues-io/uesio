@@ -7,7 +7,11 @@ import { getComponentSignalDefinition } from "../bands/component/signals"
 import { Context } from "../context/context"
 import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
-import { PathNavigateSignal } from "../bands/route/signals"
+import {
+	AssignmentNavigateSignal,
+	PathNavigateSignal,
+	RedirectSignal,
+} from "../bands/route/signals"
 import { getRouteUrlPrefix } from "../bands/route/operations"
 import { MouseEvent, useEffect, useRef } from "react"
 
@@ -18,15 +22,36 @@ const getNavigateLink = (
 	context: Context
 ) => {
 	if (!signals || signals.length !== 1) return undefined
-	const signal = signals[0] as PathNavigateSignal
-	if (!signal.path) return undefined
+	const signal = signals[0] as
+		| PathNavigateSignal
+		| AssignmentNavigateSignal
+		| RedirectSignal
 
 	if (signal.signal === "route/NAVIGATE") {
+		if (!signal.path) return undefined
 		const prefix = getRouteUrlPrefix(context, signal.namespace)
 		return urlJoin(prefix, context.mergeString(signal.path))
 	}
 
+	if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
+		const prefix = getRouteUrlPrefix(context, undefined)
+		const assignment = context.getRouteAssignment(
+			`${signal.collection}_${signal.viewtype || "list"}`
+		)
+		if (!assignment) return undefined
+
+		return urlJoin(
+			prefix,
+			context
+				.addRecordDataFrame({
+					recordid: context.mergeString(signal.recordid),
+				})
+				.mergeString(assignment.path.replace(/{/g, "${"))
+		)
+	}
+
 	if (signal.signal === "route/REDIRECT") {
+		if (!signal.path) return undefined
 		return context.mergeString(signal.path)
 	}
 

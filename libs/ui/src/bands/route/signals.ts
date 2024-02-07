@@ -21,12 +21,24 @@ type RouteSignal = SignalDefinition & {
 }
 
 interface RedirectSignal extends RouteSignal {
+	signal: "route/REDIRECT"
 	path: string
 }
 
-type PathNavigateSignal = RouteSignal & PathNavigateRequest
-type RouteNavigateSignal = RouteSignal & RouteNavigateRequest
-type AssignmentNavigateSignal = RouteSignal & AssignmentNavigateRequest
+type PathNavigateSignal = RouteSignal &
+	PathNavigateRequest & {
+		signal: "route/NAVIGATE"
+	}
+
+type RouteNavigateSignal = RouteSignal &
+	RouteNavigateRequest & {
+		signal: "route/NAVIGATE_TO_ROUTE"
+	}
+
+type AssignmentNavigateSignal = RouteSignal &
+	AssignmentNavigateRequest & {
+		signal: "route/NAVIGATE_TO_ASSIGNMENT"
+	}
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -63,6 +75,11 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 }
 
-export type { PathNavigateSignal, RouteNavigateSignal }
+export type {
+	PathNavigateSignal,
+	RouteNavigateSignal,
+	AssignmentNavigateSignal,
+	RedirectSignal,
+}
 
 export default signals

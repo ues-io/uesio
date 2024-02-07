@@ -26,6 +26,7 @@ type RouteAssignment struct {
 	Type           string     `yaml:"type" json:"uesio/studio.type"`
 	RouteRef       string     `yaml:"route" json:"uesio/studio.route"`
 	Collection     string     `yaml:"-" json:"uesio/studio.collection"`
+	Path           string     `yaml:"-" json:"-"`
 	Public         bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
@@ -40,6 +41,7 @@ func (r *RouteAssignment) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("collection", r.Collection)
 	enc.AddStringKey("namespace", r.Namespace)
 	enc.AddStringKey("name", r.Collection+"_"+r.Type)
+	enc.AddStringKey("path", r.Path)
 }
 
 func (r *RouteAssignment) IsNil() bool {

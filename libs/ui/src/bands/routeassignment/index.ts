@@ -1,10 +1,9 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { RouteAssignmentState } from "../../definition/routeassignment"
 import { RootState } from "../../store/store"
-import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter<RouteAssignmentState>({
-	selectId: getKey,
+	selectId: (assignment) => assignment.name,
 })
 
 const selectors = adapter.getSelectors(
@@ -13,6 +12,8 @@ const selectors = adapter.getSelectors(
 
 const selectById = (state: RootState, name: string) =>
 	selectors.selectById(state, name)
+
+const selectAll = (state: RootState) => selectors.selectAll(state)
 
 const metadataSlice = createSlice({
 	name: "routeassignment",
@@ -23,7 +24,7 @@ const metadataSlice = createSlice({
 	},
 })
 
-export { selectById, selectors, adapter }
+export { selectById, selectAll, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer
