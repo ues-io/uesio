@@ -3,7 +3,7 @@ type: MAP
 label: Integration Action Permissions
 subtype: STRUCT
 subfields:
-  - name: allowAll
+  - name: allowAllActions
     label: Allow All
     type: CHECKBOX
   - name: actions
