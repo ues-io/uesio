@@ -1,0 +1,61 @@
+name: emptystate
+category: LAYOUT
+pack: main
+type: DECLARATIVE
+slots: null
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - grid
+          - items-center
+          - justify-center
+          - h-full
+          - text-center
+          - border-slate-300
+          - border-1
+          - border-dashed
+          - rounded-lg
+          - p-10
+      components:
+        - uesio/io.box:
+            components:
+              - uesio/io.text:
+                  uesio.variant: uesio/io.icon
+                  uesio.styleTokens:
+                    root:
+                      - text-8xl
+                      - text-slate-500
+                      - p-4
+                  text: $Prop{icon}
+                  element: div
+              - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - text-lg
+                      - text-slate-500
+                      - font-light
+                      - p-2
+                  text: $Prop{text}
+                  element: div
+title: Empty State
+discoverable: false
+description: A component for showing empty state
+properties:
+  - type: TEXT
+    name: text
+    label: Text
+  - type: TEXT
+    name: icon
+    label: Icon
+    defaultValue: handyman
+defaultDefinition:
+sections:
+  - type: HOME
+    properties:
+      - text
+      - icon
+  - type: STYLES
+  - type: DISPLAY
+signals: null
+styleRegions: null
