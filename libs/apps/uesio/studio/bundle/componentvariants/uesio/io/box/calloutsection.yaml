@@ -5,8 +5,9 @@ definition:
     root:
       - bg-yellow-300
       - p-3
-      - m-3
       - text-sm
       - rounded
       - text-slate-900
       - font-light
+      - grid
+      - gap-3

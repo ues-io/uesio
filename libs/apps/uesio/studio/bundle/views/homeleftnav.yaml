@@ -103,33 +103,7 @@ definition:
                                   - uesio/io.button:
                                       icon: add
                                       uesio.id: add-app
-                                      uesio.variant: uesio/studio.navctawithpointer
-                                      uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: apps
-                                        - type: wireHasNoSearchCondition
-                                          wire: apps
-                                        - type: wireIsNotLoading
-                                          wire: apps
-                                      signals:
-                                        - signal: wire/RESET
-                                          wire: newApp
-                                        - signal: panel/TOGGLE
-                                          panel: newApp
-                                  - uesio/io.button:
-                                      icon: add
-                                      uesio.id: add-app-2
-                                      uesio.variant: uesio/studio.navcta
-                                      uesio.display:
-                                        - type: group
-                                          conjunction: OR
-                                          conditions:
-                                            - type: wireHasRecords
-                                              wire: apps
-                                            - type: wireHasSearchCondition
-                                              wire: apps
-                                            - type: wireIsLoading
-                                              wire: apps
+                                      uesio.variant: uesio/studio.headernavicon
                                       signals:
                                         - signal: wire/RESET
                                           wire: newApp
@@ -147,18 +121,16 @@ definition:
                               wire: apps
                           components:
                             - uesio/io.text:
-                                text: Welcome to the ues.io studio!
-                                element: p
-                            - uesio/io.text:
-                                text: Click the
+                                text: Welcome to the ues.io studio! Create an app to get started.
                             - uesio/io.button:
                                 uesio.variant: uesio/studio.navcta
-                                icon: +
-                                uesio.styleTokens:
-                                  root:
-                                    - px-2
-                            - uesio/io.text:
-                                text: to create your first app.
+                                icon: add
+                                text: Create an App
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newApp
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
                       - uesio/io.list:
                           uesio.id: appslist
                           wire: apps
@@ -196,7 +168,7 @@ definition:
                             - uesio/io.button:
                                 icon: add
                                 uesio.id: add-organization
-                                uesio.variant: uesio/studio.navcta
+                                uesio.variant: uesio/studio.headernavicon
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newOrg
