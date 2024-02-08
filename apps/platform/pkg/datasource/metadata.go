@@ -304,7 +304,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	err := bundle.LoadMany(fields, session, connection)
+	err := bundle.LoadMany(fields, true, session, connection)
 	if err != nil {
 		return fmt.Errorf("collection: %s : %v", collectionKey, err)
 	}

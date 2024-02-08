@@ -180,12 +180,15 @@ func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, cond
 	return group.Len() > 0, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem) error {
+func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error {
 	return b.processItems(items, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
 		if item == nil {
+			if allowMissingItems {
+				return nil
+			}
 			return fmt.Errorf("Could not find workspace item: " + id)
 		}
 		for _, locator := range locators {

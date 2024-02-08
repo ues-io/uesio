@@ -60,7 +60,7 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 	}
 
 	// TBD: Why is connection nil here??
-	if err := bundle.LoadMany(tokens, session, nil); err != nil {
+	if err := bundle.LoadMany(tokens, false, session, nil); err != nil {
 		return nil, err
 	}
 
