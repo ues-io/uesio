@@ -53,18 +53,27 @@ func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection 
 	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session, connection); err != nil {
 		return err
 	}
-	bot.FileContents = string(buf.Bytes())
+	bot.FileContents = buf.String()
 	return nil
 }
 
-func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot func(*meta.Bot, *sess.Session, wire.Connection) error, errorFunc func(string)) error {
-	cacheKey := bot.GetKey()
-	// In workspace mode, we need to cache by the database id (the Unique Key),
-	// to ensure we don't have cross-workspace collisions.
-	// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
+func getBotProgramCacheKey(bot *meta.Bot, session *sess.Session) string {
 	if session.GetWorkspace() != nil {
-		cacheKey = fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+		// In workspace mode, we need to cache by the database id (the Unique Key),
+		// to ensure we don't have cross-workspace collisions.
+		// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
+		return fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+	} else {
+		site := session.GetContextSite()
+		// In site mode, include the app and bundle version along with the bot's key in the cache key,
+		// to ensure that if the site's bundle is modified a new version of the bot is used.
+		return fmt.Sprintf("%s:%s:%s", site.GetAppFullName(), site.Bundle.GetVersionString(), bot.GetKey())
 	}
+}
+
+func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot func(*meta.Bot, *sess.Session, wire.Connection) error, errorFunc func(string)) error {
+
+	cacheKey := getBotProgramCacheKey(bot, session)
 
 	var program *goja.Program
 
@@ -98,8 +107,8 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wi
 		return err
 	}
 	time.AfterFunc(time.Duration(getTimeout(bot.Timeout))*time.Second, func() {
+		// Interrupt native Go functions
 		vm.Interrupt("Bot: " + bot.Name + " is running too long, please check your code and run the operation again.")
-		return //Interrupt native Go functions
 	})
 	runner, err := vm.RunProgram(program)
 	if err != nil {
