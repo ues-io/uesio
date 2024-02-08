@@ -30,7 +30,8 @@ definition:
                   title: ${appname}
               - uesio/io.navsection:
                   title: Collections
-                  content: ${navcollections}
+                  content:
+                    - uesio/io.sitenav:
       content:
         - uesio/core.slot:
             name: extra

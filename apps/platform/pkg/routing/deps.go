@@ -451,6 +451,8 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	routes := []meta.BundleableItem{}
 	routeMap := map[string]meta.BundleableItem{}
+	collections := []meta.BundleableItem{}
+	collectionMap := map[string]meta.BundleableItem{}
 
 	for _, assignment := range routeAssignments {
 		route, err := meta.NewRoute(assignment.RouteRef)
@@ -459,24 +461,46 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		}
 		routes = append(routes, route)
 		routeMap[assignment.RouteRef] = route
+
+		collection, err := meta.NewCollection(assignment.Collection)
+		if err != nil {
+			return nil, err
+		}
+		collections = append(collections, collection)
+		collectionMap[assignment.Collection] = collection
 	}
 
-	err = bundle.LoadMany(routes, session, nil)
+	err = bundle.LoadMany(routes, true, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load routes for route assignments: " + err.Error())
 	}
 
+	err = bundle.LoadMany(collections, true, session, nil)
+	if err != nil {
+		return nil, errors.New("Failed to load collections for route assignments: " + err.Error())
+	}
+
 	for _, assignment := range routeAssignments {
-		item, ok := routeMap[assignment.RouteRef]
+		routeItem, ok := routeMap[assignment.RouteRef]
 		if !ok {
 			continue
 		}
-		route, ok := item.(*meta.Route)
+		route, ok := routeItem.(*meta.Route)
 		if !ok {
 			continue
 		}
-		assignment.Path = route.Path
-		if route.Path != "" {
+		collectionItem, ok := collectionMap[assignment.Collection]
+		if !ok {
+			continue
+		}
+		collection, ok := collectionItem.(*meta.Collection)
+		if !ok {
+			continue
+		}
+		if route.Path != "" && collection.Label != "" {
+			assignment.Path = route.Path
+			assignment.CollectionLabel = collection.Label
+			assignment.CollectionPluralLabel = collection.PluralLabel
 			deps.RouteAssignment.AddItem(assignment)
 		}
 	}

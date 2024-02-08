@@ -60,7 +60,7 @@ type BundleZipOptions struct {
 
 type BundleStoreConnection interface {
 	GetItem(item meta.BundleableItem) error
-	GetManyItems(items []meta.BundleableItem) error
+	GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error
 	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
 	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
 	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)

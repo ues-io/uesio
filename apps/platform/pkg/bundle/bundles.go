@@ -143,7 +143,7 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 	return bs.GetAllItems(group, conditions)
 }
 
-func LoadMany(items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
+func LoadMany(items []meta.BundleableItem, allowMissingItems bool, session *sess.Session, connection wire.Connection) error {
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
@@ -153,7 +153,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session, connection wir
 			}
 			return err
 		}
-		if err = bs.GetManyItems(nsItems); err != nil {
+		if err = bs.GetManyItems(nsItems, allowMissingItems); err != nil {
 			return err
 		}
 	}
