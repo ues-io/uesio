@@ -144,13 +144,15 @@ func (b *SystemBundleStoreConnection) HasAny(group meta.BundleableGroup, conditi
 	return group.Len() > 0, nil
 }
 
-func (b *SystemBundleStoreConnection) GetManyItems(items []meta.BundleableItem) error {
+func (b *SystemBundleStoreConnection) GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error {
 	for _, item := range items {
 		err := b.GetItem(item)
 		if err != nil {
-			switch err.(type) {
-			case *exceptions.ForbiddenException:
-				continue
+			if allowMissingItems {
+				switch err.(type) {
+				case *exceptions.ForbiddenException:
+					continue
+				}
 			}
 			return err
 		}

@@ -1,0 +1,18 @@
+name: sitenav
+pack: main
+title: Site Navigation
+entrypoint: components/sitenav/sitenav
+category: CONTENT
+description: A navigation component for your site.
+link: "https://docs.ues.io/"
+discoverable: true
+properties:
+variants:
+  - uesio/io.tile:uesio/io.nav
+sections:
+  - type: HOME
+    properties:
+      - uesio.id
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:
