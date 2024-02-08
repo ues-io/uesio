@@ -4,11 +4,11 @@
 	"include": [],
 	"references": [
 		{
-			"path": "./tsconfig.lib.json",
-		},
+			"path": "./tsconfig.lib.json"
+		}
 	],
 	"typeRoots": ["node_modules/@types", "./generated/@types"],
 	"compilerOptions": {
-		"sourceMap": true,
-	},
+		"sourceMap": true
+	}
 }

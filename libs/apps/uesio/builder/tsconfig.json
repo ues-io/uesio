@@ -4,13 +4,13 @@
 	"include": [],
 	"references": [
 		{
-			"path": "./tsconfig.lib.json",
+			"path": "./tsconfig.lib.json"
 		},
 		{
-			"path": "./tsconfig.spec.json",
-		},
+			"path": "./tsconfig.spec.json"
+		}
 	],
 	"compilerOptions": {
-		"sourceMap": true,
-	},
+		"sourceMap": true
+	}
 }
