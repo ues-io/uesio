@@ -91,9 +91,11 @@ function JSONTransformStream(options: JSONTransformStreamOptions = {}) {
 					parseResult.objects.forEach((obj) =>
 						controller.enqueue(obj)
 					)
-				}
-				if (parseResult.remaining) {
-					remaining = parseResult.remaining
+					if (parseResult.remaining || parseResult.remaining === "") {
+						remaining = parseResult.remaining
+					}
+				} else {
+					break
 				}
 			}
 			buffer = remaining
