@@ -138,9 +138,9 @@ definition:
                                 description: Create views for viewing data for a single record
                                 generator: uesio/core.view_detail
                             - uesio/studio.generatoractiontile:
-                                label: Generate Queue View
-                                description: Create a view for listing records in a collection
-                                generator: uesio/core.view_queue
+                                label: Generate Console View
+                                description: Create a view for quickly switching between records in a collection
+                                generator: uesio/core.view_console
   panels:
     newView:
       uesio.type: uesio/io.dialog

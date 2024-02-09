@@ -5,4 +5,8 @@ options:
     value: "list"
   - label: "Detail View"
     value: "detail"
+  - label: "Console View"
+    value: "console"
+  - label: "Create New View"
+    value: "createnew"
 public: true

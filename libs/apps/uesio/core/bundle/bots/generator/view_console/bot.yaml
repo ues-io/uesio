@@ -1,6 +1,6 @@
-name: view_queue
+name: view_console
 dialect: "JAVASCRIPT"
-label: Queue View
+label: Console View
 type: "GENERATOR"
 params:
   - name: collection

@@ -1,0 +1,23 @@
+name: view_new
+dialect: "JAVASCRIPT"
+label: Create New View
+type: "GENERATOR"
+params:
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+  - name: fields
+    prompt: Fields
+    type: MULTIMETADATA
+    metadataType: FIELD
+    grouping: ${collection}
+    conditions:
+      - param: collection
+        type: hasValue
+    required: true
+  - name: name
+    prompt: View Name (optional)
+    type: METADATANAME
+public: true

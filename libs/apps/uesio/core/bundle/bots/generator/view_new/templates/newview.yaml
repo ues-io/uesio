@@ -1,0 +1,44 @@
+# Wires connect to data in collections
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+    init:
+      create: true
+      query: false
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.viewlayout:
+      left: ${navContent}
+      content:
+        - uesio/io.list:
+            wire: ${wirename}
+            uesio.id: ${wirename}List
+            mode: EDIT
+            components:
+              - uesio/io.titlebar:
+                  title: Create a new $Collection{label}
+                  subtitle: $RecordMeta{name}
+                  uesio.variant: uesio/io.main
+                  actions:
+                    - uesio/io.group:
+                        components:
+                          - uesio/io.button:
+                              signals:
+                                - signal: wire/SAVE
+                                  wires:
+                                    - ${wirename}
+                                - signal: route/NAVIGATE_TO_ASSIGNMENT
+                                  collection: ${collection}
+                              text: Create
+                              hotkey: "meta+s"
+                              uesio.variant: uesio/io.secondary
+                          - uesio/io.button:
+                              signals:
+                                - signal: wire/CANCEL
+                                  wire: ${wirename}
+                              text: Reset
+                              uesio.variant: uesio/io.secondary
+              - uesio/io.box:
+                  uesio.variant: uesio/io.section
+                  components: ${formFields}
