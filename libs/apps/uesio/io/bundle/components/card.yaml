@@ -1,0 +1,41 @@
+name: card
+category: CONTENT
+pack: main
+type: DECLARATIVE
+slots:
+  - name: content
+  - name: footer
+description: A Card component
+discoverable: true
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Subtitle
+    type: TEXT
+  - name: scrollpanelVariant
+    label: Scrollpanel Variant
+    type: METADATA
+    defaultValue: uesio/io.card
+    metadataType: COMPONENTVARIANT
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+      - scrollpanelVariant
+  - type: DISPLAY
+definition:
+  - uesio/io.scrollpanel:
+      uesio.variant: $Prop{scrollpanelVariant}
+      header:
+        - uesio/io.titlebar:
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
+      content:
+        - uesio/core.slot:
+            name: content
+      footer:
+        - uesio/core.slot:
+            name: footer
