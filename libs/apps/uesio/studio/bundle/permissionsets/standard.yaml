@@ -13,7 +13,8 @@ bots:
   uesio/core.view: true
   uesio/core.view_detail: true
   uesio/core.view_list: true
-  uesio/core.view_queue: true
+  uesio/core.view_console: true
+  uesio/core.view_new: true
   uesio/studio.createbundle: true
   uesio/studio.makepayment: true
   uesio/studio.workspacetruncate: true

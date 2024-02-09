@@ -7,7 +7,7 @@ function view(bot) {
 	var fields = bot.params.get("fields")
 	var name = bot.params.get("name")
 	var fields = bot.params.get("fields")
-	var name = bot.params.get("name") || `${collectionName}_queue`
+	var name = bot.params.get("name") || `${collectionName}_console`
 	var wirename = collectionName || name
 	var detailviewname = bot.params.get("detailview")
 
@@ -26,7 +26,7 @@ function view(bot) {
 					cardcontents,
 					wirename,
 				},
-				"templates/queue.yaml"
+				"templates/console.yaml"
 			)
 		: ""
 
@@ -41,7 +41,7 @@ function view(bot) {
 			wirename,
 			detailviewname,
 		},
-		"templates/queueview.yaml"
+		"templates/consoleview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

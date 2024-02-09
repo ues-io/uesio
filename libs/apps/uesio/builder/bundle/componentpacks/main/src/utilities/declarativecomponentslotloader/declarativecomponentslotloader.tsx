@@ -10,10 +10,19 @@ export const DeclarativeComponentSlotLoaderId =
 const getSlotProps = (slotProps: component.SlotUtilityProps) =>
 	component.getSlotProps(slotProps).map((props) => {
 		const { componentType, context, definition } = props
-		const slotName = definition?.name as string
+
+		// If we encounter a declarative component inside of a declarative component,
+		// make it READONLY.
+		if (getComponentDef(componentType)?.type === component.Declarative) {
+			return {
+				...props,
+				context: context.setCustomSlotLoader(InnerViewSlotLoaderId),
+			} as definition.BaseProps
+		}
 
 		// If we are rendering an actual Slot component...
 		if (componentType === component.SlotComponentId) {
+			const slotName = definition?.name as string
 			// If there is NO user-defined content for this slot, but there IS default content,
 			// then treat the slot as READONlY, so that no nested slots appear,
 			// i.e. it should be rendered exactly like a Declarative Component.

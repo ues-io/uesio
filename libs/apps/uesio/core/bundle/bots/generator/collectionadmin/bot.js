@@ -46,7 +46,13 @@ function collectionadmin(bot) {
 		fields: fields,
 	})
 
-	bot.runGenerator("uesio/core", "view_queue", {
+	bot.runGenerator("uesio/core", "view_new", {
+		navcomponent: collectionNamespace + ".nav",
+		collection: collection,
+		fields: fields,
+	})
+
+	bot.runGenerator("uesio/core", "view_console", {
 		navcomponent: collectionNamespace + ".nav",
 		collection: collection,
 		fields: fields,
@@ -62,19 +68,27 @@ function collectionadmin(bot) {
 	})
 
 	bot.runGenerator("uesio/core", "route", {
-		name: collectionName + "queue",
-		path: collectionName + "queue",
-		view: collectionName + "_queue",
+		name: collectionName + "console",
+		path: collectionName + "console",
+		view: collectionName + "_console",
 		theme: "uesio/core.default",
-		title: collectionLabel + " Queue View",
+		title: collectionLabel + " Console View",
 	})
 
 	bot.runGenerator("uesio/core", "route", {
 		name: collectionName + "detail",
-		path: collectionName + "/{recordid}",
+		path: collectionName + "/detail/{recordid}",
 		view: collectionName + "_detail",
 		theme: "uesio/core.default",
 		title: collectionLabel + " Detail View",
+	})
+
+	bot.runGenerator("uesio/core", "route", {
+		name: collectionName + "new",
+		path: collectionName + "new",
+		view: collectionName + "_new",
+		theme: "uesio/core.default",
+		title: collectionLabel + " Create New View",
 	})
 
 	bot.runGenerator("uesio/core", "routeassignment", {
@@ -84,8 +98,20 @@ function collectionadmin(bot) {
 	})
 
 	bot.runGenerator("uesio/core", "routeassignment", {
+		type: "console",
+		route: collectionName + "console",
+		collection: collection,
+	})
+
+	bot.runGenerator("uesio/core", "routeassignment", {
 		type: "detail",
 		route: collectionName + "detail",
+		collection: collection,
+	})
+
+	bot.runGenerator("uesio/core", "routeassignment", {
+		type: "createnew",
+		route: collectionName + "new",
 		collection: collection,
 	})
 }
