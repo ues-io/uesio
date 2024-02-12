@@ -56,7 +56,6 @@ definition:
         uesio/studio.actiontype:
         uesio/studio.metadatatype:
         uesio/studio.unit:
-        uesio/studio.icon:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -169,15 +168,6 @@ definition:
                                                             - text-slate-400
                                                             - uppercase
                                                         element: div
-                                      avatar:
-                                        - uesio/io.text:
-                                            uesio.styleTokens:
-                                              root:
-                                                - text-lg
-                                                - text-slate-700
-                                            uesio.variant: uesio/io.icon
-                                            text: ${icon}
-
                           footer:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
