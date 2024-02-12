@@ -10,10 +10,4 @@ definition:
       - text-xs
       - font-light
       - text-slate-700
-    avatar:
-      - w-8
-      - h-8
-      - items-center
-      - justify-center
-      - grid
 public: true
