@@ -5,6 +5,7 @@ type: DECLARATIVE
 slots:
   - name: content
   - name: footer
+  - name: actions
 description: A Card component
 discoverable: true
 properties:
@@ -36,6 +37,9 @@ definition:
         - uesio/io.titlebar:
             title: $Prop{title}
             subtitle: $Prop{subtitle}
+            actions:
+              - uesio/core.slot:
+                  name: actions
       content:
         - uesio/core.slot:
             name: content
