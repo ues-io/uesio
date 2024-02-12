@@ -137,15 +137,3 @@ definition:
                             - field: uesio/studio.metadatatype
                               type: fieldValue
                               value: ${limit_plan:uesio/studio.metadatatype}
-                # - uesio/io.table:
-                #     wire: usage
-                #     columns:
-                #       - field: uesio/studio.app
-                #       - field: uesio/studio.site
-                #       - field: uesio/studio.user
-                #       - field: uesio/studio.day
-                #       - field: uesio/studio.metadataname
-                #       - field: uesio/studio.metadatatype
-                #       - field: uesio/studio.actiontype
-                #       - field: uesio/studio.total
-                #     pagesize: 10
