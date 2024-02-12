@@ -34,6 +34,14 @@ type ViewOnlyField = {
 	updateable?: boolean
 }
 
+type AggregateField = {
+	function: "SUM" | "COUNT" | "MAX" | "MIN"
+}
+
+type GroupByField = {
+	function: "DATE_TRUNC_MONTH" | "DATE_TRUNC_DAY" | undefined
+}
+
 type RegularField = {
 	fields?: WireFieldDefinitionMap
 }
@@ -79,9 +87,23 @@ type WireDefinitionBase = {
 		create?: boolean
 	}
 	viewOnly?: boolean
+	aggregate?: boolean
+}
+
+type AggregateWireDefinition = WireDefinitionBase & {
+	aggregate: true
+	viewOnly?: false
+	/**
+	 * @minLength 2
+	 */
+	collection: CollectionKey
+	conditions?: WireConditionState[]
+	fields?: Record<string, AggregateField>
+	groupby?: Record<string, GroupByField>
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
+	aggregate?: false
 	fields: Record<string, ViewOnlyField>
 	label?: string
 	pluralLabel?: string
@@ -90,6 +112,7 @@ type ViewOnlyWireDefinition = WireDefinitionBase & {
 }
 
 type RegularWireDefinition = WireDefinitionBase & {
+	aggregate?: false
 	/**
 	 * @minimum 0
 	 */
@@ -106,7 +129,10 @@ type RegularWireDefinition = WireDefinitionBase & {
 	viewOnly?: false
 }
 
-type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
+type WireDefinition =
+	| ViewOnlyWireDefinition
+	| RegularWireDefinition
+	| AggregateWireDefinition
 
 type WireFieldDefinitionMap = {
 	[key: CollectionFieldKey]: WireFieldDefinition | ViewOnlyField
@@ -130,5 +156,7 @@ export type {
 	WireFieldDefinitionMap,
 	RegularWireDefinition,
 	ViewOnlyWireDefinition,
+	AggregateWireDefinition,
 	ViewOnlyField,
+	AggregateField,
 }
