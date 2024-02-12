@@ -17,6 +17,9 @@ properties:
   - name: scrollpanelVariant
     label: Scrollpanel Variant
     type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.scrollpanel
     defaultValue: uesio/io.card
     metadataType: COMPONENTVARIANT
 sections:
@@ -39,5 +42,3 @@ definition:
       footer:
         - uesio/core.slot:
             name: footer
-variants:
-  - uesio/io.scrollpanel:uesio/io.card
