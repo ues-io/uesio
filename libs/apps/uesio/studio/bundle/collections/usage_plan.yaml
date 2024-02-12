@@ -2,3 +2,5 @@ name: usage_plan
 label: usage plan
 pluralLabel: usage plans
 nameField: uesio/studio.name
+uniqueKey:
+  - uesio/studio.name
