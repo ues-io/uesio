@@ -1,0 +1,151 @@
+name: userusage
+definition:
+  # Wires are how we pull in data
+  wires:
+    usage:
+      collection: uesio/studio.usage
+      fields:
+        uesio/studio.app:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.metadataname:
+        uesio/studio.metadatatype:
+        uesio/studio.site:
+        uesio/studio.total:
+        uesio/studio.actiontype:
+      conditions:
+        - field: uesio/studio.app->uesio/studio.user->uesio/core.id
+          valueSource: VALUE
+          value: $User{id}
+        - field: uesio/studio.day
+          operator: IN
+          value: THIS_MONTH
+    plans:
+      collection: uesio/studio.usage_plan
+      fields:
+        uesio/studio.name:
+    user_selected_plan:
+      collection: uesio/studio.user_usage_plan
+      fields:
+        uesio/studio.user:
+        uesio/studio.plan:
+    limit_plan:
+      collection: uesio/studio.usage_limit_plan
+      fields:
+        uesio/studio.plan:
+          fields:
+            uesio/core.id:
+        uesio/studio.limit:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              view: userprofilenav
+              uesio.context:
+                wire: users
+              params:
+                selected: usage
+        content:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: Usage & Billing
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Plans
+                - uesio/io.group:
+                    uesio.styleTokens:
+                      root:
+                        - justify-between
+                    components:
+                      - uesio/io.list:
+                          wire: plans
+                          mode: READ
+                          components:
+                            - uesio/io.card:
+                                scrollpanelVariant: uesio/io.card
+                                title: ${uesio/studio.name}
+                                content:
+                                  - uesio/io.list:
+                                      wire: limit_plan
+                                      recordDisplay:
+                                        - type: fieldValue
+                                          operator: EQUALS
+                                          value: ${plans:uesio/core.id}
+                                          field: uesio/studio.plan->uesio/core.id
+                                      components:
+                                        - uesio/io.tile:
+                                            uesio.variant: uesio/io.item
+                                            content:
+                                              - uesio/io.text:
+                                                  text: ${uesio/studio.limit} - ${uesio/studio.metadatatype} - ${uesio/studio.actiontype}
+                                footer:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: Change
+                                      signals:
+                                        - signal: notification/ADD
+                                          text: Coming soon!
+                                          severity: success
+                                      uesio.display:
+                                        - type: fieldValue
+                                          operator: NOT_EQUALS
+                                          value: ${uesio/core.id}
+                                          wire: user_selected_plan
+                                          field: uesio/studio.plan->uesio/core.id
+                                  - uesio/io.iconlabel:
+                                      uesio.variant: uesio/io.namespacefield
+                                      text: (Active Plan)
+                                      icon: check_circle
+                                      color: green
+                                      tooltip: Active plan for this user.
+                                      uesio.display:
+                                        - type: fieldValue
+                                          operator: EQUALS
+                                          value: ${uesio/core.id}
+                                          wire: user_selected_plan
+                                          field: uesio/studio.plan->uesio/core.id
+                - uesio/io.titlebar:
+                    uesio.styleTokens:
+                      root:
+                        - mt-10
+                    uesio.variant: uesio/io.section
+                    title: Current month usage
+                - uesio/io.list:
+                    wire: limit_plan
+                    recordDisplay:
+                      - type: fieldValue
+                        operator: EQUALS
+                        value: ${plans:uesio/core.id}
+                        field: uesio/studio.plan->uesio/core.id
+                    components:
+                      - uesio/studio.limit:
+                          title: ${uesio/studio.metadatatype}
+                          subtitle: ${uesio/studio.actiontype}
+                          wire: usage
+                          maximum: ${uesio/studio.limit}
+                          recordDisplay:
+                            - field: uesio/studio.actiontype
+                              type: fieldValue
+                              value: ${limit_plan:uesio/studio.actiontype}
+                            - field: uesio/studio.metadatatype
+                              type: fieldValue
+                              value: ${limit_plan:uesio/studio.metadatatype}
+                # - uesio/io.table:
+                #     wire: usage
+                #     columns:
+                #       - field: uesio/studio.app
+                #       - field: uesio/studio.site
+                #       - field: uesio/studio.user
+                #       - field: uesio/studio.day
+                #       - field: uesio/studio.metadataname
+                #       - field: uesio/studio.metadatatype
+                #       - field: uesio/studio.actiontype
+                #       - field: uesio/studio.total
+                #     pagesize: 10

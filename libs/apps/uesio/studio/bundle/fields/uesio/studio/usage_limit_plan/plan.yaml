@@ -1,0 +1,6 @@
+name: plan
+type: REFERENCE
+label: Plan
+required: true
+reference:
+  collection: uesio/studio.usage_plan

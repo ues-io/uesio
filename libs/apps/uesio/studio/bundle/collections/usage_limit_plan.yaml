@@ -1,0 +1,7 @@
+name: usage_limit_plan
+label: user limit plan
+pluralLabel: user limit plans
+uniqueKey:
+  - uesio/studio.plan
+  - uesio/studio.metadatatype
+  - uesio/studio.actiontype

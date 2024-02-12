@@ -120,6 +120,7 @@ views:
   uesio/studio.userprofilenav: true
   uesio/studio.signupmethod: true
   uesio/studio.signupmethods: true
+  uesio/studio.userusage: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -213,6 +214,7 @@ routes:
   uesio/studio.useraccesstokens: true
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
+  uesio/studio.userusage: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
@@ -292,6 +294,9 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
+  uesio/studio.usage_plan: true
+  uesio/studio.user_usage_plan: true
+  uesio/studio.usage_limit_plan: true
 integrationActions: {}
 allowallintegrationactions: true
 modifyallrecords: false

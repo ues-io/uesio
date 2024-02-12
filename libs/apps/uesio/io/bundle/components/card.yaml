@@ -39,3 +39,5 @@ definition:
       footer:
         - uesio/core.slot:
             name: footer
+variants:
+  - uesio/io.scrollpanel:uesio/io.card
