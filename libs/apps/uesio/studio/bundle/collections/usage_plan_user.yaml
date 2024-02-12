@@ -1,0 +1,5 @@
+name: usage_plan_user
+label: Usage Plan User
+pluralLabel: Usage Plan Users
+uniqueKey:
+  - uesio/studio.user

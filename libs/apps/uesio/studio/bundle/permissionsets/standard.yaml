@@ -299,8 +299,8 @@ collections:
     create: false
     edit: false
     delete: false
-  uesio/studio.user_usage_plan: true
-  uesio/studio.usage_limit_plan:
+  uesio/studio.usage_plan_user: true
+  uesio/studio.usage_plan_limit:
     read: true
     create: false
     edit: false
