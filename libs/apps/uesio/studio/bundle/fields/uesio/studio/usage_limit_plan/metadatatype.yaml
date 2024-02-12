@@ -1,3 +1,5 @@
 name: metadatatype
-type: TEXT
+type: SELECT
 label: Metadata Type
+selectList: usagemetadatatype
+required: true
