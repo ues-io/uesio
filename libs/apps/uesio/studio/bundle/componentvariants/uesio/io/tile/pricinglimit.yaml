@@ -1,0 +1,13 @@
+name: pricinglimit
+label: Pricing Limit
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - items-center
+      - mb-1
+    content:
+      - text-xs
+      - font-light
+      - text-slate-700
+public: true

@@ -4,11 +4,17 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - p-6
       - bg-white
       - border
-      - border-gray-200
+      - border-slate-200
       - rounded-lg
-      - shadow dark:bg-gray-800
-      - dark:border-gray-700
+    header:
+      - rounded-t-lg
+      - p-6
+      - bg-slate-50
+    inner:
+      - p-6
+    footer:
+      - p-6
+
 public: true

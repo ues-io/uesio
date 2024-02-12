@@ -24,20 +24,38 @@ definition:
       collection: uesio/studio.usage_plan
       fields:
         uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.price:
     user_selected_plan:
-      collection: uesio/studio.usage_plan_user
+      collection: uesio/studio.usage_plan
       fields:
-        uesio/studio.user:
-        uesio/studio.plan:
+        uesio/core.id:
+      conditions:
+        - type: GROUP
+          conjunction: OR
+          conditions:
+            - field: uesio/core.id
+              type: SUBQUERY
+              operator: IN
+              subcollection: uesio/studio.usage_plan_user
+              subfield: uesio/studio.user
+            - field: uesio/studio.default
+              value: true
+      limit: 1
+      order:
+        - field: uesio/studio.default
+          desc: true
     limit_plan:
       collection: uesio/studio.usage_plan_limit
       fields:
+        uesio/studio.description:
         uesio/studio.plan:
           fields:
             uesio/core.id:
         uesio/studio.limit:
         uesio/studio.actiontype:
         uesio/studio.metadatatype:
+        uesio/studio.unit:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -63,7 +81,7 @@ definition:
                     uesio.styleTokens:
                       root:
                         - grid
-                        - gap-10
+                        - gap-6
                         - grid-cols-1
                         - md:grid-cols-2
                         - lg:grid-cols-3
@@ -73,7 +91,35 @@ definition:
                     components:
                       - uesio/io.card:
                           scrollpanelVariant: uesio/io.card
-                          title: ${uesio/studio.name}
+                          title: ${name}
+                          subtitle: ${description}
+                          actions:
+                            - uesio/io.box:
+                                uesio.styleTokens:
+                                  root:
+                                    - whitespace-nowrap
+                                    - text-right
+                                components:
+                                  - uesio/io.text:
+                                      text: "$${price}"
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-3xl
+                                          - text-slate-800
+                                      element: div
+                                  - uesio/io.text:
+                                      uesio.display:
+                                        - type: hasValue
+                                          value: ${price}
+                                      text: " / month"
+                                      uesio.styleTokens:
+                                        root:
+                                          - font-light
+                                          - -mt-1
+                                          - text-[7pt]
+                                          - text-slate-400
+                                          - uppercase
+                                      element: div
                           content:
                             - uesio/io.list:
                                 wire: limit_plan
@@ -84,10 +130,44 @@ definition:
                                     field: uesio/studio.plan->uesio/core.id
                                 components:
                                   - uesio/io.tile:
-                                      uesio.variant: uesio/io.item
+                                      uesio.variant: uesio/studio.pricinglimit
                                       content:
-                                        - uesio/io.text:
-                                            text: ${uesio/studio.limit} - ${uesio/studio.metadatatype} - ${uesio/studio.actiontype}
+                                        - uesio/io.group:
+                                            uesio.styleTokens:
+                                              root:
+                                                - justify-between
+                                            components:
+                                              - uesio/io.text:
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - text-sm
+                                                      - text-slate-700
+                                                  text: ${uesio/studio.description}
+                                                  element: div
+                                              - uesio/io.box:
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - whitespace-nowrap
+                                                      - text-right
+                                                      - mt-[10px]
+                                                  components:
+                                                    - uesio/io.text:
+                                                        text: "${limit}"
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - text-lg
+                                                            - text-green-800
+                                                        element: div
+                                                    - uesio/io.text:
+                                                        text: "${unit} / month"
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - font-light
+                                                            - -mt-1
+                                                            - text-[7pt]
+                                                            - text-slate-400
+                                                            - uppercase
+                                                        element: div
                           footer:
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
@@ -101,19 +181,30 @@ definition:
                                     operator: NOT_EQUALS
                                     value: ${uesio/core.id}
                                     wire: user_selected_plan
-                                    field: uesio/studio.plan->uesio/core.id
-                            - uesio/io.iconlabel:
-                                uesio.variant: uesio/io.namespacefield
-                                text: (Active Plan)
-                                icon: check_circle
-                                color: green
-                                tooltip: Active plan for this user.
+                                    field: uesio/core.id
+                            - uesio/io.tile:
+                                uesio.variant: uesio/studio.appitem
                                 uesio.display:
                                   - type: fieldValue
                                     operator: EQUALS
                                     value: ${uesio/core.id}
                                     wire: user_selected_plan
-                                    field: uesio/studio.plan->uesio/core.id
+                                    field: uesio/core.id
+                                uesio.styleTokens:
+                                  root:
+                                    - p-0
+                                    - hover:bg-white
+                                    - font-light
+                                  avatar:
+                                    - bg-green-700
+                                content:
+                                  - uesio/io.text:
+                                      text: Your Current Plan
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "white"
+                                      text: check
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
