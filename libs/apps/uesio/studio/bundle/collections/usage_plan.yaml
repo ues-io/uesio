@@ -1,0 +1,6 @@
+name: usage_plan
+label: Usage Plan
+pluralLabel: Usage Plans
+nameField: uesio/studio.name
+uniqueKey:
+  - uesio/studio.name

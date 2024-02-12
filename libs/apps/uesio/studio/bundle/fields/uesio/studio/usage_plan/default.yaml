@@ -1,0 +1,3 @@
+name: default
+type: CHECKBOX
+label: Is a default plan ?

@@ -27,5 +27,19 @@ collections:
     delete: false
     viewall: true
     modifyall: true
+  uesio/studio.usage_plan:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    viewall: true
+    modifyall: true
+  uesio/studio.usage_plan_limit:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    viewall: true
+    modifyall: true
 bots:
   uesio/studio.addexternalbundle: true

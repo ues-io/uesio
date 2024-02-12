@@ -1,0 +1,5 @@
+name: metadatatype
+type: SELECT
+label: Metadata Type
+selectList: usagemetadatatype
+required: true

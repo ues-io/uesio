@@ -67,6 +67,23 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
                           text: token
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: usage
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: user/usage
+                    content:
+                      - uesio/io.text:
+                          text: Usage & Billing
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: credit_card
         footer:
           - uesio/core.view:
               view: profiletag

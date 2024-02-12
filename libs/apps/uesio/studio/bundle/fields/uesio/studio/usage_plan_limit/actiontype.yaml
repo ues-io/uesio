@@ -1,0 +1,5 @@
+name: actiontype
+type: SELECT
+label: Action Type
+selectList: usageactiontype
+required: true
