@@ -125,7 +125,7 @@ definition:
                           text: View Bundles
                           signals:
                             - signal: route/NAVIGATE
-                              path: app/$Param{app}
+                              path: app/$Param{app}/bundles
   panels:
     newBundle:
       uesio.type: uesio/io.dialog
@@ -201,7 +201,7 @@ definition:
               - signal: context/CLEAR
                 type: WORKSPACE
               - signal: route/NAVIGATE
-                path: app/$Param{app}
+                path: app/$Param{app}/bundles
         - uesio/io.button:
             uesio.variant: uesio/io.secondary
             uesio.id: cancel-new-bundle-creation
