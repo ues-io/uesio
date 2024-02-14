@@ -1,0 +1,7 @@
+name: limits
+type: REFERENCEGROUP
+label: Usage Plan Limits
+referenceGroup:
+  collection: usage_plan_limit
+  field: plan
+  onDelete: CASCADE
