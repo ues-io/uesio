@@ -6,12 +6,16 @@ views:
   uesio/studio.sitemanageappbundles: true
   uesio/studio.officialbundlestore: true
   uesio/studio.officialbundlelisting: true
+  uesio/studio.manageplans: true
+  uesio/studio.manageplan: true
 routes:
   uesio/studio.admin: true
   uesio/studio.sitemanagebundles: true
   uesio/studio.sitemanageappbundles: true
   uesio/studio.officialbundlestore: true
   uesio/studio.officialbundlelisting: true
+  uesio/studio.manageplans: true
+  uesio/studio.manageplan: true
 collections:
   uesio/studio.bundlelisting:
     read: true

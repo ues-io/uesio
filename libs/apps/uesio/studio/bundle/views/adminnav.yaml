@@ -63,6 +63,24 @@ definition:
                           text: outbox
                 - uesio/io.tile:
                     uesio.variant: uesio/io.nav
+                    uesio.id: manageplans
+                    uesio.classes:
+                      selected:
+                        - type: paramValue
+                          param: selected
+                          value: manageplans
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: manageplans
+                    content:
+                      - uesio/io.text:
+                          text: Manage Plans
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: credit_card
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
                     uesio.id: officialbundlestore
                     uesio.classes:
                       selected:
