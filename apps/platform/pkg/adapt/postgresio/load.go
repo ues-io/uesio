@@ -201,7 +201,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		groupByClause, err = wire.GetGroupByClause(fieldsResponse.GroupByFields, getGroupByFieldNameWithAlias)
+		groupByClause, err = wire.GetGroupByClause(fieldsResponse.GroupByFields, "", getGroupByFieldNameWithAlias)
 		if err != nil {
 			return err
 		}
@@ -293,6 +293,16 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	if len(orders) > 0 {
 		loadQuery = loadQuery + "\nORDER BY " + strings.Join(orders, ",")
 	}
+
+	// Special handling for empty order by on aggregate queries
+	if op.Aggregate && len(orders) == 0 {
+		orderByClause, err := wire.GetGroupByClause(fieldsResponse.GroupByFields, "ORDER BY", getGroupByFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
+		loadQuery = loadQuery + orderByClause
+	}
+
 	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
 		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
@@ -327,10 +337,13 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		item := op.Collection.NewItem()
 
 		if op.Aggregate {
+			// For aggregate operations, we need to create extra columns to
+			// aggregate on. However, since we're having postgres already build
+			// our json response in the first column returned, we can just throw
+			// away the rest of our columns. We can do this by scanning into "nil".
 			scanItems := []any{item}
 			for range op.GroupBy {
-				var throwaway string
-				scanItems = append(scanItems, &throwaway)
+				scanItems = append(scanItems, nil)
 			}
 			err := rows.Scan(scanItems...)
 			if err != nil {

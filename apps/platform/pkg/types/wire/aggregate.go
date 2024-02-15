@@ -2,6 +2,7 @@ package wire
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 	"strconv"
 	"strings"
@@ -45,10 +46,14 @@ func GetGroupBySelects(groupByFields []AggregationField, getDBGroupByFieldName f
 	return "," + strings.Join(dbNames, ","), nil
 }
 
-func GetGroupByClause(groupByFields []AggregationField, getDBGroupByFieldName func(*AggregationField) string) (string, error) {
+func GetGroupByClause(groupByFields []AggregationField, prefix string, getDBGroupByFieldName func(*AggregationField) string) (string, error) {
 
 	if len(groupByFields) == 0 {
 		return "", errors.New("No group by fields selected")
+	}
+
+	if prefix == "" {
+		prefix = "GROUP BY"
 	}
 
 	i := 0
@@ -57,5 +62,6 @@ func GetGroupByClause(groupByFields []AggregationField, getDBGroupByFieldName fu
 		dbNames[i] = strconv.Itoa(i + 2)
 		i++
 	}
-	return "\nGROUP BY " + strings.Join(dbNames, ", "), nil
+	return fmt.Sprintf("\n%s %s", prefix, strings.Join(dbNames, ", ")), nil
+
 }

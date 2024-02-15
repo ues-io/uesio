@@ -695,7 +695,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		}
 
 		//Set default order by: id - asc
-		if op.Order == nil {
+		if op.Order == nil && !op.Aggregate {
 			op.Order = append(op.Order, GetDefaultOrder())
 		}
 

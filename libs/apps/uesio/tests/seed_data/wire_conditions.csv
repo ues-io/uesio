@@ -1,11 +1,11 @@
-autonumber,checkbox,date,email,longtext,number,reference,text,timestamp,select,name,multiselect,user,struct
-ID-001,true,2023-05-10,test1@test.com,test text1,1,ID-001,text 1,2001-01-01T01:01:00Z,one,ID-001,"[""one""]",abel,"{""firstname"":""John"",""age"":20}"
-ID-002,true,2023-05-12,test2@test.com,test text2,2,ID-002,text 2,1012611720,two,ID-002,"[""two""]",uesio,"{""firstname"":""Michael"",""age"":30}"
-ID-003,true,2023-05-13,test3@test.com,test text3,3,ID-003,text 3,1046656980,three,ID-003,"[""one"",""two""]",,"{""firstname"":""Tim"",""age"":10}"
-ID-004,true,2023-05-14,test4@test.com,test text4,4,ID-005,text 4,1012666666,four,ID-004,"[""three""]",,
-ID-005,,2023-05-15,test5@test.com,test text5,5,ID-005,text 5,1012611720,five,ID-005,,zach,
-ID-006,,2023-05-16,test6@test.com,test text6,6,ID-006,,1012611720,,ID-006,,,
-ID-007,false,2023-05-17,test7@test.com,,7,ID-007,,1012611720,,ID-007,,,
-ID-008,false,,test8@test.com,,,ID-008,,1012611720,,ID-008,,,
-ID-009,false,,,test text9,,,,,,ID-009,,,
-,false,2023-05-19,,test text10,1,,,,,ID-010,,,
+autonumber,checkbox,date,email,longtext,number,reference,text,timestamp,select,name,multiselect,user,struct,category
+ID-001,true,2023-05-10,test1@test.com,test text1,1,ID-001,text 1,2001-01-01T01:01:00Z,one,ID-001,"[""one""]",abel,"{""firstname"":""John"",""age"":20}",a
+ID-002,true,2023-05-12,test2@test.com,test text2,2,ID-002,text 2,1012611720,two,ID-002,"[""two""]",uesio,"{""firstname"":""Michael"",""age"":30}",a
+ID-003,true,2023-05-13,test3@test.com,test text3,3,ID-003,text 3,1046656980,three,ID-003,"[""one"",""two""]",,"{""firstname"":""Tim"",""age"":10}",a
+ID-004,true,2023-05-14,test4@test.com,test text4,4,ID-005,text 4,1012666666,four,ID-004,"[""three""]",,,b
+ID-005,,2023-05-15,test5@test.com,test text5,5,ID-005,text 5,1012611720,five,ID-005,,zach,,b
+ID-006,,2023-05-16,test6@test.com,test text6,6,ID-006,,1012611720,,ID-006,,,,b
+ID-007,false,2023-05-17,test7@test.com,,7,ID-007,,1012611720,,ID-007,,,,b
+ID-008,false,,test8@test.com,,,ID-008,,1012611720,,ID-008,,,,c
+ID-009,false,,,test text9,,,,,,ID-009,,,,
+,false,2023-05-19,,test text10,1,,,,,ID-010,,,,
