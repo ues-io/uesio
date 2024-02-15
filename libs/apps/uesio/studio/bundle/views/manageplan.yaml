@@ -1,0 +1,284 @@
+name: manageplan
+definition:
+  # Wires are how we pull in data
+  wires:
+    plans:
+      collection: uesio/studio.usage_plan
+      fields:
+        uesio/studio.name:
+        uesio/studio.default:
+        uesio/studio.description:
+        uesio/studio.price:
+        uesio/core.createdat:
+        uesio/core.createdby:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: planName
+    plan_limit:
+      collection: uesio/studio.usage_plan_limit
+      fields:
+        uesio/studio.description:
+        uesio/studio.plan:
+        uesio/studio.limit:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.unit:
+        uesio/core.createdat:
+        uesio/core.createdby:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
+      conditions:
+        - field: uesio/studio.plan
+          valueSource: LOOKUP
+          lookupWire: plans
+          lookupField: uesio/core.id
+    newlimit:
+      collection: uesio/studio.usage_plan_limit
+      fields:
+        uesio/studio.description:
+        uesio/studio.plan:
+        uesio/studio.limit:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.unit:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.plan
+          valueSource: LOOKUP
+          lookupWire: plans
+          lookupField: uesio/core.id
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              view: adminnav
+              params:
+                selected: manageplans
+        content:
+          - uesio/io.item:
+              wire: plans
+              mode: READ
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: $Param{planName}
+                    subtitle: ${uesio/studio.description}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.edit}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: editPlan
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: $Label{uesio/io.delete}
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: deletePlan
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.four_columns
+                          items:
+                            - uesio/io.field:
+                                fieldId: uesio/studio.name
+                            - uesio/io.field:
+                                fieldId: uesio/studio.description
+                            - uesio/io.field:
+                                fieldId: uesio/studio.price
+                            - uesio/io.field:
+                                fieldId: uesio/studio.default
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.section
+                    title: Plans Limits
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: $Label{uesio/io.save}
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - plan_limit
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: plan_limit
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                uesio.id: new-field
+                                text: Add Limit
+                                hotkey: "n"
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newlimit
+                                  - signal: panel/TOGGLE
+                                    panel: newLimit
+                - uesio/io.table:
+                    uesio.id: plansLimitsTable
+                    wire: plan_limit
+                    columns:
+                      - field: uesio/studio.metadatatype
+                      - field: uesio/studio.actiontype
+                      - field: uesio/studio.limit
+                      - field: uesio/studio.description
+                      - field: uesio/studio.unit
+                      - field: uesio/core.createdby
+                        user:
+                          subtitle: $Time{uesio/core.createdat}
+                      - field: uesio/core.updatedby
+                        user:
+                          subtitle: $Time{uesio/core.updatedat}
+                    rowactions:
+                      - text: $Label{uesio/io.delete}
+                        signals:
+                          - signal: wire/MARK_FOR_DELETE
+  panels:
+    deletePlan:
+      uesio.type: uesio/io.dialog
+      title: Delete Plan
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete this plan?
+            element: div
+            uesio.variant: uesio/io.smalltitle
+        - uesio/io.text:
+            text: You will never be able to access the information associated with this plan again.
+            element: div
+            uesio.variant: uesio/io.smallcontent
+      actions:
+        - uesio/io.button:
+            text: $Label{uesio/io.delete}
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - plans
+              - signal: route/NAVIGATE
+                path: manageplans
+        - uesio/io.button:
+            text: $Label{uesio/io.cancel}
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deletePlan
+    editPlan:
+      uesio.type: uesio/io.dialog
+      title: Edit Plan
+      width: 400px
+      height: 560px
+      components:
+        - uesio/io.item:
+            uesio.id: editPlan
+            wire: plans
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.description
+              - uesio/io.field:
+                  fieldId: uesio/studio.price
+              - uesio/io.field:
+                  fieldId: uesio/studio.default
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - plans
+              - signal: panel/TOGGLE
+                panel: editPlan
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/CANCEL
+                wire: plans
+              - signal: panel/TOGGLE
+                panel: editPlan
+    newLimit:
+      uesio.type: uesio/io.dialog
+      title: add a new limit
+      width: 440px
+      height: 660px
+      components:
+        - uesio/io.item:
+            wire: newlimit
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.metadatatype
+              - uesio/io.field:
+                  fieldId: uesio/studio.actiontype
+              - uesio/io.field:
+                  fieldId: uesio/studio.limit
+              - uesio/io.field:
+                  fieldId: uesio/studio.description
+              - uesio/io.field:
+                  fieldId: uesio/studio.unit
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: Save and new
+            hotkey: "meta+s"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlimit
+              - signal: notification/ADD
+                text: "New limit successfully created: $Record{newlimit:uesio/studio.name}"
+                severity: success
+                duration: "3"
+              - signal: wire/RESET
+                wire: newlimit
+              - signal: wire/LOAD
+                wires:
+                  - plan_limit
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.save}
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlimit
+              - signal: notification/ADD
+                text: "New limit successfully created: $Record{newlimit:uesio/studio.name}"
+                severity: success
+                duration: "3"
+              - signal: wire/LOAD
+                wires:
+                  - plan_limit
+              - signal: wire/RESET
+                wire: newlimit
+              - signal: panel/TOGGLE
+                panel: newLimit
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: $Label{uesio/io.cancel}
+            signals:
+              - signal: wire/EMPTY
+                wire: newlimit
+              - signal: wire/LOAD
+                wires:
+                  - plan_limit
+              - signal: panel/TOGGLE
+                panel: newLimit

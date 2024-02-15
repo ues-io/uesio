@@ -1,0 +1,8 @@
+name: manageplans
+path: manageplans
+view: manageplans
+theme: default
+title: Manage Plans
+# params:
+#   app: "uesio/studio"
+#   sitename: "prod"
