@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -57,6 +58,23 @@ const (
 func getFieldNameWithAlias(fieldMetadata *wire.FieldMetadata) string {
 	fieldName := getJSONBFieldName(fieldMetadata, "main")
 	return fmt.Sprintf("'%s',%s", fieldMetadata.GetFullName(), fieldName)
+}
+
+func getAggregationFieldNameWithAlias(aggregation *wire.AggregationField) string {
+	fieldName := getFieldName(aggregation.Metadata, "main")
+	if aggregation.Function == "" {
+		return fmt.Sprintf("'%s',%s", aggregation.Metadata.GetFullName(), fieldName)
+	}
+	lowercaseFunction := strings.ToLower(aggregation.Function)
+	return fmt.Sprintf("'%s_%s',%s(%s)", aggregation.Metadata.GetFullName(), lowercaseFunction, aggregation.Function, fieldName)
+}
+
+func getGroupByFieldNameWithAlias(aggregation *wire.AggregationField) string {
+	fieldName := getFieldName(aggregation.Metadata, "main")
+	if aggregation.Function == "" {
+		return fieldName
+	}
+	return fmt.Sprintf("%s(%s)", aggregation.Function, fieldName)
 }
 
 func castFieldToText(fieldAlias string) string {
@@ -160,14 +178,33 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := wire.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldsResponse, err := wire.GetFieldsResponse(op, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
 
-	fieldIDs, err := fieldMap.GetUniqueDBFieldNames(getFieldNameWithAlias)
-	if err != nil {
-		return err
+	var fieldIDs []string
+	groupByClause := ""
+	groupBySelects := ""
+
+	if !op.Aggregate {
+		fieldIDs, err = wire.GetUniqueDBFieldNames(fieldsResponse.LoadFields, getFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
+	} else {
+		fieldIDs, err = wire.GetAggregationFieldNames(fieldsResponse.AggregationFields, fieldsResponse.GroupByFields, getAggregationFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
+		groupBySelects, err = wire.GetGroupBySelects(fieldsResponse.GroupByFields, getGroupByFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
+		groupByClause, err = wire.GetGroupByClause(fieldsResponse.GroupByFields, "", getGroupByFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
 	}
 
 	joins := []string{}
@@ -228,11 +265,12 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	loadQuery := "SELECT\n" +
 		"jsonb_build_object(\n" +
 		strings.Join(fieldIDs, ",\n") +
-		"\n)" +
+		"\n)" + groupBySelects +
 		"\nFROM data as \"main\"\n" +
 		strings.Join(joins, "") +
 		"WHERE\n" +
-		builder.String()
+		builder.String() +
+		groupByClause
 
 	var orders []string
 	for i := range op.Order {
@@ -255,6 +293,16 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	if len(orders) > 0 {
 		loadQuery = loadQuery + "\nORDER BY " + strings.Join(orders, ",")
 	}
+
+	// Special handling for empty order by on aggregate queries
+	if op.Aggregate && len(orders) == 0 {
+		orderByClause, err := wire.GetGroupByClause(fieldsResponse.GroupByFields, "ORDER BY", getGroupByFieldNameWithAlias)
+		if err != nil {
+			return err
+		}
+		loadQuery = loadQuery + orderByClause
+	}
+
 	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
 		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
@@ -278,7 +326,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	defer rows.Close()
 
 	op.HasMoreBatches = false
-	formulaPopulations := formula.GetFormulaFunction(c.ctx, formulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(c.ctx, fieldsResponse.FormulaFields, collectionMetadata)
 	index := 0
 	for rows.Next() {
 		if op.BatchSize == index {
@@ -288,12 +336,29 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 		item := op.Collection.NewItem()
 
-		err := rows.Scan(item)
-		if err != nil {
-			return TranslatePGError(err)
+		if op.Aggregate {
+			// For aggregate operations, we need to create extra columns to
+			// aggregate on. However, since we're having postgres already build
+			// our json response in the first column returned, we can just throw
+			// away the rest of our columns. We can do this by scanning into "nil".
+			scanItems := []any{item}
+			for range op.GroupBy {
+				scanItems = append(scanItems, nil)
+			}
+			err := rows.Scan(scanItems...)
+			if err != nil {
+				return TranslatePGError(err)
+			}
+			fakeID, _ := shortid.Generate()
+			item.SetField(commonfields.Id, fakeID)
+		} else {
+			err := rows.Scan(item)
+			if err != nil {
+				return TranslatePGError(err)
+			}
 		}
 
-		for _, refCol := range referencedCollections {
+		for _, refCol := range fieldsResponse.ReferencedColletions {
 			for _, fieldMetadata := range refCol.RefFields {
 				refObj, err := item.GetField(fieldMetadata.GetFullName())
 				if err != nil {
@@ -342,17 +407,17 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	}
 	op.BatchNumber++
 
-	err = datasource.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
+	err = datasource.HandleReferencesGroup(c, op.Collection, fieldsResponse.ReferencedGroupCollections, session)
 	if err != nil {
 		return err
 	}
 
-	err = datasource.HandleMultiCollectionReferences(c, referencedCollections, session)
+	err = datasource.HandleMultiCollectionReferences(c, fieldsResponse.ReferencedColletions, session)
 	if err != nil {
 		return err
 	}
 
-	return datasource.HandleReferences(c, referencedCollections, session, &datasource.ReferenceOptions{
+	return datasource.HandleReferences(c, fieldsResponse.ReferencedColletions, session, &datasource.ReferenceOptions{
 		AllowMissingItems: true,
 	})
 }

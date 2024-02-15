@@ -35,6 +35,7 @@ func unmarshalViewOnlyField(node *yaml.Node) (*FieldMetadata, error) {
 
 func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 	isViewOnlyWire := meta.GetNodeValueAsBool(node, "viewOnly", false)
+	isAggregateWire := meta.GetNodeValueAsBool(node, "aggregate", false)
 	fieldsNode, _ := meta.GetMapNode(node, "fields")
 	if fieldsNode == nil {
 		return nil, nil
@@ -57,10 +58,38 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 				return nil, err
 			}
 		}
+		var aggregateFunction string
+		if isAggregateWire {
+			aggregateFunction = meta.GetNodeValueAsString(fieldPair.Node, "function")
+		}
 		fields = append(fields, LoadRequestField{
 			ID:               fieldPair.Key,
 			Fields:           subFields,
+			Function:         aggregateFunction,
 			ViewOnlyMetadata: viewOnlyMetadata,
+		})
+	}
+	return fields, nil
+}
+
+func unmarshalGroupBy(node *yaml.Node) ([]LoadRequestField, error) {
+
+	fieldsNode, _ := meta.GetMapNode(node, "groupby")
+	if fieldsNode == nil {
+		return nil, nil
+	}
+	fieldPairs, err := meta.GetMapNodes(fieldsNode)
+	if err != nil {
+		return nil, err
+	}
+	var fields []LoadRequestField
+	for _, fieldPair := range fieldPairs {
+
+		aggregateFunction := meta.GetNodeValueAsString(fieldPair.Node, "function")
+
+		fields = append(fields, LoadRequestField{
+			ID:       fieldPair.Key,
+			Function: aggregateFunction,
 		})
 	}
 	return fields, nil
@@ -69,6 +98,7 @@ func unmarshalFields(node *yaml.Node) ([]LoadRequestField, error) {
 type LoadRequestField struct {
 	ID               string             `json:"id" bot:"id"`
 	Fields           []LoadRequestField `json:"fields,omitempty" bot:"fields"`
+	Function         string             `json:"function,omitempty" bot:"function"`
 	ViewOnlyMetadata *FieldMetadata     `json:"viewOnlyMetadata,omitempty"`
 }
 

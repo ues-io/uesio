@@ -7,9 +7,13 @@ import FieldPropTag from "./fieldproptag"
 import ViewOnlyFieldPropTag from "./viewonlyfieldproptag"
 import FieldPicker from "./fieldpicker"
 import { FullPath } from "../../../../api/path"
+import AggregateFieldPropTag from "./aggregatefieldproptag"
+import GroupByFieldPropTag from "./groupbyfieldproptag"
 
 type FieldsPropertiesDefinition = {
 	viewOnly?: boolean
+	aggregate?: boolean
+	groupBy?: boolean
 }
 
 const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
@@ -18,7 +22,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Popper = component.getUtility("uesio/io.popper")
 	const { context, definition } = props
-	const { viewOnly } = definition
+	const { viewOnly, aggregate, groupBy } = definition
 	const isViewOnlyWire = viewOnly
 	const anchorEl = useRef<HTMLDivElement>(null)
 	const [showPopper, setShowPopper] = useState(false)
@@ -26,7 +30,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 	const selectedPath = useSelectedPath(context)
 	if (selectedPath.size() < 2) return null
 	const wirePath = selectedPath.trimToSize(2)
-	const fieldsPath = wirePath.addLocal("fields")
+	const fieldsPath = wirePath.addLocal(groupBy ? "groupby" : "fields")
 	const onSelect = (ctx: context.Context, path: FullPath) =>
 		set(ctx, fieldsPath.merge(path), {})
 	const onUnselect = (ctx: context.Context, path: FullPath) =>
@@ -45,6 +49,9 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 	if (!wireDef) return null
 	const collection =
 		(wireDef && !wireDef.viewOnly && wireDef.collection) || ""
+
+	const fields =
+		groupBy && wireDef.aggregate ? wireDef.groupby : wireDef.fields
 
 	return (
 		<>
@@ -91,44 +98,49 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 								}}
 							/>
 						)}
-						<Button
-							context={context}
-							variant="uesio/builder.panelactionbutton"
-							icon={
-								<Icon
-									context={context}
-									icon="add"
-									variant="uesio/builder.actionicon"
-								/>
-							}
-							label={"View-only Field"}
-							onClick={() => {
-								set(
-									context,
-									fieldsPath.addLocal(
-										"field" +
-											(Math.floor(Math.random() * 60) + 1)
-									),
-									isViewOnlyWire
-										? {
-												type: "TEXT",
-											}
-										: { viewOnly: true, type: "TEXT" },
-									true
-								)
-							}}
-						/>
+						{!(aggregate || groupBy) && (
+							<Button
+								context={context}
+								variant="uesio/builder.panelactionbutton"
+								icon={
+									<Icon
+										context={context}
+										icon="add"
+										variant="uesio/builder.actionicon"
+									/>
+								}
+								label={"View-only Field"}
+								onClick={() => {
+									set(
+										context,
+										fieldsPath.addLocal(
+											"field" +
+												(Math.floor(
+													Math.random() * 60
+												) +
+													1)
+										),
+										isViewOnlyWire
+											? {
+													type: "TEXT",
+												}
+											: { viewOnly: true, type: "TEXT" },
+										true
+									)
+								}}
+							/>
+						)}
 					</BuildActionsArea>
 				}
 			>
-				{Object.entries(wireDef.fields || {}).map(
-					([fieldId, fieldDef]) => {
-						const viewOnlyField =
-							isViewOnlyWire ||
-							(fieldDef && "viewOnly" in fieldDef) ||
-							false
+				{Object.entries(fields || {}).map(([fieldId, fieldDef]) => {
+					const viewOnlyField =
+						isViewOnlyWire ||
+						(fieldDef && "viewOnly" in fieldDef) ||
+						false
 
-						return viewOnlyField ? (
+					if (viewOnlyField) {
+						return (
 							<ViewOnlyFieldPropTag
 								fieldId={fieldId}
 								key={fieldId}
@@ -137,19 +149,49 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
 								fieldDef={fieldDef as wire.ViewOnlyField}
 								context={context}
 							/>
-						) : (
-							<FieldPropTag
+						)
+					}
+
+					if (groupBy) {
+						return (
+							<GroupByFieldPropTag
 								collectionKey={collection}
 								fieldId={fieldId}
 								key={fieldId}
 								path={fieldsPath.addLocal(fieldId)}
 								selectedPath={selectedPath}
-								fieldDef={fieldDef}
+								fieldDef={fieldDef as wire.GroupByField}
 								context={context}
 							/>
 						)
 					}
-				)}
+
+					if (aggregate) {
+						return (
+							<AggregateFieldPropTag
+								collectionKey={collection}
+								fieldId={fieldId}
+								key={fieldId}
+								path={fieldsPath.addLocal(fieldId)}
+								selectedPath={selectedPath}
+								fieldDef={fieldDef as wire.AggregateField}
+								context={context}
+							/>
+						)
+					}
+
+					return (
+						<FieldPropTag
+							collectionKey={collection}
+							fieldId={fieldId}
+							key={fieldId}
+							path={fieldsPath.addLocal(fieldId)}
+							selectedPath={selectedPath}
+							fieldDef={fieldDef}
+							context={context}
+						/>
+					)
+				})}
 			</ScrollPanel>
 		</>
 	)

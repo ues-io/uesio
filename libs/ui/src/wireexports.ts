@@ -7,6 +7,8 @@ import {
 	ViewOnlyField,
 	ViewOnlyWireDefinition,
 	WireEvent,
+	AggregateField,
+	GroupByField,
 } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
@@ -38,12 +40,14 @@ import { LoadRequestField } from "./load/loadrequest"
 import { PlainWire, OrderState, CollectionKey } from "./bands/wire/types"
 
 export type {
+	AggregateField,
 	CollectionKey,
 	ConditionOperators,
 	FieldMetadata,
 	FieldMetadataPropertyPath,
 	FieldType,
 	FieldValue,
+	GroupByField,
 	LoadRequestField,
 	LoadResponseBatch,
 	LookupConditionState,
