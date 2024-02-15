@@ -21,10 +21,18 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	// This forces a rerender if the definition changes
 	const wireDefinition = useDefinition<wire.WireDefinition>(context, wirePath)
 	const VIEW_ONLY = wireDefinition?.viewOnly === true
+	const AGGREGATE = wireDefinition?.aggregate === true
 	const IS_NOT_VIEW_ONLY = [
 		{
 			type: "hasNoValue",
 			value: VIEW_ONLY,
+		},
+	] as component.DisplayCondition[]
+
+	const IS_AGGREGATE = [
+		{
+			type: "hasValue",
+			value: AGGREGATE,
 		},
 	] as component.DisplayCondition[]
 
@@ -226,9 +234,25 @@ const WireProperties: definition.UtilityComponent = (props) => {
 						{
 							"uesio/builder.fieldsproperties": {
 								viewOnly: VIEW_ONLY,
+								aggregate: AGGREGATE,
 							},
 						},
 					],
+				},
+				{
+					id: "groupby",
+					label: "Group By",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.fieldsproperties": {
+								viewOnly: false,
+								aggregate: false,
+								groupBy: true,
+							},
+						},
+					],
+					displayConditions: IS_AGGREGATE,
 				},
 				{
 					id: "conditions",

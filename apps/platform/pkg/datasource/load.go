@@ -461,6 +461,15 @@ func GetMetadataForLoad(
 		}
 	}
 
+	if op.Aggregate {
+		for _, requestField := range op.GroupBy {
+			err := metadataRequest.AddField(collectionKey, requestField.ID, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	for _, condition := range op.Conditions {
 		innerErr := getMetadataForConditionLoad(&condition, collectionKey, metadataRequest, op, ops)
 		if innerErr != nil {
@@ -539,6 +548,23 @@ func GetMetadataForLoad(
 			for key := range fieldDeps {
 				op.Fields = append(op.Fields, wire.LoadRequestField{ID: key})
 			}
+		}
+
+		// Add fake metadata to our aggregate fields
+		if op.Aggregate {
+			if requestField.Function == "" {
+				return errors.New("All request fields for aggregate wires must have an aggregate function")
+			}
+			collectionMetadata.SetField(&wire.FieldMetadata{
+				Name:       fieldMetadata.Name + "_" + strings.ToLower(requestField.Function),
+				Namespace:  fieldMetadata.Namespace,
+				Type:       "NUMBER",
+				Accessible: true,
+				Label:      fieldMetadata.Label + " " + requestField.Function,
+				NumberMetadata: &wire.NumberMetadata{
+					Decimals: 0,
+				},
+			})
 		}
 	}
 
@@ -651,13 +677,14 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 				break
 			}
 		}
-		if !hasIDField {
+
+		if !hasIDField && !op.Aggregate {
 			op.Fields = append(op.Fields, wire.LoadRequestField{
 				ID: commonfields.Id,
 			})
 		}
 
-		if !hasUniqueKeyField {
+		if !hasUniqueKeyField && !op.Aggregate {
 			op.Fields = append(op.Fields, wire.LoadRequestField{
 				ID: commonfields.UniqueKey,
 			})

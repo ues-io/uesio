@@ -2,6 +2,7 @@ import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { init } from ".."
 import {
+	AggregateWireDefinition,
 	RegularWireDefinition,
 	ViewOnlyField,
 	ViewOnlyWireDefinition,
@@ -38,18 +39,19 @@ const getBaseWireDefInfo = (wireDef: WireDefinition) => ({
 	create: wireDef.init ? wireDef.init.create || false : false,
 	defaults: wireDef.defaults,
 	events: wireDef.events,
-	fields: getFieldsRequest(wireDef.fields) || [],
 	definitionHash: getDefinitionHash(wireDef),
 })
 
 const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 	...getBaseWireDefInfo(wireDef),
+	fields: getFieldsRequest(wireDef.fields) || [],
 	conditions: wireDef.conditions,
 	collection: wireDef.collection,
 	order: wireDef.order,
 	batchsize: wireDef.batchsize,
 	requirewriteaccess: wireDef.requirewriteaccess,
 	viewOnly: false,
+	aggregate: false,
 	loadAll: wireDef.loadAll,
 })
 
@@ -58,9 +60,19 @@ const getViewOnlyWireDefInfo = (
 	wireDef: ViewOnlyWireDefinition
 ) => ({
 	...getBaseWireDefInfo(wireDef),
+	fields: getFieldsRequest(wireDef.fields) || [],
 	collection: "",
 	viewOnly: true,
+	aggregate: false,
 	viewOnlyMetadata: getViewOnlyMetadata(wireName, wireDef),
+})
+
+const getAggregateWireDefInfo = (wireDef: AggregateWireDefinition) => ({
+	...getBaseWireDefInfo(wireDef),
+	fields: [],
+	collection: wireDef.collection,
+	viewOnly: false,
+	aggregate: true,
 })
 
 const getViewOnlyFieldMetadata = (
@@ -147,20 +159,28 @@ const getViewOnlyMetadata = (
 const initExistingWire = (
 	existingWire: PlainWire,
 	wireDef: WireDefinition
-): PlainWire =>
-	wireDef.viewOnly
-		? {
-				...existingWire,
-				...getViewOnlyWireDefInfo(existingWire.name, wireDef),
-			}
-		: {
-				...existingWire,
-				changes: {},
-				original: { ...existingWire.data },
-				deletes: {},
-				...getWireDefInfo(wireDef),
-				...addViewOnlyFields(wireDef),
-			}
+): PlainWire => {
+	if (wireDef.viewOnly) {
+		return {
+			...existingWire,
+			...getViewOnlyWireDefInfo(existingWire.name, wireDef),
+		}
+	}
+	if (wireDef.aggregate) {
+		return {
+			...existingWire,
+			...getAggregateWireDefInfo(wireDef),
+		}
+	}
+	return {
+		...existingWire,
+		changes: {},
+		original: { ...existingWire.data },
+		deletes: {},
+		...getWireDefInfo(wireDef),
+		...addViewOnlyFields(wireDef),
+	}
+}
 
 const getNewPlainWireBase = (viewId: string, wireName: string) => ({
 	view: viewId || "",
@@ -177,17 +197,25 @@ const initWire = (
 	viewId: string,
 	wireName: string,
 	wireDef: WireDefinition
-): PlainWire =>
-	wireDef.viewOnly
-		? {
-				...getNewPlainWireBase(viewId, wireName),
-				...getViewOnlyWireDefInfo(wireName, wireDef),
-			}
-		: {
-				...getNewPlainWireBase(viewId, wireName),
-				...getWireDefInfo(wireDef),
-				...addViewOnlyFields(wireDef),
-			}
+): PlainWire => {
+	if (wireDef.viewOnly) {
+		return {
+			...getNewPlainWireBase(viewId, wireName),
+			...getViewOnlyWireDefInfo(wireName, wireDef),
+		}
+	}
+	if (wireDef.aggregate) {
+		return {
+			...getNewPlainWireBase(viewId, wireName),
+			...getAggregateWireDefInfo(wireDef),
+		}
+	}
+	return {
+		...getNewPlainWireBase(viewId, wireName),
+		...getWireDefInfo(wireDef),
+		...addViewOnlyFields(wireDef),
+	}
+}
 
 export { initExistingWire, getDefinitionHash }
 

@@ -3,7 +3,7 @@ package wire
 import (
 	"encoding/json"
 	"errors"
-	"sort"
+	"slices"
 
 	"gopkg.in/yaml.v3"
 
@@ -17,6 +17,7 @@ type LoadOp struct {
 	Collection         meta.Group             `json:"data"`
 	Conditions         []LoadRequestCondition `json:"conditions" bot:"conditions"`
 	Fields             []LoadRequestField     `json:"fields,omitempty" bot:"fields"`
+	GroupBy            []LoadRequestField     `json:"groupby,omitempty" bot:"groupby"`
 	Query              bool                   `json:"query"`
 	Order              []LoadRequestOrder     `json:"order,omitempty" bot:"order"`
 	BatchSize          int                    `json:"batchsize" bot:"batchsize"`
@@ -28,6 +29,7 @@ type LoadOp struct {
 	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
 	DebugQueryString   string                 `json:"debugQueryString"`
 	ViewOnly           bool                   `json:"viewOnly,omitempty"`
+	Aggregate          bool                   `json:"aggregate,omitempty"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
 	metadata              *MetadataCache
 	integrationConnection *IntegrationConnection
@@ -79,6 +81,15 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.Order = order
 	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	op.ViewOnly = meta.GetNodeValueAsBool(node, "viewOnly", false)
+	op.Aggregate = meta.GetNodeValueAsBool(node, "aggregate", false)
+
+	if op.Aggregate {
+		groupby, err := unmarshalGroupBy(node)
+		if err != nil {
+			return err
+		}
+		op.GroupBy = groupby
+	}
 	return nil
 
 }
@@ -131,54 +142,49 @@ func (lr *LoadResponseBatch) TrimStructForSerialization() *LoadResponseBatch {
 	return lr
 }
 
-type FieldsMap map[string]*FieldMetadata
-
-func (fm *FieldsMap) GetKeys() []string {
-	fieldIDIndex := 0
-	fieldIDs := make([]string, len(*fm))
-	for k := range *fm {
-		fieldIDs[fieldIDIndex] = k
-		fieldIDIndex++
-	}
-	return fieldIDs
+type AggregationField struct {
+	Metadata *FieldMetadata
+	Function string
 }
 
-func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
-	if len(*fm) == 0 {
+type FieldsResponse struct {
+	LoadFields                 map[string]*FieldMetadata
+	FormulaFields              map[string]*FieldMetadata
+	AggregationFields          []AggregationField
+	GroupByFields              []AggregationField
+	ReferencedColletions       ReferenceRegistry
+	ReferencedGroupCollections ReferenceGroupRegistry
+}
+
+func GetUniqueDBFieldNames(fieldsMap map[string]*FieldMetadata, getDBFieldName func(*FieldMetadata) string) ([]string, error) {
+	if len(fieldsMap) == 0 {
 		return nil, errors.New("No fields selected")
 	}
-	dbNamesMap := map[string]bool{}
-	for _, fieldMetadata := range *fm {
-		dbFieldName := getDBFieldName(fieldMetadata)
-		dbNamesMap[dbFieldName] = true
-	}
+
 	i := 0
-	dbNames := make([]string, len(dbNamesMap))
-	for k := range dbNamesMap {
-		dbNames[i] = k
+	dbNames := make([]string, len(fieldsMap))
+	for _, fieldMetadata := range fieldsMap {
+		dbNames[i] = getDBFieldName(fieldMetadata)
 		i++
 	}
-	sort.Strings(dbNames)
+	slices.Sort(dbNames)
 	return dbNames, nil
 }
 
-func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
-	(*fm)[fieldMetadata.GetFullName()] = fieldMetadata
-	return nil
-}
-
-func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
-	fieldIDMap := FieldsMap{}
+func GetFieldsResponse(op *LoadOp, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*FieldsResponse, error) {
+	fieldIDMap := map[string]*FieldMetadata{}
 	referencedCollections := ReferenceRegistry{}
 	referencedGroupCollections := ReferenceGroupRegistry{}
 	formulaFields := map[string]*FieldMetadata{}
-	for _, field := range fields {
+	aggregateFields := []AggregationField{}
+	groupByFields := []AggregationField{}
+	for _, field := range op.Fields {
 		if field.ViewOnlyMetadata != nil {
 			continue
 		}
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
-			return nil, nil, nil, nil, err
+			return nil, err
 		}
 
 		if fieldMetadata.IsFormula {
@@ -186,10 +192,15 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			continue
 		}
 
-		err = fieldIDMap.AddField(fieldMetadata)
-		if err != nil {
-			return nil, nil, nil, nil, err
+		if op.Aggregate {
+			aggregateFields = append(aggregateFields, AggregationField{
+				Function: field.Function,
+				Metadata: fieldMetadata,
+			})
+			continue
 		}
+
+		fieldIDMap[fieldMetadata.GetFullName()] = fieldMetadata
 
 		if IsReference(fieldMetadata.Type) {
 
@@ -224,5 +235,30 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 		}
 
 	}
-	return fieldIDMap, referencedCollections, referencedGroupCollections, formulaFields, nil
+
+	if op.Aggregate {
+		for _, field := range op.GroupBy {
+			if field.ViewOnlyMetadata != nil {
+				continue
+			}
+			fieldMetadata, err := collectionMetadata.GetField(field.ID)
+			if err != nil {
+				return nil, err
+			}
+
+			groupByFields = append(groupByFields, AggregationField{
+				Function: field.Function,
+				Metadata: fieldMetadata,
+			})
+
+		}
+	}
+	return &FieldsResponse{
+		LoadFields:                 fieldIDMap,
+		FormulaFields:              formulaFields,
+		ReferencedColletions:       referencedCollections,
+		ReferencedGroupCollections: referencedGroupCollections,
+		AggregationFields:          aggregateFields,
+		GroupByFields:              groupByFields,
+	}, nil
 }
