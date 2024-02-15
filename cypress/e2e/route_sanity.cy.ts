@@ -45,7 +45,7 @@ describe("Uesio Route Sanity Tests", () => {
 				.should("eq", `${workspace1Name}`)
 			cy.get(`a[href="${getAppBasePath(appName)}"]`).click()
 			cy.url().should("contain", getAppBasePath(appName))
-			cy.get(`a[href="${workspace2BasePath}"]`).click()
+			cy.get(`a[href="${workspace2BasePath}"]`).eq(1).click()
 			cy.url().should("contain", workspace2BasePath)
 
 			// Now navigate to the second workspace

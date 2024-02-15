@@ -131,7 +131,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 				.eq(0)
 				.children("td")
 				.eq(4)
-				.find("button.rowaction")
+				.find(".rowaction")
 				.eq(1)
 				.click()
 			// Save
