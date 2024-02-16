@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/stripe/stripe-go/form"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
@@ -65,6 +66,22 @@ type BotHttpRequest struct {
 	URL     string            `json:"url" bot:"url"`
 	Body    interface{}       `json:"body" bot:"body"`
 	Auth    *BotHttpAuth      `json:"auth" bot:"auth"`
+}
+
+func (req *BotHttpRequest) getLowerCaseHeaderMap() map[string]string {
+	lowercase := make(map[string]string, len(req.Headers))
+	for k, v := range req.Headers {
+		lowercase[strings.ToLower(k)] = v
+	}
+	return lowercase
+}
+
+func (req *BotHttpRequest) getHeader(header string) string {
+	return req.getLowerCaseHeaderMap()[strings.ToLower(header)]
+}
+
+func (req *BotHttpRequest) getContentType() string {
+	return req.getHeader("content-type")
 }
 
 type BotHttpResponse struct {
@@ -131,12 +148,20 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		case []byte:
 			payloadReader = bytes.NewReader(payload)
 		case map[string]interface{}, []interface{}:
-			// Marshall other payloads, e.g. map[string]interface{} (almost certainly coming from Uesio) to JSON
-			jsonBytes, err := json.Marshal(payload)
-			if err != nil {
-				return BadRequest("unable to serialize payload into JSON")
+
+			if strings.Contains(req.getContentType(), "x-www-form-urlencoded") {
+				qs := &form.Values{}
+				form.AppendTo(qs, payload)
+				payloadReader = strings.NewReader(qs.ToValues().Encode())
+			} else {
+				// Marshall other payloads, e.g. map[string]interface{} (almost certainly coming from Uesio) to JSON
+				jsonBytes, err := json.Marshal(payload)
+				if err != nil {
+					return BadRequest("unable to serialize payload into JSON")
+				}
+				payloadReader = bytes.NewReader(jsonBytes)
 			}
-			payloadReader = bytes.NewReader(jsonBytes)
+
 		}
 		if payloadReader == nil {
 			return BadRequest("unexpected payload format for " + req.Method + " request")
@@ -209,7 +234,6 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 		break
 	case "OAUTH2_AUTHORIZATION_CODE", "OAUTH2_CLIENT_CREDENTIALS":
 		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic)
-		break
 	}
 	// Default
 	return httpClient.Get().Do(req)

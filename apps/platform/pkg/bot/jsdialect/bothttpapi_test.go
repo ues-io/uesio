@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -263,6 +264,74 @@ func Test_Request(t *testing.T) {
 					body, err := io.ReadAll(request.Body)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, string(body), `["a cool","value"]`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
+			"POST: it should encode a formdata payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "POST",
+					URL:    server.URL + "/user/create",
+					Body: map[string]interface{}{
+						"value1": "cool",
+						"value2": "cooler",
+					},
+					Headers: map[string]string{
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "POST", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, string(body), `value1=cool&value2=cooler`)
+				},
+				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
+					assert.Equal(t, "200 OK", response.Status)
+					assert.Equal(t, http.StatusOK, response.Code)
+					assert.Equal(t, `ok`, response.Body)
+				},
+			},
+		},
+		{
+			"POST: it should encode a complex formdata payload to the API",
+			args{
+				request: &BotHttpRequest{
+					Method: "POST",
+					URL:    server.URL + "/user/create",
+					Body: map[string]interface{}{
+						"value1": map[string]interface{}{
+							"subvalue1": "blah",
+							"subvalue2": "woo",
+						},
+						"value2": []string{
+							"slice1",
+							"slice2",
+						},
+					},
+					Headers: map[string]string{
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+				},
+				response:            `ok`,
+				responseContentType: "text/plain",
+				requestAsserts: func(t *testing.T, request *http.Request) {
+					assert.Equal(t, "POST", request.Method)
+					assert.Equal(t, "/user/create", request.URL.Path)
+					body, err := io.ReadAll(request.Body)
+					assert.Equal(t, nil, err)
+					escaped, err := url.QueryUnescape(string(body))
+					assert.Equal(t, nil, err)
+					assert.Equal(t, escaped, `value1[subvalue1]=blah&value1[subvalue2]=woo&value2[0]=slice1&value2[1]=slice2`)
 				},
 				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
 					assert.Equal(t, "200 OK", response.Status)
