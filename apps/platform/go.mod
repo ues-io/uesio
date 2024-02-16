@@ -106,6 +106,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/stripe/stripe-go/v74 v74.30.0
 	golang.org/x/crypto v0.18.0
 	golang.org/x/net v0.20.0 // indirect
