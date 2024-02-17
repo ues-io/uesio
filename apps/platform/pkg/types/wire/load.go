@@ -31,8 +31,9 @@ type LoadOp struct {
 	ViewOnly           bool                   `json:"viewOnly,omitempty"`
 	Aggregate          bool                   `json:"aggregate,omitempty"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
-	metadata              *MetadataCache
-	integrationConnection *IntegrationConnection
+	metadata                    *MetadataCache
+	integrationConnection       *IntegrationConnection
+	needsRecordLevelAccessCheck bool
 }
 
 type LoadOpWrapper LoadOp
@@ -117,6 +118,15 @@ func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
 func (op *LoadOp) AttachIntegrationConnection(integrationConnection *IntegrationConnection) *LoadOp {
 	op.integrationConnection = integrationConnection
 	return op
+}
+
+func (op *LoadOp) SetNeedsRecordLevelAccessCheck() *LoadOp {
+	op.needsRecordLevelAccessCheck = true
+	return op
+}
+
+func (op *LoadOp) NeedsRecordLevelAccessCheck() bool {
+	return op.needsRecordLevelAccessCheck
 }
 
 type LoadRequestBatch struct {
