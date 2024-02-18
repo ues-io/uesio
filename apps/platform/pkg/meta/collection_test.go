@@ -73,6 +73,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 					"my/namespace.field1",
 					"my/namespace.field2",
 				},
+				IdField:        "uesio/core.id",
 				NameField:      "my/namespace.somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "my/namespace.someintegration",
@@ -96,6 +97,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 					"my/namespace.field1",
 					"my/namespace.field2",
 				},
+				IdField:        "uesio/core.id",
 				NameField:      "my/namespace.somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "my/namespace.someintegration",
@@ -119,6 +121,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 					"luigi/foo.field1",
 					"luigi/foo.field2",
 				},
+				IdField:        "uesio/core.id",
 				NameField:      "luigi/foo.somefield",
 				Type:           "EXTERNAL",
 				IntegrationRef: "luigi/foo.someintegration",
@@ -149,7 +152,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 			if err != nil {
 				assert.Nil(t, err, "Unexpected failure unmarshalling: %s", err.Error())
 			} else {
-				assert.EqualValues(t, initial, tc.expected)
+				assert.EqualValues(t, tc.expected, initial)
 			}
 		})
 	}
