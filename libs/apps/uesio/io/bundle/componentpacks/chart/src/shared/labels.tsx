@@ -77,6 +77,7 @@ const getCategoryFunc = (
 				return (value && value.getIdFieldValue()) || ""
 			}
 		case "TEXT":
+		case "SELECT":
 			return (record: wire.WireRecord) =>
 				record.getFieldValue<string>(fieldId) || ""
 		default:
@@ -254,6 +255,7 @@ const getDataLabels = (
 		case "USER":
 			return getReferenceDataLabels(wire, labels, categoryField)
 		case "TEXT":
+		case "SELECT":
 			return getTextDataLabels(wire, labels, categoryField)
 		default:
 			throw new Error("Invalid Field Type: " + fieldType)
