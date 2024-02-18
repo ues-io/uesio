@@ -29,12 +29,16 @@ const aggregate = (
 ) => {
 	const categories = getLabels(wires, labels, serieses)
 	const datasets = serieses.flatMap((series, index) => {
-		const wire = wires[series.wire]
+		const { wire: wireName, valueField, categoryField, label } = series
+		const wire = wires[wireName]
 		if (!wire) return []
-		const bucketField = wire?.getCollection().getField(series.categoryField)
-		if (!bucketField) {
+		const collection = wire.getCollection()
+		const bucketField = collection.getField(categoryField)
+		const dataField = collection.getField(valueField)
+		if (!bucketField || !dataField) {
 			return []
 		}
+		const isNumericDataField = dataField.getType() === "NUMBER"
 
 		const buckets: Buckets = Object.fromEntries(
 			Object.entries(categories).map(([key]) => [key, 0])
@@ -44,18 +48,27 @@ const aggregate = (
 
 		wire?.getData().forEach((record) => {
 			const category = categoryFunc(record)
-			const aggValue =
-				record.getFieldValue<number>(series.valueField) || 0
 			const currentValue = buckets[category]
-			buckets[category] = currentValue + aggValue
+			if (isNumericDataField) {
+				const aggValue = record.getFieldValue<number>(valueField) || 0
+				buckets[category] = currentValue + aggValue
+			} else {
+				// For non-numeric fields, default to doing a count,
+				// so only increment the bucket if there's a value
+				const val = record.getFieldValue(valueField)
+				if (val !== undefined && val !== null) {
+					buckets[category] = currentValue + 1
+				}
+			}
 		})
+		const color = Object.values(CHART_COLORS)[index]
 		return [
 			{
-				label: context.mergeString(series.label),
+				label: context.mergeString(label),
 				cubicInterpolationMode: "monotone" as const,
 				data: Object.values(buckets),
-				backgroundColor: Object.values(CHART_COLORS)[index],
-				borderColor: Object.values(CHART_COLORS)[index],
+				backgroundColor: color,
+				borderColor: color,
 			},
 		]
 	})

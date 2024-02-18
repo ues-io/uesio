@@ -206,7 +206,13 @@ const getTextDataLabels = (
 			categories[category] = value || ""
 		}
 	})
-	return categories
+	const sortedCategories: Categories = {}
+	Object.keys(categories)
+		.sort()
+		.forEach((k) => {
+			sortedCategories[k] = categories[k]
+		})
+	return sortedCategories
 }
 
 const getDateDataLabels = (
