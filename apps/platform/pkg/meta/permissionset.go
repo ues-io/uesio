@@ -321,6 +321,17 @@ func (ps *PermissionSet) HasModifyAllRecordsPermission(key string) bool {
 	}
 }
 
+func (ps *PermissionSet) HasViewAllRecordsPermission(key string) bool {
+	if ps.ViewAllRecords {
+		return true
+	}
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ViewAll
+	}
+}
+
 func (ps *PermissionSet) HasNamedPermission(namedPermission string) bool {
 	if ps.NamedRefs == nil {
 		return false

@@ -1,0 +1,5 @@
+name: idfield
+type: METADATA
+label: Id Field
+metadata:
+  type: FIELD

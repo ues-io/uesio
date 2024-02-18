@@ -553,7 +553,7 @@ func GetMetadataForLoad(
 		// Add fake metadata to our aggregate fields
 		if op.Aggregate {
 			if requestField.Function == "" {
-				return errors.New("All request fields for aggregate wires must have an aggregate function")
+				return errors.New("all request fields for aggregate wires must have an aggregate function")
 			}
 			collectionMetadata.SetField(&wire.FieldMetadata{
 				Name:       fieldMetadata.Name + "_" + strings.ToLower(requestField.Function),
@@ -640,6 +640,41 @@ func GetDefaultOrder() wire.LoadRequestOrder {
 	}
 }
 
+// getOpsNeedingRecordLevelAccessCheck filters a list of LoadOps to only those that need a record-level access check
+// for the purposes of performing the provided queries.
+func getOpsNeedingRecordLevelAccessCheck(ops []*wire.LoadOp, metadataResponse *wire.MetadataCache, userPerms *meta.PermissionSet) ([]*wire.LoadOp, error) {
+	var opsNeedingRecordLevelAccessCheck []*wire.LoadOp
+	for _, op := range ops {
+		if op.ViewOnly {
+			continue
+		}
+		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+		if err != nil {
+			return nil, err
+		}
+		// If we don't need a record level access check at all, move on.
+		needsAccessCheck := collectionMetadata.IsReadProtected() || (collectionMetadata.IsWriteProtected() && op.RequireWriteAccess)
+		if !needsAccessCheck {
+			continue
+		}
+		// Check whether the running user has view all / modify all records permission for the collection,
+		// depending on whether the op requires write access or not.
+
+		var userCanViewAllRecords bool
+		if op.RequireWriteAccess {
+			userCanViewAllRecords = userPerms.HasModifyAllRecordsPermission(op.CollectionName)
+		} else {
+			userCanViewAllRecords = userPerms.HasViewAllRecordsPermission(op.CollectionName)
+		}
+
+		// if the user cannot view all records, then we need to do a record-level access check for this op
+		if !userCanViewAllRecords {
+			opsNeedingRecordLevelAccessCheck = append(opsNeedingRecordLevelAccessCheck, op)
+		}
+	}
+	return opsNeedingRecordLevelAccessCheck, nil
+}
+
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
@@ -710,8 +745,23 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		return nil, err
 	}
 
-	if err = GenerateUserAccessTokens(connection, session); err != nil {
+	userPerms := session.GetContextPermissions()
+
+	// Do an initial loop to determine whether or not we need to do record-level access checks
+	// for the current user. If we do, then we need to generate access tokens and send this in to the load implementations.
+	// If we don't, then we can skip this step.
+	opsNeedingRecordLevelAccessCheck, err := getOpsNeedingRecordLevelAccessCheck(ops, metadataResponse, userPerms)
+	if err != nil {
 		return nil, err
+	}
+	if len(opsNeedingRecordLevelAccessCheck) > 0 {
+		// Attach user access tokens to the session
+		if err = GenerateUserAccessTokens(connection, session); err != nil {
+			return nil, err
+		}
+		for _, op := range opsNeedingRecordLevelAccessCheck {
+			op.SetNeedsRecordLevelAccessCheck()
+		}
 	}
 
 	for _, op := range allOps {

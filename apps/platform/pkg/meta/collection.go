@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"gopkg.in/yaml.v3"
 )
 
@@ -41,6 +42,7 @@ type Collection struct {
 	Type            string   `yaml:"type,omitempty" json:"uesio/studio.type"`
 	PluralLabel     string   `yaml:"pluralLabel,omitempty" json:"uesio/studio.plurallabel"`
 	UniqueKeyFields []string `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
+	IdField         string   `yaml:"idField,omitempty" json:"uesio/studio.idfield"`
 	NameField       string   `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly        bool     `yaml:"readOnly,omitempty" json:"-"`
 	Access          string   `yaml:"access,omitempty" json:"uesio/studio.access"`
@@ -100,7 +102,11 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	c.IntegrationRef = GetFullyQualifiedKey(c.IntegrationRef, c.Namespace)
 	c.NameField = GetFullyQualifiedKey(c.NameField, c.Namespace)
 	if c.NameField == "" {
-		c.NameField = "uesio/core.id"
+		c.NameField = commonfields.Id
+	}
+	c.IdField = GetFullyQualifiedKey(c.IdField, c.Namespace)
+	if c.IdField == "" {
+		c.IdField = commonfields.Id
 	}
 	c.LoadBot = GetFullyQualifiedKey(c.LoadBot, c.Namespace)
 	c.SaveBot = GetFullyQualifiedKey(c.SaveBot, c.Namespace)
@@ -114,7 +120,8 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 
 func (c *Collection) MarshalYAML() (interface{}, error) {
 	c.IntegrationRef = removeDefault(GetLocalizedKey(c.IntegrationRef, c.Namespace), PLATFORM_DATA_SOURCE)
-	c.NameField = removeDefault(GetLocalizedKey(c.NameField, c.Namespace), "uesio/core.id")
+	c.NameField = removeDefault(GetLocalizedKey(c.NameField, c.Namespace), commonfields.Id)
+	c.IdField = removeDefault(GetLocalizedKey(c.IdField, c.Namespace), commonfields.Id)
 	c.LoadBot = GetLocalizedKey(c.LoadBot, c.Namespace)
 	c.SaveBot = GetLocalizedKey(c.SaveBot, c.Namespace)
 	if len(c.UniqueKeyFields) > 0 {

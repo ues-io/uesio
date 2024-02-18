@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -64,6 +65,7 @@ type CollectionMetadata struct {
 	Type                  string                       `json:"-"`
 	UniqueKey             []string                     `json:"uniqueKey"`
 	NameField             string                       `json:"nameField"`
+	IdField               string                       `json:"-"`
 	Createable            bool                         `json:"createable"`
 	Accessible            bool                         `json:"accessible"`
 	Updateable            bool                         `json:"updateable"`
@@ -100,6 +102,15 @@ func (cm *CollectionMetadata) IsWriteProtected() bool {
 
 func (cm *CollectionMetadata) IsReadProtected() bool {
 	return cm.Access == "protected"
+}
+
+func (cm *CollectionMetadata) GetTableName() string {
+	// For Uesio DB collections, all data is in one table: data
+	if cm.Integration == "" {
+		return "data"
+	}
+	// For external collections, the table name should be defined in TableName
+	return cm.TableName
 }
 
 func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
@@ -159,6 +170,19 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 
 func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
 	cm.Fields[metadata.GetFullName()] = metadata
+}
+
+func (cm *CollectionMetadata) GetIdFieldName() string {
+	// For Uesio DB collections, the id field is always the common id field,
+	// but for external collections, it can be customized.
+	if cm.Integration != "" && cm.IdField != "" {
+		return cm.IdField
+	}
+	return commonfields.Id
+}
+
+func (cm *CollectionMetadata) GetIdField() (*FieldMetadata, error) {
+	return cm.GetField(cm.GetIdFieldName())
 }
 
 func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {

@@ -170,7 +170,7 @@ func getAliasedName(name, alias string) string {
 func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
-	userTokens := session.GetFlatTokens()
+
 	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -215,16 +215,16 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
+	flatTokens := session.GetFlatTokens()
+	targetTableName := collectionMetadata.GetTableName()
+	mainTableAlias := "main"
 
-	needsAccessCheck := collectionMetadata.IsReadProtected() || (collectionMetadata.IsWriteProtected() && op.RequireWriteAccess)
-
-	userCanViewAllRecords := session.GetContextPermissions().ViewAllRecords
-
-	if needsAccessCheck && userTokens != nil && userCanViewAllRecords == false {
-		accessFieldID := "main.id"
+	if op.NeedsRecordLevelAccessCheck() && flatTokens != nil {
 
 		challengeMetadata := collectionMetadata
-		currentTable := "main"
+		currentTable := mainTableAlias
+		currentTableIdFieldName := "id"
+		accessFieldID := fmt.Sprintf("%s.%s", mainTableAlias, currentTableIdFieldName)
 
 		for challengeMetadata.AccessField != "" {
 
@@ -235,6 +235,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 				return err
 			}
 			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
+			targetTableName := challengeMetadata.GetTableName()
 			if err != nil {
 				return err
 			}
@@ -247,7 +248,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			subBuilder := builder.getSubBuilder("")
 			addTenantConditions(challengeMetadata, metadata, subBuilder, newTable, session)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s = %s AND %s\n", newTable, accessFieldString, idFieldString, subBuilder.String()))
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN %s as \"%s\" ON %s = %s AND %s\n", targetTableName, newTable, accessFieldString, idFieldString, subBuilder.String()))
 
 			accessFieldID = getAliasedName("id", newTable)
 
@@ -256,9 +257,9 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		}
 
 		if op.RequireWriteAccess {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(flatTokens)))
 		} else if collectionMetadata.IsReadProtected() {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT recordid FROM tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(flatTokens)))
 		}
 	}
 
@@ -266,7 +267,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		"jsonb_build_object(\n" +
 		strings.Join(fieldIDs, ",\n") +
 		"\n)" + groupBySelects +
-		"\nFROM data as \"main\"\n" +
+		"\nFROM " + targetTableName + " as \"" + mainTableAlias + "\"\n" +
 		strings.Join(joins, "") +
 		"WHERE\n" +
 		builder.String() +
@@ -279,7 +280,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		fieldName := getFieldName(fieldMetadata, "main")
+		fieldName := getFieldName(fieldMetadata, mainTableAlias)
 		if err != nil {
 			return err
 		}
