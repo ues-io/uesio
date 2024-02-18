@@ -77,6 +77,7 @@ const getCategoryFunc = (
 				return (value && value.getIdFieldValue()) || ""
 			}
 		case "TEXT":
+		case "SELECT":
 			return (record: wire.WireRecord) =>
 				record.getFieldValue<string>(fieldId) || ""
 		default:
@@ -205,7 +206,13 @@ const getTextDataLabels = (
 			categories[category] = value || ""
 		}
 	})
-	return categories
+	const sortedCategories: Categories = {}
+	Object.keys(categories)
+		.sort()
+		.forEach((k) => {
+			sortedCategories[k] = categories[k]
+		})
+	return sortedCategories
 }
 
 const getDateDataLabels = (
@@ -254,6 +261,7 @@ const getDataLabels = (
 		case "USER":
 			return getReferenceDataLabels(wire, labels, categoryField)
 		case "TEXT":
+		case "SELECT":
 			return getTextDataLabels(wire, labels, categoryField)
 		default:
 			throw new Error("Invalid Field Type: " + fieldType)

@@ -91,7 +91,8 @@ type WireDefinitionBase = {
 }
 
 type AggregateWireDefinition = WireDefinitionBase & {
-	aggregate: true
+	aggregate?: true
+	batchsize?: number
 	viewOnly?: false
 	/**
 	 * @minLength 2

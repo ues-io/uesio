@@ -65,7 +65,6 @@ export type {
 	ValueConditionState,
 	ViewOnlyField,
 	ViewOnlyWireDefinition,
-	Wire,
 	WireConditionState,
 	WireDefinition,
 	WireDefinitionMap,
@@ -75,4 +74,4 @@ export type {
 	WireRecord,
 }
 
-export { isValueCondition, isGroupCondition, isParamCondition }
+export { isValueCondition, isGroupCondition, isParamCondition, Wire }

@@ -177,8 +177,8 @@ const initExistingWire = (
 		changes: {},
 		original: { ...existingWire.data },
 		deletes: {},
-		...getWireDefInfo(wireDef),
-		...addViewOnlyFields(wireDef),
+		...getWireDefInfo(wireDef as RegularWireDefinition),
+		...addViewOnlyFields(wireDef as RegularWireDefinition),
 	}
 }
 
@@ -212,8 +212,8 @@ const initWire = (
 	}
 	return {
 		...getNewPlainWireBase(viewId, wireName),
-		...getWireDefInfo(wireDef),
-		...addViewOnlyFields(wireDef),
+		...getWireDefInfo(wireDef as RegularWireDefinition),
+		...addViewOnlyFields(wireDef as RegularWireDefinition),
 	}
 }
 
