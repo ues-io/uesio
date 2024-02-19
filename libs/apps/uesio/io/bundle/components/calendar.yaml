@@ -1,0 +1,59 @@
+name: calendar
+title: Calendar
+icon: calendar_month
+description: A calendar component.
+category: DATA
+pack: calendar
+entrypoint: components/calendar/calendar
+discoverable: true
+defaultDefinition:
+  uesio.variant: uesio/io.default
+  weekends: true
+properties:
+  - name: weekends
+    type: CHECKBOX
+    label: Include Weekends
+  - name: events
+    type: LIST
+    items:
+      addLabel: Add Event Source
+      displayTemplate: "${label} - ${wire}"
+      title: Event Source Properties
+      defaultDefinition:
+        label: New Event Source
+      properties:
+        - name: label
+          label: Label
+          type: TEXT
+          required: true
+        - name: wire
+          label: Wire
+          type: WIRE
+          required: true
+        - name: startField
+          label: Start Field
+          required: true
+          type: FIELD
+          wireField: wire
+        - name: endField
+          label: End Field
+          type: FIELD
+          wireField: wire
+        - name: allDayField
+          label: All Field
+          type: FIELD
+          wireField: wire
+sections:
+  - type: HOME
+    properties:
+      - weekends
+      - uesio.id
+  - type: CUSTOM
+    id: events
+    label: Events
+    properties:
+      - events
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:
+  root:
