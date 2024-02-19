@@ -1,0 +1,15 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - "[&_h2.fc-toolbar-title]:(text-lg,text-slate-800)"
+      - "[&_.fc_table]:(text-sm,text-slate-700,border-slate-300)"
+      - "[&_.fc_th]:(border-slate-300,uppercase,font-normal,tracking-wider,text-xs,bg-slate-100)"
+      - "[&_.fc_th>div>a]:(p-2)"
+      - "[&_.fc_td]:(border-slate-300,text-xs)"
+      - "[&_.fc_td.fc-day-today]:(bg-slate-100)"
+      - "[&_.fc_.fc-button]:(uppercase,text-xs,text-slate-700,font-normal,tracking-wide,py-1.5,px-2,bg-white,border-1,border-slate-400)"
+      - "[&_.fc_.fc-button.fc-today-button]:(py-[7px])"
+      - "[&_.fc_.fc-button:disabled]:(hidden)"
+public: true
