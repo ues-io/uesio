@@ -109,21 +109,27 @@ interface UserApi {
 	getUniqueKey: () => string
 }
 
-interface BotHttpRequest {
+interface BotHttpRequest<
+	RequestBody = string | Record<string, unknown> | unknown[],
+> {
 	url: string
 	method: string
 	headers?: Record<string, string>
-	body?: string | Record<string, unknown> | unknown[]
+	body?: RequestBody
 }
-interface BotHttpResponse {
+interface BotHttpResponse<
+	ResponseBody = string | Record<string, unknown> | null,
+> {
 	code: number
 	status: string
 	headers: Record<string, string>
-	body: string | Record<string, unknown> | null
+	body: ResponseBody
 }
 
 interface HttpApi {
-	request: (options: BotHttpRequest) => BotHttpResponse
+	request: <RequestBody, ResponseBody>(
+		options: BotHttpRequest<RequestBody>
+	) => BotHttpResponse<ResponseBody>
 }
 
 interface SaveOptionsApi {
