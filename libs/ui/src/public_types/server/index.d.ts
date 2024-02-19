@@ -123,7 +123,10 @@ interface BotHttpResponse<ResponseBody> {
 }
 
 interface HttpApi {
-	request: <RequestBody, ResponseBody>(
+	request: <
+		RequestBody = string | Record<string, unknown> | unknown[],
+		ResponseBody = string | Record<string, unknown> | null,
+	>(
 		options: BotHttpRequest<RequestBody>
 	) => BotHttpResponse<ResponseBody>
 }
