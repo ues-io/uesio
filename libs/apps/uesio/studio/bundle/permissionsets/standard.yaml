@@ -16,7 +16,6 @@ bots:
   uesio/core.view_console: true
   uesio/core.view_new: true
   uesio/studio.createbundle: true
-  uesio/studio.makepayment: true
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
