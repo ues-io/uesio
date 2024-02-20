@@ -55,5 +55,11 @@ sections:
       - events
   - type: STYLES
   - type: DISPLAY
+  - type: SIGNALS
+    id: onDateClick
+    label: On Date Click
+  - type: SIGNALS
+    id: onEventClick
+    label: On Event Click
 styleRegions:
   root:
