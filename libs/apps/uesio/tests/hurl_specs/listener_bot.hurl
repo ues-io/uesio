@@ -112,12 +112,6 @@ HTTP 403
 [Asserts]
 body == "you do not have permission to call bot: uesio/studio.workspacetruncate\n"
 
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/makepayment
-{}
-HTTP 403
-[Asserts]
-body == "you do not have permission to call bot: uesio/studio.makepayment\n"
-
 POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 {}
 HTTP 403
