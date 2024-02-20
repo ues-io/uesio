@@ -32,9 +32,9 @@ type Integration struct {
 type IntegrationWrapper Integration
 
 func (i *Integration) GetType() string {
-	// backwards compatibility: map the old "stripe" and "sendgrid" integrations to fully-qualified core integrations
+	// backwards compatibility: map the old "sendgrid" integrations to fully-qualified core integrations
 	integrationTypeName := i.Type
-	if integrationTypeName == "stripe" || integrationTypeName == "sendgrid" {
+	if integrationTypeName == "sendgrid" {
 		integrationTypeName = fmt.Sprintf("uesio/core.%s", integrationTypeName)
 	}
 	return integrationTypeName

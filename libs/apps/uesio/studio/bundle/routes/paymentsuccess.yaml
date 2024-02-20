@@ -1,4 +1,0 @@
-name: paymentsuccess
-path: paymentsuccess/{session_id}
-view: paymentsuccess
-theme: default

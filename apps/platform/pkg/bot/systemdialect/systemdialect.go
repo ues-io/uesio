@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
 	"github.com/thecloudmasters/uesio/pkg/integ/openai"
 	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
-	"github.com/thecloudmasters/uesio/pkg/integ/stripe"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -118,8 +117,6 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	switch bot.GetKey() {
 	case "listener:uesio/studio.createbundle":
 		botFunction = runCreateBundleListenerBot
-	case "listener:uesio/studio.makepayment":
-		botFunction = runMakePaymentListenerBot
 	case "listener:uesio/studio.workspacetruncate":
 		botFunction = RunWorkspaceTruncateListenerBot
 	case "listener:uesio/studio.resetrecordaccesstokens":
@@ -150,8 +147,6 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 		botFunction = bedrock.RunAction
 	case "uesio/core.openai":
 		botFunction = openai.RunAction
-	case "uesio/core.stripe":
-		botFunction = stripe.RunAction
 	case "uesio/core.sendgrid":
 		botFunction = sendgrid.RunAction
 	}
@@ -174,8 +169,6 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http
 	routeKey := route.GetKey()
 
 	switch routeKey {
-	case "uesio/studio.paymentsuccess":
-		botFunction = runPaymentSuccessRouteBot
 	case "uesio/core.login":
 		botFunction = runLoginRouteBot
 	case "uesio/core.signup":
