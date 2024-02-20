@@ -1,7 +1,9 @@
-import { styles, api, definition } from "@uesio/ui"
+import { styles, api, definition, signal, context, wire } from "@uesio/ui"
 
 import FullCalendar from "@fullcalendar/react"
-import dayGridPlugin from "@fullcalendar/daygrid" // a plugin!
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction"
+import { EventClickArg } from "@fullcalendar/core"
 
 type EventSource = {
 	label: string
@@ -14,6 +16,78 @@ type EventSource = {
 type CalendarDefinition = {
 	weekends?: boolean
 	events?: EventSource[]
+	onDateClick?: signal.SignalDefinition[]
+	onEventClick?: signal.SignalDefinition[]
+}
+
+const checkEventSourceFieldTypes = (
+	wire: wire.Wire,
+	eventsource: EventSource
+) => {
+	const collection = wire.getCollection()
+	const startField = collection.getField(eventsource.startField)
+	const endField = collection.getField(eventsource.endField)
+	const allDayField = collection.getField(eventsource.allDayField)
+
+	if (!startField) {
+		throw new Error("Invalid start field: " + eventsource.startField)
+	}
+	if (!["TIMESTAMP", "DATE"].includes(startField.getType())) {
+		throw new Error(
+			"Invalid type for start field: " +
+				startField.getType() +
+				" must be a DATE or TIMESTAMP field."
+		)
+	}
+
+	if (endField && !["TIMESTAMP", "DATE"].includes(endField.getType())) {
+		throw new Error(
+			"Invalid type for end field: " +
+				endField.getType() +
+				" must be a DATE or TIMESTAMP field."
+		)
+	}
+
+	if (allDayField && allDayField.getType() !== "CHECKBOX") {
+		throw new Error(
+			"Invalid type for allDay field: " +
+				allDayField.getType() +
+				" must be a CHECKBOX field."
+		)
+	}
+}
+
+const getEventsForSource = (
+	wire: wire.Wire,
+	eventsource: EventSource,
+	context: context.Context
+) => {
+	checkEventSourceFieldTypes(wire, eventsource)
+	return wire?.getData().flatMap((record) => {
+		const id = record.getId()
+		const recordContext = context.addRecordFrame({
+			wire: wire.getId(),
+			record: id,
+		})
+		const title = recordContext.mergeString(eventsource.label)
+		const start = record.getDateValue(eventsource.startField)
+		const end = record.getDateValue(eventsource.endField)
+		const allDay = record.getFieldValue<boolean>(eventsource.allDayField)
+
+		if (!start) return []
+		return [
+			{
+				id,
+				title,
+				start,
+				end,
+				allDay,
+				extendedProps: {
+					context: recordContext,
+				},
+			},
+		]
+	})
 }
 
 const StyleDefaults = Object.freeze({
@@ -22,7 +96,7 @@ const StyleDefaults = Object.freeze({
 
 const Calendar: definition.UC<CalendarDefinition> = (props) => {
 	const { definition, context } = props
-	const { weekends, events } = definition
+	const { weekends, events, onDateClick, onEventClick } = definition
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	// Get a list of all wires used
@@ -30,67 +104,41 @@ const Calendar: definition.UC<CalendarDefinition> = (props) => {
 
 	const wires = api.wire.useWires(wireNames, context)
 
+	const onDateHandler = onDateClick
+		? (dateArg: DateClickArg) =>
+				api.signal.runMany(
+					onDateClick,
+					context.addSignalOutputFrame("dateClick", {
+						timestamp: dateArg.date.getTime() / 1000,
+						date: dateArg.dateStr,
+					})
+				)
+		: undefined
+
+	const onEventHandler = onEventClick
+		? (eventArg: EventClickArg) =>
+				api.signal.runMany(
+					onEventClick,
+					eventArg.event.extendedProps.context
+				)
+		: undefined
+
 	const eventData = events?.flatMap((eventsource) => {
-		const {
-			wire: wireName,
-			startField: startFieldName,
-			endField: endFieldName,
-			allDayField: allDayFieldName,
-		} = eventsource
-		const wire = wires[wireName]
+		const wire = wires[eventsource.wire]
 		if (!wire) return []
-		const collection = wire.getCollection()
-		const startField = collection.getField(startFieldName)
-		if (!startField) {
-			throw new Error("Invalid start field")
-		}
-		if (!["TIMESTAMP", "DATE"].includes(startField.getType())) {
-			throw new Error(
-				"Invalid type for start field: " + startField.getType()
-			)
-		}
-
-		const endField = collection.getField(endFieldName)
-		if (endField && !["TIMESTAMP", "DATE"].includes(endField.getType())) {
-			throw new Error("Invalid type for end field: " + endField.getType())
-		}
-		const allDayField = collection.getField(allDayFieldName)
-		if (allDayField && allDayField.getType() !== "CHECKBOX") {
-			throw new Error(
-				"Invalid type for allDay field: " + allDayField.getType()
-			)
-		}
-
-		return wire?.getData().flatMap((record) => {
-			const recordContext = context.addRecordFrame({
-				wire: wire.getId(),
-				record: record.getId(),
-			})
-			const title = recordContext.mergeString(eventsource.label)
-			const start = record.getDateValue(startFieldName)
-			const end = record.getDateValue(endFieldName)
-			const allDay = allDayField
-				? record.getFieldValue<boolean>(allDayFieldName)
-				: true
-			if (!start) return []
-			return [
-				{
-					title,
-					start,
-					end,
-					allDay,
-				},
-			]
-		})
+		return getEventsForSource(wire, eventsource, context)
 	})
 
 	return (
 		<div className={classes.root}>
 			<FullCalendar
-				plugins={[dayGridPlugin]}
+				plugins={[dayGridPlugin, interactionPlugin]}
 				weekends={weekends}
 				initialView="dayGridMonth"
 				events={eventData}
+				dateClick={onDateHandler}
+				eventClick={onEventHandler}
+				defaultAllDay={true}
 			/>
 		</div>
 	)
