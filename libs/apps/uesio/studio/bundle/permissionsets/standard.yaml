@@ -16,7 +16,6 @@ bots:
   uesio/core.view_console: true
   uesio/core.view_new: true
   uesio/studio.createbundle: true
-  uesio/studio.makepayment: true
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
@@ -110,7 +109,6 @@ views:
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
   uesio/studio.useraccesstokens: true
@@ -207,7 +205,6 @@ routes:
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
   uesio/studio.useraccesstoken: true
