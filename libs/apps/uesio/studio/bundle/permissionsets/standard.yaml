@@ -109,7 +109,6 @@ views:
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
   uesio/studio.useraccesstokens: true
@@ -206,7 +205,6 @@ routes:
   uesio/studio.licensespricing: true
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
-  uesio/studio.paymentsuccess: true
   uesio/studio.recorddata: true
   uesio/studio.apppublish: true
   uesio/studio.useraccesstoken: true
