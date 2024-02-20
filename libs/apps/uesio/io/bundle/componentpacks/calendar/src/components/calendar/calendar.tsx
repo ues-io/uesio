@@ -2,6 +2,7 @@ import { styles, api, definition, signal, context, wire } from "@uesio/ui"
 
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
+import timeGridPlugin from "@fullcalendar/timegrid"
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction"
 import { EventClickArg } from "@fullcalendar/core"
 
@@ -132,9 +133,14 @@ const Calendar: definition.UC<CalendarDefinition> = (props) => {
 	return (
 		<div className={classes.root}>
 			<FullCalendar
-				plugins={[dayGridPlugin, interactionPlugin]}
+				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				weekends={weekends}
 				initialView="dayGridMonth"
+				headerToolbar={{
+					left: "prev,next today",
+					center: "title",
+					right: "dayGridMonth,timeGridWeek,timeGridDay",
+				}}
 				events={eventData}
 				dateClick={onDateHandler}
 				eventClick={onEventHandler}
