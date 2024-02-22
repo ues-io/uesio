@@ -3,27 +3,13 @@ import { wire } from "@uesio/ui"
 
 interface SearchResult<T> {
 	data: T[]
-	has_more: boolean
-	next_page?: string | null
-	object: "search_result"
-	url: string
 }
 
 interface Customer {
 	id: string
-	object: "customer"
-	address?: {
-		city?: string
-		country?: string
-	}
-	created: number
-	deleted: boolean
-	description?: string
 	email?: string
 	metadata?: Record<string, string>
 	name?: string
-	phone?: string
-	preferred_locales?: string[]
 }
 
 export default function upgrade_plan(bot: ListenerBotApi) {
@@ -66,8 +52,8 @@ export default function upgrade_plan(bot: ListenerBotApi) {
 		currency: "usd",
 		customer: customer.id,
 		success_url:
-			"https://example.com/success?session_id={CHECKOUT_SESSION_ID}", //this must be a route bot
-		cancel_url: "https://example.com/cancel",
+			"https://studio.uesio-dev.com:3000/paymentsuccess/{CHECKOUT_SESSION_ID}",
+		cancel_url: "https://studio.uesio-dev.com:3000/user/usage",
 		line_items: [
 			{
 				price: plan,

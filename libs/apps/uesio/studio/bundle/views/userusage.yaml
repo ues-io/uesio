@@ -39,7 +39,7 @@ definition:
               type: SUBQUERY
               operator: IN
               subcollection: uesio/studio.usage_plan_user
-              subfield: uesio/studio.user
+              subfield: uesio/studio.plan
             - field: uesio/studio.default
               value: true
       limit: 1

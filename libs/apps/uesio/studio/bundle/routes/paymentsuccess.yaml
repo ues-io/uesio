@@ -1,0 +1,4 @@
+name: paymentsuccess
+type: bot
+path: paymentsuccess/{session_id}
+bot: paymentsuccess

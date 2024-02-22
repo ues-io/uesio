@@ -1,0 +1,8 @@
+name: paymentsuccess
+type: ROUTE
+dialect: TYPESCRIPT
+params:
+  - name: session_id
+    label: Checkout Session ID
+    type: TEXT
+    required: true

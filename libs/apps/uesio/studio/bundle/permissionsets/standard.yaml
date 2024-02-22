@@ -213,6 +213,7 @@ routes:
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
   uesio/studio.userusage: true
+  uesio/studio.paymentsuccess: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true
