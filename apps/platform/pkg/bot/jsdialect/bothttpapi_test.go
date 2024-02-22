@@ -903,7 +903,7 @@ func Test_Request(t *testing.T) {
 			}
 			credentialSaveCalled = false
 			credentialFetchCalled = false
-			botApi := NewBotHttpAPI(&meta.Bot{}, tt.args.integration)
+			botApi := NewBotHttpAPI(tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			serveStatusCode = tt.args.responseStatusCode

@@ -1,0 +1,5 @@
+name: uesio
+label: Uesio Site
+public: true
+loadBot: uesio_load
+saveBot: uesio_save

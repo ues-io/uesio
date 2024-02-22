@@ -1,0 +1,4 @@
+name: uesio_self
+label: Self Connection
+type: uesio/core.uesio
+baseUrl: https://tests.$Site{domain}

@@ -1,0 +1,5 @@
+name: animal_external
+label: Animal External
+pluralLabel: Animals External
+tablename: uesio/tests.animal
+integration: uesio_self

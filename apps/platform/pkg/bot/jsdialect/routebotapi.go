@@ -55,7 +55,7 @@ func NewRouteBotApi(bot *meta.Bot, route *meta.Route, request *http.Request, ses
 			connection: connection,
 		},
 		LogApi: NewBotLogAPI(bot, session.Context()),
-		Http:   NewBotHttpAPI(bot, wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
+		Http:   NewBotHttpAPI(wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
 	}
 }
 

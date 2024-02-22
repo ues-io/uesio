@@ -11,7 +11,7 @@ func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.In
 	return &RunIntegrationActionBotAPI{
 		actionName: actionName,
 		LogApi:     NewBotLogAPI(bot, integrationConnection.Context()),
-		Http:       NewBotHttpAPI(bot, integrationConnection),
+		Http:       NewBotHttpAPI(integrationConnection),
 		Params: &ParamsAPI{
 			Params: params,
 		},

@@ -1,0 +1,4 @@
+name: description
+type: TEXT
+label: Description
+columnname: uesio/cms.description
