@@ -1,0 +1,4 @@
+name: slug
+type: TEXT
+label: Slug
+columnname: uesio/cms.slug

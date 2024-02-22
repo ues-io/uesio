@@ -1,0 +1,4 @@
+name: website
+label: Web Site
+type: uesio/core.uesio
+baseUrl: https://$Site{domain}

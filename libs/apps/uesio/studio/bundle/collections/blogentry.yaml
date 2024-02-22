@@ -1,4 +1,6 @@
 name: blogentry
-type: DYNAMIC
+type: EXTERNAL
+integration: website
 label: Blog Entry
 pluralLabel: Blog Entries
+tablename: uesio/cms.article

@@ -32,7 +32,7 @@ func NewSaveBotAPI(bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveO
 		connection:            connection,
 		integrationConnection: integrationConnection,
 
-		Http:                NewBotHttpAPI(bot, integrationConnection),
+		Http:                NewBotHttpAPI(integrationConnection),
 		Deletes:             &DeletesAPI{saveOp},
 		Inserts:             &InsertsAPI{saveOp},
 		Updates:             &UpdatesAPI{saveOp},

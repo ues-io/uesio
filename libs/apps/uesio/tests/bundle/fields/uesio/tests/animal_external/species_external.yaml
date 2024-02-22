@@ -1,0 +1,4 @@
+name: species_external
+label: Species External
+type: TEXT
+columnname: uesio/tests.species

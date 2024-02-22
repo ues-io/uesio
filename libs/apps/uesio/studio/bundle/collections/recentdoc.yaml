@@ -1,4 +1,6 @@
 name: recentdoc
-type: DYNAMIC
+type: EXTERNAL
+integration: docssite
 label: Recent Doc
 pluralLabel: Recent Docs
+tablename: uesio/cms.article

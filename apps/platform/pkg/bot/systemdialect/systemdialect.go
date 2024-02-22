@@ -186,6 +186,11 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http
 func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction LoadBotFunc
 
+	switch bot.GetKey() {
+	case "load:uesio/core.uesio_load":
+		botFunction = runUesioExternalLoadBot
+	}
+
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
@@ -193,10 +198,6 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.
 		botFunction = runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
 		botFunction = runRecentMetadataLoadBot
-	case "uesio/studio.blogentry":
-		botFunction = runBlogEntryLoadBot
-	case "uesio/studio.recentdoc":
-		botFunction = runRecentDocLoadBot
 	case "uesio/studio.usertokenvalue":
 		botFunction = runUserTokenValueLoadBot
 	case "uesio/studio.recordtokenvalue":
@@ -219,6 +220,11 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.
 
 func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction SaveBotFunc
+
+	switch bot.GetKey() {
+	case "save:uesio/core.uesio_save":
+		botFunction = runUesioExternalSaveBot
+	}
 
 	switch op.Metadata.GetFullName() {
 

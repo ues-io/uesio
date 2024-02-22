@@ -92,6 +92,17 @@ func (cm *CollectionMetadata) GetIntegrationName() string {
 	return integrationName
 }
 
+func (cm *CollectionMetadata) GetExternalFieldMap() map[string]*FieldMetadata {
+	externalMap := map[string]*FieldMetadata{}
+	for _, field := range cm.Fields {
+		externalFieldName := field.GetExternalFieldName()
+		if externalFieldName != "" {
+			externalMap[externalFieldName] = field
+		}
+	}
+	return externalMap
+}
+
 func (cm *CollectionMetadata) IsDynamic() bool {
 	return cm.Type == "DYNAMIC" || meta.IsBundleableCollection(cm.GetFullName())
 }

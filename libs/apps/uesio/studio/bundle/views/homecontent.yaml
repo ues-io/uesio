@@ -4,10 +4,22 @@ definition:
   wires:
     blogentries:
       collection: uesio/studio.blogentry
-      batchsize: 5
+      fields:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.slug:
+      batchsize: 4
     recentdocs:
       collection: uesio/studio.recentdoc
-      batchsize: 5
+      fields:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.slug:
+        uesio/core.updatedat:
+      order:
+        - field: uesio/core.updatedat
+          desc: true
+      batchsize: 4
   # Components are how we describe the layout of our view
   components:
     - uesio/io.box:
@@ -95,15 +107,15 @@ definition:
                                 uesio.variant: uesio/io.action
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/cms.name}
+                                      text: ${uesio/studio.name}
                                       element: div
                                   - uesio/io.text:
-                                      text: ${uesio/cms.description}
+                                      text: ${uesio/studio.description}
                                       uesio.variant: uesio/io.smallcontent
                                       element: div
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://$Site{domain}/blog/${uesio/cms.slug}"
+                                    path: "https://$Site{domain}/blog/${uesio/studio.slug}"
                                     newtab: true
                 - uesio/io.griditem:
                     components:
@@ -118,13 +130,13 @@ definition:
                                 uesio.variant: uesio/io.action
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/cms.name}
+                                      text: ${uesio/studio.name}
                                       element: div
                                   - uesio/io.text:
-                                      text: ${uesio/cms.description}
+                                      text: ${uesio/studio.description}
                                       uesio.variant: uesio/io.smallcontent
                                       element: div
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://docs.$Site{domain}/${uesio/cms.slug}"
+                                    path: "https://docs.$Site{domain}/${uesio/studio.slug}"
                                     newtab: true

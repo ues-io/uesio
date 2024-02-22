@@ -14,8 +14,8 @@ type LoadOp struct {
 	CollectionName     string                 `json:"collection" bot:"collection"`
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
-	Collection         meta.Group             `json:"data"`
-	Conditions         []LoadRequestCondition `json:"conditions" bot:"conditions"`
+	Collection         meta.Group             `json:"data,omitempty"`
+	Conditions         []LoadRequestCondition `json:"conditions,omitempty" bot:"conditions"`
 	Fields             []LoadRequestField     `json:"fields,omitempty" bot:"fields"`
 	GroupBy            []LoadRequestField     `json:"groupby,omitempty" bot:"groupby"`
 	Query              bool                   `json:"query"`

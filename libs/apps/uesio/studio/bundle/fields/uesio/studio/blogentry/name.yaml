@@ -1,0 +1,4 @@
+name: name
+type: TEXT
+label: Name
+columnname: uesio/cms.name

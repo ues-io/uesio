@@ -21,8 +21,7 @@ import (
 )
 
 type BotHttpAPI struct {
-	bot *meta.Bot
-	ic  *wire.IntegrationConnection
+	ic *wire.IntegrationConnection
 }
 
 func (api *BotHttpAPI) getSession() *sess.Session {
@@ -33,10 +32,9 @@ func (api *BotHttpAPI) GetIntegration() *meta.Integration {
 	return api.ic.GetIntegration()
 }
 
-func NewBotHttpAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection) *BotHttpAPI {
+func NewBotHttpAPI(integrationConnection *wire.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
-		bot: bot,
-		ic:  integrationConnection,
+		ic: integrationConnection,
 	}
 }
 
@@ -61,11 +59,12 @@ func NewBotHttpAuth(connection *wire.IntegrationConnection) *BotHttpAuth {
 }
 
 type BotHttpRequest struct {
-	Headers map[string]string `json:"headers" bot:"headers"`
-	Method  string            `json:"method" bot:"method"`
-	URL     string            `json:"url" bot:"url"`
-	Body    interface{}       `json:"body" bot:"body"`
-	Auth    *BotHttpAuth      `json:"auth" bot:"auth"`
+	Headers      map[string]string `json:"headers" bot:"headers"`
+	Method       string            `json:"method" bot:"method"`
+	URL          string            `json:"url" bot:"url"`
+	Body         interface{}       `json:"body" bot:"body"`
+	Auth         *BotHttpAuth      `json:"auth" bot:"auth"`
+	ResponseBody interface{}       `json:"-"`
 }
 
 func (req *BotHttpRequest) getLowerCaseHeaderMap() map[string]string {
@@ -147,7 +146,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 			payloadReader = strings.NewReader(payload)
 		case []byte:
 			payloadReader = bytes.NewReader(payload)
-		case map[string]interface{}, []interface{}:
+		case map[string]interface{}, []interface{}, wire.LoadRequestBatch:
 
 			if strings.Contains(req.getContentType(), "x-www-form-urlencoded") {
 				qs := &form.Values{}
@@ -201,7 +200,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
 	// Attempt to parse the response body into a structured representation,
 	// if possible. If it fails, just return the raw response as a string
-	parsedBody, err := ParseResponseBody(contentType, responseData, nil)
+	parsedBody, err := ParseResponseBody(contentType, responseData, req.ResponseBody)
 	if err != nil {
 		return &BotHttpResponse{
 			Headers: getBotHeaders(httpResp.Header),

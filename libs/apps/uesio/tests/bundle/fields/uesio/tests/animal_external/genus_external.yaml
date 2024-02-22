@@ -1,0 +1,4 @@
+name: genus_external
+label: Genus External
+type: TEXT
+columnname: uesio/tests.genus
