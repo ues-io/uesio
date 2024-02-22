@@ -9,6 +9,7 @@ definition:
         uesio/studio.default:
         uesio/studio.description:
         uesio/studio.price:
+        uesio/studio.external_plan_id:
         uesio/core.createdat:
         uesio/core.createdby:
         uesio/core.updatedat:
@@ -96,6 +97,8 @@ definition:
                                 fieldId: uesio/studio.description
                             - uesio/io.field:
                                 fieldId: uesio/studio.price
+                            - uesio/io.field:
+                                fieldId: uesio/studio.external_plan_id
                             - uesio/io.field:
                                 fieldId: uesio/studio.default
           - uesio/io.box:
@@ -195,6 +198,8 @@ definition:
                   fieldId: uesio/studio.description
               - uesio/io.field:
                   fieldId: uesio/studio.price
+              - uesio/io.field:
+                  fieldId: uesio/studio.external_plan_id
               - uesio/io.field:
                   fieldId: uesio/studio.default
       actions:

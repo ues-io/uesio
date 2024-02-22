@@ -26,6 +26,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.price:
+        uesio/studio.external_plan_id:
     user_selected_plan:
       collection: uesio/studio.usage_plan
       fields:
@@ -173,9 +174,13 @@ definition:
                                 uesio.variant: uesio/io.primary
                                 text: Upgrade to ${name}
                                 signals:
-                                  - signal: notification/ADD
-                                    text: Coming soon!
-                                    severity: success
+                                  - signal: bot/CALL
+                                    stepId: upgradePlanResult
+                                    bot: uesio/studio.upgrade_plan
+                                    params:
+                                      plan: ${external_plan_id}
+                                  - signal: route/REDIRECT
+                                    path: $SignalOutput{upgradePlanResult:checkoutResult.session.url}
                                 uesio.display:
                                   - type: fieldValue
                                     operator: NOT_EQUALS

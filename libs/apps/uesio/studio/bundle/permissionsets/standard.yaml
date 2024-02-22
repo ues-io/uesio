@@ -19,6 +19,7 @@ bots:
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
+  uesio/studio.upgrade_plan: true
 views:
   uesio/studio.app: true
   uesio/studio.appcrumb: true
