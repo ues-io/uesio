@@ -1,4 +1,4 @@
-name: upgrade_plan
+name: select_plan
 public: true
 type: LISTENER
 dialect: TYPESCRIPT

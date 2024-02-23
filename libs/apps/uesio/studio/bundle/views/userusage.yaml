@@ -40,6 +40,9 @@ definition:
               operator: IN
               subcollection: uesio/studio.usage_plan_user
               subfield: uesio/studio.plan
+              conditions:
+                - field: uesio/studio.user
+                  value: $User{id}
             - field: uesio/studio.default
               value: true
       limit: 1
@@ -176,7 +179,7 @@ definition:
                                 signals:
                                   - signal: bot/CALL
                                     stepId: upgradePlanResult
-                                    bot: uesio/studio.upgrade_plan
+                                    bot: uesio/studio.select_plan
                                     params:
                                       plan: ${external_plan_id}
                                   - signal: route/REDIRECT
