@@ -14,7 +14,29 @@ type SessionAPI struct {
 	session *sess.Session
 	wsApi   *WorkspaceAPI
 	appApi  *AppAPI
+	siteApi *SiteAPI
 }
+
+type SiteAPI struct {
+	site *meta.Site
+}
+
+func (s *SiteAPI) GetName() string {
+	return s.site.Name
+}
+
+func (s *SiteAPI) GetTitle() string {
+	return s.site.Title
+}
+
+func (s *SiteAPI) GetDomain() string {
+	return s.site.Domain
+}
+
+func (s *SiteAPI) GetSubdomain() string {
+	return s.site.Subdomain
+}
+
 type WorkspaceAPI struct {
 	workspace *meta.Workspace
 }
