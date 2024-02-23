@@ -93,6 +93,19 @@ interface SessionApi {
 	// If in a Workspace context, returns a Workspace Api
 	// to obtain info about the context Workspace
 	getWorkspace: () => WorkspaceApi
+	// returns a Site Api
+	// to obtain info about the context Workspace
+	getSite: () => SiteApi
+}
+interface SiteApi {
+	// Return the name of the site
+	getName: () => string
+	// Return the title of the site
+	getTitle: () => string
+	// Return the domain of the site
+	getDomain: () => string
+	// Return the subdomain of the site
+	getSubDomain: () => string
 }
 interface WorkspaceApi {
 	// Return the name of the workspace
