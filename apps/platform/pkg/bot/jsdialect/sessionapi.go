@@ -33,7 +33,7 @@ func (s *SiteAPI) GetDomain() string {
 	return s.site.Domain
 }
 
-func (s *SiteAPI) GetSubdomain() string {
+func (s *SiteAPI) GetSubDomain() string {
 	return s.site.Subdomain
 }
 
@@ -80,6 +80,17 @@ func (s *SessionAPI) GetId() string {
 
 func (s *SessionAPI) InWorkspaceContext() bool {
 	return s.session.GetWorkspace() != nil
+}
+
+func (s *SessionAPI) GetSite() *SiteAPI {
+	if s.siteApi != nil {
+		return s.siteApi
+	}
+	if s.session.GetSite() != nil {
+		s.siteApi = &SiteAPI{site: s.session.GetSite()}
+		return s.siteApi
+	}
+	return nil
 }
 
 func (s *SessionAPI) GetWorkspace() *WorkspaceAPI {

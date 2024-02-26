@@ -1,0 +1,9 @@
+name: select_plan
+public: true
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: plan
+    label: Plan ID
+    type: TEXT
+    required: true

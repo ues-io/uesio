@@ -19,6 +19,7 @@ bots:
   uesio/studio.workspacetruncate: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
+  uesio/studio.select_plan: true
 views:
   uesio/studio.app: true
   uesio/studio.appcrumb: true
@@ -212,6 +213,7 @@ routes:
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
   uesio/studio.userusage: true
+  uesio/studio.paymentsuccess: true
 files: {}
 collections:
   uesio/studio.recentmetadata: true

@@ -84,5 +84,15 @@
 		"uesio/studio.user": {
 			"uesio/core.uniquekey": "uesio"
 		}
+	},
+	{
+		"uesio/studio.name": "stripe",
+		"uesio/studio.fullname": "uesio/stripe",
+		"uesio/studio.description": "Stripe Integration",
+		"uesio/studio.color": "#818cf8",
+		"uesio/studio.icon": "payments",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
+		}
 	}
 ]
