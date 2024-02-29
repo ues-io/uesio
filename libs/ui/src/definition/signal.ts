@@ -16,7 +16,7 @@ type ComponentSignalDispatcher<T> = (
 	context: Context,
 	platform: Platform,
 	id: string
-) => void
+) => unknown | Context
 
 type SignalDescriptor = {
 	dispatcher: SignalDispatcher

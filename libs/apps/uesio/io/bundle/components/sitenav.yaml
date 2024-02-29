@@ -9,6 +9,7 @@ discoverable: true
 properties:
 variants:
   - uesio/io.tile:uesio/io.nav
+  - uesio/io.text:uesio/io.icon
 sections:
   - type: HOME
     properties:

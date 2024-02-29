@@ -74,10 +74,25 @@ type ColumnDefinition = {
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
+type SelectedState = {
+	selected: Record<string, boolean>
+	wire: string
+}
+
+const getSelected: signal.ComponentSignalDescriptor<SelectedState> = {
+	dispatcher: (state, signal, context) =>
+		context.addMultiRecordFrame({
+			view: context.getViewId(),
+			wire: state.wire,
+			records: state.selected ? Object.keys(state.selected) : [],
+		}),
+}
+
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
 	SET_EDIT_MODE: setEditMode,
 	SET_READ_MODE: setReadMode,
+	GET_SELECTED: getSelected,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
 	...drawerSignals,
@@ -165,6 +180,9 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const [selected, setSelected] = api.component.useStateSlice<
 		Record<string, boolean>
 	>("selected", componentId, {})
+
+	// Set the wire being used into the state of this wire. That way our signals can access it.
+	api.component.useStateSlice<string>("wire", componentId, wire?.getId())
 
 	const [openDrawers] = api.component.useStateSlice<Record<string, boolean>>(
 		"drawerState",

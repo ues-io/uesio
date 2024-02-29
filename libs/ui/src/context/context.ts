@@ -29,6 +29,7 @@ import { getCollection } from "../bands/collection/selectors"
 const ERROR = "ERROR",
 	COMPONENT = "COMPONENT",
 	RECORD = "RECORD",
+	MULTI_RECORD = "MULTI_RECORD",
 	THEME = "THEME",
 	VIEW = "VIEW",
 	ROUTE = "ROUTE",
@@ -60,6 +61,12 @@ interface RecordContext {
 	view?: string
 	wire: string
 	record: string
+}
+
+interface MultiRecordContext {
+	view?: string
+	wire: string
+	records: string[]
 }
 
 interface RecordDataContext {
@@ -133,6 +140,12 @@ interface RecordContextFrame extends RecordContext {
 	view: string
 }
 
+interface MultiRecordContextFrame extends MultiRecordContext {
+	type: typeof MULTI_RECORD
+	// We will throw an error if view is not available at time of construction
+	view: string
+}
+
 interface RecordDataContextFrame extends RecordDataContext {
 	type: typeof RECORD_DATA
 }
@@ -167,12 +180,18 @@ type ContextFrame =
 	| ThemeContextFrame
 	| ViewContextFrame
 	| RecordContextFrame
+	| MultiRecordContextFrame
 	| RecordDataContextFrame
 	| WireContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
 	| SignalOutputContextFrame
 	| PropsContextFrame
+
+const isContextObject = (o: unknown): o is Context =>
+	o &&
+	typeof o === "object" &&
+	Object.prototype.hasOwnProperty.call(o, "stack")
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -200,6 +219,14 @@ const providesRecordContext = (
 ): frame is RecordContextFrame | RecordDataContextFrame =>
 	[RECORD, RECORD_DATA].includes(frame.type)
 
+const providesRecordOrMultiRecordContext = (
+	frame: ContextFrame
+): frame is
+	| RecordContextFrame
+	| RecordDataContextFrame
+	| MultiRecordContextFrame =>
+	[RECORD, RECORD_DATA, MULTI_RECORD].includes(frame.type)
+
 const isFieldModeContextFrame = (
 	frame: ContextFrame
 ): frame is FieldModeContextFrame => frame.type === FIELD_MODE
@@ -215,7 +242,7 @@ const isPropsContextFrame = (frame: ContextFrame): frame is PropsContextFrame =>
 const hasWireContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | WireContextFrame =>
-	[RECORD, WIRE].includes(frame.type)
+	[RECORD, WIRE, MULTI_RECORD].includes(frame.type)
 const hasViewContext = (
 	frame: ContextFrame
 ): frame is ViewContextFrame | RouteContextFrame =>
@@ -339,6 +366,43 @@ class Context {
 					wireRecord === undefined ||
 					frame.recordData === wireRecord.source
 			)?.index
+
+	// Gets either multiple records or a single record depending on the
+	// topmost record-having frame in the context.
+	getRecords = (wireId?: string) => {
+		const recordFrame = this.stack
+			.filter(providesRecordOrMultiRecordContext)
+			.find((frame) =>
+				wireId
+					? (frame.type === "RECORD" ||
+							frame.type === "MULTI_RECORD") &&
+						frame.wire === wireId
+					: true
+			)
+
+		if (recordFrame?.type === "RECORD_DATA") {
+			return [new WireRecord(recordFrame.recordData, "", new Wire())]
+		}
+
+		const wire = this.getWire(wireId)
+
+		if (!wire) return undefined
+
+		if (recordFrame?.type === "MULTI_RECORD") {
+			return (
+				recordFrame.records?.map((record) => wire.getRecord(record)) ||
+				[]
+			)
+		}
+
+		// If we've got a recordFrame with a record already, return the associated record
+		if (recordFrame?.record) {
+			return [wire.getRecord(recordFrame.record)]
+		}
+
+		// Otherwise, just return all the data
+		return wire.getData()
+	}
 
 	getRecord = (wireId?: string) => {
 		const recordFrame = this.stack
@@ -531,6 +595,14 @@ class Context {
 			view: recordContext.view || this.getViewId(),
 			wire: recordContext.wire,
 			record: recordContext.record,
+		})
+
+	addMultiRecordFrame = (recordContext: MultiRecordContext) =>
+		this.#addFrame({
+			type: MULTI_RECORD,
+			view: recordContext.view || this.getViewId(),
+			wire: recordContext.wire,
+			records: recordContext.records,
 		})
 
 	addRecordDataFrame = (recordData: PlainWireRecord, index?: number) =>
@@ -762,6 +834,7 @@ export {
 	injectDynamicContext,
 	hasViewContext,
 	isRecordContextFrame,
+	isContextObject,
 	newContext,
 }
 

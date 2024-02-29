@@ -1,6 +1,6 @@
 import produce from "immer"
 import { getSignal } from "../../component/registry"
-import { Context } from "../../context/context"
+import { Context, isContextObject } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { getCurrentState, dispatch } from "../../store/store"
 import { selectTarget } from "./selectors"
@@ -92,15 +92,22 @@ const getComponentSignalDefinition = () => ({
 				dispatch(
 					setComponent({
 						id: componentState.id,
-						state: produce(componentState.state, (draft) =>
-							handler.dispatcher(
+						state: produce(componentState.state, (draft) => {
+							const returnvalue = handler.dispatcher(
 								draft,
 								signal,
 								context,
 								platform,
 								componentState.id
 							)
-						),
+							// If we returned a context object from our dispatcher,
+							// That means we want to set it as the new context.
+							if (isContextObject(returnvalue)) {
+								context = returnvalue
+								return
+							}
+							return returnvalue
+						}),
 					})
 				)
 			})
