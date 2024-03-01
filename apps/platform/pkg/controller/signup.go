@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/routing"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -49,7 +49,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if signupMethod.AutoLogin {
-		loginRedirectResponse(w, r, user, systemSession)
+		auth.LoginRedirectResponse(w, r, user, systemSession)
 		return
 	}
 
@@ -59,7 +59,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &routing.LoginResponse{
+	filejson.RespondJSON(w, r, &preload.LoginResponse{
 		RedirectRouteNamespace: redirectRouteNamespace,
 		RedirectRouteName:      redirectRouteName,
 	})

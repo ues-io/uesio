@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -81,5 +81,5 @@ func GetRouteParams(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, routeParams)
+	filejson.RespondJSON(w, r, routeParams)
 }

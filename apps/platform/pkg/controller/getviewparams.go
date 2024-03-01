@@ -9,7 +9,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -69,5 +69,5 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, viewParams)
+	filejson.RespondJSON(w, r, viewParams)
 }

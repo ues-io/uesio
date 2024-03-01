@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
 	"text/template"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
@@ -40,7 +42,7 @@ func init() {
 	}).ParseFiles(indexPath, cssPath))
 }
 
-func getComponentPackURLs(componentPackDeps *routing.MetadataMergeData, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) []string {
+func getComponentPackURLs(componentPackDeps *preload.MetadataMergeData, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) []string {
 	allDeps := componentPackDeps.GetItems()
 	packUrls := make([]string, len(allDeps))
 	for i, packDep := range allDeps {
@@ -56,7 +58,7 @@ func getComponentPackURLs(componentPackDeps *routing.MetadataMergeData, workspac
 	return packUrls
 }
 
-func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
+func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -116,44 +118,19 @@ func getPackUrl(key string, packModstamp int64, workspace *routing.WorkspaceMerg
 
 }
 
-func GetSessionMergeData(session *sess.Session) *routing.SessionMergeData {
-	return &routing.SessionMergeData{
+func GetSessionMergeData(session *sess.Session) *preload.SessionMergeData {
+	return &preload.SessionMergeData{
 		Hash: session.GetSessionIdHash(),
 	}
 
 }
 
-func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
-	userInfo := session.GetContextUser()
-	userPicture := userInfo.GetPicture()
-	userProfile := userInfo.GetProfileRef()
-	userMergeData := &routing.UserMergeData{
-		ID:        userInfo.ID,
-		Username:  userInfo.UniqueKey,
-		FirstName: userInfo.FirstName,
-		LastName:  userInfo.LastName,
-		Profile:   userInfo.Profile,
-		Site:      session.GetSite().ID,
-		Language:  userInfo.Language,
-	}
-	if userProfile != nil {
-		userMergeData.ProfileLabel = userProfile.Label
-	}
-	if userPicture != nil {
-		userMergeData.Picture = &routing.UserPictureMergeData{
-			ID:        userPicture.ID,
-			UpdatedAt: userPicture.UpdatedAt,
-		}
-	}
-	return userMergeData
-}
-
-func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {
+func GetWorkspaceMergeData(workspace *meta.Workspace) *preload.WorkspaceMergeData {
 	if workspace == nil {
 		return nil
 	}
 
-	return &routing.WorkspaceMergeData{
+	return &preload.WorkspaceMergeData{
 		Name:    workspace.Name,
 		App:     workspace.GetAppFullName(),
 		Wrapper: routing.DEFAULT_BUILDER_COMPONENT,
@@ -175,7 +152,7 @@ func MergeRouteData(mergeableText string, mergeData *merge.ServerMergeData) (str
 	return templating.Execute(template, mergeData)
 }
 
-func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
+func GetRoutingMergeData(route *meta.Route, metadata *preload.PreloadMetadata, session *sess.Session) (*preload.RouteMergeData, error) {
 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
@@ -221,7 +198,7 @@ func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, s
 		}
 	}
 
-	return &routing.RouteMergeData{
+	return &preload.RouteMergeData{
 		Dependencies: metadata,
 		Namespace:    route.Namespace,
 		Params:       route.Params,
@@ -235,8 +212,8 @@ func GetRoutingMergeData(route *meta.Route, metadata *routing.PreloadMetadata, s
 	}, err
 }
 
-func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
-	return &routing.SiteMergeData{
+func GetSiteMergeData(site *meta.Site) *preload.SiteMergeData {
+	return &preload.SiteMergeData{
 		Name:         site.Name,
 		App:          site.GetAppFullName(),
 		Subdomain:    site.Subdomain,
@@ -248,7 +225,7 @@ func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 	}
 }
 
-func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
+func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta *preload.PreloadMetadata, buildMode bool, session *sess.Session) {
 
 	// #2783 Prevent 3rd party sites from iframing Uesio
 	// Add a content security policy header to prevent any other sites from iframing this site
@@ -259,7 +236,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 
 	site := session.GetSite()
 
-	routingMergeData, err := GetRoutingMergeData(route, preload, session)
+	routingMergeData, err := GetRoutingMergeData(route, preloadmeta, session)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
 		return
@@ -267,12 +244,12 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 
 	vendorScriptUrls := file.GetVendorScriptUrls()
 
-	mergeData := routing.MergeData{
+	mergeData := preload.MergeData{
 		Route:               routingMergeData,
-		User:                GetUserMergeData(session),
+		User:                preload.GetUserMergeData(session),
 		Session:             GetSessionMergeData(session),
 		Site:                GetSiteMergeData(site),
-		PreloadMetadata:     preload,
+		PreloadMetadata:     preloadmeta,
 		MonacoEditorVersion: file.GetMonacoEditorVersion(),
 		StaticAssetsPath:    file.GetAssetsPath(),
 		StaticAssetsHost:    file.GetAssetsHost(),

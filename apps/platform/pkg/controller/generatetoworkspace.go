@@ -11,7 +11,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/types"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -71,7 +71,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !respondWithZIP {
-		file.RespondJSON(w, r, &bot.BotResponse{
+		filejson.RespondJSON(w, r, &bot.BotResponse{
 			Success: true,
 		})
 	}
@@ -81,7 +81,7 @@ func handleError(respondWithZIP bool, w http.ResponseWriter, r *http.Request, er
 	if respondWithZIP {
 		ctlutil.HandleError(w, err)
 	} else {
-		file.RespondJSON(w, r, &bot.BotResponse{
+		filejson.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
 			Error:   err.Error(),
 		})

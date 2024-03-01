@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 
 	"github.com/gorilla/mux"
 
@@ -52,5 +52,5 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &namespaces)
+	filejson.RespondJSON(w, r, &namespaces)
 }

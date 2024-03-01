@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
@@ -36,7 +36,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &wire.LoadResponseBatch{
+	filejson.RespondJSON(w, r, &wire.LoadResponseBatch{
 		Collections: metadataResponse.Collections,
 	})
 

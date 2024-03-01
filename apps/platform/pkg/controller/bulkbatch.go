@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -18,7 +18,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, &bulk.BatchResponse{
+	filejson.RespondJSON(w, r, &bulk.BatchResponse{
 		ID: batch.ID,
 	})
 }

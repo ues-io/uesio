@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 )
 
 type PerfStats struct {
@@ -15,7 +15,7 @@ func GetPerfStats(w http.ResponseWriter, r *http.Request) {
 	perfStats := PerfStats{
 		QueryStats: postgresio.GetQueryStatistics(),
 	}
-	file.RespondJSON(w, r, perfStats)
+	filejson.RespondJSON(w, r, perfStats)
 }
 
 func ResetPerfStats(w http.ResponseWriter, r *http.Request) {

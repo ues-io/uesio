@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -19,7 +20,7 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
-	deps := routing.NewPreloadMetadata()
+	deps := preload.NewPreloadMetadata()
 
 	// Clear out the wire dependency, we don't want to send any wire data to the client.
 	deps.Wire = nil
@@ -30,6 +31,6 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &deps)
+	filejson.RespondJSON(w, r, &deps)
 
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -55,7 +55,7 @@ func Secrets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, response)
+	filejson.RespondJSON(w, r, response)
 }
 
 type SecretSetRequest struct {
@@ -76,7 +76,7 @@ func SetSecret(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, &bot.BotResponse{
+	filejson.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }

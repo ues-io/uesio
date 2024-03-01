@@ -13,6 +13,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -79,7 +80,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	if result, err := processUploadRequest(r); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
-		RespondJSON(w, r, result)
+		filejson.RespondJSON(w, r, result)
 	}
 }
 
@@ -89,7 +90,7 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	if err := filesource.Delete(mux.Vars(r)["fileid"], session); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
-		RespondJSON(w, r, &bot.BotResponse{
+		filejson.RespondJSON(w, r, &bot.BotResponse{
 			Success: true,
 		})
 	}

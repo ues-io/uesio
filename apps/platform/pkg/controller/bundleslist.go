@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -108,5 +108,5 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 	sort.Slice(responses, func(i, j int) bool {
 		return responses[i].App < responses[j].App
 	})
-	file.RespondJSON(w, r, responses)
+	filejson.RespondJSON(w, r, responses)
 }

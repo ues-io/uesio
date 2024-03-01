@@ -8,12 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/routing"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 )
 
 func TestGetPackUrl_Workspace(t *testing.T) {
 
-	siteMergeData := &routing.SiteMergeData{
+	siteMergeData := &preload.SiteMergeData{
 		App:     "luigi/stuff",
 		Version: "v1.2.3",
 	}
@@ -22,7 +22,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 	type testCase struct {
 		description      string
 		key              string
-		workspace        *routing.WorkspaceMergeData
+		workspace        *preload.WorkspaceMergeData
 		staticAssetsPath string
 		expect           string
 	}
@@ -33,7 +33,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 		{
 			"return a workspace component pack url",
 			"zach/foo.main",
-			&routing.WorkspaceMergeData{
+			&preload.WorkspaceMergeData{
 				App:  "zach/foo",
 				Name: "dev",
 			},
@@ -43,7 +43,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 		{
 			"return a workspace component pack url with correct pack",
 			"zach/foo.other",
-			&routing.WorkspaceMergeData{
+			&preload.WorkspaceMergeData{
 				App:  "zach/foo",
 				Name: "test",
 			},
@@ -53,7 +53,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 		{
 			"return nothing if key is malformed",
 			"asdfasfasdf",
-			&routing.WorkspaceMergeData{
+			&preload.WorkspaceMergeData{
 				App:  "zach/foo",
 				Name: "dev",
 			},
@@ -63,7 +63,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 		{
 			"return nothing if namespace is malformed",
 			"foo.main",
-			&routing.WorkspaceMergeData{
+			&preload.WorkspaceMergeData{
 				App:  "zach/foo",
 				Name: "dev",
 			},
@@ -86,7 +86,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 	type testCase struct {
 		description      string
 		key              string
-		site             *routing.SiteMergeData
+		site             *preload.SiteMergeData
 		staticAssetsPath string
 		expect           string
 	}
@@ -98,7 +98,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[custom app] use Site dependencies to get the requested pack URL",
 			"ben/mosaic.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "zach/foo",
 				Version: "v0.0.2",
 				Dependencies: map[string]meta.BundleDefDep{
@@ -116,7 +116,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[custom app] use pack's modstamp if no Site dependencies are found",
 			"ben/mosaic.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "zach/foo",
 				Version: "v0.0.2",
 			},
@@ -126,7 +126,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[custom app] use site version if the pack is in the app",
 			"zach/foo.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "zach/foo",
 				Version: "v0.2.4",
 			},
@@ -136,7 +136,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[custom app] substitute Uesio static assets path, if provided, for system bundle pack loads only",
 			"uesio/io.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "zach/foo",
 				Version: "v0.2.4",
 			},
@@ -146,7 +146,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[custom app] use the correct dependency for non-system-bundle Uesio pack loads",
 			"uesio/extras.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "uesio/www",
 				Version: "v0.0.8",
 				Dependencies: map[string]meta.BundleDefDep{
@@ -164,7 +164,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[system app] use the Uesio App git sha if the request is for a system namespace bundle",
 			"uesio/io.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "uesio/studio",
 				Version: "v0.0.1",
 				Dependencies: map[string]meta.BundleDefDep{
@@ -182,7 +182,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 		{
 			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no Gitsha (local dev)",
 			"uesio/io.main",
-			&routing.SiteMergeData{
+			&preload.SiteMergeData{
 				App:     "uesio/studio",
 				Version: "v0.0.1",
 				Dependencies: map[string]meta.BundleDefDep{
@@ -211,7 +211,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 
 func Test_getComponentPackURLs(t *testing.T) {
 
-	siteMergeData := &routing.SiteMergeData{
+	siteMergeData := &preload.SiteMergeData{
 		Name:      "prod",
 		App:       "uesio/studio",
 		Version:   "v0.0.1",
@@ -219,7 +219,7 @@ func Test_getComponentPackURLs(t *testing.T) {
 		Subdomain: "studio",
 	}
 
-	workspaceMergeData := &routing.WorkspaceMergeData{
+	workspaceMergeData := &preload.WorkspaceMergeData{
 		App:  "zach/foo",
 		Name: "test",
 	}
@@ -237,9 +237,9 @@ func Test_getComponentPackURLs(t *testing.T) {
 	acmePack.UpdatedAt = 1234577777
 
 	type args struct {
-		componentPackDeps *routing.MetadataMergeData
-		workspace         *routing.WorkspaceMergeData
-		site              *routing.SiteMergeData
+		componentPackDeps *preload.MetadataMergeData
+		workspace         *preload.WorkspaceMergeData
+		site              *preload.SiteMergeData
 	}
 
 	tests := []struct {
@@ -250,7 +250,7 @@ func Test_getComponentPackURLs(t *testing.T) {
 		{
 			"it should use pack UpdatedAt to generate workspace pack URLs",
 			args{
-				componentPackDeps: routing.NewItem().AddItems(ioPack, mainPack, otherPack, acmePack),
+				componentPackDeps: preload.NewItem().AddItems(ioPack, mainPack, otherPack, acmePack),
 				workspace:         workspaceMergeData,
 				site:              siteMergeData,
 			},

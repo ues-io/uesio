@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/bulk"
@@ -30,7 +30,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &bulk.JobResponse{
+	filejson.RespondJSON(w, r, &bulk.JobResponse{
 		ID: jobID,
 	})
 

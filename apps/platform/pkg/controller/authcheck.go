@@ -1,15 +1,15 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/routing"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 )
 
 func AuthCheck(w http.ResponseWriter, r *http.Request) {
-	file.RespondJSON(w, r, &routing.LoginResponse{
-		User: GetUserMergeData(middleware.GetSession(r)),
+	filejson.RespondJSON(w, r, &preload.LoginResponse{
+		User: preload.GetUserMergeData(middleware.GetSession(r)),
 	})
 }

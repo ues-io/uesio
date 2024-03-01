@@ -3,7 +3,7 @@ package oauth
 import (
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 )
 
 type OAuthTokenResponse struct {
@@ -48,6 +48,6 @@ func GetOAuthToken(w http.ResponseWriter, r *http.Request) {
 		Scopes:       "openid email profile",
 	}
 
-	file.RespondJSON(w, r, response)
+	filejson.RespondJSON(w, r, response)
 
 }
