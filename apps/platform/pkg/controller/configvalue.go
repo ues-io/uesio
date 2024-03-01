@@ -6,7 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -85,7 +85,7 @@ func ConfigValues(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, response)
+	filejson.RespondJSON(w, r, response)
 }
 
 func ConfigValue(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +100,7 @@ func ConfigValue(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, response)
+	filejson.RespondJSON(w, r, response)
 }
 
 type ConfigValueSetRequest struct {
@@ -122,7 +122,7 @@ func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, &bot.BotResponse{
+	filejson.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }

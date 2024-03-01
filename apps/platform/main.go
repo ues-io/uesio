@@ -13,6 +13,7 @@ import (
 	googleauth "github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/auth/platform"
+	"github.com/thecloudmasters/uesio/pkg/auth/samlauth"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/tsdialect"
@@ -52,6 +53,7 @@ func init() {
 	auth.RegisterAuthType("cognito", &cognito.Auth{})
 	auth.RegisterAuthType("google", &googleauth.Auth{})
 	auth.RegisterAuthType("platform", &platform.Auth{})
+	auth.RegisterAuthType("saml", &samlauth.Auth{})
 
 	// File Adapters
 	fileadapt.RegisterFileAdapter("uesio.s3", &s3.FileAdapter{})

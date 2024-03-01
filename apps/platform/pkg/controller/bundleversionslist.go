@@ -8,7 +8,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -108,5 +108,5 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle Versions List: "+err.Error()))
 		return
 	}
-	file.RespondJSON(w, r, responses)
+	filejson.RespondJSON(w, r, responses)
 }

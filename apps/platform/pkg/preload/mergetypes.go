@@ -1,10 +1,11 @@
-package routing
+package preload
 
 import (
 	"encoding/json"
 	"log/slog"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type LoginResponse struct {
@@ -95,4 +96,29 @@ func (md MergeData) String() string {
 		return ""
 	}
 	return string(serialized)
+}
+
+func GetUserMergeData(session *sess.Session) *UserMergeData {
+	userInfo := session.GetContextUser()
+	userPicture := userInfo.GetPicture()
+	userProfile := userInfo.GetProfileRef()
+	userMergeData := &UserMergeData{
+		ID:        userInfo.ID,
+		Username:  userInfo.UniqueKey,
+		FirstName: userInfo.FirstName,
+		LastName:  userInfo.LastName,
+		Profile:   userInfo.Profile,
+		Site:      session.GetSite().ID,
+		Language:  userInfo.Language,
+	}
+	if userProfile != nil {
+		userMergeData.ProfileLabel = userProfile.Label
+	}
+	if userPicture != nil {
+		userMergeData.Picture = &UserPictureMergeData{
+			ID:        userPicture.ID,
+			UpdatedAt: userPicture.UpdatedAt,
+		}
+	}
+	return userMergeData
 }

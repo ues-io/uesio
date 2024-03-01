@@ -2,12 +2,13 @@ package testapis
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
-	"github.com/thecloudmasters/uesio/pkg/timeutils"
 	"io"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
+	"github.com/thecloudmasters/uesio/pkg/timeutils"
 )
 
 type CurrentWeather struct {
@@ -54,7 +55,7 @@ func TestApi(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	file.RespondJSON(w, r, &TempResult{
+	filejson.RespondJSON(w, r, &TempResult{
 		Current: CurrentWeather{
 			Temp: 30 + (10 * rand.Float64()),
 		},

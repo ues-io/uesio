@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -35,5 +35,5 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		loadResponse.Collections = metadata.Collections
 		loadResponse.SelectLists = metadata.GetSelectLists()
 	}
-	file.RespondJSON(w, r, loadResponse.TrimStructForSerialization())
+	filejson.RespondJSON(w, r, loadResponse.TrimStructForSerialization())
 }

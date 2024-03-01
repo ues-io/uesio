@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -26,11 +26,11 @@ func Save(w http.ResponseWriter, r *http.Request) {
 		_, ok := err.(*exceptions.SaveException)
 		// If the error is a save error still respond
 		if ok {
-			file.RespondJSON(w, r, &saveRequestBatch)
+			filejson.RespondJSON(w, r, &saveRequestBatch)
 			return
 		}
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, &saveRequestBatch)
+	filejson.RespondJSON(w, r, &saveRequestBatch)
 }

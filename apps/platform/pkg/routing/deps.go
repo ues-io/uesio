@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -71,7 +72,7 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 	return "", errors.New("Invalid Variant Key: " + fullName)
 }
 
-func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName string, session *sess.Session) {
+func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
 	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
 	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
@@ -92,7 +93,7 @@ func addComponentPackToDeps(deps *PreloadMetadata, packNamespace, packName strin
 	}
 }
 
-func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
+func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
@@ -115,7 +116,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 }
 
-func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, session *sess.Session) error {
+func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	if component.Pack != "" {
 		addComponentPackToDeps(deps, component.Namespace, component.Pack, session)
@@ -185,7 +186,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 	return subParams, nil
 }
 
-func processView(key string, viewInstanceID string, deps *PreloadMetadata, params map[string]interface{}, session *sess.Session) error {
+func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -283,7 +284,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 }
 
-func InBuildMode(fullViewId string, deps *MetadataMergeData) bool {
+func InBuildMode(fullViewId string, deps *preload.MetadataMergeData) bool {
 	if deps == nil {
 		return false
 	}
@@ -292,7 +293,7 @@ func InBuildMode(fullViewId string, deps *MetadataMergeData) bool {
 	return deps.Has(buildModeKey)
 }
 
-func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadata, session *sess.Session) error {
+func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
 	if err != nil {
@@ -311,7 +312,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
-	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
+	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -383,9 +384,9 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	deps.Component.AddItem(NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
-	deps.Component.AddItem(NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
-	deps.Component.AddItem(NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
+	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
+	deps.Component.AddItem(preload.NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
 
 	return nil
 }
@@ -398,9 +399,9 @@ func GetIndexPanelKey(builderComponentID string) string {
 	return fmt.Sprintf("%s:indexpanel", builderComponentID)
 }
 
-func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
+func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.PreloadMetadata, error) {
 
-	deps := NewPreloadMetadata()
+	deps := preload.NewPreloadMetadata()
 
 	if route.ThemeRef == "" {
 		route.ThemeRef = session.GetDefaultTheme()
@@ -528,7 +529,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		// If there is already an entry for build mode, don't override it, as it may be set to true
-		deps.Component.AddItemIfNotExists(NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
+		deps.Component.AddItemIfNotExists(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, session)
 		// Also load in the modstamps for all static files in the workspace
 		// so that we never have stale URLs in the view builder / preview
@@ -541,7 +542,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	return deps, nil
 }
 
-func addStaticFileModstampsForWorkspaceToDeps(deps *PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
+func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
 	// Query for all static files in the workspace
 	var files meta.FileCollection
 	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)

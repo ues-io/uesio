@@ -13,7 +13,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -126,7 +126,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		}
 	default:
 		// Send the response to the client as JSON
-		file.RespondJSON(w, r, result)
+		filejson.RespondJSON(w, r, result)
 	}
 }
 
@@ -198,7 +198,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &IntegrationActionsResponse{
+	filejson.RespondJSON(w, r, &IntegrationActionsResponse{
 		Inputs: getParamResponse(actionParams),
 	})
 }

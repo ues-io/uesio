@@ -6,7 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/francoispqt/gojay"
@@ -34,7 +34,7 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, json.RawMessage(bytes))
+	filejson.RespondJSON(w, r, json.RawMessage(bytes))
 }
 
 type FeatureFlagSetRequest struct {
@@ -63,7 +63,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	file.RespondJSON(w, r, &bot.BotResponse{
+	filejson.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }

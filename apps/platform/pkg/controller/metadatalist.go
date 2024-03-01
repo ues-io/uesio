@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -107,6 +107,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &collectionKeyMap)
+	filejson.RespondJSON(w, r, &collectionKeyMap)
 
 }

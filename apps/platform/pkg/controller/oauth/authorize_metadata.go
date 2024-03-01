@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
@@ -36,5 +36,5 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, errors.New("unable to generate a state token"))
 		return
 	}
-	file.RespondJSON(w, r, redirectMetadata)
+	filejson.RespondJSON(w, r, redirectMetadata)
 }

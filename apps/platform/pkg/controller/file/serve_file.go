@@ -22,13 +22,6 @@ import (
 
 const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
 
-func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
-	w.Header().Set("content-type", "text/json")
-	if err := json.NewEncoder(w).Encode(v); err != nil {
-		ctlutil.HandleError(w, err)
-		return
-	}
-}
 func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadSeeker) {
 	if stream == nil {
 		w.WriteHeader(http.StatusNotFound)

@@ -11,9 +11,10 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/merge"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
@@ -55,7 +56,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, routingMergeData)
+	filejson.RespondJSON(w, r, routingMergeData)
 
 }
 
@@ -97,7 +98,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, routingMergeData)
+	filejson.RespondJSON(w, r, routingMergeData)
 
 }
 
@@ -126,14 +127,14 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 		handleApiErrorRoute(w, r, route.Path, session, err)
 		return
 	}
-	file.RespondJSON(w, r, routingMergeData)
+	filejson.RespondJSON(w, r, routingMergeData)
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
 	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
-		file.RespondJSON(w, r, routingMergeData)
+		filejson.RespondJSON(w, r, routingMergeData)
 	}
 }
 
@@ -144,7 +145,7 @@ func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string,
 	); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
-		file.RespondJSON(w, r, routingMergeData)
+		filejson.RespondJSON(w, r, routingMergeData)
 	}
 }
 
@@ -167,7 +168,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 	http.Redirect(w, r, mergedRouteRedirect, http.StatusOK)
 }
 
-func getRouteAPIResult(route *meta.Route, session *sess.Session) (*routing.RouteMergeData, error) {
+func getRouteAPIResult(route *meta.Route, session *sess.Session) (*preload.RouteMergeData, error) {
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
@@ -257,7 +258,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	}
 	// Respond with a structured JSON error response
 	w.WriteHeader(statusCode)
-	file.RespondJSON(w, r, getErrorResponse(err, statusCode))
+	filejson.RespondJSON(w, r, getErrorResponse(err, statusCode))
 }
 
 func getErrorResponse(err error, statusCode int) *errorResponse {

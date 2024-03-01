@@ -132,7 +132,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: optionally respond with a representation of the deleted content
 	w.WriteHeader(204)
-	//file.RespondJSON(w, r, op.Collection)
+	//filejson.RespondJSON(w, r, op.Collection)
 
 }
 
