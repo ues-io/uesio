@@ -32,6 +32,8 @@ type Credential struct {
 	AwsAssumeRole *credentials.AwsSTSCredentials `yaml:"awsAssumeRole,omitempty" json:"uesio/studio.aws_assume_role"`
 	// OAUTH2_CREDENTIALS
 	OAuth2 *credentials.OAuth2Credentials `yaml:"oauth2,omitempty" json:"uesio/studio.oauth2"`
+	// SAML_CREDENTIALS
+	SAML *credentials.SAMLCredentials `yaml:"saml,omitempty" json:"uesio/studio.saml"`
 	// POSTGRESQL_CONNECTION
 	Postgres *credentials.PostgreSQLConnection `yaml:"pg,omitempty" json:"uesio/studio.postgresql_connection"`
 	// USERNAME_PASSWORD
@@ -116,6 +118,8 @@ func (c *Credential) GetTypeSpecificCredentialContainer() credentials.Credential
 		return c.AwsAssumeRole
 	case "OAUTH2_CREDENTIALS":
 		return c.OAuth2
+	case "SAML_CREDENTIALS":
+		return c.SAML
 	case "POSTGRESQL_CONNECTION":
 		return c.Postgres
 	case "USERNAME_PASSWORD":
