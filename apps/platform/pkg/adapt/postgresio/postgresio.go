@@ -75,7 +75,7 @@ func checkPoolCache(ctx context.Context, cache map[string]*pgxpool.Pool, credent
 	if ok {
 		return client, nil
 	}
-	pool, err := getConnection(ctx, credentials, hash)
+	pool, err := getConnection(ctx, credentials)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func checkPoolCache(ctx context.Context, cache map[string]*pgxpool.Pool, credent
 	return pool, nil
 }
 
-func getConnection(ctx context.Context, credentials *wire.Credentials, hash string) (*pgxpool.Pool, error) {
+func getConnection(ctx context.Context, credentials *wire.Credentials) (*pgxpool.Pool, error) {
 	host, err := credentials.GetRequiredEntry("host")
 	if err != nil {
 		return nil, err

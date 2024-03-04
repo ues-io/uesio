@@ -18,14 +18,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
+func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*preload.LoginResponse, error) {
 
 	site := session.GetSite()
 
 	err := HydrateUserPermissions(user, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
-		return
+		return nil, err
 	}
 
 	profile := user.ProfileRef
@@ -42,8 +41,7 @@ func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
 	if err != nil {
-		ctlutil.HandleError(w, err)
-		return
+		return nil, err
 	}
 
 	redirectPath := referer.Query().Get("r")
@@ -52,24 +50,32 @@ func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 
 	if redirectPath == "" {
 		if redirectKey == "" {
-			http.Error(w, "No redirect route specified", http.StatusInternalServerError)
-			return
+			return nil, errors.New("No redirect route specified")
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
-			ctlutil.HandleError(w, err)
-			return
+			return nil, err
 		}
 	}
 
-	filejson.RespondJSON(w, r, &preload.LoginResponse{
+	return &preload.LoginResponse{
 		User: preload.GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
 		SessionId:              session.GetSessionId(),
-	})
+	}, nil
+}
+
+func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
+
+	response, err := GetLoginRedirectResponse(w, r, user, session)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	filejson.RespondJSON(w, r, response)
 }
 
 func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, error) {
@@ -98,19 +104,22 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 	return user, nil
 }
 
-func Login(w http.ResponseWriter, r *http.Request, authSourceID string, payload map[string]interface{}, session *sess.Session) {
+func Login(w http.ResponseWriter, r *http.Request, authSourceID string, session *sess.Session) {
 	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	user, err := conn.Login(payload)
+	conn.Login(w, r)
+}
+
+func RequestLogin(w http.ResponseWriter, r *http.Request, authSourceID string, session *sess.Session) {
+	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
-
-	LoginRedirectResponse(w, r, user, session)
+	conn.RequestLogin(w, r)
 }
 
 func getLoginRoute(session *sess.Session) (*meta.Route, error) {

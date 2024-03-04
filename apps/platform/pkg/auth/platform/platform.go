@@ -1,9 +1,11 @@
 package platform
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
+	"net/http"
 	"regexp"
 	"strings"
 	"time"
@@ -11,6 +13,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -92,7 +96,27 @@ func (c *Connection) callListenerBot(botKey, code string, payload map[string]int
 	return nil
 }
 
-func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
+	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
+	return
+}
+
+func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
+	var loginRequest map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		return
+	}
+	user, err := c.DoLogin(loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	auth.LoginRedirectResponse(w, r, user, c.session)
+}
+
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
@@ -110,11 +134,14 @@ func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
 
 	if loginmethod == nil {
 		// TEMPORARY FOR MIGRATION FROM COGNITO
-		cognitoConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
+		authConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
 		if err != nil {
 			return nil, err
 		}
-		return cognitoConnection.Login(payload)
+
+		cognitoConnection := authConnection.(*cognito.Connection)
+
+		return cognitoConnection.DoLogin(payload)
 		// END TEMPORARY
 		//return nil, exceptions.NewBadRequestException()("No account found with this login method")
 	}

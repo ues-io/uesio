@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"net/http"
 	"os"
 	"strings"
 
@@ -48,7 +49,8 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Login(map[string]interface{}) (*meta.User, error)
+	Login(http.ResponseWriter, *http.Request)
+	RequestLogin(http.ResponseWriter, *http.Request)
 	Signup(*meta.SignupMethod, map[string]interface{}, string) error
 	ConfirmSignUp(*meta.SignupMethod, map[string]interface{}) error
 	ForgotPassword(*meta.SignupMethod, map[string]interface{}) error

@@ -1,17 +1,20 @@
 package cognito
 
 import (
+	"encoding/json"
 	"errors"
+	"net/http"
 
-	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/smithy-go"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -42,7 +45,27 @@ func getFullyQualifiedUsername(site string, username string) string {
 	return site + ":" + username
 }
 
-func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
+	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
+	return
+}
+
+func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
+	var loginRequest map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		return
+	}
+	user, err := c.DoLogin(loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	auth.LoginRedirectResponse(w, r, user, c.session)
+}
+
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
 	ctx := c.session.Context()
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
@@ -127,7 +150,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 // Make Cognito error messages more readable by returning the more specific error message
 func handleCognitoError(err error) error {
 	if opErr, isOpError := err.(*smithy.OperationError); isOpError {
-		if respErr, isRespErr := opErr.Err.(*http.ResponseError); isRespErr {
+		if respErr, isRespErr := opErr.Err.(*awshttp.ResponseError); isRespErr {
 			switch cognitoErr := respErr.Err.(type) {
 			case *types.NotAuthorizedException:
 				return exceptions.NewUnauthorizedException(cognitoErr.ErrorMessage())

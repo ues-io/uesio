@@ -1,11 +1,15 @@
 package mock
 
 import (
+	"encoding/json"
 	"errors"
+	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -28,7 +32,27 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
+	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
+	return
+}
+
+func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
+	var loginRequest map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		return
+	}
+	user, err := c.DoLogin(loginRequest)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	auth.LoginRedirectResponse(w, r, user, c.session)
+}
+
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
 		return nil, errors.New("Mock login:" + err.Error())

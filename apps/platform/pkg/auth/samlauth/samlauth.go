@@ -1,21 +1,19 @@
 package samlauth
 
 import (
-	"context"
-	"crypto/rsa"
-	"crypto/tls"
-	"crypto/x509"
+	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
-
-	"github.com/crewjam/saml/samlsp"
 )
 
 type Auth struct{}
@@ -37,60 +35,73 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) Login(payload map[string]interface{}) (*meta.User, error) {
-	fmt.Println("Gooooo")
-	keyPair, err := tls.LoadX509KeyPair("myservice.cert", "myservice.key")
+func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
+	samlSP, err := getSP(r.Host, c.authSource, c.credentials)
 	if err != nil {
-		panic(err) // TODO handle error
-	}
-	keyPair.Leaf, err = x509.ParseCertificate(keyPair.Certificate[0])
-	if err != nil {
-		panic(err) // TODO handle error
+		ctlutil.HandleError(w, err)
+		return
 	}
 
-	idpMetadataURL, err := url.Parse("https://samltest.id/saml/idp")
-	if err != nil {
-		panic(err) // TODO handle error
-	}
-	idpMetadata, err := samlsp.FetchMetadata(context.Background(), http.DefaultClient,
-		*idpMetadataURL)
-	if err != nil {
-		panic(err) // TODO handle error
-	}
+	samlSP.HandleStartAuthFlow(w, r)
+}
 
-	rootURL, err := url.Parse("http://localhost:8000")
+func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
+
+	sp, err := getSP(r.Host, c.authSource, c.credentials)
 	if err != nil {
-		panic(err) // TODO handle error
+		ctlutil.HandleError(w, err)
+		return
 	}
 
-	samlSP, _ := samlsp.New(samlsp.Options{
-		URL:         *rootURL,
-		Key:         keyPair.PrivateKey.(*rsa.PrivateKey),
-		Certificate: keyPair.Leaf,
-		IDPMetadata: idpMetadata,
-	})
+	err = r.ParseForm()
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
 
-	fmt.Println(samlSP)
+	assertion, err := sp.ServiceProvider.ParseResponse(r, []string{})
+	if err != nil {
+		target := &saml.InvalidResponseError{}
+		if errors.As(err, &target) {
+			fmt.Println(target.PrivateErr)
+		}
 
-	return auth.GetUserFromFederationID(c.authSource.GetKey(), "Subject", c.session)
+		ctlutil.HandleError(w, err)
+		return
+	}
+
+	sess, err := samlsp.JWTSessionCodec{}.New(assertion)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+
+	claims := sess.(samlsp.JWTSessionClaims)
+
+	user, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.session)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+
+	response, err := auth.GetLoginRedirectResponse(w, r, user, c.session)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+
+	redirectPath := "/" + response.RedirectRouteName
+
+	if c.session.GetContextAppName() != response.RedirectRouteNamespace {
+		redirectPath = "/site/app/" + response.RedirectRouteNamespace + "/" + response.RedirectRouteName
+	}
+
+	http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+	return
 }
 
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
-
-	user, err := auth.CreateUser(signupMethod, &meta.User{
-		Username:  username,
-		FirstName: "FNAME",
-		LastName:  "LNAME",
-		Email:     "EMAIL",
-	}, c.connection, c.session)
-	if err != nil {
-		return err
-	}
-	return auth.CreateLoginMethod(&meta.LoginMethod{
-		FederationID: "FED_ID",
-		User:         user,
-		AuthSource:   signupMethod.AuthSource,
-	}, c.connection, c.session)
+	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up")
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
