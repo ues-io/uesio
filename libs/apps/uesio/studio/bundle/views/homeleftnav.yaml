@@ -190,7 +190,7 @@ definition:
                                       text: domain
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "organization/${uesio/core.uniquekey}"
+                                    path: "org/info/${uesio/core.uniquekey}"
         footer:
           - uesio/core.view:
               view: profiletag

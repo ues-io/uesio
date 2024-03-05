@@ -1,5 +1,5 @@
 name: org
-path: organization/{orgname:\w*}
+path: org/info/{orgname:\w*}
 view: org
 theme: default
 title: "Organization: $Param{orgname}"

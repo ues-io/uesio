@@ -25,7 +25,7 @@ definition:
                         path: myprofile
                     content:
                       - uesio/io.text:
-                          text: Personal info
+                          text: Personal Info
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon

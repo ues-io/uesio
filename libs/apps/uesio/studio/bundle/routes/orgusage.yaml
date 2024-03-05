@@ -1,0 +1,5 @@
+name: orgusage
+path: org/usage/{orgname:\w*}
+view: orgusage
+theme: default
+title: "Organization Usage: $Param{orgname}"

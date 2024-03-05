@@ -117,9 +117,12 @@ views:
   uesio/studio.userpayments: true
   uesio/studio.userprofile: true
   uesio/studio.userprofilenav: true
+  uesio/studio.orgprofilenav: true
+  uesio/studio.orgusage: true
   uesio/studio.signupmethod: true
   uesio/studio.signupmethods: true
   uesio/studio.userusage: true
+  uesio/studio.userusage_inner: true
 routes:
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -155,6 +158,7 @@ routes:
   uesio/studio.integrationtype: true
   uesio/studio.integrationtypes: true
   uesio/studio.org: true
+  uesio/studio.orgusage: true
   uesio/studio.packaging: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true

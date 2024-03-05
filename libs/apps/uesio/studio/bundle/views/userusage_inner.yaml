@@ -1,0 +1,244 @@
+name: userusage_inner
+definition:
+  # Wires are how we pull in data
+  wires:
+    user:
+      collection: uesio/core.user
+      fields:
+        uesio/core.username:
+        uesio/core.uniquekey:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{userid}
+    usage:
+      collection: uesio/studio.usage
+      fields:
+        uesio/studio.app:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.metadataname:
+        uesio/studio.metadatatype:
+        uesio/studio.site:
+        uesio/studio.total:
+        uesio/studio.actiontype:
+      conditions:
+        - field: uesio/studio.app->uesio/studio.user->uesio/core.id
+          valueSource: VALUE
+          value: $Param{userid}
+        - field: uesio/studio.day
+          operator: IN
+          value: THIS_MONTH
+    plans:
+      collection: uesio/studio.usage_plan
+      fields:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.price:
+        uesio/studio.external_plan_id:
+    user_selected_plan:
+      collection: uesio/studio.usage_plan
+      fields:
+        uesio/core.id:
+      conditions:
+        - type: GROUP
+          conjunction: OR
+          conditions:
+            - field: uesio/core.id
+              type: SUBQUERY
+              operator: IN
+              subcollection: uesio/studio.usage_plan_user
+              subfield: uesio/studio.plan
+              conditions:
+                - field: uesio/studio.user
+                  value: $Param{userid}
+            - field: uesio/studio.default
+              value: true
+      batchsize: 1
+      order:
+        - field: uesio/studio.default
+          desc: true
+    limit_plan:
+      collection: uesio/studio.usage_plan_limit
+      fields:
+        uesio/studio.description:
+        uesio/studio.plan:
+          fields:
+            uesio/core.id:
+        uesio/studio.limit:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.unit:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.titlebar:
+        uesio.variant: uesio/io.main
+        title: Usage & Billing
+        subtitle: ${user:uesio/core.uniquekey}
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.section
+              title: Plans
+          - uesio/io.deck:
+              uesio.styleTokens:
+                root:
+                  - grid
+                  - gap-6
+                  - grid-cols-1
+                  - md:grid-cols-2
+                  - lg:grid-cols-3
+                  - xl:grid-cols-4
+              wire: plans
+              mode: READ
+              components:
+                - uesio/io.card:
+                    scrollpanelVariant: uesio/io.card
+                    title: ${name}
+                    subtitle: ${description}
+                    actions:
+                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - whitespace-nowrap
+                              - text-right
+                          components:
+                            - uesio/io.text:
+                                text: "$${price}"
+                                uesio.styleTokens:
+                                  root:
+                                    - text-3xl
+                                    - text-slate-800
+                                element: div
+                            - uesio/io.text:
+                                uesio.display:
+                                  - type: hasValue
+                                    value: ${price}
+                                text: " / month"
+                                uesio.styleTokens:
+                                  root:
+                                    - font-light
+                                    - -mt-1
+                                    - text-[7pt]
+                                    - text-slate-400
+                                    - uppercase
+                                element: div
+                    content:
+                      - uesio/io.list:
+                          wire: limit_plan
+                          recordDisplay:
+                            - type: fieldValue
+                              operator: EQUALS
+                              value: ${plans:uesio/core.id}
+                              field: uesio/studio.plan->uesio/core.id
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/studio.pricinglimit
+                                content:
+                                  - uesio/io.group:
+                                      uesio.styleTokens:
+                                        root:
+                                          - justify-between
+                                      components:
+                                        - uesio/io.text:
+                                            uesio.styleTokens:
+                                              root:
+                                                - text-sm
+                                                - text-slate-700
+                                            text: ${uesio/studio.description}
+                                            element: div
+                                        - uesio/io.box:
+                                            uesio.styleTokens:
+                                              root:
+                                                - whitespace-nowrap
+                                                - text-right
+                                                - mt-[10px]
+                                            components:
+                                              - uesio/io.text:
+                                                  text: "${limit}"
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - text-lg
+                                                      - text-green-800
+                                                  element: div
+                                              - uesio/io.text:
+                                                  text: "${unit} / month"
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - font-light
+                                                      - -mt-1
+                                                      - text-[7pt]
+                                                      - text-slate-400
+                                                      - uppercase
+                                                  element: div
+                    footer:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.primary
+                          text: Upgrade to ${name}
+                          signals:
+                            - signal: bot/CALL
+                              stepId: upgradePlanResult
+                              bot: uesio/studio.select_plan
+                              params:
+                                plan: ${external_plan_id}
+                            - signal: route/REDIRECT
+                              path: $SignalOutput{upgradePlanResult:checkoutResult.session.url}
+                          uesio.display:
+                            - type: fieldValue
+                              operator: NOT_EQUALS
+                              value: ${uesio/core.id}
+                              wire: user_selected_plan
+                              field: uesio/core.id
+                      - uesio/io.tile:
+                          uesio.variant: uesio/studio.appitem
+                          uesio.display:
+                            - type: fieldValue
+                              operator: EQUALS
+                              value: ${uesio/core.id}
+                              wire: user_selected_plan
+                              field: uesio/core.id
+                          uesio.styleTokens:
+                            root:
+                              - p-0
+                              - hover:bg-white
+                              - font-light
+                            avatar:
+                              - bg-green-700
+                          content:
+                            - uesio/io.text:
+                                text: Your Current Plan
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "white"
+                                text: check
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.section
+              title: Current month usage
+          - uesio/io.list:
+              wire: limit_plan
+              recordDisplay:
+                - type: fieldValue
+                  operator: EQUALS
+                  value: ${user_selected_plan:uesio/core.id}
+                  field: uesio/studio.plan->uesio/core.id
+              components:
+                - uesio/studio.limit:
+                    title: ${uesio/studio.metadatatype}
+                    subtitle: ${uesio/studio.actiontype}
+                    wire: usage
+                    maximum: ${uesio/studio.limit}
+                    recordDisplay:
+                      - field: uesio/studio.actiontype
+                        type: fieldValue
+                        value: ${limit_plan:uesio/studio.actiontype}
+                      - field: uesio/studio.metadatatype
+                        type: fieldValue
+                        value: ${limit_plan:uesio/studio.metadatatype}
+  params:
+    userid:
+      type: TEXT
+      required: true
