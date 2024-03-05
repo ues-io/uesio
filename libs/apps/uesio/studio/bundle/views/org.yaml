@@ -74,8 +74,10 @@ definition:
         uesio.variant: uesio/studio.main
         left:
           - uesio/core.view:
-              view: homeleftnav
-              uesio.id: orglist
+              view: orgprofilenav
+              params:
+                orgname: $Param{orgname}
+                selected: orginfo
         content:
           - uesio/io.list:
               wire: org

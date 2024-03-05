@@ -1,7 +1,7 @@
 name: usagemetadatatype
 options:
-  # - label: "COLLECTION"
-  #   value: "COLLECTION"
+  - label: "ROUTE"
+    value: "ROUTE"
   - label: "DATASOURCE"
     value: "DATASOURCE"
   - label: "FILESOURCE"

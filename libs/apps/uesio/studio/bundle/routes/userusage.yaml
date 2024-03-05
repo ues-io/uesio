@@ -2,3 +2,5 @@ name: userusage
 path: user/usage
 view: userusage
 theme: default
+params:
+  userid: $User{id}

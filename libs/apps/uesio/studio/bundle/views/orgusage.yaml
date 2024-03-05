@@ -1,25 +1,33 @@
-name: userusage
+name: orgusage
 definition:
   # Wires are how we pull in data
   wires:
+    user:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.username:
+        uesio/core.uniquekey:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{orgname}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
         left:
           - uesio/core.view:
-              view: userprofilenav
-              uesio.context:
-                wire: users
+              view: orgprofilenav
               params:
                 selected: usage
+                orgname: $Param{orgname}
         content:
           - uesio/core.view:
               view: userusage_inner
               uesio.id: userusage_inner
               params:
-                userid: $Param{userid}
+                userid: ${user:uesio/core.id}
   params:
-    userid:
+    orgname:
       type: TEXT
       required: true
