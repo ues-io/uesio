@@ -4,5 +4,7 @@ options:
     value: "cognito"
   - label: "Google"
     value: "google"
+  - label: "SAML"
+    value: "saml"
   - label: "Mock"
     value: "mock"

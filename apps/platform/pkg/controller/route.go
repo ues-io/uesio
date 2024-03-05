@@ -67,13 +67,9 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 	path := vars["route"]
 
 	session := middleware.GetSession(r)
-	workspace := session.GetWorkspace()
 
-	prefix := "/site/routes/path/" + namespace + "/"
-
-	if workspace != nil {
-		prefix = "/workspace/" + workspace.GetAppFullName() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
-	}
+	contextPrefix := session.GetContextURLPrefix()
+	prefix := contextPrefix + "/routes/path/" + namespace + "/"
 
 	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
 	if err != nil {
