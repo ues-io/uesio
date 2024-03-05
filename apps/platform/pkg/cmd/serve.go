@@ -386,6 +386,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 
 	sr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
+	wr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
 
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")

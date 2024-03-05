@@ -394,6 +394,13 @@ func (s *Session) GetContextInstalledNamespaces() []string {
 	return namespaces
 }
 
+func (s *Session) GetContextURLPrefix() string {
+	if s.workspaceSession != nil {
+		return "/workspace/" + s.workspaceSession.GetAppFullName() + "/" + s.workspaceSession.GetVersion()
+	}
+	return "/site"
+}
+
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	if s.versionSession != nil {
 		return s.versionSession.bundleDef
