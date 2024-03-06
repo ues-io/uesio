@@ -142,6 +142,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 		Certificate:       keyPair.Leaf,
 		IDPMetadata:       idpMetadata,
 		AllowIDPInitiated: true,
+		SignRequest:       true,
 	})
 	if err != nil {
 		return nil, err
