@@ -157,6 +157,9 @@ func processConditions(
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
 			value, ok := params[condition.Param]
 			if !ok {
+				if condition.NoValueBehavior == "DEACTIVATE" {
+					continue
+				}
 				return nil, exceptions.NewBadRequestException("Invalid Condition, param '" + condition.Param + "' was not provided")
 			}
 			condition.Value = value

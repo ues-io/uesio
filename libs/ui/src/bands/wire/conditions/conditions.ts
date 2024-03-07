@@ -37,6 +37,7 @@ type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
 	inactive?: boolean
+	noValueBehavior?: "DEFAULT" | "DEACTIVATE"
 }
 
 type GroupConditionState = ConditionBase & {
