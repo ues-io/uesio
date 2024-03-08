@@ -253,8 +253,6 @@ const typesRequiringWire = [
 	"wireHasNoActiveConditions",
 	"wireHasLoadedAllRecords",
 	"wireHasMoreRecordsToLoad",
-	"wireHasNoActiveConditions",
-	"wireHasActiveConditions",
 ]
 
 const isConditionRequiringWireProperty = (condition: DisplayCondition) =>
