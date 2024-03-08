@@ -262,7 +262,14 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
-const defaultMergeRegex = /\$([.\w]*){(.*?)}/g
+//const originalRegex = /\$([.\w]*){(.*?)}/g
+//const oneLevelCapture = /\\$([.\w]*){([^{}]*)}/g
+//const twoLevelCapture = /\$([.\w]*){((?:[^{}]|{[^{}]*})*)}/g
+
+// We're currently using the two level capture regex. This means that we can capture
+// up to two levels of nested merges and it will still just be returned as the
+// outermost merge.
+const defaultMergeRegex = /\$([.\w]*){((?:[^{}]|{[^{}]*})*)}/g
 
 function injectDynamicContext(
 	context: Context,
@@ -302,7 +309,7 @@ function injectDynamicContext(
 }
 
 const getMergeRegexForTypes = (types: MergeType[]) =>
-	new RegExp(`\\$(${types.join("|")}){(.*?)}`, "g")
+	new RegExp(`\\$(${types.join("|")}){((?:[^{}]|{[^{}]*})*)}`, "g")
 
 const newContext = () => new Context()
 

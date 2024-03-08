@@ -17,6 +17,7 @@ type MergeType =
 	| "Prop"
 	| "User"
 	| "Time"
+	| "Text"
 	| "Date"
 	| "RecordMeta"
 	| "Collection"
@@ -143,6 +144,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
 	},
+	Text: (expression) => expression,
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""
