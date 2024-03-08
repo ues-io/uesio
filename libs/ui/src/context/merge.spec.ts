@@ -522,6 +522,21 @@ const mergeOptionsTestCases = [
 	},
 ] as MergeWithContextTestCase[]
 
+const mergeTextTestCases = [
+	{
+		name: "simple text merge",
+		context: new Context(),
+		input: "$Text{blah}",
+		expected: "blah",
+	},
+	{
+		name: "simple text merge",
+		context: new Context(),
+		input: "$Text{$SignalOutput{[ask][data]}}",
+		expected: "$SignalOutput{[ask][data]}",
+	},
+] as MergeWithContextTestCase[]
+
 describe("merge", () => {
 	describe("$SignalOutput context", () => {
 		signalOutputMergeTestCases.forEach((tc) => {
@@ -570,6 +585,21 @@ describe("merge", () => {
 	})
 	describe("merge", () => {
 		mergeTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.merge(tc.input)
+				} catch (e) {
+					errCaught = (e as Error).message
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("merge", () => {
+		mergeTextTestCases.forEach((tc) => {
 			test(tc.name, () => {
 				let errCaught
 				let actual
