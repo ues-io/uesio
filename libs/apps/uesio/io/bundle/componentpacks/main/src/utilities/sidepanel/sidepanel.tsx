@@ -5,6 +5,7 @@ import IconButton from "../iconbutton/iconbutton"
 
 interface SidePanelUtilityProps {
 	onClose?: () => void
+	closeOnOutsideClick?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -22,12 +23,13 @@ const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
 		props,
 		"uesio/io.sidepanel"
 	)
-	const { context, onClose, children } = props
+	const { context, onClose, children, closeOnOutsideClick } = props
 	return (
 		<SidePanelPlain
-			context={props.context}
+			context={context}
 			onClose={onClose}
 			initialFocus={1}
+			closeOnOutsideClick={closeOnOutsideClick}
 		>
 			<Grid className={classes.root} context={context}>
 				<div className={classes.header}>

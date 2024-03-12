@@ -10,6 +10,7 @@ import {
 interface SidePanelUtilityProps {
 	onClose?: () => void
 	initialFocus?: number
+	closeOnOutsideClick?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -47,10 +48,14 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 		},
 	})
 
+	const closeOnOutsideClick =
+		props.closeOnOutsideClick === undefined
+			? true
+			: !!props.closeOnOutsideClick
+
 	const dismiss = useDismiss(floating.context, {
-		outsidePress: false,
-		referencePress: true,
-		bubbles: false,
+		outsidePress: closeOnOutsideClick,
+		referencePress: closeOnOutsideClick,
 	})
 
 	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])

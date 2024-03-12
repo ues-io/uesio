@@ -29,6 +29,9 @@ properties:
     label: Height
     required: true
     type: TEXT
+  - name: closeOnOutsideClick
+    label: Close On Outside Click
+    type: CHECKBOX
 sections:
   - type: HOME
     properties:
@@ -37,6 +40,7 @@ sections:
       - title
       - width
       - height
+      - closeOnOutsideClick
   - type: STYLES
   - type: SIGNALS
     id: afterClose
