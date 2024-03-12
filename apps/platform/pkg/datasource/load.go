@@ -417,6 +417,10 @@ func getMetadataForConditionLoad(
 		}
 
 		if lookupCollectionKey == "" {
+			// If we've already processed this condition, we can ignore this error
+			if condition.Values != nil {
+				return nil
+			}
 			return fmt.Errorf("LOOKUP condition requested field %s from a wire named %s, but no Wire with this name was found in this load request", condition.LookupField, condition.LookupWire)
 		}
 
