@@ -4,6 +4,7 @@ import { default as IOSidePanel } from "../../utilities/sidepanel/sidepanel"
 
 type SidePanelDefinition = {
 	id?: string
+	closeOnOutsideClick?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -30,6 +31,7 @@ const Dialog: definition.UC<SidePanelDefinition> = (props) => {
 			context={context}
 			classes={classes}
 			variant={definition[component.STYLE_VARIANT]}
+			closeOnOutsideClick={definition.closeOnOutsideClick}
 		>
 			<component.Slot
 				definition={definition}

@@ -12,6 +12,7 @@ interface DialogPlainUtilityProps {
 	width?: string
 	height?: string
 	initialFocus?: number
+	closeOnOutsideClick?: boolean
 }
 
 const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
@@ -55,10 +56,14 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 		},
 	})
 
+	const closeOnOutsideClick =
+		props.closeOnOutsideClick === undefined
+			? true
+			: !!props.closeOnOutsideClick
+
 	const dismiss = useDismiss(floating.context, {
-		outsidePress: false,
-		referencePress: true,
-		bubbles: false,
+		outsidePress: closeOnOutsideClick,
+		referencePress: closeOnOutsideClick,
 	})
 
 	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])

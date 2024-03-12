@@ -12,6 +12,7 @@ interface DialogUtilityProps {
 	height?: string
 	title?: string
 	actions?: ReactNode
+	closeOnOutsideClick?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -25,7 +26,16 @@ const StyleDefaults = Object.freeze({
 const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 	const { blocker, wrapper, inner, content, footer } =
 		styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.dialog")
-	const { context, title, onClose, width, height, children, actions } = props
+	const {
+		context,
+		title,
+		onClose,
+		width,
+		height,
+		children,
+		actions,
+		closeOnOutsideClick,
+	} = props
 	return (
 		<DialogPlain
 			context={props.context}
@@ -33,6 +43,7 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 			width={width}
 			onClose={onClose}
 			initialFocus={1}
+			closeOnOutsideClick={closeOnOutsideClick}
 			classes={{
 				blocker,
 				wrapper,

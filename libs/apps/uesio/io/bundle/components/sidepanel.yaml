@@ -10,9 +10,13 @@ properties:
     label: Panel Id
     required: true
     type: KEY
+  - name: closeOnOutsideClick
+    label: Close On Outside Click
+    type: CHECKBOX
 sections:
   - type: HOME
     properties:
       - uesio.type
       - panelid
+      - closeOnOutsideClick
   - type: STYLES

@@ -10,6 +10,7 @@ type DialogDefinition = {
 	afterClose?: signal.SignalDefinition[]
 	actions?: definition.DefinitionList[]
 	components?: definition.DefinitionList[]
+	closeOnOutsideClick?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -39,6 +40,7 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 			width={definition.width as string}
 			height={definition.height as string}
 			title={definition.title as string}
+			closeOnOutsideClick={definition.closeOnOutsideClick}
 			actions={
 				definition.actions && (
 					<component.Slot
