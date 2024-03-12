@@ -298,46 +298,80 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			break
 		case "MAP":
 			mapFieldOptions = (map || {}) as MapFieldOptions
-			content =
-				displayAs === "DECK" ? (
-					<MapFieldDeck {...common} options={map as MapDeckOptions} />
-				) : (
-					<MapField
-						{...common}
-						options={{
-							...mapFieldOptions,
-							...{
-								keyField: mapFieldOptions.keyField || {
-									name: "key",
-									label:
-										mapFieldOptions.keyFieldLabel || "Key",
-									type: "TEXT",
-									namespace: "",
-									accessible: true,
-									createable: true,
-									updateable: true,
+			switch (displayAs) {
+				case "DECK":
+					content = (
+						<MapFieldDeck
+							{...common}
+							options={map as MapDeckOptions}
+						/>
+					)
+					break
+				case "REFERENCE":
+					content = (
+						<ReferenceField
+							{...common}
+							fieldMetadata={
+								new collection.Field(
+									{
+										...fieldMetadata.source,
+										reference: {
+											collection:
+												(
+													reference as ReferenceFieldOptions
+												)?.collection || "",
+											multiCollection: false,
+											collections: [],
+										},
+									},
+									context
+								)
+							}
+							options={reference}
+						/>
+					)
+					break
+				default:
+					content = (
+						<MapField
+							{...common}
+							options={{
+								...mapFieldOptions,
+								...{
+									keyField: mapFieldOptions.keyField || {
+										name: "key",
+										label:
+											mapFieldOptions.keyFieldLabel ||
+											"Key",
+										type: "TEXT",
+										namespace: "",
+										accessible: true,
+										createable: true,
+										updateable: true,
+									},
+									valueField: mapFieldOptions.valueField || {
+										name: "value",
+										label:
+											mapFieldOptions.valueFieldLabel ||
+											"Value",
+										type: subType,
+										// It is intentional to just use "source.selectlist" here
+										// because we will be fetching the actual options later on,
+										// right now we just need to get the "raw" definition
+										selectlist:
+											fieldMetadata.source.selectlist,
+										number: fieldMetadata.getNumberMetadata(),
+										subfields: fieldMetadata.getSubFields(),
+										namespace: "",
+										accessible: true,
+										createable: true,
+										updateable: true,
+									},
 								},
-								valueField: mapFieldOptions.valueField || {
-									name: "value",
-									label:
-										mapFieldOptions.valueFieldLabel ||
-										"Value",
-									type: subType,
-									// It is intentional to just use "source.selectlist" here
-									// because we will be fetching the actual options later on,
-									// right now we just need to get the "raw" definition
-									selectlist: fieldMetadata.source.selectlist,
-									number: fieldMetadata.getNumberMetadata(),
-									subfields: fieldMetadata.getSubFields(),
-									namespace: "",
-									accessible: true,
-									createable: true,
-									updateable: true,
-								},
-							},
-						}}
-					/>
-				)
+							}}
+						/>
+					)
+			}
 			break
 		case "STRUCT":
 			content = (

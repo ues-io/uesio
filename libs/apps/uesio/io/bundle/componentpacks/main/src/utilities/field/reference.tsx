@@ -21,6 +21,7 @@ export type ReferenceFieldOptions = {
 	template?: string
 	requirewriteaccess?: boolean
 	conditions?: wire.WireConditionState[]
+	collection?: string
 }
 
 export interface ReferenceFieldProps {
