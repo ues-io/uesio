@@ -61,6 +61,10 @@ func (sba *SaveBotAPI) getSession() *sess.Session {
 	return sba.integrationConnection.GetSession()
 }
 
+func (sba *SaveBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection())
+}
+
 func (sba *SaveBotAPI) GetCredentials() map[string]interface{} {
 	if sba.integrationConnection == nil || sba.integrationConnection.GetCredentials() == nil {
 		return map[string]interface{}{}
