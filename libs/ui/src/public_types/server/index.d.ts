@@ -422,6 +422,7 @@ interface SaveBotApi {
 	log: LogApi
 	http: HttpApi
 	callBot: CallBot
+	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 }
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"

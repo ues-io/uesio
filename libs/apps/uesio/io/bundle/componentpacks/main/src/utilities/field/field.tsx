@@ -38,6 +38,7 @@ import {
 	LabelPosition,
 } from "../../components/field/field"
 import MultiReferenceField from "./multireference"
+import CodeField from "../codefield/codefield"
 interface FieldProps {
 	setValue: FieldValueSetter
 	value: wire.FieldValue
@@ -304,6 +305,21 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 						<MapFieldDeck
 							{...common}
 							options={map as MapDeckOptions}
+						/>
+					)
+					break
+				case "CODE":
+					content = (
+						<CodeField
+							{...common}
+							value={JSON.stringify(value, null, 2)}
+							setValue={(value: string) => {
+								record.update(
+									fieldId,
+									JSON.parse(value),
+									context
+								)
+							}}
 						/>
 					)
 					break
