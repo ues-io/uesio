@@ -105,6 +105,8 @@ func (c *NamespaceSwapCollection) TransferFieldMetadata(fromCollectionName strin
 		if wire.IsReference(clonedField.Type) || clonedField.Type == "SELECT" || clonedField.Type == "MULTISELECT" {
 			clonedField.Type = "TEXT"
 		}
+		clonedField.Createable = false
+		clonedField.Updateable = false
 		// Check to see if the field already exists
 		_, err := toCollectionMetadata.GetField(clonedField.GetFullName())
 		if err != nil {

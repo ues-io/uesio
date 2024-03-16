@@ -87,8 +87,6 @@ definition:
                                 uesio.display:
                                   - type: wireHasRecords
                                     wire: app
-                                  - type: wireHasNoRecords
-                                    wire: localbundle
                                 uesio.variant: uesio/io.primary
                                 text: Add to local Bundle Store
                                 signals:

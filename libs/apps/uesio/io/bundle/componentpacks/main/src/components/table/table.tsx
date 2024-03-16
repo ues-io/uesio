@@ -217,7 +217,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (
-				<FieldWrapper context={context} variant="uesio/io.table">
+				<FieldWrapper
+					context={context}
+					labelPosition="none"
+					variant="uesio/io.table"
+				>
 					<Group context={recordContext.context}>
 						{otherActions
 							.filter((action) =>
