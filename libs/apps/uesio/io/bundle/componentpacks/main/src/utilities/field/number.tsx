@@ -48,10 +48,7 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	const readOnly = mode === "READ" || props.readonly
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 	const decimals = numberOptions?.decimals ?? 2
-	const initialValue =
-		typeof value === "number"
-			? (value as number).toFixed(decimals)
-			: parseFloat(value)
+	const initialValue = typeof value === "number" ? value : parseFloat(value)
 
 	const controlledInputProps = useControlledInputNumber({
 		value: initialValue,
