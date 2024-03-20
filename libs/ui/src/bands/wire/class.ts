@@ -15,6 +15,7 @@ import {
 	setConditionValue,
 	getFullWireId,
 	reset,
+	removeRecord,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
@@ -106,6 +107,15 @@ class Wire {
 				recordId,
 				record,
 				path,
+			})
+		)
+	}
+
+	removeRecord = (recordId: string) => {
+		dispatch(
+			removeRecord({
+				entity: this.getFullId(),
+				recordId,
 			})
 		)
 	}

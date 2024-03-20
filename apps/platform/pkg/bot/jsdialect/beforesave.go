@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -33,8 +34,24 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 	bs.op.AddError(exceptions.NewSaveException("", "", message))
 }
 
+func (bs *BeforeSaveAPI) Save(collection string, changes wire.Collection) error {
+	return botSave(collection, changes, bs.session, bs.connection)
+}
+
+func (bs *BeforeSaveAPI) Delete(collection string, deletes wire.Collection) error {
+	return botDelete(collection, deletes, bs.session, bs.connection)
+}
+
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, bs.session, bs.connection)
+}
+
+func (bs *BeforeSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+	return runIntegrationAction(integrationID, action, options, bs.session, bs.connection)
+}
+
+func (bs *BeforeSaveAPI) GetConfigValue(configValueKey string) (string, error) {
+	return configstore.GetValueFromKey(configValueKey, bs.session)
 }
 
 func (bs *BeforeSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

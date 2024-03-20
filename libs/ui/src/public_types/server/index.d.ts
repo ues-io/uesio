@@ -167,17 +167,17 @@ type CallBot = (
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
 	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
+	save: (collectionName: string, records: WireRecord[]) => void
+	delete: (collectionName: string, records: WireRecord[]) => void
 	deletes: DeletesApi
 	inserts: InsertsApi
 	updates: UpdatesApi
 	callBot: CallBot
+	runIntegrationAction: RunIntegrationAction
+	getConfigValue: (configValueKey: string) => string
 	log: LogApi
 }
 interface AfterSaveBotApi extends BeforeSaveBotApi {
-	save: (collectionName: string, records: WireRecord[]) => void
-	delete: (collectionName: string, records: WireRecord[]) => void
-	runIntegrationAction: RunIntegrationAction
-	getConfigValue: (configValueKey: string) => string
 	asAdmin: AsAdminApi
 }
 interface AsAdminApi {
