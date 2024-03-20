@@ -6,6 +6,7 @@ import { setMany as setLabel } from "../label"
 import { upsertMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
 import { setMany as setFeatureFlag } from "../featureflag"
+import { setMany as setFile } from "../file"
 import { setMany as setComponent } from "../component"
 import { setMany as setComponentTypes } from "../componenttype"
 import { setMany as setSelectList } from "../selectlist"
@@ -46,6 +47,7 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 		dispatch(setComponentVariant(deps.componentvariant))
 	if (deps.configvalue) dispatch(setConfigValue(deps.configvalue))
 	if (deps.featureflag) dispatch(setFeatureFlag(deps.featureflag))
+	if (deps.file) dispatch(setFile(deps.file))
 	if (deps.label) dispatch(setLabel(deps.label))
 	if (deps.routeassignment) dispatch(setRouteAssignment(deps.routeassignment))
 	if (deps.selectlist) dispatch(setSelectList(deps.selectlist))

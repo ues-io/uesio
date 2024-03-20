@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react"
-import { Class } from "@twind/core"
+import { Class, cx } from "@twind/core"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -224,6 +224,7 @@ declare function useStyleTokens(
 export const styles = {
 	useUtilityStyleTokens,
 	useStyleTokens,
+	cx,
 }
 
 //
@@ -239,6 +240,10 @@ interface SlotUtilityProps extends UtilityProps {
 	componentType?: MetadataKey
 }
 
+interface UtilityPropsPlus extends UtilityProps {
+	[x: string]: unknown
+}
+
 export namespace component {
 	export namespace registry {
 		export function register(key: MetadataKey, componentType: UC): void
@@ -251,6 +256,9 @@ export namespace component {
 	export function Slot(
 		...args: Parameters<FC<SlotUtilityProps>>
 	): ReturnType<FC>
+	export function getUtility<T extends UtilityProps = UtilityPropsPlus>(
+		key: MetadataKey
+	): UtilityComponent<T>
 }
 
 //
@@ -614,6 +622,10 @@ type WireRecord = {
 	 * @param context Context - the context in which to perform the update
 	 */
 	update: (fieldId: string, value: FieldValue, context: Context) => void
+	/**
+	 * Remove a record from the wire
+	 */
+	remove: () => void
 }
 
 type OrderState = {

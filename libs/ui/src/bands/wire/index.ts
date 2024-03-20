@@ -47,6 +47,10 @@ type UpdateRecordPayload = {
 	path: string[]
 } & EntityPayload
 
+type RemoveRecordPayload = {
+	recordId: string
+} & EntityPayload
+
 type CreateRecordPayload = {
 	record: PlainWireRecord
 	recordId: string
@@ -230,6 +234,12 @@ const wireSlice = createSlice({
 				const usePath = [recordId].concat(path)
 				set(state.data, usePath, record)
 				set(state.original, usePath, record)
+			}
+		),
+		removeRecord: createEntityReducer<RemoveRecordPayload, PlainWire>(
+			(state, { recordId }) => {
+				delete state.data[recordId]
+				delete state.changes[recordId]
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
@@ -511,6 +521,7 @@ export const {
 	unmarkForDelete,
 	updateRecord,
 	setRecord,
+	removeRecord,
 	createRecord,
 	cancel,
 	empty,

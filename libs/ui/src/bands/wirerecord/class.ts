@@ -62,6 +62,8 @@ class WireRecord {
 		this.wire.setRecord(this.id, value, this.getFieldParts(fieldId))
 
 	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value, [])
+
+	remove = () => this.wire.removeRecord(this.id)
 }
 
 export default WireRecord

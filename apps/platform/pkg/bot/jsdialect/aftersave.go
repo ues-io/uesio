@@ -53,18 +53,18 @@ func (as *AfterSaveAPI) Delete(collection string, deletes wire.Collection) error
 	return botDelete(collection, deletes, as.session, as.connection)
 }
 
-func (bs *AfterSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, bs.session, bs.connection)
+func (as *AfterSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, as.session, as.connection)
 }
 
-func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
-	return runIntegrationAction(integrationID, action, options, bs.session, bs.connection)
+func (as *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+	return runIntegrationAction(integrationID, action, options, as.session, as.connection)
 }
 
-func (bs *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, bs.session)
+func (as *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
+	return configstore.GetValueFromKey(configValueKey, as.session)
 }
 
-func (bs *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
-	return botCall(botKey, params, bs.session, bs.connection)
+func (as *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+	return botCall(botKey, params, as.session, as.connection)
 }
