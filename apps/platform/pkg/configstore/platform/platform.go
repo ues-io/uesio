@@ -1,6 +1,8 @@
 package environment
 
 import (
+	"log/slog"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -30,6 +32,12 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 		},
 		session)
 	if err != nil {
+		slog.LogAttrs(session.Context(),
+			slog.LevelWarn,
+			"Error getting Config Value",
+			slog.String("error", err.Error()),
+		)
+
 		return "", nil
 	}
 	return cv.Value, nil
