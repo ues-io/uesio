@@ -306,16 +306,19 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// List All Namespace Items
 	itemListPath := "/metadata/types/{type}/list"
+	sr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 	wr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 
 	itemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/list/%s", groupingParam)
+	sr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	wr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 
 	nsItemListPath := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list", nsParam)
+	sr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	wr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)

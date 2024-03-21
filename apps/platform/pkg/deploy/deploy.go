@@ -24,6 +24,7 @@ import (
 // TODO: Eliminate the need to keep this manual list.
 // Evaluate the dependencies of each item and deploy in dependency order.
 var ORDERED_ITEMS = [...]string{
+	"authsources",
 	"labels",
 	"translations",
 	"collections",

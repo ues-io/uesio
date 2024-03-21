@@ -311,9 +311,9 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	if (type === "featureFlag")
 		return !!context.getFeatureFlag(condition.name)?.value
 
-	if (type === "recordIsNew") return !!context.getRecord()?.isNew()
+	if (type === "recordIsNew") return !!context.getRecord(wireName)?.isNew()
 
-	if (type === "recordIsNotNew") return !context.getRecord()?.isNew()
+	if (type === "recordIsNotNew") return !context.getRecord(wireName)?.isNew()
 
 	if (type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
