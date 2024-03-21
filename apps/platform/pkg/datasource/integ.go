@@ -70,7 +70,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 	if integration.Credentials != "" {
 		credentials, err = GetCredentials(integration.Credentials, versionSession)
 		if err != nil {
-			return nil, fmt.Errorf("could not retrieve Credentials with name %s for Integration %s", integration.Credentials, integrationID)
+			return nil, fmt.Errorf("could not retrieve Credentials with name %s for Integration %s: %s", integration.Credentials, integrationID, err.Error())
 		}
 	}
 
