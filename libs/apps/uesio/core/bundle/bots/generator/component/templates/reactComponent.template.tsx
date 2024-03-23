@@ -12,7 +12,7 @@ const Component: definition.UC<ComponentDefinition> = (props) => {
 		},
 		props
 	)
-	return <div className={classes.root}>{props.context.merge(text)}</div>
+	return <div className={classes.root}>{props.context.mergeString(text)}</div>
 }
 
 export default Component

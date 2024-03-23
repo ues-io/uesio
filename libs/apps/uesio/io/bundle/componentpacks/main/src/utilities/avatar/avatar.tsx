@@ -7,8 +7,8 @@ interface AvatarProps {
 
 const Avatar: definition.UtilityComponent<AvatarProps> = (props) => {
 	const { image, context, text } = props
-	const mergedImage = context.merge(image)
-	const mergedText = context.merge(text)
+	const mergedImage = context.mergeString(image)
+	const mergedText = context.mergeString(text)
 
 	const bgImageClass = mergedImage ? `bg-[url(${mergedImage})]` : "initial"
 	const bgColorClass = mergedImage ? "bg-transparent" : "bg-primary"

@@ -100,7 +100,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 				<div className={classes.input}>
 					{!selectedItems.length && (
 						<div className={classes.notfound}>
-							{context.merge(props.placeholder) ||
+							{context.mergeString(props.placeholder) ||
 								"Nothing selected"}
 						</div>
 					)}

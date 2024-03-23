@@ -14,6 +14,7 @@ func (c *UpdatesAPI) Get() []*ChangeAPI {
 	_ = c.op.LoopUpdates(func(change *wire.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
 			change: change,
+			op:     c.op,
 		})
 		return nil
 	})

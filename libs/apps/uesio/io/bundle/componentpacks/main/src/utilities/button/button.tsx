@@ -62,7 +62,9 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		>
 			{iconPlacement === "start" && icon}
 			{label && (
-				<span className={classes.label}>{context.merge(label)}</span>
+				<span className={classes.label}>
+					{context.mergeString(label)}
+				</span>
 			)}
 			{iconPlacement === "end" && icon}
 		</Tag>

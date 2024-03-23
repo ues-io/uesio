@@ -1,10 +1,13 @@
 package jsdialect
 
-import "github.com/thecloudmasters/uesio/pkg/types/wire"
+import (
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+)
 
 type ChangeAPI struct {
 	change *wire.ChangeItem
-	errors []string
+	op     *wire.SaveOp
 }
 
 func (c *ChangeAPI) GetId() string {
@@ -41,7 +44,7 @@ func (c *ChangeAPI) GetOld(fieldName string) interface{} {
 
 func (c *ChangeAPI) Set(fieldName string, value interface{}) {
 	if err := c.change.FieldChanges.SetField(fieldName, value); err != nil {
-		c.AddError(err.Error())
+		c.AddFieldError(err.Error(), fieldName)
 	}
 }
 
@@ -52,5 +55,9 @@ func (c *ChangeAPI) SetAll(record map[string]interface{}) {
 }
 
 func (c *ChangeAPI) AddError(message string) {
-	c.errors = append(c.errors, message)
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, "", message))
+}
+
+func (c *ChangeAPI) AddFieldError(message string, field string) {
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, field, message))
 }
