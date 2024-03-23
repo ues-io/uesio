@@ -191,21 +191,7 @@ const Route: UtilityComponent = (props) => {
 				/>
 			)}
 			<Progress context={props.context} />
-			<div
-				id="notificationsArea"
-				style={{
-					position: "fixed",
-					right: "2em",
-					bottom: "2em",
-					display: "grid",
-					rowGap: "10px",
-					marginLeft: "2em",
-					width: "350px",
-					zIndex: "1",
-				}}
-			>
-				<NotificationArea context={props.context} />
-			</div>
+			<NotificationArea context={props.context} />
 		</>
 	)
 }

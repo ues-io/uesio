@@ -19,7 +19,7 @@ const FieldLabel: definition.UtilityComponent<FieldLabelProps> = (props) => {
 	)
 	return (
 		<label className={classes.root} htmlFor={labelFor}>
-			{context.merge(label)}
+			{context.mergeString(label)}
 		</label>
 	)
 }

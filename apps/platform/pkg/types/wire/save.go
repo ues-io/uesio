@@ -133,7 +133,6 @@ type ChangeItem struct {
 	FieldChanges    meta.Item
 	IDValue         string
 	UniqueKey       string
-	Error           error
 	RecordKey       string
 	OldValues       meta.Item
 	ReadTokens      []string

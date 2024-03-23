@@ -50,14 +50,14 @@ const IconLabel: definition.UtilityComponent<T> = (props) => {
 				iconElement
 			)}
 			<div>
-				<p className={classes.title}>{context.merge(text)}</p>
+				<p className={classes.title}>{context.mergeString(text)}</p>
 				{/* Render whitespace if subtitle is empty string */}
 				{(subtitle || subtitle === "") && (
 					<p className={classes.subtitle}>
 						{subtitle === "" ? (
 							<>&nbsp;</>
 						) : (
-							context.merge(subtitle)
+							context.mergeString(subtitle)
 						)}
 					</p>
 				)}

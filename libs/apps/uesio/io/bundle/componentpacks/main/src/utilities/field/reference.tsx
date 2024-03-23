@@ -133,11 +133,9 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (template) {
 			return context.addRecordDataFrame(item).mergeString(template)
 		}
-		return (
-			item[nameField] ||
+		return (item[nameField] ||
 			item[collection.UNIQUE_KEY_FIELD] ||
-			item[collection.ID_FIELD]
-		)
+			item[collection.ID_FIELD]) as string
 	}
 
 	const onSearch = debounce(async (search: string) => {

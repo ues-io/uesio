@@ -87,7 +87,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 			<ItemTag context={context}>
 				{typeof displayTemplate === "function"
 					? displayTemplate(record.source)
-					: context.merge(displayTemplate)}
+					: context.mergeString(displayTemplate)}
 			</ItemTag>
 			{itemChildren?.({
 				item: record.source,

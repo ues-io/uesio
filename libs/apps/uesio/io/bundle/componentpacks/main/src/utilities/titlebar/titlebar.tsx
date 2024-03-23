@@ -47,7 +47,7 @@ const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
 				<div className={classes.avatar}>{avatar}</div>
 			) : undefined}
 			<div className={classes.content}>
-				<p className={classes.title}>{context.merge(title)}</p>
+				<p className={classes.title}>{context.mergeString(title)}</p>
 
 				{/* Render whitespace if subtitle is empty string */}
 				{(subtitle || subtitle === "") && (
@@ -55,7 +55,7 @@ const TitleBar: definition.UtilityComponent<TitleBarUtilityProps> = (props) => {
 						{subtitle === "" ? (
 							<>&nbsp;</>
 						) : (
-							context.merge(subtitle)
+							context.mergeString(subtitle)
 						)}
 					</p>
 				)}

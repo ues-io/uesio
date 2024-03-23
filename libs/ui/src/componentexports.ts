@@ -8,7 +8,6 @@ import {
 	ViewComponentDefinition,
 	ViewComponentId,
 } from "./components/view"
-import NotificationArea from "./utilities/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
 import {
@@ -71,7 +70,6 @@ export {
 	registry,
 	getUtility,
 	Component,
-	NotificationArea,
 	shouldHaveClass,
 	useShould,
 	shouldAll,
