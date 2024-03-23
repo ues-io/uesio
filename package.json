@@ -54,7 +54,7 @@
 		"@fullcalendar/react": "^6.1.10",
 		"@fullcalendar/timegrid": "^6.1.11",
 		"@monaco-editor/react": "^4.6.0",
-		"@nx/eslint": "17.3.0",
+		"@nx/eslint": "18.1.2",
 		"@nx/eslint-plugin": "17.3.0",
 		"@nx/jest": "17.3.0",
 		"@orangeopensource/hurl": "^4.2.0",
