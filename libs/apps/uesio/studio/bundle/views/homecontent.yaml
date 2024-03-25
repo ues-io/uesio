@@ -8,7 +8,10 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.slug:
-      batchsize: 4
+      batchsize: 5
+      order:
+        - field: uesio/core.updatedat
+          desc: true
     recentdocs:
       collection: uesio/studio.recentdoc
       fields:
@@ -19,7 +22,7 @@ definition:
       order:
         - field: uesio/core.updatedat
           desc: true
-      batchsize: 4
+      batchsize: 5
   # Components are how we describe the layout of our view
   components:
     - uesio/io.box:
