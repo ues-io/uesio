@@ -458,3 +458,12 @@ Content-Type: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
+
+# Remove impersonation record to reset to orignal state
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+{
+    "workspaceid": "{{workspace_id}}",
+    "profile": ""
+}
+HTTP 200
+

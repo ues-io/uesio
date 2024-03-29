@@ -126,23 +126,6 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 	// so that we can send down their runtime definition metadata into the View HTML.
 	deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
 
-	if component.ConfigValues != nil && len(component.ConfigValues) > 0 {
-		// need an admin session for retrieving config values
-		// in order to prevent users from having to have read on the uesio/core.configvalue table
-		adminSession := datasource.GetSiteAdminSession(session)
-		for _, key := range component.ConfigValues {
-			value, err := configstore.GetValueFromKey(key, adminSession)
-			if err != nil {
-				return err
-			}
-			configvalue, err := meta.NewConfigValue(key)
-			if err != nil {
-				return err
-			}
-			configvalue.Value = value
-			deps.ConfigValue.AddItem(configvalue)
-		}
-	}
 	for _, key := range component.Utilities {
 		if utilityErr := getDepsForUtilityComponent(key, deps, session); utilityErr != nil {
 			return utilityErr
@@ -438,7 +421,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
 
-	configValues, err := configstore.GetConfigValues(adminSession)
+	configValues, err := configstore.GetConfigValues(adminSession, nil)
 	if err != nil {
 		return nil, errors.New("Failed to get config values: " + err.Error())
 	}

@@ -11,25 +11,77 @@ import (
 
 type ConfigStore interface {
 	Get(key string, session *sess.Session) (string, error)
+	GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error)
 	Set(key, value string, session *sess.Session) error
 }
 
 var configStoreMap = map[string]ConfigStore{}
 
-func GetConfigValues(session *sess.Session) (*meta.ConfigValueCollection, error) {
-	configValues := meta.ConfigValueCollection{}
-	err := bundle.LoadAllFromAny(&configValues, nil, session, nil)
+type ConfigLoadOptions struct {
+	OnlyWriteable bool
+}
+
+func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.ConfigValueCollection, error) {
+	if options == nil {
+		options = &ConfigLoadOptions{}
+	}
+	allConfigValues := meta.ConfigValueCollection{}
+	err := bundle.LoadAllFromAny(&allConfigValues, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	for i := range configValues {
-		cv := configValues[i]
-		value, err := GetValue(cv, session)
-		if err != nil {
+	configValues := meta.ConfigValueCollection{}
+	for i := range allConfigValues {
+		cv := allConfigValues[i]
+		if options.OnlyWriteable && (cv.ManagedBy == "app" || cv.Store == "environment") {
 			continue
 		}
-		cv.Value = value
+		configValues = append(configValues, cv)
+	}
+
+	configValuesByStore := map[string]meta.ConfigValueCollection{}
+
+	for i := range configValues {
+		cv := configValues[i]
+		_, ok := configValuesByStore[cv.Store]
+		if !ok {
+			configValuesByStore[cv.Store] = meta.ConfigValueCollection{}
+		}
+		configValuesByStore[cv.Store] = append(configValuesByStore[cv.Store], cv)
+	}
+
+	for storeName, configValuesForStore := range configValuesByStore {
+		store, err := GetConfigStore(storeName)
+		if err != nil {
+			return nil, err
+		}
+
+		keys := make([]string, len(configValuesForStore))
+		for i, cv := range configValuesForStore {
+			keys[i] = cv.GetKey()
+		}
+
+		values, err := store.GetMany(keys, session)
+		if err != nil {
+			return nil, err
+		}
+
+		// Now make a map of our results
+		valuesMap := map[string]string{}
+		for _, value := range values {
+			valuesMap[value.Key] = value.Value
+		}
+
+		for _, cv := range configValuesForStore {
+			value, ok := valuesMap[cv.GetKey()]
+			if !ok || value == "" {
+				cv.Value = cv.DefaultValue
+				continue
+			}
+			cv.Value = value
+		}
+
 	}
 	return &configValues, nil
 }

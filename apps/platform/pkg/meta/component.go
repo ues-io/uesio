@@ -34,7 +34,6 @@ type Component struct {
 	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
 	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
 	Type           string   `yaml:"type,omitempty" json:"uesio/studio.type"`
-	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 	Slots          *YAMLDef `yaml:"slots,omitempty" json:"uesio/studio.slots"`

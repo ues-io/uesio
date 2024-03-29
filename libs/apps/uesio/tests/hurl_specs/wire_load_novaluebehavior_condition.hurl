@@ -47,7 +47,12 @@ Accept: application/json
                     "noValueBehavior": "DEACTIVATE"
                 }
             ],
-            "batchsize": 1
+            "batchsize": 1,
+            "order": [
+                {
+                    "field": "uesio/tests.species"
+                }
+            ]
         }
     ]
 }
@@ -64,7 +69,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2
-ORDER BY main.id::text asc
+ORDER BY main.fields->>'uesio/tests.species' asc
 LIMIT 2```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Blazewski:Aaron"
