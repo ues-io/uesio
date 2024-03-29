@@ -31,6 +31,24 @@ export default function signup(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
+	const site = bot.getSession().getSite()
+
+	const signupNotifyEmail = bot.asAdmin.getConfigValue(
+		"uesio/studio.signup_notify_email"
+	)
+
+	if (signupNotifyEmail) {
+		bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
+			to: [email],
+			toNames: [toName],
+			from,
+			fromName,
+			subject: "New signup in uesio studio ",
+			plainBody: `A user signed up for a studio account on site ${site.getName()} and domain ${site.getDomain()}.`,
+			contentType,
+		})
+	}
+
 	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
 		to: [email],
 		toNames: [toName],

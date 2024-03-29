@@ -35,7 +35,7 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 		return nil, err
 	}
 
-	value, err := configstore.GetValueFromKey(key, session)
+	value, err := configstore.GetValue(configValue, session)
 	if err != nil {
 		return nil, err
 	}
@@ -49,27 +49,22 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 }
 
 func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
-	var configValues meta.ConfigValueCollection
-	err := bundle.LoadAllFromAny(&configValues, nil, session, nil)
+
+	configValues, err := configstore.GetConfigValues(session, &configstore.ConfigLoadOptions{
+		OnlyWriteable: true,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	var response []ConfigValueResponse
 
-	for _, cv := range configValues {
-		if cv.ManagedBy == "app" || cv.Store == "environment" {
-			continue
-		}
-		value, err := configstore.GetValue(cv, session)
-		if err != nil {
-			return nil, err
-		}
+	for _, cv := range *configValues {
 		response = append(response, ConfigValueResponse{
 			Name:      cv.Name,
 			Namespace: cv.Namespace,
 			ManagedBy: cv.ManagedBy,
-			Value:     value,
+			Value:     cv.Value,
 		})
 	}
 	return response, nil

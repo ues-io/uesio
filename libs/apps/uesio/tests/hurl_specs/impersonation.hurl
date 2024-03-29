@@ -172,3 +172,11 @@ HTTP 200
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
+
+# Remove impersonation record to reset to orignal state
+POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+{
+    "workspaceid": "{{workspace_id}}",
+    "profile": ""
+}
+HTTP 200

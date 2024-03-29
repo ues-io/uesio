@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -54,6 +55,21 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 		return "", nil
 	}
 	return value, nil
+}
+
+func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
+	results := meta.ConfigStoreValueCollection{}
+	for _, key := range keys {
+		value, err := cs.Get(key, session)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, &meta.ConfigStoreValue{
+			Key:   key,
+			Value: value,
+		})
+	}
+	return results, nil
 }
 
 func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {

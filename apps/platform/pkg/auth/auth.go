@@ -233,6 +233,11 @@ func getUser(field, value string, session *sess.Session, connection wire.Connect
 				},
 				{
 					ID: "uesio/core.owner",
+					Fields: []wire.LoadRequestField{
+						{
+							ID: commonfields.Id,
+						},
+					},
 				},
 			},
 			Conditions: []wire.LoadRequestCondition{
@@ -292,6 +297,31 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 	err := datasource.PlatformLoadOne(
 		&loginMethod,
 		&datasource.PlatformLoadOptions{
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "uesio/core.federation_id",
+				},
+				{
+					ID: "uesio/core.auth_source",
+				},
+				{
+					ID: "uesio/core.user",
+					Fields: []wire.LoadRequestField{
+						{
+							ID: commonfields.Id,
+						},
+					},
+				},
+				{
+					ID: "uesio/core.hash",
+				},
+				{
+					ID: "uesio/core.verification_code",
+				},
+				{
+					ID: "uesio/core.verification_expires",
+				},
+			},
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.auth_source",

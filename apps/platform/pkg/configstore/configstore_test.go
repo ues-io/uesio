@@ -23,6 +23,20 @@ func (store *TestConfigStore) Get(key string, session *sess.Session) (string, er
 		return "", nil
 	}
 }
+func (store *TestConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
+	results := meta.ConfigStoreValueCollection{}
+	for _, key := range keys {
+		value, err := store.Get(key, session)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, &meta.ConfigStoreValue{
+			Key:   key,
+			Value: value,
+		})
+	}
+	return results, nil
+}
 func (store *TestConfigStore) Set(key, value string, session *sess.Session) error {
 	return nil
 }

@@ -23,30 +23,35 @@ import (
 // in numbers of total queries.
 var totalWorkspaceQueries atomic.Int64
 var totalQueries atomic.Int64
+var totalConfigStoreQueries atomic.Int64
 
 var debugSQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
 
 func init() {
 	if env.InDevMode() {
 		totalWorkspaceQueries = atomic.Int64{}
+		totalConfigStoreQueries = atomic.Int64{}
 		totalQueries = atomic.Int64{}
 	}
 }
 
 type QueryStatistics struct {
-	TotalWorkspaceQueries int64 `json:"totalWorkspaceQueries"`
-	TotalQueries          int64 `json:"totalQueries"`
+	TotalWorkspaceQueries   int64 `json:"totalWorkspaceQueries"`
+	TotalConfigStoreQueries int64 `json:"totalConfigStoreQueries"`
+	TotalQueries            int64 `json:"totalQueries"`
 }
 
 func GetQueryStatistics() QueryStatistics {
 	return QueryStatistics{
-		TotalWorkspaceQueries: totalWorkspaceQueries.Load(),
-		TotalQueries:          totalQueries.Load(),
+		TotalWorkspaceQueries:   totalWorkspaceQueries.Load(),
+		TotalConfigStoreQueries: totalConfigStoreQueries.Load(),
+		TotalQueries:            totalQueries.Load(),
 	}
 }
 
 func ResetQueryStatistics() {
 	totalWorkspaceQueries.Store(0)
+	totalConfigStoreQueries.Store(0)
 	totalQueries.Store(0)
 }
 
@@ -281,9 +286,6 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			return err
 		}
 		fieldName := getFieldName(fieldMetadata, mainTableAlias)
-		if err != nil {
-			return err
-		}
 		dir := "asc"
 		if order.Desc {
 			dir = "desc"
@@ -403,6 +405,9 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	if env.InDevMode() {
 		if op.CollectionName == "uesio/studio.workspace" {
 			totalWorkspaceQueries.Add(1)
+		}
+		if op.CollectionName == "uesio/core.configstorevalue" {
+			totalConfigStoreQueries.Add(1)
 		}
 		totalQueries.Add(1)
 	}
