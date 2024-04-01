@@ -1,12 +1,18 @@
+import { getPackUrlsForDeps } from "../bands/route/utils"
+import { Context } from "../context/context"
+import { ComponentPackState } from "../definition/componentpack"
+
 const cachedScripts: ScriptMap = {}
 
 interface ScriptMap {
 	[key: string]: ScriptCache
 }
 
+type HTMLLoadableElement = HTMLScriptElement | HTMLLinkElement
+
 type ScriptCache = {
 	loaded: boolean
-	script: HTMLScriptElement
+	script: HTMLLoadableElement
 	fullKey: string
 }
 
@@ -45,6 +51,36 @@ const initializeScriptCache = () => {
 	}
 }
 
+const isScriptTag = (
+	element: HTMLLoadableElement
+): element is HTMLScriptElement => element.nodeName === "SCRIPT"
+
+const getItemSource = (element: HTMLLoadableElement) =>
+	isScriptTag(element) ? element.src : element.href
+
+const getLoadItem = (src: string) => {
+	if (src.endsWith(".css")) {
+		const link = document.createElement("link")
+		link.rel = "stylesheet"
+		link.type = "text/css"
+		link.href = src
+		return {
+			loaded: false,
+			script: link,
+			fullKey: link.href,
+		}
+	}
+	const script = document.createElement("script")
+	script.src = src
+	script.async = true
+	script.type = "module"
+	return {
+		loaded: false,
+		script,
+		fullKey: script.src,
+	}
+}
+
 const getScriptsToLoad = (
 	sources: string[],
 	callback: (result: ScriptResult) => void
@@ -53,7 +89,7 @@ const getScriptsToLoad = (
 
 	const scriptsToLoad: ScriptMap = {}
 
-	const registerScriptEvents = (elem: HTMLScriptElement) => {
+	const registerScriptEvents = (elem: HTMLLoadableElement) => {
 		elem.addEventListener("load", onScriptLoad)
 		elem.addEventListener("error", onScriptError)
 	}
@@ -67,8 +103,8 @@ const getScriptsToLoad = (
 	}
 
 	// Script event listener callbacks for load and error
-	const onScriptLoad = function (this: HTMLScriptElement): void {
-		const src = this.src
+	const onScriptLoad = function (this: HTMLLoadableElement): void {
+		const src = getItemSource(this)
 		const cachedScriptKey = Object.keys(cachedScripts).find((key) => {
 			const item = cachedScripts[key]
 			return item.fullKey === src
@@ -86,8 +122,8 @@ const getScriptsToLoad = (
 			}
 		}
 	}
-	const onScriptError = function (this: HTMLScriptElement): void {
-		const src = this.src
+	const onScriptError = function (this: HTMLLoadableElement): void {
+		const src = getItemSource(this)
 		// Remove from cachedScripts we can try loading again
 		delete cachedScripts[src]
 		removeScriptEvents()
@@ -99,24 +135,14 @@ const getScriptsToLoad = (
 	sources.forEach((src: string) => {
 		const cache = cachedScripts[src]
 		if (!cache) {
-			// Create script
-			const script = document.createElement("script")
-			script.src = src
-			script.async = true
-			script.type = "module"
-
-			const scriptCacheItem = {
-				loaded: false,
-				script,
-				fullKey: script.src,
-			}
+			const scriptCacheItem = getLoadItem(src)
 
 			scriptsToLoad[src] = scriptCacheItem
 			cachedScripts[src] = scriptCacheItem
-			registerScriptEvents(script)
+			registerScriptEvents(scriptCacheItem.script)
 
 			// Add script to document body
-			document.body.appendChild(script)
+			document.body.appendChild(scriptCacheItem.script)
 		} else if (!cache.loaded) {
 			scriptsToLoad[src] = cache
 			registerScriptEvents(cache.script)
@@ -131,11 +157,16 @@ const getScriptsToLoad = (
 	return removeScriptEvents
 }
 
-const loadScripts = async (sources: string[]): Promise<ScriptResult> =>
-	new Promise((resolve, reject) => {
-		getScriptsToLoad(sources, (result) => {
+const loadScripts = async (
+	packs: ComponentPackState[] | undefined,
+	context: Context
+): Promise<ScriptResult> => {
+	const packsToLoad = getPackUrlsForDeps(packs, context)
+	return new Promise((resolve, reject) => {
+		getScriptsToLoad(packsToLoad, (result) => {
 			result.error ? reject(result) : resolve(result)
 		})
 	})
+}
 
 export { loadScripts, getLoadedScripts }

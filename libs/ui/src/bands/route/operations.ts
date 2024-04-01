@@ -8,7 +8,7 @@ import {
 } from "../../platform/platform"
 import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
-import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
+import { dispatchRouteDeps } from "./utils"
 import { dispatch } from "../../store/store"
 import { RouteState } from "./types"
 import { nanoid } from "@reduxjs/toolkit"
@@ -166,11 +166,12 @@ const handleNavigateResponse = async (
 		})
 	}
 
-	const newPacks = getPackUrlsForDeps(deps, context)
+	const packDeps = deps?.componentpack
 
-	if (newPacks && newPacks.length) {
-		await loadScripts(newPacks)
+	if (packDeps) {
+		await loadScripts(packDeps, context)
 	}
+
 	// We don't need to store the dependencies in redux with the route itself
 	delete routeResponse.dependencies
 
