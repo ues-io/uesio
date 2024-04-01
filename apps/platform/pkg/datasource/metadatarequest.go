@@ -62,6 +62,9 @@ func (fm *FieldsMap) getRequestFields() []wire.LoadRequestField {
 	}
 
 	for fieldKey, subFields := range *fm {
+		if fieldKey == commonfields.Id {
+			continue
+		}
 		fields = append(fields, wire.LoadRequestField{
 			ID:     fieldKey,
 			Fields: subFields.getRequestFields(),

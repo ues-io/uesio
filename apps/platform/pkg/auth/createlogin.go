@@ -44,7 +44,7 @@ func createLoginWithConnection(signupMethod *meta.SignupMethod, payload map[stri
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func createLoginWithConnection(signupMethod *meta.SignupMethod, payload map[stri
 		return err
 	}
 
-	user, err := GetUserByKey(username, session, nil)
+	user, err := GetUserByKey(username, session, connection)
 	if err != nil {
 		return err
 	}
