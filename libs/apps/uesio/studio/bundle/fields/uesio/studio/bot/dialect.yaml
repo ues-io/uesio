@@ -1,6 +1,6 @@
 name: dialect
 type: SELECT
 label: Dialect
-selectList: botdialect
+selectList: uesio/core.botdialect
 required: true
 createOnly: true

@@ -221,6 +221,7 @@ type Bot struct {
 	CollectionRef  string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	Type           string    `yaml:"type" json:"uesio/studio.type"`
 	Dialect        string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Definition     *YAMLDef  `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 	Timeout        int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
 	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
 	FileContents   string    `yaml:"-" json:"-"`
@@ -245,9 +246,10 @@ func GetBotTypes() map[string]string {
 
 func GetBotDialects() map[string]string {
 	return map[string]string{
-		"JAVASCRIPT": "javascript",
-		"SYSTEM":     "system",
-		"TYPESCRIPT": "typescript",
+		"JAVASCRIPT":  "javascript",
+		"SYSTEM":      "system",
+		"TYPESCRIPT":  "typescript",
+		"DECLARATIVE": "declarative",
 	}
 }
 

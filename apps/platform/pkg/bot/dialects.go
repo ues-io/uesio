@@ -37,5 +37,4 @@ type BotDialect interface {
 	LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error
 	SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 	RunIntegrationActionBot(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
-	GetFilePath() string
 }

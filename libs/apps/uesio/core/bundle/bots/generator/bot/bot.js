@@ -4,6 +4,7 @@ function bot(botapi) {
 	const params = botapi.params.getAll()
 	const { name, collection } = params
 	const type = (params.type || "LISTENER").toLowerCase()
+	const dialect = (params.dialect || "TYPESCRIPT").toLowerCase()
 	// In order to avoid conflicts with Generator merges clobbering JS variable merges
 	// inside of our Bot template files, we will just replace all JS merges in the template files,
 	// e.g. we will just have "ns" => "${ns}", etc.
@@ -21,11 +22,13 @@ function bot(botapi) {
 		path += `/${collection.replace(".", "/")}`
 	}
 	path += `/${name}/bot`
-	botapi.generateFile(
-		`${path}.ts`,
-		newBotParams,
-		`templates/${type}/bot.template.ts`
-	)
+	if (dialect === "TYPESCRIPT") {
+		botapi.generateFile(
+			`${path}.ts`,
+			newBotParams,
+			`templates/${type}/bot.template.ts`
+		)
+	}
 	botapi.generateFile(
 		`${path}.yaml`,
 		{ ...params, name },
