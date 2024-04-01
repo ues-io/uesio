@@ -14,4 +14,4 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.queryStats.totalQueries" > 1
-jsonpath "$.queryStats.totalWorkspaceQueries" > 1
+jsonpath "$.queryStats.queriesByCollection['uesio/studio.workspace']" > 1
