@@ -15,7 +15,7 @@ func GetPerfStats(w http.ResponseWriter, r *http.Request) {
 	perfStats := PerfStats{
 		QueryStats: postgresio.GetQueryStatistics(),
 	}
-	filejson.RespondJSON(w, r, perfStats)
+	filejson.RespondJSONPretty(w, r, perfStats)
 }
 
 func ResetPerfStats(w http.ResponseWriter, r *http.Request) {

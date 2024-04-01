@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"sync/atomic"
 
 	"github.com/teris-io/shortid"
@@ -18,41 +19,39 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-// Only used if DEBUG_SQL is enabled - does some counts of SQL queries made
-// so that we can analyze whether performance optimizations are moving us up/down
-// in numbers of total queries.
-var totalWorkspaceQueries atomic.Int64
-var totalQueries atomic.Int64
-var totalConfigStoreQueries atomic.Int64
+var queryCounts sync.Map
 
 var debugSQL = os.Getenv("UESIO_DEBUG_SQL") == "true"
 
 func init() {
 	if env.InDevMode() {
-		totalWorkspaceQueries = atomic.Int64{}
-		totalConfigStoreQueries = atomic.Int64{}
-		totalQueries = atomic.Int64{}
+		ResetQueryStatistics()
 	}
 }
 
 type QueryStatistics struct {
-	TotalWorkspaceQueries   int64 `json:"totalWorkspaceQueries"`
-	TotalConfigStoreQueries int64 `json:"totalConfigStoreQueries"`
-	TotalQueries            int64 `json:"totalQueries"`
+	QueriesByCollection map[string]int64 `json:"queriesByCollection"`
+	TotalQueries        int64            `json:"totalQueries"`
 }
 
 func GetQueryStatistics() QueryStatistics {
+	queryCountsResult := make(map[string]int64)
+	var totalQueries int64
+	queryCounts.Range(func(k interface{}, v interface{}) bool {
+		intValue := v.(*int64)
+		totalQueries = totalQueries + *intValue
+		queryCountsResult[k.(string)] = *intValue
+		return true
+	})
+
 	return QueryStatistics{
-		TotalWorkspaceQueries:   totalWorkspaceQueries.Load(),
-		TotalConfigStoreQueries: totalConfigStoreQueries.Load(),
-		TotalQueries:            totalQueries.Load(),
+		QueriesByCollection: queryCountsResult,
+		TotalQueries:        totalQueries,
 	}
 }
 
 func ResetQueryStatistics() {
-	totalWorkspaceQueries.Store(0)
-	totalConfigStoreQueries.Store(0)
-	totalQueries.Store(0)
+	queryCounts = sync.Map{}
 }
 
 const (
@@ -403,13 +402,9 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 	//fmt.Printf("PG LOAD %v\n", op.CollectionName)
 	if env.InDevMode() {
-		if op.CollectionName == "uesio/studio.workspace" {
-			totalWorkspaceQueries.Add(1)
-		}
-		if op.CollectionName == "uesio/core.configstorevalue" {
-			totalConfigStoreQueries.Add(1)
-		}
-		totalQueries.Add(1)
+		val, _ := queryCounts.LoadOrStore(op.CollectionName, new(int64))
+		ptr := val.(*int64)
+		atomic.AddInt64(ptr, 1)
 	}
 	op.BatchNumber++
 
