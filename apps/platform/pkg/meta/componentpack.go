@@ -23,6 +23,7 @@ func NewBaseComponentPack(namespace, name string) *ComponentPack {
 type ComponentPack struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	HasStyles      bool `yaml:"hasStyles,omitempty" json:"uesio/studio.has_styles"`
 }
 
 type ComponentPackWrapper ComponentPack
@@ -37,6 +38,7 @@ func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
 	if cp.UpdatedAt > 0 {
 		enc.AddInt64Key("updatedAt", cp.UpdatedAt)
 	}
+	enc.AddBoolKey("hasStyles", cp.HasStyles)
 }
 
 func (cp *ComponentPack) IsNil() bool {

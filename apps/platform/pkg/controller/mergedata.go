@@ -38,7 +38,8 @@ func init() {
 	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
 	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
-		"getComponentPackURLs": getComponentPackURLs,
+		"getComponentPackURLs":      getComponentPackURLs,
+		"getComponentPackStyleURLs": getComponentPackStyleURLs,
 	}).ParseFiles(indexPath, cssPath))
 }
 
@@ -53,12 +54,28 @@ func getComponentPackURLs(componentPackDeps *preload.MetadataMergeData, workspac
 		} else {
 			packModstamp = time.Now().Unix()
 		}
-		packUrls[i] = getPackUrl(key, packModstamp, workspace, site)
+		packUrls[i] = getPackUrl(key, packModstamp, workspace, site, "runtime.js")
 	}
 	return packUrls
 }
 
-func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) string {
+func getComponentPackStyleURLs(componentPackDeps *preload.MetadataMergeData, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) []string {
+	allDeps := componentPackDeps.GetItems()
+	packUrls := []string{}
+	for _, packDep := range allDeps {
+		key := packDep.GetKey()
+		var packModstamp int64
+		if pack, ok := packDep.(*meta.ComponentPack); ok {
+			packModstamp = pack.UpdatedAt
+			if pack.HasStyles {
+				packUrls = append(packUrls, getPackUrl(key, packModstamp, workspace, site, "runtime.css"))
+			}
+		}
+	}
+	return packUrls
+}
+
+func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -67,8 +84,6 @@ func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMerg
 	if err != nil {
 		return ""
 	}
-
-	filePath := "runtime.js"
 
 	if workspace != nil {
 		// If we are in a workspace context, use component pack modstamps to load in their resources,
