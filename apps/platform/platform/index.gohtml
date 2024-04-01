@@ -45,6 +45,9 @@
             {{- range getComponentPackURLs .PreloadMetadata.ComponentPack $workspace $site -}}
                 <script src="{{.}}" type="module"></script>
             {{- end -}}
+            {{- range getComponentPackStyleURLs .PreloadMetadata.ComponentPack $workspace $site -}}
+                <link rel="stylesheet" type="text/css" href="{{.}}"/>
+            {{- end -}}
         {{- end -}}
     {{- end -}}
     <script type="module">

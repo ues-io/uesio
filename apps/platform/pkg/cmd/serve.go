@@ -264,7 +264,7 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 
 	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
-	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt){1}(?:\\.map)?}"
+	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt|css){1}(?:\\.map)?}"
 
 	// Un-versioned Component pack routes - for backwards compatibility, and for local development
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)

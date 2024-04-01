@@ -54,6 +54,9 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 	if path != "runtime.js" && strings.HasSuffix(path, ".json") {
 		usePath = path
 	}
+	if path == "runtime.css" {
+		usePath = path
+	}
 
 	respondFile(w, r, &FileRequest{
 		Path:         usePath,
