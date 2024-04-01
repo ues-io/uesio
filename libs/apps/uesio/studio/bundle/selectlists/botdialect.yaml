@@ -1,6 +1,0 @@
-name: botdialect
-options:
-  - label: "JavaScript"
-    value: "JAVASCRIPT"
-  - label: "TypeScript"
-    value: "TYPESCRIPT"

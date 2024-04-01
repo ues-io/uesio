@@ -1,5 +1,5 @@
 name: ${name}
-dialect: TYPESCRIPT
+dialect: ${dialect}
 type: LISTENER
 params:
   - name: a

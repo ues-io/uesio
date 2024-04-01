@@ -199,6 +199,13 @@ definition:
                                   subtitle: $Time{uesio/core.updatedat}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
+                    uesio.display:
+                      - field: uesio/studio.dialect
+                        type: fieldValue
+                        operator: IN
+                        values:
+                          - TYPESCRIPT
+                          - JAVASCRIPT
                     components:
                       - uesio/io.list:
                           uesio.id: botAttachmentsList
@@ -212,6 +219,34 @@ definition:
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
                                   - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.display:
+                      - field: uesio/studio.dialect
+                        type: fieldValue
+                        operator: IN
+                        values:
+                          - DECLARATIVE
+                    components:
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          mode: READ
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              operator: NOT_EQUALS
+                              value: $Param{namespace}
+                      - uesio/studio.codefield:
+                          fieldId: uesio/studio.definition
+                          height: 350px
+                          language: yaml
+                          uesio.display:
+                            - type: paramValue
+                              param: app
+                              operator: EQUALS
+                              value: $Param{namespace}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/auth/platform"
 	"github.com/thecloudmasters/uesio/pkg/auth/samlauth"
+	"github.com/thecloudmasters/uesio/pkg/bot/declarativedialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/tsdialect"
@@ -79,6 +80,7 @@ func init() {
 	bot.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
 	bot.RegisterBotDialect("system", &systemdialect.SystemDialect{})
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
+	bot.RegisterBotDialect("declarative", &declarativedialect.DeclarativeDialect{})
 
 }
 

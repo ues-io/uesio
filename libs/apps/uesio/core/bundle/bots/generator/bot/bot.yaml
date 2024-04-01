@@ -11,6 +11,11 @@ params:
   - name: name
     prompt: Bot Name
     type: METADATANAME
+  - name: dialect
+    type: SELECT
+    prompt: Dialect
+    selectList: uesio/core.botdialect
+    default: TYPESCRIPT
   - name: collection
     type: METADATA
     prompt: Collection

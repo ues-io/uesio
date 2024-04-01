@@ -1,5 +1,5 @@
 name: ${name}
-dialect: TYPESCRIPT
+dialect: ${dialect}
 type: RUNACTION
 params:
   - name: amount

@@ -1,0 +1,11 @@
+name: botdialect
+label: Bot Dialect
+options:
+  - label: "TypeScript"
+    value: "TYPESCRIPT"
+  - label: "Declarative"
+    value: "DECLARATIVE"
+  - label: "JavaScript"
+    value: "JAVASCRIPT"
+    disabled: true
+public: true

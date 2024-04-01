@@ -241,8 +241,3 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.
 	return botFunction(op, connection, session)
 
 }
-
-// Unused by System Dialects, there is no actual file to load since they're all defined in Go code
-func (b *SystemDialect) GetFilePath() string {
-	return ""
-}
