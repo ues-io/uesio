@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 )
 
 // SetField sets the provided obj field with provided value. obj param has
@@ -102,6 +104,13 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 }
 
 func setPointer(to reflect.Value, from reflect.Value) error {
+	fromKind := from.Kind()
+	// Special handling for strings, just set the id field.
+	if fromKind == reflect.String {
+		from = reflect.ValueOf(map[string]interface{}{
+			commonfields.Id: from.String(),
+		})
+	}
 	if from.IsNil() {
 		to.Set(reflect.Zero(to.Type()))
 		return nil

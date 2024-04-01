@@ -53,7 +53,7 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 
 	s := sess.GetAnonSession(context.Background(), site)
 
-	user, err := GetUserByID(userid, s, nil)
+	user, err := GetUserWithPictureByID(userid, s, nil)
 	if err != nil {
 		return nil, err
 	}

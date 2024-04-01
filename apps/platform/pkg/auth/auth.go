@@ -195,51 +195,54 @@ func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection wir
 	return user, nil
 }
 
-func getUser(field, value string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+func getUser(field, value string, withPicture bool, session *sess.Session, connection wire.Connection) (*meta.User, error) {
 	var user meta.User
+	fields := []wire.LoadRequestField{
+		{
+			ID: "uesio/core.firstname",
+		},
+		{
+			ID: "uesio/core.lastname",
+		},
+		{
+			ID: "uesio/core.username",
+		},
+		{
+			ID: "uesio/core.profile",
+		},
+		{
+			ID: "uesio/core.email",
+		},
+		{
+			ID: "uesio/core.language",
+		},
+		{
+			ID: "uesio/core.owner",
+			Fields: []wire.LoadRequestField{
+				{
+					ID: commonfields.Id,
+				},
+			},
+		},
+	}
+	if withPicture {
+		fields = append(fields, wire.LoadRequestField{
+			ID: "uesio/core.picture",
+			Fields: []wire.LoadRequestField{
+				{
+					ID: commonfields.Id,
+				},
+				{
+					ID: commonfields.UpdatedAt,
+				},
+			},
+		})
+	}
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
-			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/core.firstname",
-				},
-				{
-					ID: "uesio/core.lastname",
-				},
-				{
-					ID: "uesio/core.username",
-				},
-				{
-					ID: "uesio/core.profile",
-				},
-				{
-					ID: "uesio/core.email",
-				},
-				{
-					ID: "uesio/core.picture",
-					Fields: []wire.LoadRequestField{
-						{
-							ID: commonfields.Id,
-						},
-						{
-							ID: commonfields.UpdatedAt,
-						},
-					},
-				},
-				{
-					ID: "uesio/core.language",
-				},
-				{
-					ID: "uesio/core.owner",
-					Fields: []wire.LoadRequestField{
-						{
-							ID: commonfields.Id,
-						},
-					},
-				},
-			},
+			Fields:     fields,
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: field,
@@ -256,11 +259,15 @@ func getUser(field, value string, session *sess.Session, connection wire.Connect
 }
 
 func GetUserByKey(username string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(commonfields.UniqueKey, username, session, connection)
+	return getUser(commonfields.UniqueKey, username, false, session, connection)
 }
 
 func GetUserByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(commonfields.Id, id, session, connection)
+	return getUser(commonfields.Id, id, false, session, connection)
+}
+
+func GetUserWithPictureByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(commonfields.Id, id, true, session, connection)
 }
 
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {

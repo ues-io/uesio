@@ -7,6 +7,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -213,6 +214,10 @@ func GetFieldsResponse(op *LoadOp, collectionMetadata *CollectionMetadata, metad
 		fieldIDMap[fieldMetadata.GetFullName()] = fieldMetadata
 
 		if IsReference(fieldMetadata.Type) {
+
+			if len(field.Fields) == 1 && field.Fields[0].ID == commonfields.Id {
+				continue
+			}
 
 			referencedCollection := fieldMetadata.ReferenceMetadata.GetCollection()
 			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
