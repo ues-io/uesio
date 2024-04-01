@@ -75,7 +75,7 @@ func TestGetPackUrl_Workspace(t *testing.T) {
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
 			file.SetAssetsPath(tc.staticAssetsPath)
-			actual := getPackUrl(tc.key, timestamp, tc.workspace, siteMergeData)
+			actual := getPackUrl(tc.key, timestamp, tc.workspace, siteMergeData, "runtime.js")
 			assert.Equal(t, actual, tc.expect)
 		})
 	}
@@ -202,7 +202,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
 			file.SetAssetsPath(tc.staticAssetsPath)
-			actual := getPackUrl(tc.key, PackUpdatedAt, nil, tc.site)
+			actual := getPackUrl(tc.key, PackUpdatedAt, nil, tc.site, "runtime.js")
 			assert.Equal(t, tc.expect, actual)
 		})
 	}
