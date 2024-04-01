@@ -38,13 +38,30 @@ export default function signup(bot: ListenerBotApi) {
 	)
 
 	if (signupNotifyEmail) {
+		const notifyBody = `
+		<!DOCTYPE html>
+		<html>
+			<body>
+				Hi ues.io Studio Administrator,<br/>
+				<br/>
+				A user signed up for a studio account on site ${site.getName()} and domain ${site.getDomain()}.<br/>
+				<br/>
+				Name: ${toName}<br/>
+				Username: ${username}<br/>
+				Email: ${email}<br/><br/>
+				Cheers!<br/>
+				<br/>
+				The team at ues.io
+			</body>
+		</html>`
+
 		bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-			to: [email],
-			toNames: [toName],
+			to: [signupNotifyEmail],
+			toNames: ["Studio Administrator"],
 			from,
 			fromName,
-			subject: "New signup in uesio studio ",
-			plainBody: `A user signed up for a studio account on site ${site.getName()} and domain ${site.getDomain()}.`,
+			subject: `New signup in uesio studio: ${toName}`,
+			plainBody: notifyBody,
 			contentType,
 		})
 	}
