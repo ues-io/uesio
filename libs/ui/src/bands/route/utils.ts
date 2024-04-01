@@ -21,6 +21,7 @@ import { dispatch } from "../../store/store"
 import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
 import { Bundleable } from "../../metadata/types"
+import { ComponentPackState } from "../../definition/componentpack"
 
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
 	if (!wires || !viewdefs) return [] as PlainWire[]
@@ -61,18 +62,29 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 }
 
 const getPackUrlsForDeps = (
-	deps: Dependencies | undefined,
+	packDeps: ComponentPackState[] | undefined,
 	context: Context
 ) => {
-	if (!deps?.componentpack) return []
-	return deps.componentpack.map((pack) =>
-		platform.getComponentPackURL(
+	if (!packDeps) return []
+	return packDeps.flatMap((pack) => {
+		const js = platform.getComponentPackURL(
 			context,
 			pack.namespace,
 			pack.name,
 			`${pack.updatedAt || 0}`
 		)
-	)
+		if (pack.hasStyles) {
+			const css = platform.getComponentPackURL(
+				context,
+				pack.namespace,
+				pack.name,
+				`${pack.updatedAt || 0}`,
+				"runtime.css"
+			)
+			return [js, css]
+		}
+		return [js]
+	})
 }
 
 export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

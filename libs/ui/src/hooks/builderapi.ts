@@ -5,7 +5,7 @@ import { MetadataType } from "../metadata/types"
 import { batch } from "react-redux"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
-import { dispatchRouteDeps, getPackUrlsForDeps } from "../bands/route/utils"
+import { dispatchRouteDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 import { makeComponentId } from "./componentapi"
 
@@ -49,9 +49,7 @@ const getBuilderDeps = async (context: Context) => {
 
 	const response = await platform.getBuilderDeps(context)
 
-	const packsToLoad = getPackUrlsForDeps(response, context)
-
-	await loadScripts(packsToLoad)
+	await loadScripts(response.componentpack, context)
 	batch(() => {
 		dispatchRouteDeps(response)
 	})
