@@ -1,0 +1,3 @@
+name: flowhandle
+pack: flow
+entrypoint: utilities/flowhandle/flowhandle
