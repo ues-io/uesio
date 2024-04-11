@@ -105,11 +105,19 @@ const getDef = <T extends definition.Definition>(
 		if (!viewDef) {
 			viewDef = api.view.getViewDef(path.itemName)
 		}
-		if (!path.localPath) {
-			return viewDef as T
-		}
-		return get(viewDef, path.localPath) as T
+		return getDefAtPath<T>(viewDef, path)
 	}
+}
+
+// A faster version of getDef where you privide a def. This is good for use in loops.
+const getDefAtPath = <T extends definition.Definition>(
+	definition: definition.Definition,
+	path: FullPath
+): T | undefined => {
+	if (!path.localPath) {
+		return definition as T
+	}
+	return get(definition, path.localPath)
 }
 
 const set = (
@@ -462,6 +470,7 @@ export {
 	move,
 	yamlMove,
 	getDef as get,
+	getDefAtPath,
 	getMetadataId,
 	getMetadataValue,
 	clone,

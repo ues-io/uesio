@@ -1,6 +1,7 @@
 import { definition, component, api, styles } from "@uesio/ui"
 import { useDefinition } from "../../api/defapi"
 import {
+	getSelectedComponentOrSlotPath,
 	useDragPath,
 	useDropPath,
 	useSelectedViewPath,
@@ -35,6 +36,11 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 	const viewDefinition = useDefinition<component.ViewDefinition>(
 		parentContext,
 		selectedPath.setLocal("")
+	)
+
+	const selectedComponentPath = getSelectedComponentOrSlotPath(
+		selectedPath,
+		viewDefinition
 	)
 
 	const [searchTerm, setSearchTerm] = useState("")
@@ -96,7 +102,7 @@ const IndexPanel: definition.UtilityComponent = (props) => {
 						name: "components",
 						label: "View Contents",
 					}}
-					selectedPath={selectedPath}
+					selectedPath={selectedComponentPath}
 					definition={viewDefinition as component.ViewDefinition}
 					path={""}
 					context={context}

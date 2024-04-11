@@ -5,7 +5,6 @@ import {
 	getSlotsFromPath,
 	replaceSlotPath,
 	setSelectedPath,
-	useSelectedComponentOrSlotPath,
 } from "../../api/stateapi"
 import ItemTag from "../../utilities/itemtag/itemtag"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
@@ -27,14 +26,18 @@ const StyleDefaults = Object.freeze({
 	actionarea: ["text-right", "bg-slate-50", "text-slate-700"],
 })
 
-const IndexComponent: definition.UC = (props) => {
-	const { componentType, context, path, definition } = props
+type IndexComponentProps = {
+	selectedPath: FullPath
+} & definition.BaseProps
+
+const IndexComponent: definition.UtilityComponent<IndexComponentProps> = (
+	props
+) => {
+	const { componentType, context, path, definition, selectedPath } = props
 	const componentDef = getComponentDef(componentType)
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 	const classes = styles.useStyleTokens(StyleDefaults, props)
-
-	const selectedPath = useSelectedComponentOrSlotPath(context)
 
 	const viewDefId = context.getViewDefId()
 
