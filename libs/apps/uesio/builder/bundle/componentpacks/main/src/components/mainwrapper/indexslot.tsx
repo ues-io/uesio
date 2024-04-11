@@ -144,7 +144,10 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 				})
 				.map((props, index) => (
 					<IndexBuildWrapper key={index} {...props}>
-						<IndexComponent {...props} />
+						<IndexComponent
+							selectedPath={selectedPath}
+							{...props}
+						/>
 					</IndexBuildWrapper>
 				))}
 		</div>
