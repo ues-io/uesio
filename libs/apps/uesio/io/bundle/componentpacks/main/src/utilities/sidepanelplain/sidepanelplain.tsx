@@ -54,7 +54,7 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 			: !!props.closeOnOutsideClick
 
 	const dismiss = useDismiss(floating.context, {
-		outsidePress: closeOnOutsideClick,
+		outsidePress: false,
 		referencePress: closeOnOutsideClick,
 	})
 
