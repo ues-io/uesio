@@ -38,9 +38,6 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 
 	if (!componentDef) return <NothingSelectedProperties context={context} />
 
-	// This forces a rerender if the definition changes
-	// useDefinition(selectedPath) as definition.DefinitionMap
-
 	return (
 		<PropertiesForm
 			context={context}

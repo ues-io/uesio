@@ -1,8 +1,10 @@
 import { dispatch, getCurrentState } from "../store/store"
 import { PlainComponentState } from "../bands/component/types"
 import {
+	selectEntity,
 	selectState,
 	selectTarget,
+	useComponentEntity,
 	useComponentState,
 	useComponentStates,
 	useComponentStatesCount,
@@ -136,15 +138,16 @@ const getExternalState = <T extends PlainComponentState>(
 const getExternalStates = (target: string) =>
 	selectTarget(getCurrentState(), target)
 
-const useExternalState = <T extends PlainComponentState>(
-	componentId: string
-): T | undefined => useComponentState<T>(componentId)
+const getExternalEntity = (componentId: string) =>
+	selectEntity(getCurrentState(), componentId)
 
-const useExternalStates = (componentId: string) =>
-	useComponentStates(componentId)
+const useExternalState = useComponentState
 
-const useExternalStatesCount = (componentId: string) =>
-	useComponentStatesCount(componentId)
+const useExternalStates = useComponentStates
+
+const useExternalStatesCount = useComponentStatesCount
+
+const useExternalEntity = useComponentEntity
 
 const removeState = (componentId: string) => dispatch(removeOne(componentId))
 
@@ -167,8 +170,10 @@ export {
 	useExternalState,
 	useExternalStates,
 	useExternalStatesCount,
+	useExternalEntity,
 	getExternalState,
 	getExternalStates,
+	getExternalEntity,
 	removeState,
 	getVariantId,
 	useAllVariants,

@@ -32,6 +32,7 @@ import ErrorBoundary from "./utilities/errorboundary"
 import ErrorMessage from "./utilities/errormessage"
 import { SlotComponentId } from "./components/slot"
 import { ViewDefinition } from "./definition/ViewDefinition"
+import { ComponentState } from "./bands/component/types"
 const COMPONENT_ID = "uesio.id"
 const COMPONENT_CONTEXT = "uesio.context"
 const DISPLAY_CONDITIONS = "uesio.display"
@@ -41,6 +42,7 @@ const STYLE_TOKENS = "uesio.styleTokens"
 export type {
 	ComponentDef,
 	ComponentVariant,
+	ComponentState,
 	DeclarativeComponentSlotContext,
 	DisplayCondition,
 	DisplayOperator,

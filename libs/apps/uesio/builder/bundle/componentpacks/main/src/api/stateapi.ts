@@ -21,11 +21,13 @@ const {
 	getComponentType,
 	getExternalState,
 	getExternalStates,
+	getExternalEntity,
 	removeState,
 	setState,
 	useExternalState,
 	useExternalStates,
 	useExternalStatesCount,
+	useExternalEntity,
 	useState,
 } = api.component
 
@@ -107,6 +109,9 @@ const useBuilderExternalState = <T extends definition.Definition>(
 	id: string
 ) => useExternalState<T>(getBuilderComponentId(context, id))
 
+const useBuilderExternalEntity = (context: ctx.Context, id: string) =>
+	useExternalEntity(getBuilderComponentId(context, id))
+
 const useBuilderExternalStates = (context: ctx.Context, id: string) =>
 	useExternalStates(getBuilderComponentId(context, id))
 
@@ -117,6 +122,9 @@ const getBuilderExternalState = <T extends definition.Definition>(
 	context: ctx.Context,
 	id: string
 ) => getExternalState<T>(getBuilderComponentId(context, id))
+
+const getBuilderExternalEntity = (context: ctx.Context, id: string) =>
+	getExternalEntity(getBuilderComponentId(context, id))
 
 const getBuilderExternalStates = (context: ctx.Context, id: string) =>
 	getExternalStates(getBuilderComponentId(context, id))
@@ -587,8 +595,10 @@ export {
 	useBuilderExternalState,
 	useBuilderExternalStates,
 	useBuilderExternalStatesCount,
+	useBuilderExternalEntity,
 	getBuilderExternalState,
 	getBuilderExternalStates,
+	getBuilderExternalEntity,
 	setBuilderState,
 	removeBuilderState,
 	useSelectedPath,

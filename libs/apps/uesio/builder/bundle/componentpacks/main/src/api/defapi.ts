@@ -17,6 +17,7 @@ import {
 } from "../yaml/yamlutils"
 import { FullPath } from "./path"
 import {
+	getBuilderExternalEntity,
 	getBuilderExternalState,
 	getBuilderExternalStates,
 	getBuilderState,
@@ -24,9 +25,9 @@ import {
 	removeBuilderState,
 	setBuilderState,
 	setSelectedPath,
+	useBuilderExternalEntity,
 	useBuilderExternalState,
 	useBuilderExternalStatesCount,
-	useBuilderState,
 } from "./stateapi"
 import yaml from "yaml"
 import get from "lodash/get"
@@ -73,21 +74,26 @@ const setMetadataValue = (
 	}
 }
 
+const parseCache = new WeakMap()
+
+const getCachedParseResult = (result: component.ComponentState) => {
+	const cacheResult = parseCache.get(result)
+	if (cacheResult) {
+		return cacheResult
+	}
+	const parsedResult = parse(result.state as string).toJS()
+	parseCache.set(result, parsedResult)
+	return parsedResult
+}
+
 const useDefinition = <T extends definition.Definition>(
 	context: ctx.Context,
 	path: FullPath
 ) => {
-	const [result] = useBuilderState<T>(
-		context,
-		getMetadataId(path),
-		getDef<T>(context, path)
-	)
-	if (typeof result === "string") {
-		const viewDef = parse(result).toJS() as T
-		if (!path.localPath) {
-			return viewDef as T
-		}
-		return get(viewDef, path.localPath) as T
+	const result = useBuilderExternalEntity(context, getMetadataId(path))
+	if (result) {
+		const viewDef = getCachedParseResult(result)
+		return getDefAtPath<T>(viewDef, path)
 	}
 }
 
@@ -96,10 +102,11 @@ const getDef = <T extends definition.Definition>(
 	path: FullPath
 ) => {
 	if (path.itemType === "viewdef" && path.itemName) {
-		const viewDefString = getMetadataValue(context, path)
+		const result = getBuilderExternalEntity(context, getMetadataId(path))
+
 		let viewDef = null
-		if (viewDefString) {
-			viewDef = parse(viewDefString).toJS()
+		if (result) {
+			viewDef = getCachedParseResult(result)
 		}
 		// If we don't have this state yet, we need to initialize it
 		if (!viewDef) {
