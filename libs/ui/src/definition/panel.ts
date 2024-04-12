@@ -9,6 +9,7 @@ export interface PanelDefinition {
 	title?: string
 	width?: string
 	height?: string
+	closeOnOutsideClick?: boolean
 	components?: DefinitionList
 	actions?: DefinitionList
 	afterClose?: SignalDefinition[]

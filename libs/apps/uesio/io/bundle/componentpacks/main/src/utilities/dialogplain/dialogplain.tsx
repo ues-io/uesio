@@ -62,7 +62,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 			: !!props.closeOnOutsideClick
 
 	const dismiss = useDismiss(floating.context, {
-		outsidePress: closeOnOutsideClick,
+		outsidePress: false,
 		referencePress: closeOnOutsideClick,
 	})
 
