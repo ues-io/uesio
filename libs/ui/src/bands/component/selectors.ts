@@ -14,10 +14,16 @@ const useComponentStates = (target: string) =>
 const useComponentStatesCount = (target: string) =>
 	useSelector((state: RootState) => selectTargetCount(state, target))
 
+const useComponentEntity = (componentId: string) =>
+	useSelector((state: RootState) => selectEntity(state, componentId))
+
 const selectState = <T extends PlainComponentState>(
 	state: RootState,
 	componentId: string
 ) => selectors.selectById(state, componentId)?.state as T | undefined
+
+const selectEntity = (state: RootState, componentId: string) =>
+	selectors.selectById(state, componentId)
 
 const selectTarget = (state: RootState, target: string) => {
 	const matches: ComponentState[] = []
@@ -44,8 +50,10 @@ const selectTargetCount = (state: RootState, target: string) => {
 
 export {
 	useComponentState,
+	useComponentEntity,
 	useComponentStates,
 	selectState,
+	selectEntity,
 	selectTarget,
 	useComponentStatesCount,
 }
