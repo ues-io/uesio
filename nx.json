@@ -1,7 +1,4 @@
 {
-	"affected": {
-		"defaultBase": "master"
-	},
 	"defaultProject": "cli",
 	"$schema": "./node_modules/nx/schemas/nx-schema.json",
 	"targetDefaults": {
@@ -56,5 +53,7 @@
 		]
 	},
 	"useDaemonProcess": false,
-	"parallel": 1
+	"parallel": 1,
+	"useInferencePlugins": false,
+	"defaultBase": "master"
 }
