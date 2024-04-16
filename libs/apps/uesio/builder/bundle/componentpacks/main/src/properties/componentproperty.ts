@@ -299,8 +299,10 @@ export type {
 	BotProperty,
 	CollectionFieldProperty,
 	ComponentProperty,
+	ConditionProperty,
 	ComponentPropertiesGetter,
 	FieldProperty,
+	FieldsProperty,
 	FieldMetadataProperty,
 	IconProperty,
 	ListProperty,
@@ -320,6 +322,9 @@ export type {
 	CheckboxProperty,
 	DateProperty,
 	FieldValueProperty,
+	FieldValuesProperty,
+	MetadataProperty,
+	MultiMetadataProperty,
 }
 
 export { getStyleVariantProperty }

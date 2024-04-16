@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component, context, definition, wire } from "@uesio/ui"
 
 import { useState } from "react"
 
@@ -22,6 +22,7 @@ import {
 import { setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
 import PropFormInternal from "./propforminternal"
+import { getSignalProperties } from "../api/signalsapi"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -136,7 +137,19 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 				properties = [
 					{
 						name: selectedSectionId,
-						type: "SIGNALS",
+						type: "LIST",
+						items: {
+							properties: (
+								record: wire.PlainWireRecord,
+								context: context.Context
+							) => getSignalProperties(record, context),
+							displayTemplate: "${signal}",
+							addLabel: "New Signal",
+							title: "Signal Properties",
+							defaultDefinition: {
+								signal: "",
+							},
+						},
 					},
 				]
 				break
