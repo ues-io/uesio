@@ -45,7 +45,7 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 ]
 
 const StyleDefaults = Object.freeze({
-	lineDecoration: ["bg-blue-100"],
+	lineDecoration: ["bg-blue-100", "-z-10"],
 	root: ["h-[300px]", "mb-3"],
 })
 
