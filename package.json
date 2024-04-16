@@ -110,7 +110,7 @@
 		"redux": "^4.2.0",
 		"remark-gfm": "^3.0.1",
 		"sonner": "^1.4.41",
-		"tailwind-merge": "^1.12.0",
+		"tailwind-merge": "^2.2.2",
 		"ts-jest": "29.1.1",
 		"ts-json-schema-generator": "^1.4.0",
 		"ts-node": "10.9.1",
