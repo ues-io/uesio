@@ -48,6 +48,12 @@ const CheckboxField: definition.UtilityComponent<CheckboxFieldProps> = (
 				type="checkbox"
 				disabled={readonly}
 				onChange={(event) => setValue?.(event.target.checked)}
+				onClick={(event) => {
+					// Stopping propagation here to prevent actions higher in the
+					// hierarchy from firing. For example a default row action
+					// for a table row.
+					event.stopPropagation()
+				}}
 				autoFocus={focusOnRender}
 			/>
 		</div>

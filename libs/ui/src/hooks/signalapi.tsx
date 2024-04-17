@@ -80,6 +80,10 @@ const useLinkHandler = (
 			const isMeta = e.getModifierState("Meta")
 			if (isMeta) return
 			e.preventDefault()
+			// Stopping propagation here to prevent actions higher in the
+			// hierarchy from firing. For example a default row action
+			// for a table row.
+			e.stopPropagation()
 			setPendingState?.(true)
 			await runMany(signals, context)
 			isMounted.current && setPendingState?.(false)

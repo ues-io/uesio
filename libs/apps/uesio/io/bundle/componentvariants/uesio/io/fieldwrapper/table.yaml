@@ -7,4 +7,5 @@ definition:
       - p-2
       - relative
       - "[&_input]:bg-inherit"
+      - "[&_input[type=checkbox]]:ml-[11px]"
 public: true
