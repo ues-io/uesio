@@ -84,6 +84,12 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					isReadMode && classes.readonly,
 					isPassword && classes.password
 				)}
+				onClick={(e) => {
+					// Stopping propagation here to prevent actions higher in the
+					// hierarchy from firing. For example a default row action
+					// for a table row.
+					e.stopPropagation()
+				}}
 				autoComplete={options?.autoComplete}
 				disabled={isReadMode}
 				autoFocus={focusOnRender}

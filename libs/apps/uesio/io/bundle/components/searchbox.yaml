@@ -20,6 +20,11 @@ properties:
   - name: focusOnRender
     label: Focus on render
     type: CHECKBOX
+  - name: fieldVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.field
 sections:
   - type: HOME
     properties:

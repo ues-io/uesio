@@ -97,7 +97,7 @@ const Table: definition.UtilityComponent<
 						{rowNumberFunc?.(index + 1)}
 					</div>
 					<CheckboxField
-						className="numbercheck"
+						className={rowNumberFunc ? "numbercheck" : ""}
 						context={context}
 						value={isSelected}
 						setValue={(value: boolean) =>
