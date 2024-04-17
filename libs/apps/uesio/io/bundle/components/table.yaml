@@ -66,6 +66,9 @@ properties:
           type: TEXT
           required: true
           defaultValue: New action
+        - name: icon
+          label: Icon
+          type: ICON
         - name: type
           label: Type
           type: SELECT
@@ -78,6 +81,7 @@ properties:
         - type: HOME
           properties:
             - text
+            - icon
             - type
         - type: SIGNALS
 sections:
