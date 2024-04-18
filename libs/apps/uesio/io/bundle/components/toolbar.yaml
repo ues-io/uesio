@@ -1,0 +1,27 @@
+name: toolbar
+title: Toolbar
+description: Create a toolbar. Re-renders when the linked component's state changes
+category: DATA
+pack: main
+entrypoint: components/toolbar/toolbar
+discoverable: true
+slots:
+  - name: left
+    label: Left Toolbar Contents
+  - name: right
+    label: Right Toolbar Contents
+defaultDefinition:
+properties:
+  - name: linkedComponentType
+    type: TEXT
+    label: Linked Component Type
+  - name: linkedComponentId
+    type: TEXT
+    label: Linked Component Id
+sections:
+  - type: HOME
+    properties:
+      - linkedComponentType
+      - linkedComponentId
+  - type: STYLES
+  - type: DISPLAY
