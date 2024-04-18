@@ -75,17 +75,34 @@ type ColumnDefinition = {
 type RecordContext = component.ItemContext<wire.WireRecord>
 
 type SelectedState = {
-	selected: Record<string, boolean>
-	wire: string
+	records: Record<string, boolean>
+	wire: string | undefined
+	count: number
 }
 
-const getSelected: signal.ComponentSignalDescriptor<SelectedState> = {
-	dispatcher: (state, signal, context) =>
-		context.addMultiRecordFrame({
+type TableState = {
+	selected: SelectedState
+}
+
+const getSelected: signal.ComponentSignalDescriptor<TableState> = {
+	dispatcher: (state, signal, context) => {
+		const selected = state.selected
+		return context.addMultiRecordFrame({
 			view: context.getViewId(),
-			wire: state.wire,
-			records: state.selected ? Object.keys(state.selected) : [],
-		}),
+			wire: selected.wire || "",
+			records: selected.records ? Object.keys(selected.records) : [],
+		})
+	},
+}
+
+const clearSelected: signal.ComponentSignalDescriptor<TableState> = {
+	dispatcher: (state) => {
+		state.selected = {
+			...state.selected,
+			records: {},
+			count: 0,
+		}
+	},
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
@@ -93,6 +110,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	SET_EDIT_MODE: setEditMode,
 	SET_READ_MODE: setReadMode,
 	GET_SELECTED: getSelected,
+	CLEAR_SELECTED: clearSelected,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
 	...drawerSignals,
@@ -177,12 +195,15 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		newContext
 	)
 
-	const [selected, setSelected] = api.component.useStateSlice<
-		Record<string, boolean>
-	>("selected", componentId, {})
-
-	// Set the wire being used into the state of this wire. That way our signals can access it.
-	api.component.useStateSlice<string>("wire", componentId, wire?.getId())
+	const [selected, setSelected] = api.component.useStateSlice<SelectedState>(
+		"selected",
+		componentId,
+		{
+			records: {},
+			count: 0,
+			wire: wire?.getId() || "",
+		}
+	)
 
 	const [openDrawers] = api.component.useStateSlice<Record<string, boolean>>(
 		"drawerState",
@@ -317,10 +338,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const isAllSelectedFunc = definition.selectable
 		? () => {
-				if (!selected || Object.keys(selected).length === 0) {
+				const records = selected?.records
+				if (!records || Object.keys(records).length === 0) {
 					return false
 				}
-				if (Object.keys(selected).length === itemContexts.length) {
+				if (Object.keys(records).length === itemContexts.length) {
 					return true
 				}
 				return undefined
@@ -329,22 +351,25 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const onAllSelectChange = definition.selectable
 		? (isSelected: boolean) => {
-				setSelected(
-					isSelected
-						? Object.fromEntries(
-								itemContexts.map((itemContext) => [
-									itemContext.item.getId(),
-									true,
-								])
-							)
-						: {}
-				)
+				const records = isSelected
+					? Object.fromEntries(
+							itemContexts.map((itemContext) => [
+								itemContext.item.getId(),
+								true,
+							])
+						)
+					: {}
+				setSelected({
+					records,
+					count: Object.keys(records).length,
+					wire: selected?.wire,
+				})
 			}
 		: undefined
 
 	const isSelectedFunc = definition.selectable
 		? (recordContext: RecordContext) =>
-				!!selected?.[recordContext.item.getId()]
+				!!selected?.records?.[recordContext.item.getId()]
 		: undefined
 
 	const onSelectChange = definition.selectable
@@ -353,16 +378,19 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				index: number,
 				isSelected: boolean
 			) => {
-				setSelected(
-					isSelected
-						? {
-								...selected,
-								...{
-									[recordContext.item.getId()]: true,
-								},
-							}
-						: omit(selected, recordContext.item.getId())
-				)
+				const records = isSelected
+					? {
+							...selected?.records,
+							...{
+								[recordContext.item.getId()]: true,
+							},
+						}
+					: omit(selected?.records, recordContext.item.getId())
+				setSelected({
+					records,
+					count: Object.keys(records).length,
+					wire: selected?.wire,
+				})
 			}
 		: undefined
 

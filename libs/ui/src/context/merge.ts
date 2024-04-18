@@ -7,6 +7,7 @@ import { UserState } from "../bands/user/types"
 import get from "lodash/get"
 import { SiteState } from "../bands/site"
 import { wire } from ".."
+import { getExternalState, makeComponentId } from "../hooks/componentapi"
 
 type MergeType =
 	| "Error"
@@ -31,6 +32,7 @@ type MergeType =
 	| "StaticFile"
 	| "SignalOutput"
 	| "ComponentOutput"
+	| "ComponentState"
 	| "ConfigValue"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
@@ -113,6 +115,20 @@ const handlers: Record<MergeType, MergeHandler> = {
 			)
 		}
 		return get(frame.data, propertyPath) as string
+	},
+	ComponentState: (expression, context) => {
+		// Expression MUST have 3 parts, e.g. $ComponentOutput{[componentType][componentId][property]}
+		let parts
+		try {
+			parts = parseThreePartExpression(expression)
+		} catch (e) {
+			throw InvalidComponentOutputMsg
+		}
+		const [componentType, componentId, propertyPath] = parts
+		const state = getExternalState(
+			makeComponentId(context, componentType, componentId)
+		)
+		return get(state, propertyPath.split("->")) as string
 	},
 	User: (expression, context) => {
 		const user = context.getUser()
@@ -280,6 +296,36 @@ const parseTwoPartExpression = (expression: string) => {
 		parts = expression.split(colonDelimiter)
 	}
 	if (!parts || parts.length !== 2) {
+		throw InvalidExpressionError
+	}
+	return parts
+}
+
+const parseThreePartExpression = (expression: string) => {
+	let parts
+	let part1, part2, part3
+	if (expression.includes(bracketedDelimiter)) {
+		parts = expression.split(bracketedDelimiter)
+		if (parts.length !== 3) {
+			throw InvalidExpressionError
+		}
+		;[part1, part2, part3] = parts
+		if (part1[0] !== "[" || part3[part3.length - 1] !== "]") {
+			throw InvalidExpressionError
+		}
+		try {
+			parts = [
+				part1.substring(1),
+				part2,
+				part3.substring(0, part3.length - 1),
+			]
+		} catch (e) {
+			throw InvalidExpressionError
+		}
+	} else if (expression.includes(colonDelimiter)) {
+		parts = expression.split(colonDelimiter)
+	}
+	if (!parts || parts.length !== 3) {
 		throw InvalidExpressionError
 	}
 	return parts

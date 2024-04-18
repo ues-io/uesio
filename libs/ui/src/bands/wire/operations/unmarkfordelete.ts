@@ -1,17 +1,22 @@
 import { Context } from "../../../context/context"
 import { unmarkForDelete } from ".."
 import { dispatch } from "../../../store/store"
+import { batch } from "react-redux"
 
 export default (context: Context, wireId: string) => {
-	const record = context.getRecord(wireId)
+	const records = context.getRecords(wireId)
 
-	if (!record) return context
+	if (!records) return context
 
-	dispatch(
-		unmarkForDelete({
-			entity: record.getWire().getFullId(),
-			recordId: record.getId(),
-		})
-	)
+	batch(() => {
+		for (const record of records) {
+			dispatch(
+				unmarkForDelete({
+					entity: record.getWire().getFullId(),
+					recordId: record.getId(),
+				})
+			)
+		}
+	})
 	return context
 }
