@@ -15,9 +15,7 @@ const Icon: definition.UtilityComponent<IconUtilityProps> = (props) => {
 				"inline-block",
 				"isicon",
 				"font-[Material_Icons]",
-				"leading-none",
 				"align-middle",
-
 				`[font-variation-settings:'FILL'_${
 					fill ? "1" : "0"
 				},'wght'_${weight}]`,

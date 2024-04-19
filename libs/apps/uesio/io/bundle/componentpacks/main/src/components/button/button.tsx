@@ -10,6 +10,7 @@ type ButtonDefinition = {
 	text?: string
 	icon?: string
 	iconPlacement?: ButtonIconPlacement
+	iconFill?: boolean
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
 }
@@ -32,7 +33,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 
 	const [isPending, setPending] = useState(false)
 
-	const { signals, hotkey, text, icon, iconPlacement } = definition
+	const { signals, hotkey, text, icon, iconPlacement, iconFill } = definition
 
 	const [link, handler] = api.signal.useLinkHandler(
 		signals,
@@ -60,6 +61,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 						classes={{
 							root: classes.icon,
 						}}
+						fill={iconFill}
 						context={context}
 						icon={context.mergeString(icon)}
 					/>
