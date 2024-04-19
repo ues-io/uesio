@@ -22,7 +22,7 @@ function bot(botapi) {
 		path += `/${collection.replace(".", "/")}`
 	}
 	path += `/${name}/bot`
-	if (dialect === "TYPESCRIPT") {
+	if (dialect === "typescript") {
 		botapi.generateFile(
 			`${path}.ts`,
 			newBotParams,
