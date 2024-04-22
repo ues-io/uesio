@@ -226,15 +226,16 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		(action) => action.type === "DEFAULT"
 	)
 
-	const defaultActionsFunc = defaultActions.length
-		? (recordContext: RecordContext) => {
-				const handler = api.signal.getHandler(
-					defaultActions.flatMap((action) => action.signals),
-					recordContext.context
-				)
-				handler?.()
-			}
-		: undefined
+	const defaultActionsFunc =
+		defaultActions.length && mode !== "EDIT"
+			? (recordContext: RecordContext) => {
+					const handler = api.signal.getHandler(
+						defaultActions.flatMap((action) => action.signals),
+						recordContext.context
+					)
+					handler?.()
+				}
+			: undefined
 
 	const rowActionsFunc = otherActions.length
 		? (recordContext: RecordContext) => (

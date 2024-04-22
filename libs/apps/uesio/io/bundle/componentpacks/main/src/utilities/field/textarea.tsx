@@ -1,6 +1,7 @@
 import { definition, styles, context, wire } from "@uesio/ui"
 import { ApplyChanges } from "../../components/field/field"
 import { useControlledInput } from "../../shared/useControlledFieldValue"
+import ReadOnlyField from "./readonly"
 export type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
@@ -34,6 +35,8 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		applyChanges,
 		readonly = false,
 		focusOnRender = false,
+		variant,
+		context,
 	} = props
 	const value = props.value as string
 	const readOnly = readonly || mode === "READ"
@@ -59,6 +62,21 @@ const TextAreaField: definition.UtilityComponent<TextAreaFieldProps> = (
 		disabled: readOnly,
 		rows: options?.rows,
 		cols: options?.cols,
+	}
+
+	if (readOnly) {
+		return (
+			<ReadOnlyField
+				variant={variant}
+				classes={{
+					input: "whitespace-pre-line",
+				}}
+				context={context}
+				id={id}
+			>
+				{value}
+			</ReadOnlyField>
+		)
 	}
 
 	return <textarea {...commonProps} autoFocus={focusOnRender} />

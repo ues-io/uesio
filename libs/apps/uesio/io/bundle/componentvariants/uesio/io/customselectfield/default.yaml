@@ -33,6 +33,7 @@ definition:
     selectediteminner:
       - overflow-hidden
       - text-ellipsis
+      - whitespace-nowrap
     checkbox:
       - p-0
       - pt-0.5

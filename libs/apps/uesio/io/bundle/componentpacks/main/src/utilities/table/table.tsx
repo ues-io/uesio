@@ -191,6 +191,17 @@ const Table: definition.UtilityComponent<
 												isSelected && "isselected"
 											)}
 											key="rownumbers"
+											onClick={(e) => {
+												// Stopping propagation here to prevent actions higher in the
+												// hierarchy from firing. For example a default row action
+												// for a table row.
+												e.stopPropagation()
+												onSelectChange?.(
+													row,
+													index,
+													!isSelected
+												)
+											}}
 										>
 											{getRowNumberCell(
 												row,
