@@ -13,7 +13,11 @@ const ReadOnlyField: definition.UtilityComponent = (props) => {
 	)
 	return (
 		<div
-			className={styles.cx(classes.input, classes.readonly)}
+			className={styles.cx(
+				classes.input,
+				classes.readonly,
+				"readonly-input"
+			)}
 			id={props.id}
 		>
 			{props.children || <>&nbsp;</>}

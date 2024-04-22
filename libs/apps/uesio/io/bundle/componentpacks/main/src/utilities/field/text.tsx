@@ -4,6 +4,7 @@ import { FieldValueSetter, ApplyChanges } from "../../components/field/field"
 import { useControlledInput } from "../../shared/useControlledFieldValue"
 
 import Icon from "../icon/icon"
+import ReadOnlyField from "./readonly"
 
 export type TextFieldOptions = {
 	autoComplete?: string
@@ -53,6 +54,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 		setValue,
 		type = "text",
 		value = "",
+		variant,
 	} = props
 
 	const classes = styles.useUtilityStyleTokens(
@@ -71,6 +73,14 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	})
 
 	const [useType, setType] = useState(type)
+
+	if (isReadMode) {
+		return (
+			<ReadOnlyField variant={variant} context={context} id={id}>
+				{value}
+			</ReadOnlyField>
+		)
+	}
 
 	return (
 		<div className={classes.wrapper}>
@@ -91,7 +101,6 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 					e.stopPropagation()
 				}}
 				autoComplete={options?.autoComplete}
-				disabled={isReadMode}
 				autoFocus={focusOnRender}
 				{...controlledInputProps}
 			/>

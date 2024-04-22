@@ -86,14 +86,16 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	)
 
 	const nameField = referencedCollection?.getNameField()?.getId()
+	const currentItem =
+		record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null
 
 	const [items, setItems] = useState<wire.PlainWireRecord[]>([])
-	const [item, setItem] = useState<wire.PlainWireRecord | null>(
-		record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null
-	)
+	const [item, setItem] = useState<wire.PlainWireRecord | null>(currentItem)
+
 	useEffect(() => {
-		setItem(record?.getFieldValue<wire.PlainWireRecord>(fieldId) || null)
-	}, [record, fieldId])
+		if (item === currentItem) return
+		setItem(currentItem)
+	}, [currentItem, item])
 
 	if (!referencedCollection || !nameField) return null
 
@@ -189,34 +191,33 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				{item ? renderer(item) : ""}
 			</ReadOnlyField>
 		)
-	} else {
-		return (
-			<CustomSelect
-				id={id}
-				items={items}
-				itemRenderer={renderer}
-				variant={"uesio/io.customselectfield:uesio/io.default"}
-				context={context}
-				selectedItems={item ? [item] : []}
-				isSelected={() => false}
-				onSearch={onSearch}
-				placeholder={placeholder}
-				onSelect={(item: wire.PlainWireRecord) => {
-					record?.update(fieldId, item, context)
-					setValue?.(item)
-					setItem(item)
-				}}
-				onUnSelect={() => {
-					record?.update(fieldId, null, context)
-					setValue?.(null)
-					setItem(null)
-				}}
-				getItemKey={(item: wire.PlainWireRecord) =>
-					item[collection.ID_FIELD] as string
-				}
-			/>
-		)
 	}
+	return (
+		<CustomSelect
+			id={id}
+			items={items}
+			itemRenderer={renderer}
+			variant={"uesio/io.customselectfield:uesio/io.default"}
+			context={context}
+			selectedItems={item ? [item] : []}
+			isSelected={() => false}
+			onSearch={onSearch}
+			placeholder={placeholder}
+			onSelect={(item: wire.PlainWireRecord) => {
+				record?.update(fieldId, item, context)
+				setValue?.(item)
+				setItem(item)
+			}}
+			onUnSelect={() => {
+				record?.update(fieldId, null, context)
+				setValue?.(null)
+				setItem(null)
+			}}
+			getItemKey={(item: wire.PlainWireRecord) =>
+				item[collection.ID_FIELD] as string
+			}
+		/>
+	)
 }
 
 export default ReferenceField

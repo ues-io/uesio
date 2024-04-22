@@ -65,36 +65,38 @@ const NumberField: definition.UtilityComponent<NumberFieldProps> = (props) => {
 	if (readOnly) {
 		return (
 			<ReadOnlyField variant={variant} context={context} id={id}>
-				{typeof value === "number" ? value.toFixed(decimals) : value}
+				{Intl.NumberFormat(undefined, {
+					minimumFractionDigits: decimals,
+					maximumFractionDigits: decimals,
+				}).format(value)}
 			</ReadOnlyField>
 		)
-	} else {
-		return (
-			<div className={classes.wrapper}>
-				<input
-					id={id}
-					className={styles.cx(
-						classes.input,
-						readOnly && classes.readonly
-					)}
-					{...controlledInputProps}
-					type={type}
-					disabled={readOnly}
-					placeholder={placeholder}
-					step={options?.step}
-					min={options?.min}
-					max={options?.max}
-					title={`${controlledInputProps.value}`}
-					autoFocus={focusOnRender}
-				/>
-				{type === "range" ? (
-					<span className={classes.rangevalue}>
-						{controlledInputProps.value}
-					</span>
-				) : null}
-			</div>
-		)
 	}
+	return (
+		<div className={classes.wrapper}>
+			<input
+				id={id}
+				className={styles.cx(
+					classes.input,
+					readOnly && classes.readonly
+				)}
+				{...controlledInputProps}
+				type={type}
+				disabled={readOnly}
+				placeholder={placeholder}
+				step={options?.step}
+				min={options?.min}
+				max={options?.max}
+				title={`${controlledInputProps.value}`}
+				autoFocus={focusOnRender}
+			/>
+			{type === "range" ? (
+				<span className={classes.rangevalue}>
+					{controlledInputProps.value}
+				</span>
+			) : null}
+		</div>
+	)
 }
 
 export default NumberField
