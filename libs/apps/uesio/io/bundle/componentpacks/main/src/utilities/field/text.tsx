@@ -77,7 +77,7 @@ const TextField: definition.UtilityComponent<TextFieldProps> = (props) => {
 	if (isReadMode) {
 		return (
 			<ReadOnlyField variant={variant} context={context} id={id}>
-				{value}
+				{`${value}`}
 			</ReadOnlyField>
 		)
 	}

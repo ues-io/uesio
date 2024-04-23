@@ -77,10 +77,57 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/core.view:
-                          view: appedit
-                          uesio.context:
-                            wire: apps
+                      - uesio/io.list:
+                          uesio.id: editapplist
+                          mode: EDIT
+                          wire: apps
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-10
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.user
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.createdby
+                                      user:
+                                        subtitle: $Time{uesio/core.createdat}
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.updatedby
+                                      user:
+                                        subtitle: $Time{uesio/core.updatedat}
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.four_columns
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-10
+                                items:
+                                  - uesio/io.griditem:
+                                      uesio.styleTokens:
+                                        root:
+                                          - col-span-2
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.owner
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.public
+                            - uesio/io.grid:
+                                uesio.variant: uesio/io.two_columns
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-10
+                                items:
+                                  - uesio/studio.colorpicker:
+                                      fieldId: uesio/studio.color
+                                  - uesio/studio.appiconpicker:
+                                      fieldId: uesio/studio.icon
+                                      colorFieldId: uesio/studio.color
                 - uesio/io.box:
                     uesio.variant: uesio/io.danger
                     components:

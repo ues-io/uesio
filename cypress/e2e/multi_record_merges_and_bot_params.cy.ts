@@ -27,8 +27,15 @@ describe("Wire Merges: $Records", () => {
 					)
 				)
 				cy.clickButton("prefixValues")
-				cy.get('input[value="Hello ID-001"]').should("exist")
-				cy.get('input[value="Hello ID-002"]').should("exist")
+
+				cy.getByIdFragment("div", "outputs")
+					.find(".readonly-input")
+					.eq(0)
+					.should("have.text", "Hello ID-001")
+				cy.getByIdFragment("div", "outputs")
+					.find(".readonly-input")
+					.eq(1)
+					.should("have.text", "Hello ID-002")
 			})
 		}
 	)

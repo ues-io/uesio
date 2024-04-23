@@ -201,10 +201,40 @@ definition:
       width: 400px
       height: 500px
       components:
-        - uesio/core.view:
-            view: appedit
-            uesio.context:
-              wire: newapp
+        - uesio/io.list:
+            uesio.id: editapplist
+            mode: EDIT
+            wire: newapp
+            components:
+              - uesio/io.grid:
+                  uesio.variant: uesio/io.two_columns
+                  uesio.styleTokens:
+                    root:
+                      - grid-cols-2
+                  items:
+                    - uesio/io.field:
+                        fieldId: uesio/studio.user
+                        uesio.id: new-app-user
+                        reference:
+                          requirewriteaccess: true
+                    - uesio/io.field:
+                        fieldId: uesio/studio.name
+                        uesio.id: new-app-name
+
+              - uesio/io.field:
+                  fieldId: uesio/studio.description
+                  uesio.id: new-app-description
+              - uesio/io.grid:
+                  uesio.variant: uesio/io.two_columns
+                  uesio.styleTokens:
+                    root:
+                      - gap-10
+                  items:
+                    - uesio/studio.colorpicker:
+                        fieldId: uesio/studio.color
+                    - uesio/studio.appiconpicker:
+                        fieldId: uesio/studio.icon
+                        colorFieldId: uesio/studio.color
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"

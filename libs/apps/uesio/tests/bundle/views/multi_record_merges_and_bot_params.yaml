@@ -59,6 +59,7 @@ definition:
               wire: conditions
     - uesio/io.box:
         uesio.variant: uesio/io.section
+        uesio.id: outputs
         components:
           - uesio/io.item:
               wire: outputs
