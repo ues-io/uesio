@@ -141,8 +141,8 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
 			cy.go("forward")
 			cy.url().should("include", "/animal/")
 			cy.title().should("include", "Animal: ")
-			cy.getByIdFragment("input", "genusField").should("exist")
-			cy.getByIdFragment("input", "speciesField").should("exist")
+			cy.getByIdFragment("div", "genusField").should("exist")
+			cy.getByIdFragment("div", "speciesField").should("exist")
 			cy.get("label[for*='ancestorField']").should(
 				"have.text",
 				"Direct ancestor (via Language Label)"

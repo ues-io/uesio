@@ -187,7 +187,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	const isReadMode = readonly || mode === "READ"
 	if (isReadMode) {
 		return (
-			<ReadOnlyField variant={variant} context={context}>
+			<ReadOnlyField variant={variant} context={context} id={id}>
 				{item ? renderer(item) : ""}
 			</ReadOnlyField>
 		)

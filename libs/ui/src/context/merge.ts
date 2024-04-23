@@ -126,7 +126,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		const [componentType, componentId, propertyPath] = parts
 		const state = getExternalState(
-			makeComponentId(context, componentType, componentId)
+			makeComponentId(context, componentType, componentId, true)
 		)
 		return get(state, propertyPath.split("->")) as string
 	},
