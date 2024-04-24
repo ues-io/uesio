@@ -35,17 +35,19 @@ const StyleDefaults = Object.freeze({
 	itemsarea: [],
 })
 
+const NoStyle = Object.freeze(
+	Object.fromEntries(Object.keys(StyleDefaults).map((key) => [key, ""]))
+)
+
 const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	props
 ) => {
-	const classes = styles.useUtilityStyleTokens(
-		StyleDefaults,
-		props,
-		"uesio/io.menu"
-	)
-
 	const [isOpen, setIsOpen] = useState(props.open || false)
 	const [searchText, setSearchText] = useState("")
+
+	const classes = isOpen
+		? styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.menu")
+		: NoStyle
 
 	const getSearchItems = (searchText: string) => {
 		onSearch?.(searchText)
