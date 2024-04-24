@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { getAppBasePath, getWorkspaceBasePath } from "./paths"
+import { getAppBasePath } from "./paths"
 
 const baseUrl = Cypress.config().baseUrl
 const useMockLogin = Cypress.env("use_mock_login")

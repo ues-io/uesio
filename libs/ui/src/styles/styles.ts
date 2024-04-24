@@ -11,6 +11,7 @@ import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import { tw, cx, Class, hash } from "@twind/core"
 import { STYLE_TOKENS } from "../componentexports"
+import interpolate from "./interpolate"
 
 const twMerge = extendTailwindMerge({
 	classGroups: {
@@ -94,7 +95,7 @@ function getVariantTokens(
 }
 
 function process(context: Context | undefined, ...classes: Class[]) {
-	const output = cx(classes)
+	const output = interpolate(classes, [])
 	return tw(twMerge(context ? context?.mergeString(output) : output))
 }
 
@@ -109,17 +110,15 @@ function useUtilityStyleTokens<K extends string>(
 	return Object.entries(defaults).reduce(
 		(classNames, entry: [K, Class[]]) => {
 			const [className, defaultClasses] = entry
-			const classVariantTokens = variantTokens?.[className] || []
-			const classInlineTokens = inlineTokens?.[className] || []
 			classNames[className] = process(
 				props.context,
 				defaultClasses,
-				classVariantTokens,
+				variantTokens?.[className],
 				props.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.
 				className === "root" && props.className,
-				classInlineTokens
+				inlineTokens?.[className]
 			)
 			return classNames
 		},
