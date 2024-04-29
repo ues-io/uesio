@@ -17,7 +17,7 @@ func GetAggregationFieldNames(aggregateFields []AggregationField, groupByFields 
 	dbNames := make([]string, len(aggregateFields)+len(groupByFields))
 	for _, aggregation := range aggregateFields {
 		if aggregation.Function == "" {
-			return nil, errors.New("Missing funciton for aggregation field")
+			return nil, errors.New("Missing function for aggregation field")
 		}
 		dbNames[i] = getDBAggregateFieldName(&aggregation)
 		i++

@@ -144,9 +144,10 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 	switch condition.Operator {
 	case "IN", "NOT_IN":
 		//IF we got values use normal flow
-		if fieldType == "DATE" && condition.Values == nil {
-			return processDateRangeCondition(condition, fieldName, builder)
+		if (fieldType == "DATE" || fieldType == "TIMESTAMP") && condition.Values == nil {
+			return processDateRangeCondition(condition, fieldName, fieldType, builder)
 		}
+
 		useOperator := "= ANY"
 		if condition.Operator == "NOT_IN" {
 			useOperator = "<> ALL"

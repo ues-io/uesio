@@ -436,6 +436,30 @@ func getMetadataForConditionLoad(
 	return nil
 }
 
+func getFakeAggregateMetadata(requestField wire.LoadRequestField, collectionMetadata *wire.CollectionMetadata, fieldMetadata *wire.FieldMetadata) error {
+	if requestField.Function == "" {
+		return errors.New("all request fields for aggregate wires must have an aggregate function")
+	}
+
+	fieldType := "NUMBER"
+
+	switch requestField.Function {
+	case "DATE_TRUNC_DAY", "DATE_TRUNC_MONTH":
+		fieldType = "DATE"
+	}
+	collectionMetadata.SetField(&wire.FieldMetadata{
+		Name:       fieldMetadata.Name + "_" + strings.ToLower(requestField.Function),
+		Namespace:  fieldMetadata.Namespace,
+		Type:       fieldType,
+		Accessible: true,
+		Label:      fieldMetadata.Label + " " + requestField.Function,
+		NumberMetadata: &wire.NumberMetadata{
+			Decimals: 0,
+		},
+	})
+	return nil
+}
+
 func GetMetadataForLoad(
 	op *wire.LoadOp,
 	metadataResponse *wire.MetadataCache,
@@ -559,19 +583,27 @@ func GetMetadataForLoad(
 
 		// Add fake metadata to our aggregate fields
 		if op.Aggregate {
-			if requestField.Function == "" {
-				return errors.New("all request fields for aggregate wires must have an aggregate function")
+			err := getFakeAggregateMetadata(requestField, collectionMetadata, fieldMetadata)
+			if err != nil {
+				return err
 			}
-			collectionMetadata.SetField(&wire.FieldMetadata{
-				Name:       fieldMetadata.Name + "_" + strings.ToLower(requestField.Function),
-				Namespace:  fieldMetadata.Namespace,
-				Type:       "NUMBER",
-				Accessible: true,
-				Label:      fieldMetadata.Label + " " + requestField.Function,
-				NumberMetadata: &wire.NumberMetadata{
-					Decimals: 0,
-				},
-			})
+		}
+	}
+
+	// Now loop over group by fields and do some additional processing
+	if op.Aggregate {
+		for _, requestField := range op.GroupBy {
+			if requestField.Function == "" {
+				continue
+			}
+			fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
+			if err != nil {
+				return err
+			}
+			err = getFakeAggregateMetadata(requestField, collectionMetadata, fieldMetadata)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
