@@ -10,7 +10,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func addDateRangeCondition(start, end time.Time, fieldName string, builder *QueryBuilder) error {
+func addDateRangeCondition(start, end time.Time, fieldName, fieldType string, builder *QueryBuilder) error {
+	if fieldType == "TIMESTAMP" {
+		builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(start.Unix())))
+		builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(end.Unix())))
+		return nil
+	}
 	builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(start.Format("2006-01-02"))))
 	builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(end.Format("2006-01-02"))))
 	return nil
@@ -25,7 +30,7 @@ func getWeekRange(week, year int) (startDate, endDate time.Time) {
 	return startDate, endDate
 }
 
-func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName string, builder *QueryBuilder) error {
+func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName, fieldType string, builder *QueryBuilder) error {
 
 	value, ok := condition.Value.(string)
 	if !ok {
@@ -54,7 +59,7 @@ func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName st
 			return err
 		}
 		start, end := getWeekRange(week, year)
-		return addDateRangeCondition(start, end, fieldName, builder)
+		return addDateRangeCondition(start, end, fieldName, fieldType, builder)
 	}
 
 	// Handle Month Ranges
@@ -64,7 +69,7 @@ func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName st
 			return err
 		}
 		end := start.AddDate(0, 1, 0)
-		return addDateRangeCondition(start, end, fieldName, builder)
+		return addDateRangeCondition(start, end, fieldName, fieldType, builder)
 	}
 	return nil
 }

@@ -64,21 +64,41 @@ func getFieldNameWithAlias(fieldMetadata *wire.FieldMetadata) string {
 	return fmt.Sprintf("'%s',%s", fieldMetadata.GetFullName(), fieldName)
 }
 
+func getFunctionText(aggregation *wire.AggregationField) string {
+	fieldName := getFieldName(aggregation.Metadata, "main")
+	switch aggregation.Function {
+	case "DATE_TRUNC_DAY":
+		if aggregation.Metadata.Type == "DATE" {
+			return fmt.Sprintf("DATE_TRUNC('day',to_timestamp(%s,'YYYY-MM-DD'))::date", fieldName)
+		}
+		return fmt.Sprintf("DATE_TRUNC('day',to_timestamp(%s))::date", fieldName)
+	case "DATE_TRUNC_MONTH":
+		if aggregation.Metadata.Type == "DATE" {
+			return fmt.Sprintf("DATE_TRUNC('month',to_timestamp(%s,'YYYY-MM-DD'))::date", fieldName)
+		}
+		return fmt.Sprintf("DATE_TRUNC('month',to_timestamp(%s))::date", fieldName)
+	case "SUM":
+		return fmt.Sprintf("SUM((%s)::numeric)", fieldName)
+	}
+	return fmt.Sprintf("%s(%s)", aggregation.Function, fieldName)
+}
+
 func getAggregationFieldNameWithAlias(aggregation *wire.AggregationField) string {
 	fieldName := getFieldName(aggregation.Metadata, "main")
 	if aggregation.Function == "" {
 		return fmt.Sprintf("'%s',%s", aggregation.Metadata.GetFullName(), fieldName)
 	}
+
+	functionText := getFunctionText(aggregation)
 	lowercaseFunction := strings.ToLower(aggregation.Function)
-	return fmt.Sprintf("'%s_%s',%s(%s)", aggregation.Metadata.GetFullName(), lowercaseFunction, aggregation.Function, fieldName)
+	return fmt.Sprintf("'%s_%s',%s", aggregation.Metadata.GetFullName(), lowercaseFunction, functionText)
 }
 
 func getGroupByFieldNameWithAlias(aggregation *wire.AggregationField) string {
-	fieldName := getFieldName(aggregation.Metadata, "main")
 	if aggregation.Function == "" {
-		return fieldName
+		return getFieldName(aggregation.Metadata, "main")
 	}
-	return fmt.Sprintf("%s(%s)", aggregation.Function, fieldName)
+	return getFunctionText(aggregation)
 }
 
 func castFieldToText(fieldAlias string) string {
