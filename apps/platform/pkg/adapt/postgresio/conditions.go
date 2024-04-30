@@ -19,6 +19,13 @@ type QueryBuilder struct {
 	Parent      *QueryBuilder
 }
 
+var operatorMap = map[string]string{
+	"GT":  ">",
+	"GTE": ">=",
+	"LT":  "<",
+	"LTE": "<=",
+}
+
 func NewQueryBuilder() *QueryBuilder {
 	return &QueryBuilder{
 		Values: []interface{}{},
@@ -173,17 +180,13 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 	case "NOT_EQ":
 		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
 
-	case "GT":
-		builder.addQueryPart(fmt.Sprintf("%s > %s", fieldName, builder.addValue(condition.Value)))
-
-	case "LT":
-		builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(condition.Value)))
-
-	case "GTE":
-		builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(condition.Value)))
-
-	case "LTE":
-		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
+	case "GT", "LT", "GTE", "LTE":
+		opString := operatorMap[condition.Operator]
+		useValue := condition.Value
+		if fieldType == "TIMESTAMP" {
+			useValue = getTimestampValue(condition)
+		}
+		builder.addQueryPart(fmt.Sprintf("%s %s %s", fieldName, opString, builder.addValue(useValue)))
 
 	case "IS_BLANK":
 		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
