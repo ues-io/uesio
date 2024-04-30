@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"text/scanner"
+	"time"
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
@@ -34,6 +35,9 @@ var baseLanguage = gval.NewLanguage(
 			return "", nil
 		}
 		return valStr[0:1], nil
+	}),
+	gval.Function("NOW", func(args ...interface{}) (interface{}, error) {
+		return time.Now().Unix(), nil
 	}),
 )
 

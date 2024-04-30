@@ -73,3 +73,16 @@ func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName, f
 	}
 	return nil
 }
+
+func getTimestampValue(condition wire.LoadRequestCondition) interface{} {
+	value, ok := condition.Value.(string)
+	if !ok {
+		return condition.Value
+	}
+
+	if value == "NOW" {
+		return time.Now().Unix()
+	}
+
+	return condition.Value
+}
