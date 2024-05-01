@@ -4,36 +4,21 @@ definition:
   uesio.styleTokens:
     menu:
       - bg-white
-      - text-sm
       - border
-      - border-slate-300
+      - border-slate-800
       - rounded
-      - overflow-hidden
       - shadow-lg
-      - max-h-64
-      - flex
-      - flex-col
       - min-w-[200px]
-    menuheader:
-      - grid
-      - bg-white
-    itemsarea:
-      - grow
-      - overflow-y-auto
-    menuitem:
-      - cursor-pointer
-      - p-2
-      - text-slate-700
-      - min-w-[200px]
-      - hover:bg-slate-100
-    highlighted:
-      - bg-slate-200
-    searchbox:
-      - bg-slate-100
-      - rounded
-      - m-1.5
-      - py-1
-      - px-1.5
-      - placeholder:text-xs
-      - placeholder:text-slate-400
+      - relative
+    arrow:
+      - fill-white
+      - stroke-slate-800
+      - "[&>path:last-of-type]:stroke-white"
+    closeButton:
+      - absolute
+      - top-0
+      - right-0
+      - m-0.5
+      - p-1.5
+      - leading-none
 public: true

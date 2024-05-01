@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { definition, styles, metadata } from "@uesio/ui"
 import Icon from "../icon/icon"
-import Menu from "../menu/menu"
+import ListMenu from "../listmenu/listmenu"
 import CheckboxField from "../field/checkbox"
 import Group from "../group/group"
 
@@ -84,7 +84,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 		: onSelect
 
 	return (
-		<Menu
+		<ListMenu
 			onSelect={onSelectFunc}
 			getItemKey={getItemKey}
 			itemRenderer={renderer}
@@ -128,7 +128,7 @@ const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
 					))}
 				</div>
 			</div>
-		</Menu>
+		</ListMenu>
 	)
 }
 

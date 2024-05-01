@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { definition } from "@uesio/ui"
 
-import Menu from "../menu/menu"
+import ListMenu from "../listmenu/listmenu"
 import IconButton from "../iconbutton/iconbutton"
 
 interface MenuButtonUtilityProps<I> {
@@ -20,7 +20,7 @@ const MenuButton: definition.UtilityComponent<
 		props
 
 	return (
-		<Menu
+		<ListMenu
 			context={context}
 			onSelect={onSelect}
 			itemRenderer={itemRenderer}
@@ -33,7 +33,7 @@ const MenuButton: definition.UtilityComponent<
 				icon={icon}
 				fill={fill}
 			/>
-		</Menu>
+		</ListMenu>
 	)
 }
 

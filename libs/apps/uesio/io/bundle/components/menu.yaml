@@ -1,0 +1,24 @@
+name: menu
+pack: main
+entrypoint: components/menu/menu
+title: Menu
+description: Adds a popup menu
+category: INTERACTION
+discoverable: true
+icon: dashboard
+slots:
+  - name: trigger
+    label: Trigger
+  - name: content
+    label: Contents
+defaultDefinition:
+  uesio.variant: uesio/io.default
+  trigger: []
+  content: []
+properties:
+sections:
+  - type: HOME
+    properties:
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:

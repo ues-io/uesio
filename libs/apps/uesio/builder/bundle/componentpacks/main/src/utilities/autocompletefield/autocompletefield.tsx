@@ -55,7 +55,7 @@ const AutocompleteField: definition.UtilityComponent<
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
-		"uesio/io.menu"
+		"uesio/io.listmenu"
 	)
 
 	const [isOpen, setIsOpen] = useState(open)
