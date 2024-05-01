@@ -18,6 +18,6 @@ variants:
   - uesio/io.text:uesio/io.smalltitle
   - uesio/io.text:uesio/io.smallcontent
   - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.menu:uesio/io.default
+  - uesio/io.listmenu:uesio/io.default
   - uesio/io.iconlabel:uesio/io.default
   - uesio/io.titlebar:uesio/io.dialog

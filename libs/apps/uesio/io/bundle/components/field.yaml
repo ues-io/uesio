@@ -19,7 +19,7 @@ variants:
   - uesio/io.iconlabel:uesio/io.default
   - uesio/io.listfield:uesio/io.default
   - uesio/io.markdownfield:uesio/io.default
-  - uesio/io.menu:uesio/io.default
+  - uesio/io.listmenu:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.tile:uesio/io.default
   - uesio/io.titlebar:uesio/io.infotag

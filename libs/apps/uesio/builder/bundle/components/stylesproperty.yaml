@@ -7,7 +7,7 @@ utilities:
   - uesio/io.button
   - uesio/io.icon
   - uesio/io.textfield
-  - uesio/io.menu
+  - uesio/io.listmenu
   - uesio/builder.autocompletefield
   - uesio/builder.tailwindclasspicker
 variants:

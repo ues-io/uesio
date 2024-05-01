@@ -15,7 +15,7 @@ variants:
   - uesio/io.button:uesio/io.rowaction
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.menu:uesio/io.default
+  - uesio/io.listmenu:uesio/io.default
   - uesio/io.group:uesio/io.default
 category: DATA
 discoverable: true

@@ -39,14 +39,18 @@ const NoStyle = Object.freeze(
 	Object.fromEntries(Object.keys(StyleDefaults).map((key) => [key, ""]))
 )
 
-const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
+const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	props
 ) => {
 	const [isOpen, setIsOpen] = useState(props.open || false)
 	const [searchText, setSearchText] = useState("")
 
 	const classes = isOpen
-		? styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.menu")
+		? styles.useUtilityStyleTokens(
+				StyleDefaults,
+				props,
+				"uesio/io.listmenu"
+			)
 		: NoStyle
 
 	const getSearchItems = (searchText: string) => {
@@ -72,7 +76,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		whileElementsMounted: autoUpdate,
 	})
 
-	const { x, y, strategy, refs } = floating
+	const { floatingStyles, refs } = floating
 
 	const listRef = useRef<(HTMLDivElement | null)[]>([])
 
@@ -126,11 +130,7 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 					>
 						<div
 							ref={refs.setFloating}
-							style={{
-								position: strategy,
-								top: y ?? 0,
-								left: x ?? 0,
-							}}
+							style={floatingStyles}
 							className={classes.menu}
 							{...getFloatingProps()}
 						>
@@ -205,4 +205,4 @@ const Menu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 	)
 }
 
-export default Menu
+export default ListMenu

@@ -17,6 +17,6 @@ variants:
   - uesio/io.button:uesio/io.primary
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.dialog:uesio/io.default
-  - uesio/io.menu:uesio/io.default
+  - uesio/io.listmenu:uesio/io.default
   - uesio/io.iconlabel:uesio/io.default
   - uesio/io.titlebar:uesio/io.dialog
