@@ -193,6 +193,12 @@ func getAliasedName(name, alias string) string {
 
 func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
+	// If we're loading uesio/core.user from a workspace, always use the site
+	// tenant id, not the workspace tenant id. Since workspaces don't have users.
+	if op.CollectionName == "uesio/core.user" && session.GetWorkspaceSession() != nil {
+		session = session.RemoveWorkspaceContext()
+	}
+
 	metadata := c.metadata
 
 	db := c.GetClient()
