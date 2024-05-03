@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -23,8 +24,10 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 
 	var translations meta.TranslationCollection
 	if userLanguage != "" {
-		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
-			"uesio/studio.language": userLanguage,
+		err = bundle.LoadAllFromAny(&translations, &bundlestore.GetAllItemsOptions{
+			Conditions: meta.BundleConditions{
+				"uesio/studio.language": userLanguage,
+			},
 		}, session, nil)
 
 		if err != nil {

@@ -31,7 +31,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	if err = bundle.Load(componentPack, session, nil); err != nil {
+	if err = bundle.Load(componentPack, nil, session, nil); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}

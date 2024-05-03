@@ -242,6 +242,7 @@ func getUser(field, value string, withPicture bool, session *sess.Session, conne
 		&user,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
+			WireName:   "AuthGetUser",
 			Fields:     fields,
 			Conditions: []wire.LoadRequestCondition{
 				{
@@ -275,7 +276,7 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(authSource, session, nil)
+	err = bundle.Load(authSource, nil, session, nil)
 
 	if err != nil {
 		return nil, err
@@ -289,7 +290,7 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(signupMethod, session, nil)
+	err = bundle.Load(signupMethod, nil, session, nil)
 
 	if err != nil {
 		return nil, err
@@ -304,6 +305,7 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 	err := datasource.PlatformLoadOne(
 		&loginMethod,
 		&datasource.PlatformLoadOptions{
+			WireName: "AuthGetLoginMethod",
 			Fields: []wire.LoadRequestField{
 				{
 					ID: "uesio/core.federation_id",

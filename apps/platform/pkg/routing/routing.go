@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -30,7 +31,7 @@ func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	if err != nil {
 		return nil, exceptions.NewNotFoundException(err.Error())
 	}
-	err = bundle.Load(route, session, nil)
+	err = bundle.Load(route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +109,9 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	var routeAssignment *meta.RouteAssignment
 	var routeAssignments meta.RouteAssignmentCollection
 
-	err := bundle.LoadAllFromAny(&routeAssignments, map[string]interface{}{"uesio/studio.collection": namespace + "." + collection}, session, nil)
+	err := bundle.LoadAllFromAny(&routeAssignments, &bundlestore.GetAllItemsOptions{
+		Conditions: map[string]interface{}{"uesio/studio.collection": namespace + "." + collection},
+	}, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +132,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
-	err = bundle.Load(route, session, nil)
+	err = bundle.Load(route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +160,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute(namespace, routeName)
 	// TODO: connection should not have to be nil
-	err := bundle.Load(route, session, nil)
+	err := bundle.Load(route, nil, session, nil)
 	if err != nil || route == nil {
 		return nil, exceptions.NewNotFoundException("route not found: " + fmt.Sprintf("%s.%s", namespace, routeName))
 	}

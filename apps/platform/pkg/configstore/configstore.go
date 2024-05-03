@@ -108,7 +108,7 @@ func GetValueFromKey(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = bundle.Load(configValue, session, nil)
+	err = bundle.Load(configValue, nil, session, nil)
 	if err != nil {
 		return "", err
 	}
@@ -139,7 +139,7 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(configValue, session, nil)
+	err = bundle.Load(configValue, nil, session, nil)
 	if err != nil {
 		return err
 	}

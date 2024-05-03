@@ -30,7 +30,7 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(configValue, session, nil)
+	err = bundle.Load(configValue, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

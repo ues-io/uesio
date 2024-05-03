@@ -18,7 +18,7 @@ func runSignupRouteBot(route *meta.Route, request *http.Request, connection wire
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(signupRoute, session, nil)
+	err = bundle.Load(signupRoute, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -33,7 +33,7 @@ func GetNumericLimit(numericLimitName, user string, session *sess.Session) (int,
 	if err != nil {
 		return 0, err
 	}
-	err = bundle.Load(featureFlag, session, nil)
+	err = bundle.Load(featureFlag, nil, session, nil)
 	if err != nil {
 		return 0, err
 	}

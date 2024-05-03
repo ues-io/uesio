@@ -85,7 +85,7 @@ func (b *PlatformBundleStoreConnection) download(w io.Writer, path string) (file
 	return conn.Download(w, path)
 }
 
-func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error {
+func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
 	key := item.GetKey()
 	fullCollectionName := item.GetCollectionName()
 	collectionName := item.GetBundleFolderName()
@@ -125,19 +125,27 @@ func (b *PlatformBundleStoreConnection) GetItem(item meta.BundleableItem) error 
 	return bundleStoreCache.AddItemToCache(b.Namespace, b.Version, fullCollectionName, key, item)
 }
 
-func (b *PlatformBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {
-	err := b.GetAllItems(group, conditions)
+func (b *PlatformBundleStoreConnection) HasAny(group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
+	if options == nil {
+		options = &bundlestore.HasAnyOptions{}
+	}
+	err := b.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+		Conditions: options.Conditions,
+	})
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-func (b *PlatformBundleStoreConnection) GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error {
+func (b *PlatformBundleStoreConnection) GetManyItems(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
+	if options == nil {
+		options = &bundlestore.GetManyItemsOptions{}
+	}
 	for _, item := range items {
-		err := b.GetItem(item)
+		err := b.GetItem(item, nil)
 		if err != nil {
-			if allowMissingItems {
+			if options.AllowMissingItems {
 				switch err.(type) {
 				case *exceptions.ForbiddenException:
 					continue
@@ -149,14 +157,17 @@ func (b *PlatformBundleStoreConnection) GetManyItems(items []meta.BundleableItem
 	return nil
 }
 
-func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
+func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
+	if options == nil {
+		options = &bundlestore.GetAllItemsOptions{}
+	}
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 	conn, err := b.getPlatformFileConnection()
 	if err != nil {
 		return err
 	}
-	paths, err := systembundlestore.GetFilePaths(basePath, group.FilterPath, conditions, conn)
+	paths, err := systembundlestore.GetFilePaths(basePath, group.FilterPath, options.Conditions, conn)
 	if err != nil {
 		return err
 	}
@@ -169,7 +180,7 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 		}
 
 		// TODO: Shouldn't we return these errors?
-		if err = b.GetItem(retrievedItem); err != nil {
+		if err = b.GetItem(retrievedItem, nil); err != nil {
 			switch err.(type) {
 			case *exceptions.NotFoundException, *exceptions.ForbiddenException:
 				continue
@@ -180,7 +191,7 @@ func (b *PlatformBundleStoreConnection) GetAllItems(group meta.BundleableGroup, 
 
 		// Check to see if the item meets bundle conditions
 		// which are not associated with the Item's filesystem path
-		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, conditions) {
+		if bundlestore.DoesItemMeetBundleConditions(retrievedItem, options.Conditions) {
 			group.AddItem(retrievedItem)
 		}
 	}
@@ -277,7 +288,7 @@ func (b *PlatformBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) 
 
 func (b *PlatformBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
 	for _, item := range items {
-		err := b.GetItem(item)
+		err := b.GetItem(item, nil)
 		if err != nil {
 			return err
 		}

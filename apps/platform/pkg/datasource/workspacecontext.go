@@ -127,6 +127,7 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 	// Lookup to see if this user wants to impersonate a profile.
 	_, err := Load([]*wire.LoadOp{
 		{
+			WireName:       "CheckImpersonationWorkspaceContext",
 			CollectionName: "uesio/studio.workspaceuser",
 			Collection:     results,
 			Query:          true,
@@ -242,7 +243,34 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 	err := PlatformLoadOne(
 		&workspace,
 		&PlatformLoadOptions{
+			WireName:   "QueryWorkspaceForWrite",
 			Connection: connection,
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "uesio/studio.name",
+				},
+				{
+					ID: "uesio/studio.app",
+				},
+				{
+					ID: "uesio/studio.loginroute",
+				},
+				{
+					ID: "uesio/studio.signuproute",
+				},
+				{
+					ID: "uesio/studio.homeroute",
+				},
+				{
+					ID: "uesio/studio.defaulttheme",
+				},
+				{
+					ID: "uesio/studio.publicprofile",
+				},
+				{
+					ID: "uesio/studio.favicon",
+				},
+			},
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: field,

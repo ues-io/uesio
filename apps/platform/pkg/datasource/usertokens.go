@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -60,7 +61,9 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 	}
 
 	// TBD: Why is connection nil here??
-	if err := bundle.LoadMany(tokens, false, session, nil); err != nil {
+	if err := bundle.LoadMany(tokens, &bundlestore.GetManyItemsOptions{
+		AllowMissingItems: false,
+	}, session, nil); err != nil {
 		return nil, err
 	}
 
@@ -134,7 +137,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 			lookupResults := &wire.Collection{}
 			var loadOp = &wire.LoadOp{
 				CollectionName: token.Collection,
-				WireName:       "foo",
+				WireName:       "UserTokenRequest",
 				Collection:     lookupResults,
 				Conditions:     loadConditions,
 				Fields:         fieldsMap.getRequestFields(),

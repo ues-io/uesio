@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
@@ -132,11 +133,15 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	// If we have unique namespaces to load from, do a more targeted load.
 	if len(uniqueNames) > 0 {
 		conditions["uesio/studio.name"] = goutils.MapKeys(uniqueNames)
-		if err := bundle.LoadAllFromNamespaces(goutils.MapKeys(uniqueNamespaces), group, conditions, session, connection); err != nil {
+		if err := bundle.LoadAllFromNamespaces(goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
+			Conditions: conditions,
+		}, session, connection); err != nil {
 			return nil, errors.New("unable to load integrations: " + err.Error())
 		}
 	} else {
-		if err := bundle.LoadAllFromAny(group, conditions, session, connection); err != nil {
+		if err := bundle.LoadAllFromAny(group, &bundlestore.GetAllItemsOptions{
+			Conditions: conditions,
+		}, session, connection); err != nil {
 			return nil, errors.New("unable to load integrations: " + err.Error())
 		}
 	}

@@ -55,7 +55,7 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		return
 	}
 
-	if err := bundle.Load(file, session, connection); err != nil {
+	if err := bundle.Load(file, nil, session, connection); err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
