@@ -112,13 +112,13 @@ func GetBundleStoreConnection(namespace string, session *sess.Session, connectio
 	})
 }
 
-func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session, connection wire.Connection) error {
-	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, conditions, session, connection)
+func LoadAllFromAny(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
+	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, options, session, connection)
 }
 
-func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session, connection wire.Connection) error {
+func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
 	for _, namespace := range namespaces {
-		err := LoadAll(group, namespace, conditions, session, connection)
+		err := LoadAll(group, namespace, options, session, connection)
 		if err != nil {
 			return err
 		}
@@ -126,24 +126,24 @@ func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, cond
 	return nil
 }
 
-func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection wire.Connection) (bool, error) {
+func HasAny(group meta.BundleableGroup, namespace string, options *bundlestore.HasAnyOptions, session *sess.Session, connection wire.Connection) (bool, error) {
 	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		return false, err
 	}
-	return bs.HasAny(group, conditions)
+	return bs.HasAny(group, options)
 }
 
-func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection wire.Connection) error {
+func LoadAll(group meta.BundleableGroup, namespace string, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		fmt.Println("Failed Load All: " + group.GetName())
 		return err
 	}
-	return bs.GetAllItems(group, conditions)
+	return bs.GetAllItems(group, options)
 }
 
-func LoadMany(items []meta.BundleableItem, allowMissingItems bool, session *sess.Session, connection wire.Connection) error {
+func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions, session *sess.Session, connection wire.Connection) error {
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
@@ -153,19 +153,19 @@ func LoadMany(items []meta.BundleableItem, allowMissingItems bool, session *sess
 			}
 			return err
 		}
-		if err = bs.GetManyItems(nsItems, allowMissingItems); err != nil {
+		if err = bs.GetManyItems(nsItems, options); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func Load(item meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
+func Load(item meta.BundleableItem, options *bundlestore.GetItemOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		return err
 	}
-	return bs.GetItem(item)
+	return bs.GetItem(item, options)
 }
 
 func GetItemAttachment(w io.Writer, item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (file.Metadata, error) {

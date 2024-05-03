@@ -41,7 +41,20 @@ func getParamsFromWorkspace(workspace *meta.Workspace) map[string]interface{} {
 	}
 }
 
-func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
+func getFilteredFields(fieldNames []string) []wire.LoadRequestField {
+	filtered := []string{}
+	// Filter out the user field
+	for _, v := range fieldNames {
+		if v == "uesio/core.owner" || v == "uesio/core.createdby" || v == "uesio/core.updatedby" || v == "uesio/studio.workspace" {
+			continue
+		}
+		filtered = append(filtered, v)
+	}
+	return datasource.GetLoadRequestFields(filtered)
+
+}
+
+func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, includeUserFields bool, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
 	if b.Workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
@@ -67,11 +80,19 @@ func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableIte
 			return err
 		}
 
+		var fields []wire.LoadRequestField
+
+		if !includeUserFields {
+			fields = getFilteredFields(group.GetFields())
+		}
+
 		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
 			LoadAll:    true,
+			WireName:   "WorkspaceProcessItems",
+			Fields:     fields,
 			Connection: b.Connection,
 			Params:     getParamsFromWorkspace(b.Workspace),
 			Conditions: []wire.LoadRequestCondition{
@@ -138,8 +159,11 @@ func (b *WorkspaceBundleStoreConnection) getWorkspaceCacheKey() string {
 	return b.Workspace.ID
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error {
+func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
 
+	if options == nil {
+		options = &bundlestore.GetItemOptions{}
+	}
 	itemUniqueKey := item.GetDBID(b.Workspace.UniqueKey)
 	collectionName := item.GetCollectionName()
 
@@ -149,9 +173,16 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 			return meta.Copy(item, cachedItem)
 		}
 	}
+	var fields []wire.LoadRequestField
+
+	if !options.IncludeUserFields {
+		fields = getFilteredFields(item.GetCollection().GetFields())
+	}
 
 	// If we didn't find it in cache, we need to go to the database
 	if err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+		WireName: "WorkspaceGetItem",
+		Fields:   fields,
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field: commonfields.UniqueKey,
@@ -172,21 +203,29 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem) error
 	return bundleStoreCache.AddItemToCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey, item)
 }
 
-func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error) {
-	err := b.GetAllItems(group, conditions)
+func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
+	if options == nil {
+		options = &bundlestore.HasAnyOptions{}
+	}
+	err := b.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+		Conditions: options.Conditions,
+	})
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error {
-	return b.processItems(items, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
+	if options == nil {
+		options = &bundlestore.GetManyItemsOptions{}
+	}
+	return b.processItems(items, options.IncludeUserFields, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
 		if item == nil {
-			if allowMissingItems {
+			if options.AllowMissingItems {
 				return nil
 			}
 			return fmt.Errorf("Could not find workspace item: " + id)
@@ -201,13 +240,16 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 	})
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error {
+func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
 
+	if options == nil {
+		options = &bundlestore.GetAllItemsOptions{}
+	}
 	// Add the workspace id as a condition
-	loadConditions := make([]wire.LoadRequestCondition, len(conditions))
+	loadConditions := make([]wire.LoadRequestCondition, len(options.Conditions))
 
 	i := 0
-	for field, value := range conditions {
+	for field, value := range options.Conditions {
 		// Handle multi-value conditions
 		switch typedVal := value.(type) {
 		case []interface{}, []string:
@@ -226,10 +268,18 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		i++
 	}
 
+	var fields []wire.LoadRequestField
+
+	if !options.IncludeUserFields {
+		fields = getFilteredFields(group.GetFields())
+	}
+
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  b.Namespace,
 	}, &datasource.PlatformLoadOptions{
+		WireName:   "WorkspaceGetAllItems",
+		Fields:     fields,
 		Conditions: loadConditions,
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
@@ -242,7 +292,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 }
 
 func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableItem) (string, error) {
-	err := b.GetItem(item)
+	err := b.GetItem(item, nil)
 	if err != nil {
 		return "", err
 	}
@@ -278,7 +328,8 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	err = datasource.PlatformLoad(
 		userFiles,
 		&datasource.PlatformLoadOptions{
-			Params: getParamsFromWorkspace(b.Workspace),
+			WireName: "WorkspaceGetItemAttachments",
+			Params:   getParamsFromWorkspace(b.Workspace),
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field: "uesio/core.recordid",
@@ -320,11 +371,9 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 		&bdc,
 		&datasource.PlatformLoadOptions{
 			Connection: b.Connection,
+			WireName:   "WorkspaceGetBundleDef",
 			Params:     getParamsFromWorkspace(b.Workspace),
 			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/studio.workspace",
-				},
 				{
 					ID: "uesio/studio.app",
 				},
@@ -390,7 +439,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
-	return b.processItems(items, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(items, false, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}

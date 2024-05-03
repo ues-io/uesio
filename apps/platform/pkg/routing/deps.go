@@ -10,6 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
@@ -40,7 +41,7 @@ func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 		return nil, err
 	}
 
-	err = bundle.Load(subViewDep, session, nil)
+	err = bundle.Load(subViewDep, nil, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load SubView: " + key + " : " + err.Error())
 	}
@@ -54,7 +55,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 		return nil, err
 	}
 
-	err = bundle.Load(variantDep, session, nil)
+	err = bundle.Load(variantDep, nil, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
 	}
@@ -83,7 +84,7 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 		}
 	}
 	if pack.UpdatedAt == 0 {
-		if err := bundle.Load(pack, session, nil); err != nil || pack.UpdatedAt == 0 {
+		if err := bundle.Load(pack, nil, session, nil); err != nil || pack.UpdatedAt == 0 {
 			pack.UpdatedAt = time.Now().Unix()
 		}
 	}
@@ -102,7 +103,7 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 
 	utility := meta.NewBaseUtility(namespace, name)
 
-	if err = bundle.Load(utility, session, nil); err != nil {
+	if err = bundle.Load(utility, nil, session, nil); err != nil {
 		return err
 	}
 
@@ -353,7 +354,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 		return err
 	}
 
-	err = bundle.Load(theme, session.RemoveWorkspaceContext(), nil)
+	err = bundle.Load(theme, nil, session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}
@@ -395,7 +396,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, err
 	}
 
-	err = bundle.Load(theme, session, nil)
+	err = bundle.Load(theme, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -454,12 +455,16 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		collectionMap[assignment.Collection] = collection
 	}
 
-	err = bundle.LoadMany(routes, true, session, nil)
+	err = bundle.LoadMany(routes, &bundlestore.GetManyItemsOptions{
+		AllowMissingItems: true,
+	}, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load routes for route assignments: " + err.Error())
 	}
 
-	err = bundle.LoadMany(collections, true, session, nil)
+	err = bundle.LoadMany(collections, &bundlestore.GetManyItemsOptions{
+		AllowMissingItems: true,
+	}, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load collections for route assignments: " + err.Error())
 	}
@@ -781,7 +786,7 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(component, session, nil)
+	err = bundle.Load(component, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

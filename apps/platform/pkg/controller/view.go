@@ -30,7 +30,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		view := meta.NewBaseView(viewNamespace, viewName)
 
 		// Make sure this is a legit view that we have access to
-		err := bundle.Load(view, session, nil)
+		err := bundle.Load(view, nil, session, nil)
 		if err != nil {
 			HandleErrorRoute(w, r, session, "", err, false)
 			return

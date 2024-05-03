@@ -58,11 +58,29 @@ type BundleZipOptions struct {
 	IncludeGeneratedTypes bool
 }
 
+type GetItemOptions struct {
+	IncludeUserFields bool
+}
+
+type GetManyItemsOptions struct {
+	AllowMissingItems bool
+	IncludeUserFields bool
+}
+
+type GetAllItemsOptions struct {
+	Conditions        meta.BundleConditions
+	IncludeUserFields bool
+}
+
+type HasAnyOptions struct {
+	Conditions meta.BundleConditions
+}
+
 type BundleStoreConnection interface {
-	GetItem(item meta.BundleableItem) error
-	GetManyItems(items []meta.BundleableItem, allowMissingItems bool) error
-	GetAllItems(group meta.BundleableGroup, conditions meta.BundleConditions) error
-	HasAny(group meta.BundleableGroup, conditions meta.BundleConditions) (bool, error)
+	GetItem(item meta.BundleableItem, options *GetItemOptions) error
+	GetManyItems(items []meta.BundleableItem, options *GetManyItemsOptions) error
+	GetAllItems(group meta.BundleableGroup, options *GetAllItemsOptions) error
+	HasAny(group meta.BundleableGroup, options *HasAnyOptions) (bool, error)
 	GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error)
 	GetItemAttachments(creator FileCreator, item meta.AttachableItem) error
 	GetBundleDef() (*meta.BundleDef, error)

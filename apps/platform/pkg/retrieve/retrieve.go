@@ -48,7 +48,9 @@ func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnect
 	for _, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
 		metadataType := group.GetName()
 		genOptions := group.GetTypeGenerationOptions()
-		err := bs.GetAllItems(group, genOptions.GetTypescriptableItemConditions())
+		err := bs.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+			Conditions: genOptions.GetTypescriptableItemConditions(),
+		})
 		if err != nil {
 			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
 		}

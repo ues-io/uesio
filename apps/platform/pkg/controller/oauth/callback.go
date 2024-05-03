@@ -86,7 +86,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute("uesio/core", "oauth2callback")
-	if err := bundle.Load(route, coreSession, platformConn); err != nil {
+	if err := bundle.Load(route, nil, coreSession, platformConn); err != nil {
 		return nil, errors.New("unable to load oauth callback route: " + err.Error())
 	}
 	// Make sure to do a copy to avoid mutating in-memory/cached metadata

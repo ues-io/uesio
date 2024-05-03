@@ -123,7 +123,7 @@ func HandleBotResponse(api *RouteBotAPI) (finalRoute *meta.Route, err error) {
 		if err != nil {
 			return nil, err
 		}
-		if err = bundle.Load(route, api.session, api.connection); err != nil {
+		if err = bundle.Load(route, nil, api.session, api.connection); err != nil {
 			return nil, exceptions.NewNotFoundException("could not find requested redirect route: " + localizedRouteKey)
 		}
 		finalRoute = route

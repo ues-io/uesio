@@ -8,6 +8,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
@@ -227,7 +228,9 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, session, nil)
+		err = bundle.Load(item, &bundlestore.GetItemOptions{
+			IncludeUserFields: true,
+		}, session, nil)
 		if err != nil {
 			return err
 		}
@@ -278,7 +281,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		}
 
 		if !onlyLoadCommonFields {
-			err = bundle.LoadAllFromNamespaces(namespaces, group, conditions, session, nil)
+			err = bundle.LoadAllFromNamespaces(namespaces, group, &bundlestore.GetAllItemsOptions{
+				Conditions:        conditions,
+				IncludeUserFields: true,
+			}, session, nil)
 			if err != nil {
 				return err
 			}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -238,7 +239,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 		return nil, err
 	}
 
-	err = bundle.Load(collection, session, connection)
+	err = bundle.Load(collection, nil, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -248,14 +249,18 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 	// To fetch record challenge tokens, enter an admin context, since we don't have separate permissions for these things.
 	adminSession := GetSiteAdminSession(session)
 
-	var recordChallengeTokens meta.RecordChallengeTokenCollection
-	err = bundle.LoadAllFromAny(&recordChallengeTokens, meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()}, adminSession, connection)
-	if err != nil {
-		return nil, err
-	}
-	if recordChallengeTokens.Len() > 0 {
-		for _, rct := range recordChallengeTokens {
-			collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
+	if collectionMetadata.Access != "" {
+		var recordChallengeTokens meta.RecordChallengeTokenCollection
+		err = bundle.LoadAllFromAny(&recordChallengeTokens, &bundlestore.GetAllItemsOptions{
+			Conditions: meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()},
+		}, adminSession, connection)
+		if err != nil {
+			return nil, err
+		}
+		if recordChallengeTokens.Len() > 0 {
+			for _, rct := range recordChallengeTokens {
+				collectionMetadata.RecordChallengeTokens = append(collectionMetadata.RecordChallengeTokens, rct)
+			}
 		}
 	}
 
@@ -267,8 +272,10 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *wire.CollectionMetadata, session *sess.Session, connection wire.Connection) error {
 	var fields meta.FieldCollection
 
-	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
-		"uesio/studio.collection": collectionKey,
+	err := bundle.LoadAllFromAny(&fields, &bundlestore.GetAllItemsOptions{
+		Conditions: meta.BundleConditions{
+			"uesio/studio.collection": collectionKey,
+		},
 	}, session, connection)
 	if err != nil {
 		return err
@@ -304,7 +311,9 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	err := bundle.LoadMany(fields, true, session, connection)
+	err := bundle.LoadMany(fields, &bundlestore.GetManyItemsOptions{
+		AllowMissingItems: true,
+	}, session, connection)
 	if err != nil {
 		return fmt.Errorf("collection: %s : %v", collectionKey, err)
 	}
@@ -327,7 +336,7 @@ func LoadSelectListMetadata(key string, metadataCache *wire.MetadataCache, sessi
 		if err != nil {
 			return err
 		}
-		if err = bundle.Load(selectList, session, connection); err != nil {
+		if err = bundle.Load(selectList, nil, session, connection); err != nil {
 			return err
 		}
 		metadataCache.AddSelectList(key, &wire.SelectListMetadata{

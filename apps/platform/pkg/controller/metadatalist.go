@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
@@ -34,13 +35,17 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	var appNames []string
 
 	if namespace != "" {
-		err = bundle.LoadAll(collection, namespace, conditions, session, nil)
+		err = bundle.LoadAll(collection, namespace, &bundlestore.GetAllItemsOptions{
+			Conditions: conditions,
+		}, session, nil)
 		if err != nil {
 			return nil, err
 		}
 		appNames = []string{namespace}
 	} else {
-		err := bundle.LoadAllFromAny(collection, conditions, session, nil)
+		err := bundle.LoadAllFromAny(collection, &bundlestore.GetAllItemsOptions{
+			Conditions: conditions,
+		}, session, nil)
 		if err != nil {
 			return nil, err
 		}

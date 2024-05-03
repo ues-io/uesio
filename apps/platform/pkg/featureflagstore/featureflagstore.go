@@ -74,7 +74,7 @@ func SetValueFromKey(key string, value interface{}, userID string, session *sess
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(FeatureFlag, session, nil)
+	err = bundle.Load(FeatureFlag, nil, session, nil)
 	if err != nil {
 		return err
 	}

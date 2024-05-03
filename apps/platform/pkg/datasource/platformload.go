@@ -20,6 +20,7 @@ type PlatformLoadOptions struct {
 	LoadAll            bool
 	Params             map[string]interface{}
 	RequireWriteAccess bool
+	WireName           string
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -50,7 +51,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		fields = GetLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&wire.LoadOp{
-		WireName:           group.GetName() + "Wire",
+		WireName:           "Platform Load: " + options.WireName,
 		CollectionName:     group.GetName(),
 		Collection:         group,
 		Conditions:         options.Conditions,
