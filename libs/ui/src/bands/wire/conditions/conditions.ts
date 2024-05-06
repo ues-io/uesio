@@ -24,6 +24,8 @@ type ConditionOperators =
 	| "HAS_ANY"
 	| "HAS_ALL"
 	| "CONTAINS"
+	| "BETWEEN"
+	| "STARTS_WITH"
 
 type WireConditionState =
 	| ParamConditionState
