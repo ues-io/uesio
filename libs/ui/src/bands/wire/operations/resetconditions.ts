@@ -1,6 +1,6 @@
-import { dispatch } from "../../../store/store"
 import { Context, Mergeable } from "../../../context/context"
-import { setConditionValue, getFullWireId, SetConditionValuePayload } from ".."
+import { dispatch } from "../../../store/store"
+import { setConditions, getFullWireId } from ".."
 import { isValueCondition } from "../conditions/conditions"
 import { PlainFieldValue } from "../../wirerecord/types"
 
@@ -10,23 +10,31 @@ export default (context: Context, wireName: string) => {
 	const wireDef = viewDef?.wires?.[wireName]
 	if (wireDef && !wireDef.viewOnly && wireDef.conditions) {
 		const viewId = context.getViewId()
-		wireDef.conditions.forEach((condition) => {
+		const conditions = wireDef.conditions.map((condition) => {
 			if (condition.id && isValueCondition(condition)) {
-				const { id, value, values, inactive } = condition
-				const payload = {
-					entity: getFullWireId(viewId, wireName),
-					id,
+				const { value, values, inactive } = condition
+				const newCondition = {
+					...condition,
 					inactive: context.mergeBoolean(inactive, false),
-				} as SetConditionValuePayload
+				}
 				if (value ?? false)
-					payload.value = context.merge(value as Mergeable)
+					newCondition.value = context.merge(
+						value as Mergeable
+					) as PlainFieldValue
 				if (values ?? false)
-					payload.values = context.merge(
+					newCondition.values = context.merge(
 						values as Mergeable
 					) as PlainFieldValue[]
-				dispatch(setConditionValue(payload))
+				return newCondition
 			}
+			return condition
 		})
+		dispatch(
+			setConditions({
+				entity: getFullWireId(viewId, wireName),
+				conditions,
+			})
+		)
 	}
 	return context
 }

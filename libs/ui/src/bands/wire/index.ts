@@ -88,6 +88,10 @@ type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
+type SetConditionsPayload = {
+	conditions: WireConditionState[]
+} & EntityPayload
+
 type WireLoadAction = PayloadAction<
 	[
 		PlainWire[],
@@ -327,6 +331,11 @@ const wireSlice = createSlice({
 				state.conditions.splice(conditionIndex, 1)
 			}
 		),
+		setConditions: createEntityReducer<SetConditionsPayload, PlainWire>(
+			(state, { conditions }) => {
+				state.conditions = conditions
+			}
+		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
 			(state, { id }) => {
 				if (!state.conditions) return
@@ -535,6 +544,7 @@ export const {
 	toggleCondition,
 	addCondition,
 	removeCondition,
+	setConditions,
 	initAll,
 	upsertMany,
 	removeOne,
