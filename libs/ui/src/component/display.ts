@@ -363,6 +363,7 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	}
 
 	const canHaveMultipleValues =
+		!type ||
 		type === "fieldValue" ||
 		type === "paramValue" ||
 		type === "hasConfigValue"

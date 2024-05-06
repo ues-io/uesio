@@ -93,9 +93,9 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	const [item, setItem] = useState<wire.PlainWireRecord | null>(currentItem)
 
 	useEffect(() => {
-		if (item === currentItem) return
+		if (item === currentItem || !record) return
 		setItem(currentItem)
-	}, [currentItem, item])
+	}, [currentItem, item, record])
 
 	if (!referencedCollection || !nameField) return null
 
