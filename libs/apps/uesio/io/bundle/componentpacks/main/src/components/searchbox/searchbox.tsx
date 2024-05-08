@@ -1,4 +1,4 @@
-import { api, context, definition, metadata, styles } from "@uesio/ui"
+import { api, context, wire, definition, metadata, styles } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
@@ -34,16 +34,14 @@ const search = (
 }
 
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
+	const { definition, context } = props
 	const {
-		definition: {
-			placeholder = props.context.getLabel("uesio/io.search"),
-			searchFields,
-			wire,
-			focusOnRender = false,
-			fieldVariant = "uesio/io.search",
-		},
-		context,
-	} = props
+		placeholder = props.context.getLabel("uesio/io.search"),
+		searchFields,
+		focusOnRender = false,
+		fieldVariant = "uesio/io.search",
+	} = definition
+
 	const [text, setText] = useState("")
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -52,18 +50,24 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 		() =>
 			debounce(
 				(searchText: string) =>
-					search(searchText, wire, searchFields, context),
+					search(searchText, definition.wire, searchFields, context),
 				500
 			),
-		[wire, searchFields, context]
+		[definition.wire, searchFields, context]
 	)
 
 	useEffect(
 		() => () => {
 			debouncedSearch.cancel()
 		},
-		[wire, searchFields, debouncedSearch]
+		[definition.wire, searchFields, debouncedSearch]
 	)
+
+	const wire = api.wire.useWire(definition.wire, context)
+	if (!wire) return null
+
+	const existingCondition = (wire.getCondition("uesio.search") ||
+		undefined) as wire.SearchConditionState
 
 	return (
 		<FieldWrapper
@@ -81,7 +85,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 					setText(value)
 					debouncedSearch(value)
 				}}
-				value={text}
+				value={context.merge(existingCondition?.value || text)}
 				focusOnRender={focusOnRender}
 			/>
 		</FieldWrapper>

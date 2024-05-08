@@ -4,6 +4,7 @@ import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD } from "../../collection/types"
 import set from "lodash/set"
 import Wire from "../class"
+import { DisplayCondition, shouldAll } from "../../../component/display"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -13,6 +14,7 @@ const SHORTID = "SHORTID"
 type WireDefaultBase = {
 	field: string
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM | typeof SHORTID
+	conditions?: DisplayCondition[]
 }
 
 type ShortIDDefault = WireDefaultBase & {
@@ -64,6 +66,7 @@ const getDefaultRecord = (context: Context, wire: Wire): PlainWireRecord => {
 	const collection = wire.getCollection()
 	const defaultRecord: PlainWireRecord = {}
 	wire.getDefaults().forEach((defaultItem) => {
+		if (!shouldAll(defaultItem.conditions, context)) return
 		const value = getDefaultValue(context, defaultItem)
 		const fieldName = defaultItem.field
 		const field = collection.getField(fieldName)
