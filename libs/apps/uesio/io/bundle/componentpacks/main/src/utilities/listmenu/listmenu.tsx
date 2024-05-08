@@ -71,7 +71,14 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 		placement: "bottom-start",
 		middleware: [
 			offset(2),
-			autoPlacement({ allowedPlacements: ["top-start", "bottom-start"] }),
+			autoPlacement({
+				allowedPlacements: [
+					"top-start",
+					"bottom-start",
+					"bottom-start",
+					"bottom-end",
+				],
+			}),
 		],
 		whileElementsMounted: autoUpdate,
 	})
