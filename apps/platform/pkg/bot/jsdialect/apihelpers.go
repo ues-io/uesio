@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func botSave(collection string, changes wire.Collection, session *sess.Session, connection wire.Connection) error {
+func botSave(collection string, changes wire.Collection, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -18,7 +18,11 @@ func botSave(collection string, changes wire.Collection, session *sess.Session, 
 		},
 	}
 	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
-	return datasource.HandleSaveRequestErrors(requests, err)
+	err = datasource.HandleSaveRequestErrors(requests, err)
+	if err != nil {
+		return nil, err
+	}
+	return &changes, nil
 }
 
 func botDelete(collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection) error {
