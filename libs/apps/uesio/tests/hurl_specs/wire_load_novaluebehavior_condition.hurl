@@ -74,3 +74,34 @@ LIMIT 2```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Blazewski:Aaron"
 
+# Test again a wire load with novaluebehavor property set to noquery on the condition
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/tests.genus",
+                    "value": "",
+                    "noValueBehavior": "NOQUERY"
+                }
+            ],
+            "batchsize": 1,
+            "order": [
+                {
+                    "field": "uesio/tests.species"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].debugQueryString" == ""
+jsonpath "$.wires[0].data" count == 0
+
+

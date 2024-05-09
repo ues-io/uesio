@@ -26,7 +26,7 @@ import saveWiresOp from "./operations/save"
 import resetConditionsOp from "./operations/resetconditions"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 
-import { WireConditionState } from "./conditions/conditions"
+import { NoValueBehavior, WireConditionState } from "./conditions/conditions"
 import { MetadataKey } from "../../metadata/types"
 import { PlainFieldValue } from "../wirerecord/types"
 import { OrderState } from "./types"
@@ -116,6 +116,7 @@ interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
 	searchFields?: string[]
+	noValueBehavior?: NoValueBehavior
 }
 
 interface ResetConditionsSignal extends SignalDefinition {
@@ -211,7 +212,8 @@ const signals: Record<string, SignalDescriptor> = {
 				context,
 				context.mergeString(signal.wire),
 				context.mergeString(signal.search),
-				context.mergeList(signal.searchFields) as string[]
+				context.mergeList(signal.searchFields) as string[],
+				signal.noValueBehavior
 			),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {

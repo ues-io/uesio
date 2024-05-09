@@ -34,6 +34,7 @@ import {
 	isGroupCondition,
 	isParamCondition,
 	ConditionOperators,
+	NoValueBehavior,
 } from "./bands/wire/conditions/conditions"
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
@@ -52,6 +53,7 @@ export type {
 	LoadRequestField,
 	LoadResponseBatch,
 	LookupConditionState,
+	NoValueBehavior,
 	OrderState,
 	ParamConditionState,
 	PlainFieldValue,

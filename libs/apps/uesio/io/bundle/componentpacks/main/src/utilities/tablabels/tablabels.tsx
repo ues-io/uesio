@@ -26,7 +26,7 @@ const StyleDefaults = Object.freeze({
 	menuButton: ["p-1", "text-base", "self-center"],
 })
 
-const MENU_WIDTH = 30
+const MENU_WIDTH = 42
 
 const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props

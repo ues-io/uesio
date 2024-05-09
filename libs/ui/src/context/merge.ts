@@ -8,6 +8,10 @@ import get from "lodash/get"
 import { SiteState } from "../bands/site"
 import { wire } from ".."
 import { getExternalState, makeComponentId } from "../hooks/componentapi"
+import {
+	isSearchCondition,
+	isValueCondition,
+} from "../bands/wire/conditions/conditions"
 
 type MergeType =
 	| "Error"
@@ -34,6 +38,7 @@ type MergeType =
 	| "ComponentOutput"
 	| "ComponentState"
 	| "ConfigValue"
+	| "ConditionValue"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -83,6 +88,16 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return total
 	},
 	Param: (expression, context) => context.getParam(expression) ?? "",
+	ConditionValue: (fullExpression, context) => {
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const wire = context.getWire(wirename)
+		const condition = wire?.getCondition(expression)
+		if (!condition) return ""
+		if (!isValueCondition(condition) && !isSearchCondition(condition))
+			return ""
+		if (!condition.value) return ""
+		return context.merge(condition.value)
+	},
 	SignalOutput: (expression, context) => {
 		// Expression MUST have 2+ parts, e.g. $SignalOutput{[stepId][propertyPath]}
 		let parts

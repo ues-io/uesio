@@ -10,6 +10,7 @@ type SearchBoxDefinition = {
 	focusOnRender?: boolean
 	placeholder?: string
 	fieldVariant?: metadata.MetadataKey
+	noValueBehavior?: wire.NoValueBehavior
 }
 
 const StyleDefaults = Object.freeze({
@@ -20,6 +21,7 @@ const search = (
 	searchValue: string,
 	wire: string,
 	searchFields: string[],
+	noValueBehavior: wire.NoValueBehavior,
 	context: context.Context
 ) => {
 	api.signal.run(
@@ -28,6 +30,7 @@ const search = (
 			search: searchValue,
 			wire,
 			searchFields,
+			noValueBehavior,
 		},
 		context
 	)
@@ -40,6 +43,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 		searchFields,
 		focusOnRender = false,
 		fieldVariant = "uesio/io.search",
+		noValueBehavior,
 	} = definition
 
 	const [text, setText] = useState("")
@@ -50,10 +54,17 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 		() =>
 			debounce(
 				(searchText: string) =>
-					search(searchText, definition.wire, searchFields, context),
+					search(
+						searchText,
+						definition.wire,
+						searchFields,
+						noValueBehavior,
+						context
+					),
+
 				500
 			),
-		[definition.wire, searchFields, context]
+		[definition.wire, searchFields, noValueBehavior, context]
 	)
 
 	useEffect(

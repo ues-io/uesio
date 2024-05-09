@@ -74,7 +74,14 @@ const tests: WireSignalTest[] = [
 				)
 			return (wire) => {
 				spy.mockRestore()
-				expect(wire.conditions).toMatchObject([])
+				expect(wire.conditions).toMatchObject([
+					{
+						type: "SEARCH",
+						value: "",
+						id: SEARCH_CONDITION_ID,
+						fields: ["ben/planets.name"],
+					},
+				])
 			}
 		},
 	},
