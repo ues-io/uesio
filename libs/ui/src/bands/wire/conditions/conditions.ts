@@ -35,11 +35,13 @@ type WireConditionState =
 	| GroupConditionState
 	| SubqueryConditionState
 
+type NoValueBehavior = "DEFAULT" | "DEACTIVATE" | "NOQUERY" | undefined
+
 type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
 	inactive?: boolean
-	noValueBehavior?: "DEFAULT" | "DEACTIVATE"
+	noValueBehavior?: NoValueBehavior
 }
 
 type GroupConditionState = ConditionBase & {
@@ -109,7 +111,16 @@ const isGroupCondition = (
 	condition: WireConditionState | undefined
 ): condition is ValueConditionState => condition?.type === "GROUP"
 
-export { isValueCondition, isGroupCondition, isParamCondition }
+const isSearchCondition = (
+	condition: WireConditionState | undefined
+): condition is ValueConditionState => condition?.type === "SEARCH"
+
+export {
+	isValueCondition,
+	isGroupCondition,
+	isParamCondition,
+	isSearchCondition,
+}
 
 export type {
 	ConditionOperators,
@@ -119,4 +130,5 @@ export type {
 	ValueConditionState,
 	SearchConditionState,
 	SubqueryConditionState,
+	NoValueBehavior,
 }

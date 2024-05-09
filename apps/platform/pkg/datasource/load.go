@@ -65,9 +65,9 @@ func getSubFields(loadFields []wire.LoadRequestField) *FieldsMap {
 }
 
 func processConditions(
+	op *wire.LoadOp,
 	collectionKey string,
 	conditions []wire.LoadRequestCondition,
-	params map[string]interface{},
 	metadata *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
@@ -114,7 +114,7 @@ func processConditions(
 				nestedCollection = condition.SubCollection
 			}
 			if condition.SubConditions != nil {
-				if useSubConditions, err := processConditions(nestedCollection, condition.SubConditions, params, metadata, ops, session); err != nil {
+				if useSubConditions, err := processConditions(op, nestedCollection, condition.SubConditions, metadata, ops, session); err != nil {
 					return nil, err
 				} else {
 					condition.SubConditions = useSubConditions
@@ -146,16 +146,21 @@ func processConditions(
 
 			mergedValue, err := templating.Execute(template, merge.ServerMergeData{
 				Session:     session,
-				ParamValues: params,
+				ParamValues: op.Params,
 			})
 			if err != nil {
 				return nil, err
+			}
+
+			if mergedValue == "" && condition.NoValueBehavior == "NOQUERY" {
+				op.Query = false
+				break
 			}
 			condition.Value = mergedValue
 		}
 
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
-			value, ok := params[condition.Param]
+			value, ok := op.Params[condition.Param]
 			if !ok {
 				if condition.NoValueBehavior == "DEACTIVATE" {
 					continue
@@ -168,7 +173,7 @@ func processConditions(
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
 			var values []interface{}
 			for _, param := range condition.Params {
-				value, ok := params[param]
+				value, ok := op.Params[param]
 				if !ok {
 					return nil, exceptions.NewBadRequestException("Invalid Condition, param: '" + param + "' was not provided")
 				}
@@ -816,10 +821,19 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
 		// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
 		originalConditions := op.Conditions
-		activeConditions, err := processConditions(op.CollectionName, originalConditions, op.Params, metadataResponse, allOps, session)
+		originalQuery := op.Query
+		activeConditions, err := processConditions(op, op.CollectionName, originalConditions, metadataResponse, allOps, session)
 		if err != nil {
 			return nil, err
 		}
+
+		// The op could have been cancelled in the process conditions step, so we need
+		// to check op.Query again.
+		if !op.Query {
+			op.Query = originalQuery
+			continue
+		}
+
 		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
 			return nil, err
