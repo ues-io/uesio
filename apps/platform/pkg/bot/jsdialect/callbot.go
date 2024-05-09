@@ -42,7 +42,7 @@ func (cba *CallBotAPI) AddResult(key string, value interface{}) {
 	cba.Results[key] = value
 }
 
-func (cba *CallBotAPI) Save(collection string, changes wire.Collection) error {
+func (cba *CallBotAPI) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
 	return botSave(collection, changes, cba.Session, cba.connection)
 }
 

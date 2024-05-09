@@ -12,7 +12,7 @@ type AsAdminApi struct {
 	connection wire.Connection
 }
 
-func (aaa *AsAdminApi) Save(collection string, changes wire.Collection) error {
+func (aaa *AsAdminApi) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
 	return botSave(collection, changes, datasource.GetSiteAdminSession(aaa.session), aaa.connection)
 }
 

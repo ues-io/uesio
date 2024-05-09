@@ -167,7 +167,10 @@ type CallBot = (
 interface BeforeSaveBotApi {
 	addError: (error: string) => void
 	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
-	save: (collectionName: string, records: WireRecord[]) => void
+	save: (
+		collectionName: string,
+		records: WireRecord[]
+	) => Record<string, FieldValue>[]
 	delete: (collectionName: string, records: WireRecord[]) => void
 	deletes: DeletesApi
 	inserts: InsertsApi
@@ -183,7 +186,10 @@ interface AfterSaveBotApi extends BeforeSaveBotApi {
 interface AsAdminApi {
 	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	delete: (collectionName: string, records: WireRecord[]) => void
-	save: (collectionName: string, records: WireRecord[]) => void
+	save: (
+		collectionName: string,
+		records: WireRecord[]
+	) => Record<string, FieldValue>[]
 	runIntegrationAction: RunIntegrationAction
 	callBot: CallBot
 	getConfigValue: (configValueKey: string) => string
@@ -193,7 +199,10 @@ interface ListenerBotApi {
 	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	params: BotParamsApi
 	delete: (collectionName: string, records: WireRecord[]) => void
-	save: (collectionName: string, records: WireRecord[]) => void
+	save: (
+		collectionName: string,
+		records: WireRecord[]
+	) => Record<string, FieldValue>[]
 	runIntegrationAction: RunIntegrationAction
 	callBot: CallBot
 	getConfigValue: (configValueKey: string) => string
@@ -221,7 +230,10 @@ interface RunActionBotApi {
 	load: (loadRequest: LoadRequest) => Record<string, FieldValue>[]
 	log: LogApi
 	params: BotParamsApi
-	save: (collectionName: string, records: WireRecord[]) => void
+	save: (
+		collectionName: string,
+		records: WireRecord[]
+	) => Record<string, FieldValue>[]
 	callBot: CallBot
 }
 
@@ -492,7 +504,10 @@ interface RouteBotApi {
 	// Delete records from a collection
 	delete: (collectionName: string, records: WireRecord[]) => void
 	// Insert/update collection records
-	save: (collectionName: string, records: WireRecord[]) => void
+	save: (
+		collectionName: string,
+		records: WireRecord[]
+	) => Record<string, FieldValue>[]
 	// Run a specific integration action
 	runIntegrationAction: RunIntegrationAction
 	// Go into "admin" mode, elevating the session to have unrestricted admin access

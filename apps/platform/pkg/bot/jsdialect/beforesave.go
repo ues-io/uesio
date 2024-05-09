@@ -34,7 +34,7 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 	bs.op.AddError(exceptions.NewSaveException("", "", message))
 }
 
-func (bs *BeforeSaveAPI) Save(collection string, changes wire.Collection) error {
+func (bs *BeforeSaveAPI) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
 	return botSave(collection, changes, bs.session, bs.connection)
 }
 
