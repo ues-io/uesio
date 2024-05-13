@@ -205,6 +205,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Collection: (fullExpression, context) => {
 		const [wirename, expression] = parseWireExpression(fullExpression)
 		const collection = context.getWireCollection(wirename)
+		if (expression === "id") {
+			return collection?.getFullName() || ""
+		}
 		if (expression === "label") {
 			return collection?.getLabel() || ""
 		}
