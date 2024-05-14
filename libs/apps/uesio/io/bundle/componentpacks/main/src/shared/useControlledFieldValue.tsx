@@ -110,8 +110,12 @@ const useControlledInputNumber = <T extends HTMLInputElement>(
 		[debouncedSetValue]
 	)
 
+	const finalValue = isNaN(controlledValue as number)
+		? undefined
+		: controlledValue
+
 	return {
-		value: controlledValue ?? "",
+		value: finalValue ?? "",
 		onChange: (e: ChangeEvent<T>) => {
 			setControlledValue(e.target.value)
 			if (applyDebounce) {
