@@ -171,7 +171,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const columnsToDisplay = component.useShouldFilter(
 		definition.columns,
-		context
+		newContext
 	)
 
 	const data = wire?.getData() || []
