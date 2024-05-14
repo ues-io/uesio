@@ -29,6 +29,23 @@ var baseLanguage = gval.NewLanguage(
 		valStr := fmt.Sprint(args[0])
 		return valStr, nil
 	}),
+	gval.Function("TO_NUMBER", func(args ...interface{}) (interface{}, error) {
+		number := args[0]
+		int64Num, ok := number.(int64)
+		if ok {
+			return int64Num, nil
+		}
+		intNum, ok := number.(int)
+		if ok {
+			return intNum, nil
+		}
+		floatNum, ok := number.(float64)
+		if ok {
+			return floatNum, nil
+		}
+
+		return 0, nil
+	}),
 	gval.Function("FIRST", func(args ...interface{}) (interface{}, error) {
 		valStr := fmt.Sprint(args[0])
 		if valStr == "" {

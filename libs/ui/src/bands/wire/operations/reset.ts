@@ -1,23 +1,16 @@
-import { dispatch, getCurrentState } from "../../../store/store"
+import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { reset, getFullWireId } from ".."
+import { reset, getFullWireId, getWiresFromDefinitonOrContext } from ".."
 import { batch } from "react-redux"
 import { createRecordOp } from "./createrecord"
 
 export default (context: Context, wireName: string) => {
-	const viewId = context.getViewId()
-	if (!viewId) return context
-
-	const state = getCurrentState()
-
-	const wireId = getFullWireId(viewId, wireName)
-	const wire = state.wire.entities[wireId]
-	if (!wire) return context
+	const wire = getWiresFromDefinitonOrContext(wireName, context)[0]
 
 	batch(() => {
 		dispatch(
 			reset({
-				entity: getFullWireId(viewId, wireName),
+				entity: getFullWireId(wire.view, wire.name),
 			})
 		)
 		if (wire.create) {
