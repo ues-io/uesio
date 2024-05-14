@@ -17,6 +17,7 @@ definition:
       - font-light
       - py-0.5
       - px-1
+      - whitespace-nowrap
     editbutton:
       - text-slate-700
       - leading-none
