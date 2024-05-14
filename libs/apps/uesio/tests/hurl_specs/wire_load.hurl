@@ -270,7 +270,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.species' = ANY ($3)
+array_position($3,main.fields->>'uesio/tests.species') IS NOT NULL
 ORDER BY main.fields->>'uesio/tests.genus' asc
 LIMIT 501```
 jsonpath "$.wires[0].data" count == 2
@@ -318,8 +318,8 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.genus' <> ALL ($3) AND
-main.fields->>'uesio/tests.species' = ANY ($4)
+array_position($3,main.fields->>'uesio/tests.genus') IS NULL AND
+array_position($4,main.fields->>'uesio/tests.species') IS NOT NULL
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Soitoux:Franklin"
@@ -365,7 +365,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.species' = ANY ($3)
+array_position($3,main.fields->>'uesio/tests.species') IS NOT NULL
 ORDER BY main.fields->'uesio/tests.total_population' desc
 LIMIT 501```
 # Lathe:Franklin has a higher total population so it should come first

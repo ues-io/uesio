@@ -58,7 +58,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.uniquekey = ANY ($3)
+array_position($3,main.uniquekey) IS NOT NULL
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[1].data[0]['uesio/tests.text']" == "text 1"
@@ -113,7 +113,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.text' <> ALL ($3)
+array_position($3,main.fields->>'uesio/tests.text') IS NULL
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[1].data[*]['uesio/tests.text']" not includes "text 1"
@@ -167,7 +167,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.uniquekey = ANY ($3)
+array_position($3,main.uniquekey) IS NOT NULL
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[1].data" isEmpty
@@ -221,7 +221,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.text' <> ALL ($3)
+array_position($3,main.fields->>'uesio/tests.text') IS NULL
 ORDER BY main.id::text asc
 LIMIT 501```
 jsonpath "$.wires[1].data[*]['uesio/tests.text']" includes "text 1"

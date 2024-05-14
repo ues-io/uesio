@@ -580,6 +580,10 @@ Accept: application/json
                     "valueSource": "LOOKUP",
                     "lookupWire": "reference",
                     "lookupField": "uesio/tests.number"
+                },
+                {
+                    "field":"uesio/tests.user",
+                    "operator":"IS_NOT_BLANK"
                 }
             ]
         }
