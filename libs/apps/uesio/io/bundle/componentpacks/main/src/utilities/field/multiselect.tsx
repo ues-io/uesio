@@ -1,4 +1,5 @@
-import { component, definition, context, collection, wire } from "@uesio/ui"
+import { definition, context, collection, wire } from "@uesio/ui"
+import CustomSelect from "../customselect/customselect"
 
 interface SelectFieldProps {
 	setValue: (value: wire.PlainFieldValue[]) => void
@@ -7,13 +8,14 @@ interface SelectFieldProps {
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: wire.SelectOption[] | null
+	placeholder?: string
 }
 
 const MultiSelectField: definition.UtilityComponent<SelectFieldProps> = (
 	props
 ) => {
-	const CustomSelect = component.getUtility("uesio/io.customselect")
-	const { setValue, value, mode, options, context, variant } = props
+	const { setValue, value, mode, options, context, variant, placeholder } =
+		props
 	if (mode === "READ") {
 		let displayLabel
 		if (value !== undefined && value.length) {
@@ -51,6 +53,7 @@ const MultiSelectField: definition.UtilityComponent<SelectFieldProps> = (
 					.includes(search.toLocaleLowerCase())
 			}
 			getItemKey={(item: collection.SelectOption) => item.value}
+			placeholder={placeholder}
 		/>
 	)
 }
