@@ -347,6 +347,10 @@ Accept: application/json
                         "{{ID001-UUID}}",
                         "{{ID002-UUID}}"
                     ]
+                },
+                {
+                    "field":"uesio/tests.reference",
+                    "operator":"IS_NOT_BLANK"
                 }
             ]
         }

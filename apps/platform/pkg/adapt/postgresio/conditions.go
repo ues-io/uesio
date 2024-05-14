@@ -155,15 +155,15 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 			return processDateRangeCondition(condition, fieldName, fieldType, builder)
 		}
 
-		useOperator := "= ANY"
+		useOperator := "IS NOT NULL"
 		if condition.Operator == "NOT_IN" {
-			useOperator = "<> ALL"
+			useOperator = "IS NULL"
 		}
 		useValue := condition.Value
 		if condition.Values != nil {
 			useValue = condition.Values
 		}
-		builder.addQueryPart(fmt.Sprintf("%s %s (%s)", fieldName, useOperator, builder.addValue(useValue)))
+		builder.addQueryPart(fmt.Sprintf("array_position(%s,%s) %s", builder.addValue(useValue), fieldName, useOperator))
 
 	case "HAS_ANY":
 		if fieldType != "MULTISELECT" {

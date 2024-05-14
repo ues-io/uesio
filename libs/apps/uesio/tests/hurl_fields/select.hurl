@@ -276,6 +276,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].data" count == 8
 jsonpath "$.wires[0].data[*]['uesio/tests.select']" not includes "one"
 jsonpath "$.wires[0].data[*]['uesio/tests.select']" not includes "two"
 

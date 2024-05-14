@@ -375,6 +375,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
                "values": [
                     "{{ID011-UUID}}"
                ]
+            },
+            {
+               "field":"uesio/tests.user",
+               "operator":"IS_NOT_BLANK"
             }
          ],
          "query":true
@@ -383,9 +387,36 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 }
 HTTP 200
 [Asserts]
+jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" count == 3
 jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" includes "{{ID012-UUID}}"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-002"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-012"
+
+# Operator: NOT_IN | valueSource: VALUE | ID011-UUID & ID012-UUID
+# entry 12
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+{
+   "wires":[
+      {
+         "collection":"uesio/tests.wire_condition",
+         "fields":[{"id":"uesio/tests.user"},{"id":"uesio/tests.name"}],
+         "conditions":[
+            {
+               "field":"uesio/tests.user",
+               "operator":"NOT_IN",
+               "valueSource":"VALUE",
+               "values": [
+                    "{{ID011-UUID}}"
+               ]
+            }
+         ],
+         "query":true
+      }
+   ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data" count == 10
 
 # Operator: NOT_IN | valueSource: PARAM | ID011-UUID & ID012-UUID
 # entry 13
@@ -406,6 +437,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
                "params": [
                     "ID-011"
                ]
+            },
+            {
+               "field":"uesio/tests.user",
+               "operator":"IS_NOT_BLANK"
             }
          ],
          "query":true
@@ -448,6 +483,10 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
                "valueSource":"LOOKUP",
                "lookupWire": "lookup",
                "lookupField": "uesio/tests.user->uesio/core.id"
+            },
+            {
+               "field":"uesio/tests.user",
+               "operator":"IS_NOT_BLANK"
             }
          ],
          "query":true
