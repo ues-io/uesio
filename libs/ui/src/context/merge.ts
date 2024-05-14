@@ -24,6 +24,8 @@ type MergeType =
 	| "Time"
 	| "Text"
 	| "Date"
+	| "Number"
+	| "Currency"
 	| "RecordMeta"
 	| "Collection"
 	| "Theme"
@@ -174,6 +176,24 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
+	},
+	Number: (expression, context) => {
+		const value = context.getRecord()?.getFieldValue(expression) as number
+		const decimals = 2
+		return Intl.NumberFormat(undefined, {
+			minimumFractionDigits: decimals,
+			maximumFractionDigits: decimals,
+		}).format(value)
+	},
+	Currency: (expression, context) => {
+		const value = context.getRecord()?.getFieldValue(expression) as number
+		const decimals = 2
+		return Intl.NumberFormat(undefined, {
+			minimumFractionDigits: decimals,
+			maximumFractionDigits: decimals,
+			style: "currency",
+			currency: "USD",
+		}).format(value)
 	},
 	Text: (expression) => expression,
 	Route: (expression, context) => {
