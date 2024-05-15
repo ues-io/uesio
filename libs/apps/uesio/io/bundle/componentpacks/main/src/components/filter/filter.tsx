@@ -192,7 +192,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		condition,
 		variant:
 			definition[component.STYLE_VARIANT] ||
-			"uesio/io.field:uesio/io.default",
+			"uesio/io.field:uesio/io.filter",
 	}
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
