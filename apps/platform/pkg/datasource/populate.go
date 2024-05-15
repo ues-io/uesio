@@ -85,10 +85,13 @@ func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
 func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionKey := op.Metadata.GetFullName()
-
-	autonumberStart, err := getAutonumber(connection, op.Metadata, session)
-	if err != nil {
-		return err
+	autonumberStart := 0
+	if op.HasInserts() {
+		autonumberResult, err := getAutonumber(connection, op.Metadata, session)
+		if err != nil {
+			return err
+		}
+		autonumberStart = autonumberResult
 	}
 
 	var populations []ChangeProcessor
