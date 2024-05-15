@@ -95,6 +95,14 @@ func (op *SaveOp) HasChanges() bool {
 	return len(op.Updates)+len(op.Inserts) > 0
 }
 
+func (op *SaveOp) HasInserts() bool {
+	return len(op.Inserts) > 0
+}
+
+func (op *SaveOp) HasUpdates() bool {
+	return len(op.Updates) > 0
+}
+
 func (op *SaveOp) HasDeletes() bool {
 	return len(op.Deletes) > 0
 }
