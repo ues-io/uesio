@@ -214,6 +214,19 @@ interface ListenerBotApi {
 	getNamespace: () => string
 	// Returns the name of the Bot, e.g "add_numbers"
 	getName: () => string
+	copyFile: (
+		sourceFileKey: string,
+		sourcePath: string,
+		destCollection: string,
+		destRecord: string,
+		destField: string
+	) => void
+	copyUserFile: (
+		sourceFileId: string,
+		destCollection: string,
+		destRecord: string,
+		destField: string
+	) => void
 	log: LogApi
 	http: HttpApi
 }

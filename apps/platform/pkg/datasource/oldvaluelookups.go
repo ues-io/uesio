@@ -157,15 +157,20 @@ func HandleOldValuesLookup(
 			return errors.New("Could not find record to update or delete: " + ID)
 		}
 
-		if len(matchIndexes) != 1 {
+		if len(matchIndexes) == 0 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
-		match := matchIndexes[0].Item
-		// Cast item to a change
-		change := match.(*wire.ChangeItem)
-		change.OldValues = item
 
-		return SetUniqueKey(change)
+		for _, matchIndex := range matchIndexes {
+			match := matchIndex.Item
+			change := match.(*wire.ChangeItem)
+			change.OldValues = item
+			err := SetUniqueKey(change)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 
 	})
 }

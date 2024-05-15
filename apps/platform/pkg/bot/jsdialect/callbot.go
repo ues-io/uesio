@@ -82,6 +82,14 @@ func (cba *CallBotAPI) GetName() string {
 	return cba.bot.Name
 }
 
+func (cba *CallBotAPI) CopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string) error {
+	return botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID, cba.Session, cba.connection)
+}
+
+func (cba *CallBotAPI) CopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string) error {
+	return botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID, cba.Session, cba.connection)
+}
+
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
 	if cba.connection == nil {
 		return nil, errors.New("no collection metadata available for this connection")
