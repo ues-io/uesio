@@ -12,7 +12,8 @@ interface ReferenceFilterProps {
 const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 	props
 ) => {
-	const { context, condition, fieldMetadata, options, path, wire } = props
+	const { context, condition, fieldMetadata, options, path, wire, variant } =
+		props
 	const wireId = wire.getId()
 	return (
 		<ReferenceField
@@ -20,8 +21,9 @@ const ReferenceFilter: definition.UtilityComponent<ReferenceFilterProps> = (
 			mode={"EDIT"}
 			fieldId={fieldMetadata.getId()}
 			fieldMetadata={fieldMetadata}
+			placeholder={"Any " + fieldMetadata.getLabel()}
 			context={context}
-			variant={"uesio/io.filter"}
+			variant={variant}
 			options={options}
 			setValue={(value: wire.PlainWireRecord) => {
 				api.signal.runMany(

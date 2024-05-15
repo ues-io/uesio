@@ -197,7 +197,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 			id={id}
 			items={items}
 			itemRenderer={renderer}
-			variant={"uesio/io.customselectfield:uesio/io.default"}
+			variant={variant}
 			context={context}
 			selectedItems={item ? [item] : []}
 			isSelected={() => false}

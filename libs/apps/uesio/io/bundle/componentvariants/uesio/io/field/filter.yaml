@@ -1,0 +1,8 @@
+name: filter
+label: Filter
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+    input:
+public: true
