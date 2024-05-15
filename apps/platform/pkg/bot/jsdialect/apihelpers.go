@@ -1,9 +1,12 @@
 package jsdialect
 
 import (
+	"bytes"
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -77,4 +80,58 @@ func botCall(botKey string, params map[string]interface{}, session *sess.Session
 		return nil, errors.New("invalid bot name provided")
 	}
 	return datasource.CallListenerBot(botNamespace, botName, params, connection, session)
+}
+
+func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+	file, err := meta.NewFile(sourceKey)
+	if err != nil {
+		return err
+	}
+
+	if err := bundle.Load(file, nil, session, connection); err != nil {
+		return err
+	}
+
+	path := sourcePath
+	if path == "" {
+		path = file.Path
+	}
+
+	buf := &bytes.Buffer{}
+	_, err = bundle.GetItemAttachment(buf, file, path, session, connection)
+	if err != nil {
+		return err
+	}
+
+	_, err = filesource.Upload([]*filesource.FileUploadOp{
+		{
+			Data:         buf,
+			Path:         path,
+			CollectionID: destCollectionID,
+			RecordID:     destRecordID,
+			FieldID:      destFieldID,
+		},
+	}, connection, session, nil)
+
+	return err
+}
+
+func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+	buf := &bytes.Buffer{}
+	userFileMetadata, err := filesource.Download(buf, sourceFileID, session)
+	if err != nil {
+		return err
+	}
+
+	_, err = filesource.Upload([]*filesource.FileUploadOp{
+		{
+			Data:         buf,
+			Path:         userFileMetadata.Path,
+			CollectionID: destCollectionID,
+			RecordID:     destRecordID,
+			FieldID:      destFieldID,
+		},
+	}, connection, session, nil)
+
+	return err
 }
