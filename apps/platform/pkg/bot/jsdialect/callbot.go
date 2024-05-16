@@ -19,6 +19,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 			session:    session,
 			connection: connection,
 		},
+		errors:     []string{},
 		connection: connection,
 		bot:        bot,
 		Results:    map[string]interface{}{},
@@ -32,10 +33,19 @@ type CallBotAPI struct {
 	Params     *ParamsAPI `bot:"params"`
 	connection wire.Connection
 	bot        *meta.Bot
+	errors     []string
 	Results    map[string]interface{}
 	AsAdmin    AsAdminApi  `bot:"asAdmin"`
 	LogApi     *BotLogAPI  `bot:"log"`
 	Http       *BotHttpAPI `bot:"http"`
+}
+
+func (cba *CallBotAPI) AddError(message string) {
+	cba.errors = append(cba.errors, message)
+}
+
+func (cba *CallBotAPI) GetErrors() []string {
+	return cba.errors
 }
 
 func (cba *CallBotAPI) AddResult(key string, value interface{}) {

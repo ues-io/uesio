@@ -46,6 +46,8 @@ jsonpath "$.params.forecast" count == 7
 # which JS can make use of, rather than Go errors, which cause Bots to just die
 POST https://tests.{{domain}}:{{port}}/site/bots/call/uesio/tests/call_forbidden_run_action
 {}
-HTTP 500
+HTTP 400
+[Asserts]
+body contains "GoError: you do not have permission to run action uesio/tests.privileged_action for integration uesio/tests.weather_api"
 
 

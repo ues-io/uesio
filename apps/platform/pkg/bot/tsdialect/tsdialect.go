@@ -52,9 +52,13 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 
 func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
-	err := jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	err := jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 	if err != nil {
 		return nil, err
+	}
+	loadErrors := botAPI.GetErrors()
+	if len(loadErrors) > 0 {
+		return nil, exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
 	}
 	return botAPI.Results, nil
 }
@@ -82,7 +86,7 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	if err = jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
-	loadErrors := botAPI.GetLoadErrors()
+	loadErrors := botAPI.GetErrors()
 	if len(loadErrors) > 0 {
 		return exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
 	}

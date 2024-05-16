@@ -61,4 +61,6 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/s
     "integrationName": "uesio/tests.secret_access_forbidden",
     "actionName": "get_secret"
 }
-HTTP 500 # TODO This really should be a 403 error... need to improve Bot error handling!!!
+HTTP 400 # TODO This really should be a 403 error... need to improve Bot error handling!!!
+[Asserts]
+body contains "GoError: could not retrieve Credentials with name uesio/tests.secret_access_forbidden for Integration uesio/tests.secret_access_forbidden"
