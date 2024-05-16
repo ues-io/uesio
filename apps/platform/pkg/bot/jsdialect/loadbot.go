@@ -73,7 +73,7 @@ type LoadBotAPI struct {
 	// Private
 	bot                   *meta.Bot
 	integrationConnection *wire.IntegrationConnection
-	loadErrors            []string
+	errors                []string
 	loadOp                *wire.LoadOp
 	// Public
 	Http                *BotHttpAPI          `bot:"http"`
@@ -85,8 +85,8 @@ func (lb *LoadBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, lb.integrationConnection.GetSession(), lb.integrationConnection.GetPlatformConnection())
 }
 
-func (lb *LoadBotAPI) GetLoadErrors() []string {
-	return lb.loadErrors
+func (lb *LoadBotAPI) GetErrors() []string {
+	return lb.errors
 }
 
 func (lb *LoadBotAPI) getSession() *sess.Session {
@@ -130,7 +130,7 @@ func (lb *LoadBotAPI) GetUser() *UserAPI {
 }
 
 func (lb *LoadBotAPI) AddError(error string) {
-	lb.loadErrors = append(lb.loadErrors, error)
+	lb.errors = append(lb.errors, error)
 }
 
 func (lb *LoadBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

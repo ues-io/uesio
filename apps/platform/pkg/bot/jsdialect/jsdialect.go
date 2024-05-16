@@ -128,7 +128,10 @@ func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wi
 			return err
 		}
 		if jserr, ok := err.(*goja.Exception); ok {
-			errorFunc(jserr.Error())
+			// errorFunc(jserr.Value().String())
+			// Will just give the error without the stack.
+			// Maybe we could do that for site mode?
+			errorFunc(jserr.String())
 		} else {
 			// Not a Javascript error
 			return err
@@ -150,8 +153,12 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := NewCallBotAPI(bot, session, connection, params)
-	if err := RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
+	if err := RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError); err != nil {
 		return nil, err
+	}
+	loadErrors := botAPI.GetErrors()
+	if len(loadErrors) > 0 {
+		return nil, exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
 	}
 	return botAPI.Results, nil
 }
@@ -179,8 +186,9 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	if err = RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
-	if len(botAPI.loadErrors) > 0 {
-		return exceptions.NewExecutionException(strings.Join(botAPI.loadErrors, "\n"))
+	loadErrors := botAPI.GetErrors()
+	if len(loadErrors) > 0 {
+		return exceptions.NewExecutionException(strings.Join(loadErrors, "\n"))
 	}
 	return nil
 }
