@@ -12,12 +12,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func botSave(collection string, changes wire.Collection, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
+func botSave(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
 			Wire:       "botsave",
 			Changes:    &changes,
+			Options:    options,
 		},
 	}
 	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))

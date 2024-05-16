@@ -165,8 +165,8 @@ func (r *RouteBotResponseAPI) RedirectToURL(url string) {
 //	r.response.Params = params
 //}
 
-func (rba *RouteBotAPI) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
-	return botSave(collection, changes, rba.session, rba.connection)
+func (rba *RouteBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
+	return botSave(collection, changes, options, rba.session, rba.connection)
 }
 
 func (rba *RouteBotAPI) Delete(collection string, deletes wire.Collection) error {

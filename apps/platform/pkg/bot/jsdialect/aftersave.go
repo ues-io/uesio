@@ -45,8 +45,8 @@ func (as *AfterSaveAPI) AddError(message string) {
 	as.op.AddError(exceptions.NewSaveException("", "", message))
 }
 
-func (as *AfterSaveAPI) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
-	return botSave(collection, changes, as.session, as.connection)
+func (as *AfterSaveAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
+	return botSave(collection, changes, options, as.session, as.connection)
 }
 
 func (as *AfterSaveAPI) Delete(collection string, deletes wire.Collection) error {
