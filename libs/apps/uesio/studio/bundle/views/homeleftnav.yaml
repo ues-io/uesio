@@ -106,7 +106,7 @@ definition:
                                       uesio.variant: uesio/studio.headernavicon
                                       signals:
                                         - signal: wire/RESET
-                                          wire: newApp
+                                          wire: newapp
                                         - signal: panel/TOGGLE
                                           panel: newApp
                     content:
@@ -128,7 +128,7 @@ definition:
                                 text: Create an App
                                 signals:
                                   - signal: wire/RESET
-                                    wire: newApp
+                                    wire: newapp
                                   - signal: panel/TOGGLE
                                     panel: newApp
                       - uesio/io.list:
