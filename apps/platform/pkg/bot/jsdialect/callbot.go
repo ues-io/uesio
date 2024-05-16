@@ -52,8 +52,8 @@ func (cba *CallBotAPI) AddResult(key string, value interface{}) {
 	cba.Results[key] = value
 }
 
-func (cba *CallBotAPI) Save(collection string, changes wire.Collection) (*wire.Collection, error) {
-	return botSave(collection, changes, cba.Session, cba.connection)
+func (cba *CallBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
+	return botSave(collection, changes, options, cba.Session, cba.connection)
 }
 
 func (cba *CallBotAPI) Delete(collection string, deletes wire.Collection) error {

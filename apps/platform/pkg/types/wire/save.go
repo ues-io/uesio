@@ -323,7 +323,7 @@ func (ci *ChangeItem) GetUpdatedByID() (string, error) {
 }
 
 type SaveOptions struct {
-	Upsert               bool `json:"upsert"`
+	Upsert               bool `json:"upsert" bot:"upsert"`
 	IgnoreMissingRecords bool `json:"ignoreMissingRecords"`
 }
 
