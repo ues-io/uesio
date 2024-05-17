@@ -53,6 +53,7 @@ const LoginGoogleUtility: definition.UtilityComponent<
 				data-callback="googleAuthCallback"
 				data-auto_prompt={oneTap ? "true" : "false"}
 				data-cancel_on_tap_outside="false"
+				data-use_fedcm_for_prompt="true"
 			/>
 			{!oneTap && (
 				<div

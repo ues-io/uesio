@@ -39,13 +39,7 @@ func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload,
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
 	}
-	clientID, err := auth.GetPayloadValue(payload, "client_id")
-	if err != nil {
-		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
-	}
 
-	// Verify that the client id sent in the payload matches the client id
-	// associated with our auth source.
 	trustedClientID, err := c.credentials.GetRequiredEntry("client_id")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
@@ -55,11 +49,12 @@ func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload,
 		return nil, exceptions.NewBadRequestException("google login: no client id associated with auth source")
 	}
 
-	if trustedClientID != clientID {
-		return nil, exceptions.NewBadRequestException("google login: invalid client id")
+	validToken, err := idtoken.Validate(c.session.Context(), token, trustedClientID)
+	if err != nil {
+		return nil, exceptions.NewBadRequestException(err.Error())
 	}
 
-	return idtoken.Validate(c.session.Context(), token, clientID)
+	return validToken, nil
 
 }
 
