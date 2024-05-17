@@ -32,6 +32,11 @@ const signup = async (
 		mergedPayload
 	)
 	dispatch(setUser(response.user))
+
+	// Cancel any google account popups if they exist
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	;(window as any)?.google?.accounts?.id?.cancel()
+
 	return responseRedirect(response, context)
 }
 
@@ -49,6 +54,11 @@ const login = async (
 			mergedPayload
 		)
 		dispatch(setUser(response.user))
+
+		// Cancel any google account popups if they exist
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		;(window as any)?.google?.accounts?.id?.cancel()
+
 		return responseRedirect(response, context)
 	} catch (error) {
 		//CAST the error and decide what error message show to the user, for this operation.

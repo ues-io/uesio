@@ -6,6 +6,7 @@ type ButtonDefinition = {
 	text?: string
 	minWidth?: number
 	oneTap?: boolean
+	useFedCM?: boolean
 }
 
 type GoogleLoginResponse = {
@@ -17,7 +18,7 @@ const LoginGoogle: definition.UC<ButtonDefinition> = ({
 	context,
 	definition,
 }) => {
-	const { onLoginSignals, minWidth, text, oneTap } = definition
+	const { onLoginSignals, minWidth, text, oneTap, useFedCM } = definition
 	const handler = (loginresponse: GoogleLoginResponse) => {
 		if (!onLoginSignals) return
 		api.signal.runMany(
@@ -35,6 +36,7 @@ const LoginGoogle: definition.UC<ButtonDefinition> = ({
 			minWidth={minWidth}
 			text={text}
 			oneTap={oneTap}
+			useFedCM={useFedCM}
 		/>
 	)
 }
