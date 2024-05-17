@@ -17,12 +17,13 @@ interface GoogleLoginUtilityProps {
 	text?: string
 	minWidth?: number
 	oneTap?: boolean
+	useFedCM?: boolean
 }
 
 const LoginGoogleUtility: definition.UtilityComponent<
 	GoogleLoginUtilityProps
 > = (props) => {
-	const { onLogin, minWidth, text, oneTap } = props
+	const { onLogin, minWidth, text, oneTap, useFedCM } = props
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	window.googleAuthCallback = (response: unknown) => {
@@ -53,7 +54,7 @@ const LoginGoogleUtility: definition.UtilityComponent<
 				data-callback="googleAuthCallback"
 				data-auto_prompt={oneTap ? "true" : "false"}
 				data-cancel_on_tap_outside="false"
-				data-use_fedcm_for_prompt="true"
+				data-use_fedcm_for_prompt={useFedCM ? "true" : "false"}
 			/>
 			{!oneTap && (
 				<div
