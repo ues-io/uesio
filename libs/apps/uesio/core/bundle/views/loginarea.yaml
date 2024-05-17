@@ -96,6 +96,7 @@ definition:
                           password: ${password}
     - uesio/core.logingoogle:
         minWidth: 240
+        oneTap: true
         onLoginSignals:
           - signal: "user/LOGIN"
             authSource: uesio/core.google
