@@ -1,0 +1,3 @@
+name: api_key_name
+type: TEXT
+label: API Key Name

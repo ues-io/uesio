@@ -89,6 +89,22 @@ definition:
           valueSource: LOOKUP
           lookupWire: users
           lookupField: uesio/core.id
+    newapikey:
+      viewOnly: true
+      fields:
+        name:
+          label: Api Key Name
+          type: TEXT
+        value:
+          label: Api Key Value
+          type: TEXT
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: name
+          valueSource: VALUE
+          value: myapikey
   events:
     onload:
       - signal: context/SET
@@ -315,6 +331,14 @@ definition:
                                           panel: newLoginMethod
                                       text: Add Method
                                       uesio.variant: uesio/io.secondary
+                                  - uesio/io.button:
+                                      signals:
+                                        - signal: wire/RESET
+                                          wire: newapikey
+                                        - signal: panel/TOGGLE
+                                          panel: newApiKey
+                                      text: Add API Key
+                                      uesio.variant: uesio/io.secondary
                       - uesio/io.deck:
                           uesio.id: loginmethodlist
                           wire: loginmethods
@@ -427,3 +451,87 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: newLoginMethod
+    newApiKey:
+      uesio.type: uesio/io.dialog
+      title: Create a New Api Key
+      width: 400px
+      height: 400px
+      components:
+        - uesio/io.list:
+            uesio.id: newapikeylist
+            wire: newapikey
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  uesio.display:
+                    - type: hasNoValue
+                      value: ${value}
+                  fieldId: name
+              - uesio/io.box:
+                  uesio.variant: uesio/studio.calloutsection
+                  uesio.display:
+                    - type: hasValue
+                      value: ${value}
+                  components:
+                    - uesio/io.text:
+                        text: Your api key has been generated. You will not be shown this key again. Keep it secret, keep it safe!
+                    - uesio/io.text:
+                        uesio.styleTokens:
+                          root:
+                            - whitespace-pre
+                            - font-mono
+                            - border-1
+                            - border-yellow-500
+                            - p-2
+                            - rounded-md
+                            - text-[8pt]
+                            - text-center
+                        text: ${value}
+      actions:
+        - uesio/io.item:
+            wire: newapikey
+            components:
+              - uesio/io.button:
+                  uesio.variant: uesio/io.primary
+                  uesio.display:
+                    - type: hasNoValue
+                      value: ${value}
+                  text: Create Key
+                  signals:
+                    - signal: bot/CALL
+                      bot: uesio/core.createapikey
+                      stepId: createkey
+                      params:
+                        name: ${newapikey:name}
+                        userid: ${users:uesio/core.id}
+                      uesio.context:
+                        siteadmin:
+                          name: $Param{sitename}
+                          app: $Param{app}
+                    - signal: wire/UPDATE_RECORD
+                      field: value
+                      value: $SignalOutput{[createkey][key]}
+                    - signal: wire/LOAD
+                      wires:
+                        - users
+                        - loginmethods
+              - uesio/io.button:
+                  uesio.variant: uesio/io.secondary
+                  uesio.display:
+                    - type: hasNoValue
+                      value: ${value}
+                  text: $Label{uesio/io.cancel}
+                  signals:
+                    - signal: panel/TOGGLE
+                      panel: newApiKey
+                    - signal: wire/RESET
+              - uesio/io.button:
+                  uesio.variant: uesio/io.secondary
+                  uesio.display:
+                    - type: hasValue
+                      value: ${value}
+                  text: Done
+                  signals:
+                    - signal: panel/TOGGLE
+                      panel: newApiKey
+                    - signal: wire/RESET

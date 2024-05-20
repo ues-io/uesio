@@ -208,6 +208,7 @@ func serve(cmd *cobra.Command, args []string) {
 	callBotPath := fmt.Sprintf("/bots/call/%s", itemParam)
 	sr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 	wr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
+	sa.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 
 	botParamPath := fmt.Sprintf("/bots/params/{type}/%s", itemParam)
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
@@ -412,6 +413,7 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// REST API routes
 	sr.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
+	sa.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
 
 	// Add Invalid Routes to all subrouters to give 404s
 	invalidPath := "/{invalidroute:.*}"

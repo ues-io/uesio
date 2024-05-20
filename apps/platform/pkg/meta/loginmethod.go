@@ -6,6 +6,7 @@ type LoginMethod struct {
 	AuthSource          string `json:"uesio/core.auth_source"`
 	User                *User  `json:"uesio/core.user"`
 	Hash                string `json:"uesio/core.hash"`
+	APIKeyName          string `json:"uesio/core.api_key_name"`
 	VerificationCode    string `json:"uesio/core.verification_code"`
 	VerificationExpires int64  `json:"uesio/core.verification_expires"`
 }
