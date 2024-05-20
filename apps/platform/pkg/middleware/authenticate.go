@@ -3,6 +3,7 @@ package middleware
 import (
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
@@ -43,6 +44,31 @@ func Authenticate(next http.Handler) http.Handler {
 		site, err := auth.GetSiteFromHost(r.Host)
 		if err != nil {
 			http.Error(w, "Failed to get site from domain: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Does the request have an authorization header?
+		fullToken := r.Header.Get("Authorization")
+		if fullToken != "" {
+			splitToken := strings.Split(fullToken, "Bearer ")
+			if len(splitToken) != 2 {
+				http.Error(w, "Invalid bearer token format", http.StatusUnauthorized)
+				return
+			}
+			authToken := splitToken[1]
+
+			user, err := auth.GetUserFromAuthToken(authToken, site)
+			if err != nil {
+				http.Error(w, "Invalid bearer token", http.StatusUnauthorized)
+				return
+			}
+
+			s, err := auth.GetSessionFromUser("", user, site)
+			if err != nil {
+				http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+			next.ServeHTTP(w, r.WithContext(SetSession(r, s)))
 			return
 		}
 

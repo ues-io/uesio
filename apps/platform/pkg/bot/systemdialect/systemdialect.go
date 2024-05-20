@@ -123,6 +123,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runResetRecordAccessTokensListenerBot
 	case "listener:uesio/studio.setworkspaceuser":
 		botFunction = runSetWorkspaceUserBot
+	case "listener:uesio/core.createapikey":
+		botFunction = runCreateApiKeyListenerBot
 	case "listener:uesio/studio.checkavailability":
 		botFunction = runCheckAvailabilityBot
 	case "listener:uesio/studio.addexternalbundle":

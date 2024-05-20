@@ -44,6 +44,28 @@ HTTP 200
 jsonpath "$.wires[0].errors" not exists
 jsonpath "$.wires[0].data" count == 0
 
+# Verify that sites are cascade deleted
+POST https://{{host}}:{{port}}/site/wires/load
+{
+    "wires": [
+        {
+            "name": "sites",
+            "collection": "uesio/studio.site",
+            "conditions": [
+                {
+                    "field": "uesio/studio.app->uesio/studio.fullname",
+                    "operator": "EQ",
+                    "value": "uesio/tests"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" not exists
+jsonpath "$.wires[0].data" count == 0
+
 # Create the tests app
 POST https://{{host}}:{{port}}/site/wires/save
 {
