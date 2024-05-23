@@ -563,9 +563,34 @@ interface RouteBotApi {
 	 */
 	callBot: CallBot
 }
+
+type PlainWireRecord = {
+	[key: string]: FieldValue
+}
+
+type SaveError = {
+	recordid?: string
+	fieldid?: string
+	message: string
+}
+
+type SaveResponse = {
+	wire: string
+	errors: null | SaveError[]
+	changes: ChangeResults
+	deletes: ChangeResults
+}
+
+type ChangeResults = Record<string, PlainWireRecord>
+
+type SaveResponseBatch = {
+	wires: SaveResponse[]
+}
+
 export type {
 	AfterSaveBotApi,
 	BeforeSaveBotApi,
+	BotHttpResponse,
 	BotParamsApi,
 	ChangeApi,
 	ConditionOperator,
@@ -583,10 +608,12 @@ export type {
 	LoadOrder,
 	LoadRequest,
 	LoadRequestMetadata,
+	PlainWireRecord,
 	ReadableStringMap,
 	RouteBotApi,
 	RunActionBotApi,
 	SaveBotApi,
+	SaveResponseBatch,
 	SessionApi,
 	StatusCode,
 	WorkspaceApi,

@@ -73,7 +73,7 @@ func (c *Connection) callListenerBot(botKey, code string, payload map[string]int
 
 	site := c.session.GetSite()
 
-	domain, err := datasource.QueryDomainFromSite(site.ID)
+	domain, err := datasource.QueryDomainFromSite(site.ID, c.connection)
 	if err != nil {
 		return err
 	}

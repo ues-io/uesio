@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
+func QueryDomainFromSite(siteID string, connection wire.Connection) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := PlatformLoadOne(
 		&sd,
@@ -28,7 +28,8 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 					Value: siteID,
 				},
 			},
-			BatchSize: 1,
+			BatchSize:  1,
+			Connection: connection,
 		},
 		sess.GetStudioAnonSession(context.Background()),
 	)

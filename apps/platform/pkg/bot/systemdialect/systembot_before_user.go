@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -21,6 +23,9 @@ func runUserBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		username, err := change.GetFieldAsString("uesio/core.username")
 		if err != nil {
 			return err
+		}
+		if username == "" {
+			return errors.New("User must have a username")
 		}
 		return change.SetField(commonfields.Owner, &meta.User{
 			BuiltIn: meta.BuiltIn{

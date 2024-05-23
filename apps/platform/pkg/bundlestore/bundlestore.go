@@ -63,8 +63,9 @@ type GetItemOptions struct {
 }
 
 type GetManyItemsOptions struct {
-	AllowMissingItems bool
-	IncludeUserFields bool
+	AllowMissingItems     bool
+	IgnoreUnlicensedItems bool
+	IncludeUserFields     bool
 }
 
 type GetAllItemsOptions struct {
