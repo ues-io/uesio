@@ -147,6 +147,9 @@ func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOpti
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
+			if options.IgnoreUnlicensedItems {
+				continue
+			}
 			fmt.Println("Failed load many")
 			for _, item := range nsItems {
 				fmt.Println(item.GetKey())

@@ -19,7 +19,7 @@ func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}
 		return err
 	}
 
-	err = createLoginWithConnection(signupMethod, payload, connection, session)
+	err = CreateLoginWithConnection(signupMethod, payload, connection, session)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -36,7 +36,7 @@ func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}
 	return nil
 }
 
-func createLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, siteAdminSession *sess.Session) error {
+func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, siteAdminSession *sess.Session) error {
 
 	siteAdmin := siteAdminSession.GetSiteAdmin()
 	session, err := GetSystemSession(siteAdminSession.Context(), siteAdmin, nil)
