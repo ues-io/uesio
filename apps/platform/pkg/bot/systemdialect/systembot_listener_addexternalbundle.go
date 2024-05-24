@@ -9,6 +9,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -32,7 +33,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, exceptions.NewForbiddenException("cannot install a bundle for a system app")
 	}
 
-	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+	if !session.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to install bundles")
 	}
 

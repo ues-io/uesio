@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -20,7 +21,7 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection wire.Conne
 		return nil, errors.New("must provide a profile to set the workspace user")
 	}
 
-	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+	if !session.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return nil, errors.New("you must be a workspace admin to update workspace user settings")
 	}
 

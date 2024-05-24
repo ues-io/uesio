@@ -522,6 +522,7 @@ func GetAdminPermissionSet() *PermissionSet {
 		ViewAllRecords:             true,
 		NamedRefs: map[string]bool{
 			constant.WorkspaceAdminPerm: true,
+			constant.UserAdminPerm:      true,
 		},
 	}
 }
