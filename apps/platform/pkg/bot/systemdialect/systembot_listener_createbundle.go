@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -31,7 +32,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, exceptions.NewForbiddenException("cannot create a bundle for a system app")
 	}
 
-	if !session.GetSitePermissions().HasNamedPermission("uesio/studio.workspace_admin") {
+	if !session.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 

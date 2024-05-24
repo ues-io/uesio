@@ -375,6 +375,7 @@ func serve(cmd *cobra.Command, args []string) {
 	vr_compat.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 
 	// Auth Routes
+	sr.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	wr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")

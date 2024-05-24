@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -36,15 +39,19 @@ func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}
 	return nil
 }
 
-func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, siteAdminSession *sess.Session) error {
+func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 
-	siteAdmin := siteAdminSession.GetSiteAdmin()
-	session, err := GetSystemSession(siteAdminSession.Context(), siteAdmin, connection)
+	if !session.GetSitePermissions().HasNamedPermission(constant.UserAdminPerm) {
+		return errors.New("you must be a user admin to create login methods for users")
+	}
+
+	site := session.GetContextSite()
+	systemSession, err := GetSystemSession(session.Context(), site, connection)
 	if err != nil {
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, systemSession)
 	if err != nil {
 		return err
 	}
@@ -54,7 +61,7 @@ func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[stri
 		return err
 	}
 
-	user, err := GetUserByKey(username, session, connection)
+	user, err := GetUserByKey(username, systemSession, connection)
 	if err != nil {
 		return err
 	}
