@@ -10,6 +10,11 @@ import (
 type FeatureFlagStore struct{}
 
 func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssignmentCollection, session *sess.Session) error {
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
 	return datasource.PlatformLoad(
 		assignments,
 		&datasource.PlatformLoadOptions{
@@ -29,12 +34,17 @@ func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssig
 				},
 			},
 		},
-		session,
+		versionSession,
 	)
 }
 
 func (ffs *FeatureFlagStore) Set(flag *meta.FeatureFlagAssignment, session *sess.Session) error {
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
 	return datasource.PlatformSaveOne(flag, &wire.SaveOptions{
 		Upsert: true,
-	}, nil, session)
+	}, nil, versionSession)
 }
