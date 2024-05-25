@@ -41,7 +41,7 @@ func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}
 
 func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) error {
 
-	if !session.GetSitePermissions().HasNamedPermission(constant.UserAdminPerm) {
+	if !session.GetContextPermissions().HasNamedPermission(constant.UserAdminPerm) {
 		return errors.New("you must be a user admin to create login methods for users")
 	}
 
