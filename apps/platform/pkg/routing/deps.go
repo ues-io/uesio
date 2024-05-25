@@ -413,16 +413,12 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	// need an admin session for retrieving feature flags
-	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
-	adminSession := datasource.GetSiteAdminSession(session)
-
-	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
+	featureFlags, err := featureflagstore.GetFeatureFlags(session, session.GetContextUser().ID)
 	if err != nil {
 		return nil, errors.New("Failed to get feature flags: " + err.Error())
 	}
 
-	configValues, err := configstore.GetConfigValues(adminSession, nil)
+	configValues, err := configstore.GetConfigValues(session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to get config values: " + err.Error())
 	}

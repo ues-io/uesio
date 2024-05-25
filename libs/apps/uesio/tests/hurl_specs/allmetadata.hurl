@@ -100,10 +100,15 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 3
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "increase_population"
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "nozebras"
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "decrease_population"
+jsonpath "$.wires[0].data" count == 4
+jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "get_config_value"
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "aftersave:uesio/tests.animal:uesio/tests.get_config_value"
+jsonpath "$.wires[0].data[1]['uesio/studio.name']" == "increase_population"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "aftersave:uesio/tests.animal:uesio/tests.increase_population"
+jsonpath "$.wires[0].data[2]['uesio/studio.name']" == "nozebras"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "aftersave:uesio/tests.animal:uesio/tests.nozebras"
+jsonpath "$.wires[0].data[3]['uesio/studio.name']" == "decrease_population"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "beforesave:uesio/tests.animal:uesio/tests.decrease_population"
 
 # Get a list of common fields available to our workspace for the animal collection
 POST https://{{host}}:{{port}}/site/wires/load
@@ -612,7 +617,7 @@ last-bot-workspace-id: jsonpath "$.wires[0].data[4]['uesio/studio.workspace']['u
 jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].more" == true
 
-#Site admin all metadata in studio context 
+#Site admin all metadata in studio context
 #Change the label of one bot to make sure we got write access
 POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
 {

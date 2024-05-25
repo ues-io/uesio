@@ -14,7 +14,12 @@ type ConfigStore struct {
 
 func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 	var cv meta.ConfigStoreValue
-	err := datasource.PlatformLoadOne(
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return "", err
+	}
+	err = datasource.PlatformLoadOne(
 		&cv,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -29,7 +34,7 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 				},
 			},
 		},
-		session)
+		versionSession)
 	if err != nil {
 		if exceptions.IsNotFoundException(err) {
 			return "", nil
@@ -42,7 +47,12 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 
 func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
-	err := datasource.PlatformLoad(
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return nil, err
+	}
+	err = datasource.PlatformLoad(
 		&results,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -61,7 +71,7 @@ func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.Confi
 				},
 			},
 		},
-		session)
+		versionSession)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +83,12 @@ func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
 		Key:   key,
 		Value: value,
 	}
+	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
 	return datasource.PlatformSaveOne(&cv, &wire.SaveOptions{
 		Upsert: true,
-	}, nil, session)
+	}, nil, versionSession)
 }

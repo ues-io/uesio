@@ -93,6 +93,7 @@ POST https://{{host}}:{{port}}/site/wires/save
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:testsite"
+jsonpath "$.wires[0].errors" == null
 
 # Create a site domain, so that we can test accessing the site
 POST https://{{host}}:{{port}}/site/wires/save

@@ -1,0 +1,4 @@
+name: get_config_value
+collection: animal
+type: AFTERSAVE
+dialect: TYPESCRIPT
