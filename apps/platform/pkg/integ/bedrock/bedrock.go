@@ -32,12 +32,14 @@ func estimateTokens(characterCount int64) int64 {
 }
 
 type InvokeModelOptions struct {
-	Input             string  `json:"input"`
-	Model             string  `json:"model"`
-	MaxTokensToSample int     `json:"max_tokens_to_sample"`
-	Temperature       float64 `json:"temperature"`
-	TopK              int     `json:"top_k"`
-	TopP              float64 `json:"top_p"`
+	Input             string             `json:"input"`
+	Messages          []AnthropicMessage `json:"messages"`
+	System            string             `json:"system"`
+	Model             string             `json:"model"`
+	MaxTokensToSample int                `json:"max_tokens_to_sample"`
+	Temperature       float64            `json:"temperature"`
+	TopK              int                `json:"top_k"`
+	TopP              float64            `json:"top_p"`
 }
 
 func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
@@ -65,18 +67,44 @@ type connection struct {
 	client      *bedrockruntime.Client
 }
 
-type ModelOutput struct {
+type CompletionModelOutput struct {
 	Completion string `json:"completion"`
 	StopReason string `json:"stop_reason"`
 }
 
-type AnthropicInput struct {
+type MessagesContent struct {
+	ContentType string `json:"type"`
+	Text        string `json:"text"`
+}
+
+type MessagesModelOutput struct {
+	Content    []MessagesContent `json:"content"`
+	StopReason string            `json:"stop_reason"`
+}
+
+type AnthropicCompletionInput struct {
 	Prompt            string   `json:"prompt"`
 	MaxTokensToSample int      `json:"max_tokens_to_sample"`
 	Temperature       float64  `json:"temperature"`
 	TopK              int      `json:"top_k"`
 	TopP              float64  `json:"top_p"`
 	StopSequences     []string `json:"stop_sequences"`
+}
+
+type AnthropicMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type AnthropicMessagesInput struct {
+	Messages         []AnthropicMessage `json:"messages"`
+	AnthropicVersion string             `json:"anthropic_version"`
+	MaxTokens        int                `json:"max_tokens"`
+	Temperature      float64            `json:"temperature,omitempty"`
+	TopK             int                `json:"top_k,omitempty"`
+	TopP             float64            `json:"top_p,omitempty"`
+	StopSequences    []string           `json:"stop_sequences,omitempty"`
+	System           string             `json:"system"`
 }
 
 // RunAction implements the system bot interface
@@ -146,14 +174,53 @@ func hydrateInvokeModelOptions(requestOptions map[string]interface{}) *InvokeMod
 	}
 	topP := float64WithDefault(requestOptions["top_p"], 0.999)
 	topK := intWithDefault(requestOptions["top_k"], 250)
+
+	messages := []AnthropicMessage{}
+	messageOptions := requestOptions["messages"]
+	if messageOptions != nil {
+		messagesArray := messageOptions.([]any)
+		for _, message := range messagesArray {
+			messageMap := message.(map[string]any)
+			messages = append(messages, AnthropicMessage{
+				Role:    goutils.StringValue(messageMap["role"]),
+				Content: goutils.StringValue(messageMap["content"]),
+			})
+		}
+	}
 	return &InvokeModelOptions{
 		Input:             goutils.StringValue(requestOptions["input"]),
 		Model:             goutils.StringValue(requestOptions["model"]),
+		System:            goutils.StringValue(requestOptions["system"]),
 		MaxTokensToSample: maxTokensToSample,
 		Temperature:       temperature,
 		TopK:              topK,
 		TopP:              topP,
+		Messages:          messages,
 	}
+}
+
+func getModelOutput(output *bedrockruntime.InvokeModelOutput, options *InvokeModelOptions) (string, error) {
+
+	if options.Model == "anthropic.claude-3-sonnet-20240229-v1:0" {
+		var modelOutput MessagesModelOutput
+		if err := json.Unmarshal(output.Body, &modelOutput); err != nil {
+			return "", err
+		}
+		if modelOutput.Content == nil {
+			return "", errors.New("Invalid Response from Bedrock")
+		}
+		if len(modelOutput.Content) < 1 {
+			return "", errors.New("Invalid Response from Bedrock")
+		}
+		return modelOutput.Content[0].Text, nil
+	}
+
+	var modelOutput CompletionModelOutput
+	if err := json.Unmarshal(output.Body, &modelOutput); err != nil {
+		return "", err
+	}
+
+	return modelOutput.Completion, nil
 }
 
 func getModelBody(options *InvokeModelOptions) ([]byte, error) {
@@ -177,7 +244,7 @@ func getModelBody(options *InvokeModelOptions) ([]byte, error) {
 		if !strings.Contains(claudePrompt, claudePromptEnding) {
 			claudePrompt = claudePrompt + claudePromptEnding
 		}
-		body, err = json.Marshal(AnthropicInput{
+		body, err = json.Marshal(AnthropicCompletionInput{
 			// Claude has a VERY particular format. We need to make sure that if the format does not match,
 			// that we populate it
 			Prompt:            claudePrompt,
@@ -186,6 +253,37 @@ func getModelBody(options *InvokeModelOptions) ([]byte, error) {
 			TopK:              options.TopK,
 			TopP:              options.TopP,
 			StopSequences:     []string{"Human:", "```"},
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if options.Model == "anthropic.claude-3-sonnet-20240229-v1:0" {
+
+		messages := []AnthropicMessage{}
+
+		if options.Messages != nil {
+			messages = options.Messages
+		}
+
+		if options.Input != "" {
+			messages = append(messages, AnthropicMessage{
+				Role:    "user",
+				Content: options.Input,
+			})
+		}
+
+		body, err = json.Marshal(AnthropicMessagesInput{
+			// Claude has a VERY particular format. We need to make sure that if the format does not match,
+			// that we populate it
+			Messages:         messages,
+			AnthropicVersion: "bedrock-2023-05-31",
+			MaxTokens:        options.MaxTokensToSample,
+			Temperature:      options.Temperature,
+			TopK:             options.TopK,
+			TopP:             options.TopP,
+			System:           options.System,
 		})
 		if err != nil {
 			return nil, err
@@ -235,7 +333,7 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 			case e := <-eventsChannel:
 				switch event := e.(type) {
 				case *brtypes.ResponseStreamMemberChunk:
-					var modelOutput ModelOutput
+					var modelOutput CompletionModelOutput
 					if err := json.Unmarshal(event.Value.Bytes, &modelOutput); err != nil {
 						outputStream.Err() <- err
 						break outer
@@ -288,13 +386,10 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 		return nil, handleBedrockError(err)
 	}
 
-	var modelOutput ModelOutput
-
-	if err = json.Unmarshal(output.Body, &modelOutput); err != nil {
+	response, err := getModelOutput(output, options)
+	if err != nil {
 		return nil, err
 	}
-
-	response := modelOutput.Completion
 
 	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), estimateTokens(int64(len(response))), c.session)
 
