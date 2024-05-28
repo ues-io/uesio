@@ -13,6 +13,7 @@ const StyleDefaults = Object.freeze({
 	content: [],
 	header: [],
 	icon: [],
+	blocker: [],
 })
 
 const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
@@ -30,6 +31,9 @@ const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
 			onClose={onClose}
 			initialFocus={1}
 			closeOnOutsideClick={closeOnOutsideClick}
+			classes={{
+				blocker: classes.blocker,
+			}}
 		>
 			<Grid className={classes.root} context={context}>
 				<div className={classes.header}>

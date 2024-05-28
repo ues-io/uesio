@@ -9,6 +9,8 @@ type SidePanelDefinition = {
 
 const StyleDefaults = Object.freeze({
 	root: [],
+	blocker: [],
+	icon: [],
 })
 
 const Dialog: definition.UC<SidePanelDefinition> = (props) => {
