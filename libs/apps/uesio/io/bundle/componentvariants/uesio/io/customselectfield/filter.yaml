@@ -1,0 +1,5 @@
+name: filter
+label: Filter
+extends: uesio/io.default
+definition:
+public: true

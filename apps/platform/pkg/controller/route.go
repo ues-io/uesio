@@ -165,7 +165,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 }
 
 func getRouteAPIResult(route *meta.Route, session *sess.Session) (*preload.RouteMergeData, error) {
-
+	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
 		return nil, err

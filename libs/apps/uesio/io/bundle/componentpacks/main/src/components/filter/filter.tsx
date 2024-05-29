@@ -190,9 +190,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		fieldMetadata,
 		wire,
 		condition,
-		variant:
-			definition[component.STYLE_VARIANT] ||
-			"uesio/io.field:uesio/io.filter",
+		variant: definition[component.STYLE_VARIANT] || "uesio/io.filter",
 	}
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
