@@ -39,6 +39,10 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params, err := getParamsFromRequestBody(r)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
@@ -114,7 +118,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 				if streamErr == nil {
 					streamErr = errors.New("request terminated for unknown reason")
 				}
-				streamErrorHandler(w, err)
+				streamErrorHandler(w, streamErr)
 				return
 			case <-sigTerm:
 				streamErrorHandler(w, errors.New("request cancelled"))
