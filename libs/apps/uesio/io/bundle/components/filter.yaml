@@ -6,8 +6,12 @@ pack: main
 entrypoint: components/filter/filter
 variants:
   - uesio/io.selectfield:uesio/io.filter
+  - uesio/io.selectfield:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.field:uesio/io.filter
   - uesio/io.fieldwrapper:uesio/io.default
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.customselectfield:uesio/io.filter
 category: INTERACTION
 discoverable: true
 properties:
