@@ -443,7 +443,7 @@ definition:
                 wires:
                   - licensetemplate
               - signal: wire/RESET
-                wire: newlicensepricingtemplate
+                wire: newlicensetemplate
               - signal: "panel/TOGGLE"
                 panel: "newLicenseTemplate"
         - uesio/io.button:

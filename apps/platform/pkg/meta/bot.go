@@ -399,16 +399,14 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 	return true
 }
 
-// ValidateParams checks validates received a map of provided bot params
-// against any bot parameter metadata defined for the Bot
-func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleLoader) error {
+func ValidateParams(params BotParams, paramValues map[string]interface{}, bundleLoader BundleLoader) error {
+	for _, param := range params {
 
-	for _, param := range b.Params {
 		// Ignore validations on Params which are not relevant due to conditions
-		if !IsParamRelevant(param, params) {
+		if !IsParamRelevant(param, paramValues) {
 			continue
 		}
-		paramValue := params[param.Name]
+		paramValue := paramValues[param.Name]
 		// First check for requiredness
 		if paramValue == nil || paramValue == "" {
 			if param.Required {
@@ -429,7 +427,7 @@ func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleL
 				if strVal, isString := paramValue.(string); isString {
 					if float64Val, err := strconv.ParseFloat(strVal, 64); err == nil {
 						isNumeric = true
-						params[param.Name] = float64Val
+						paramValues[param.Name] = float64Val
 					}
 				}
 			}
@@ -480,6 +478,12 @@ func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleL
 		}
 	}
 	return nil
+}
+
+// ValidateParams checks validates received a map of provided bot params
+// against any bot parameter metadata defined for the Bot
+func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleLoader) error {
+	return ValidateParams(b.Params, params, bundleLoader)
 }
 
 func isNumericType(val interface{}) bool {
