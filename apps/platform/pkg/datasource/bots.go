@@ -461,7 +461,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return nil, exceptions.NewNotFoundException("integration run action bot not found: " + actionBot)
 	}
 
-	if err = robot.ValidateParams(params, bundleLoader); err != nil {
+	if err = meta.ValidateParams(action.Params, params, bundleLoader); err != nil {
 		// This error will already be a BotParamError strongly typed
 		return nil, err
 	}

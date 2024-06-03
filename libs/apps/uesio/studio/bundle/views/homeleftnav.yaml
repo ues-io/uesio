@@ -283,7 +283,7 @@ definition:
                 wires:
                   - orgs
               - signal: "route/NAVIGATE"
-                path: "organization/${uesio/core.username}"
+                path: "org/info/${neworg:uesio/core.username}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: $Label{uesio/io.cancel}
