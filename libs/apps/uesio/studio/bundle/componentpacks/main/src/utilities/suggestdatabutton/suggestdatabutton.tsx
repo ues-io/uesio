@@ -86,7 +86,7 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 							transform: "json",
 							params: {
 								input: prompt,
-								model: "anthropic.claude-v2",
+								model: "anthropic.claude-3-haiku-20240307-v1:0",
 								temperature: 0.5,
 							},
 							onChunk: handleAutocompleteData,
