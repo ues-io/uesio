@@ -69,9 +69,7 @@ const signals: Record<string, SignalDescriptor> = {
 							chunks.push(chunk)
 							if (stepId && onChunk) {
 								const onChunkContext =
-									context.addSignalOutputFrame(stepId, {
-										data: chunk,
-									})
+									context.addSignalOutputFrame(stepId, chunk)
 								if (typeof onChunk === "function") {
 									await onChunk(onChunkContext)
 								} else if (Array.isArray(onChunk)) {
@@ -115,9 +113,7 @@ const signals: Record<string, SignalDescriptor> = {
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
 				if (stepId) {
-					return context.addSignalOutputFrame(stepId, {
-						data: finalResult,
-					})
+					return context.addSignalOutputFrame(stepId, finalResult)
 				}
 				return context
 			} catch (error) {

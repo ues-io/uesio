@@ -12,10 +12,6 @@ type Props = {
 	targetTableId?: string
 }
 
-export type AutocompleteResponse = {
-	data: object
-}
-
 const StyleDefaults = Object.freeze({
 	pulse: ["animate-pulse"],
 })
@@ -43,7 +39,7 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 
 	const handleAutocompleteData = useCallback(
 		(resultContext: context.Context) => {
-			const result = resultContext.getSignalOutputs(stepId)
+			const result = resultContext.getSignalOutputData(stepId)
 			if (!result) {
 				api.notification.addError(
 					"Unable to suggest data, please try again!",
@@ -51,9 +47,9 @@ const SuggestDataButton: definition.UtilityComponent<Props> = (props) => {
 				)
 				return
 			}
-			const autocompleteResponse = result.data as AutocompleteResponse
+
 			try {
-				handleResults([autocompleteResponse.data])
+				handleResults([result])
 			} catch (e) {
 				api.notification.addError(
 					"Unable to suggest data, unexpected error: " + e,

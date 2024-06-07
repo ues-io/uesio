@@ -100,7 +100,7 @@ interface SiteAdminContext {
 }
 
 interface SignalOutputContext {
-	data: object
+	data: unknown
 	errors?: string[]
 	label: string
 }
@@ -631,7 +631,7 @@ class Context {
 			theme,
 		})
 
-	addSignalOutputFrame = (label: string, data: object) =>
+	addSignalOutputFrame = (label: string, data: unknown) =>
 		this.#addFrame({
 			type: SIGNAL_OUTPUT,
 			label,
@@ -822,7 +822,9 @@ class Context {
 	getSignalOutputs = (label: string) =>
 		this.stack.find(
 			(f) => isSignalOutputContextFrame(f) && f.label === label
-		) as SignalOutputContextFrame
+		) as SignalOutputContextFrame | undefined
+
+	getSignalOutputData = (label: string) => this.getSignalOutputs(label)?.data
 
 	getComponentData = (componentType: string) =>
 		this.stack.find(
@@ -834,6 +836,8 @@ class Context {
 		this.stack.find(
 			(f) => isRecordContextFrame(f) && f.wire === wireId
 		) as RecordContextFrame
+
+	hasErrors = () => !!this.getCurrentErrors().length
 }
 
 export {
