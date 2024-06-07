@@ -71,3 +71,15 @@ func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
 func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
 	return botCall(botKey, params, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
 }
+
+func (b *RunIntegrationActionBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
+	return botSave(collection, changes, options, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+}
+
+func (b *RunIntegrationActionBotAPI) Delete(collection string, deletes wire.Collection) error {
+	return botDelete(collection, deletes, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+}
+
+func (b *RunIntegrationActionBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
+	return botLoad(request, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+}

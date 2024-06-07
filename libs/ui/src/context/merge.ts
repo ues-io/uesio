@@ -109,11 +109,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 			throw InvalidSignalOutputMergeMsg
 		}
 		const [stepId, propertyPath] = parts
-		const signalOutputFrame = context.getSignalOutputs(stepId)
-		if (!signalOutputFrame) {
+		const signalOutputData = context.getSignalOutputData(stepId)
+		if (!signalOutputData) {
 			throw `Could not find signal output for step: ${stepId}`
 		}
-		return get(signalOutputFrame.data, propertyPath)
+		return get(signalOutputData, propertyPath)
 	},
 	ComponentOutput: (expression, context) => {
 		// Expression MUST have 2+ parts, e.g. $ComponentOutput{[componentType][property]}

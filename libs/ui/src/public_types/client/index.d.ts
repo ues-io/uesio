@@ -69,11 +69,23 @@ type Context = {
 		data: Record<string, unknown>
 	) => Context
 	/**
+	 * Adds a Signal-specific context frame to the current stack
+	 * @param label - the frame label or stepId
+	 * @param data - arbitrary data to be associated with this signal output context frame
+	 * @returns new Context object
+	 */
+	addSignalOutputFrame: (label: string, data: unknown) => Context
+	/**
 	 * Merges a text string containing merges, e.g. ${uesio/core.uniquekey} in the current context
 	 * @param text - the text to be merged
 	 * @returns the merged text
 	 */
 	merge: (text: string) => string
+	/**
+	 * Returns an array of errors that are part of the current context
+	 * @returns Array of error strings
+	 */
+	getCurrentErrors: () => string[]
 	/**
 	 * Returns the mode of the closest context FIELD_MODE frame, or "READ" if no such frame is in context.
 	 * @returns FieldMode
@@ -113,6 +125,11 @@ type Context = {
 	 */
 	getRoute: () => RouteState
 	/**
+	 * Returns signal output for a paricular label
+	 * @returns Data object
+	 */
+	getSignalOutputData: (label: string) => object
+	/**
 	 * Returns info about the current Site
 	 * @returns Wire object
 	 */
@@ -137,6 +154,11 @@ type Context = {
 	 * @returns Wire object
 	 */
 	getWire: (wireId?: string) => Wire
+	/**
+	 * Returns whether or not errors exist in the current context
+	 * @returns true or false
+	 */
+	hasErrors: () => boolean
 }
 
 type ComponentSignalDescriptor = {
@@ -653,6 +675,7 @@ type PlainWire = {
 interface SignalDefinition {
 	signal: string
 	stepId?: string
+	[key: string]: Definition
 }
 
 // SIGNAL
@@ -673,6 +696,28 @@ export namespace api {
 			signals: SignalDefinition[] | undefined,
 			context: Context
 		): () => Context
+
+		/**
+		 * Runs a single signal
+		 * @param signal Signal to run
+		 * @param context Context object
+		 * @returns a promise with a new Context that could have been altered by the signal
+		 */
+		export function run(
+			signal: SignalDefinition,
+			context: Context
+		): Promise<Context>
+
+		/**
+		 * Runs a set of signals
+		 * @param signals Array of Signals to run
+		 * @param context Context object
+		 * @returns a promise with a new Context that could have been altered by the signal
+		 */
+		export function runMany(
+			signals: SignalDefinition[],
+			context: Context
+		): Promise<Context>
 
 		export { getHandler }
 	}
