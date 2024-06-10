@@ -142,12 +142,15 @@ const getDragOverHandler =
 		// Step 1: Find the closest slot that is accepting the current dragpath.
 		let slotTarget = e.target as Element | null
 		let validPath = ""
-		while (slotTarget !== null && slotTarget !== e.currentTarget) {
+		while (slotTarget !== null) {
 			const accepts = slotTarget.getAttribute("data-accepts")?.split(",")
 			if (accepts && isDropAllowed(accepts, dragPath)) {
 				validPath = component.path.fromDataAttrPath(
 					slotTarget.getAttribute("data-path")
 				)
+				break
+			}
+			if (slotTarget === e.currentTarget) {
 				break
 			}
 			slotTarget = slotTarget.parentElement || null
