@@ -21,4 +21,6 @@ definition:
       - m-0.5
       - p-1.5
       - leading-none
+    trigger:
+      - cursor-pointer
 public: true

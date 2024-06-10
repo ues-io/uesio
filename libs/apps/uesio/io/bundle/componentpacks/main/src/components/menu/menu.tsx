@@ -24,6 +24,7 @@ type MenuDefinition = {
 
 const StyleDefaults = Object.freeze({
 	menu: [],
+	trigger: [],
 	arrow: [],
 	closeButton: [],
 })
@@ -70,7 +71,11 @@ const Menu: definition.UC<MenuDefinition> = (props) => {
 
 	return (
 		<>
-			<div ref={refs.setReference} {...getReferenceProps()}>
+			<div
+				ref={refs.setReference}
+				{...getReferenceProps()}
+				className={classes.trigger}
+			>
 				<component.Slot
 					definition={definition}
 					listName="trigger"
