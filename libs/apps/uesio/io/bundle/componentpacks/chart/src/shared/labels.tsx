@@ -22,7 +22,11 @@ type ValueLabel = {
 type DataLabels = {
 	source: "DATA"
 	timeunit?: "YEAR" | "MONTH" | "DAY"
-	timeunitfill?: "MONTH" | "WEEK"
+	timeunitfill?: "YEAR" | "MONTH" | "WEEK"
+	format?: {
+		month?: "long" | "short" | "numeric" | "narrow" | "2-digit"
+		year?: "numeric" | "2-digit"
+	}
 }
 
 type LabelsDefinition = WireLabels | ValueLabels | DataLabels
@@ -141,10 +145,7 @@ const getDayDataLabels = (labels: DataLabels, categories: Categories) => {
 	return sortedCategories
 }
 
-const getMonthDataLabels = (
-	labels: LabelsDefinition,
-	categories: Categories
-) => {
+const getMonthDataLabels = (labels: DataLabels, categories: Categories) => {
 	// Loop through all our data to get a full list of categories based
 	// on our category field
 
@@ -155,16 +156,36 @@ const getMonthDataLabels = (
 	// Now sort our buckets
 	const sortedKeys = categoryKeys.sort()
 	const firstKey = sortedKeys[0]
-	const lastKey = sortedKeys[sortedKeys.length - 1]
+	let lastKey = sortedKeys[sortedKeys.length - 1]
 
 	let currentKey = firstKey
 
+	const format = labels.format || {
+		month: "short",
+		year: "numeric",
+	}
+
 	const getLabel = (d: Date) =>
 		d.toLocaleDateString(undefined, {
-			month: "short",
-			year: "numeric",
+			month: format.month,
+			year: format.year,
 			timeZone: "UTC",
 		})
+
+	if (labels.timeunitfill === "YEAR") {
+		const start = getDateFromMonthYearKey(currentKey)
+		start.setUTCMonth(0)
+		start.setUTCDate(1)
+		currentKey = getMonthYearDateKey(start)
+
+		const end = getDateFromMonthYearKey(lastKey)
+		end.setUTCMonth(0)
+		end.setUTCDate(1)
+		end.setFullYear(end.getFullYear() + 1)
+		end.setUTCDate(end.getUTCDate() - 1)
+		lastKey = getMonthYearDateKey(end)
+	}
+
 	while (currentKey <= lastKey) {
 		const d = getDateFromMonthYearKey(currentKey)
 		sortedCategories[currentKey] = getLabel(d)
