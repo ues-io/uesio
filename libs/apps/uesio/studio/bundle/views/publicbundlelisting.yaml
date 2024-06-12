@@ -1,0 +1,201 @@
+name: publicbundlelisting
+definition:
+  # Wires are how we pull in data
+  wires:
+    # The details of the listing, nothing special going on here
+    listing:
+      collection: uesio/studio.bundlelisting
+      fields:
+        uesio/core.uniquekey:
+        uesio/studio.title:
+        uesio/studio.description:
+        uesio/studio.splash:
+        uesio/studio.app:
+          fields:
+            uesio/core.uniquekey:
+            uesio/studio.fullname:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{id}
+    licensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: listing
+          lookupField: uesio/studio.app->uesio/core.id
+  components:
+    - uesio/core.view:
+        view: uesio/studio.publicbundleheader
+    - uesio/io.box:
+        uesio.styleTokens:
+          root:
+            - "[max-width:1248px]"
+            - m-auto
+            - "[container-type:inline-size]"
+            - md:px-20
+            - px-6
+        uesio.display:
+          - type: wireHasNoRecords
+            wire: listing
+        components:
+          - uesio/io.emptystate:
+              title: We can't find a bundle called $Param{id}.
+              subtitle: The bundle you're looking for may not be published yet.
+              icon: unknown_document
+    - uesio/io.item:
+        uesio.display:
+          - type: wireHasRecords
+            wire: listing
+        wire: listing
+        mode: READ
+        components:
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - "[max-width:1248px]"
+                  - m-auto
+                  - "[container-type:inline-size]"
+                  - md:px-20
+                  - px-6
+              components:
+                - uesio/io.grid:
+                    uesio.variant: uesio/io.three_columns
+                    uesio.styleTokens:
+                      root:
+                        - my-16
+                        - items-start
+                        - gap-14
+                    items:
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                uesio.styleTokens:
+                                  root:
+                                    - gap-4
+                                  title:
+                                    - text-xl
+                                  subtitle:
+                                    - text-xs
+                                  avatar:
+                                    - text-2xl
+                                    - h-12
+                                    - w-12
+                                    - grid
+                                    - items-center
+                                    - justify-center
+                                    - bg-slate-50
+                                    - rounded-full
+                                title: ${uesio/studio.app->uesio/studio.fullname}
+                                subtitle: ${uesio/studio.title}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      text: ${uesio/studio.app->uesio/studio.icon}
+                                      color: ${uesio/studio.app->uesio/studio.color}
+                                actions:
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.box:
+                                            uesio.styleTokens:
+                                              root:
+                                                - rounded
+                                                - bg-lime-200
+                                                - py-0.5
+                                                - px-2.5
+                                                - flex
+                                                - items-center
+                                                - gap-2
+                                            components:
+                                              - uesio/io.text:
+                                                  uesio.variant: uesio/io.icon
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - text-base
+                                                      - text-lime-700
+                                                  text: redeem
+                                              - uesio/io.text:
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - mt-[1px]
+                                                      - text-xs
+                                                      - uppercase
+                                                      - text-lime-700
+                                                      - leading-none
+                                                      - font-bold
+                                                      - tracking-wider
+                                                  text: Free
+                            - uesio/io.text:
+                                element: div
+                                uesio.styleTokens:
+                                  root:
+                                    - font-light
+                                    - text-sm
+                                    - text-slate-800
+                                    - leading-loose
+                                    - whitespace-pre-line
+                                text: ${description}
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                uesio.styleTokens:
+                                  root:
+                                    - mt-10
+                                    - mb-4
+                                    - min-w-[80px]
+                                    - text-white
+                                    - bg-slate-800
+                                    - rounded-full
+                                    - border-0
+                                    - px-6
+                                    - hover:shadow-none
+                                    - focus:shadow-none
+                                    - border-2
+                                    - border-white
+                                text: Log In to Install
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: login
+                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - p-6
+                              - md:col-span-2
+                          uesio.display:
+                            - type: hasValue
+                              value: ${splash}
+                          components:
+                            - uesio/io.image:
+                                uesio.styleTokens:
+                                  root:
+                                    - w-full
+                                src: $UserFile{splash}
+                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - bg-[${app->color}]
+                              - p-6
+                              - rounded-xl
+                              - md:col-span-2
+                              - "[min-height:380px]"
+                              - grid
+                              - items-center
+                              - justify-center
+                          uesio.display:
+                            - type: hasNoValue
+                              value: ${splash}
+                          components:
+                            - uesio/io.text:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                    - text-8xl
+                                uesio.variant: uesio/io.icon
+                                text: ${app->icon}

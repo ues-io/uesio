@@ -1,0 +1,4 @@
+name: publicbundlelisting
+path: bundles/{id:\w*\/\w*}
+view: publicbundlelisting
+theme: default

@@ -50,6 +50,7 @@ definition:
       collection: uesio/studio.bundlelisting
       fields:
         uesio/core.id:
+        uesio/studio.title:
         uesio/studio.description:
         uesio/studio.app:
           fields:
@@ -58,6 +59,7 @@ definition:
             uesio/studio.fullname:
         uesio/studio.status:
         uesio/studio.approved:
+        uesio/studio.splash:
         uesio/core.owner:
         uesio/core.createdat:
         uesio/core.createdby:
@@ -146,7 +148,7 @@ definition:
                 selected: managebundles
         content:
           - uesio/io.list:
-              uesio.id: bundleListingDeck
+              uesio.id: bundleListing
               wire: bundlelisting
               mode: READ
               components:
@@ -157,6 +159,37 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Edit
+                                signals:
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: TOGGLE_MODE
+                                    targettype: specific
+                                    componentid: bundleListing
+                                uesio.display:
+                                  - type: wireHasNoChanges
+                                    wire: bundlelisting
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: Save
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - bundlelisting
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: bundlelisting
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Cancel
+                                signals:
+                                  - signal: wire/CANCEL
+                                    wire: bundlelisting
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: bundlelisting
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: Start Review
@@ -228,11 +261,19 @@ definition:
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns
+                          uesio.styleTokens:
+                            root:
+                              - gap-10
                           items:
                             - uesio/io.box:
                                 components:
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.title
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.splash
+                                      displayAs: IMAGE
                                   - uesio/io.field:
                                       fieldId: uesio/studio.status
                                   - uesio/io.field:
@@ -243,7 +284,8 @@ definition:
                                       color: ${uesio/studio.app->uesio/studio.color}
                                       icon: ${uesio/studio.app->uesio/studio.icon}
                                       title: ${uesio/studio.app->uesio/studio.fullname}
-                                      subtitle: ${uesio/studio.description}
+                                      subtitle: ${uesio/studio.title}
+                                      description: ${uesio/studio.description}
                                       verified: false
           - uesio/io.box:
               uesio.variant: uesio/io.section

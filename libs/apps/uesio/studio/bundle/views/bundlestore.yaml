@@ -18,6 +18,7 @@ definition:
       collection: uesio/studio.bundlelisting
       fields:
         uesio/core.id:
+        uesio/studio.title:
         uesio/studio.description:
         uesio/studio.status:
         uesio/studio.approved:
@@ -27,6 +28,9 @@ definition:
             uesio/studio.fullname:
             uesio/studio.color:
             uesio/studio.icon:
+      conditions:
+        - field: uesio/studio.status
+          value: PUBLISHED
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -58,6 +62,7 @@ definition:
                           searchFields:
                             - uesio/core.uniquekey
                             - uesio/studio.description
+                            - uesio/studio.title
                           focusOnRender: true
                           uesio.styleTokens:
                             root:
@@ -86,5 +91,6 @@ definition:
                                 color: ${uesio/studio.app->uesio/studio.color}
                                 icon: ${uesio/studio.app->uesio/studio.icon}
                                 title: ${uesio/studio.app->uesio/studio.fullname}
-                                subtitle: ${uesio/studio.description}
+                                subtitle: ${uesio/studio.title}
+                                description: ${uesio/studio.description}
                                 verified: false

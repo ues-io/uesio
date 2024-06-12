@@ -1,0 +1,5 @@
+name: splash
+label: Splash Image
+type: FILE
+file:
+  accept: IMAGE

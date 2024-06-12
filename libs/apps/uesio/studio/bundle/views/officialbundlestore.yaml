@@ -7,6 +7,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.description:
+        uesio/studio.title:
         uesio/studio.status:
         uesio/studio.approved:
         uesio/studio.app:
@@ -60,5 +61,6 @@ definition:
                                 color: ${uesio/studio.app->uesio/studio.color}
                                 icon: ${uesio/studio.app->uesio/studio.icon}
                                 title: ${uesio/studio.app->uesio/studio.fullname}
-                                subtitle: ${uesio/studio.description}
+                                subtitle: ${uesio/studio.title}
+                                description: ${uesio/studio.description}
                                 verified: false

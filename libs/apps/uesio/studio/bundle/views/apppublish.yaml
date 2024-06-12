@@ -27,7 +27,9 @@ definition:
       collection: uesio/studio.bundlelisting
       fields:
         uesio/core.id:
+        uesio/studio.title:
         uesio/studio.description:
+        uesio/studio.splash:
         uesio/studio.app:
           fields:
             uesio/studio.color:
@@ -208,7 +210,8 @@ definition:
                                       color: ${uesio/studio.color}
                                       icon: ${uesio/studio.icon}
                                       title: ${uesio/studio.fullname}
-                                      subtitle: ${uesio/studio.description}
+                                      subtitle: ${uesio/studio.title}
+                                      description: ${uesio/studio.description}
                                       verified: false
           - uesio/io.list:
               uesio.display:
@@ -258,7 +261,12 @@ definition:
                             - uesio/io.box:
                                 components:
                                   - uesio/io.field:
+                                      fieldId: uesio/studio.title
+                                  - uesio/io.field:
                                       fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.splash
+                                      displayAs: IMAGE
                                   - uesio/io.field:
                                       fieldId: uesio/studio.status
                                   - uesio/io.field:
@@ -269,7 +277,8 @@ definition:
                                       color: ${uesio/studio.app->uesio/studio.color}
                                       icon: ${uesio/studio.app->uesio/studio.icon}
                                       title: ${uesio/studio.app->uesio/studio.fullname}
-                                      subtitle: ${uesio/studio.description}
+                                      subtitle: ${uesio/studio.title}
+                                      description: ${uesio/studio.description}
                                       verified: false
           - uesio/io.box:
               uesio.display:

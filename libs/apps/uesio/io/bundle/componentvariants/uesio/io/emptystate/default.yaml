@@ -1,0 +1,27 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - justify-items-center
+      - m-10
+      - rounded-lg
+      - md:p-24
+      - p-6
+      - gap-2
+    title:
+      - text-xl
+      - text-slate-800
+      - "[text-wrap:balance]"
+      - text-center
+    subtitle:
+      - text-sm
+      - font-light
+      - text-slate-500
+      - text-center
+      - "[text-wrap:balance]"
+    icon:
+      - text-7xl
+      - mb-10
+public: true

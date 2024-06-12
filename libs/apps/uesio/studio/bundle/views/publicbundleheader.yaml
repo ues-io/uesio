@@ -1,0 +1,126 @@
+name: publicbundleheader
+definition:
+  # Wires are how we pull in data
+  wires:
+    # The details of the listing, nothing special going on here
+  components:
+    - uesio/io.box:
+        uesio.styleTokens:
+          root:
+            - md:py-8
+            - py-6
+            - sticky
+            - top-0
+            - z-10
+            - from-indigo-700/95
+            - to-violet-600/95
+            - bg-gradient-to-br
+            - "[background-size:100%_500%]"
+            - backdrop-blur
+        components:
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - "[max-width:1248px]"
+                  - m-auto
+                  - "[container-type:inline-size]"
+                  - md:px-20
+                  - px-6
+              components:
+                - uesio/io.group:
+                    uesio.styleTokens:
+                      root:
+                        - grid
+                        - justify-between
+                    components:
+                      - uesio/io.group:
+                          uesio.styleTokens:
+                            root:
+                              - gap-4
+                          components:
+                            - uesio/io.image:
+                                file: uesio/core.logowhite
+                                height: 44
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "home"
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: deployed_code
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                    - text-5xl
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.text:
+                                      text: Bundle Store
+                                      element: div
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-white
+                                          - text-xl
+                                          - font-light
+                                          - leading-none
+                      - uesio/io.group:
+                          uesio.styleTokens:
+                            root:
+                              - grid
+                              - md:hidden
+                              - justify-right
+                          components:
+                            - uesio/io.button:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-3xl
+                                    - text-white
+                                    - p-2
+                                icon: menu
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: navmenu
+                      - uesio/io.group:
+                          uesio.styleTokens:
+                            root:
+                              - gap-8
+                              - hidden
+                              - md:grid
+                          components:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      uesio.styleTokens:
+                                        root:
+                                          - min-w-[80px]
+                                          - text-white
+                                          - bg-transparent
+                                          - rounded-full
+                                          - border-0
+                                          - px-6
+                                          - hover:shadow-none
+                                          - focus:shadow-none
+                                          - bg-transparent
+                                      text: Log In
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: login
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                uesio.styleTokens:
+                                  root:
+                                    - min-w-[80px]
+                                    - text-white
+                                    - bg-transparent
+                                    - rounded-full
+                                    - border-0
+                                    - px-6
+                                    - hover:shadow-none
+                                    - focus:shadow-none
+                                    - bg-transparent
+                                    - border-2
+                                    - border-white
+                                text: Sign Up
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: signup

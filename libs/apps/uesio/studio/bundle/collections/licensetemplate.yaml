@@ -2,7 +2,7 @@ name: licensetemplate
 uniqueKey:
   - uesio/studio.app
 nameField: uesio/studio.app
-access: protected
+access: protected_write
 accessField: uesio/studio.app
 label: license template
 pluralLabel: license template
