@@ -25,7 +25,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	authCode, state, err := extractAuthCodeAndState(r.URL.Query())
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, exceptions.NewBadRequestException(err.Error()), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", exceptions.NewBadRequestException(err.Error()), false)
 		return
 	}
 	// If we have either workspace / site admin context embedded in the state token,
@@ -39,7 +39,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	if contextSession != nil {
 		s = contextSession
 	} else if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, exceptions.NewForbiddenException("invalid state: insufficient privileges"), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", exceptions.NewForbiddenException("invalid state: insufficient privileges"), false)
 		return
 	}
 
@@ -55,7 +55,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)
 		return
 	}
 
@@ -64,20 +64,20 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, s, connection)
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)
 		return
 	}
 
 	host := fmt.Sprintf("https://%s", r.Host)
 	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(s.Context(), integrationConnection.GetCredentials(), host, authCode, state)
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, err, false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)
 		return
 	}
 	// Now that we have an access token (and maybe refresh token),
 	// store this into an Integration Credential record in the DB.
 	if err = oauth.UpsertIntegrationCredential(oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, errors.New("failed to obtain access token from authorization code: "+err.Error()), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", errors.New("failed to obtain access token from authorization code: "+err.Error()), false)
 		return
 	}
 

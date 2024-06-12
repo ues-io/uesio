@@ -40,7 +40,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	}
 	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session, connection)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, "", session)
+		handleApiNotFoundRoute(w, r, "", "", session)
 		return
 	}
 
@@ -52,7 +52,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 
 	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		handleApiErrorRoute(w, r, route.Path, session, err)
+		handleApiErrorRoute(w, r, route.Path, route.Namespace, session, err)
 		return
 	}
 
@@ -78,7 +78,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 	}
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, path, session)
+		handleApiNotFoundRoute(w, r, path, namespace, session)
 		return
 	}
 
@@ -90,7 +90,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 
 	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		handleApiErrorRoute(w, r, route.Path, session, err)
+		handleApiErrorRoute(w, r, route.Path, namespace, session, err)
 		return
 	}
 
@@ -110,7 +110,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 	}
 	route, err := routing.GetRouteByKey(r, namespace, routeName, session, connection)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), session)
+		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), namespace, session)
 		return
 	}
 	// Handle redirect routes
@@ -120,23 +120,23 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 	}
 	routingMergeData, err := getRouteAPIResult(route, session)
 	if err != nil {
-		handleApiErrorRoute(w, r, route.Path, session, err)
+		handleApiErrorRoute(w, r, route.Path, namespace, session, err)
 		return
 	}
 	filejson.RespondJSON(w, r, routingMergeData)
 }
 
-func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session, err error) {
-	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
+func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session, err error) {
+	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, namespace, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
 		filejson.RespondJSON(w, r, routingMergeData)
 	}
 }
 
-func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path string, session *sess.Session) {
+func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session) {
 	if routingMergeData, err := getRouteAPIResult(
-		getNotFoundRoute(path, "You may need to log in again.", "true"),
+		getNotFoundRoute(path, namespace, "You may need to log in again.", "true"),
 		sess.GetAnonSessionFrom(session),
 	); err != nil {
 		ctlutil.HandleError(w, err)
@@ -174,12 +174,15 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*preload.Route
 	return GetRoutingMergeData(route, depsCache, session)
 }
 
-func getNotFoundRoute(path string, err string, displayButton string) *meta.Route {
+func getNotFoundRoute(path, namespace, err, displayButton string) *meta.Route {
 	params := map[string]interface{}{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
+	if namespace == "" {
+		namespace = "uesio/core"
+	}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
-			Namespace: "uesio/core",
+			Namespace: namespace,
 		},
 		Path:     path,
 		ThemeRef: "uesio/core.default",
@@ -188,12 +191,15 @@ func getNotFoundRoute(path string, err string, displayButton string) *meta.Route
 	}
 }
 
-func GetErrorRoute(path string, err string) *meta.Route {
+func GetErrorRoute(path, namespace, err string) *meta.Route {
 	params := map[string]interface{}{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
+	if namespace == "" {
+		namespace = "uesio/core"
+	}
 	return &meta.Route{
 		ViewRef: "uesio/core.error",
 		BundleableBase: meta.BundleableBase{
-			Namespace: "uesio/core",
+			Namespace: namespace,
 		},
 		Path:     path,
 		ThemeRef: "uesio/core.default",
@@ -209,7 +215,7 @@ type errorResponse struct {
 	Details string `json:"details,omitempty"`
 }
 
-func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
+func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, namespace string, err error, redirect bool) {
 	slog.Debug("Error Getting Route: " + err.Error())
 
 	// If this is an invalid param exception
@@ -228,9 +234,9 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
 			showButton = "true"
 		}
-		route = getNotFoundRoute(path, err.Error(), showButton)
+		route = getNotFoundRoute(path, namespace, err.Error(), showButton)
 	} else {
-		route = GetErrorRoute(path, err.Error())
+		route = GetErrorRoute(path, namespace, err.Error())
 	}
 
 	// We can upgrade to the site session to be sure to have access to the not found route
@@ -276,12 +282,12 @@ func ServeRouteByKey(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
 	if err != nil {
-		HandleErrorRoute(w, r, session, r.URL.Path, err, true)
+		HandleErrorRoute(w, r, session, r.URL.Path, namespace, err, true)
 		return
 	}
 	route, err := routing.GetRouteByKey(r, namespace, routeName, session, connection)
 	if err != nil {
-		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), session)
+		handleApiNotFoundRoute(w, r, fmt.Sprintf("%s.%s", namespace, routeName), namespace, session)
 		return
 	}
 	ServeRouteInternal(w, r, session, route.Path, route)
@@ -309,12 +315,12 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
 	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
 	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, true)
+		HandleErrorRoute(w, r, session, path, namespace, err, true)
 		return nil, err
 	}
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
 	if err != nil {
-		HandleErrorRoute(w, r, session, path, err, true)
+		HandleErrorRoute(w, r, session, path, namespace, err, true)
 		return nil, err
 	}
 	return route, nil
@@ -331,7 +337,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 			Session: session,
 		})
 		if err != nil {
-			HandleErrorRoute(w, r, session, path, err, true)
+			HandleErrorRoute(w, r, session, path, route.Namespace, err, true)
 			return
 		}
 		http.Redirect(w, r, mergedRouteRedirect, http.StatusFound)
@@ -379,7 +385,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 		// Handle view routes
 		depsCache, err := routing.GetMetadataDeps(route, session)
 		if err != nil {
-			HandleErrorRoute(w, r, session, path, err, false)
+			HandleErrorRoute(w, r, session, path, route.Namespace, err, false)
 			return
 		}
 		ExecuteIndexTemplate(w, route, depsCache, false, session)
