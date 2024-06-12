@@ -4,6 +4,7 @@ views:
   uesio/studio.signup: true
   uesio/studio.publicbundlelisting: true
   uesio/studio.publicbundleheader: true
+  uesio/studio.publicbundlefooter: true
 routes:
   uesio/studio.login: true
   uesio/studio.signup: true
