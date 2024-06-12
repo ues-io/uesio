@@ -1,0 +1,25 @@
+name: emptystate
+category: CONTENT
+pack: main
+entrypoint: components/emptystate/emptystate
+description: A placeholder for missing content
+discoverable: true
+defaultDefinition:
+  uesio.variant: uesio/io.default
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Subtitle
+    type: TEXT
+  - name: icon
+    label: Icon
+    type: ICON
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+      - icon
+  - type: DISPLAY

@@ -11,8 +11,6 @@ definition:
           - overflow-hidden
           - bg-white
           - shadow-lg
-          - max-h-80
-          - max-w-md
       components:
         - uesio/io.box:
             uesio.styleTokens:
@@ -20,7 +18,7 @@ definition:
                 - bg-slate-50
                 - flex
                 - bg-[$Prop{color}]
-                - pt-[50%]
+                - pt-64
                 - items-center
                 - justify-center
                 - text-white
@@ -61,6 +59,13 @@ definition:
                   uesio.variant: uesio/io.aside
                   text: $Prop{subtitle}
                   element: p
+              - uesio/io.text:
+                  uesio.variant: uesio/io.aside
+                  text: $Prop{description}
+                  uesio.display:
+                    - type: hasNoValue
+                      value: $Prop{subtitle}
+                  element: p
 title: Bundle Listing Visual
 discoverable: true
 description: A component that wraps other components
@@ -77,6 +82,9 @@ properties:
   - type: TEXT
     name: subtitle
     label: Subtitle
+  - type: TEXT
+    name: description
+    label: Description
   - type: CHECKBOX
     name: verified
     label: Verified

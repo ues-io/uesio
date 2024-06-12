@@ -36,6 +36,7 @@ definition:
       collection: uesio/studio.bundlelisting
       fields:
         uesio/core.uniquekey:
+        uesio/studio.title:
         uesio/studio.description:
         uesio/studio.app:
           fields:
@@ -182,7 +183,7 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: ${uesio/studio.app->uesio/studio.fullname}
-                    subtitle: ${uesio/studio.description}
+                    subtitle: ${uesio/studio.title}
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
@@ -230,6 +231,15 @@ definition:
                                             - workspaces
                                             - dependencies
                                             - dependencyAlreadyInstalled
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              components:
+                - uesio/io.text:
+                    uesio.styleTokens:
+                      root:
+                        - whitespace-pre-line
+                        - font-light
+                    text: ${listing:description}
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:

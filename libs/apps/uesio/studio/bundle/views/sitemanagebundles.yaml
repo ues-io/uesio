@@ -38,6 +38,7 @@ definition:
       collection: uesio/studio.bundlelisting
       fields:
         uesio/core.id:
+        uesio/studio.title:
         uesio/studio.description:
         uesio/studio.app:
           fields:
@@ -106,7 +107,7 @@ definition:
                               text: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
                               color: ${uesio/studio.app->uesio/studio.color}
-                      - field: uesio/studio.description
+                      - field: uesio/studio.title
                       - field: uesio/studio.status
                       - field: uesio/core.createdby
                         user:

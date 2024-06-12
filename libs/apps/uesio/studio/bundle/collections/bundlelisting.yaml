@@ -3,5 +3,5 @@ uniqueKey:
   - uesio/studio.app
 label: bundlelisting
 pluralLabel: Bundle Listings
-access: protected
+access: protected_write
 accessField: uesio/studio.app

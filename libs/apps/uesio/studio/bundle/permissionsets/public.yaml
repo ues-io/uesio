@@ -2,15 +2,24 @@ name: public
 named:
 views:
   uesio/studio.signup: true
+  uesio/studio.publicbundlelisting: true
+  uesio/studio.publicbundleheader: true
 routes:
   uesio/studio.login: true
   uesio/studio.signup: true
   uesio/studio.signuplanding: true
   uesio/studio.changepassword: true
+  uesio/studio.publicbundlelisting: true
   uesio/studio.requestpassword: true
 files:
 bots:
   uesio/studio.checkavailability: true
 collections:
   uesio/studio.externalbundlelisting: true
+  uesio/studio.app:
+    read: true
+  uesio/studio.bundlelisting:
+    read: true
+  uesio/studio.licensetemplate:
+    read: true
   uesio/studio.externalbundleversion: true

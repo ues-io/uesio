@@ -14,6 +14,7 @@ const StyleDefaults = Object.freeze({
 	title: [],
 	subtitle: [],
 	actions: [],
+	avatar: [],
 })
 
 const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
