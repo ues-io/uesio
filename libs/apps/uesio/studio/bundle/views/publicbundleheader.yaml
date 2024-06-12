@@ -9,14 +9,10 @@ definition:
           root:
             - md:py-8
             - py-6
-            - sticky
-            - top-0
-            - z-10
-            - from-indigo-700/95
-            - to-violet-600/95
+            - from-indigo-700
+            - to-violet-600
             - bg-gradient-to-br
             - "[background-size:100%_500%]"
-            - backdrop-blur
         components:
           - uesio/io.box:
               uesio.styleTokens:

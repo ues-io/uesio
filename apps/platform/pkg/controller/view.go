@@ -32,7 +32,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		// Make sure this is a legit view that we have access to
 		err := bundle.Load(view, nil, session, nil)
 		if err != nil {
-			HandleErrorRoute(w, r, session, "", err, false)
+			HandleErrorRoute(w, r, session, "", "", err, false)
 			return
 		}
 
@@ -50,14 +50,14 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 
 		depsCache, err := routing.GetMetadataDeps(route, session)
 		if err != nil {
-			HandleErrorRoute(w, r, session, "", err, false)
+			HandleErrorRoute(w, r, session, "", "", err, false)
 			return
 		}
 
 		if buildMode {
 			err = routing.GetBuilderDependencies(viewNamespace, viewName, depsCache, session)
 			if err != nil {
-				HandleErrorRoute(w, r, session, "", err, false)
+				HandleErrorRoute(w, r, session, "", "", err, false)
 				return
 			}
 			route.Title = "Edit: " + view.Name

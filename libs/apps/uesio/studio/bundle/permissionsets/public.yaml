@@ -17,6 +17,8 @@ bots:
   uesio/studio.checkavailability: true
 collections:
   uesio/studio.externalbundlelisting: true
+  uesio/core.userfile:
+    read: true
   uesio/studio.app:
     read: true
   uesio/studio.bundlelisting:
