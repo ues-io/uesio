@@ -166,7 +166,6 @@ definition:
                       - uesio/io.box:
                           uesio.styleTokens:
                             root:
-                              - p-6
                               - md:col-span-2
                           uesio.display:
                             - type: hasValue
@@ -199,3 +198,5 @@ definition:
                                     - text-8xl
                                 uesio.variant: uesio/io.icon
                                 text: ${app->icon}
+    - uesio/core.view:
+        view: uesio/studio.publicbundlefooter

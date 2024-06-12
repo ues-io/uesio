@@ -65,6 +65,8 @@ views:
   uesio/studio.profiletag: true
   uesio/studio.profiles: true
   uesio/studio.publicbundlelisting: true
+  uesio/studio.publicbundleheader: true
+  uesio/studio.publicbundlefooter: true
   uesio/studio.route: true
   uesio/studio.routes: true
   uesio/studio.secret: true
