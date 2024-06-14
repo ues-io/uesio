@@ -40,7 +40,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.15.0
+          node-version: 18.18.0
           cache: "npm"
       - name: Setup Uesio CLI Symlink
         shell: bash
@@ -109,7 +109,7 @@ jobs:
         run: bash ./scripts/seed-etc-hosts.sh
       - name: Run E2E and API Integration tests against app in Docker
         run: |
-          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating  
+          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
           # Make sure we're using the same Hurl version specified in package.json
           hurlversion=$(bash ./scripts/get-hurl-version.sh)
           echo "Installing hurl $hurlversion for Debian..."

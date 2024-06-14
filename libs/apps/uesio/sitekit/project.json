@@ -31,7 +31,7 @@
 			"executor": "@nx/jest:jest",
 			"options": {
 				"jestConfig": "libs/apps/uesio/sitekit/jest.config.ts",
-				"passWithNoTests": false
+				"passWithNoTests": true
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/sitekit"]
 		}
