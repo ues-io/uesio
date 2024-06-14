@@ -1,0 +1,26 @@
+{
+	"extends": "../../../../.eslintrc.json",
+	"ignorePatterns": [
+		"!**/*",
+		"bundle/bots/*",
+		"bundle/componentpacks/*/*.js*"
+	],
+	"rules": {},
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"parserOptions": {
+				"project": ["libs/apps/uesio/sitekit/tsconfig.*?.json"]
+			},
+			"rules": {}
+		},
+		{
+			"files": ["*.ts", "*.tsx"],
+			"rules": {}
+		},
+		{
+			"files": ["*.js", "*.jsx"],
+			"rules": {}
+		}
+	]
+}

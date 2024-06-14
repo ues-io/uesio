@@ -4,31 +4,8 @@ definition:
   wires:
     # The details of the listing, nothing special going on here
   components:
-    - uesio/io.box:
-        uesio.styleTokens:
-          root:
-            - bg-slate-900
-            - "[min-height:500px]"
-        components:
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - "[max-width:1248px]"
-                  - m-auto
-                  - "[container-type:inline-size]"
-                  - md:px-20
-                  - px-6
-              components:
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - p-4
-                  - text-center
-              components:
-                - uesio/io.text:
-                    text: UESIO Inc. | All rights Reserved © | Open Source GPL3
-                    uesio.styleTokens:
-                      root:
-                        - text-slate-500
-                        - text-xs
-                        - font-light
+    - uesio/sitekit.footer:
+        note:
+          - uesio/io.text:
+              text: UESIO Inc. | All rights Reserved © | Open Source GPL3
+              uesio.variant: uesio/sitekit.footernote

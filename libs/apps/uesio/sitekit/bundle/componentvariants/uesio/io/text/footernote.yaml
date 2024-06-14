@@ -1,0 +1,9 @@
+name: footernote
+label: Footer Note
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-500
+      - text-xs
+      - font-light

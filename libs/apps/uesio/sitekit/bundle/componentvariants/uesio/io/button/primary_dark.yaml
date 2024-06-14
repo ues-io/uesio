@@ -1,0 +1,9 @@
+name: primary_dark
+label: Primary Dark
+public: true
+extends: uesio/sitekit.primary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-white
+      - bg-slate-800

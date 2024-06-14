@@ -100,6 +100,28 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/sitekit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/sitekit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/sitekit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/sitekit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "zach"
+		}
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		},
 		"uesio/studio.team": {

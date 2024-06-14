@@ -107,7 +107,7 @@ const stripSlotsFromDefinition = (
 }
 
 const propMergeOptions = {
-	types: ["Prop" as MergeType],
+	types: ["Prop" as MergeType, "Region" as MergeType],
 }
 
 /**

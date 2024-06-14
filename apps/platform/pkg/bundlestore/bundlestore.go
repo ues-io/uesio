@@ -19,6 +19,7 @@ var systemBundles = map[string]bool{
 	"uesio/studio":  true,
 	"uesio/io":      true,
 	"uesio/builder": true,
+	"uesio/sitekit": true,
 }
 
 func IsSystemBundle(namespace string) bool {

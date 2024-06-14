@@ -1,0 +1,8 @@
+name: secondary_dark
+label: Secondary Dark
+public: true
+extends: uesio/sitekit.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-800

@@ -1,0 +1,67 @@
+name: header
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: logo
+  - name: left
+  - name: right
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - md:py-8
+          - py-6
+          - $If{[$Prop{sticky}][sticky]}
+          - $If{[$Prop{sticky}][top-0]}
+          - $If{[$Prop{sticky}][z-10]}
+          - $Region{root}
+      components:
+        - uesio/io.box:
+            uesio.variant: uesio/sitekit.section
+            components:
+              - uesio/io.group:
+                  uesio.styleTokens:
+                    root:
+                      - grid
+                      - justify-between
+                  components:
+                    - uesio/io.group:
+                        uesio.styleTokens:
+                          root:
+                            - gap-4
+                        components:
+                          - uesio/core.slot:
+                              name: logo
+                          - uesio/core.slot:
+                              name: left
+                    - uesio/io.group:
+                        uesio.styleTokens:
+                          root:
+                            - grid
+                            - md:hidden
+                            - justify-right
+                        components:
+                          - uesio/io.button:
+                              uesio.styleTokens:
+                                root:
+                                  - text-3xl
+                                  - text-white
+                                  - p-2
+                              icon: menu
+                              signals: $Prop{menuSignals}
+                    - uesio/io.group:
+                        uesio.styleTokens:
+                          root:
+                            - gap-8
+                            - hidden
+                            - md:grid
+                        components:
+                          - uesio/core.slot:
+                              name: right
+title: Header Component
+discoverable: true
+description: A header component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

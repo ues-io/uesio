@@ -1,0 +1,13 @@
+name: footerlink
+label: Footer Link
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-300
+      - hover:text-slate-100
+      - text-xs
+      - font-light
+      - "[min-width:0px]"
+      - justify-left

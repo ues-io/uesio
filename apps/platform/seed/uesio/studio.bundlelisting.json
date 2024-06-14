@@ -22,5 +22,13 @@
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/io"
 		}
+	},
+	{
+		"uesio/studio.description": "Tools for building websites",
+		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/sitekit"
+		}
 	}
 ]

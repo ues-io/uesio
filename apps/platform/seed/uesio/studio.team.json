@@ -19,6 +19,12 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/sitekit"
+		},
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		},
 		"uesio/studio.name": "maintainers"

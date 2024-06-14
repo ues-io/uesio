@@ -1,0 +1,33 @@
+name: footer
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: note
+  - name: content
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - bg-slate-900
+          - "[min-height:300px]"
+      components:
+        - uesio/io.box:
+            uesio.variant: uesio/sitekit.section
+            components:
+              - uesio/core.slot:
+                  name: content
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - p-4
+                - text-center
+            components:
+              - uesio/core.slot:
+                  name: note
+title: Footer Component
+discoverable: true
+description: A footer component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
