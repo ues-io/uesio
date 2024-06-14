@@ -2,11 +2,8 @@
 export default {
 	displayName: "studio",
 	preset: "../../../../jest.preset.js",
-	globals: {
-		"ts-jest": { tsconfig: "<rootDir>/tsconfig.spec.json" },
-	},
 	transform: {
-		"^.+\\.[tj]sx?$": "ts-jest",
+		"^.+\\.(t|j)sx?$": "@swc/jest",
 	},
 	moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
 	coverageDirectory: "../../coverage/libs/apps/uesio/studio",

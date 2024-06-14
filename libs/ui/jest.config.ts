@@ -3,7 +3,7 @@ export default {
 	preset: "../../jest.preset.js",
 	clearMocks: true,
 	transform: {
-		"^.+\\.[tj]sx?$": "ts-jest",
+		"^.+\\.(t|j)sx?$": "@swc/jest",
 	},
 	moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
 	coverageDirectory: "../../coverage/libs/ui",
