@@ -22,6 +22,16 @@
 		}
 	},
 	{
+		"uesio/studio.name": "sitekit",
+		"uesio/studio.fullname": "uesio/sitekit",
+		"uesio/studio.description": "Build great websites fast",
+		"uesio/studio.color": "#818cf8",
+		"uesio/studio.icon": "public",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
+		}
+	},
+	{
 		"uesio/studio.name": "studio",
 		"uesio/studio.fullname": "uesio/studio",
 		"uesio/studio.description": "The uesio configuration app",

@@ -1,5 +1,5 @@
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
-import { PlainWireRecord } from "../bands/wirerecord/types"
+import { PlainFieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
@@ -20,10 +20,12 @@ type MergeType =
 	| "Records"
 	| "Param"
 	| "Prop"
+	| "Region"
 	| "User"
 	| "Time"
 	| "Text"
 	| "Date"
+	| "If"
 	| "Number"
 	| "Currency"
 	| "RecordMeta"
@@ -52,6 +54,8 @@ interface MergeOptions {
 
 export const InvalidSignalOutputMergeMsg =
 	"Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{stepId:propertyPath}"
+export const InvalidIfMergeMsg =
+	"Invalid If merge - a condition and iftrue must be provided, e.g. $If{[condition][iftrue][iffalse]}. iffalse is optional"
 export const InvalidComponentOutputMsg =
 	"Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
 
@@ -196,6 +200,17 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}).format(value)
 	},
 	Text: (expression) => expression,
+	If: (expression, context) => {
+		let parts
+		try {
+			parts = parseTwoOrThreePartExpression(expression)
+		} catch (e) {
+			throw InvalidIfMergeMsg
+		}
+		return context.merge(parts[0])
+			? context.merge(parts[1])
+			: context.merge(parts[2])
+	},
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""
@@ -294,6 +309,13 @@ const handlers: Record<MergeType, MergeHandler> = {
 		// but until we improve merge typing to allow for non-string values,
 		// we'll pretend the prop will always be a string
 		(context.getProp(expression) as string) ?? "",
+	Region: (expression, context) => {
+		const styleTokens = context.getProp("uesio.styleTokens") as Record<
+			string,
+			PlainFieldValue[]
+		>
+		return styleTokens?.[expression] || []
+	},
 }
 
 /**
@@ -312,6 +334,18 @@ const handlers: Record<MergeType, MergeHandler> = {
 const InvalidExpressionError = "Invalid Expression"
 const bracketedDelimiter = "]["
 const colonDelimiter = ":"
+
+const parseTwoOrThreePartExpression = (expression: string) => {
+	let parts
+	if (expression.includes(bracketedDelimiter)) {
+		parts = expression.split(bracketedDelimiter)
+		if (parts.length !== 3) {
+			return parseTwoPartExpression(expression)
+		}
+		return parseThreePartExpression(expression)
+	}
+	throw InvalidExpressionError
+}
 
 const parseTwoPartExpression = (expression: string) => {
 	let parts

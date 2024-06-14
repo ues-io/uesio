@@ -1,0 +1,11 @@
+name: primary_nofill
+label: Primary No Fill
+public: true
+extends: uesio/sitekit.primary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-white
+      - bg-transparent
+      - border-2
+      - border-white

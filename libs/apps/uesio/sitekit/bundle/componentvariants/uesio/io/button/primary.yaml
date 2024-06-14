@@ -1,0 +1,9 @@
+name: primary
+label: Primary
+public: true
+extends: uesio/sitekit.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-black
+      - bg-white

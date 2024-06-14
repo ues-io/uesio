@@ -1,0 +1,11 @@
+name: section
+label: Section
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - "[max-width:1248px]"
+      - m-auto
+      - "[container-type:inline-size]"
+      - md:px-20
+      - px-6

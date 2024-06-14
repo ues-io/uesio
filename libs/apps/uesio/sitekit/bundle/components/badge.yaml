@@ -1,0 +1,40 @@
+name: badge
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - rounded
+          - bg-$Prop{backgroundColor}
+          - py-0.5
+          - px-2.5
+          - flex
+          - items-center
+          - gap-2
+      components:
+        - uesio/io.text:
+            uesio.variant: uesio/io.icon
+            uesio.styleTokens:
+              root:
+                - text-base
+                - text-$Prop{textColor}
+            text: redeem
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - mt-[1px]
+                - text-xs
+                - uppercase
+                - text-$Prop{textColor}
+                - leading-none
+                - font-bold
+                - tracking-wider
+            text: $Prop{text}
+title: Badge Component
+discoverable: true
+description: A badge component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

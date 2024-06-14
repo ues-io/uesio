@@ -35,13 +35,7 @@ definition:
     - uesio/core.view:
         view: uesio/studio.publicbundleheader
     - uesio/io.box:
-        uesio.styleTokens:
-          root:
-            - "[max-width:1248px]"
-            - m-auto
-            - "[container-type:inline-size]"
-            - md:px-20
-            - px-6
+        uesio.variant: uesio/sitekit.section
         uesio.display:
           - type: wireHasNoRecords
             wire: listing
@@ -58,13 +52,7 @@ definition:
         mode: READ
         components:
           - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - "[max-width:1248px]"
-                  - m-auto
-                  - "[container-type:inline-size]"
-                  - md:px-20
-                  - px-6
+              uesio.variant: uesio/sitekit.section
               components:
                 - uesio/io.grid:
                     uesio.variant: uesio/io.three_columns
@@ -104,35 +92,10 @@ definition:
                                 actions:
                                   - uesio/io.group:
                                       components:
-                                        - uesio/io.box:
-                                            uesio.styleTokens:
-                                              root:
-                                                - rounded
-                                                - bg-lime-200
-                                                - py-0.5
-                                                - px-2.5
-                                                - flex
-                                                - items-center
-                                                - gap-2
-                                            components:
-                                              - uesio/io.text:
-                                                  uesio.variant: uesio/io.icon
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - text-base
-                                                      - text-lime-700
-                                                  text: redeem
-                                              - uesio/io.text:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - mt-[1px]
-                                                      - text-xs
-                                                      - uppercase
-                                                      - text-lime-700
-                                                      - leading-none
-                                                      - font-bold
-                                                      - tracking-wider
-                                                  text: Free
+                                        - uesio/sitekit.badge:
+                                            backgroundColor: lime-200
+                                            textColor: lime-700
+                                            text: Free
                             - uesio/io.text:
                                 element: div
                                 uesio.styleTokens:
@@ -142,23 +105,10 @@ definition:
                                     - text-slate-800
                                     - leading-loose
                                     - whitespace-pre-line
+                                    - mb-10
                                 text: ${description}
                             - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                uesio.styleTokens:
-                                  root:
-                                    - mt-10
-                                    - mb-4
-                                    - min-w-[80px]
-                                    - text-white
-                                    - bg-slate-800
-                                    - rounded-full
-                                    - border-0
-                                    - px-6
-                                    - hover:shadow-none
-                                    - focus:shadow-none
-                                    - border-2
-                                    - border-white
+                                uesio.variant: uesio/sitekit.primary_dark
                                 text: Log In to Install
                                 signals:
                                   - signal: route/NAVIGATE

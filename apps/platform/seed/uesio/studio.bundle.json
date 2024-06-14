@@ -34,5 +34,14 @@
 		"uesio/studio.major": 0,
 		"uesio/studio.minor": 0,
 		"uesio/studio.patch": 1
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/sitekit"
+		},
+		"uesio/studio.description": "Tools for building websites",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	}
 ]

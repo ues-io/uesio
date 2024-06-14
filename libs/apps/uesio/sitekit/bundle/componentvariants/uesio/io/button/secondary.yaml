@@ -1,0 +1,15 @@
+name: secondary
+label: Secondary
+public: true
+extends: uesio/io.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-[80px]
+      - text-white
+      - bg-transparent
+      - rounded-full
+      - border-0
+      - px-6
+      - hover:shadow-none
+      - focus:shadow-none
