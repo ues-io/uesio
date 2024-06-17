@@ -4,5 +4,6 @@
 !libs/apps/uesio/core
 !libs/apps/uesio/io
 !libs/apps/uesio/studio
+!libs/apps/uesio/sitekit
 !dist/ui
 !dist/vendor

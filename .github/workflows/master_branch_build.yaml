@@ -56,7 +56,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION_DEV }}
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1.6.0
+        uses: aws-actions/amazon-ecr-login@v2
       - name: Use Go
         uses: actions/setup-go@v5
         with:
@@ -100,7 +100,7 @@ jobs:
           echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG
       - name: Upload image id
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-artifacts
           path: |
@@ -132,7 +132,7 @@ jobs:
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
           fetch-depth: 1
       - name: Download image id artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: image-artifacts
       - name: Load new image into env var
