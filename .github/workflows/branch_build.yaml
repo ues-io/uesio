@@ -21,12 +21,12 @@ jobs:
       FULL_SHA: ${{ github.sha }}
     steps:
       # Checkout master (so we can use nx:affected)
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           ref: master
       # Checkout the current branch
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Uesio CLI Symlink
@@ -36,12 +36,12 @@ jobs:
           mkdir -p dist/cli
           sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.14.0
           cache: "npm"
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: 1.21.3
           cache-dependency-path: apps/*/go.sum

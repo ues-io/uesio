@@ -34,11 +34,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.14.0
           cache: "npm"
@@ -49,7 +49,7 @@ jobs:
           mkdir -p dist/cli
           sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ECR_ROLE_DEV }}
           role-session-name: ecrpush
@@ -58,7 +58,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1.6.0
       - name: Use Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: 1.21.3
           cache-dependency-path: apps/*/go.sum
@@ -126,7 +126,7 @@ jobs:
     needs: build
     timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: TheCloudMasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token

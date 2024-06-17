@@ -25,13 +25,13 @@ jobs:
     permissions: write-all
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ECR_ROLE_DEV }}
           role-session-name: ecrpull
@@ -92,11 +92,11 @@ jobs:
             artifact_name: uesio-macos-arm64
             asset_name: uesio-macos-arm64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: 1.21.3
           cache-dependency-path: apps/*/go.sum
