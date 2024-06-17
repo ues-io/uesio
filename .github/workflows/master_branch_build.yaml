@@ -58,7 +58,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1.6.0
       - name: Use Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: 1.21.3
           cache-dependency-path: apps/*/go.sum
