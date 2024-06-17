@@ -84,7 +84,9 @@ const scriptTasks = modules.map(({ src, dest, path, name: module }) => {
 })
 
 const moveFonts = () =>
-	gulp.src(fontsSrc).pipe(gulp.dest(`${distVendor}/fonts`))
+	gulp
+		.src(fontsSrc, { encoding: false })
+		.pipe(gulp.dest(`${distVendor}/fonts`))
 
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
