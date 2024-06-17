@@ -1,5 +1,4 @@
 const csstree = require("css-tree")
-const fuzzysort = require("fuzzysort")
 
 const walk = (tree, prefix, items = []) => {
 	for (const child of tree.children) {
