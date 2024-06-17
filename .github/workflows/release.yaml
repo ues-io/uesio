@@ -38,7 +38,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION_DEV }}
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1.6.0
+        uses: aws-actions/amazon-ecr-login@v2
       - name: Pull the latest Docker image from ECR
         shell: bash
         env:
@@ -109,7 +109,7 @@ jobs:
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $outputPath
           cd ../..
       - name: Upload binary artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: binaries
           path: |
@@ -121,7 +121,7 @@ jobs:
       - cli_release_artifacts
     steps:
       - name: Download binary artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: binaries
           path: binaries
