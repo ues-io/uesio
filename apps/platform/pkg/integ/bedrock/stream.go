@@ -2,7 +2,6 @@ package bedrock
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"os"
 	"os/signal"
@@ -28,6 +27,12 @@ type MessagesModelStreamOutput struct {
 	Message *struct {
 		Usage *MessagesModelUsage `json:"usage"`
 	} `json:"message"`
+	AmazonBedrockInvocationMetrics *struct {
+		InputTokenCount   int `json:"inputTokenCount"`
+		OutputTokenCount  int `json:"outputTokenCount"`
+		InvocationLatency int `json:"invocationLatency"`
+		FirstByteLatency  int `json:"firstByteLatency"`
+	} `json:"amazon-bedrock-invocationMetrics"`
 	Usage *MessagesModelUsage `json:"usage"`
 }
 
@@ -37,8 +42,13 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Validate the model against Bedrock's known valid models!!!
-	body, err := getModelBody(options)
+
+	handler, ok := modelHandlers[options.Model]
+	if !ok {
+		return nil, errors.New("Model Not Supported: " + options.Model)
+	}
+
+	body, err := handler.GetBody(options)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +72,6 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 	signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
 
 	go (func(ctx context.Context) {
-		totalCharacters := int64(0)
 		defer close(outputStream.Chunk())
 		defer close(outputStream.Err())
 		defer close(outputStream.Done())
@@ -73,50 +82,32 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 			case e := <-eventsChannel:
 				switch event := e.(type) {
 				case *brtypes.ResponseStreamMemberChunk:
-					var modelOutput MessagesModelStreamOutput
-					if err := json.Unmarshal(event.Value.Bytes, &modelOutput); err != nil {
+					result, inputTokens, outputTokens, isDone, err := handler.HandleStreamChunk(event.Value.Bytes)
+					if err != nil {
 						outputStream.Err() <- err
 						break outer
 					}
-
-					if modelOutput.Type == "message_start" {
-						if modelOutput.Message == nil || modelOutput.Message.Usage == nil {
-							outputStream.Err() <- errors.New("Could not get input token usage")
-							break outer
-						}
-
-						usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), modelOutput.Message.Usage.InputTokens, c.session)
-
+					if result != nil {
+						outputStream.Chunk() <- result
 					}
-					if modelOutput.Type == "content_block_delta" {
-						if modelOutput.Delta != nil {
-							content := modelOutput.Delta.Text
-							totalCharacters = totalCharacters + int64(len(content))
-							outputStream.Chunk() <- []byte(content)
-						}
+					if inputTokens > 0 {
+						usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), inputTokens, c.session)
 					}
-
-					// If we have any stop reason, break, we're done
-					if modelOutput.Delta != nil && modelOutput.Delta.StopReason != "" {
-
-						if modelOutput.Usage == nil {
-							outputStream.Err() <- errors.New("Could not get output token usage")
-							break outer
-						}
-
-						usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), modelOutput.Usage.OutputTokens, c.session)
-						outputStream.Done() <- totalCharacters
+					if outputTokens > 0 {
+						usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), outputTokens, c.session)
+					}
+					if isDone {
+						outputStream.Done() <- 0
 						break outer
 					}
-
 				}
 			case <-ctx.Done():
 				outputStream.Err() <- errors.New("request cancelled")
 				break outer
 			}
-		}
-		if reader != nil && reader.Err() != nil {
-			outputStream.Err() <- reader.Err()
+			if reader != nil && reader.Err() != nil {
+				outputStream.Err() <- reader.Err()
+			}
 		}
 	})(c.session.Context())
 

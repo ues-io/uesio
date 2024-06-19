@@ -1,7 +1,6 @@
 package bedrock
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 
@@ -27,6 +26,27 @@ type InvokeModelOptions struct {
 	Temperature       float64            `json:"temperature"`
 	TopK              int                `json:"top_k"`
 	TopP              float64            `json:"top_p"`
+	Tools             []Tool             `json:"tools,omitempty"`
+	ToolChoice        *ToolChoice        `json:"tool_choice,omitempty"`
+}
+
+type ToolChoice struct {
+	Type string `json:"type"`
+	Name string `json:"name,omitempty"`
+}
+
+type Tool struct {
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	InputSchema *InputSchema `json:"input_schema"`
+}
+
+type InputSchema struct {
+	Type        string                 `json:"type,omitempty"`
+	Properties  map[string]InputSchema `json:"properties,omitempty"`
+	Items       *InputSchema           `json:"items,omitempty"`
+	Required    []string               `json:"required,omitempty"`
+	Description string                 `json:"description,omitempty"`
 }
 
 func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
@@ -52,6 +72,18 @@ type connection struct {
 	integration *meta.Integration
 	credentials *wire.Credentials
 	client      *bedrockruntime.Client
+}
+
+type ModelHandler interface {
+	GetBody(options *InvokeModelOptions) ([]byte, error)
+	GetInvokeResult(body []byte) (result string, inputTokens, outputTokens int64, err error)
+	HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error)
+}
+
+var modelHandlers = map[string]ModelHandler{
+	"anthropic.claude-3-haiku-20240307-v1:0":  claudeModelHandler,
+	"anthropic.claude-3-sonnet-20240229-v1:0": claudeModelHandler,
+	"anthropic.claude-3-opus-20240229-v1:0":   claudeModelHandler,
 }
 
 // RunAction implements the system bot interface
@@ -114,33 +146,6 @@ func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions,
 	}
 
 	return options, nil
-}
-
-func getModelBody(options *InvokeModelOptions) ([]byte, error) {
-
-	messages := []AnthropicMessage{}
-
-	if options.Messages != nil {
-		messages = options.Messages
-	}
-
-	if options.Input != "" {
-		messages = append(messages, AnthropicMessage{
-			Role:    "user",
-			Content: options.Input,
-		})
-	}
-
-	return json.Marshal(AnthropicMessagesInput{
-		Messages:         messages,
-		AnthropicVersion: "bedrock-2023-05-31",
-		MaxTokens:        options.MaxTokensToSample,
-		Temperature:      options.Temperature,
-		TopK:             options.TopK,
-		TopP:             options.TopP,
-		System:           options.System,
-	})
-
 }
 
 func handleBedrockError(err error) error {
