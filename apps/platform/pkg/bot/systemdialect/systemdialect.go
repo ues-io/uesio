@@ -147,7 +147,7 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 
 	// Intercept system integration types
 	switch ic.GetIntegrationType().GetKey() {
-	case "uesio/core.bedrock":
+	case "uesio/aikit.bedrock":
 		botFunction = bedrock.RunAction
 	case "uesio/core.openai":
 		botFunction = openai.RunAction
