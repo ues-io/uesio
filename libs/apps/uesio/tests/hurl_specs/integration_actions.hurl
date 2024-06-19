@@ -9,7 +9,7 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Request metadata for a core integration action with input parameters defined
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/integrationactions/describe/uesio/core/bedrock?action=uesio/core.invokemodel
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/integrationactions/describe/uesio/aikit/bedrock?action=uesio/aikit.invokemodel
 HTTP 200
 [Asserts]
 jsonpath "$.inputs" count == 6

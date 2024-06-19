@@ -9,3 +9,5 @@ dependencies:
     version: v0.0.1
   uesio/io:
     version: v0.0.1
+  uesio/aikit:
+    version: v0.0.1

@@ -200,7 +200,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "openaikey"
-jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[0]['uesio/studio.namespace']" == "uesio/aikit"
 jsonpath "$.wires[0].data[1]['uesio/studio.name']" == "sendgridkey"
 jsonpath "$.wires[0].data[1]['uesio/studio.namespace']" == "uesio/core"
 jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.test_oauth_client_id"
@@ -335,7 +335,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 5
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.sendgrid"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/core.openai"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_allowed"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_forbidden"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_api_key_credentials"

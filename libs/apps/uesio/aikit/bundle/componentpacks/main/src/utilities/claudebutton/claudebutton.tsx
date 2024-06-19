@@ -72,7 +72,7 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
 						[
 							{
 								signal: "integration/RUN_ACTION",
-								integration: "uesio/core.bedrock",
+								integration: "uesio/aikit.bedrock",
 								action: "streammodel",
 								stepId,
 								params: {
