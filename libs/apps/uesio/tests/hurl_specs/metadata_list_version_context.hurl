@@ -13,11 +13,12 @@ GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/namespaces
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 4
+jsonpath "$" count == 5
 jsonpath "$[0]" == "uesio/tests"
-jsonpath "$[1]" == "uesio/builder"
-jsonpath "$[2]" == "uesio/core"
-jsonpath "$[3]" == "uesio/io"
+jsonpath "$[1]" == "uesio/aikit"
+jsonpath "$[2]" == "uesio/builder"
+jsonpath "$[3]" == "uesio/core"
+jsonpath "$[4]" == "uesio/io"
 
 # Get a list of all collections available from a version context
 GET https://{{host}}:{{port}}/version/uesio/tests/v0.0.1/metadata/types/collections/list
@@ -98,4 +99,4 @@ GET https://{{host}}:{{port}}/version/uesio/core/v0.0.1/metadata/types/secrets/l
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 8
+jsonpath "$[*]" count == 7
