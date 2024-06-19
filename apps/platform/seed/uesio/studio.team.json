@@ -25,6 +25,18 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		},
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		},
 		"uesio/studio.name": "maintainers"

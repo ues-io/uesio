@@ -1,0 +1,9 @@
+name: main
+label: Main
+public: true
+definition:
+  labelsVariant: uesio/appkit.main
+  panelVariant: uesio/appkit.tabpanel
+variants:
+  - uesio/io.tablabels:uesio/appkit.main
+  - uesio/io.scrollpanel:uesio/appkit.tabpanel

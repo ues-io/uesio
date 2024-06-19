@@ -1,0 +1,9 @@
+name: dashboarditem
+label: Dashboard Item
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - lg:grid
+      - lg:grid-rows-[min-content_minmax(0,1fr)]
+      - lg:h-full

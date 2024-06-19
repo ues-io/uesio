@@ -1,0 +1,10 @@
+name: primary
+label: Primary
+public: true
+extends: uesio/appkit.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-rose-800
+      - border-rose-800
+      - text-white

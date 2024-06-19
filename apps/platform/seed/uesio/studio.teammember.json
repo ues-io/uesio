@@ -122,6 +122,50 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/aikit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/aikit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "zach"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/appkit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/appkit:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "zach"
+		}
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		},
 		"uesio/studio.team": {

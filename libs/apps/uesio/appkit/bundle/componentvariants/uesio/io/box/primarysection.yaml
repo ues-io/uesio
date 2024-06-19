@@ -1,0 +1,8 @@
+name: primarysection
+label: Primary Section
+public: true
+extends: uesio/appkit.section
+definition:
+  uesio.styleTokens:
+    root:
+      - mt-0

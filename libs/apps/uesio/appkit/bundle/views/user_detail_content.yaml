@@ -1,0 +1,208 @@
+name: user_detail_content
+public: true
+definition:
+  # Wires connect to data in collections
+  wires:
+    user:
+      collection: uesio/core.user
+      fields:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.email:
+        uesio/core.initials:
+        uesio/core.profile:
+        uesio/core.picture:
+        uesio/core.language:
+        uesio/core.createdby:
+        uesio/core.createdat:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.owner:
+      conditions:
+        - field: uesio/core.id
+          valueSource: PARAM
+          param: recordid
+    loginmethods:
+      collection: uesio/core.loginmethod
+      fields:
+        uesio/core.id:
+        uesio/core.user:
+        uesio/core.auth_source:
+        uesio/core.federation_id:
+      conditions:
+        - field: uesio/core.user
+          valueSource: PARAM
+          param: recordid
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.box:
+        uesio.display:
+          - type: paramIsSet
+            param: recordid
+        components:
+          - uesio/appkit.detail_split:
+              main:
+                - uesio/io.list:
+                    mode: READ
+                    wire: user
+                    uesio.id: userList
+                    components:
+                      - uesio/io.titlebar:
+                          title: ${uesio/core.firstname} ${uesio/core.lastname}
+                          subtitle: $Collection{label}
+                          actions:
+                            - uesio/io.toolbar:
+                                right:
+                                  - uesio/io.button:
+                                      text: Save
+                                      uesio.variant: uesio/appkit.primary
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - user
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          operator: EQUALS
+                                          wire: user
+                                  - uesio/io.button:
+                                      text: Cancel
+                                      uesio.variant: uesio/appkit.secondary
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: user
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          operator: EQUALS
+                                          wire: user
+                                  - uesio/io.button:
+                                      text: Read
+                                      icon: task_alt
+                                      uesio.variant: uesio/appkit.secondary
+                                      signals:
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: userList
+                                      uesio.display:
+                                        - type: mergeValue
+                                          operator: EQUALS
+                                          sourceValue: $ComponentState{[uesio/io.list][userList][mode]}
+                                          value: EDIT
+                                        - type: wireHasNoChanges
+                                          operator: EQUALS
+                                          wire: user
+                                  - uesio/io.button:
+                                      text: EDIT
+                                      icon: edit_square
+                                      iconFill: false
+                                      uesio.variant: uesio/appkit.secondary
+                                      signals:
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: userList
+                                      uesio.display:
+                                        - type: mergeValue
+                                          operator: NOT_EQUALS
+                                          sourceValue: $ComponentState{[uesio/io.list][userList][mode]}
+                                          value: EDIT
+                                        - type: wireHasNoChanges
+                                          operator: EQUALS
+                                          wire: user
+                          uesio.variant: uesio/appkit.main
+                          avatar:
+                            - uesio/io.menu:
+                                uesio.context:
+                                  workspace:
+                                    name:
+                                    app:
+                                uesio.variant: uesio/appkit.upload
+                                arrow: true
+                                closeButton: true
+                                trigger:
+                                  - uesio/io.avatar:
+                                      uesio.variant: uesio/appkit.main
+                                      text: ${initials}
+                                      image: $UserFile{uesio/core.picture}
+                                content:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.titlebar:
+                                            uesio.variant: uesio/appkit.sub
+                                            title: Upload or Delete User Image
+                                        - uesio/io.field:
+                                            labelPosition: none
+                                            uesio.context:
+                                              fieldMode: EDIT
+                                            fieldId: uesio/core.picture
+                                            displayAs: IMAGE
+                      - uesio/appkit.user_primary_section:
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          components:
+                            - uesio/io.titlebar:
+                                title: User Administration
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.titlebar:
+                                actions:
+                                  - uesio/io.button:
+                                      uesio.display:
+                                        - type: wireHasRecords
+                                          wire: loginmethods
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-4
+                                      uesio.variant: uesio/appkit.secondary
+                                      text: Reset Password
+                                      signals:
+                                        - signal: user/FORGOT_PASSWORD
+                                          onerror:
+                                            signals:
+                                              - signal: notification/ADD_ERRORS
+                                          signupMethod: uesio/appkit.admin
+                                          payload:
+                                            username: ${uesio/core.username}
+                                        - signal: notification/ADD
+                                          text: An email has been sent!
+                                          details: Please check your inbox.
+                                          severity: success
+                                  - uesio/io.button:
+                                      uesio.display:
+                                        - type: wireHasNoRecords
+                                          wire: loginmethods
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-4
+                                      uesio.variant: uesio/appkit.secondary
+                                      text: Send Login Email
+                                      signals:
+                                        - signal: user/CREATE_LOGIN
+                                          signupMethod: $Param{signupmethod}
+                                          payload:
+                                            username: ${uesio/core.username}
+                                            email: ${uesio/core.email}
+                                          onerror:
+                                            continue: false
+                                            notify: true
+                                            signals:
+                                              signal: notification/ADD_ERRORS
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - loginmethods
+                                        - signal: notification/ADD
+                                          text: "An email has been sent to the user!"
+                                          details: A new password can be created.
+                                          severity: success
+                      - uesio/appkit.audit_info_section:
+              left:
+  params:
+    recordid:
+      type: RECORD
+      required: true
+      collection: uesio/core.user
+    signupmethod:
+      type: TEXT
+      required: true

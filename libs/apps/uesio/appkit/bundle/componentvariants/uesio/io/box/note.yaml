@@ -1,0 +1,13 @@
+name: note
+label: Note
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-indigo-100
+      - p-4
+      - text-base
+      - font-light
+      - text-indigo-900
+      - rounded-md
+      - mb-4

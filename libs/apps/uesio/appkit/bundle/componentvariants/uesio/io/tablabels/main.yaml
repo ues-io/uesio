@@ -1,0 +1,31 @@
+name: main
+label: Main
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - grid-flow-col
+      - auto-cols-max
+    tab:
+      - pt-3
+      - pb-3.5
+      - px-4
+      - text-xs
+      - text-slate-700
+      - uppercase
+      - font-normal
+      - tracking-wider
+      - cursor-pointer
+      - border-t-2
+      - border-x-1
+      - border-transparent
+      - border-b-0
+      - -mb-[2px]
+    tabSelected:
+      - border-x-slate-400
+      - border-t-slate-800
+      - text-slate-900
+      - bg-white
+      - cursor-default
+      - z-0

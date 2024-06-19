@@ -1,0 +1,11 @@
+name: main
+label: Main
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - w-12
+      - h-12
+      - rounded-md
+      - text-xl

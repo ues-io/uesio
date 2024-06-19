@@ -113,6 +113,12 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 
 	addComponentPackToDeps(deps, namespace, utility.Pack, session)
 
+	for _, key := range utility.Utilities {
+		if utilityErr := getDepsForUtilityComponent(key, deps, session); utilityErr != nil {
+			return utilityErr
+		}
+	}
+
 	return nil
 
 }

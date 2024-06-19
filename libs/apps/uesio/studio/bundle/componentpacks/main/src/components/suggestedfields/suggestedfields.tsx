@@ -1,6 +1,4 @@
-import { definition, api, wire } from "@uesio/ui"
-import ClaudeInvokeButton from "../../utilities/claude/button"
-import { getClaudeArrayStreamHandler } from "../../utilities/claude/stream"
+import { definition, api, wire, component, context } from "@uesio/ui"
 
 type ComponentDefinition = {
 	collectionWire: string
@@ -135,6 +133,8 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 		},
 	} = props
 
+	const ClaudeInvokeButton = component.getUtility("uesio/aikit.claudebutton")
+
 	const fieldWire = api.wire.useWire(fieldWireName || "", context)
 	const collectionWire = api.wire.useWire(collectionWireName || "", context)
 	const workspaceWire = api.wire.useWire("workspaces", context)
@@ -152,18 +152,16 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 			prompt={getPrompt(pluralLabel)}
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
-			onTextDelta={getClaudeArrayStreamHandler({
-				onItem(item: SuggestedField) {
-					handleResults(
-						targetCollectionName,
-						pluralLabel,
-						workspaceId,
-						[item],
-						fieldWire
-					)
-				},
-			})}
-			onSuccess={(resultContext) => {
+			onTextJSONArrayItem={(item: SuggestedField) => {
+				handleResults(
+					targetCollectionName,
+					pluralLabel,
+					workspaceId,
+					[item],
+					fieldWire
+				)
+			}}
+			onSuccess={(resultContext: context.Context) => {
 				if (targetTableId) {
 					// Turn the target table into edit mode
 					api.signal.run(

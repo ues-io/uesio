@@ -1,0 +1,68 @@
+name: main
+label: Main
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - overflow-auto
+      - mb-6
+    table:
+      - border-separate
+      - border-spacing-0
+      - w-full
+    header:
+    headerCell:
+      - tracking-wider
+      - uppercase
+      - text-xs
+      - px-[19px]
+      - py-3.5
+      - text-slate-800
+      - border-b-2
+      - border-slate-800
+      - font-normal
+      - whitespace-nowrap
+    headerCellInner:
+      - text-left
+      - grid
+      - grid-flow-col
+      - justify-between
+      - auto-cols-min
+      - items-center
+    rowNumberCell:
+      - whitespace-nowrap
+      - w-px
+      - text-center
+      - text-slate-700
+      - text-[10pt]
+      - "[&>.numberlabel]:block"
+      - "[&.isselected>.numberlabel]:hidden"
+      - "group-hover:[&>.numberlabel]:hidden"
+      - "[&>.numbercheck]:hidden"
+      - "[&.isselected>.numbercheck]:block"
+      - "group-hover:[&>.numbercheck]:block"
+      - "[&:>div]:leading-none"
+      - leading-none
+    row:
+      - group
+    cell:
+      - p-0
+      - border-b-1
+      - border-slate-200
+    body:
+      - "[&.hasRowAction>tr]:hover:cursor-pointer"
+      - "[&.hasRowAction>tr]:hover:bg-slate-50"
+    rowDeleted:
+      - bg-rose-50
+    noData:
+      - text-center
+      - p-4
+      - text-slate-500
+      - text-sm
+      - font-light
+    drawer:
+      - bg-slate-50
+      - p-6
+      - border-b-1
+      - border-slate-100

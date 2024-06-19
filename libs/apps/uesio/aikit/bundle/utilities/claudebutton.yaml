@@ -1,0 +1,6 @@
+name: claudebutton
+pack: main
+entrypoint: utilities/claudebutton/claudebutton
+utilities:
+  - uesio/io.image
+  - uesio/io.button

@@ -1,0 +1,10 @@
+name: add
+label: Add
+public: true
+extends: uesio/appkit.primary
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-min
+      - bg-emerald-600
+      - border-emerald-600

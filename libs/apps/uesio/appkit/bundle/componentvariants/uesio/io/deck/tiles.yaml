@@ -1,0 +1,7 @@
+name: tiles
+label: Tiles
+public: true
+definition:
+  gridVariant: uesio/appkit.tiles
+variants:
+  - uesio/io.grid:uesio/appkit.tiles

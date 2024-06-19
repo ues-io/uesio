@@ -1,0 +1,17 @@
+name: sub
+label: Sub
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-white
+      - border-b-2
+      - border-slate-800
+      - py-2
+      - mb-2
+    title:
+      - text-xs
+      - uppercase
+      - tracking-wider
+      - font-normal

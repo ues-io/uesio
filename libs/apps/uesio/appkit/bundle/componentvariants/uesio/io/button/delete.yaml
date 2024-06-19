@@ -1,0 +1,8 @@
+name: delete
+label: Delete
+public: true
+extends: uesio/appkit.primary
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-min

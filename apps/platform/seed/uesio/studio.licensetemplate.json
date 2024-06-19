@@ -22,6 +22,20 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.autocreate": true,
+		"uesio/studio.monthlyprice": 0
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		},
+		"uesio/studio.autocreate": true,
+		"uesio/studio.monthlyprice": 0
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/builder"
 		},
 		"uesio/studio.autocreate": true,

@@ -1,0 +1,14 @@
+name: item
+label: Item
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-4
+      - text-slate-700
+      - p-2
+      - hover:bg-slate-50
+      - rounded
+      - relative
+      - group
