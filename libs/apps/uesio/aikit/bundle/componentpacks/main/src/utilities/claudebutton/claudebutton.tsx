@@ -1,12 +1,14 @@
 import { component, definition, api, context, styles } from "@uesio/ui"
 import { useState } from "react"
-import { getClaudeResponseHandler, Tool, ToolChoice } from "../claude/claude"
+import { getClaudeResponseHandler, Tool, ToolChoice } from "./claude"
+import { getClaudeArrayStreamHandler } from "./stream"
 
 type Props = {
 	prompt: string
 	label: string
 	loadingLabel: string
 	onTextComplete?: (result: string) => void
+	onTextJSONArrayItem?: (item: unknown) => void
 	onTextDelta?: (delta: string) => void
 	onToolUse?: (tool: string, inputs: unknown) => void
 	onToolUseDelta?: (tool: string, delta: string) => void
@@ -27,9 +29,9 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
 		prompt,
 		icon = "magic_button",
 		onTextComplete,
-		onTextDelta,
 		onToolUse,
 		onToolUseDelta,
+		onTextJSONArrayItem,
 		loadingLabel,
 		label,
 		tools,
@@ -41,6 +43,12 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
 	const Icon = component.getUtility("uesio/io.icon")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+
+	const onTextDelta = onTextJSONArrayItem
+		? getClaudeArrayStreamHandler({
+				onItem: onTextJSONArrayItem,
+			})
+		: props.onTextDelta
 
 	const [isLoading, setLoading] = useState(false)
 

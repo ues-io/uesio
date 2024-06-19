@@ -1,0 +1,7 @@
+name: section
+label: Section
+public: true
+extends: uesio/io.section
+definition:
+  uesio.styleTokens:
+    root:

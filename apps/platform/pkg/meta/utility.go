@@ -21,8 +21,9 @@ func NewBaseUtility(namespace, name string) *Utility {
 type Utility struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Pack           string `yaml:"pack,omitempty" json:"uesio/studio.pack"`
-	EntryPoint     string `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 }
 
 type UtilityWrapper Utility

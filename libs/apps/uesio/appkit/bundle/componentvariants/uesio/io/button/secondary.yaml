@@ -1,0 +1,10 @@
+name: secondary
+label: Secondary
+public: true
+extends: uesio/io.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-[88px]
+      - text-slate-800
+      - border-slate-700

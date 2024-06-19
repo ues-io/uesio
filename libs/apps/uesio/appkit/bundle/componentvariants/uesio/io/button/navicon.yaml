@@ -1,0 +1,16 @@
+name: navicon
+label: Nav Icon
+public: true
+extends: uesio/io.nav
+definition:
+  uesio.styleTokens:
+    root:
+      - p-0
+    icon:
+      - text-base
+      - text-slate-800
+      - hover:bg-slate-200
+      - hover:text-slate-900
+      - px-2
+      - py-1
+      - rounded-full

@@ -30,5 +30,21 @@
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/sitekit"
 		}
+	},
+	{
+		"uesio/studio.description": "Tools for working with AI",
+		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		}
+	},
+	{
+		"uesio/studio.description": "Tools for building apps",
+		"uesio/studio.status": "PUBLISHED",
+		"uesio/studio.approved": true,
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		}
 	}
 ]

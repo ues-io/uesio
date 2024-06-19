@@ -1,0 +1,41 @@
+{
+	"name": "apps-uesio-aikit",
+	"$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/apps/uesio/aikit/bundle",
+	"projectType": "library",
+	"generators": {},
+	"targets": {
+		"build": {
+			"executor": "nx:run-commands",
+			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
+			"options": {
+				"commands": [
+					"uesio pack",
+					"npx tsc --noEmit --project ./tsconfig.lib.json"
+				],
+				"parallel": false,
+				"cwd": "libs/apps/uesio/aikit"
+			}
+		},
+		"watch": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "uesio pack -w",
+				"cwd": "libs/apps/uesio/aikit"
+			}
+		},
+		"lint": {
+			"executor": "@nx/eslint:lint"
+		},
+		"test": {
+			"executor": "@nx/jest:jest",
+			"options": {
+				"jestConfig": "libs/apps/uesio/aikit/jest.config.ts",
+				"passWithNoTests": true
+			},
+			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/aikit"]
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["cli", "ui"]
+}

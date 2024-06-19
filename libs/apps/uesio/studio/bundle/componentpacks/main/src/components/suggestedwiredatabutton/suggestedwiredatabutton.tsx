@@ -1,6 +1,11 @@
-import { definition, api, wire, collection, context } from "@uesio/ui"
-import ClaudeInvokeButton from "../../utilities/claude/button"
-import { getClaudeArrayStreamHandler } from "../../utilities/claude/stream"
+import {
+	definition,
+	api,
+	wire,
+	collection,
+	context,
+	component,
+} from "@uesio/ui"
 
 type ComponentDefinition = {
 	wire: string
@@ -126,6 +131,8 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 		definition: { wire: wireName },
 	} = props
 
+	const ClaudeInvokeButton = component.getUtility("uesio/aikit.claudebutton")
+
 	const wire = api.wire.useWire(wireName, ctx)
 	const fields = wire?.getFields()
 	const collection = wire?.getCollection()
@@ -142,12 +149,10 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 			prompt={prompt}
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
-			onTextDelta={getClaudeArrayStreamHandler({
-				onItem(item: wire.PlainWireRecord) {
-					if (!wire) return
-					handleResults(ctx, wire, [item])
-				},
-			})}
+			onTextJSONArrayItem={(item: wire.PlainWireRecord) => {
+				if (!wire) return
+				handleResults(ctx, wire, [item])
+			}}
 		/>
 	)
 }

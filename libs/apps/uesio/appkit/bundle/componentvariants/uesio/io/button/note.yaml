@@ -1,0 +1,11 @@
+name: note
+label: Note
+public: true
+extends: uesio/appkit.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-transparent
+      - mt-4
+      - text-indigo-900
+      - border-indigo-900

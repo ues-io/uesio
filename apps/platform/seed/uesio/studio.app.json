@@ -32,6 +32,26 @@
 		}
 	},
 	{
+		"uesio/studio.name": "aikit",
+		"uesio/studio.fullname": "uesio/aikit",
+		"uesio/studio.description": "Integrate with AI",
+		"uesio/studio.color": "#a05195",
+		"uesio/studio.icon": "bolt",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
+		}
+	},
+	{
+		"uesio/studio.name": "appkit",
+		"uesio/studio.fullname": "uesio/appkit",
+		"uesio/studio.description": "Build great apps fast",
+		"uesio/studio.color": "#818cf8",
+		"uesio/studio.icon": "apps",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
+		}
+	},
+	{
 		"uesio/studio.name": "studio",
 		"uesio/studio.fullname": "uesio/studio",
 		"uesio/studio.description": "The uesio configuration app",

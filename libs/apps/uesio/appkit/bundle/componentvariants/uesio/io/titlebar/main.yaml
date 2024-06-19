@@ -1,0 +1,15 @@
+name: main
+label: Main
+public: true
+extends: uesio/io.main
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-white
+      - border-0
+    avatar:
+      - bg-rose-100
+      - rounded-md
+      - border-0
+      - text-rose-800
+      - text-3xl

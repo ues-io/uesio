@@ -1,0 +1,7 @@
+name: main
+label: Main
+public: true
+definition:
+  fieldVariant: uesio/appkit.search
+variants:
+  - uesio/io.field:uesio/appkit.search

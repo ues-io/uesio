@@ -1,9 +1,11 @@
 *
 !apps
+!libs/apps/uesio/aikit
+!libs/apps/uesio/appkit
 !libs/apps/uesio/builder
 !libs/apps/uesio/core
 !libs/apps/uesio/io
-!libs/apps/uesio/studio
 !libs/apps/uesio/sitekit
+!libs/apps/uesio/studio
 !dist/ui
 !dist/vendor
