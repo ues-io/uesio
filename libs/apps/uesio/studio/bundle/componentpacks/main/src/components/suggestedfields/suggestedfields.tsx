@@ -1,5 +1,6 @@
 import { definition, api, wire } from "@uesio/ui"
-import SuggestDataButton from "../../utilities/suggestdatabutton/suggestdatabutton"
+import ClaudeInvokeButton from "../../utilities/claude/button"
+import { getClaudeArrayStreamHandler } from "../../utilities/claude/stream"
 
 type ComponentDefinition = {
 	collectionWire: string
@@ -146,20 +147,36 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
 	) || "") as string
 	const targetCollectionName = context.mergeString(collectionId)
 	return (
-		<SuggestDataButton
+		<ClaudeInvokeButton
 			context={context.deleteWorkspace()}
 			prompt={getPrompt(pluralLabel)}
 			label={"Suggest Fields"}
 			loadingLabel={"Suggesting fields..."}
-			targetTableId={targetTableId}
-			handleResults={(results: SuggestedField[]) => {
-				handleResults(
-					targetCollectionName,
-					pluralLabel,
-					workspaceId,
-					results,
-					fieldWire
-				)
+			onTextDelta={getClaudeArrayStreamHandler({
+				onItem(item: SuggestedField) {
+					handleResults(
+						targetCollectionName,
+						pluralLabel,
+						workspaceId,
+						[item],
+						fieldWire
+					)
+				},
+			})}
+			onSuccess={(resultContext) => {
+				if (targetTableId) {
+					// Turn the target table into edit mode
+					api.signal.run(
+						{
+							signal: "component/CALL",
+							component: "uesio/io.table",
+							componentsignal: "SET_EDIT_MODE",
+							targettype: "specific",
+							componentid: targetTableId,
+						},
+						resultContext
+					)
+				}
 			}}
 		/>
 	)

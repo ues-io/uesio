@@ -1,5 +1,6 @@
 import { definition, api, wire, collection, context } from "@uesio/ui"
-import SuggestDataButton from "../../utilities/suggestdatabutton/suggestdatabutton"
+import ClaudeInvokeButton from "../../utilities/claude/button"
+import { getClaudeArrayStreamHandler } from "../../utilities/claude/stream"
 
 type ComponentDefinition = {
 	wire: string
@@ -136,15 +137,17 @@ const SuggestedWireDataButton: definition.UC<ComponentDefinition> = (props) => {
 	)}. Please respond with valid JSON! Do not respond with any text other than valid JSON.`
 
 	return (
-		<SuggestDataButton
+		<ClaudeInvokeButton
 			context={ctx.deleteWorkspace()}
 			prompt={prompt}
 			label={"Generate sample data"}
 			loadingLabel={"Generating data..."}
-			handleResults={(results: wire.PlainWireRecord[]) => {
-				if (!wire || !results.length) return
-				handleResults(ctx, wire, results)
-			}}
+			onTextDelta={getClaudeArrayStreamHandler({
+				onItem(item: wire.PlainWireRecord) {
+					if (!wire) return
+					handleResults(ctx, wire, [item])
+				},
+			})}
 		/>
 	)
 }

@@ -80,7 +80,6 @@
 		"@types/react-transition-group": "^4.4.6",
 		"@typescript-eslint/eslint-plugin": "7.6.0",
 		"@typescript-eslint/parser": "7.6.0",
-		"best-effort-json-parser": "^1.0.1",
 		"chai": "^4.3.6",
 		"chart.js": "^4.4.2",
 		"css-tree": "^2.3.1",

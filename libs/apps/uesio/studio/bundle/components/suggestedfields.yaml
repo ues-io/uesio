@@ -4,4 +4,3 @@ entrypoint: components/suggestedfields/suggestedfields
 utilities:
   - uesio/io.image
   - uesio/io.button
-  - uesio/studio.suggestdatabutton

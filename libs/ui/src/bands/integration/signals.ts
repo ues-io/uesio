@@ -4,19 +4,16 @@ import { BotParams, platform } from "../../platform/platform"
 import { getErrorString } from "../utils"
 import { MetadataKey } from "../../metadata/types"
 import { runMany } from "../../signals/signals"
-import JSONTransformStream from "./JSONTransformStream"
 
 // The key for the entire band
 const INTEGRATION_BAND = "integration"
 
-type OnChunkFunction = (context: Context) => Promise<Context>
-type ChunkTransform = "json" | "text"
+type OnChunkFunction = (chunk: string) => Promise<Context>
 
 export interface RunActionSignal extends SignalDefinition {
 	integrationType: MetadataKey
 	integration: MetadataKey
 	action: string
-	transform?: ChunkTransform
 	params?: BotParams
 	// onChunk allows for signals to be invoked for each chunk of streaming data received
 	onChunk?: SignalDefinition[] | OnChunkFunction
@@ -36,7 +33,6 @@ const signals: Record<string, SignalDescriptor> = {
 				action,
 				params = {},
 				stepId,
-				transform,
 				onChunk,
 			} = signalInvocation
 			const mergedParams = context.mergeStringMap(
@@ -62,16 +58,14 @@ const signals: Record<string, SignalDescriptor> = {
 				} else if (response.body && noSniff) {
 					// Handle streaming responses
 					const chunks = [] as (string | object)[]
-					const chunkWriterStream = new WritableStream<
-						string | object
-					>({
+					const chunkWriterStream = new WritableStream<string>({
 						async write(chunk) {
 							chunks.push(chunk)
 							if (stepId && onChunk) {
 								const onChunkContext =
 									context.addSignalOutputFrame(stepId, chunk)
 								if (typeof onChunk === "function") {
-									await onChunk(onChunkContext)
+									onChunk(chunk)
 								} else if (Array.isArray(onChunk)) {
 									await runMany(onChunk, onChunkContext)
 								}
@@ -79,20 +73,13 @@ const signals: Record<string, SignalDescriptor> = {
 						},
 					})
 
-					// Stream the response through our text decoder and,
-					// if we want to transform to JSON, through the JSON transformer
-					await (transform === "json"
-						? response.body
-								.pipeThrough(new TextDecoderStream())
-								.pipeThrough(JSONTransformStream())
-								.pipeTo(chunkWriterStream)
-						: response.body
-								.pipeThrough(new TextDecoderStream())
-								.pipeTo(chunkWriterStream))
-					if ("text" === transform || !transform) {
-						// Our final output should be text, not an array of objects
-						finalResult = (chunks as string[]).join("")
-					}
+					// Stream the response through our text decoder
+					await response.body
+						.pipeThrough(new TextDecoderStream())
+						.pipeTo(chunkWriterStream)
+
+					// Our final output should be text, not an array of objects
+					finalResult = (chunks as string[]).join("")
 				} else {
 					finalResult = await response.text()
 				}
