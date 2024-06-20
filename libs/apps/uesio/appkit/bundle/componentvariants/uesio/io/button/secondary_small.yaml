@@ -1,0 +1,8 @@
+name: secondary_small
+label: Secondary Small
+public: true
+extends: uesio/appkit.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-xs

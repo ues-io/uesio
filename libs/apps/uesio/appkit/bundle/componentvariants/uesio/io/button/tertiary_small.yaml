@@ -1,0 +1,8 @@
+name: tertiary_small
+label: Tertiary Small
+public: true
+extends: uesio/appkit.tertiary
+definition:
+  uesio.styleTokens:
+    root:
+      - text-xs
