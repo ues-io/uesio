@@ -1,0 +1,8 @@
+name: tablecolumn
+label: Table Column Avatar
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - m-auto

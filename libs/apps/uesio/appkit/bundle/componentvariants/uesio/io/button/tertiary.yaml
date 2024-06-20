@@ -1,0 +1,13 @@
+name: tertiary
+label: Tertiary
+public: true
+extends: uesio/io.secondary
+definition:
+  uesio.styleTokens:
+    root:
+      - min-w-[0px]
+      - text-slate-600
+      - border-transparent
+      - hover:text-slate-800
+      - hover:border-slate-600
+      - bg-transparent

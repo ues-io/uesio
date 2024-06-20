@@ -1,0 +1,7 @@
+name: tiles
+label: Tiles
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-0.5

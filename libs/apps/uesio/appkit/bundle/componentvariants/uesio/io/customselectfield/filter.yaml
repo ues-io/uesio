@@ -1,0 +1,16 @@
+name: filter
+label: Filter
+public: true
+extends: uesio/io.customselectfield:uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+    input:
+      - border-slate-700
+      - bg-slate-50
+    notfound:
+      - text-slate-500
+    editbutton:
+    selecteditemwrapper:
+    selectediteminner:
+    checkbox:
