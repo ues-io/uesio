@@ -162,7 +162,7 @@ definition:
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS
-                                          signupMethod: uesio/appkit.admin
+                                          signupMethod: $Param{signupmethod}
                                           payload:
                                             username: ${uesio/core.username}
                                         - signal: notification/ADD
