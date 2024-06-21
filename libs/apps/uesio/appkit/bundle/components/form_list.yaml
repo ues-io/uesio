@@ -1,0 +1,144 @@
+name: form_list
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+  - name: filters
+definition:
+  - uesio/io.list:
+      wire: $Prop{wire}
+      uesio.id: $Prop{wire}_list
+      iterate: false
+      components:
+        - uesio/io.titlebar:
+            title: $Collection{pluralLabel}
+            subtitle: List View
+            uesio.variant: uesio/appkit.main
+            avatar:
+              - uesio/io.text:
+                  uesio.variant: uesio/io.icon
+                  text: $Prop{avataricon}
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - $Prop{wire}
+                          - signal: component/CALL
+                            component: uesio/io.list
+                            componentsignal: SET_READ_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_list
+                          - signal: component/CALL
+                            component: $Prop{linkedComponentType}
+                            componentsignal: CLEAR_SELECTED
+                            targettype: specific
+                            componentid: $Prop{linkedComponentId}
+                        text: $Label{uesio/io.save}
+                        hotkey: "meta+s"
+                        uesio.variant: uesio/appkit.primary
+                        uesio.display:
+                          - type: wireHasChanges
+                            wire: $Prop{wire}
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/CANCEL
+                            wire: $Prop{wire}
+                          - signal: component/CALL
+                            component: uesio/io.list
+                            componentsignal: SET_READ_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_list
+                          - signal: component/CALL
+                            component: $Prop{linkedComponentType}
+                            componentsignal: CLEAR_SELECTED
+                            targettype: specific
+                            componentid: $Prop{linkedComponentId}
+                        uesio.display:
+                          - type: wireHasChanges
+                            wire: $Prop{wire}
+                        text: $Label{uesio/io.cancel}
+                        uesio.variant: uesio/appkit.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/CALL
+                            component: uesio/io.list
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_list
+                        uesio.display:
+                          - type: mergeValue
+                            value: EDIT
+                            operator: NOT_EQUALS
+                            sourceValue: $FieldMode{}
+                          - type: wireHasNoChanges
+                            wire: $Prop{wire}
+                        text: Edit
+                        icon: edit_square
+                        iconFill: false
+                        uesio.variant: uesio/appkit.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/CALL
+                            component: uesio/io.list
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_list
+                        uesio.display:
+                          - type: mergeValue
+                            value: EDIT
+                            operator: EQUALS
+                            sourceValue: $FieldMode{}
+                          - type: wireHasNoChanges
+                            wire: $Prop{wire}
+                        icon: task_alt
+                        iconFill: false
+                        text: Read
+                        uesio.variant: uesio/appkit.secondary
+        - uesio/io.box:
+            uesio.variant: uesio/appkit.primarysection
+            components:
+              - uesio/io.toolbar:
+                  linkedComponentType: $Prop{linkedComponentType}
+                  linkedComponentId: $Prop{linkedComponentId}
+                  left:
+                    - uesio/core.slot:
+                        name: filters
+                  right:
+                    - uesio/io.button:
+                        text: Quick Create
+                        icon: add_circle
+                        uesio.variant: uesio/appkit.add
+                        signals:
+                          - signal: wire/CREATE_RECORD
+                            wire: $Prop{wire}
+                            prepend: true
+                        uesio.display:
+                          - type: mergeValue
+                            sourceValue: $ComponentState{[$Prop{linkedComponentType}][$Prop{linkedComponentId}][mode]}
+                            value: EDIT
+                    - uesio/io.button:
+                        text: Delete
+                        icon: delete
+                        uesio.variant: uesio/appkit.delete
+                        signals:
+                          - signal: component/CALL
+                            component: $Prop{linkedComponentType}
+                            componentsignal: GET_SELECTED
+                            targettype: specific
+                            componentid: $Prop{linkedComponentId}
+                          - signal: wire/TOGGLE_DELETE_STATUS
+                        uesio.display:
+                          - type: hasValue
+                            value: $ComponentState{[$Prop{linkedComponentType}][$Prop{linkedComponentId}][selected->count]}
+              - uesio/core.slot:
+                  name: content
+title: List Form Component
+discoverable: true
+description: A component for an editable collection list.
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

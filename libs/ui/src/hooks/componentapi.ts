@@ -156,7 +156,7 @@ const getVariantId = selectId as (variant: ComponentVariant) => MetadataKey
 const useAllVariants = useComponentVariants
 
 const useMode = (id: string, initialMode: FieldMode | undefined) =>
-	useStateSlice<FieldMode>("mode", id, initialMode || "READ")
+	useStateSlice<FieldMode>("mode", id, initialMode)
 
 export {
 	getComponentIdFromProps,

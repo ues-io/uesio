@@ -1,0 +1,40 @@
+name: user_new_content
+public: true
+definition:
+  # Wires connect to data in collections
+  wires:
+    user:
+      collection: uesio/core.user
+      fields:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.email:
+        uesio/core.initials:
+        uesio/core.profile:
+        uesio/core.picture:
+        uesio/core.language:
+        uesio/core.createdby:
+        uesio/core.createdat:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
+        uesio/core.owner:
+      init:
+        create: true
+        query: false
+      defaults:
+        - field: uesio/core.type
+          valueSource: VALUE
+          value: PERSON
+        - field: uesio/core.profile
+          valueSource: VALUE
+          value: uesio/crm.admin
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/appkit.layout_detail_split:
+        main:
+          - uesio/appkit.form_new:
+              wire: user
+              avataricon: badge
+              content:
+                - uesio/appkit.section_user_primary:

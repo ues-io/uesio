@@ -32,8 +32,9 @@ definition:
         actions:
           - uesio/io.button:
               signals:
-                - signal: route/NAVIGATE
-                  path: usernew
+                - signal: route/NAVIGATE_TO_ASSIGNMENT
+                  collection: uesio/core.user
+                  viewtype: createnew
               text: Add New User
               uesio.variant: uesio/appkit.secondary
               uesio.display:

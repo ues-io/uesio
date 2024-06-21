@@ -149,7 +149,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
 	const wire = api.wire.useWire(definition.wire, context)
 	const componentId = api.component.getComponentIdFromProps(props)
-	const [mode] = api.component.useMode(componentId, definition.mode)
+	const [selfMode] = api.component.useMode(componentId, definition.mode)
 
 	// If we got a wire from the definition, add it to context
 	let newContext = context
@@ -159,9 +159,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 			view: wire.getViewId(),
 		})
 	}
-	if (mode) {
-		newContext = newContext.addFieldModeFrame(mode)
+	if (selfMode) {
+		newContext = newContext.addFieldModeFrame(selfMode)
 	}
+
+	const mode = selfMode || context.getFieldMode()
 
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
