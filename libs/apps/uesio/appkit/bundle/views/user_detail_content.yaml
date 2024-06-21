@@ -139,7 +139,7 @@ definition:
                                               fieldMode: EDIT
                                             fieldId: uesio/core.picture
                                             displayAs: IMAGE
-                      - uesio/appkit.user_primary_section:
+                      - uesio/appkit.section_user_primary:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           components:
@@ -196,7 +196,7 @@ definition:
                                           text: "An email has been sent to the user!"
                                           details: A new password can be created.
                                           severity: success
-                      - uesio/appkit.audit_info_section:
+                      - uesio/appkit.section_audit_info:
               left:
   params:
     recordid:
