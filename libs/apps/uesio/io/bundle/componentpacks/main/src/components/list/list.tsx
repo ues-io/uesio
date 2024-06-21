@@ -24,9 +24,8 @@ const List: definition.UC<ListDefinition> = (props) => {
 	const componentId = api.component.getComponentIdFromProps(props)
 	const [mode] = api.component.useMode(componentId, definition.mode)
 
-	if (!wire) return null
-
 	if (!iterate) {
+		if (!wire) return null
 		const wireContext = context.addWireFrame({
 			wire: wire.getId(),
 			view: wire.getViewId(),
@@ -45,10 +44,10 @@ const List: definition.UC<ListDefinition> = (props) => {
 	}
 
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
-		wire.getData() || [],
+		wire?.getData() || [],
 		definition.recordDisplay,
 		(record, context) => {
-			if (record) {
+			if (record && wire) {
 				context = context.addRecordFrame({
 					wire: wire.getId(),
 					record: record.getId(),
