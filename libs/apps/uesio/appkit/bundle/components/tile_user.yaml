@@ -1,0 +1,22 @@
+name: tile_user
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/appkit.item
+      content:
+        - uesio/io.titlebar:
+            uesio.variant: uesio/appkit.item
+            title: ${firstname} ${lastname}
+            subtitle: ${username}
+      avatar:
+        - uesio/io.avatar:
+            text: ${initials}
+            image: $UserFile{picture}
+title: User Tile Component
+discoverable: true
+description: A user tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
