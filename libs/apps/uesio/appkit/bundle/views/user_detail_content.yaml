@@ -41,7 +41,7 @@ definition:
           - type: paramIsSet
             param: recordid
         components:
-          - uesio/appkit.detail_split:
+          - uesio/appkit.layout_detail_split:
               main:
                 - uesio/io.list:
                     mode: READ
