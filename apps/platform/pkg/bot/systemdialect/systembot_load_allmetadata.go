@@ -2,10 +2,10 @@ package systemdialect
 
 import (
 	"errors"
+	"slices"
 	"strings"
 
 	"github.com/teris-io/shortid"
-	"golang.org/x/exp/slices"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -397,8 +397,11 @@ func getConditionValue(condition *wire.LoadRequestCondition) interface{} {
 }
 
 func sortItems(items []meta.Item, orderings []wire.LoadRequestOrder) {
+	if len(orderings) == 0 {
+		return
+	}
 	// Order the collection results
-	slices.SortStableFunc(items, func(a, b meta.Item) bool {
+	slices.SortStableFunc(items, func(a, b meta.Item) int {
 		for i := range orderings {
 			order := orderings[i]
 			result := compareItemsByField(a, b, order.Field)
@@ -407,12 +410,18 @@ func sortItems(items []meta.Item, orderings []wire.LoadRequestOrder) {
 			if result == 0 {
 				continue
 			} else if result < 1 {
-				return !order.Desc
+				if order.Desc {
+					return 1
+				}
+				return -1
 			} else {
-				return order.Desc
+				if order.Desc {
+					return -1
+				}
+				return 1
 			}
 		}
-		return false
+		return 0
 	})
 }
 
