@@ -26,14 +26,14 @@ var baseLanguage = gval.NewLanguage(
 		return (float64)(length), nil
 	}),
 	gval.Function("TO_STRING", func(args ...interface{}) (interface{}, error) {
-		if args[0] == nil {
+		if len(args) == 0 || args[0] == nil {
 			return "", nil
 		}
 		valStr := fmt.Sprint(args[0])
 		return valStr, nil
 	}),
 	gval.Function("IS_BLANK", func(args ...interface{}) (interface{}, error) {
-		if args[0] == nil {
+		if len(args) == 0 || args[0] == nil {
 			return true, nil
 		}
 		valStr := fmt.Sprint(args[0])
@@ -60,7 +60,7 @@ var baseLanguage = gval.NewLanguage(
 		return 0, nil
 	}),
 	gval.Function("FIRST", func(args ...interface{}) (interface{}, error) {
-		if args[0] == nil {
+		if len(args) == 0 || args[0] == nil {
 			return "", nil
 		}
 		valStr := fmt.Sprint(args[0])
