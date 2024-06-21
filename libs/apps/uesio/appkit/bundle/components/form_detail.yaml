@@ -120,8 +120,8 @@ definition:
                   uesio.variant: uesio/io.icon
         - uesio/core.slot:
             name: content
-        - uesio/appkit.audit_info_section:
-        - uesio/appkit.delete_section:
+        - uesio/appkit.section_audit_info:
+        - uesio/appkit.section_delete:
 title: Detail Form Component
 discoverable: true
 description: A component for a record detail form.

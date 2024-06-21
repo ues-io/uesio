@@ -69,7 +69,7 @@ definition:
                       recordid: ${uesio/core.id}
               columns:
                 - components:
-                    - uesio/appkit.user_tile:
+                    - uesio/appkit.tile_user:
                 - field: uesio/core.email
               uesio.id: userTable
               mode: READ
