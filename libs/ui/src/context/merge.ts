@@ -43,6 +43,7 @@ type MergeType =
 	| "ComponentState"
 	| "ConfigValue"
 	| "ConditionValue"
+	| "FieldMode"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -316,6 +317,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		>
 		return styleTokens?.[expression] || []
 	},
+	FieldMode: (expression, context) => context.getFieldMode(),
 }
 
 /**

@@ -1,0 +1,49 @@
+name: form_new
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+definition:
+  - uesio/io.item:
+      wire: $Prop{wire}
+      uesio.id: $Prop{wire}_item
+      mode: EDIT
+      components:
+        - uesio/io.titlebar:
+            title: $If{[$Prop{title}][$Prop{title}][New $Collection{label}]}
+            subtitle: $If{[$Prop{subtitle}][$Prop{subtitle}][$RecordMeta{name}]}
+            uesio.variant: uesio/appkit.main
+            avatar:
+              - uesio/io.text:
+                  text: $Prop{avataricon}
+                  uesio.variant: uesio/io.icon
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - $Prop{wire}
+                          - signal: route/NAVIGATE_TO_ASSIGNMENT
+                            collection: $Collection{id}
+                            viewtype: detail
+                            recordid: ${uesio/core.id}
+                        text: Create $Collection{label}
+                        hotkey: "meta+s"
+                        uesio.variant: uesio/appkit.primary
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/RESET
+                            wire: $Prop{wire}
+                        text: Reset
+                        uesio.variant: uesio/appkit.secondary
+        - uesio/core.slot:
+            name: content
+title: New Record Form
+discoverable: true
+description: A component for a record create form.
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

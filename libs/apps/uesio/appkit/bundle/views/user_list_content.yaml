@@ -1,0 +1,77 @@
+name: user_list_content
+public: true
+definition:
+  # Wires connect to data in collections
+  wires:
+    user:
+      collection: uesio/core.user
+      fields:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.email:
+        uesio/core.profile:
+      batchsize: 200
+      conditions:
+        - field: uesio/core.username
+          operator: NOT_IN
+          values:
+            - system
+            - guest
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.titlebar:
+        title: $Collection{user:pluralLabel}
+        subtitle: List View
+        uesio.variant: uesio/appkit.main
+        avatar:
+          - uesio/io.text:
+              text: badge
+              uesio.variant: uesio/io.iconoutline
+        actions:
+          - uesio/io.button:
+              signals:
+                - signal: route/NAVIGATE
+                  path: usernew
+              text: Add New User
+              uesio.variant: uesio/appkit.secondary
+              uesio.display:
+                - type: wireHasNoChanges
+                  wire: user
+    - uesio/io.box:
+        uesio.variant: uesio/appkit.primarysection
+        components:
+          - uesio/io.toolbar:
+              linkedComponentType: uesio/io.table
+              linkedComponentId: userTable
+              left:
+                - uesio/io.searchbox:
+                    uesio.variant: uesio/appkit.main
+                    wire: user
+                    placeholder: Search Users
+                    searchFields:
+                      - uesio/core.firstname
+                      - uesio/core.lastname
+                      - uesio/core.username
+          - uesio/io.table:
+              uesio.variant: uesio/appkit.main
+              rowactions:
+                - icon: visibility
+                  text: View
+                  type: DEFAULT
+                  uesio.display:
+                    - type: recordIsNotNew
+                  signals:
+                    - signal: route/NAVIGATE_TO_ASSIGNMENT
+                      collection: uesio/core.user
+                      viewtype: detail
+                      recordid: ${uesio/core.id}
+              columns:
+                - components:
+                    - uesio/appkit.user_tile:
+                - field: uesio/core.email
+              uesio.id: userTable
+              mode: READ
+              wire: user
+              pagesize: 10

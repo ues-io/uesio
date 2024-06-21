@@ -1,0 +1,30 @@
+name: section_audit_info
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.section
+      components:
+        - uesio/io.titlebar:
+            title: Audit Information
+            uesio.variant: uesio/appkit.sub
+        - uesio/io.grid:
+            uesio.variant: uesio/appkit.three_columns
+            items:
+              - uesio/io.field:
+                  fieldId: uesio/core.owner
+              - uesio/io.field:
+                  fieldId: uesio/core.createdby
+                  user:
+                    subtitle: $Time{uesio/core.createdat}
+              - uesio/io.field:
+                  fieldId: uesio/core.updatedby
+                  user:
+                    subtitle: $Time{uesio/core.updatedat}
+title: Audit Info Section
+discoverable: true
+description: Audit Info Section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

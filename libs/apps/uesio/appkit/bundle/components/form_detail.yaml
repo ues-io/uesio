@@ -1,0 +1,131 @@
+name: form_detail
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: extra_actions
+  - name: content
+definition:
+  - uesio/io.item:
+      wire: $Prop{wire}
+      uesio.id: $Prop{wire}_item
+      components:
+        - uesio/io.titlebar:
+            title: $If{[$Prop{title}][$Prop{title}][$RecordMeta{name}]}
+            subtitle: $If{[$Prop{subtitle}][$Prop{subtitle}][$Collection{label}]}
+            uesio.variant: uesio/appkit.main
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/core.slot:
+                        name: extra_actions
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - $Prop{wire}
+                        text: Save
+                        hotkey: "meta+s"
+                        uesio.variant: uesio/appkit.primary
+                        uesio.display:
+                          - type: wireHasChanges
+                            operator: EQUALS
+                            wire: $Prop{wire}
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/CANCEL
+                            wire: $Prop{wire}
+                        text: Cancel
+                        uesio.variant: uesio/appkit.secondary
+                        uesio.display:
+                          - type: wireHasChanges
+                            operator: EQUALS
+                            wire: $Prop{wire}
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/CALL
+                            component: uesio/io.item
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_item
+                        text: Read
+                        uesio.variant: uesio/appkit.secondary
+                        icon: task_alt
+                        uesio.display:
+                          - type: mergeValue
+                            operator: EQUALS
+                            sourceValue: $FieldMode{}
+                            value: EDIT
+                          - type: wireHasNoChanges
+                            operator: EQUALS
+                            wire: $Prop{wire}
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/CALL
+                            component: uesio/io.item
+                            componentsignal: TOGGLE_MODE
+                            targettype: specific
+                            componentid: $Prop{wire}_item
+                        text: EDIT
+                        uesio.variant: uesio/appkit.secondary
+                        icon: edit_square
+                        iconFill: false
+                        uesio.display:
+                          - type: mergeValue
+                            operator: NOT_EQUALS
+                            sourceValue: $FieldMode{}
+                            value: EDIT
+                          - type: wireHasNoChanges
+                            operator: EQUALS
+                            wire: $Prop{wire}
+            avatar:
+              - uesio/io.menu:
+                  uesio.display:
+                    - type: hasValue
+                      value: $Prop{imagefield}
+                  uesio.variant: uesio/appkit.upload
+                  arrow: true
+                  closeButton: true
+                  trigger:
+                    - uesio/io.avatar:
+                        text: $Prop{initials}
+                        image: $UserFile{$Prop{imagefield}}
+                        uesio.variant: uesio/appkit.main
+                  content:
+                    - uesio/io.box:
+                        components:
+                          - uesio/io.titlebar:
+                              uesio.variant: uesio/appkit.sub
+                              title: Upload or Delete $Collection{label} Image
+                          - uesio/io.field:
+                              labelPosition: none
+                              uesio.context:
+                                fieldMode: EDIT
+                              fieldId: $Prop{imagefield}
+                              displayAs: IMAGE
+              - uesio/io.avatar:
+                  uesio.display:
+                    - type: hasNoValue
+                      value: $Prop{imagefield}
+                    - type: hasValue
+                      value: $Prop{initials}
+                  text: $Prop{initials}
+                  uesio.variant: uesio/appkit.main
+              - uesio/io.text:
+                  uesio.display:
+                    - type: hasNoValue
+                      value: $Prop{imagefield}
+                    - type: hasNoValue
+                      value: $Prop{initials}
+                  text: $Prop{avataricon}
+                  uesio.variant: uesio/io.icon
+        - uesio/core.slot:
+            name: content
+        - uesio/appkit.audit_info_section:
+        - uesio/appkit.delete_section:
+title: Detail Form Component
+discoverable: true
+description: A component for a record detail form.
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

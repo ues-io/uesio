@@ -16,5 +16,4 @@ definition:
     readonly:
       - bg-slate-100
       - border-transparent
-      - whitespace-nowrap
 public: true

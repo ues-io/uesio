@@ -7,6 +7,7 @@ definition:
       - py-2.5
       - grid
       - gap-1
+      - auto-rows-max
     labelLeft:
       - grid
       - grid-cols-[2fr_3fr]
