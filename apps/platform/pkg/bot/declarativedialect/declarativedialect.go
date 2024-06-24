@@ -1,9 +1,9 @@
 package declarativedialect
 
 import (
+	"errors"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
