@@ -14,8 +14,10 @@ import { STYLE_TOKENS } from "../componentexports"
 import interpolate from "./interpolate"
 
 const twMerge = extendTailwindMerge({
-	classGroups: {
-		"font-size": ["xxs"],
+	extend: {
+		classGroups: {
+			"font-size": ["xxs"],
+		},
 	},
 })
 
