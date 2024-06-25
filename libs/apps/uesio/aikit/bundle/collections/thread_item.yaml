@@ -1,0 +1,5 @@
+name: thread_item
+label: Thread Item
+public: true
+pluralLabel: Thread Items
+nameField: content

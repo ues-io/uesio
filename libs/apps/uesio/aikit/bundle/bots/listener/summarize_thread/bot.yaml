@@ -1,0 +1,9 @@
+name: summarize_thread
+type: LISTENER
+public: true
+dialect: TYPESCRIPT
+timeout: 30
+params:
+  - name: thread
+    type: TEXT
+    required: true

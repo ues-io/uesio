@@ -1,0 +1,44 @@
+name: tile_ai_thread
+category: LAYOUT
+type: DECLARATIVE
+properties:
+  - type: SIGNALS
+    name: signals
+    label: Signals
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/appkit.item
+      content:
+        - uesio/io.titlebar:
+            uesio.variant: uesio/appkit.item
+            uesio.styleTokens:
+              subtitle:
+                - text-sm
+            subtitle: $If{[${title}][${title}][New Conversation]}
+            actions:
+              - uesio/io.button:
+                  icon: delete
+                  uesio.variant: uesio/appkit.navadd
+                  uesio.styleTokens:
+                    root:
+                      - invisible
+                      - group-hover:visible
+                      - px-2
+                      - py-1.5
+                      - text-slate-600
+                      - hover:text-slate-800
+                  signals:
+                    - signal: wire/MARK_FOR_DELETE
+                    - signal: wire/SAVE
+      signals: $Prop{signals}
+      avatar:
+        - uesio/io.text:
+            text: forum
+            uesio.variant: uesio/appkit.avatariconoutline
+title: AI Thread Tile Component
+discoverable: true
+description: An ai thread tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

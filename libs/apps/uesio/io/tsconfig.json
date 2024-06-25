@@ -9,13 +9,5 @@
 		{
 			"path": "./tsconfig.spec.json"
 		}
-	],
-	"compilerOptions": {
-		"sourceMap": true,
-		"resolveJsonModule": true,
-		"baseUrl": "./",
-		"paths": {
-			"@uesio/ui": ["../../../ui/src/index.ts"]
-		}
-	}
+	]
 }

@@ -10,8 +10,9 @@ export HURL_unix_epoch_seconds=$(date +%s)
 export HURL_num_common_fields=8
 export HURL_num_public_core_collections=13
 export HURL_num_tests_collections=11
+export HURL_num_aikit_collections=2
 # this number should be the sum of the above two variables
-export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections))
+export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections + $HURL_num_aikit_collections))
 
 # Initialize and the sample app and seed test data
 bash "scripts/tests-init.sh"

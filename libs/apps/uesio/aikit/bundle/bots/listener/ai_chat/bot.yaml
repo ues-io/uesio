@@ -1,0 +1,15 @@
+name: ai_chat
+type: LISTENER
+public: true
+dialect: TYPESCRIPT
+timeout: 30
+params:
+  - name: input
+    type: TEXT
+    required: true
+  - name: thread
+    type: TEXT
+    required: true
+  - name: systemPrompt
+    type: TEXT
+    required: true

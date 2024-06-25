@@ -1,0 +1,5 @@
+name: parent
+label: Parent
+type: REFERENCE
+reference:
+  multiCollection: true

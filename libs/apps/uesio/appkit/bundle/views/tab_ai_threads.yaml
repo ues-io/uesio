@@ -1,0 +1,224 @@
+name: tab_ai_threads
+public: true
+definition:
+  # Wires connect to data in collections
+  wires:
+    threads:
+      collection: uesio/aikit.thread
+      fields:
+        uesio/aikit.title:
+        uesio/aikit.parent:
+      conditions:
+        - field: uesio/aikit.parent
+          value: $Param{parent}
+      defaults:
+        - field: uesio/aikit.parent
+          value: $Param{parent}
+    threaditems:
+      collection: uesio/aikit.thread_item
+      fields:
+        uesio/aikit.content:
+        uesio/aikit.thread:
+        uesio/aikit.type:
+        uesio/core.createdat:
+        uesio/core.createdby:
+          fields:
+            uesio/core.picture:
+            uesio/core.initials:
+            uesio/core.firstname:
+            uesio/core.lastname:
+            uesio/core.username:
+      conditions:
+        - field: uesio/aikit.thread
+          id: thread
+          value: ""
+      defaults:
+        - field: uesio/aikit.type
+          value: USER
+      init:
+        query: false
+    input:
+      viewOnly: true
+      fields:
+        input:
+          type: LONGTEXT
+          label: input
+        current_thread_id:
+          type: TEXT
+          label: Current Thread
+        current_thread_temp_id:
+          type: TEXT
+          label: Current Thread Temp
+      init:
+        query: false
+        create: true
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.item:
+        wire: input
+        mode: EDIT
+        components:
+          - uesio/io.scrollpanel:
+              content:
+                - uesio/io.deck:
+                    wire: threads
+                    mode: READ
+                    id: threads
+                    uesio.variant: uesio/appkit.tiles
+                    uesio.display:
+                      - type: hasNoValue
+                        value: ${current_thread_id}
+                    components:
+                      - uesio/appkit.tile_ai_thread:
+                          signals:
+                            - signal: wire/SET_CONDITION_VALUE
+                              wire: threaditems
+                              conditionId: thread
+                              value: ${uesio/core.id}
+                            - signal: wire/LOAD
+                              wires:
+                                - threaditems
+                            - signal: wire/UPDATE_RECORD
+                              wire: input
+                              field: current_thread_id
+                              value: ${uesio/core.id}
+                            - signal: wire/UPDATE_RECORD
+                              wire: input
+                              field: current_thread_temp_id
+                              value: $RecordMeta{id}
+                    emptyState:
+                      - uesio/io.emptystate:
+                          title: No Conversations Found
+                          subtitle: You haven't created any ai conversations yet.
+                          icon: mist
+                - uesio/io.deck:
+                    wire: threaditems
+                    mode: READ
+                    id: threaditems
+                    uesio.variant: uesio/appkit.tiles
+                    uesio.display:
+                      - type: hasValue
+                        value: ${current_thread_id}
+                    components:
+                      - uesio/appkit.tile_ai_comment:
+                    emptyState:
+                      - uesio/io.emptystate:
+                          title: This conversation is empty.
+                          subtitle: Ask Claude about $If{[$Param{displayname}][$Param{displayname}][ this record]}.
+                          icon: forum
+                          iconFill: false
+              footer:
+                - uesio/io.box:
+                    uesio.display:
+                      - type: hasNoValue
+                        value: ${current_thread_id}
+                    components:
+                      - uesio/io.group:
+                          columnGap: 10px
+                          components:
+                            - uesio/io.button:
+                                text: New Conversation
+                                uesio.variant: uesio/appkit.secondary_small
+                                signals:
+                                  - signal: wire/CREATE_RECORD
+                                    stepId: create
+                                    wire: threads
+                                  - signal: wire/RESET
+                                    wire: threaditems
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: input
+                                    field: current_thread_id
+                                    value: temp_to_prevent_flash
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - threads
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: input
+                                    field: current_thread_id
+                                    value: ${uesio/core.id}
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: input
+                                    field: current_thread_temp_id
+                                    value: $RecordMeta{id}
+                                  - signal: wire/SET_CONDITION_VALUE
+                                    wire: threaditems
+                                    conditionId: thread
+                                    value: ${uesio/core.id}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - threaditems
+                          uesio.styleTokens:
+                            root:
+                              - justify-right
+                - uesio/io.box:
+                    uesio.display:
+                      - type: hasValue
+                        value: ${current_thread_id}
+                    components:
+                      - uesio/io.field:
+                          fieldId: input
+                          labelPosition: none
+                      - uesio/io.group:
+                          columnGap: 10px
+                          components:
+                            - uesio/io.button:
+                                text: Ask Claude
+                                uesio.variant: uesio/appkit.secondary_small
+                                signals:
+                                  - signal: wire/CREATE_RECORD
+                                    wire: threaditems
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: threaditems
+                                    field: content
+                                    value: ${input:input}
+                                  - signal: bot/CALL
+                                    bot: uesio/aikit.ai_chat
+                                    params:
+                                      thread: ${input:current_thread_id}
+                                      input: ${input:input}
+                                      systemPrompt: $Param{systemPrompt}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - threaditems
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: input
+                                    field: input
+                                    value: ""
+                                  - signal: bot/CALL
+                                    bot: uesio/aikit.summarize_thread
+                                    stepId: summarize
+                                    params:
+                                      thread: ${input:current_thread_id}
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: threads
+                                    record: ${input:current_thread_temp_id}
+                                    field: title
+                                    value: $SignalOutput{[summarize][summary]}
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - threads
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - threads
+                            - uesio/io.button:
+                                icon: arrow_back
+                                uesio.variant: uesio/appkit.tertiary_small
+                                uesio.styleTokens:
+                                  root:
+                                    - order-first
+                                signals:
+                                  - signal: wire/UPDATE_RECORD
+                                    wire: input
+                                    field: current_thread_id
+                                    value: ""
+                          uesio.styleTokens:
+                            root:
+                              - justify-between
+              uesio.variant: uesio/appkit.sidebar
+  params:
+    parent:
+      type: TEXT
+      required: true
+    systemPrompt:
+      type: TEXT
+      required: true

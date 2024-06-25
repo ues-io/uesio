@@ -411,7 +411,13 @@ class Context {
 		return wire.getData()
 	}
 
-	getRecord = (wireId?: string) => {
+	getRecord = (wireId?: string, recordId?: string) => {
+		if (recordId) {
+			const wire = this.getWire(wireId)
+			if (!wire) return undefined
+			return wire.getRecord(recordId)
+		}
+
 		const recordFrame = this.stack
 			.filter(providesRecordContext)
 			.find((frame) =>

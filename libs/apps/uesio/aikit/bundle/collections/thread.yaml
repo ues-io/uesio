@@ -1,0 +1,5 @@
+name: thread
+label: Thread
+public: true
+pluralLabel: Threads
+nameField: title

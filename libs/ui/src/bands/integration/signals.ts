@@ -62,12 +62,16 @@ const signals: Record<string, SignalDescriptor> = {
 						async write(chunk) {
 							chunks.push(chunk)
 							if (stepId && onChunk) {
-								const onChunkContext =
-									context.addSignalOutputFrame(stepId, chunk)
 								if (typeof onChunk === "function") {
 									onChunk(chunk)
 								} else if (Array.isArray(onChunk)) {
-									await runMany(onChunk, onChunkContext)
+									await runMany(
+										onChunk,
+										context.addSignalOutputFrame(
+											stepId,
+											chunk
+										)
+									)
 								}
 							}
 						},

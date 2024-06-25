@@ -48,8 +48,7 @@ const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
 
 		return firstRecord.getFieldValue(item.lookupField)
 	}
-	// TODO: Default to VALUE if nothing provided?
-	if (item.valueSource === "VALUE") {
+	if (item.valueSource === "VALUE" || !item.valueSource) {
 		return context.merge(item.value as Mergeable)
 	}
 
