@@ -141,7 +141,7 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 	return nil
 }
 
-func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, session *sess.Session) (map[string]interface{}, error) {
+func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, wireData map[string]meta.Group, session *sess.Session) (map[string]interface{}, error) {
 
 	subParams := map[string]interface{}{}
 	// Process the params
@@ -156,7 +156,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 					return nil, err
 				}
 				for _, param := range paramsNodes {
-					template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+					template, err := templating.NewWithFuncs(param.Node.Value, merge.RecordMergeFunc, merge.ServerMergeFuncs)
 					if err != nil {
 						return nil, err
 					}
@@ -164,6 +164,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 					mergedValue, err := templating.Execute(template, merge.ServerMergeData{
 						Session:     session,
 						ParamValues: parentParamValues,
+						WireData:    wireData,
 					})
 					if err != nil {
 						return nil, err
@@ -200,31 +201,7 @@ func processView(key string, viewInstanceID string, deps *preload.PreloadMetadat
 		deps.ComponentVariant.AddItemIfNotExists(variant)
 	}
 
-	for viewKey, viewCompDef := range depMap.Views {
-
-		if key == viewKey {
-			continue
-		}
-
-		viewID := meta.GetNodeValueAsString(viewCompDef, "uesio.id")
-		// Backwards compatibility until we can get Morandi/TimeTracker migrated to using "uesio.id" consistently
-		if viewID == "" {
-			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
-		}
-
-		subParams, err := getSubParams(viewCompDef, params, session)
-		if err != nil {
-			// If we get an error processing a subview, don't panic,
-			// just set the viewID to blank so that we don't server-side
-			// process its wires.
-			viewID = ""
-		}
-
-		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, session)
-		if err != nil {
-			return err
-		}
-	}
+	wireData := map[string]meta.Group{}
 
 	if viewInstanceID != "" {
 		var ops []*wire.LoadOp
@@ -267,6 +244,33 @@ func processView(key string, viewInstanceID string, deps *preload.PreloadMetadat
 
 		for _, op := range ops {
 			deps.Wire.AddItem(op)
+			wireData[op.WireName] = op.Collection
+		}
+	}
+
+	for viewKey, viewCompDef := range depMap.Views {
+
+		if key == viewKey {
+			continue
+		}
+
+		viewID := meta.GetNodeValueAsString(viewCompDef, "uesio.id")
+		// Backwards compatibility until we can get Morandi/TimeTracker migrated to using "uesio.id" consistently
+		if viewID == "" {
+			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
+		}
+
+		subParams, err := getSubParams(viewCompDef, params, wireData, session)
+		if err != nil {
+			// If we get an error processing a subview, don't panic,
+			// just set the viewID to blank so that we don't server-side
+			// process its wires.
+			viewID = ""
+		}
+
+		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, session)
+		if err != nil {
+			return err
 		}
 	}
 

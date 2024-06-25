@@ -41,6 +41,15 @@ func Test_extractRegexParams(t *testing.T) {
 				"fieldName": "uesio/studio.name",
 			},
 		},
+		{
+			"local field",
+			RecordMergeRegex,
+			"${wire:field}",
+			map[string]string{
+				"wireName":  "wire",
+				"fieldName": "field",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -50,6 +59,33 @@ func Test_extractRegexParams(t *testing.T) {
 		})
 	}
 }
+
+var studioUser = &meta.User{
+	FirstName: "Luigi",
+	LastName:  "Vampa",
+}
+
+var studioApp = &meta.App{
+	BuiltIn: meta.BuiltIn{
+		UniqueKey: "uesio/studio",
+	},
+}
+
+var studioSite = &meta.Site{
+	Domain:    "acme.com",
+	Title:     "Acme Inc",
+	Subdomain: "www",
+	App:       studioApp,
+}
+
+var studioSiteWithoutSubdomain = &meta.Site{
+	Domain: "acme.com",
+	Title:  "Acme Inc",
+	App:    studioApp,
+}
+
+var studioSession = sess.New("", studioUser, studioSite)
+var studioSessionWithoutSubdomain = sess.New("", studioUser, studioSiteWithoutSubdomain)
 
 func Test_serverMergeFuncs(t *testing.T) {
 
@@ -92,12 +128,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"User: valid user field",
 			"User",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Name: "acme",
-				}),
+				Session: studioSession,
 			},
 			"firstname",
 			"Luigi",
@@ -107,12 +138,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"User: invalid field",
 			"User",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Name: "acme",
-				}),
+				Session: studioSession,
 			},
 			"foo",
 			nil,
@@ -123,12 +149,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: valid site field",
 			"Site",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Title: "Acme Inc",
-				}),
+				Session: studioSession,
 			},
 			"title",
 			"Acme Inc",
@@ -138,13 +159,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: url with domain and subdomain",
 			"Site",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Domain:    "acme.com",
-					Subdomain: "www",
-				}),
+				Session: studioSession,
 			},
 			"url",
 			"https://www.acme.com",
@@ -154,12 +169,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: url without subdomain",
 			"Site",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Domain: "acme.com",
-				}),
+				Session: studioSessionWithoutSubdomain,
 			},
 			"url",
 			"https://acme.com",
@@ -169,12 +179,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Site: invalid field",
 			"Site",
 			ServerMergeData{
-				Session: sess.New("", &meta.User{
-					FirstName: "Luigi",
-					LastName:  "Vampa",
-				}, &meta.Site{
-					Name: "acme",
-				}),
+				Session: studioSession,
 			},
 			"foo",
 			nil,
@@ -186,6 +191,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Record",
 			ServerMergeData{
 				WireData: map[string]meta.Group{},
+				Session:  studioSession,
 			},
 			"",
 			"",
@@ -196,6 +202,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Record",
 			ServerMergeData{
 				WireData: map[string]meta.Group{},
+				Session:  studioSession,
 			},
 			"collection:uesio/studio.name",
 			"",
@@ -208,6 +215,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 				WireData: map[string]meta.Group{
 					"collection": &wire.Collection{},
 				},
+				Session: studioSession,
 			},
 			"collection:uesio/studio.name",
 			"",
@@ -222,6 +230,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 						&wire.Item{},
 					},
 				},
+				Session: studioSession,
 			},
 			"collection:uesio/studio.name",
 			"",
@@ -236,6 +245,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 						&validItem,
 					},
 				},
+				Session: studioSession,
 			},
 			"collection:uesio/studio.name",
 			"happy",

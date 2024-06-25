@@ -1,0 +1,21 @@
+name: fullpage
+label: Full Page
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - m-10
+      - rounded-lg
+      - md:p-24
+      - gap-2
+    title:
+      - text-slate-800
+      - text-xl
+    subtitle:
+      - text-sm
+      - text-slate-500
+    icon:
+      - text-7xl
+      - text-slate-800
+      - mb-10
+public: true

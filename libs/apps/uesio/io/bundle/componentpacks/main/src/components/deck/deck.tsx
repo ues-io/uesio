@@ -9,6 +9,7 @@ const StyleDefaults = Object.freeze({
 
 type DeckDefinition = {
 	gridVariant?: metadata.MetadataKey
+	emptyState?: definition.DefinitionList
 } & ListDefinition
 
 const Deck: definition.UC<DeckDefinition> = (props) => {

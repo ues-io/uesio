@@ -8,6 +8,7 @@ type ListDefinition = {
 	components?: definition.DefinitionList
 	recordDisplay?: component.DisplayCondition[]
 	iterate?: boolean
+	emptyState?: definition.DefinitionList
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
@@ -61,6 +62,18 @@ const List: definition.UC<ListDefinition> = (props) => {
 		},
 		context
 	)
+
+	if (wire && !itemContexts.length) {
+		return (
+			<component.Slot
+				definition={definition}
+				listName="emptyState"
+				path={path}
+				context={context}
+				componentType={componentType}
+			/>
+		)
+	}
 
 	return (
 		<>

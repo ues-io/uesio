@@ -117,7 +117,7 @@ const getWires = (
 	const wiresArray = Array.isArray(wires) ? wires : [wires]
 	return wiresArray.flatMap((wirename) => {
 		const wire = getWire(viewId, wirename)
-		if (!wire) throw new Error("Bad Wire!")
+		if (!wire) throw new Error("Invalid wire name " + wirename)
 		return wire
 	})
 }

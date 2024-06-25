@@ -41,6 +41,7 @@ definition:
             wire: listing
         components:
           - uesio/io.emptystate:
+              uesio.variant: uesio/sitekit.fullpage
               title: We can't find a bundle called $Param{id}.
               subtitle: The bundle you're looking for may not be published yet.
               icon: unknown_document

@@ -5,3 +5,4 @@ definition:
   uesio.styleTokens:
     root:
       - gap-0.5
+      - "[&:has(.isempty)]:h-full"

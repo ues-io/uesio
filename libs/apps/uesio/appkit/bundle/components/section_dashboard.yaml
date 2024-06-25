@@ -1,0 +1,24 @@
+name: section_dashboard
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.dashboarditem
+      components:
+        - uesio/io.titlebar:
+            title: $Prop{title}
+            uesio.variant: uesio/appkit.sub
+        - uesio/io.box:
+            uesio.variant: uesio/appkit.dashboardpanel
+            components:
+              - uesio/core.slot:
+                  name: content
+title: Dashboard Section
+discoverable: true
+description: Dashboard Section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

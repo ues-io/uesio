@@ -1,0 +1,7 @@
+name: items
+type: REFERENCEGROUP
+label: Items
+referenceGroup:
+  collection: thread_item
+  field: thread
+  onDelete: CASCADE

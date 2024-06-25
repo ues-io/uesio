@@ -1,0 +1,5 @@
+name: thread
+label: Thread
+type: REFERENCE
+reference:
+  collection: thread

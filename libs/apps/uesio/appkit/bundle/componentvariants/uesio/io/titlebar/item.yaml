@@ -8,3 +8,6 @@ definition:
       - items-center
     title:
       - text-sm
+      - leading-none
+    actions:
+      - leading-none
