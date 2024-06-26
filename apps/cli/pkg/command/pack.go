@@ -58,6 +58,9 @@ func Pack(options *PackOptions) error {
 			MinifySyntax:      true,
 			Metafile:          true,
 			Sourcemap:         api.SourceMapLinked,
+			// This fixes a bug where the monaco amd loader was polluting
+			// the global define object, causing papaparse to not load correctly.
+			Define: map[string]string{"define.amd": "undefined"},
 		}
 
 		basePath := fmt.Sprintf("bundle/componentpacks/%s/", packName)

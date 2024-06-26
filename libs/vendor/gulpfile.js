@@ -79,7 +79,7 @@ const scriptTasks = modules.map(({ src, dest, path, name: module }) => {
 		.filter((x) => !!x)
 		.join("/")
 	return function () {
-		return gulp.src(gulpSrc).pipe(gulp.dest(gulpDest))
+		return gulp.src(gulpSrc, { encoding: false }).pipe(gulp.dest(gulpDest))
 	}
 })
 
