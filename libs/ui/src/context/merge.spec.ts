@@ -3,69 +3,7 @@ import {
 	InvalidComponentOutputMsg,
 	InvalidSignalOutputMergeMsg,
 	MergeOptions,
-	parseTwoPartExpression,
 } from "./merge"
-
-type parseTwoPartExpressionTestCase = {
-	name: string
-	input: string
-	expected: string[] | undefined
-	expectError: string | undefined
-}
-
-const parseTwoPartExpressionTests = [
-	{
-		name: "no delimiters",
-		input: "foo",
-		expectError: "Invalid Expression",
-	},
-	{
-		name: "bracket delimiters: bad syntax",
-		input: "[foo]",
-		expectError: "Invalid Expression",
-	},
-	{
-		name: "bracket delimiters: bad syntax",
-		input: "[foo][",
-		expectError: "Invalid Expression",
-	},
-	{
-		name: "bracket delimiters: bad syntax",
-		input: "[foo]",
-		expectError: "Invalid Expression",
-	},
-	{
-		name: "bracket delimiters: bad syntax",
-		input: "foo][bar]",
-		expectError: "Invalid Expression",
-	},
-	{
-		name: "bracket delimiters: happy path",
-		input: "[foo:foo][bar]",
-		expected: ["foo:foo", "bar"],
-	},
-	{
-		name: "colon delimiter: happy path",
-		input: "foo:bar",
-		expected: ["foo", "bar"],
-	},
-] as parseTwoPartExpressionTestCase[]
-
-describe("parseTwoPartExpression", () => {
-	parseTwoPartExpressionTests.forEach((tc) => {
-		test(tc.name, () => {
-			let errCaught
-			let actual
-			try {
-				actual = parseTwoPartExpression(tc.input)
-			} catch (e) {
-				errCaught = e
-			}
-			expect(errCaught).toEqual(tc.expectError)
-			expect(actual).toEqual(tc.expected)
-		})
-	})
-})
 
 type MergeWithContextTestCase = {
 	name: string
@@ -95,12 +33,35 @@ const signalOutputContextHappyPath = new Context().addSignalOutputFrame(
 	}
 )
 
+const signalOutputContextString = new Context().addSignalOutputFrame(
+	"myStep",
+	"myString"
+)
+
 const signalOutputMergeTestCases = [
 	{
 		name: "happy path - colon delimiter",
 		context: signalOutputContextHappyPath,
 		input: "$SignalOutput{myStep:foo}",
 		expected: "bar",
+	},
+	{
+		name: "happy path - colon delimiter - single",
+		context: signalOutputContextString,
+		input: "$SignalOutput{myStep}",
+		expected: "myString",
+	},
+	{
+		name: "happy path - bracket delimiter - single",
+		context: signalOutputContextString,
+		input: "$SignalOutput{[myStep]}",
+		expected: "myString",
+	},
+	{
+		name: "happy path - bracket delimiter - empty - single",
+		context: signalOutputContextString,
+		input: "$SignalOutput{[myStep][]}",
+		expected: "myString",
 	},
 	{
 		name: "happy path - bracket delimiter",
