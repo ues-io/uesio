@@ -4,6 +4,7 @@ pack: main
 type: DECLARATIVE
 slots: null
 description: A tile with an icon
+deprecated: true
 properties:
   - type: TEXT
     name: title

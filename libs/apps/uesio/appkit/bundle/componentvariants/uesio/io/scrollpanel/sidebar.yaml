@@ -12,3 +12,9 @@ definition:
       - bg-slate-100
       - border-t
       - border-slate-200
+    header:
+      - p-3
+      - empty:p-0
+      - border-b-1
+      - border-b-slate-400
+      - empty:border-b-0

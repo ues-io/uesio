@@ -59,6 +59,30 @@ definition:
         mode: EDIT
         components:
           - uesio/io.scrollpanel:
+              header:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: Threads
+                          icon: forum
+                          signals:
+                            - signal: wire/UPDATE_RECORD
+                              wire: input
+                              field: current_thread_id
+                              value: ""
+                      - uesio/io.item:
+                          uesio.display:
+                            - type: hasValue
+                              value: ${current_thread_id}
+                          external:
+                            collection: uesio/aikit.thread
+                            record: ${current_thread_id}
+                          components:
+                            - uesio/appkit.icontile:
+                                tileVariant: uesio/appkit.breadcrumb
+                                title: ${uesio/aikit.title}
               content:
                 - uesio/io.deck:
                     wire: threads
@@ -90,7 +114,7 @@ definition:
                       - uesio/io.emptystate:
                           title: No Conversations Found
                           subtitle: You haven't created any ai conversations yet.
-                          icon: mist
+                          icon: forum
                 - uesio/io.deck:
                     wire: threaditems
                     mode: READ
@@ -202,6 +226,7 @@ definition:
                                       - threads
                             - uesio/io.button:
                                 icon: arrow_back
+                                text: Back
                                 uesio.variant: uesio/appkit.tertiary_small
                                 uesio.styleTokens:
                                   root:

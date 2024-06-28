@@ -19,6 +19,9 @@ definition:
             actions:
               - uesio/core.slot:
                   name: actions
+            uesio.display:
+              - type: hasValue
+                value: $Prop{title}
         - uesio/io.box:
             uesio.styleTokens:
               root:

@@ -11,6 +11,10 @@ definition:
             subtitle: ${username}
       avatar:
         - uesio/io.avatar:
+            uesio.context:
+              workspace:
+                name:
+                app:
             text: ${initials}
             image: $UserFile{picture}
 title: User Tile Component

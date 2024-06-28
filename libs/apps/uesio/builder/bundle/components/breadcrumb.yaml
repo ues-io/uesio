@@ -4,6 +4,7 @@ pack: main
 type: DECLARATIVE
 slots: null
 description: A breadcrumb tile with a navigate link and icon
+deprecated: true
 properties:
   - type: TEXT
     name: title

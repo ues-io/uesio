@@ -12,6 +12,7 @@ slots:
         wireProperty: wire
       - type: FIELD_MODE
         modeProperty: mode
+  - name: emptyState
 defaultDefinition:
   mode: READ
   uesio.variant: uesio/io.four_column

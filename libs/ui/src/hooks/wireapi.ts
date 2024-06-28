@@ -15,7 +15,25 @@ import { Context, getWire } from "../context/context"
 import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
 import { useDeepCompareEffect } from "react-use"
-import { dispatch } from "../store/store"
+import { dispatch, getCurrentState } from "../store/store"
+import { ID_FIELD } from "../bands/collection/types"
+import { PlainWireRecord } from "../bands/wirerecord/types"
+
+const useExternalRecord = (collection: string, record: string) => {
+	// loop through all wires, regardless of view to get ones with
+	// the requested collection and record
+	const state = getCurrentState()
+	let foundRecord: PlainWireRecord | undefined
+	const wire = Object.values(state.wire.entities).find((plainWire) => {
+		if (!plainWire || plainWire.collection !== collection) return false
+		foundRecord = Object.values(plainWire.data).find(
+			(currentRecord) => currentRecord[ID_FIELD] === record
+		)
+		return foundRecord
+	})
+	uWire(wire?.view, wire?.name)
+	return foundRecord
+}
 
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
@@ -98,4 +116,12 @@ const loadWires = loadWiresOp
 
 const initWires = initWiresOp
 
-export { useWire, useDynamicWire, useWires, loadWires, initWires, getWire }
+export {
+	useWire,
+	useExternalRecord,
+	useDynamicWire,
+	useWires,
+	loadWires,
+	initWires,
+	getWire,
+}

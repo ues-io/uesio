@@ -479,9 +479,7 @@ const getFilteredShallowEqualFunc =
 		return true
 	}
 
-const useWires = (
-	fullWireIds: string[]
-): Record<string, PlainWire | undefined> =>
+const useWires = (fullWireIds: string[]) =>
 	Object.fromEntries(
 		Object.entries(
 			useSelector(
