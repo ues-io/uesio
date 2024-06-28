@@ -20,7 +20,7 @@ definition:
                 - type: collectionContext
                   collection: uesio/studio.app
               components:
-                - uesio/builder.icontile:
+                - uesio/appkit.icontile:
                     title: ${uesio/core.uniquekey}
                     icon: ${uesio/studio.icon}
                     iconcolor: ${uesio/studio.color}
@@ -39,9 +39,11 @@ definition:
                     - type: collectionContext
                       collection: uesio/studio.workspace
               components:
-                - uesio/builder.breadcrumb:
+                - uesio/appkit.icontile:
                     title: ${uesio/studio.app->uesio/core.uniquekey}
                     icon: ${uesio/studio.app->uesio/studio.icon}
                     iconcolor: ${uesio/studio.app->uesio/studio.color}
-                    path: app/${uesio/studio.app->uesio/core.uniquekey}
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}
                     tileVariant: uesio/builder.apptag

@@ -17,3 +17,5 @@ dependencies:
     version: "v0.0.8"
   uesio/aikit:
     version: "v0.0.1"
+  uesio/appkit:
+    version: "v0.0.1"

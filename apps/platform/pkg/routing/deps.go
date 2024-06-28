@@ -634,10 +634,6 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 							}
 						}
 					}
-					err := getComponentAreaDeps(prop, depMap, session)
-					if err != nil {
-						return err
-					}
 				}
 			}
 		}
@@ -652,16 +648,18 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 		return err
 	}
 
-	slotDefinitions := compDef.GetSlotDefinitions()
 	variantPropertyNames := compDef.GetVariantPropertyNames()
 
 	foundComponentVariant := false
 
 	// Clone the variantPropertyNames map
 	// (we'll remove records from this map as we find values for them)
-	variantPropsWithNoValue := make(map[string]*meta.PropertyDefinition, len(variantPropertyNames))
-	for k, v := range variantPropertyNames {
-		variantPropsWithNoValue[k] = v
+	var variantPropsWithNoValue map[string]*meta.PropertyDefinition
+	if len(variantPropertyNames) > 0 {
+		variantPropsWithNoValue = make(map[string]*meta.PropertyDefinition, len(variantPropertyNames))
+		for k, v := range variantPropertyNames {
+			variantPropsWithNoValue[k] = v
+		}
 	}
 
 	for i, prop := range compDefinitionMap.Content {
@@ -686,15 +684,15 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 							useComponentName = propDef.Metadata.Grouping
 							useVariantName = variantNameParts[0]
 						}
+					} else {
+						if useVariantName != "" {
+							foundComponentVariant = true
+						}
 					}
 					if err = addComponentVariantDep(depMap, useVariantName, useComponentName, session); err == nil {
-						foundComponentVariant = true
+						// Do nothing
 					}
 				}
-			}
-		} else {
-			if err = getComponentAreaDeps(prop, depMap, session); err != nil {
-				return err
 			}
 		}
 	}
@@ -729,6 +727,8 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, depMap *Vie
 			}
 		}
 	}
+
+	slotDefinitions := compDef.GetSlotDefinitions()
 
 	if len(slotDefinitions) > 0 {
 		for _, slotDef := range slotDefinitions {

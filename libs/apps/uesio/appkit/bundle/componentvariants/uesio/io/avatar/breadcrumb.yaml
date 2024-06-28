@@ -1,0 +1,12 @@
+name: breadcrumb
+label: Breadcrumb
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - w-[18px]
+      - h-[18px]
+      - rounded-full
+      - text-[7.5px]
+      - text-white

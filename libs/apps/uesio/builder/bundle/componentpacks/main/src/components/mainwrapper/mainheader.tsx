@@ -43,15 +43,20 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					link={homeLogoLink}
 				/>
 				<component.Component
-					componentType={"uesio/builder.breadcrumb"}
+					componentType={"uesio/appkit.icontile"}
 					path=""
 					definition={{
 						title: workspace.app,
 						icon: nsInfo?.icon,
 						iconcolor: nsInfo?.color,
 						tileVariant: "uesio/builder.apptag",
-						path: `/app/${workspace.app}`,
-						namespace: "uesio/studio",
+						signals: [
+							{
+								signal: "route/NAVIGATE",
+								path: `/app/${workspace.app}`,
+								namespace: "uesio/studio",
+							},
+						],
 					}}
 					context={context.deleteWorkspace()}
 				/>

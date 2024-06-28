@@ -1,11 +1,11 @@
-name: crumbsbox
-label: CrumbsBox
-deprecated: true
+name: breadcrumbs
+label: BreadCrumbs Wrapper
 definition:
   uesio.styleTokens:
     root:
       - flex
       - gap-x-0
       - gap-y-1
-      - flex-wrap
+      - flex-nowrap
+      - overflow-hidden
 public: true

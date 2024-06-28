@@ -5,65 +5,84 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.group:
-        uesio.variant: uesio/builder.crumbsbox
+        uesio.variant: uesio/appkit.breadcrumbs
         uesio.display:
           - type: collectionContext
             collection: uesio/studio.site
         uesio.id: sitestag
         components:
-          - uesio/builder.breadcrumb:
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               title: ${uesio/studio.name}
               icon: public
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
-          - uesio/builder.breadcrumb:
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               uesio.display:
                 - type: paramIsSet
                   param: itemType
               title: $Param{itemType}
               icon: $Param{itemIcon}
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/$Param{itemType}
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/$Param{itemType}
     - uesio/io.group:
-        uesio.variant: uesio/builder.crumbsbox
+        uesio.variant: uesio/appkit.breadcrumbs
         uesio.display:
           - type: collectionContext
             collection: uesio/studio.bundle
         uesio.id: sitestag
         components:
-          - uesio/builder.breadcrumb:
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               title: ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
               icon: inventory_2
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
     - uesio/io.group:
-        uesio.variant: uesio/builder.crumbsbox
+        uesio.variant: uesio/appkit.breadcrumbs
         uesio.display:
           - type: collectionContext
             collection: uesio/studio.team
         uesio.id: teamstag
         components:
-          - uesio/builder.breadcrumb:
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               title: ${uesio/studio.name}
               icon: groups
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
     - uesio/io.group:
-        uesio.variant: uesio/builder.crumbsbox
+        uesio.variant: uesio/appkit.breadcrumbs
         uesio.display:
           - type: collectionContext
             collection: uesio/studio.workspace
         uesio.id: workspaceapptag
         components:
-          - uesio/builder.breadcrumb:
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               title: ${uesio/studio.name}
               icon: handyman
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
-          - uesio/builder.breadcrumb:
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               uesio.display:
                 - type: paramIsSet
                   param: itemType
               title: $Param{itemType}
               icon: $Param{itemIcon}
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
           #Buttons for all views with updated URL's
-          - uesio/builder.breadcrumb:
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               uesio.display:
                 - type: paramIsSet
                   param: itemName
@@ -72,8 +91,11 @@ definition:
               title: $Param{itemName}
               icon: $Param{itemNameSpaceIcon}
               iconcolor: $Param{itemNameSpaceColor}
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
-          - uesio/builder.breadcrumb:
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}
+          - uesio/appkit.icontile:
+              tileVariant: uesio/appkit.breadcrumb
               uesio.display:
                 - type: paramIsSet
                   param: itemName
@@ -84,4 +106,6 @@ definition:
                 - type: paramIsSet
                   param: subItemType
               title: $Param{subItemName}
-              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}
+              signals:
+                - signal: route/NAVIGATE
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemNameSpace}/$Param{itemName}/$Param{subItemType}/$Param{subItemNameSpace}/$Param{subItemName}

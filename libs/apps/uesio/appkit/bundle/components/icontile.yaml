@@ -1,0 +1,62 @@
+name: icontile
+category: LAYOUT
+type: DECLARATIVE
+slots: null
+description: A tile with an icon
+properties:
+  - type: TEXT
+    name: title
+    label: Title text
+  - type: ICON
+    name: icon
+  - type: TEXT
+    name: iconcolor
+  - type: SIGNALS
+    name: signals
+    label: Signals
+  - name: tileVariant
+    label: Tile Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.tile
+  - name: iconVariant
+    label: Icon Variant
+    type: METADATA
+    defaultValue: uesio/io.icon
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.text
+  - name: avatarVariant
+    label: Avatar Variant
+    type: METADATA
+    defaultValue: uesio/appkit.main
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.avatar
+definition:
+  - uesio/io.tile:
+      signals: $Prop{signals}
+      uesio.variant: $Prop{tileVariant}
+      content:
+        - uesio/io.text:
+            text: $Prop{title}
+      avatar:
+        - uesio/io.text:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{icon}
+              - type: hasNoValue
+                value: $Prop{initials}
+              - type: hasNoValue
+                value: $Prop{imagefield}
+            uesio.variant: $Prop{iconVariant}
+            color: $Prop{iconcolor}
+            text: $Prop{icon}
+        - uesio/io.avatar:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{initials}
+            text: $Prop{initials}
+            image: $UserFile{$Prop{imagefield}}
+            uesio.variant: $Prop{avatarVariant}

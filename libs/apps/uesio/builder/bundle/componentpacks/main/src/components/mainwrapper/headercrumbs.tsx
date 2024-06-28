@@ -14,14 +14,14 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 	const itemNSInfo = getBuilderNamespace(context, viewNamespace)
 
 	return (
-		<Group context={context} variant="uesio/builder.crumbsbox">
+		<Group context={context} variant="uesio/appkit.breadcrumbs">
 			<component.Component
-				componentType={"uesio/builder.icontile"}
+				componentType={"uesio/appkit.icontile"}
 				path=""
 				definition={{
 					title: workspace.name,
 					icon: "handyman",
-					tileVariant: "uesio/builder.breadcrumb",
+					tileVariant: "uesio/appkit.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",
@@ -33,12 +33,12 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/builder.icontile"}
+				componentType={"uesio/appkit.icontile"}
 				path=""
 				definition={{
 					title: "views",
 					icon: "view_quilt",
-					tileVariant: "uesio/builder.breadcrumb",
+					tileVariant: "uesio/appkit.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",
@@ -50,13 +50,13 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				context={context.deleteWorkspace()}
 			/>
 			<component.Component
-				componentType={"uesio/builder.icontile"}
+				componentType={"uesio/appkit.icontile"}
 				path=""
 				definition={{
 					title: viewName,
 					icon: itemNSInfo?.icon,
 					iconcolor: itemNSInfo?.color,
-					tileVariant: "uesio/builder.breadcrumb",
+					tileVariant: "uesio/appkit.breadcrumb",
 					signals: [
 						{
 							signal: "route/NAVIGATE",

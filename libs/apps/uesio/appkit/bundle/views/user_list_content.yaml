@@ -12,6 +12,7 @@ definition:
         uesio/core.initials:
         uesio/core.email:
         uesio/core.profile:
+        uesio/core.picture:
       batchsize: 200
       conditions:
         - field: uesio/core.username
