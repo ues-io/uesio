@@ -3,7 +3,6 @@ package file
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -39,7 +38,7 @@ func init() {
 	// so that we can build the list of vendor script URLs
 	vendorDistDir = filepath.Join(baseDir, "dist", "vendor")
 	manifestFilePath := filepath.Join(vendorDistDir, "manifest.json")
-	vendorScriptsManifestFile, err := ioutil.ReadFile(manifestFilePath)
+	vendorScriptsManifestFile, err := os.ReadFile(manifestFilePath)
 
 	if err != nil {
 		fmt.Println("Unable to read vendor scripts manifest file")

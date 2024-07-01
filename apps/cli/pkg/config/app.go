@@ -2,14 +2,17 @@ package config
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 )
 
 func GetApp() (string, error) {
 
 	sbs := &localbundlestore.LocalBundleStore{}
+	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := sbs.GetBundleDef("", "", nil, nil)
+	def, err := conn.GetBundleDef()
 	if err != nil {
 		return "", err
 	}
@@ -20,8 +23,9 @@ func GetApp() (string, error) {
 
 func GetVersion(namespace string) (string, error) {
 	sbs := &localbundlestore.LocalBundleStore{}
+	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := sbs.GetBundleDef("", "", nil, nil)
+	def, err := conn.GetBundleDef()
 	if err != nil {
 		return "", err
 	}

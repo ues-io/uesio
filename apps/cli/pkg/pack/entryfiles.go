@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -21,8 +22,9 @@ func fileExists(path string) bool {
 
 func CreateEntryFiles() (map[string]string, error) {
 	sbs := &localbundlestore.LocalBundleStore{}
+	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := sbs.GetBundleDef("", "", nil, nil)
+	def, err := conn.GetBundleDef()
 	if err != nil {
 		return nil, err
 	}
@@ -31,13 +33,13 @@ func CreateEntryFiles() (map[string]string, error) {
 	namespace := def.Name
 
 	components := &meta.ComponentCollection{}
-	err = sbs.GetAllItems(components, "", "", nil, nil)
+	err = conn.GetAllItems(components, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	utilities := &meta.UtilityCollection{}
-	err = sbs.GetAllItems(utilities, "", "", nil, nil)
+	err = conn.GetAllItems(utilities, nil)
 	if err != nil {
 		return nil, err
 	}
