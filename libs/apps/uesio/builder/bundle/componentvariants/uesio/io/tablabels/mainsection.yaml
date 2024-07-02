@@ -7,8 +7,9 @@ definition:
       - p-2
       - gap-x-2
       - gap-y-1
-      - flex
-      - flex-wrap
+      - grid
+      - grid-flow-col
+      - auto-cols-max
       - leading-none
     tab:
       - uppercase

@@ -1,1 +1,6 @@
 name: uesio/builder
+dependencies:
+  uesio/io:
+    version: "v0.0.1"
+  uesio/appkit:
+    version: "v0.0.1"

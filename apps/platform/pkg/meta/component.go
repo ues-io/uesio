@@ -36,6 +36,7 @@ type Component struct {
 	Type           string   `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	SubComponents  []string `yaml:"components,omitempty" json:"uesio/studio.components"`
 	Slots          *YAMLDef `yaml:"slots,omitempty" json:"uesio/studio.slots"`
 	Properties     *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
 	// Definition defines the Component body, for Declarative components

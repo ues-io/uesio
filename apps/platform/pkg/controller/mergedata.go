@@ -49,12 +49,17 @@ func getComponentPackURLs(componentPackDeps *preload.MetadataMergeData, workspac
 	for i, packDep := range allDeps {
 		key := packDep.GetKey()
 		var packModstamp int64
+		workspaceMergeData := workspace
 		if pack, ok := packDep.(*meta.ComponentPack); ok {
 			packModstamp = pack.UpdatedAt
+			if pack.SiteOnly {
+				workspaceMergeData = nil
+			}
 		} else {
 			packModstamp = time.Now().Unix()
 		}
-		packUrls[i] = getPackUrl(key, packModstamp, workspace, site, "runtime.js")
+
+		packUrls[i] = getPackUrl(key, packModstamp, workspaceMergeData, site, "runtime.js")
 	}
 	return packUrls
 }
