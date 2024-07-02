@@ -105,6 +105,11 @@ definition:
                       - uesio/io.list:
                           wire: blogentries
                           mode: READ
+                          emptyState:
+                            - uesio/io.emptystate:
+                                uesio.variant: uesio/studio.main
+                                title: No news is good news
+                                icon: newspaper
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.action

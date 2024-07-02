@@ -55,11 +55,13 @@ definition:
                               - col-span-1
                               - lg:col-span-2
                           components:
-                            - uesio/studio.emptystate:
+                            - uesio/io.emptystate:
+                                uesio.variant: uesio/studio.main
                                 uesio.display:
                                   - type: wireHasNoRecords
                                     wire: recentmetadata
-                                text: Empty Workspace
+                                title: Empty Workspace
+                                icon: handyman
                             - uesio/io.box:
                                 uesio.display:
                                   - type: wireHasRecords
