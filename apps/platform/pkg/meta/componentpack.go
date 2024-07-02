@@ -24,6 +24,7 @@ type ComponentPack struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 	HasStyles      bool `yaml:"hasStyles,omitempty" json:"uesio/studio.has_styles"`
+	SiteOnly       bool `yaml:"-" json:"-"`
 }
 
 type ComponentPackWrapper ComponentPack
@@ -39,6 +40,7 @@ func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
 		enc.AddInt64Key("updatedAt", cp.UpdatedAt)
 	}
 	enc.AddBoolKey("hasStyles", cp.HasStyles)
+	enc.AddBoolKey("siteOnly", cp.SiteOnly)
 }
 
 func (cp *ComponentPack) IsNil() bool {

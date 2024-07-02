@@ -1,1 +1,4 @@
 name: uesio/io
+dependencies:
+  uesio/core:
+    version: "v0.0.1"

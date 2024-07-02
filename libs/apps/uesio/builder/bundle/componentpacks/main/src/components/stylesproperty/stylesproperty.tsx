@@ -70,7 +70,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 		() => {
 			// Fetch tailwind tokens
 			const tailwindClassesUrl = platform.platform.getComponentPackURL(
-				context,
+				context.deleteWorkspace(),
 				"uesio/builder",
 				"main",
 				undefined,

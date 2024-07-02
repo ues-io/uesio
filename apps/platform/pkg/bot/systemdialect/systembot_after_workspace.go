@@ -70,9 +70,6 @@ func deployEmptyWorkspace(workspaceID string, connection wire.Connection, sessio
 
 	defaultDef := &meta.BundleDef{
 		Dependencies: map[string]meta.BundleDefDep{
-			"uesio/builder": {
-				Version: "v0.0.1",
-			},
 			"uesio/core": {
 				Version: "v0.0.1",
 			},

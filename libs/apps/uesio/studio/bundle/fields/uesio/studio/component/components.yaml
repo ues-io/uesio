@@ -1,0 +1,4 @@
+name: components
+type: LIST
+label: Components
+subtype: TEXT

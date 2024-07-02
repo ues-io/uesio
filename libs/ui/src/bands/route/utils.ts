@@ -67,6 +67,9 @@ const getPackUrlsForDeps = (
 ) => {
 	if (!packDeps) return []
 	return packDeps.flatMap((pack) => {
+		if (pack.siteOnly) {
+			context = context.deleteWorkspace()
+		}
 		const js = platform.getComponentPackURL(
 			context,
 			pack.namespace,
