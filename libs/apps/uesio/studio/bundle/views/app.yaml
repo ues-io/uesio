@@ -103,8 +103,9 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Workspaces
-                                  - uesio/studio.emptystate:
-                                      text: No Workspaces Created
+                                  - uesio/io.emptystate:
+                                      uesio.variant: uesio/studio.main
+                                      title: No Workspaces Created
                                       icon: handyman
                                       uesio.display:
                                         - type: wireHasNoRecords
@@ -134,8 +135,9 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Sites
-                                  - uesio/studio.emptystate:
-                                      text: No Sites Created
+                                  - uesio/io.emptystate:
+                                      uesio.variant: uesio/studio.main
+                                      title: No Sites Created
                                       icon: public
                                       uesio.display:
                                         - type: wireHasNoRecords

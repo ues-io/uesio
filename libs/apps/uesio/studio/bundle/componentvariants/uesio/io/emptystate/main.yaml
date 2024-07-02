@@ -1,0 +1,26 @@
+name: main
+label: Main
+definition:
+  uesio.styleTokens:
+    root:
+      - isempty
+      - grid
+      - items-center
+      - justify-center
+      - text-center
+      - border-slate-300
+      - border-1
+      - border-dashed
+      - rounded-lg
+      - p-16
+    title:
+      - text-lg
+      - text-slate-500
+      - font-light
+      - p-2
+    subtitle:
+    icon:
+      - text-8xl
+      - text-slate-200
+      - p-4
+public: true
