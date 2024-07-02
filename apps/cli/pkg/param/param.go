@@ -18,13 +18,14 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	w "github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getMetadataList(metadataType, app, version, sessid, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
+func getMetadataList(metadataType, sessid, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
 
 	if metadataType == "" {
 		return nil, nil, errors.New("no metadata type provided for prompt")
@@ -47,13 +48,16 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) (label
 	}
 
 	sbs := &localbundlestore.LocalBundleStore{}
+	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := sbs.GetBundleDef(app, version, nil, nil)
+	def, err := conn.GetBundleDef()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = sbs.GetAllItems(group, app, version, conditions, nil)
+	err = conn.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+		Conditions: conditions,
+	})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -210,7 +214,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
-		labels, valuesByLabel, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, sessid, grouping)
 		if err != nil {
 			return err
 		}
@@ -231,7 +235,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
-		labels, valuesByLabel, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, sessid, grouping)
 		if err != nil {
 			return err
 		}
