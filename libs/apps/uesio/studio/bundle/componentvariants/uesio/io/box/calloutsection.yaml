@@ -11,3 +11,4 @@ definition:
       - font-light
       - grid
       - gap-3
+      - whitespace-pre-line

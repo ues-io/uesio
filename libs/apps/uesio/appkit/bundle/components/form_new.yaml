@@ -36,7 +36,7 @@ definition:
                         signals:
                           - signal: wire/RESET
                             wire: $Prop{wire}
-                        text: Reset
+                        text: Start Over
                         uesio.variant: uesio/appkit.secondary
         - uesio/core.slot:
             name: content

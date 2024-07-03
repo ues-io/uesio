@@ -3,5 +3,5 @@ uniqueKey:
   - uesio/studio.fullname
 nameField: uesio/studio.fullname
 access: "protected"
-label: app
-pluralLabel: apps
+label: App
+pluralLabel: Apps

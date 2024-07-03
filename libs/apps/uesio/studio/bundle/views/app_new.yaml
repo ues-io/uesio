@@ -1,0 +1,103 @@
+name: app_new
+definition:
+  # Wires are how we pull in data
+  wires:
+    app:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.icon:
+        uesio/studio.user:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.user
+          valueSource: VALUE
+          value: $User{id}
+        - field: uesio/studio.user->uesio/core.uniquekey
+          valueSource: VALUE
+          value: $User{username}
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/io.scrollpanel:
+              uesio.variant: uesio/studio.left
+              header:
+                - uesio/io.item:
+                    wire: app
+                    components:
+                      - uesio/io.group:
+                          uesio.variant: uesio/builder.appcrumb
+                          components:
+                            - uesio/io.image:
+                                uesio.variant: uesio/builder.logo
+                                uesio.id: img-uesio-logo
+                                height: 32
+                                file: uesio/core.logowhite
+                            - uesio/appkit.icontile:
+                                title: ${uesio/studio.user->uesio/core.uniquekey}/${uesio/studio.name}
+                                icon: ${uesio/studio.icon}
+                                iconcolor: ${uesio/studio.color}
+                                tileVariant: uesio/builder.apptag
+              content:
+                - uesio/io.box:
+                    uesio.variant: uesio/studio.calloutsection
+                    components:
+                      - uesio/io.text:
+                          text: |
+                            Let's create a new app!
+
+                            In ues.io, an app is the starting place for everything you will build. An app can have many versions and improve and change over time.
+              footer:
+                - uesio/core.view:
+                    view: profiletag
+        content:
+          - uesio/appkit.form_new:
+              wire: app
+              avataricon: web
+              subtitle: $Text{${uesio/studio.user->uniquekey}/${uesio/studio.name}}
+              content:
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.primarysection
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/appkit.three_columns
+                          items:
+                            - uesio/io.box:
+                                uesio.styleTokens:
+                                  root:
+                                    - col-span-2
+                                components:
+                                  - uesio/io.grid:
+                                      uesio.variant: uesio/io.two_columns
+                                      uesio.styleTokens:
+                                        root:
+                                          - grid-cols-2
+                                      items:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.user
+                                            uesio.id: new-app-user
+                                            reference:
+                                              requirewriteaccess: true
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.name
+                                            uesio.id: new-app-name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.description
+                                      uesio.id: new-app-description
+                                  - uesio/io.grid:
+                                      uesio.variant: uesio/io.two_columns
+                                      uesio.styleTokens:
+                                        root:
+                                          - gap-10
+                                      items:
+                                        - uesio/studio.colorpicker:
+                                            fieldId: uesio/studio.color
+                                        - uesio/studio.appiconpicker:
+                                            fieldId: uesio/studio.icon
+                                            colorFieldId: uesio/studio.color
