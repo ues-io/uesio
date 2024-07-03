@@ -1,0 +1,5 @@
+name: app_new
+path: apps/new
+view: app_new
+theme: default
+title: App New

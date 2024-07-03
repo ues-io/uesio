@@ -23,6 +23,7 @@ bots:
   uesio/studio.select_plan: true
 views:
   uesio/studio.app: true
+  uesio/studio.app_new: true
   uesio/studio.appcrumb: true
   uesio/studio.appsettings: true
   uesio/studio.bot: true
@@ -127,6 +128,7 @@ views:
   uesio/studio.userusage: true
   uesio/studio.userusage_inner: true
 routes:
+  uesio/studio.app_new: true
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
