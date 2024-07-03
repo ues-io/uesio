@@ -1,0 +1,14 @@
+name: item_small
+label: Item Small
+public: true
+extends: uesio/appkit.item
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-3
+    content:
+      - gap-0.5
+    title:
+      - text-xs
+    subtitle:
+      - text-[8pt]

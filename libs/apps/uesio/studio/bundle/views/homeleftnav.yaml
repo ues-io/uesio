@@ -69,14 +69,14 @@ definition:
             - grid
             - grid-rows-3
         header:
-          - uesio/io.group:
-              uesio.variant: uesio/builder.appcrumb
-              components:
+          - uesio/io.tile:
+              avatar:
                 - uesio/io.image:
-                    uesio.variant: uesio/builder.logo
+                    uesio.variant: uesio/appkit.uesio_logo
                     uesio.id: img-uesio-logo
                     height: 32
                     file: uesio/core.logowhite
+              content:
                 - uesio/io.searchbox:
                     uesio.variant: uesio/studio.appsearch
                     wire: apps

@@ -1,6 +1,5 @@
-name: logo
-label: Logo
-deprecated: true
+name: uesio_logo
+label: Uesio Logo
 definition:
   uesio.styleTokens:
     root:

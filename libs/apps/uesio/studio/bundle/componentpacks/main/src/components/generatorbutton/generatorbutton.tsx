@@ -125,6 +125,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 				}
 			>
 				<DynamicForm
+					id={generator}
 					context={context}
 					content={params.map((def) =>
 						getLayoutFieldFromParamDef(def)

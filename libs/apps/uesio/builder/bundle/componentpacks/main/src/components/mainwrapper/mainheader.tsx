@@ -13,7 +13,7 @@ export const metaKey =
 const MainHeader: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const IOImage = component.getUtility("uesio/io.image")
-	const Group = component.getUtility("uesio/io.group")
+	const Tile = component.getUtility("uesio/io.tile")
 
 	const workspace = context.getWorkspace()
 	if (!workspace) throw new Error("No Workspace Context Provided")
@@ -33,15 +33,19 @@ const MainHeader: definition.UtilityComponent = (props) => {
 	)
 	return (
 		<>
-			<Group context={context} variant="uesio/builder.appcrumb">
-				<IOImage
-					height="32"
-					variant="uesio/builder.logo"
-					file="uesio/core.logowhite"
-					context={context}
-					onClick={homeLogoOnClick}
-					link={homeLogoLink}
-				/>
+			<Tile
+				context={context}
+				avatar={
+					<IOImage
+						height="32"
+						variant="uesio/appkit.uesio_logo"
+						file="uesio/core.logowhite"
+						context={context}
+						onClick={homeLogoOnClick}
+						link={homeLogoLink}
+					/>
+				}
+			>
 				<component.Component
 					componentType={"uesio/appkit.icontile"}
 					path=""
@@ -49,7 +53,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 						title: workspace.app,
 						icon: nsInfo?.icon,
 						iconcolor: nsInfo?.color,
-						tileVariant: "uesio/builder.apptag",
+						tileVariant: "uesio/appkit.apptag",
 						signals: [
 							{
 								signal: "route/NAVIGATE",
@@ -60,7 +64,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					}}
 					context={context.deleteWorkspace()}
 				/>
-			</Group>
+			</Tile>
 			<HeaderCrumbs context={context} />
 		</>
 	)

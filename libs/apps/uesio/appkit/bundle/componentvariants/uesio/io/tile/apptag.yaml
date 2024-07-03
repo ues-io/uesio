@@ -1,7 +1,6 @@
 name: apptag
 label: App Tag
 extends: uesio/io.default
-deprecated: true
 definition:
   uesio.styleTokens:
     root:
@@ -40,5 +39,4 @@ definition:
       - text-sm
       - text-slate-800
       - group-hover:text-slate-900
-
 public: true

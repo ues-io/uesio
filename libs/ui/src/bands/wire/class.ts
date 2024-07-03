@@ -85,7 +85,7 @@ class Wire {
 		if (!this.source.data) return undefined
 		const keys = Object.keys(this.source.data)
 		if (!keys || !keys.length) return undefined
-		const recordId = Object.keys(this.source.data)[0]
+		const recordId = keys[0]
 		return this.getRecord(recordId)
 	}
 

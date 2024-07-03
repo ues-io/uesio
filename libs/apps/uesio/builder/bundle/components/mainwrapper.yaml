@@ -18,15 +18,14 @@ variants:
   - uesio/io.field:uesio/builder.propfield
   - uesio/io.fieldwrapper:uesio/builder.propfield
   - uesio/io.fieldwrapper:uesio/builder.structproperty
-  - uesio/io.group:uesio/builder.appcrumb
   - uesio/io.icon:uesio/builder.actionicon
-  - uesio/io.image:uesio/builder.logo
+  - uesio/io.image:uesio/appkit.uesio_logo
   - uesio/io.listfield:uesio/builder.propfield
   - uesio/io.scrollpanel:uesio/builder.mainsection
   - uesio/io.selectfield:uesio/builder.propfield
   - uesio/io.tablabels:uesio/builder.mainsection
   - uesio/io.text:uesio/builder.infobadge
-  - uesio/io.tile:uesio/builder.apptag
+  - uesio/io.tile:uesio/appkit.apptag
   - uesio/io.tile:uesio/builder.indextag
   - uesio/io.tile:uesio/builder.propnodetag
   - uesio/io.tile:uesio/builder.smallpropnodetag

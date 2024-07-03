@@ -4,17 +4,17 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.group:
-        uesio.variant: uesio/builder.appcrumb
-        components:
+    - uesio/io.tile:
+        avatar:
           - uesio/io.image:
-              uesio.variant: uesio/builder.logo
+              uesio.variant: uesio/appkit.uesio_logo
               uesio.id: img-uesio-logo
               height: 32
               file: uesio/core.logowhite
               signals:
                 - signal: "route/NAVIGATE"
                   path: "home"
+        content:
           - uesio/io.box:
               uesio.display:
                 - type: collectionContext
@@ -24,7 +24,7 @@ definition:
                     title: ${uesio/core.uniquekey}
                     icon: ${uesio/studio.icon}
                     iconcolor: ${uesio/studio.color}
-                    tileVariant: uesio/builder.apptag
+                    tileVariant: uesio/appkit.apptag
           - uesio/io.box:
               uesio.display:
                 - type: group
@@ -46,4 +46,4 @@ definition:
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${uesio/studio.app->uesio/core.uniquekey}
-                    tileVariant: uesio/builder.apptag
+                    tileVariant: uesio/appkit.apptag
