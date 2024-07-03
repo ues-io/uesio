@@ -51,11 +51,12 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	}
 
 	useDeepCompareEffect(() => {
+		const wire = context.getWire(wireId)
 		if (!initialValue || !wire) return
 		const record = wire.getFirstRecord()
 		if (!record) return
 		record.setAll(initialValue)
-	}, [!!wire, initialValue])
+	}, [wireId, initialValue])
 
 	api.event.useEvent(
 		"wire.record.updated",

@@ -1,0 +1,27 @@
+name: tile_app
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.tile:
+      avatar:
+        - uesio/io.image:
+            uesio.variant: uesio/appkit.uesio_logo
+            uesio.id: img-uesio-logo
+            height: 32
+            file: uesio/core.logowhite
+            signals: $Prop{logoSignals}
+      content:
+        - uesio/appkit.icontile:
+            title: $Prop{title}
+            icon: $Prop{icon}
+            iconcolor: $Prop{iconcolor}
+            tileVariant: uesio/appkit.apptag
+title: App Tile Component
+discoverable: true
+description: An app tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
+variants:
+  - uesio/io.tile:uesio/appkit.apptag

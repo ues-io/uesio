@@ -31,19 +31,13 @@ definition:
                 - uesio/io.item:
                     wire: app
                     components:
-                      - uesio/io.group:
-                          uesio.variant: uesio/builder.appcrumb
-                          components:
-                            - uesio/io.image:
-                                uesio.variant: uesio/builder.logo
-                                uesio.id: img-uesio-logo
-                                height: 32
-                                file: uesio/core.logowhite
-                            - uesio/appkit.icontile:
-                                title: ${uesio/studio.user->uesio/core.uniquekey}/${uesio/studio.name}
-                                icon: ${uesio/studio.icon}
-                                iconcolor: ${uesio/studio.color}
-                                tileVariant: uesio/builder.apptag
+                      - uesio/appkit.tile_app:
+                          title: ${uesio/studio.user->uesio/core.uniquekey}/${uesio/studio.name}
+                          icon: ${uesio/studio.icon}
+                          iconcolor: ${uesio/studio.color}
+                          logoSignals:
+                            - signal: route/NAVIGATE
+                              path: home
               content:
                 - uesio/io.box:
                     uesio.variant: uesio/studio.calloutsection

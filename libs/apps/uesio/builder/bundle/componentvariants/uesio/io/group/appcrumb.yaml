@@ -1,5 +1,6 @@
 name: appcrumb
 label: App Crumb Box
+deprecated: true
 definition:
   uesio.styleTokens:
     root:
