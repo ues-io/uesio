@@ -45,13 +45,14 @@ require (
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
 	golang.org/x/crypto v0.24.0
 	golang.org/x/oauth2 v0.21.0
+	golang.org/x/sync v0.7.0
 	golang.org/x/text v0.16.0
-	google.golang.org/api v0.185.0
+	google.golang.org/api v0.187.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	cloud.google.com/go/auth v0.5.2 // indirect
+	cloud.google.com/go/auth v0.6.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
@@ -111,7 +112,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
