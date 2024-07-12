@@ -7,6 +7,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -32,6 +33,31 @@ type Connection struct {
 	authSource  *meta.AuthSource
 	connection  wire.Connection
 	session     *sess.Session
+}
+
+func (c *Connection) callListenerBot(botKey string, payload map[string]interface{}) error {
+
+	site := c.session.GetSite()
+
+	domain, err := datasource.QueryDomainFromSite(site.ID, c.connection)
+	if err != nil {
+		return err
+	}
+
+	host := datasource.GetHostFromDomain(domain, site)
+	payload["host"] = host
+
+	namespace, name, err := meta.ParseKey(botKey)
+	if err != nil {
+		return err
+	}
+
+	_, err = datasource.CallListenerBot(namespace, name, payload, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload, error) {
@@ -100,11 +126,20 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	if err != nil {
 		return err
 	}
-	return auth.CreateLoginMethod(&meta.LoginMethod{
+	err = auth.CreateLoginMethod(&meta.LoginMethod{
 		FederationID: validated.Subject,
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
 	}, c.connection, c.session)
+	if err != nil {
+		return err
+	}
+
+	payload["email"] = validated.Claims["email"].(string)
+	payload["firstname"] = validated.Claims["given_name"].(string)
+	payload["lastname"] = validated.Claims["family_name"].(string)
+
+	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
 func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
 	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")

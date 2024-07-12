@@ -5,6 +5,7 @@ usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
 usernameFormatExplanation: "lowercase a-z, 0-9, and underscore only"
 landingRoute: uesio/studio.login
+signupBot: uesio/studio.signupgoogle
 autoLogin: true
 enableSelfSignup: true
 public: true
