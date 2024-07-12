@@ -1,9 +1,10 @@
-import { ReactNode, forwardRef } from "react"
+import { ReactNode, forwardRef, MouseEvent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface ScrollPanelProps extends definition.UtilityProps {
 	header?: ReactNode
 	footer?: ReactNode
+	onClick?: (e: MouseEvent) => void
 }
 
 const StyleDefaults = Object.freeze({
@@ -15,13 +16,20 @@ const StyleDefaults = Object.freeze({
 
 const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 	(props, ref) => {
+		const { onClick } = props
 		const classes = styles.useUtilityStyleTokens(
 			StyleDefaults,
 			props,
 			"uesio/io.scrollpanel"
 		)
 		return (
-			<div id={props.id} ref={ref} className={classes.root}>
+			<div
+				id={props.id}
+				role={onClick ? "button" : undefined}
+				onClick={onClick}
+				ref={ref}
+				className={classes.root}
+			>
 				<div className={classes.header}>{props.header}</div>
 				<div className={classes.inner}>{props.children}</div>
 				<div className={classes.footer}>{props.footer}</div>

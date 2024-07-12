@@ -59,6 +59,8 @@ definition:
             uesio/studio.fullname:
         uesio/studio.status:
         uesio/studio.approved:
+        uesio/studio.show_starter_template:
+        uesio/studio.starter_template_description:
         uesio/studio.splash:
         uesio/core.owner:
         uesio/core.createdat:
@@ -278,6 +280,10 @@ definition:
                                       fieldId: uesio/studio.status
                                   - uesio/io.field:
                                       fieldId: uesio/studio.approved
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.show_starter_template
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.starter_template_description
                             - uesio/io.box:
                                 components:
                                   - uesio/studio.bundlelistingvisual:

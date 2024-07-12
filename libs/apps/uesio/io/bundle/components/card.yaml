@@ -23,6 +23,14 @@ properties:
       grouping: uesio/io.scrollpanel
     defaultValue: uesio/io.card
     metadataType: COMPONENTVARIANT
+  - name: titlebarVariant
+    label: Title Bar Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.titlebar
+    defaultValue: uesio/io.default
+    metadataType: COMPONENTVARIANT
 sections:
   - type: HOME
     properties:
@@ -33,10 +41,12 @@ sections:
 definition:
   - uesio/io.scrollpanel:
       uesio.variant: $Prop{scrollpanelVariant}
+      signals: $Prop{signals}
       header:
         - uesio/io.titlebar:
             title: $Prop{title}
             subtitle: $Prop{subtitle}
+            uesio.variant: $Prop{titlebarVariant}
             actions:
               - uesio/core.slot:
                   name: actions

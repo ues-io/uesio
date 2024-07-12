@@ -5,12 +5,13 @@ definition:
     app:
       collection: uesio/studio.app
       fields:
-        uesio/core.id:
         uesio/studio.name:
         uesio/studio.description:
+        uesio/studio.fullname:
         uesio/studio.color:
         uesio/studio.icon:
         uesio/studio.user:
+        uesio/studio.starter_template:
       init:
         query: false
         create: true
@@ -21,6 +22,20 @@ definition:
         - field: uesio/studio.user->uesio/core.uniquekey
           valueSource: VALUE
           value: $User{username}
+        - field: uesio/studio.starter_template
+          valueSource: VALUE
+          value: uesio/appkit
+    starter:
+      collection: uesio/studio.bundlelisting
+      fields:
+        uesio/studio.app:
+        uesio/studio.title:
+        uesio/studio.description:
+        uesio/studio.show_starter_template:
+        uesio/studio.starter_template_description:
+      conditions:
+        - field: uesio/studio.show_starter_template
+          value: true
   components:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
@@ -51,47 +66,211 @@ definition:
                 - uesio/core.view:
                     view: profiletag
         content:
-          - uesio/appkit.form_new:
-              wire: app
-              avataricon: web
-              subtitle: $Text{${uesio/studio.user->uniquekey}/${uesio/studio.name}}
-              content:
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.three_columns
-                          items:
-                            - uesio/io.box:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/appkit.form_new:
+                    wire: app
+                    avataricon: web
+                    subtitle: $Text{${uesio/studio.user->uniquekey}/${uesio/studio.name}}
+                    onCreateSignals:
+                      - signal: wire/SAVE
+                        wires:
+                          - app
+                      - signal: "route/NAVIGATE"
+                        path: $Text{app/${uesio/core.uniquekey}}
+                    content:
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.titlebar:
+                                title: App Name & Description
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.grid:
                                 uesio.styleTokens:
                                   root:
-                                    - col-span-2
-                                components:
-                                  - uesio/io.grid:
-                                      uesio.variant: uesio/io.two_columns
-                                      uesio.styleTokens:
-                                        root:
-                                          - grid-cols-2
-                                      items:
+                                    - grid-cols-2
+                                    - gap-6
+                                items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.name
+                                            uesio.id: new-app-name
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.description
+                                            uesio.id: new-app-description
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.box:
+                                            uesio.variant: uesio/appkit.note
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            components:
+                                              - uesio/io.text:
+                                                  text: "Note: Your app name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The app description is optional."
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          components:
+                            - uesio/io.titlebar:
+                                title: App Owner
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.grid:
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-2
+                                    - gap-6
+                                items:
+                                  - uesio/io.box:
+                                      components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.user
                                             uesio.id: new-app-user
                                             reference:
                                               requirewriteaccess: true
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.name
-                                            uesio.id: new-app-name
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.description
-                                      uesio.id: new-app-description
-                                  - uesio/io.grid:
-                                      uesio.variant: uesio/io.two_columns
-                                      uesio.styleTokens:
-                                        root:
-                                          - gap-10
-                                      items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.box:
+                                            uesio.variant: uesio/appkit.note
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            components:
+                                              - uesio/io.text:
+                                                  text: Choose who will own this app. If this is a personal app you can leave yourself as the owner. If you are a member of an organization, you can also make that organization the owner of the app.
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          components:
+                            - uesio/io.titlebar:
+                                title: App Color & Icon
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.grid:
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-2
+                                    - gap-6
+                                items:
+                                  - uesio/io.box:
+                                      components:
                                         - uesio/studio.colorpicker:
                                             fieldId: uesio/studio.color
                                         - uesio/studio.appiconpicker:
                                             fieldId: uesio/studio.icon
                                             colorFieldId: uesio/studio.color
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.box:
+                                            uesio.variant: uesio/appkit.note
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            components:
+                                              - uesio/io.text:
+                                                  text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          uesio.display:
+                            - type: featureFlag
+                              name: use_starter_templates
+                          components:
+                            - uesio/io.titlebar:
+                                title: Starter Template
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.grid:
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-2
+                                    - gap-6
+                                items:
+                                  - uesio/io.box:
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-4
+                                          - gap-6
+                                          - grid
+                                      components:
+                                        - uesio/io.list:
+                                            wire: starter
+                                            components:
+                                              - uesio/io.card:
+                                                  title: ${uesio/studio.title}
+                                                  uesio.display:
+                                                    - type: mergeValue
+                                                      sourceValue: ${app:uesio/studio.starter_template}
+                                                      operator: EQUALS
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                                  scrollpanelVariant: uesio/appkit.selectcard_selected
+                                                  content:
+                                                    - uesio/io.text:
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - font-light
+                                                            - text-sm
+                                                            - text-slate-600
+                                                        text: ${uesio/studio.starter_template_description}
+                                              - uesio/io.card:
+                                                  title: ${uesio/studio.title}
+                                                  uesio.display:
+                                                    - type: mergeValue
+                                                      operator: NOT_EQUALS
+                                                      sourceValue: ${app:uesio/studio.starter_template}
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                                  scrollpanelVariant: uesio/appkit.selectcard
+                                                  content:
+                                                    - uesio/io.text:
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - font-light
+                                                            - text-sm
+                                                            - text-slate-600
+                                                        text: ${uesio/studio.starter_template_description}
+                                                  signals:
+                                                    - signal: wire/UPDATE_RECORD
+                                                      wire: app
+                                                      field: uesio/studio.starter_template
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                        - uesio/io.card:
+                                            title: Empty App
+                                            scrollpanelVariant: uesio/appkit.selectcard
+                                            uesio.display:
+                                              - type: hasValue
+                                                wire: app
+                                                value: ${uesio/studio.starter_template}
+                                            content:
+                                              - uesio/io.text:
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - font-light
+                                                      - text-sm
+                                                      - text-slate-600
+                                                  text: Start with a completely empty app. (Recommended for advanced users.)
+                                            signals:
+                                              - signal: wire/UPDATE_RECORD
+                                                wire: app
+                                                field: uesio/studio.starter_template
+                                                value: ""
+                                        - uesio/io.card:
+                                            title: Empty App
+                                            scrollpanelVariant: uesio/appkit.selectcard_selected
+                                            uesio.display:
+                                              - type: hasNoValue
+                                                wire: app
+                                                value: ${uesio/studio.starter_template}
+                                            content:
+                                              - uesio/io.text:
+                                                  uesio.styleTokens:
+                                                    root:
+                                                      - font-light
+                                                      - text-sm
+                                                      - text-slate-600
+                                                  text: Start with a completely empty app. (Recommended for advanced users.)
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.box:
+                                            uesio.variant: uesio/appkit.note
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            components:
+                                              - uesio/io.text:
+                                                  text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)

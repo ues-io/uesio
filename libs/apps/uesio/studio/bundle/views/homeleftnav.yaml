@@ -25,25 +25,6 @@ definition:
         - field: uesio/core.username
           desc: false
       requirewriteaccess: true
-    newapp:
-      collection: uesio/studio.app
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.description:
-        uesio/studio.color:
-        uesio/studio.icon:
-        uesio/studio.user:
-      init:
-        query: false
-        create: true
-      defaults:
-        - field: uesio/studio.user
-          valueSource: VALUE
-          value: $User{id}
-        - field: uesio/studio.user->uesio/core.uniquekey
-          valueSource: VALUE
-          value: $User{username}
     neworg:
       collection: uesio/core.user
       fields:
@@ -105,10 +86,9 @@ definition:
                                       uesio.id: add-app
                                       uesio.variant: uesio/studio.headernavicon
                                       signals:
-                                        - signal: wire/RESET
-                                          wire: newapp
-                                        - signal: panel/TOGGLE
-                                          panel: newApp
+                                        - signal: route/NAVIGATE_TO_ASSIGNMENT
+                                          collection: uesio/studio.app
+                                          viewtype: createnew
                     content:
                       - uesio/io.box:
                           uesio.variant: uesio/studio.calloutsection
@@ -127,10 +107,9 @@ definition:
                                 icon: add
                                 text: Create an App
                                 signals:
-                                  - signal: wire/RESET
-                                    wire: newapp
-                                  - signal: panel/TOGGLE
-                                    panel: newApp
+                                  - signal: route/NAVIGATE_TO_ASSIGNMENT
+                                    collection: uesio/studio.app
+                                    viewtype: createnew
                       - uesio/io.list:
                           uesio.id: appslist
                           wire: apps
@@ -203,66 +182,6 @@ definition:
           - uesio/core.view:
               view: profiletag
   panels:
-    newApp:
-      uesio.type: uesio/io.dialog
-      title: Create a New App
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.list:
-            uesio.id: editapplist
-            mode: EDIT
-            wire: newapp
-            components:
-              - uesio/io.grid:
-                  uesio.variant: uesio/io.two_columns
-                  uesio.styleTokens:
-                    root:
-                      - grid-cols-2
-                  items:
-                    - uesio/io.field:
-                        fieldId: uesio/studio.user
-                        uesio.id: new-app-user
-                        reference:
-                          requirewriteaccess: true
-                    - uesio/io.field:
-                        fieldId: uesio/studio.name
-                        uesio.id: new-app-name
-
-              - uesio/io.field:
-                  fieldId: uesio/studio.description
-                  uesio.id: new-app-description
-              - uesio/io.grid:
-                  uesio.variant: uesio/io.two_columns
-                  uesio.styleTokens:
-                    root:
-                      - gap-10
-                  items:
-                    - uesio/studio.colorpicker:
-                        fieldId: uesio/studio.color
-                    - uesio/studio.appiconpicker:
-                        fieldId: uesio/studio.icon
-                        colorFieldId: uesio/studio.color
-      actions:
-        - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            uesio.id: "save-new-app"
-            hotkey: "meta+s"
-            text: $Label{uesio/io.save}
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - "newapp"
-              - signal: "route/NAVIGATE"
-                path: "app/${uesio/core.uniquekey}"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: $Label{uesio/io.cancel}
-            signals:
-              - signal: "panel/TOGGLE"
-                panel: "newApp"
-              - signal: "wire/RESET"
-                wire: newapp
     newOrg:
       uesio.type: uesio/io.dialog
       title: Create a New Organization

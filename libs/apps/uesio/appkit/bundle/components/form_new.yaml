@@ -3,6 +3,10 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: content
+properties:
+  - type: SIGNALS
+    name: onCreateSignals
+    label: On Create Signals
 definition:
   - uesio/io.item:
       wire: $Prop{wire}
@@ -21,6 +25,9 @@ definition:
               - uesio/io.group:
                   components:
                     - uesio/io.button:
+                        uesio.display:
+                          - type: hasNoValue
+                            value: $Prop{onCreateSignals}
                         signals:
                           - signal: wire/SAVE
                             wires:
@@ -29,6 +36,14 @@ definition:
                             collection: $Collection{id}
                             viewtype: detail
                             recordid: ${uesio/core.id}
+                        text: Create $Collection{label}
+                        hotkey: "meta+s"
+                        uesio.variant: uesio/appkit.primary
+                    - uesio/io.button:
+                        uesio.display:
+                          - type: hasValue
+                            value: $Prop{onCreateSignals}
+                        signals: $Prop{onCreateSignals}
                         text: Create $Collection{label}
                         hotkey: "meta+s"
                         uesio.variant: uesio/appkit.primary

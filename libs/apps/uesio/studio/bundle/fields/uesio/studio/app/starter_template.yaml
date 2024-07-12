@@ -1,0 +1,4 @@
+name: starter_template
+type: TEXT
+label: Starter Template
+createOnly: true
