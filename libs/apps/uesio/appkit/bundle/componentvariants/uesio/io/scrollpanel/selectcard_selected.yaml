@@ -1,0 +1,11 @@
+name: selectcard_selected
+label: Select Card
+public: true
+extends: uesio/appkit.selectcard
+definition:
+  uesio.styleTokens:
+    root:
+      - border-slate-800
+      - cursor-default
+      - after:content-["radio\\_button\\_checked"]
+      - after:text-slate-800

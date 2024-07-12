@@ -1,0 +1,20 @@
+name: selectcard
+label: Select Card
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - border-2
+      - border-slate-200
+      - rounded-lg
+      - p-6
+      - cursor-pointer
+      - relative
+      - after:right-4
+      - after:content-["radio\\_button\\_unchecked"]
+      - after:font-[Material_Icons]
+      - after:text-2xl
+      - after:text-slate-200
+      - after:absolute
+      - after:top-3
+      - after:pointer-events-none
