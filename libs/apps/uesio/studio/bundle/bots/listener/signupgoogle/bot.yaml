@@ -1,0 +1,10 @@
+name: signupgoogle
+type: LISTENER
+dialect: TYPESCRIPT
+params:
+  - name: username
+    type: TEXT
+    required: true
+  - name: email
+    type: TEXT
+    required: true
