@@ -72,12 +72,19 @@ definition:
                     wire: app
                     avataricon: web
                     subtitle: $Text{${uesio/studio.user->uniquekey}/${uesio/studio.name}}
-                    onCreateSignals:
-                      - signal: wire/SAVE
-                        wires:
-                          - app
-                      - signal: "route/NAVIGATE"
-                        path: $Text{app/${uesio/core.uniquekey}}
+                    hideNewButton: true
+                    extra_actions:
+                      - uesio/io.button:
+                          text: Create $Collection{label}
+                          hotkey: "meta+s"
+                          uesio.variant: uesio/appkit.primary
+                          uesio.id: save-new-app
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - app
+                            - signal: "route/NAVIGATE"
+                              path: app/${uesio/core.uniquekey}
                     content:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection
