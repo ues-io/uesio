@@ -66,7 +66,9 @@ Cypress.Commands.add("login", () => {
 Cypress.Commands.add(
 	"getByIdFragment",
 	(elementType: string, idFragment: string, timeout?: number) =>
-		cy.get(idContainsSelector(elementType, idFragment), { timeout })
+		cy.get(idContainsSelector(elementType, idFragment), {
+			timeout: timeout || 1000,
+		})
 )
 
 Cypress.Commands.add(
@@ -85,6 +87,10 @@ Cypress.Commands.add(
 // Gets an input element whose id contains a given string, and types a string into it
 Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
 	cy.get(idContainsSelector("input", idFragment)).type(value)
+})
+
+Cypress.Commands.add("typeInTextArea", (idFragment: string, value: string) => {
+	cy.get(idContainsSelector("textarea", idFragment)).type(value)
 })
 
 // Clears an input element whose id contains a given string
@@ -231,6 +237,10 @@ declare global {
 				value: string
 			): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
+			typeInTextArea(
+				inputIdFragment: string,
+				value: string
+			): Chainable<void>
 			clearInput(inputIdFragment: string): Chainable<void>
 			getInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
@@ -272,7 +282,7 @@ function createWorkspaceInApp(workspaceName: string, appName: string) {
 function createApp(appName: string) {
 	cy.clickButton("uesio/io.button:add-app")
 	cy.typeInInput("new-app-name", appName)
-	cy.typeInInput("new-app-description", "E2E Test App")
+	cy.typeInTextArea("new-app-description", "E2E Test App")
 	cy.clickButton("save-new-app")
 	// This is incredibly flaky, not sure what the issue is, but going to lighten the assertion
 	// cy.url().should("eq", Cypress.config().baseUrl + getAppBasePath(appName))
