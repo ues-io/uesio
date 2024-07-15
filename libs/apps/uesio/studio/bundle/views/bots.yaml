@@ -97,5 +97,5 @@ definition:
                             value: ${uesio/studio.namespace}
                         signals:
                           - signal: route/NAVIGATE
-                            path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}?collection=${uesio/studio.collection}
+                            path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}
                     pagesize: 10

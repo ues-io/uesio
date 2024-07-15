@@ -109,20 +109,6 @@ definition:
                                     componentsignal: UPLOAD_FILE
                                     targettype: specific
                                     componentid: botcontent
-                                  - signal: wire/LOAD
-                                    wires:
-                                      - bots
-                                      - attachments
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: SET_READ_MODE
-                                    targettype: multiple
-                                    target: bot
-                                  - signal: component/CALL
-                                    component: uesio/io.item
-                                    componentsignal: SET_READ_MODE
-                                    targettype: specific
-                                    target: botsItem
                             - uesio/io.button:
                                 uesio.variant: uesio/io.secondary
                                 text: $Label{uesio/io.cancel}
@@ -216,6 +202,21 @@ definition:
                                 uesio.id: botcontent
                                 displayAs: TEXT
                                 language: $Record{bots:uesio/studio.dialect}
+                                onUploadSignals:
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - bots
+                                      - attachments
+                                  - signal: component/CALL
+                                    component: uesio/io.list
+                                    componentsignal: SET_READ_MODE
+                                    targettype: multiple
+                                    target: bot
+                                  - signal: component/CALL
+                                    component: uesio/io.item
+                                    componentsignal: SET_READ_MODE
+                                    targettype: specific
+                                    target: botsItem
                                 typeDefinitionFileURIs:
                                   - $StaticFile{/ui/types/server/bots.d.ts}
                                   - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
