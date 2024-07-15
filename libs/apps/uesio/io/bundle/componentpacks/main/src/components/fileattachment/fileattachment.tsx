@@ -74,6 +74,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 			},
 			file
 		)
+		record.setAll(uploadResult)
 		if (onUploadSignals) {
 			await api.signal.getHandler(
 				onUploadSignals,
