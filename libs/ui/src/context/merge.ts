@@ -51,6 +51,7 @@ type MergeType =
 	| "ConfigValue"
 	| "ConditionValue"
 	| "FieldMode"
+	| "FeatureFlag"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -212,6 +213,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 			? context.merge(parts[1])
 			: context.merge(parts[2])
 	},
+	FeatureFlag: (expression, context) =>
+		context.getFeatureFlag(expression)?.value,
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""

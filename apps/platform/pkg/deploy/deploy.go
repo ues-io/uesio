@@ -16,7 +16,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -57,6 +59,34 @@ type DeployOptions struct {
 	Upsert     bool
 	Connection wire.Connection
 	Prefix     string
+}
+
+func GenerateToWorkspace(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session, extraWriter io.Writer) error {
+	buf := new(bytes.Buffer)
+	var zipWriter *zip.Writer
+	// If we were requested to return a ZIP file,
+	// then we need to write the generated ZIP both to the HTTP response body
+	// and to the workspace (via buf), so we need a MultiWriter
+	if extraWriter != nil {
+		output := types.MultiWriteCloser(extraWriter, buf)
+		zipWriter = zip.NewWriter(output)
+	} else {
+		// Otherwise we just want to generate to the workspace
+		zipWriter = zip.NewWriter(buf)
+	}
+	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session); err != nil {
+		zipWriter.Close()
+		return err
+	}
+	if err := zipWriter.Flush(); err != nil {
+		return err
+	}
+	if err := zipWriter.Close(); err != nil {
+		return err
+	}
+
+	return DeployWithOptions(io.NopCloser(buf), session, &DeployOptions{Upsert: true, Connection: connection})
+
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {

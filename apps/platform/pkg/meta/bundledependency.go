@@ -2,27 +2,6 @@ package meta
 
 import "fmt"
 
-func NewBundleDependency(namespace, bundleUniqueKey, workspaceUniqueKey string) (*BundleDependency, error) {
-
-	return &BundleDependency{
-		App: &App{
-			BuiltIn: BuiltIn{
-				UniqueKey: namespace,
-			},
-		},
-		Bundle: &Bundle{
-			BuiltIn: BuiltIn{
-				UniqueKey: bundleUniqueKey,
-			},
-		},
-		Workspace: &Workspace{
-			BuiltIn: BuiltIn{
-				UniqueKey: workspaceUniqueKey,
-			},
-		},
-	}, nil
-}
-
 type BundleDependency struct {
 	BuiltIn   `yaml:",inline"`
 	Workspace *Workspace `json:"uesio/studio.workspace"`

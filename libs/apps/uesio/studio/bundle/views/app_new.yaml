@@ -24,7 +24,7 @@ definition:
           value: $User{username}
         - field: uesio/studio.starter_template
           valueSource: VALUE
-          value: uesio/appkit
+          value: $If{[$FeatureFlag{use_starter_templates}][uesio/appkit:v0.0.1][]}
     starter:
       collection: uesio/studio.bundlelisting
       fields:
@@ -32,6 +32,7 @@ definition:
         uesio/studio.title:
         uesio/studio.description:
         uesio/studio.show_starter_template:
+        uesio/studio.starter_template_version:
         uesio/studio.starter_template_description:
       conditions:
         - field: uesio/studio.show_starter_template
@@ -235,7 +236,7 @@ definition:
                                                     - signal: wire/UPDATE_RECORD
                                                       wire: app
                                                       field: uesio/studio.starter_template
-                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
                                         - uesio/io.card:
                                             title: Empty App
                                             scrollpanelVariant: uesio/appkit.selectcard
