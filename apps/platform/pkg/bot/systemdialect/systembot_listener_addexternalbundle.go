@@ -42,7 +42,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, err
 	}
 
-	newBundle, err := getBundleFromVersion(appID, version, "")
+	newBundle, err := getBundleFromVersion(appID, version)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 
 }
 
-func getBundleFromVersion(namespace, version, description string) (*meta.Bundle, error) {
+func getBundleFromVersion(namespace, version string) (*meta.Bundle, error) {
 
 	major, minor, patch, err := meta.ParseVersionString(version)
 	if err != nil {

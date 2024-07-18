@@ -1,0 +1,6 @@
+name: starter
+dialect: JAVASCRIPT
+label: Starter
+type: GENERATOR
+params:
+public: true

@@ -255,6 +255,12 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
+	if !isExternalIntegrationCollection(op) {
+		if err = connection.SetRecordAccessTokens(op, session); err != nil {
+			return err
+		}
+	}
+
 	err = runAfterSaveBots(op, connection, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
@@ -317,14 +323,6 @@ func SaveOps(batch []*wire.SaveOp, connection wire.Connection, session *sess.Ses
 			return err
 		}
 
-	}
-
-	for _, op := range batch {
-		if !isExternalIntegrationCollection(op) {
-			if err = connection.SetRecordAccessTokens(op, session); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

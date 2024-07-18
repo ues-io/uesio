@@ -1,4 +1,5 @@
 name: uesio/appkit
+starterTemplateBot: uesio/appkit.starter
 dependencies:
   uesio/builder:
     version: v0.0.1
