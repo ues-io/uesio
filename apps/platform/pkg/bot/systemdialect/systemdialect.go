@@ -120,7 +120,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	case "listener:uesio/studio.createsite":
 		botFunction = runCreateSiteListenerBot
 	case "listener:uesio/studio.workspacetruncate":
-		botFunction = RunWorkspaceTruncateListenerBot
+		botFunction = runWorkspaceTruncateListenerBot
 	case "listener:uesio/studio.resetrecordaccesstokens":
 		botFunction = runResetRecordAccessTokensListenerBot
 	case "listener:uesio/studio.setworkspaceuser":
@@ -131,6 +131,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runCheckAvailabilityBot
 	case "listener:uesio/studio.addexternalbundle":
 		botFunction = runAddExternalBundleListenerBot
+	case "listener:uesio/studio.getstarterparams":
+		botFunction = runGetStarterParamsBot
 	}
 
 	if botFunction == nil {

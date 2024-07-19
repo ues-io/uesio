@@ -62,9 +62,8 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		"wire.record.updated",
 		(e) => {
 			if (!onUpdate || !e.detail || !wire) return
-			const { wireId, recordId, field, value } = e.detail
+			const { wireId, recordId, field, value, record } = e.detail
 			if (wireId !== wire?.getFullId()) return
-			const record = wire?.getFirstRecord()
 			if (!record || recordId !== record?.getId()) return
 			onUpdate?.(field, value, record)
 		},

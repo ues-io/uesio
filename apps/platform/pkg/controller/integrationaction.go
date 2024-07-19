@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
@@ -203,7 +204,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filejson.RespondJSON(w, r, &IntegrationActionsResponse{
-		Inputs: getParamResponse(actionParams),
+		Inputs: bot.GetParamResponse(actionParams),
 	})
 }
 

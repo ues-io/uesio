@@ -11,16 +11,19 @@ export default (
 	value: FieldValue,
 	record: WireRecord
 ) => {
-	const wire = record.getWire()
 	const recordId = record.id
 	dispatch(
 		updateRecord({
 			recordId,
 			record: value,
-			entity: wire.getFullId(),
+			entity: record.getWire().getFullId(),
 			path,
 		})
 	)
+
+	const wire = context.getWire(record.getWire().getId())
+
+	if (!wire) return context
 
 	const fullPath = path.join("->")
 

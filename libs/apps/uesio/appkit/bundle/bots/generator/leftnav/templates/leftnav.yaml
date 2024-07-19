@@ -1,0 +1,4 @@
+wires:
+components:
+  - uesio/io.text:
+      text: Hello Generator World

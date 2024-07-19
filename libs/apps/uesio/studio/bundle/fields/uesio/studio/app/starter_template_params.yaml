@@ -1,0 +1,4 @@
+name: starter_template_params
+type: MAP
+label: Starter Template Params
+createOnly: true

@@ -18,6 +18,7 @@ bots:
   uesio/studio.createbundle: true
   uesio/studio.createsite: true
   uesio/studio.workspacetruncate: true
+  uesio/studio.getstarterparams: true
   uesio/studio.setworkspaceuser: true
   uesio/studio.resetrecordaccesstokens: true
   uesio/studio.select_plan: true

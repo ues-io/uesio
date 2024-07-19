@@ -1,0 +1,61 @@
+wires:
+components:
+  - uesio/io.viewlayout:
+    left:
+      - uesio/crm.nav:
+          crumbs:
+            - uesio/io.group:
+                uesio.variant: uesio/appkit.breadcrumbs
+                components:
+                  - uesio/appkit.icontile:
+                      tileVariant: uesio/appkit.breadcrumb
+                      title: Home
+                      icon: home
+    content:
+      - uesio/io.box:
+          uesio.variant: uesio/appkit.dashboarditem
+          components:
+            - uesio/io.titlebar:
+                uesio.variant: uesio/appkit.main
+                title: Hi $User{firstname}!
+                subtitle: Welcome to your AppKit app.
+                avatar:
+                  - uesio/io.text:
+                      uesio.variant: uesio/io.icon
+                      text: home
+            - uesio/io.box:
+                uesio.variant: uesio/appkit.scrollsection
+                components:
+                  - uesio/io.grid:
+                      uesio.variant: uesio/appkit.two_columns
+                      uesio.styleTokens:
+                        root:
+                          - lg:grid-rows-1
+                      items:
+                        - uesio/appkit.section_dashboard:
+                            title: Cool Dashboard Item
+                            content:
+                              - uesio/io.emptystate:
+                                  title: meh
+                        - uesio/appkit.section_dashboard:
+                            title: Leads This Week
+                            content:
+                              - uesio/io.emptystate:
+                                  title: meh
+                  - uesio/io.grid:
+                      uesio.variant: uesio/appkit.three_columns
+                      uesio.styleTokens:
+                        root:
+                          - lg:grid-rows-1
+                      items:
+                        - uesio/appkit.section_dashboard:
+                            title: New Leads
+                            content:
+
+                        - uesio/appkit.section_dashboard:
+                            title: My Tasks
+                            content:
+
+                        - uesio/appkit.section_dashboard:
+                            title: My Events
+                            content:

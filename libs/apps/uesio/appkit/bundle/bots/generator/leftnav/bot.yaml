@@ -1,8 +1,6 @@
-name: starter
+name: leftnav
 dialect: JAVASCRIPT
 label: Starter
 type: GENERATOR
 params:
-  - name: test
-    prompt: Test Parameter
 public: true
