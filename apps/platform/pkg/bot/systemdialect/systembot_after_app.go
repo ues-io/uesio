@@ -63,6 +63,16 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
+	starterTemplateParams, err := appInsert.GetField("uesio/studio.starter_template_params")
+	if err != nil {
+		return err
+	}
+
+	starterTemplateParamsMap, ok := starterTemplateParams.(map[string]interface{})
+	if !ok {
+		starterTemplateParamsMap = map[string]interface{}{}
+	}
+
 	bundleUniqueKey := strings.Join([]string{starterApp, major, minor, patch}, ":")
 
 	newWorkspace := &meta.Workspace{
@@ -139,7 +149,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	return deploy.GenerateToWorkspace(generatorNamespace, generatorName, nil, connection, wsSession, nil)
+	return deploy.GenerateToWorkspace(generatorNamespace, generatorName, starterTemplateParamsMap, connection, wsSession, nil)
 }
 
 func cascadeDeleteWorkspaces(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {

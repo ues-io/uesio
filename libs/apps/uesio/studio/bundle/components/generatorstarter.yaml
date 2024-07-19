@@ -1,0 +1,22 @@
+name: generatorstarter
+pack: main
+entrypoint: components/generatorstarter/generatorstarter
+utilities:
+  - uesio/io.button
+  - uesio/io.dialog
+  - uesio/io.field
+  - uesio/io.grid
+  - uesio/io.metadatafield
+  - uesio/io.textfield
+  - uesio/io.dialogplain
+  - uesio/io.dynamicform
+  - uesio/io.group
+  - uesio/io.titlebar
+variants:
+  - uesio/io.button:uesio/io.secondary
+  - uesio/io.button:uesio/io.primary
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.dialog:uesio/io.default
+  - uesio/io.listmenu:uesio/io.default
+  - uesio/io.iconlabel:uesio/io.default
+  - uesio/io.titlebar:uesio/io.dialog

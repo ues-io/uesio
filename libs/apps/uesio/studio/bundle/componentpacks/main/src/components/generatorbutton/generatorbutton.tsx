@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { MutableRefObject, useRef, useState } from "react"
 import {
 	api,
 	param,
@@ -22,9 +22,20 @@ type GeneratorButtonDefinition = {
 	hotkey?: string
 }
 
-interface FormProps {
+interface DialogProps {
 	generator: metadata.MetadataKey
 	setOpen: (value: boolean) => void
+}
+
+interface FormProps {
+	generator: metadata.MetadataKey
+	wireRef?: MutableRefObject<wire.Wire | undefined>
+	params?: param.ParamDefinition[]
+	onUpdate?: (
+		field: string,
+		value: wire.FieldValue,
+		record: wire.WireRecord
+	) => void
 }
 
 const getDisplayConditionsFromBotParamConditions = (
@@ -61,12 +72,28 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({
 })
 
 const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
+	const { context, generator, params, wireRef, onUpdate } = props
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	if (!params) return null
+	return (
+		<DynamicForm
+			id={generator}
+			context={context}
+			content={params.map((def) => getLayoutFieldFromParamDef(def))}
+			fields={getWireFieldsFromParams(params)}
+			wireRef={wireRef}
+			onUpdate={onUpdate}
+			initialValue={getInitialValueFromParams(params)}
+		/>
+	)
+}
+
+const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
 	const { context, generator, setOpen } = props
 
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
 	const Dialog = component.getUtility("uesio/io.dialog")
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const Group = component.getUtility("uesio/io.group")
 	const Button = component.getUtility("uesio/io.button")
 
@@ -124,16 +151,11 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					</Group>
 				}
 			>
-				<DynamicForm
-					id={generator}
+				<GeneratorForm
 					context={context}
-					content={params.map((def) =>
-						getLayoutFieldFromParamDef(def)
-					)}
-					fields={getWireFieldsFromParams(params)}
-					submitLabel="Generate"
+					params={params}
 					wireRef={wireRef}
-					initialValue={getInitialValueFromParams(params)}
+					generator={generator}
 				/>
 			</Dialog>
 		</FloatingPortal>
@@ -167,7 +189,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 				onClick={onClick}
 			/>
 			{open && (
-				<GeneratorForm
+				<GeneratorDialog
 					setOpen={setOpen}
 					generator={generator}
 					context={context}
@@ -177,5 +199,5 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 	)
 }
 
-export { GeneratorForm }
+export { GeneratorDialog, GeneratorForm }
 export default GeneratorButton

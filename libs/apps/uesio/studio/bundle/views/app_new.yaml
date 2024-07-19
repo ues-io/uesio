@@ -12,6 +12,7 @@ definition:
         uesio/studio.icon:
         uesio/studio.user:
         uesio/studio.starter_template:
+        uesio/studio.starter_template_params:
       init:
         query: false
         create: true
@@ -206,7 +207,7 @@ definition:
                                                     - type: mergeValue
                                                       sourceValue: ${app:uesio/studio.starter_template}
                                                       operator: EQUALS
-                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
                                                   scrollpanelVariant: uesio/appkit.selectcard_selected
                                                   content:
                                                     - uesio/io.text:
@@ -222,7 +223,7 @@ definition:
                                                     - type: mergeValue
                                                       operator: NOT_EQUALS
                                                       sourceValue: ${app:uesio/studio.starter_template}
-                                                      value: ${uesio/studio.app->uesio/studio.fullname}
+                                                      value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
                                                   scrollpanelVariant: uesio/appkit.selectcard
                                                   content:
                                                     - uesio/io.text:
@@ -282,3 +283,23 @@ definition:
                                             components:
                                               - uesio/io.text:
                                                   text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          uesio.display:
+                            - type: hasValue
+                              value: ${uesio/studio.starter_template}
+                          components:
+                            - uesio/io.titlebar:
+                                title: Starter Template Options
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.grid:
+                                uesio.styleTokens:
+                                  root:
+                                    - grid-cols-2
+                                    - gap-6
+                                items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/studio.generatorstarter:
+                                            appWire: app
+                                            starterTemplate: ${uesio/studio.starter_template}

@@ -125,16 +125,6 @@ func serve(cmd *cobra.Command, args []string) {
 		middleware.AuthenticateVersion,
 	)
 
-	// The version router (Backwards Compat)
-	versionCompatPath := fmt.Sprintf("/version/%s/%s/%s", appParam, nsParam, versionParam)
-	vr_compat := r.PathPrefix(versionCompatPath).Subrouter()
-	vr_compat.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-		middleware.AuthenticateVersion,
-	)
-
 	// The site admin router
 	siteAdminPath := fmt.Sprintf("/siteadmin/%s/{site}", appParam)
 	sa := r.PathPrefix(siteAdminPath).Subrouter()
@@ -324,9 +314,6 @@ func serve(cmd *cobra.Command, args []string) {
 	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
 
-	// BACKWARDS Compat version routes for old CLI versions
-	vr_compat.HandleFunc(fmt.Sprintf("/metadata/types/{type}/list"), controller.MetadataList).Methods(http.MethodGet)
-
 	nsItemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list/%s", nsParam, groupingParam)
 	wr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
@@ -369,10 +356,6 @@ func serve(cmd *cobra.Command, args []string) {
 	// Version context specific routes
 	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
 	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")
-
-	// BACKWARDS Compat version routes for old CLI versions
-	vr_compat.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
-	vr_compat.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 
 	// Auth Routes
 	sr.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")

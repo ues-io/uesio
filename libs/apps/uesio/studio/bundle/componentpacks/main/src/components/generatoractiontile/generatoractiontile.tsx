@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { definition, component, hooks, metadata } from "@uesio/ui"
-import { GeneratorForm } from "../generatorbutton/generatorbutton"
+import { GeneratorDialog } from "../generatorbutton/generatorbutton"
 
 type GeneratorActionTileDefinition = {
 	generator: metadata.MetadataKey
@@ -53,7 +53,7 @@ const GeneratorActionTile: definition.UC<GeneratorActionTileDefinition> = (
 				</div>
 			</Tile>
 			{open && (
-				<GeneratorForm
+				<GeneratorDialog
 					setOpen={setOpen}
 					generator={generator}
 					context={context}
