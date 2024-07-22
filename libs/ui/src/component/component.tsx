@@ -189,7 +189,8 @@ function addSlotComponentContext(
 	componentType: string | undefined,
 	path: string,
 	slotDefs: SlotDef[] | null | undefined,
-	definition: DefinitionMap
+	definition: DefinitionMap,
+	slotContext?: Context
 ) {
 	return slotDefs && slotDefs.length
 		? context.addComponentFrame(DECLARATIVE_COMPONENT, {
@@ -202,7 +203,7 @@ function addSlotComponentContext(
 					}),
 					{}
 				),
-				slotContext: context,
+				slotContext,
 				path,
 			} as DeclarativeComponentSlotContext)
 		: context
