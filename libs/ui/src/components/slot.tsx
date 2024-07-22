@@ -27,7 +27,7 @@ const Slot: UC<SlotDefinition> = (props) => {
 			definition={declarativeComponentSlotContext.slotDefinitions}
 			listName={name}
 			path={declarativeComponentSlotContext.path}
-			context={declarativeComponentSlotContext.slotContext}
+			context={declarativeComponentSlotContext.slotContext || context}
 			componentType={componentType}
 		/>
 	)
