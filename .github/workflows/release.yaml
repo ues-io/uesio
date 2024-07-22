@@ -111,7 +111,7 @@ jobs:
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: binaries-${{ matrix.artifact_name }}
           path: |
             apps/cli/dist/bin/${{ matrix.artifact_name }}
   upload_release_binaries:
@@ -125,6 +125,8 @@ jobs:
         with:
           name: binaries
           path: binaries
+          pattern: binaries-*
+          merge-multiple: true
       - name: Upload release artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@v2
         with:
