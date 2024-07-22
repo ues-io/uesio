@@ -86,6 +86,7 @@ type DeclarativeComponentSlotContext = {
 	componentType: MetadataKey
 	path: string
 	slotDefinitions: Record<string, DefinitionMap>
+	slotContext: Context
 }
 
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
@@ -183,6 +184,30 @@ function addDefaultPropertyAndSlotValues(
 	}
 }
 
+function addSlotComponentContext(
+	context: Context,
+	componentType: string | undefined,
+	path: string,
+	slotDefs: SlotDef[] | null | undefined,
+	definition: DefinitionMap
+) {
+	return slotDefs && slotDefs.length
+		? context.addComponentFrame(DECLARATIVE_COMPONENT, {
+				componentType,
+				// TODO: Support non-top-level slots using the path property
+				slotDefinitions: slotDefs.reduce(
+					(acc, slot) => ({
+						...acc,
+						[slot.name]: definition[slot.name],
+					}),
+					{}
+				),
+				slotContext: context,
+				path,
+			} as DeclarativeComponentSlotContext)
+		: context
+}
+
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const { componentType, context, definition, path } = props
 	if (!componentType) return null
@@ -201,23 +226,13 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	)
 	// Add a Props frame containing any Slots, so that any Slot components
 	// which are children of this component can access the slot definitions.
-	const actualContext =
-		slots && slots.length
-			? context.addComponentFrame(DECLARATIVE_COMPONENT, {
-					componentType,
-					// TODO: Support non-top-level slots using the path property
-					slotDefinitions: slots.reduce(
-						(acc, slot) => ({
-							...acc,
-							[slot.name]: (definition as DefinitionMap)[
-								slot.name
-							],
-						}),
-						{}
-					),
-					path,
-				} as DeclarativeComponentSlotContext)
-			: context
+	const actualContext = addSlotComponentContext(
+		context,
+		componentType,
+		path,
+		slots,
+		definition
+	)
 	return (
 		<Slot
 			context={actualContext}
@@ -301,6 +316,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 
 export {
 	addDefaultPropertyAndSlotValues,
+	addSlotComponentContext,
 	Component,
 	DECLARATIVE_COMPONENT,
 	getDefinitionFromVariant,

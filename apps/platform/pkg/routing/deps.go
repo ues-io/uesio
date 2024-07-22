@@ -173,11 +173,15 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 	return nil
 }
 
-func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, wireData map[string]meta.Group, session *sess.Session) (map[string]interface{}, error) {
+func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, wireData map[string]meta.Group, session *sess.Session) (map[string]interface{}, *yaml.Node, error) {
 
 	subParams := map[string]interface{}{}
+	var slotMapNode *yaml.Node
 	// Process the params
 	for i, prop := range viewDef.Content {
+		if prop.Kind == yaml.ScalarNode && prop.Value == "slots" {
+			slotMapNode = viewDef.Content[i+1]
+		}
 
 		if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
 
@@ -185,12 +189,12 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 				valueNode := viewDef.Content[i+1]
 				paramsNodes, err := meta.GetMapNodes(valueNode)
 				if err != nil {
-					return nil, err
+					return nil, nil, err
 				}
 				for _, param := range paramsNodes {
 					template, err := templating.NewWithFuncs(param.Node.Value, merge.RecordMergeFunc, merge.ServerMergeFuncs)
 					if err != nil {
-						return nil, err
+						return nil, nil, err
 					}
 
 					mergedValue, err := templating.Execute(template, merge.ServerMergeData{
@@ -199,14 +203,15 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 						WireData:    wireData,
 					})
 					if err != nil {
-						return nil, err
+						return nil, nil, err
 					}
+
 					subParams[param.Key] = mergedValue
 				}
 			}
 		}
 	}
-	return subParams, nil
+	return subParams, slotMapNode, nil
 }
 
 func processViewWires(view *meta.View, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, session *sess.Session) (map[string]meta.Group, error) {
@@ -269,7 +274,7 @@ func processViewWires(view *meta.View, viewInstanceID string, deps *preload.Prel
 	return wireData, nil
 }
 
-func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, session *sess.Session) (map[string]*yaml.Node, error) {
+func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotMapNode *yaml.Node, session *sess.Session) (map[string]*yaml.Node, error) {
 	components, err := meta.GetMapNode((*yaml.Node)(view.Definition), "components")
 	if err != nil {
 		return nil, err
@@ -279,9 +284,21 @@ func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, sessi
 		panels = nil
 	}
 
+	slots, err := meta.GetMapNode((*yaml.Node)(view.Definition), "slots")
+	if err != nil {
+		slots = nil
+	}
+
 	subViews := map[string]*yaml.Node{}
 
 	err = getComponentAreaDeps(components, deps, subViews, session)
+	if err != nil {
+		return nil, err
+	}
+
+	// We need to process slot definitions here in the same
+	// way we do them for declarative components.
+	err = getSlotDeps(meta.ParseSlotDef(slots), slotMapNode, deps, subViews, session)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +337,7 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
 		}
 
-		subParams, err := getSubParams(viewCompDef, params, wireData, session)
+		subParams, slotMapNode, err := getSubParams(viewCompDef, params, wireData, session)
 		if err != nil {
 			// If we get an error processing a subview, don't panic,
 			// just set the viewID to blank so that we don't server-side
@@ -328,7 +345,7 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 			viewID = ""
 		}
 
-		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, session)
+		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, slotMapNode, session)
 		if err != nil {
 			return err
 		}
@@ -337,7 +354,7 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 	return nil
 }
 
-func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, session *sess.Session) error {
+func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, slotMapNode *yaml.Node, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -351,7 +368,7 @@ func processView(key string, viewInstanceID string, deps *preload.PreloadMetadat
 		return err
 	}
 
-	subViews, err := processViewComponents(view, deps, session)
+	subViews, err := processViewComponents(view, deps, slotMapNode, session)
 	if err != nil {
 		return err
 	}
@@ -497,7 +514,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 
 	deps.Theme.AddItem(theme)
 
-	err = processView(route.ViewRef, "$root", deps, route.Params, session)
+	err = processView(route.ViewRef, "$root", deps, route.Params, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -725,6 +742,33 @@ func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subVie
 	return nil
 }
 
+func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+	if len(slotDefinitions) > 0 {
+		for _, slotDef := range slotDefinitions {
+			path := slotDef.GetFullPath()
+			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
+			if err != nil {
+				continue
+			}
+			for _, n := range matchingNodes {
+				err := getComponentAreaDeps(n, deps, subViews, session)
+				if err != nil {
+					return err
+				}
+			}
+			// If there were no matching nodes, and our slot has a default content,
+			// also parse through the default content
+			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {
+				err := getComponentAreaDeps((*yaml.Node)(slotDef.DefaultContent), deps, subViews, session)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 
 	compDef, err := addComponentType(compName, deps, subViews, session)
@@ -812,32 +856,8 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 		}
 	}
 
-	slotDefinitions := compDef.GetSlotDefinitions()
+	return getSlotDeps(compDef.GetSlotDefinitions(), compDefinitionMap, deps, subViews, session)
 
-	if len(slotDefinitions) > 0 {
-		for _, slotDef := range slotDefinitions {
-			path := slotDef.GetFullPath()
-			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
-			if err != nil {
-				continue
-			}
-			for _, n := range matchingNodes {
-				err := getComponentAreaDeps(n, deps, subViews, session)
-				if err != nil {
-					return err
-				}
-			}
-			// If there were no matching nodes, and our slot has a default content,
-			// also parse through the default content
-			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {
-				err := getComponentAreaDeps((*yaml.Node)(slotDef.DefaultContent), deps, subViews, session)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-	return nil
 }
 
 func isComponentLike(node *yaml.Node) bool {

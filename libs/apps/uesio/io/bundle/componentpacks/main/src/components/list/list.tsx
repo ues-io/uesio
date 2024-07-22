@@ -63,7 +63,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 		context
 	)
 
-	if (wire && !itemContexts.length) {
+	if (!itemContexts.length) {
 		return (
 			<component.Slot
 				definition={definition}

@@ -89,15 +89,22 @@ type ComponentWrapper Component
 // GetSlotDefinitions returns a slice of parsed slot definitions to use for dependency processing
 func (c *Component) GetSlotDefinitions() []*SlotDefinition {
 	if c.slotDefs == nil && c.Slots != nil {
-		parsedSlots := make([]*SlotDefinition, 0)
-		// Decode the slots into the parsedSlots
-		err := c.Slots.Decode(&parsedSlots)
-		if err != nil {
-			parsedSlots = []*SlotDefinition{}
-		}
-		c.slotDefs = parsedSlots
+		c.slotDefs = ParseSlotDef((*yaml.Node)(c.Slots))
 	}
 	return c.slotDefs
+}
+
+func ParseSlotDef(slotDef *yaml.Node) []*SlotDefinition {
+	if slotDef == nil {
+		return []*SlotDefinition{}
+	}
+	parsedSlots := make([]*SlotDefinition, 0)
+	// Decode the slots into the parsedSlots
+	err := slotDef.Decode(&parsedSlots)
+	if err != nil {
+		return []*SlotDefinition{}
+	}
+	return parsedSlots
 }
 
 // GetVariantPropertyNames returns a map/set of component properties of type: METADATA

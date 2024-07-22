@@ -1,61 +1,92 @@
 wires:
 components:
   - uesio/io.viewlayout:
-    left:
-      - uesio/crm.nav:
-          crumbs:
-            - uesio/io.group:
-                uesio.variant: uesio/appkit.breadcrumbs
-                components:
-                  - uesio/appkit.icontile:
-                      tileVariant: uesio/appkit.breadcrumb
-                      title: Home
-                      icon: home
-    content:
-      - uesio/io.box:
-          uesio.variant: uesio/appkit.dashboarditem
-          components:
-            - uesio/io.titlebar:
-                uesio.variant: uesio/appkit.main
-                title: Hi $User{firstname}!
-                subtitle: Welcome to your AppKit app.
-                avatar:
-                  - uesio/io.text:
-                      uesio.variant: uesio/io.icon
-                      text: home
-            - uesio/io.box:
-                uesio.variant: uesio/appkit.scrollsection
-                components:
-                  - uesio/io.grid:
-                      uesio.variant: uesio/appkit.two_columns
-                      uesio.styleTokens:
-                        root:
-                          - lg:grid-rows-1
-                      items:
-                        - uesio/appkit.section_dashboard:
-                            title: Cool Dashboard Item
-                            content:
-                              - uesio/io.emptystate:
-                                  title: meh
-                        - uesio/appkit.section_dashboard:
-                            title: Leads This Week
-                            content:
-                              - uesio/io.emptystate:
-                                  title: meh
-                  - uesio/io.grid:
-                      uesio.variant: uesio/appkit.three_columns
-                      uesio.styleTokens:
-                        root:
-                          - lg:grid-rows-1
-                      items:
-                        - uesio/appkit.section_dashboard:
-                            title: New Leads
-                            content:
-
-                        - uesio/appkit.section_dashboard:
-                            title: My Tasks
-                            content:
-
-                        - uesio/appkit.section_dashboard:
-                            title: My Events
-                            content:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: Home
+                          icon: home
+      content:
+        - uesio/io.box:
+            uesio.variant: uesio/appkit.dashboarditem
+            components:
+              - uesio/io.titlebar:
+                  uesio.variant: uesio/appkit.main
+                  title: Hi $User{firstname}!
+                  subtitle: Welcome to your AppKit app.
+                  avatar:
+                    - uesio/io.text:
+                        uesio.variant: uesio/io.icon
+                        text: home
+              - uesio/io.box:
+                  uesio.variant: uesio/appkit.scrollsection
+                  components:
+                    - uesio/io.grid:
+                        uesio.variant: uesio/appkit.two_columns
+                        uesio.styleTokens:
+                          root:
+                            - lg:grid-rows-1
+                        items:
+                          - uesio/appkit.section_dashboard:
+                              title: Dashboard Item 1
+                              content:
+                                - uesio/io.deck:
+                                    uesio.variant: uesio/appkit.tiles
+                                    emptyState:
+                                      - uesio/io.emptystate:
+                                          title: Replace me with real content.
+                                          subtitle: "Protip: Collections let you define a data model for your app."
+                                          icon: mist
+                          - uesio/appkit.section_dashboard:
+                              title: Dashboard Item 2
+                              content:
+                                - uesio/io.deck:
+                                    uesio.variant: uesio/appkit.tiles
+                                    emptyState:
+                                      - uesio/io.emptystate:
+                                          title: Replace me with real content.
+                                          subtitle: "Did you know?: Views specify the visual layout and behavior of your app."
+                                          icon: mist
+                    - uesio/io.grid:
+                        uesio.variant: uesio/appkit.three_columns
+                        uesio.styleTokens:
+                          root:
+                            - lg:grid-rows-1
+                        items:
+                          - uesio/appkit.section_dashboard:
+                              title: Dashboard Item 3
+                              content:
+                                - uesio/io.deck:
+                                    uesio.variant: uesio/appkit.tiles
+                                    emptyState:
+                                      - uesio/io.emptystate:
+                                          title: Replace me with real content.
+                                          subtitle: Make custom flows and validation with bots.
+                                          icon: mist
+                          - uesio/appkit.section_dashboard:
+                              title: Dashboard Item 4
+                              content:
+                                - uesio/io.deck:
+                                    uesio.variant: uesio/appkit.tiles
+                                    emptyState:
+                                      - uesio/io.emptystate:
+                                          title: Replace me with real content.
+                                          subtitle: Use a site to share your app with real users.
+                                          icon: mist
+                          - uesio/appkit.section_dashboard:
+                              title: Dashboard Item 5
+                              content:
+                                - uesio/io.deck:
+                                    uesio.variant: uesio/appkit.tiles
+                                    emptyState:
+                                      - uesio/io.emptystate:
+                                          title: Replace me with real content.
+                                          subtitle: Workspaces are where you can safely make changes to your app.
+                                          icon: mist

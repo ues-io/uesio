@@ -1,4 +1,139 @@
 wires:
+slots:
+  - name: crumbs
+  - name: extra
 components:
-  - uesio/io.text:
-      text: Hello Generator World
+  - uesio/io.scrollpanel:
+      uesio.variant: uesio/io.default
+      uesio.styleTokens:
+        inner:
+          - p-4
+      header:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - p-4
+                - grid
+                - gap-4
+            components:
+              - uesio/appkit.tile_app:
+                  title: CRM
+                  icon: bubble_chart
+                  iconcolor: "#fb7185"
+              - uesio/core.slot:
+                  name: crumbs
+      content:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - grid
+                - gap-8
+            components:
+              - uesio/io.navsection:
+                  content:
+                    - uesio/io.box:
+                        uesio.styleTokens:
+                          root:
+                            - flex
+                            - gap-2
+                            - items-center
+                        components:
+                          - uesio/io.tile:
+                              uesio.variant: uesio/io.nav
+                              uesio.styleTokens:
+                                root:
+                                  - flex
+                                  - grow
+                              content:
+                                - uesio/io.text:
+                                    text: Home
+                              avatar:
+                                - uesio/io.text:
+                                    uesio.variant: uesio/io.icon
+                                    text: home
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: home
+                    - uesio/io.box:
+                        uesio.styleTokens:
+                          root:
+                            - flex
+                            - gap-2
+                            - items-center
+                        components:
+                          - uesio/io.tile:
+                              uesio.variant: uesio/io.nav
+                              uesio.styleTokens:
+                                root:
+                                  - flex
+                                  - grow
+                              content:
+                                - uesio/io.text:
+                                    text: Settings
+                              avatar:
+                                - uesio/io.text:
+                                    uesio.variant: uesio/io.icon
+                                    text: settings
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: settings
+                    - uesio/io.box:
+                        uesio.styleTokens:
+                          root:
+                            - flex
+                            - gap-2
+                            - items-center
+                        components:
+                          - uesio/io.tile:
+                              uesio.variant: uesio/io.nav
+                              uesio.styleTokens:
+                                root:
+                                  - flex
+                                  - grow
+                              content:
+                                - uesio/io.text:
+                                    text: Users
+                              avatar:
+                                - uesio/io.text:
+                                    uesio.variant: uesio/io.iconoutline
+                                    text: badge
+                              signals:
+                                - signal: route/NAVIGATE_TO_ASSIGNMENT
+                                  collection: uesio/core.user
+                                  viewtype: list
+              - uesio/core.slot:
+                  name: extra
+      footer:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - p-4
+            components:
+              - uesio/io.titlebar:
+                  uesio.variant: uesio/appkit.item_small
+                  title: $User{username}
+                  subtitle: $User{profileLabel}
+                  avatar:
+                    - uesio/io.avatar:
+                        uesio.styleTokens:
+                          root:
+                            - h-8
+                            - w-8
+                        text: $User{initials}
+                        image: $User{picture}
+                  actions:
+                    - uesio/io.group:
+                        components:
+                          - uesio/io.button:
+                              uesio.variant: uesio/appkit.navicon
+                              icon: logout
+                              uesio.id: logout
+                              signals:
+                                - signal: "user/LOGOUT"
+                          - uesio/io.button:
+                              uesio.variant: uesio/appkit.navicon
+                              uesio.id: user-profile
+                              icon: account_circle
+                              signals:
+                                - signal: "route/NAVIGATE"
+                                  path: myprofile

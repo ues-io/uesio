@@ -13,6 +13,7 @@ definition:
           desc: false
         - field: uesio/tests.species
           desc: false
+      batchsize: 1
   components:
   panels:
     panel1:
