@@ -7,11 +7,12 @@ import {
 	ComponentSignalDescriptor,
 	SignalDefinition,
 } from "../definition/signal"
-import { UC } from "../definition/definition"
+import { DefinitionMap, UC } from "../definition/definition"
 import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 import { getFullyQualifiedKey } from "../bands/collection/class"
 import { hash } from "@twind/core"
+import { addSlotComponentContext } from "../component/component"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -50,6 +51,7 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 type ViewComponentDefinition = {
 	view: string
 	params?: Record<string, string>
+	slots?: DefinitionMap
 }
 
 const ViewArea: UC<ViewComponentDefinition> = ({
@@ -67,7 +69,7 @@ const ViewComponentId = "uesio/core.view"
 
 const View: UC<ViewComponentDefinition> = (props) => {
 	const { path, context, definition, componentType } = props
-	const { params, view: localViewDefId } = definition
+	const { params, slots = {}, view: localViewDefId } = definition
 	const viewDefId = getFullyQualifiedKey(
 		localViewDefId,
 		context.getNamespace()
@@ -111,7 +113,13 @@ const View: UC<ViewComponentDefinition> = (props) => {
 			definition={viewDef}
 			listName={DefaultSlotName}
 			path=""
-			context={viewContext}
+			context={addSlotComponentContext(
+				viewContext,
+				componentType,
+				path,
+				viewDef.slots,
+				slots
+			)}
 			componentType={componentType}
 		/>
 	)

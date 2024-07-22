@@ -37,7 +37,10 @@ const getSlotProps = (slotProps: component.SlotUtilityProps) =>
 					componentType
 				)?.slots?.find((slot) => slot.name === slotName)?.defaultContent
 				if (!content && defaultContent) {
-					return props as definition.BaseProps
+					return {
+						...props,
+						context: componentData.slotContext,
+					} as definition.BaseProps
 				}
 			}
 			return {
