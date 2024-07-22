@@ -123,7 +123,6 @@ jobs:
       - name: Download binary artifacts
         uses: actions/download-artifact@v4
         with:
-          name: binaries
           path: binaries
           pattern: binaries-*
           merge-multiple: true
