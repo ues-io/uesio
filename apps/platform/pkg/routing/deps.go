@@ -472,7 +472,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 
 	// Get the metadata list
 	appNames := session.GetContextNamespaces()
-	appData, err := datasource.GetAppData(session.Context(), appNames)
+	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
 	if err != nil {
 		return err
 	}

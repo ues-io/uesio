@@ -1,0 +1,19 @@
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: Users
+                          icon: badge
+                          iconVariant: uesio/io.iconoutline
+      content:
+        - uesio/core.view:
+            view: uesio/appkit.user_list_content
+            uesio.id: userListContent

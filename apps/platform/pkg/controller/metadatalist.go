@@ -54,7 +54,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		appNames = append(appNames, namespaces...)
 	}
 
-	appData, err := datasource.GetAppData(session.Context(), appNames)
+	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
 	if err != nil {
 		return nil, err
 	}

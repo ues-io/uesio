@@ -1,0 +1,46 @@
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: Users
+                          icon: badge
+                          iconVariant: uesio/io.iconoutline
+                          signals:
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/core.user
+                              viewtype: list
+                      - uesio/io.item:
+                          external:
+                            collection: uesio/core.user
+                            record: $Param{recordid}
+                          components:
+                            - uesio/appkit.icontile:
+                                uesio.context:
+                                  workspace:
+                                    name:
+                                    app:
+                                tileVariant: uesio/appkit.breadcrumb
+                                avatarVariant: uesio/appkit.breadcrumb
+                                title: ${uesio/core.firstname} ${uesio/core.lastname}
+                                initials: ${uesio/core.initials}
+                                imagefield: uesio/core.picture
+      content:
+        - uesio/core.view:
+            view: uesio/appkit.user_detail_content
+            uesio.id: detailcontent
+            params:
+              recordid: $Param{recordid}
+              signupmethod: uesio/crm.admin
+params:
+  recordid:
+    type: RECORD
+    required: true
+    collection: uesio/core.user

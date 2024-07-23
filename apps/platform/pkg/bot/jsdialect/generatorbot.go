@@ -64,7 +64,7 @@ func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
 
 // GetAppName returns the name of the current workspace's app
 func (gba *GeneratorBotAPI) GetApp() *AppAPI {
-	return gba.GetSession().GetApp()
+	return gba.GetSession().GetApp(gba.connection)
 }
 
 // GetWorkspaceName returns the name of the current workspace

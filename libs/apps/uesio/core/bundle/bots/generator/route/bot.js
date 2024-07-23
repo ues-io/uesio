@@ -6,6 +6,9 @@ function route(bot) {
 	if (params.bot && params.bot.startsWith(contextApp)) {
 		params.bot = params.bot.slice(contextApp.length + 1)
 	}
+	if (!params.params) {
+		params.params = ""
+	}
 	bot.generateFile(
 		`routes/${params.name}.yaml`,
 		params,
