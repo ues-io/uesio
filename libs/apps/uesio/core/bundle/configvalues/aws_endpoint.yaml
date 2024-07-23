@@ -1,0 +1,3 @@
+name: aws_endpoint
+managedBy: app
+store: environment

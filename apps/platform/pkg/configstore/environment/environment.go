@@ -39,6 +39,7 @@ var configValues = map[string]string{
 	"uesio/core.platform_filesource_credentials":  GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_CREDENTIALS", "uesio/core.aws"),
 	"uesio/core.platform_bundlestore_credentials": GetEnvWithDefault("UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS", "uesio/core.aws"),
 	"uesio/core.aws_region":                       os.Getenv("AWS_REGION"),
+	"uesio/core.aws_endpoint":                     os.Getenv("AWS_ENDPOINT"),
 	"uesio/aikit.aws_region":                      os.Getenv("AWS_REGION"),
 	"uesio/core.userfiles_bucket_name":            GetEnvWithDefault("UESIO_USERFILES_BUCKET_NAME", "uesio-userfiles"),
 	"uesio/core.db_host":                          GetRequiredEnv("UESIO_DB_HOST"),

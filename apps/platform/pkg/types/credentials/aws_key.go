@@ -5,6 +5,7 @@ type AwsKeyCredentials struct {
 	SecretAccessKey string `yaml:"secretAccessKey" json:"secret_access_key"`
 	SessionToken    string `yaml:"sessionToken" json:"session_token"`
 	Region          string `yaml:"region" json:"region"`
+	Endpoint        string `yaml:"endpoint" json:"endpoint"`
 }
 
 func (c *AwsKeyCredentials) IsNil() bool {
@@ -32,5 +33,10 @@ func (c *AwsKeyCredentials) Map(mapper EntryMapper) {
 		Name:  "region",
 		Type:  "configvalue",
 		Value: c.Region,
+	})
+	c.Endpoint = mapper(&CredentialEntry{
+		Name:  "endpoint",
+		Type:  "configvalue",
+		Value: c.Endpoint,
 	})
 }
