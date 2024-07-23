@@ -3,3 +3,4 @@ path: ${path}
 view: ${view}
 theme: ${theme}
 title: ${title}
+params: ${params}

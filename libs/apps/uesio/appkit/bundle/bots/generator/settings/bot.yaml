@@ -1,6 +1,6 @@
-name: home
+name: settings
 dialect: JAVASCRIPT
-label: Home
+label: Settings
 type: GENERATOR
 params:
 public: true

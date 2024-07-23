@@ -1,0 +1,27 @@
+wires:
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: Settings
+                          icon: settings
+      content:
+        - uesio/io.box:
+            uesio.variant: uesio/appkit.dashboarditem
+            components:
+              - uesio/io.titlebar:
+                  uesio.variant: uesio/appkit.main
+                  title: Settings
+                  subtitle: Add configuration settings here.
+                  avatar:
+                    - uesio/io.text:
+                        uesio.variant: uesio/io.icon
+                        text: settings

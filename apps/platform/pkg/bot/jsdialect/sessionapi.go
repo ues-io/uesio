@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 // SessionAPI and UserAPI expose a limited set of Session information for usage in Bots
@@ -104,7 +105,7 @@ func (s *SessionAPI) GetWorkspace() *WorkspaceAPI {
 	return nil
 }
 
-func (s *SessionAPI) GetApp() *AppAPI {
+func (s *SessionAPI) GetApp(connection wire.Connection) *AppAPI {
 	if s.appApi != nil {
 		return s.appApi
 	}
@@ -121,7 +122,7 @@ func (s *SessionAPI) GetApp() *AppAPI {
 
 	appApi.name = name
 
-	appData, err := datasource.GetAppData(s.session.Context(), []string{appName})
+	appData, err := datasource.GetAppData(s.session.Context(), []string{appName}, connection)
 	if err != nil {
 		return appApi
 	}

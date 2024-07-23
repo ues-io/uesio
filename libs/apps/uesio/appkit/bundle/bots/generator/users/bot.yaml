@@ -1,6 +1,6 @@
-name: home
+name: users
 dialect: JAVASCRIPT
-label: Home
+label: Users
 type: GENERATOR
 params:
 public: true

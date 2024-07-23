@@ -1,6 +1,6 @@
 name: leftnav
 dialect: JAVASCRIPT
-label: Starter
+label: Left Nav
 type: GENERATOR
 params:
 public: true

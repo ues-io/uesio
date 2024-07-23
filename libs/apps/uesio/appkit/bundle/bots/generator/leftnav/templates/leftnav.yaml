@@ -17,9 +17,9 @@ components:
                 - gap-4
             components:
               - uesio/appkit.tile_app:
-                  title: CRM
-                  icon: bubble_chart
-                  iconcolor: "#fb7185"
+                  title: ${appname}
+                  icon: ${icon}
+                  iconcolor: ${iconcolor}
               - uesio/core.slot:
                   name: crumbs
       content:

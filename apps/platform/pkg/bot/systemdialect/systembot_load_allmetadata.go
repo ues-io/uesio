@@ -292,7 +292,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 	}
 
-	appData, err := datasource.GetAppData(session.Context(), namespaces)
+	appData, err := datasource.GetAppData(session.Context(), namespaces, connection)
 	if err != nil {
 		return err
 	}

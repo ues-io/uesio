@@ -21,7 +21,7 @@ type NamespaceInfo struct {
 	Namespace string `json:"namespace"`
 }
 
-func GetAppData(ctx context.Context, namespaces []string) (map[string]NamespaceInfo, error) {
+func GetAppData(ctx context.Context, namespaces []string, connection wire.Connection) (map[string]NamespaceInfo, error) {
 	apps := meta.AppCollection{}
 
 	// Load in App Settings
@@ -41,6 +41,7 @@ func GetAppData(ctx context.Context, namespaces []string) (map[string]NamespaceI
 				ID: "uesio/studio.icon",
 			},
 		},
+		Connection: connection,
 	}, sess.GetStudioAnonSession(ctx))
 	if err != nil {
 		return nil, err
