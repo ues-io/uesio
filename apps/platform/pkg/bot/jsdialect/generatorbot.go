@@ -87,6 +87,10 @@ func (gba *GeneratorBotAPI) GetNamespace() string {
 	return gba.bot.GetNamespace()
 }
 
+func (gba *GeneratorBotAPI) PackageBundle(botKey string, params map[string]interface{}) error {
+	return nil
+}
+
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
 	return botCall(botKey, params, gba.session, gba.connection)
 }
