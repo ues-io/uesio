@@ -1,8 +1,9 @@
-package systemdialect
+package deploy
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"testing"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 func Test_resolveBundleParameters(t *testing.T) {
@@ -20,7 +21,9 @@ func Test_resolveBundleParameters(t *testing.T) {
 	}{
 		{
 			"no params or previous bundle",
-			args{},
+			args{
+				params: map[string]interface{}{},
+			},
 			0,
 			0,
 			1,
@@ -182,7 +185,14 @@ func Test_resolveBundleParameters(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotMajor, gotMinor, gotPatch, gotDescription := resolveBundleParameters(tt.args.params, tt.args.lastBundle)
+			tt.args.params["app"] = "testapp"
+			tt.args.params["workspaceName"] = "testworkspace"
+			options, err := NewCreateBundleOptions(tt.args.params)
+			if err != nil {
+				t.Errorf("error resolving params %v", err)
+				return
+			}
+			gotMajor, gotMinor, gotPatch, gotDescription := resolveBundleParameters(options, tt.args.lastBundle)
 			if gotMajor != tt.wantMajor {
 				t.Errorf("resolveBundleParameters() gotMajor = %v, want %v", gotMajor, tt.wantMajor)
 			}

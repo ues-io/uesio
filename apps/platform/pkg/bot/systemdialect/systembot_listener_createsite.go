@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -15,53 +16,53 @@ import (
 
 func runCreateSiteListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	firstName, err := getRequiredParameter(params, "firstname")
+	firstName, err := param.GetRequiredString(params, "firstname")
 	if err != nil {
 		return nil, err
 	}
 
-	lastName, err := getRequiredParameter(params, "lastname")
+	lastName, err := param.GetRequiredString(params, "lastname")
 	if err != nil {
 		return nil, err
 	}
 
-	username, err := getRequiredParameter(params, "username")
+	username, err := param.GetRequiredString(params, "username")
 	if err != nil {
 		return nil, err
 	}
 	username = strings.ToLower(username)
 
-	email, err := getRequiredParameter(params, "email")
+	email, err := param.GetRequiredString(params, "email")
 	if err != nil {
 		return nil, err
 	}
 
-	subdomain, err := getRequiredParameter(params, "subdomain")
+	subdomain, err := param.GetRequiredString(params, "subdomain")
 	if err != nil {
 		return nil, err
 	}
 
-	siteName, err := getRequiredParameter(params, "site")
+	siteName, err := param.GetRequiredString(params, "site")
 	if err != nil {
 		return nil, err
 	}
 
-	appID, err := getRequiredParameter(params, "app")
+	appID, err := param.GetRequiredString(params, "app")
 	if err != nil {
 		return nil, err
 	}
 
-	version, err := getRequiredParameter(params, "version")
+	version, err := param.GetRequiredString(params, "version")
 	if err != nil {
 		return nil, err
 	}
 
-	profile, err := getRequiredParameter(params, "profile")
+	profile, err := param.GetRequiredString(params, "profile")
 	if err != nil {
 		return nil, err
 	}
 
-	signupMethodName, err := getRequiredParameter(params, "signupmethod")
+	signupMethodName, err := param.GetRequiredString(params, "signupmethod")
 	if err != nil {
 		return nil, err
 	}

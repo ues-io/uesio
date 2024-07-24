@@ -10,8 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/deploy"
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -19,12 +21,12 @@ import (
 
 func runAddExternalBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	appID, err := getRequiredParameter(params, "app")
+	appID, err := param.GetRequiredString(params, "app")
 	if err != nil {
 		return nil, err
 	}
 
-	version, err := getRequiredParameter(params, "version")
+	version, err := param.GetRequiredString(params, "version")
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +68,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, err
 	}
 
-	err = createNewBundle(body, newBundle, params, connection, session)
+	err = deploy.CreateBundleFromData(body, newBundle, connection, session)
 	if err != nil {
 		return nil, err
 	}
