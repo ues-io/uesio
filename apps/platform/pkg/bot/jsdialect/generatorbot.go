@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -55,7 +56,7 @@ func (gba *GeneratorBotAPI) GetAppName() string {
 	if ws != nil {
 		return ws.GetAppFullName()
 	}
-	return gba.Params.Get("appName").(string)
+	return ""
 }
 
 func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
@@ -71,10 +72,9 @@ func (gba *GeneratorBotAPI) GetApp() *AppAPI {
 func (gba *GeneratorBotAPI) GetWorkspaceName() string {
 	ws := gba.session.GetWorkspace()
 	if ws != nil {
-		return ws.GetAppFullName()
-	} else {
-		return gba.Params.Get("workspaceName").(string)
+		return ws.Name
 	}
+	return ""
 }
 
 // GetName returns the name of the bot
@@ -87,8 +87,19 @@ func (gba *GeneratorBotAPI) GetNamespace() string {
 	return gba.bot.GetNamespace()
 }
 
-func (gba *GeneratorBotAPI) PackageBundle(botKey string, params map[string]interface{}) error {
-	return nil
+func (gba *GeneratorBotAPI) CreateBundle(description string) (map[string]interface{}, error) {
+	ws := gba.session.GetWorkspace()
+	if ws == nil {
+		return nil, errors.New("you must be in a workspace context to create a bundle in a generator")
+	}
+
+	return deploy.CreateBundle(&deploy.CreateBundleOptions{
+		AppName:       gba.GetAppName(),
+		WorkspaceName: gba.GetWorkspaceName(),
+		Description:   description,
+		ReleaseType:   "patch",
+	}, gba.connection, gba.session.RemoveWorkspaceContext())
+
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

@@ -24,7 +24,7 @@ type VersionParts struct {
 }
 
 type CreateBundleOptions struct {
-	AppID         string
+	AppName       string
 	WorkspaceName string
 	Version       *VersionParts
 	ReleaseType   string
@@ -32,7 +32,7 @@ type CreateBundleOptions struct {
 }
 
 func NewCreateBundleOptions(params map[string]interface{}) (*CreateBundleOptions, error) {
-	appID, err := param.GetRequiredString(params, "app")
+	appName, err := param.GetRequiredString(params, "app")
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func NewCreateBundleOptions(params map[string]interface{}) (*CreateBundleOptions
 		}
 	}
 	return &CreateBundleOptions{
-		AppID:         appID,
+		AppName:       appName,
 		WorkspaceName: workspaceName,
 		Version:       version,
 		Description:   description,
@@ -76,10 +76,10 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 		return nil, errors.New("Invalid Create options")
 	}
 
-	appID := options.AppID
+	appName := options.AppName
 	workspaceName := options.WorkspaceName
 
-	if bundlestore.IsSystemBundle(appID) {
+	if bundlestore.IsSystemBundle(appName) {
 		return nil, exceptions.NewForbiddenException("cannot create a bundle for a system app")
 	}
 
@@ -87,12 +87,12 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 
-	app, err := datasource.QueryAppForWrite(appID, commonfields.UniqueKey, session, connection)
+	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appID))
+		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appName))
 	}
 
-	workspace, err := datasource.QueryWorkspaceForWrite(appID+":"+workspaceName, commonfields.UniqueKey, session, connection)
+	workspace, err := datasource.QueryWorkspaceForWrite(appName+":"+workspaceName, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
 	}
@@ -136,13 +136,13 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 
 	major, minor, patch, description := resolveBundleParameters(options, lastBundle)
 
-	bundle, err := meta.NewBundle(appID, major, minor, patch, description)
+	bundle, err := meta.NewBundle(appName, major, minor, patch, description)
 	if err != nil {
 		return nil, err
 	}
 
 	source, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Namespace:  appID,
+		Namespace:  appName,
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
