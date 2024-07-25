@@ -274,7 +274,7 @@ definition:
                                                         continue: false
                                                         notify: true
                                                         signals:
-                                                          signal: notification/ADD_ERRORS
+                                                          - signal: notification/ADD_ERRORS
                                                     - signal: wire/LOAD
                                                       wires:
                                                         - loginmethods
@@ -294,7 +294,7 @@ definition:
                                                         continue: false
                                                         notify: true
                                                         signals:
-                                                          signal: notification/ADD_ERRORS
+                                                          - signal: notification/ADD_ERRORS
                                                     - signal: notification/ADD
                                                       text: "An email has been sent to the user!"
                                                       details: Now the password can be changed

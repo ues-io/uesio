@@ -686,14 +686,14 @@ const platform = {
 		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
-	): Promise<void> => {
+	): Promise<LoginResponse> => {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
 			context,
 			`/site/auth/${namespace}/${name}/forgotpassword/confirm`,
 			requestBody
 		)
-		return respondVoid(response)
+		return respondJSON(response)
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
 		const response = await postJSON(

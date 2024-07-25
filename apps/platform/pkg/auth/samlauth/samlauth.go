@@ -196,7 +196,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 
 	claims := sess.(samlsp.JWTSessionClaims)
 
-	user, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.session)
+	user, _, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.session)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -221,11 +221,11 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up")
 }
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot create a login")

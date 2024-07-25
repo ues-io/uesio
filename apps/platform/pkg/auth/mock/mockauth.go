@@ -44,7 +44,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
 		return
 	}
-	user, err := c.DoLogin(loginRequest)
+	user, _, err := c.DoLogin(loginRequest)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -52,21 +52,21 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	auth.LoginRedirectResponse(w, r, user, c.session)
 }
 
-func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
-		return nil, errors.New("Mock login:" + err.Error())
+		return nil, nil, errors.New("Mock login:" + err.Error())
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.session)
 }
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 	return errors.New("Mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Mock login: unfortunately you cannot change the password")
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+	return nil, errors.New("Mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Mock login: unfortunately you cannot change the password")
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+	return nil, errors.New("Mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 	return errors.New("Mock login: unfortunately you cannot create a login")

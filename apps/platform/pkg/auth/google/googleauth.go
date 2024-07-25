@@ -96,7 +96,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
 		return
 	}
-	user, err := c.DoLogin(loginRequest)
+	user, _, err := c.DoLogin(loginRequest)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -104,10 +104,10 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	auth.LoginRedirectResponse(w, r, user, c.session)
 }
 
-func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
 	validated, err := c.Validate(payload)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), validated.Subject, c.session)
 }
@@ -130,6 +130,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 		FederationID: validated.Subject,
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
+		SignupMethod: signupMethod.GetKey(),
 	}, c.connection, c.session)
 	if err != nil {
 		return err
@@ -141,11 +142,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 	validated, err := c.Validate(payload)
@@ -156,6 +157,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 		FederationID: validated.Subject,
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
+		SignupMethod: signupMethod.GetKey(),
 	}, c.connection, c.session)
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
