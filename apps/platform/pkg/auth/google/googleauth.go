@@ -142,7 +142,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
-func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
 }
 func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {

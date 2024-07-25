@@ -8,11 +8,26 @@ import (
 
 func runCreateSiteListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	options, err := deploy.NewCreateSiteOptions(params)
+	userOptions, err := deploy.NewCreateSiteOptions(params)
 	if err != nil {
 		return nil, err
 	}
 
-	return deploy.CreateSite(options, connection, session)
+	site, err := deploy.CreateSite(userOptions, connection, session)
+	if err != nil {
+		return nil, err
+	}
+
+	siteOptions, err := deploy.NewCreateUserOptions(site.ID, params)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = deploy.CreateUser(siteOptions, connection, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{}, nil
 
 }

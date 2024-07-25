@@ -22,7 +22,7 @@ func ResetPassword(ctx context.Context, signupMethodID string, payload map[strin
 		return nil, err
 	}
 
-	return authconn.ResetPassword(signupMethod, payload)
+	return authconn.ResetPassword(signupMethod, payload, false)
 }
 
 func ConfirmResetPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
