@@ -18,6 +18,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*preload.LoginResponse, error) {
+
+	signupMethod := loginMethod.SignupMethod
+	redirect := "/site/app/uesio/core/changepassword?signupmethod=" + signupMethod
+	username := user.Username
+
+	code := loginMethod.VerificationCode
+
+	redirectPath := redirect + "&code=" + code + "&username=" + username
+
+	return &preload.LoginResponse{
+		User:         preload.GetUserMergeData(session),
+		RedirectPath: redirectPath,
+		SessionId:    session.GetSessionId(),
+	}, nil
+}
+
 func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*preload.LoginResponse, error) {
 
 	site := session.GetSite()
@@ -78,10 +95,20 @@ func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 	filejson.RespondJSON(w, r, response)
 }
 
-func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, error) {
+func ResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) {
+
+	response, err := GetResetPasswordRedirectResponse(w, r, user, loginMethod, session)
+	if err != nil {
+		ctlutil.HandleError(w, err)
+		return
+	}
+	filejson.RespondJSON(w, r, response)
+}
+
+func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
 
 	if session.GetWorkspace() != nil {
-		return nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
+		return nil, nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
 	}
 
 	adminSession := sess.GetAnonSessionFrom(session)
@@ -89,19 +116,19 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 	// 4. Check for Existing User
 	loginMethod, err := GetLoginMethod(federationID, authSourceID, adminSession)
 	if err != nil {
-		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+		return nil, nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
 	if loginMethod == nil {
-		return nil, exceptions.NewNotFoundException("No account found with this login method")
+		return nil, nil, exceptions.NewNotFoundException("No account found with this login method")
 	}
 
 	user, err := GetUserByID(loginMethod.User.ID, adminSession, nil)
 	if err != nil {
-		return nil, exceptions.NewNotFoundException("failed Getting user Data: " + err.Error())
+		return nil, nil, exceptions.NewNotFoundException("failed Getting user Data: " + err.Error())
 	}
 
-	return user, nil
+	return user, loginMethod, nil
 }
 
 func Login(w http.ResponseWriter, r *http.Request, authSourceID string, session *sess.Session) {

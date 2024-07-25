@@ -1,7 +1,6 @@
 package cognito
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -51,41 +50,31 @@ func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-	var loginRequest map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
-	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
-		return
-	}
-	user, err := c.DoLogin(loginRequest)
-	if err != nil {
-		ctlutil.HandleError(w, err)
-		return
-	}
-	auth.LoginRedirectResponse(w, r, user, c.session)
+	ctlutil.HandleError(w, errors.New("Logging in directly with cognito is not supported"))
+	return
 }
 
-func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
 	ctx := c.session.Context()
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("You must enter a username")
+		return nil, nil, exceptions.NewBadRequestException("You must enter a username")
 	}
 	password, err := auth.GetRequiredPayloadValue(payload, "password")
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("You must enter a password")
+		return nil, nil, exceptions.NewBadRequestException("You must enter a password")
 	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
-		return nil, exceptions.NewBadRequestException("no client id provided in credentials")
+		return nil, nil, exceptions.NewBadRequestException("no client id provided in credentials")
 	}
 	poolID, ok := (*c.credentials)["poolid"]
 	if !ok {
-		return nil, exceptions.NewBadRequestException("no user pool provided in credentials")
+		return nil, nil, exceptions.NewBadRequestException("no user pool provided in credentials")
 	}
 	cfg, err := creds.GetAWSConfig(ctx, c.credentials)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException(err.Error())
+		return nil, nil, exceptions.NewBadRequestException(err.Error())
 	}
 
 	site := c.session.GetSiteTenantID()
@@ -105,13 +94,13 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, error)
 
 	result, err := client.AdminInitiateAuth(ctx, authTry)
 	if err != nil {
-		return nil, handleCognitoError(err)
+		return nil, nil, handleCognitoError(err)
 	}
 
 	parser := jwt.Parser{}
 	tokenObj, _, err := parser.ParseUnverified(*result.AuthenticationResult.IdToken, jwt.MapClaims{})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
 
@@ -131,12 +120,12 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return errors.New("Signup with cognito is not supported")
 }
 
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Password Reset with cognito is not supported")
+func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+	return nil, errors.New("Password Reset with cognito is not supported")
 }
 
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return errors.New("Password Reset with cognito is not supported")
+func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+	return nil, errors.New("Password Reset with cognito is not supported")
 }
 
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {

@@ -107,12 +107,13 @@ const forgotPasswordConfirm = async (
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
 	try {
-		await platform.forgotPasswordConfirm(
+		const response = await platform.forgotPasswordConfirm(
 			context,
 			mergedSignupMethod,
 			mergedPayload
 		)
-		return context
+		dispatch(setUser(response.user))
+		return responseRedirect(response, context)
 	} catch (error) {
 		const message = getErrorString(error)
 		return context.addErrorFrame([message])
@@ -127,8 +128,13 @@ const createLogin = async (
 	if (!payload) return context
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
-	await platform.createLogin(context, mergedSignupMethod, mergedPayload)
-	return context
+	try {
+		await platform.createLogin(context, mergedSignupMethod, mergedPayload)
+		return context
+	} catch (error) {
+		const message = getErrorString(error)
+		return context.addErrorFrame([message])
+	}
 }
 
 export default {

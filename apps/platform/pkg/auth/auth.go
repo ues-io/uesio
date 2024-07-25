@@ -53,8 +53,8 @@ type AuthConnection interface {
 	RequestLogin(http.ResponseWriter, *http.Request)
 	Signup(*meta.SignupMethod, map[string]interface{}, string) error
 	ConfirmSignUp(*meta.SignupMethod, map[string]interface{}) error
-	ForgotPassword(*meta.SignupMethod, map[string]interface{}) error
-	ConfirmForgotPassword(*meta.SignupMethod, map[string]interface{}) error
+	ForgotPassword(*meta.SignupMethod, map[string]interface{}) (*meta.LoginMethod, error)
+	ConfirmForgotPassword(*meta.SignupMethod, map[string]interface{}) (*meta.User, error)
 	CreateLogin(*meta.SignupMethod, map[string]interface{}, *meta.User) error
 }
 
@@ -329,6 +329,15 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 				},
 				{
 					ID: "uesio/core.verification_expires",
+				},
+				{
+					ID: "uesio/core.signup_method",
+				},
+				{
+					ID: "uesio/core.force_reset",
+				},
+				{
+					ID: "uesio/core.temporary_password",
 				},
 			},
 			Conditions: []wire.LoadRequestCondition{

@@ -9,6 +9,9 @@ type LoginMethod struct {
 	APIKeyName          string `json:"uesio/core.api_key_name"`
 	VerificationCode    string `json:"uesio/core.verification_code"`
 	VerificationExpires int64  `json:"uesio/core.verification_expires"`
+	ForceReset          bool   `json:"uesio/core.force_reset"`
+	TemporaryPassword   string `json:"uesio/core.temporary_password"`
+	SignupMethod        string `json:"uesio/core.signup_method"`
 }
 
 func (lm *LoginMethod) GetCollection() CollectionableGroup {
