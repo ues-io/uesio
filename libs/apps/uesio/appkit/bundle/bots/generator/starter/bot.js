@@ -16,7 +16,9 @@ function starter(bot) {
 	// Create public profile/permission set
 
 	// Bundle it all
-	bot.createBundle("Appkit Starter")
+	const bundle = bot.createBundle("Appkit Starter")
+
+	bot.createSite("prod", `v${bundle.major}.${bundle.minor}.${bundle.patch}`)
 
 	// Create a site and domain
 }
