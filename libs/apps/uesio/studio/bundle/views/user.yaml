@@ -286,7 +286,7 @@ definition:
                                                   uesio.variant: uesio/io.secondary
                                                   text: Reset Password
                                                   signals:
-                                                    - signal: user/FORGOT_PASSWORD
+                                                    - signal: user/RESET_PASSWORD
                                                       signupMethod: ${uesio/core.uniquekey}
                                                       payload:
                                                         username: $Param{userid}

@@ -158,7 +158,7 @@ definition:
                                       uesio.variant: uesio/appkit.secondary
                                       text: Reset Password
                                       signals:
-                                        - signal: user/FORGOT_PASSWORD
+                                        - signal: user/RESET_PASSWORD
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS

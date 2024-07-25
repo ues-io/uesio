@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func ForgotPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.LoginMethod, error) {
+func ResetPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.LoginMethod, error) {
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return nil, err
@@ -22,10 +22,10 @@ func ForgotPassword(ctx context.Context, signupMethodID string, payload map[stri
 		return nil, err
 	}
 
-	return authconn.ForgotPassword(signupMethod, payload)
+	return authconn.ResetPassword(signupMethod, payload)
 }
 
-func ConfirmForgotPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
+func ConfirmResetPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
 
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
@@ -41,5 +41,5 @@ func ConfirmForgotPassword(ctx context.Context, signupMethodID string, payload m
 	if err != nil {
 		return nil, err
 	}
-	return authconn.ConfirmForgotPassword(signupMethod, payload)
+	return authconn.ConfirmResetPassword(signupMethod, payload)
 }

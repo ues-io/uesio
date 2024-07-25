@@ -115,7 +115,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if loginmethod.ForceReset {
-		loginMethod, err := c.ForgotPassword(nil, loginRequest)
+		loginMethod, err := c.ResetPassword(nil, loginRequest)
 		if err != nil {
 			ctlutil.HandleError(w, err)
 			return
@@ -235,7 +235,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return c.callListenerBot(signupMethod.SignupBot, code, payload)
 
 }
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("Unable to reset password: you must provide a username")
@@ -275,13 +275,13 @@ func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map
 	payload["email"] = user.Email
 
 	if signupMethod != nil {
-		return loginmethod, c.callListenerBot(signupMethod.ForgotPasswordBot, code, payload)
+		return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
 	}
 
 	return loginmethod, nil
 
 }
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("A username must be provided")

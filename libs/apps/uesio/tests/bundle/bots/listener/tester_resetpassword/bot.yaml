@@ -1,4 +1,4 @@
-name: tester_forgotpassword
+name: tester_resetpassword
 type: LISTENER
 dialect: TYPESCRIPT
 params:

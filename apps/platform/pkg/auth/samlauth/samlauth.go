@@ -221,10 +221,10 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up")
 }
-func (c *Connection) ForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmForgotPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {

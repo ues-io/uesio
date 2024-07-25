@@ -18,7 +18,7 @@ func getSignupMethodID(vars map[string]string) string {
 	return signupMethodNamespace + "." + signupMethodName
 }
 
-func ForgotPassword(w http.ResponseWriter, r *http.Request) {
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetContextSite()
@@ -30,7 +30,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = auth.ForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
+	_, err = auth.ResetPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -38,7 +38,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
+func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()
@@ -50,7 +50,7 @@ func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.ConfirmForgotPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
+	user, err := auth.ConfirmResetPassword(session.Context(), getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

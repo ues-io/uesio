@@ -1,6 +1,6 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function forgotpassword(bot: ListenerBotApi) {
+export default function resetpassword(bot: ListenerBotApi) {
 	const redirect =
 		"/site/app/uesio/core/changepassword?signupmethod=uesio/studio.platform"
 	const username = bot.params.get("username")

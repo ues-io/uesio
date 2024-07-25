@@ -123,7 +123,7 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.signupbot
               - uesio/io.field:
-                  fieldId: uesio/studio.forgotpasswordbot
+                  fieldId: uesio/studio.resetpasswordbot
 
       actions:
         - uesio/io.button:

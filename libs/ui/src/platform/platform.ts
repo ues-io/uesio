@@ -668,7 +668,7 @@ const platform = {
 		const response = await post(context, "/site/auth/logout")
 		return respondJSON(response)
 	},
-	forgotPassword: async (
+	resetPassword: async (
 		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
@@ -677,12 +677,12 @@ const platform = {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
 			context,
-			`${prefix}/auth/${namespace}/${name}/forgotpassword`,
+			`${prefix}/auth/${namespace}/${name}/resetpassword`,
 			requestBody
 		)
 		return respondVoid(response)
 	},
-	forgotPasswordConfirm: async (
+	resetPasswordConfirm: async (
 		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
@@ -690,7 +690,7 @@ const platform = {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
 			context,
-			`/site/auth/${namespace}/${name}/forgotpassword/confirm`,
+			`/site/auth/${namespace}/${name}/resetpassword/confirm`,
 			requestBody
 		)
 		return respondJSON(response)

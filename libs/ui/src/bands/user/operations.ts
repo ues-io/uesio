@@ -73,21 +73,17 @@ const logout = async (context: Context) => {
 	return responseRedirect(response, context)
 }
 
-const forgotPassword = async (
+const resetPassword = async (
 	context: Context,
 	signupMethod: string,
 	payload: Payload
 ) => {
 	if (!payload)
-		throw new Error("No credentials were provided for forgot password.")
+		throw new Error("No credentials were provided for reset password.")
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
 	try {
-		await platform.forgotPassword(
-			context,
-			mergedSignupMethod,
-			mergedPayload
-		)
+		await platform.resetPassword(context, mergedSignupMethod, mergedPayload)
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
@@ -95,19 +91,19 @@ const forgotPassword = async (
 	}
 }
 
-const forgotPasswordConfirm = async (
+const resetPasswordConfirm = async (
 	context: Context,
 	signupMethod: string,
 	payload: Payload
 ) => {
 	if (!payload)
 		throw new Error(
-			"No credentials were provided for forgot password confirmation."
+			"No credentials were provided for reset password confirmation."
 		)
 	const mergedPayload = context.mergeStringMap(payload)
 	const mergedSignupMethod = context.mergeString(signupMethod)
 	try {
-		const response = await platform.forgotPasswordConfirm(
+		const response = await platform.resetPasswordConfirm(
 			context,
 			mergedSignupMethod,
 			mergedPayload
@@ -141,7 +137,7 @@ export default {
 	login,
 	logout,
 	signup,
-	forgotPassword,
-	forgotPasswordConfirm,
+	resetPassword,
+	resetPasswordConfirm,
 	createLogin,
 }
