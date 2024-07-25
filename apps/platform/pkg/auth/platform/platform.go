@@ -115,7 +115,18 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if loginmethod.ForceReset {
-		loginMethod, err := c.ResetPassword(nil, loginRequest)
+		// Get the signup method from the login method
+		signupMethodKey := loginmethod.SignupMethod
+		if signupMethodKey == "" {
+			ctlutil.HandleError(w, errors.New("cannot force password reset without signup method"))
+			return
+		}
+		signupMethod, err := auth.GetSignupMethod(signupMethodKey, c.session)
+		if err != nil {
+			ctlutil.HandleError(w, err)
+			return
+		}
+		loginMethod, err := c.ResetPassword(signupMethod, loginRequest, true)
 		if err != nil {
 			ctlutil.HandleError(w, err)
 			return
@@ -235,7 +246,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return c.callListenerBot(signupMethod.SignupBot, code, payload)
 
 }
-func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("Unable to reset password: you must provide a username")
@@ -272,13 +283,16 @@ func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[
 		return nil, err
 	}
 
-	payload["email"] = user.Email
-
-	if signupMethod != nil {
-		return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
+	// For now, don't send the email to the reset password bot if the reset request is authenticated
+	// The flow for authenticated resets is to just redirect the user to the reset page with the
+	// reset code already included in the url.
+	if authenticated {
+		payload["authenticated"] = true
+	} else {
+		payload["email"] = user.Email
 	}
 
-	return loginmethod, nil
+	return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
 
 }
 func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
@@ -338,17 +352,52 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 	code := generateCode()
 
-	err := auth.CreateLoginMethod(&meta.LoginMethod{
+	loginMethod := &meta.LoginMethod{
 		FederationID:        user.Username,
 		User:                user,
 		AuthSource:          signupMethod.AuthSource,
 		VerificationCode:    code,
 		VerificationExpires: getExpireTimestamp(),
 		SignupMethod:        signupMethod.GetKey(),
-	}, c.connection, c.session)
+	}
+
+	// 1. If the payload includes a "password", go ahead and auto verify and set the password
+	password, hasPassword := payload["password"]
+	if hasPassword {
+		payload["hasPassword"] = true
+	}
+
+	// 2. If the payload includes a "password" and a "setTemporary" flag, set the password into
+	//    the temporary password field as well.
+	_, setTemporary := payload["setTemporary"]
+	if hasPassword && setTemporary {
+		loginMethod.TemporaryPassword = password.(string)
+	}
+
+	// 3. If the payload includes a "password" and a "forceReset" flag, set the forceReset flag on
+	//    the login method.
+	_, forceReset := payload["forceReset"]
+	if forceReset {
+		loginMethod.ForceReset = true
+	}
+
+	err := auth.CreateLoginMethod(loginMethod, c.connection, c.session)
 	if err != nil {
 		return err
 	}
+
+	if hasPassword {
+		err := c.ConfirmSignUp(signupMethod, map[string]interface{}{
+			"username":         user.Username,
+			"verificationcode": code,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	// For security purposes, don't send passwords to create login bots.
+	delete(payload, "password")
 
 	return c.callListenerBot(signupMethod.CreateLoginBot, code, payload)
 

@@ -62,7 +62,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 	return errors.New("Mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, errors.New("Mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {

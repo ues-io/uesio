@@ -16,20 +16,23 @@ import (
 )
 
 type CreateSiteOptions struct {
-	AppName      string
-	SiteName     string
+	AppName   string
+	SiteName  string
+	Subdomain string
+	Version   string
+}
+
+type CreateUserOptions struct {
+	SiteID       string
 	FirstName    string
 	LastName     string
 	Username     string
 	Email        string
-	Subdomain    string
-	Version      string
 	Profile      string
 	SignupMethod string
 }
 
-func NewCreateSiteOptions(params map[string]interface{}) (*CreateSiteOptions, error) {
-
+func NewCreateUserOptions(siteID string, params map[string]interface{}) (*CreateUserOptions, error) {
 	firstName, err := param.GetRequiredString(params, "firstname")
 	if err != nil {
 		return nil, err
@@ -51,6 +54,29 @@ func NewCreateSiteOptions(params map[string]interface{}) (*CreateSiteOptions, er
 		return nil, err
 	}
 
+	profile, err := param.GetRequiredString(params, "profile")
+	if err != nil {
+		return nil, err
+	}
+
+	signupMethodName, err := param.GetRequiredString(params, "signupmethod")
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateUserOptions{
+		FirstName:    firstName,
+		LastName:     lastName,
+		Username:     username,
+		Email:        email,
+		Profile:      profile,
+		SignupMethod: signupMethodName,
+		SiteID:       siteID,
+	}, nil
+}
+
+func NewCreateSiteOptions(params map[string]interface{}) (*CreateSiteOptions, error) {
+
 	subdomain, err := param.GetRequiredString(params, "subdomain")
 	if err != nil {
 		return nil, err
@@ -71,31 +97,65 @@ func NewCreateSiteOptions(params map[string]interface{}) (*CreateSiteOptions, er
 		return nil, err
 	}
 
-	profile, err := param.GetRequiredString(params, "profile")
-	if err != nil {
-		return nil, err
-	}
-
-	signupMethodName, err := param.GetRequiredString(params, "signupmethod")
-	if err != nil {
-		return nil, err
-	}
-
 	return &CreateSiteOptions{
-		AppName:      appName,
-		SiteName:     siteName,
-		FirstName:    firstName,
-		LastName:     lastName,
-		Username:     username,
-		Email:        email,
-		Subdomain:    subdomain,
-		Version:      version,
-		Profile:      profile,
-		SignupMethod: signupMethodName,
+		AppName:   appName,
+		SiteName:  siteName,
+		Subdomain: subdomain,
+		Version:   version,
 	}, nil
 }
 
-func CreateSite(options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func CreateUser(options *CreateUserOptions, connection wire.Connection, session *sess.Session) (*meta.User, error) {
+	if options == nil {
+		return nil, errors.New("Invalid Create options")
+	}
+
+	firstName := options.FirstName
+	lastName := options.LastName
+	username := options.Username
+	email := options.Email
+	profile := options.Profile
+	signupMethodName := options.SignupMethod
+	siteID := options.SiteID
+
+	user := &meta.User{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Username:  username,
+		Profile:   profile,
+		Type:      "PERSON",
+	}
+
+	siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
+	if err != nil {
+		return nil, err
+	}
+
+	// Third, create the user.
+	err = datasource.PlatformSaveOne(user, nil, connection, siteAdminSession)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fourth, create a login method.
+	signupMethod, err := auth.GetSignupMethod(signupMethodName, siteAdminSession)
+	if err != nil {
+		return nil, err
+	}
+
+	err = auth.CreateLoginWithConnection(signupMethod, map[string]interface{}{
+		"username": username,
+		"email":    email,
+	}, connection, siteAdminSession)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, err
+}
+
+func CreateSite(options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (*meta.Site, error) {
 
 	if options == nil {
 		return nil, errors.New("Invalid Create options")
@@ -103,14 +163,8 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 
 	appName := options.AppName
 	siteName := options.SiteName
-	firstName := options.FirstName
-	lastName := options.LastName
-	username := options.Username
-	email := options.Email
 	subdomain := options.Subdomain
 	version := options.Version
-	profile := options.Profile
-	signupMethodName := options.SignupMethod
 
 	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
@@ -140,15 +194,6 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 		Site:   site,
 	}
 
-	user := &meta.User{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Username:  username,
-		Profile:   profile,
-		Type:      "PERSON",
-	}
-
 	// First, create the site.
 	err = datasource.PlatformSaveOne(site, nil, connection, session)
 	if err != nil {
@@ -161,31 +206,6 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 		return nil, err
 	}
 
-	siteAdminSession, err := datasource.AddSiteAdminContextByID(site.ID, session, connection)
-	if err != nil {
-		return nil, err
-	}
-
-	// Third, create the user.
-	err = datasource.PlatformSaveOne(user, nil, connection, siteAdminSession)
-	if err != nil {
-		return nil, err
-	}
-
-	// Fourth, create a login method.
-	signupMethod, err := auth.GetSignupMethod(signupMethodName, siteAdminSession)
-	if err != nil {
-		return nil, err
-	}
-
-	err = auth.CreateLoginWithConnection(signupMethod, map[string]interface{}{
-		"username": username,
-		"email":    email,
-	}, connection, siteAdminSession)
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{}, nil
+	return site, nil
 
 }
