@@ -31,7 +31,7 @@ type SignupMethod struct {
 	UsernameFormatExplanation string `yaml:"usernameFormatExplanation,omitempty" json:"uesio/studio.usernameformatexplanation"`
 	CreateLoginBot            string `yaml:"createLoginBot,omitempty" json:"uesio/studio.createloginbot"`
 	SignupBot                 string `yaml:"signupBot,omitempty" json:"uesio/studio.signupbot"`
-	ResetPasswordBot         string `yaml:"resetPasswordBot,omitempty" json:"uesio/studio.resetpasswordbot"`
+	ResetPasswordBot          string `yaml:"resetPasswordBot,omitempty" json:"uesio/studio.resetpasswordbot"`
 }
 
 type SignupMethodWrapper SignupMethod
