@@ -102,6 +102,22 @@ func (gba *GeneratorBotAPI) CreateBundle(description string) (map[string]interfa
 
 }
 
+func (gba *GeneratorBotAPI) CreateSite(siteName, version string) (map[string]interface{}, error) {
+
+	_, err := deploy.CreateSite(&deploy.CreateSiteOptions{
+		AppName:   gba.GetAppName(),
+		SiteName:  siteName,
+		Subdomain: strings.ReplaceAll(gba.GetAppName(), "/", "-") + "-" + siteName,
+		Version:   version,
+	}, gba.connection, gba.session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{}, nil
+
+}
+
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
 	return botCall(botKey, params, gba.session, gba.connection)
 }
