@@ -45,9 +45,9 @@ const signals: SignalBandDefinition = {
 			description: "Logout",
 			properties: () => [],
 		},
-		[`${BAND}/FORGOT_PASSWORD`]: {
-			label: "Forgot Password",
-			description: "Forgot Password",
+		[`${BAND}/RESET_PASSWORD`]: {
+			label: "Reset Password",
+			description: "Reset Password",
 			properties: () => [
 				{
 					name: "signupMethod",
@@ -61,9 +61,9 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-		[`${BAND}/FORGOT_PASSWORD_CONFIRM`]: {
-			label: "Forgot Password Confirmation",
-			description: "Forgot Password Confirmation",
+		[`${BAND}/RESET_PASSWORD_CONFIRM`]: {
+			label: "Reset Password Confirmation",
+			description: "Reset Password Confirmation",
 			properties: () => [
 				{
 					name: "signupMethod",

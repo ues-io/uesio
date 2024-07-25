@@ -13,11 +13,11 @@ interface SignupSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
-interface ForgotPasswordSignal extends SignalDefinition {
+interface ResetPasswordSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
-interface ForgotPasswordConfirmSignal extends SignalDefinition {
+interface ResetPasswordConfirmSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
@@ -40,17 +40,17 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
 	},
-	[`${USER_BAND}/FORGOT_PASSWORD`]: {
-		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
-			operations.forgotPassword(
+	[`${USER_BAND}/RESET_PASSWORD`]: {
+		dispatcher: (signal: ResetPasswordSignal, context: Context) =>
+			operations.resetPassword(
 				context,
 				signal.signupMethod,
 				signal.payload
 			),
 	},
-	[`${USER_BAND}/FORGOT_PASSWORD_CONFIRM`]: {
-		dispatcher: (signal: ForgotPasswordConfirmSignal, context: Context) =>
-			operations.forgotPasswordConfirm(
+	[`${USER_BAND}/RESET_PASSWORD_CONFIRM`]: {
+		dispatcher: (signal: ResetPasswordConfirmSignal, context: Context) =>
+			operations.resetPasswordConfirm(
 				context,
 				signal.signupMethod,
 				signal.payload

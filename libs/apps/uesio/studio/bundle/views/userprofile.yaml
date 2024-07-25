@@ -104,7 +104,7 @@ definition:
                                       uesio.variant: uesio/io.primary
                                       text: Request Password Change
                                       signals:
-                                        - signal: user/FORGOT_PASSWORD
+                                        - signal: user/RESET_PASSWORD
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS

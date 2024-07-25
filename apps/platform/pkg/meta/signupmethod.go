@@ -31,7 +31,7 @@ type SignupMethod struct {
 	UsernameFormatExplanation string `yaml:"usernameFormatExplanation,omitempty" json:"uesio/studio.usernameformatexplanation"`
 	CreateLoginBot            string `yaml:"createLoginBot,omitempty" json:"uesio/studio.createloginbot"`
 	SignupBot                 string `yaml:"signupBot,omitempty" json:"uesio/studio.signupbot"`
-	ForgotPasswordBot         string `yaml:"forgotPasswordBot,omitempty" json:"uesio/studio.forgotpasswordbot"`
+	ResetPasswordBot         string `yaml:"resetPasswordBot,omitempty" json:"uesio/studio.resetpasswordbot"`
 }
 
 type SignupMethodWrapper SignupMethod
@@ -74,7 +74,7 @@ func (sm *SignupMethod) UnmarshalYAML(node *yaml.Node) error {
 	sm.AuthSource = GetFullyQualifiedKey(sm.AuthSource, sm.Namespace)
 	sm.CreateLoginBot = GetFullyQualifiedKey(sm.CreateLoginBot, sm.Namespace)
 	sm.SignupBot = GetFullyQualifiedKey(sm.SignupBot, sm.Namespace)
-	sm.ForgotPasswordBot = GetFullyQualifiedKey(sm.ForgotPasswordBot, sm.Namespace)
+	sm.ResetPasswordBot = GetFullyQualifiedKey(sm.ResetPasswordBot, sm.Namespace)
 	sm.LandingRoute = GetFullyQualifiedKey(sm.LandingRoute, sm.Namespace)
 	sm.Profile = GetFullyQualifiedKey(sm.Profile, sm.Namespace)
 	return nil
@@ -84,7 +84,7 @@ func (sm *SignupMethod) MarshalYAML() (interface{}, error) {
 	sm.AuthSource = GetLocalizedKey(sm.AuthSource, sm.Namespace)
 	sm.CreateLoginBot = GetLocalizedKey(sm.CreateLoginBot, sm.Namespace)
 	sm.SignupBot = GetLocalizedKey(sm.SignupBot, sm.Namespace)
-	sm.ForgotPasswordBot = GetLocalizedKey(sm.ForgotPasswordBot, sm.Namespace)
+	sm.ResetPasswordBot = GetLocalizedKey(sm.ResetPasswordBot, sm.Namespace)
 	sm.LandingRoute = GetLocalizedKey(sm.LandingRoute, sm.Namespace)
 	sm.Profile = GetLocalizedKey(sm.Profile, sm.Namespace)
 	return (*SignupMethodWrapper)(sm), nil

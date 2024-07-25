@@ -163,7 +163,7 @@ definition:
                             - uesio/io.field:
                                 fieldId: uesio/studio.enableselfsignup
                             - uesio/io.field:
-                                fieldId: uesio/studio.forgotpasswordbot
+                                fieldId: uesio/studio.resetpasswordbot
                             - uesio/io.field:
                                 fieldId: uesio/studio.usernametemplate
                             - uesio/io.field:

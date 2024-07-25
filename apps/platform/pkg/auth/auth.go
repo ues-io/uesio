@@ -53,8 +53,8 @@ type AuthConnection interface {
 	RequestLogin(http.ResponseWriter, *http.Request)
 	Signup(*meta.SignupMethod, map[string]interface{}, string) error
 	ConfirmSignUp(*meta.SignupMethod, map[string]interface{}) error
-	ForgotPassword(*meta.SignupMethod, map[string]interface{}) (*meta.LoginMethod, error)
-	ConfirmForgotPassword(*meta.SignupMethod, map[string]interface{}) (*meta.User, error)
+	ResetPassword(*meta.SignupMethod, map[string]interface{}) (*meta.LoginMethod, error)
+	ConfirmResetPassword(*meta.SignupMethod, map[string]interface{}) (*meta.User, error)
 	CreateLogin(*meta.SignupMethod, map[string]interface{}, *meta.User) error
 }
 

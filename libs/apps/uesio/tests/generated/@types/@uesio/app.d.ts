@@ -85,7 +85,7 @@ declare module "@uesio/app/bots/listener/uesio/tests/tester_createlogin" {
 		Params
 	}
 }
-declare module "@uesio/app/bots/listener/uesio/tests/tester_forgotpassword" {
+declare module "@uesio/app/bots/listener/uesio/tests/tester_resetpassword" {
 
 	type Params = {
 		username: string

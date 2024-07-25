@@ -8,5 +8,5 @@ enableSelfSignup: true
 landingRoute: uesio/studio.signuplanding
 createLoginBot: uesio/studio.createlogin
 signupBot: uesio/studio.signup
-forgotPasswordBot: uesio/studio.forgotpassword
+resetPasswordBot: uesio/studio.resetpassword
 public: true

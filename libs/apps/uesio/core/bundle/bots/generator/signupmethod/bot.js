@@ -21,7 +21,7 @@ function signupmethod(bot) {
 		newBotParams[param] = "${" + param + "}"
 	})
 	// Create the 3 bots TS and YAML files
-	const botNames = ["signup", "createlogin", "forgotpassword"]
+	const botNames = ["signup", "createlogin", "resetpassword"]
 	botNames.forEach((name) => {
 		const botName = `${signupMethodName}_${name}`
 		const path = `bots/listener/${botName}/bot`

@@ -9,4 +9,4 @@ usernameRegex: ^[a-z0-9_]+$
 usernameFormatExplanation: lowercase a-z, 0-9, and underscore only
 createLoginBot: tester_createlogin
 signupBot: tester_signup
-forgotPasswordBot: tester_forgotpassword
+resetPasswordBot: tester_resetpassword
