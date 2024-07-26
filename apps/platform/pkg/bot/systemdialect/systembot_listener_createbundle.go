@@ -13,5 +13,15 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	return deploy.CreateBundle(options, connection, session)
+	bundle, err := deploy.CreateBundle(options, connection, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"major":       bundle.Major,
+		"minor":       bundle.Minor,
+		"patch":       bundle.Patch,
+		"description": bundle.Description,
+	}, nil
 }

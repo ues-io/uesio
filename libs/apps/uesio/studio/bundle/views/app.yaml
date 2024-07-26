@@ -103,6 +103,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Workspaces
+                                      subtitle: Make changes to your app in workspaces.
                                   - uesio/io.emptystate:
                                       uesio.variant: uesio/studio.main
                                       title: No Workspaces Created
@@ -135,6 +136,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Sites
+                                      subtitle: Publish your app to users with sites.
                                   - uesio/io.emptystate:
                                       uesio.variant: uesio/studio.main
                                       title: No Sites Created

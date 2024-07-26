@@ -16,9 +16,22 @@ function starter(bot) {
 	// Create public profile/permission set
 
 	// Bundle it all
-	const bundle = bot.createBundle("Appkit Starter")
+	const bundle = bot.createBundle({
+		description: "Appkit Starter",
+		releaseType: "patch",
+	})
 
-	bot.createSite("prod", `v${bundle.major}.${bundle.minor}.${bundle.patch}`)
+	const version = `v${bundle.major}.${bundle.minor}.${bundle.patch}`
+	const siteName = "prod"
+	const appName = bot.getAppName()
+	const subdomain = `${appName.replaceAll("/", "-")}-${siteName}`
 
-	// Create a site and domain
+	// Create Site and domain
+	const site = bot.createSite({
+		siteName,
+		subdomain,
+		version,
+	})
+
+	bot.log.info("siteid", site.id)
 }
