@@ -1,0 +1,6 @@
+name: starter_complete
+dialect: JAVASCRIPT
+label: Starter Complete
+type: GENERATOR
+params:
+public: true

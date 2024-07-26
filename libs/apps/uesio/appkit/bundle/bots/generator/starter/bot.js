@@ -18,24 +18,4 @@ function starter(bot) {
 	bot.runGenerator("uesio/appkit", "profile_public", {})
 
 	// Create a signup method
-
-	// Bundle it all
-	const bundle = bot.createBundle({
-		description: "Appkit Starter",
-		releaseType: "patch",
-	})
-
-	const version = `v${bundle.major}.${bundle.minor}.${bundle.patch}`
-	const siteName = "prod"
-	const appName = bot.getAppName()
-	const subdomain = `${appName.replaceAll("/", "-")}-${siteName}`
-
-	// Create Site and domain
-	const site = bot.createSite({
-		siteName,
-		subdomain,
-		version,
-	})
-
-	bot.log.info("siteid", site.id)
 }

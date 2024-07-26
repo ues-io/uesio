@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -319,22 +318,13 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 
 				// Replace that crap
 				*node = *contentNode
-			}
-
-			mergeNumber, ok := mergeValue.(int64)
-			if ok {
-				node.Value = strconv.FormatInt(mergeNumber, 10)
-				node.Tag = "!!int"
-			}
-
-			mergeBool, ok := mergeValue.(bool)
-			if ok {
-				if mergeBool {
-					node.Value = "true"
-				} else {
-					node.Value = "false"
+			} else {
+				newNode := &yaml.Node{}
+				err := newNode.Encode(mergeValue)
+				if err != nil {
+					return err
 				}
-				node.Tag = "!!bool"
+				*node = *newNode
 			}
 
 		}

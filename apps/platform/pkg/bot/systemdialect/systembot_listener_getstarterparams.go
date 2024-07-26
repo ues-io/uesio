@@ -33,7 +33,7 @@ func runGetStarterParamsBot(params map[string]interface{}, connection wire.Conne
 	if err != nil {
 		return nil, err
 	}
-	generatorBotName := versionSession.GetContextAppBundle().StarterTemplateBot
+	generatorBotName := versionSession.GetContextAppBundle().StarterBot
 
 	generatorNamespace, generatorName, err := meta.ParseKey(generatorBotName)
 	if err != nil {
