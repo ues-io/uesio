@@ -1,0 +1,5 @@
+name: starterbot
+type: METADATA
+label: Starter Bot
+metadata:
+  type: BOT

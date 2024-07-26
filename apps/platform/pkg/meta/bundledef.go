@@ -11,7 +11,8 @@ type AppSettings struct {
 	DefaultTheme       string `yaml:"defaultTheme,omitempty" json:"uesio/studio.defaulttheme"`
 	PublicProfile      string `yaml:"publicProfile,omitempty" json:"uesio/studio.publicprofile"`
 	Favicon            string `yaml:"favicon,omitempty" json:"uesio/studio.favicon"`
-	StarterTemplateBot string `yaml:"starterTemplateBot,omitempty" json:"uesio/studio.startertemplatebot"`
+	StarterBot         string `yaml:"starterBot,omitempty" json:"uesio/studio.starterbot"`
+	StarterCompleteBot string `yaml:"starterCompleteBot,omitempty" json:"uesio/studio.startercompletebot"`
 }
 
 type BundleDef struct {

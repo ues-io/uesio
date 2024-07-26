@@ -142,14 +142,37 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	generatorBotName := versionSession.GetContextAppBundle().StarterTemplateBot
+	// First run the starter bot
+	starterBotName := versionSession.GetContextAppBundle().StarterBot
 
-	generatorNamespace, generatorName, err := meta.ParseKey(generatorBotName)
+	if starterBotName == "" {
+		return nil
+	}
+
+	starterBotNamespace, starterBotName, err := meta.ParseKey(starterBotName)
 	if err != nil {
 		return err
 	}
 
-	return deploy.GenerateToWorkspace(generatorNamespace, generatorName, starterTemplateParamsMap, connection, wsSession, nil)
+	err = deploy.GenerateToWorkspace(starterBotNamespace, starterBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	if err != nil {
+		return err
+	}
+
+	// Next run the starter complete bot. Two bots are necessary in order to have the workspace ready to bundle in the second bot
+	starterCompleteBotName := versionSession.GetContextAppBundle().StarterCompleteBot
+
+	if starterCompleteBotName == "" {
+		return nil
+	}
+
+	starterCompleteBotNamespace, starterCompleteBotName, err := meta.ParseKey(starterCompleteBotName)
+	if err != nil {
+		return err
+	}
+
+	return deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, nil, connection, wsSession, nil)
+
 }
 
 func cascadeDeleteWorkspaces(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {

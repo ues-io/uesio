@@ -42,6 +42,12 @@ var booleanMergeResult = meta.TrimYamlString(`
 mykey: true
 `)
 
+var arrayOfStringsMergeResult = meta.TrimYamlString(`
+mykey:
+  - bleh
+  - blah
+`)
+
 var list = meta.TrimYamlString(`
 - one
 - two
@@ -140,6 +146,14 @@ func Test_MergeYAMLString(t *testing.T) {
 			},
 			template: simpleMerge,
 			response: booleanMergeResult,
+		},
+		{
+			name: "Array of Strings Merge",
+			params: map[string]interface{}{
+				"mymerge": []string{"bleh", "blah"},
+			},
+			template: simpleMerge,
+			response: arrayOfStringsMergeResult,
 		},
 	}
 	for _, tt := range tests {
