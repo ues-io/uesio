@@ -18,17 +18,17 @@ import (
 )
 
 type VersionParts struct {
-	Major int
-	Minor int
-	Patch int
+	Major int `bot:"major"`
+	Minor int `bot:"minor"`
+	Patch int `bot:"patch"`
 }
 
 type CreateBundleOptions struct {
-	AppName       string
-	WorkspaceName string
-	Version       *VersionParts
-	ReleaseType   string
-	Description   string
+	AppName       string        `bot:"appName"`
+	WorkspaceName string        `bot:"workspaceName"`
+	Version       *VersionParts `bot:"version"`
+	ReleaseType   string        `bot:"releaseType"`
+	Description   string        `bot:"description"`
 }
 
 func NewCreateBundleOptions(params map[string]interface{}) (*CreateBundleOptions, error) {
@@ -70,7 +70,7 @@ func NewCreateBundleOptions(params map[string]interface{}) (*CreateBundleOptions
 	}, nil
 }
 
-func CreateBundle(options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func CreateBundle(options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (*meta.Bundle, error) {
 
 	if options == nil {
 		return nil, errors.New("Invalid Create options")
@@ -166,12 +166,7 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"major":       major,
-		"minor":       minor,
-		"patch":       patch,
-		"description": description,
-	}, nil
+	return bundle, nil
 
 }
 

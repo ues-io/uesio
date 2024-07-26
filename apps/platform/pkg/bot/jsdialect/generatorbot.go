@@ -87,33 +87,67 @@ func (gba *GeneratorBotAPI) GetNamespace() string {
 	return gba.bot.GetNamespace()
 }
 
-func (gba *GeneratorBotAPI) CreateBundle(description string) (map[string]interface{}, error) {
+func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (map[string]interface{}, error) {
+	if options == nil {
+		return nil, errors.New("you must provide options to the create bundle api")
+	}
 	ws := gba.session.GetWorkspace()
 	if ws == nil {
 		return nil, errors.New("you must be in a workspace context to create a bundle in a generator")
 	}
 
-	return deploy.CreateBundle(&deploy.CreateBundleOptions{
-		AppName:       gba.GetAppName(),
-		WorkspaceName: gba.GetWorkspaceName(),
-		Description:   description,
-		ReleaseType:   "patch",
-	}, gba.connection, gba.session.RemoveWorkspaceContext())
+	if options.AppName == "" {
+		options.AppName = gba.GetAppName()
+	}
 
-}
+	if options.WorkspaceName == "" {
+		options.WorkspaceName = gba.GetWorkspaceName()
+	}
 
-func (gba *GeneratorBotAPI) CreateSite(siteName, version string) (map[string]interface{}, error) {
-
-	_, err := deploy.CreateSite(&deploy.CreateSiteOptions{
-		AppName:   gba.GetAppName(),
-		SiteName:  siteName,
-		Subdomain: strings.ReplaceAll(gba.GetAppName(), "/", "-") + "-" + siteName,
-		Version:   version,
-	}, gba.connection, gba.session.RemoveWorkspaceContext())
+	bundle, err := deploy.CreateBundle(options, gba.connection, gba.session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
 
+	return map[string]interface{}{
+		"major":       bundle.Major,
+		"minor":       bundle.Minor,
+		"patch":       bundle.Patch,
+		"description": bundle.Description,
+	}, nil
+
+}
+
+func (gba *GeneratorBotAPI) CreateSite(options *deploy.CreateSiteOptions) (map[string]interface{}, error) {
+
+	if options == nil {
+		return nil, errors.New("you must provide options to the create site api")
+	}
+
+	if options.AppName == "" {
+		options.AppName = gba.GetAppName()
+	}
+
+	site, err := deploy.CreateSite(options, gba.connection, gba.session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"id": site.ID,
+	}, nil
+
+}
+
+func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[string]interface{}, error) {
+
+	if options == nil {
+		return nil, errors.New("you must provide options to the create user api")
+	}
+	_, err := deploy.CreateUser(options, gba.connection, gba.session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
 	return map[string]interface{}{}, nil
 
 }
