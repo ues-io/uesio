@@ -1,0 +1,9 @@
+name: permissionset
+dialect: "JAVASCRIPT"
+label: Permission Set
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Permission Set Name
+    type: METADATANAME
+public: true

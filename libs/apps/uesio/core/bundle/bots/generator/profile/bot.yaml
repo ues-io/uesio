@@ -1,0 +1,9 @@
+name: profile
+dialect: "JAVASCRIPT"
+label: Profile
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Profile Name
+    type: METADATANAME
+public: true

@@ -38,6 +38,10 @@ var numberMergeResult = meta.TrimYamlString(`
 mykey: 42
 `)
 
+var booleanMergeResult = meta.TrimYamlString(`
+mykey: true
+`)
+
 var list = meta.TrimYamlString(`
 - one
 - two
@@ -128,6 +132,14 @@ func Test_MergeYAMLString(t *testing.T) {
 			},
 			template: simpleMerge,
 			response: numberMergeResult,
+		},
+		{
+			name: "Boolean Merge",
+			params: map[string]interface{}{
+				"mymerge": true,
+			},
+			template: simpleMerge,
+			response: booleanMergeResult,
 		},
 	}
 	for _, tt := range tests {

@@ -1,6 +1,6 @@
-name: leftnav
+name: profile_admin
 dialect: JAVASCRIPT
-label: Left Nav
+label: Admin Profile
 type: GENERATOR
 params:
 public: true

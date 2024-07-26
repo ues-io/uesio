@@ -1,6 +1,6 @@
-name: users
+name: view_leftnav
 dialect: JAVASCRIPT
-label: Users
+label: Left Nav
 type: GENERATOR
 params:
 public: true

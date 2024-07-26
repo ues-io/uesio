@@ -1,0 +1,6 @@
+name: view_users
+dialect: JAVASCRIPT
+label: Users
+type: GENERATOR
+params:
+public: true

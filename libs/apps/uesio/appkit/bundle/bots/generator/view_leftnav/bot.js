@@ -1,4 +1,4 @@
-function leftnav(bot) {
+function view_leftnav(bot) {
 	var app = bot.getApp()
 	var definition = bot.mergeYamlTemplate(
 		{

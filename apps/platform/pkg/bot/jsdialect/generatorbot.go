@@ -327,6 +327,16 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 				node.Tag = "!!int"
 			}
 
+			mergeBool, ok := mergeValue.(bool)
+			if ok {
+				if mergeBool {
+					node.Value = "true"
+				} else {
+					node.Value = "false"
+				}
+				node.Tag = "!!bool"
+			}
+
 		}
 	}
 
