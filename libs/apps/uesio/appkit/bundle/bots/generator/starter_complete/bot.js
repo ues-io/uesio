@@ -18,4 +18,14 @@ function starter_complete(bot) {
 	})
 
 	bot.log.info("siteid", site.id)
+
+	bot.createUser({
+		siteId: site.id,
+		firstName: "George",
+		lastName: "Washington",
+		username: "george",
+		email: "plusplusben@gmail.com",
+		profile: appName + ".admin",
+		signupMethod: appName + ".admin",
+	})
 }

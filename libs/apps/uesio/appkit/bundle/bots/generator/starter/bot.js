@@ -18,4 +18,6 @@ function starter(bot) {
 	bot.runGenerator("uesio/appkit", "profile_public", {})
 
 	// Create a signup method
+	// Create public profile/permission set
+	bot.runGenerator("uesio/appkit", "signupmethod_admin", {})
 }

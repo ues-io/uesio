@@ -3,20 +3,15 @@ dialect: "JAVASCRIPT"
 label: Signup Method
 type: "GENERATOR"
 params:
-  - name: signupMethodName
+  - name: name
     prompt: Signup Method name
     type: METADATANAME
-  - name: defaultProfileName
+  - name: profile
     prompt: Profile to assign to new users
     type: METADATA
     metadataType: PROFILE
-  - name: fromEmail
-    prompt: From email address (for password emails)
-    default: "noreply@ues.io"
-  - name: fromName
-    prompt: From name (for password emails)
-    default: "ues.io"
-  - name: companyName
-    prompt: Company name (for password emails)
-    default: "ues.io"
+  - name: authSource
+    prompt: Auth Source
+    type: METADATA
+    metadataType: AUTHSOURCE
 public: true

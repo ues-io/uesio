@@ -48,6 +48,10 @@ mykey:
   - blah
 `)
 
+var noValueMergeResult = meta.TrimYamlString(`
+mykey: null
+`)
+
 var list = meta.TrimYamlString(`
 - one
 - two
@@ -154,6 +158,14 @@ func Test_MergeYAMLString(t *testing.T) {
 			},
 			template: simpleMerge,
 			response: arrayOfStringsMergeResult,
+		},
+		{
+			name: "No Value Strings Merge",
+			params: map[string]interface{}{
+				"mymerge": nil,
+			},
+			template: simpleMerge,
+			response: noValueMergeResult,
 		},
 	}
 	for _, tt := range tests {

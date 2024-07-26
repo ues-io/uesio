@@ -1,52 +1,34 @@
 function signupmethod(bot) {
-	const params = bot.params.getAll()
-	const { signupMethodName } = params
-	// In order to avoid conflicts with Generator merges clobbering JS variable merges
-	// inside of our Bot template files, we will just replace all JS merges in the template files,
-	// e.g. we will just have "code" => "${code}", "link" => "${link}", etc.
-	const escapeMerges = [
-		"code",
-		"username",
-		"lastName",
-		"firstName",
-		"link",
-		"toName",
-		"host",
-		"redirect",
-	]
-	const newBotParams = {
-		...params,
-	}
-	escapeMerges.forEach((param) => {
-		newBotParams[param] = "${" + param + "}"
-	})
-	// Create the 3 bots TS and YAML files
-	const botNames = ["signup", "createlogin", "resetpassword"]
-	botNames.forEach((name) => {
-		const botName = `${signupMethodName}_${name}`
-		const path = `bots/listener/${botName}/bot`
-		bot.generateFile(
-			`${path}.ts`,
-			newBotParams,
-			`templates/${name}_bot.template.ts`
-		)
-		bot.generateFile(
-			`${path}.yaml`,
-			{ ...params, name: botName },
-			"templates/bot.template.yaml"
-		)
-	})
+	var name = bot.params.get("name")
+	var authSource = bot.params.get("authSource") || ""
+	var profile = bot.params.get("profile") || ""
+	var usernameTemplate = bot.params.get("usernameTemplate") || ""
+	var landingRoute = bot.params.get("landingRoute") || ""
+	var createLoginBot = bot.params.get("createLoginBot") || ""
+	var signupBot = bot.params.get("signupBot") || ""
+	var resetPasswordBot = bot.params.get("resetPasswordBot") || ""
+	var usernameRegex = bot.params.get("usernameRegex") || ""
+	var usernameFormatExplanation =
+		bot.params.get("usernameFormatExplanation") || ""
+	var autoLogin = bot.params.get("autoLogin") || ""
+	var enableSelfSignup = bot.params.get("enableSelfSignup") || ""
 
-	// Create the signup landing route
 	bot.generateFile(
-		"routes/signuplanding.yaml",
-		params,
-		"templates/landingroute.template.yaml"
-	)
-	// Finally generate the signup method itself
-	bot.generateFile(
-		`signupmethods/${signupMethodName}.yaml`,
-		{ ...params, username: "${username}" },
-		"templates/signupmethod.template.yaml"
+		`signupmethods/${name}.yaml`,
+		{
+			name,
+			authSource,
+			profile,
+			usernameTemplate,
+			landingRoute,
+			createLoginBot,
+			signupBot,
+			resetPasswordBot,
+			usernameRegex,
+			usernameFormatExplanation,
+			autoLogin,
+			enableSelfSignup,
+		},
+		"templates/signupmethod.yaml"
 	)
 }
