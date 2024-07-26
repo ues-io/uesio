@@ -1,0 +1,16 @@
+name: ${name}
+named: ${namedPermissions}
+views: ${views}
+collections: ${collections}
+routes: ${routes}
+files: ${files}
+bots: ${bots}
+integrationActions: ${integrationActions}
+allowallbots: ${allowAllBots}
+allowallcollections: ${allowAllCollections}
+allowallviews: ${allowAllViews}
+allowallroutes: ${allowAllRoutes}
+allowallfiles: ${allowAllFiles}
+allowallintegrationactions: ${allowAllIntegrationActions}
+modifyallrecords: ${modifyAllRecords}
+viewallrecords: ${viewAllRecords}

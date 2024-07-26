@@ -1,20 +1,20 @@
-function home(bot) {
+function view_settings(bot) {
 	const namespace = bot.getAppName()
 	var definition = bot.mergeYamlTemplate(
 		{
 			namespace,
 		},
-		"templates/home.yaml"
+		"templates/settings.yaml"
 	)
 	bot.runGenerator("uesio/core", "view", {
-		name: "home",
+		name: "settings",
 		definition,
 	})
 	bot.runGenerator("uesio/core", "route", {
-		name: "home",
-		path: "home",
-		view: "home",
+		name: "settings",
+		path: "settings",
+		view: "settings",
 		theme: "uesio/core.default",
-		title: "Home",
+		title: "Settings",
 	})
 }

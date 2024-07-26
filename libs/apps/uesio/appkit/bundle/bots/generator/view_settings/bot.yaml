@@ -1,0 +1,6 @@
+name: view_settings
+dialect: JAVASCRIPT
+label: Settings
+type: GENERATOR
+params:
+public: true

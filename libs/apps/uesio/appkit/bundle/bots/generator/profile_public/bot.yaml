@@ -1,6 +1,6 @@
-name: settings
+name: profile_public
 dialect: JAVASCRIPT
-label: Settings
+label: Public Profile
 type: GENERATOR
 params:
 public: true
