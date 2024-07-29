@@ -9,7 +9,7 @@ definition:
       - bg-slate-50
       - p-5
       - border
-      - border-slate-200
+      - border-slate-300
       - rounded
       - my-2
 public: true

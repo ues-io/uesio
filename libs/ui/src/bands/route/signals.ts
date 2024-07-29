@@ -18,6 +18,7 @@ const ROUTE_BAND = "route"
 
 type RouteSignal = SignalDefinition & {
 	newtab?: boolean
+	preventLinkTag?: boolean
 }
 
 interface RedirectSignal extends RouteSignal {

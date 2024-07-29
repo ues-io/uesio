@@ -1,0 +1,15 @@
+name: badge
+label: Badge
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - "[line-height:0]"
+      - text-[8pt]
+      - "[min-width:50px]"
+      - text-center
+      - tracking-wider
+      - uppercase
+      - rounded
+      - py-2.5
+      - px-1.5
