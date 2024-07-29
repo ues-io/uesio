@@ -1,0 +1,5 @@
+name: workspacesettings
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/settings
+view: workspacesettings
+theme: default
+title: "Workspace Settings: $Param{workspacename}"

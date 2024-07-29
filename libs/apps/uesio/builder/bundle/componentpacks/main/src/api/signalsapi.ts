@@ -1,4 +1,4 @@
-import { collection, component, context, definition, wire } from "@uesio/ui"
+import { collection, signal, context, wire } from "@uesio/ui"
 import collectionSignals from "../signals/collection"
 import componentSignals from "../signals/component"
 import botSignals from "../signals/bot"
@@ -41,7 +41,7 @@ type SignalDescriptor = {
 	label: string
 	description: string
 	properties: (
-		signal: SignalDefinition,
+		signal: signal.SignalDefinition,
 		context: context.Context
 	) => ComponentProperty[]
 	outputs?: SignalOutput[]
@@ -52,23 +52,11 @@ type SignalDescriptor = {
 type ComponentSignalDescriptor = {
 	label?: string
 	properties?: (
-		signal: SignalDefinition,
+		signal: signal.SignalDefinition,
 		context: context.Context
 	) => ComponentProperty[]
 	target?: string
 	outputs?: SignalOutput[]
-}
-
-type SignalDefinition = {
-	signal: string
-	[key: string]: definition.Definition
-	[component.COMPONENT_CONTEXT]?: context.ContextOptions
-	stepId?: string
-	onerror?: {
-		continue: boolean
-		notify: boolean
-		signals: SignalDefinition[]
-	}
 }
 
 const signalDescriptorsIndex = {} as Record<string, SignalDescriptor>
@@ -144,7 +132,7 @@ const getSignalProperties = (
 	signalPlainWireRecord: wire.PlainWireRecord,
 	context: context.Context
 ): ComponentProperty[] => {
-	const signalDefinition = signalPlainWireRecord as SignalDefinition
+	const signalDefinition = signalPlainWireRecord as signal.SignalDefinition
 	const signalName = signalDefinition?.signal
 	let descriptor = signalDescriptorsIndex[signalName]
 	// Load Component-specific signal definitions dynamically from Component definition
@@ -183,7 +171,6 @@ export { getSignalProperties }
 
 export type {
 	SignalBandDefinition,
-	SignalDefinition,
 	SignalDescriptor,
 	SignalOutput,
 	ComponentSignalDescriptor,

@@ -11,5 +11,7 @@ definition:
     title:
       - text-sm
       - leading-none
+    subtitle:
+      - empty:hidden
     actions:
       - leading-none

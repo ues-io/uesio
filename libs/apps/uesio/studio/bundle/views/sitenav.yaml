@@ -44,6 +44,10 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: home
                 - uesio/studio.sitenavtile:
+                    title: Settings
+                    icon: settings
+                    id: settings
+                - uesio/studio.sitenavtile:
                     title: Users
                     icon: person
                     id: users

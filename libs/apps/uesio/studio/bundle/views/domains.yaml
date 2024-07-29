@@ -107,48 +107,43 @@ definition:
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
-                          uesio.styleTokens:
-                            content:
-                              - flex
-                              - justify-between
-                              - flex-1
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://${uesio/studio.domain}"
+                              newtab: true
+                              uesio.conditions:
+                                - field: uesio/studio.type
+                                  value: domain
+                            - signal: "route/REDIRECT"
+                              path: "https://${uesio/studio.domain}.$Site{domain}"
+                              newtab: true
+                              uesio.conditions:
+                                - field: uesio/studio.type
+                                  value: subdomain
                           content:
-                            # Top domain
-                            - uesio/io.button:
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: "domain"
-                                icon: shield
-                                text: "${uesio/studio.type}: ${uesio/studio.domain}"
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://${uesio/studio.domain}"
-                                    newtab: true
-                            # Subdomain
-                            - uesio/io.button:
-                                uesio.display:
-                                  - field: uesio/studio.type
-                                    value: "subdomain"
-                                icon: shield
-                                text: "${uesio/studio.type}: ${uesio/studio.domain}"
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://${uesio/studio.domain}.$Site{domain}"
-                                    newtab: true
-                            - uesio/io.button:
-                                icon: delete
-                                signals:
-                                  - signal: wire/MARK_FOR_DELETE
-                                  - signal: wire/UPDATE_RECORD
-                                    wire: deleteDomain
-                                    field: name
-                                    value: ${uesio/studio.domain}
-                                  - signal: wire/UPDATE_RECORD
-                                    wire: deleteDomain
-                                    field: type
-                                    value: ${uesio/studio.type}
-                                  - signal: panel/TOGGLE
-                                    panel: confirmDelete
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/appkit.item
+                                title: ${uesio/studio.domain}
+                                subtitle: ${uesio/studio.type}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/appkit.avataricon
+                                      text: verified_user
+                                actions:
+                                  - uesio/io.button:
+                                      icon: delete
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: deleteDomain
+                                          field: name
+                                          value: ${uesio/studio.domain}
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: deleteDomain
+                                          field: type
+                                          value: ${uesio/studio.type}
+                                        - signal: panel/TOGGLE
+                                          panel: confirmDelete
   panels:
     newDomain:
       uesio.type: uesio/io.dialog

@@ -89,7 +89,7 @@ views:
   uesio/studio.view: true
   uesio/studio.views: true
   uesio/studio.workspace: true
-  uesio/studio.workspaceconfig: true
+  uesio/studio.workspacesettings: true
   uesio/studio.workspacenav: true
   uesio/studio.sitecollectiondata: true
   uesio/studio.sitecollectiondataimport: true
@@ -97,6 +97,7 @@ views:
   uesio/studio.sitecollectionexportbatches: true
   uesio/studio.sitecollectionrecorddata: true
   uesio/studio.sitecollections: true
+  uesio/studio.sitesettings: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
@@ -193,7 +194,7 @@ routes:
   uesio/studio.usertokens: true
   uesio/studio.view: true
   uesio/studio.views: true
-  uesio/studio.workspaceconfig: true
+  uesio/studio.workspacesettings: true
   uesio/studio.workspace: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
@@ -207,6 +208,7 @@ routes:
   uesio/studio.sitecollectionexportbatches: true
   uesio/studio.sitecollectionrecorddata: true
   uesio/studio.sitecollections: true
+  uesio/studio.sitesettings: true
   uesio/studio.siteusage_file_downloads: true
   uesio/studio.siteusage_file_download_bytes: true
   uesio/studio.siteusage_route_load: true

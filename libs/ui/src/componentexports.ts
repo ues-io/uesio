@@ -36,6 +36,7 @@ import { ComponentState } from "./bands/component/types"
 const COMPONENT_ID = "uesio.id"
 const COMPONENT_CONTEXT = "uesio.context"
 const DISPLAY_CONDITIONS = "uesio.display"
+const SIGNAL_CONDITIONS = "uesio.conditions"
 const STYLE_VARIANT = "uesio.variant"
 const STYLE_TOKENS = "uesio.styleTokens"
 
@@ -56,6 +57,7 @@ export {
 	DECLARATIVE_COMPONENT,
 	DISPLAY_CONDITIONS,
 	COMPONENT_CONTEXT,
+	SIGNAL_CONDITIONS,
 	COMPONENT_ID,
 	STYLE_VARIANT,
 	STYLE_TOKENS,

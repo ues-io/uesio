@@ -1,9 +1,5 @@
-import { context } from "@uesio/ui"
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { context, signal } from "@uesio/ui"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import { getAvailablePanelIds } from "../api/panelapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
@@ -17,7 +13,7 @@ const getPanelSelectOptions = (context: context.Context) =>
 	}))
 
 const getPanelSelectProperties = (
-	signal: SignalDefinition,
+	signal: signal.SignalDefinition,
 	context: context.Context
 ) =>
 	[

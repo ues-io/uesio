@@ -3,7 +3,11 @@ import type { Definition } from "./definition"
 import type { PlainComponentState } from "../bands/component/types"
 import type { Draft } from "@reduxjs/toolkit"
 import type { Platform } from "../platform/platform"
-import { COMPONENT_CONTEXT } from "../componentexports"
+import {
+	COMPONENT_CONTEXT,
+	DisplayCondition,
+	SIGNAL_CONDITIONS,
+} from "../componentexports"
 
 type SignalDispatcher = (
 	signal: SignalDefinition,
@@ -31,6 +35,7 @@ type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
 	[COMPONENT_CONTEXT]?: ContextOptions
+	[SIGNAL_CONDITIONS]?: DisplayCondition[]
 	stepId?: string
 	onerror?: {
 		continue: boolean

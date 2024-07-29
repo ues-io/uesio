@@ -1,26 +1,22 @@
-import { wire } from "@uesio/ui"
+import { wire, signal } from "@uesio/ui"
 
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
 // The key for the entire band
 const BAND = "wire"
 
-interface ToggleConditionSignal extends SignalDefinition {
+interface ToggleConditionSignal extends signal.SignalDefinition {
 	wire: string
 	conditionId: string
 }
 
-interface RemoveConditionSignal extends SignalDefinition {
+interface RemoveConditionSignal extends signal.SignalDefinition {
 	wire: string
 	conditionId: string
 }
 
-interface SetConditionValueSignal extends SignalDefinition {
+interface SetConditionValueSignal extends signal.SignalDefinition {
 	wire: string
 	value: string | number | boolean
 	conditionId: string
