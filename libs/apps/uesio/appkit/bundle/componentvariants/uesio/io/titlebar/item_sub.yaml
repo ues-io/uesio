@@ -1,0 +1,15 @@
+name: item_sub
+label: Item Sub
+public: true
+extends: uesio/appkit.item
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-3
+    content:
+      - gap-0.5
+    title:
+      - text-xs
+      - uppercase
+    subtitle:
+      - text-[8pt]

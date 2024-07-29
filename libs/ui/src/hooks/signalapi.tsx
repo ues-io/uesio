@@ -27,6 +27,8 @@ const getNavigateLink = (
 		| AssignmentNavigateSignal
 		| RedirectSignal
 
+	if (signal.preventLinkTag) return undefined
+
 	if (signal.signal === "route/NAVIGATE") {
 		if (!signal.path) return undefined
 		const prefix = getRouteUrlPrefix(context, signal.namespace)

@@ -33,6 +33,10 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.sitedomains:
+          fields:
+            uesio/studio.type:
+            uesio/studio.domain:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -122,12 +126,13 @@ definition:
                                               - uesio/io.tile:
                                                   uesio.variant: uesio/io.item
                                                   content:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/studio.name}
-                                                  avatar:
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/io.icon
-                                                        text: handyman
+                                                    - uesio/io.titlebar:
+                                                        uesio.variant: uesio/appkit.item
+                                                        title: ${uesio/studio.name}
+                                                        avatar:
+                                                          - uesio/io.text:
+                                                              uesio.variant: uesio/appkit.avataricon
+                                                              text: handyman
                                                   signals:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}/workspace/${uesio/studio.name}"
@@ -155,12 +160,78 @@ definition:
                                               - uesio/io.tile:
                                                   uesio.variant: uesio/io.item
                                                   content:
-                                                    - uesio/io.text:
-                                                        text: ${uesio/studio.name}
-                                                  avatar:
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/io.icon
-                                                        text: public
+                                                    - uesio/io.titlebar:
+                                                        uesio.variant: uesio/appkit.item
+                                                        title: ${uesio/studio.name}
+                                                        actions:
+                                                          - uesio/io.group:
+                                                              components:
+                                                                - uesio/io.text:
+                                                                    uesio.styleTokens:
+                                                                      root:
+                                                                        - bg-emerald-600
+                                                                        - text-white
+                                                                    uesio.variant: uesio/appkit.badge
+                                                                    text: Active
+                                                        avatar:
+                                                          - uesio/io.text:
+                                                              uesio.variant: uesio/appkit.avataricon
+                                                              text: public
+                                                    - uesio/io.box:
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - mt-4
+                                                        uesio.display:
+                                                          - type: hasValue
+                                                            value: ${uesio/studio.sitedomains}
+                                                        components:
+                                                          - uesio/io.titlebar:
+                                                              uesio.variant: uesio/appkit.item_sub
+                                                              title: Domains
+                                                          - uesio/io.field:
+                                                              fieldId: uesio/studio.sitedomains
+                                                              labelPosition: none
+                                                              reference:
+                                                                components:
+                                                                  - uesio/io.tile:
+                                                                      uesio.styleTokens:
+                                                                        root:
+                                                                          - group
+                                                                      signals:
+                                                                        - signal: "route/REDIRECT"
+                                                                          path: "https://${uesio/studio.domain}.$Site{domain}"
+                                                                          newtab: true
+                                                                      content:
+                                                                        - uesio/io.group:
+                                                                            components:
+                                                                              - uesio/io.text:
+                                                                                  uesio.variant: uesio/appkit.badge
+                                                                                  uesio.styleTokens:
+                                                                                    root:
+                                                                                      - lowercase
+                                                                                      - bg-slate-200
+                                                                                      - group-hover:bg-emerald-200
+                                                                                  uesio.display:
+                                                                                    - type: fieldValue
+                                                                                      field: uesio/studio.type
+                                                                                      value: subdomain
+                                                                                  text: https://${uesio/studio.domain}.$Site{domain}
+                                                                              - uesio/io.text:
+                                                                                  uesio.variant: uesio/appkit.badge
+                                                                                  uesio.styleTokens:
+                                                                                    root:
+                                                                                      - lowercase
+                                                                                      - bg-slate-200
+                                                                                      - group-hover:bg-emerald-200
+                                                                                  uesio.display:
+                                                                                    - type: fieldValue
+                                                                                      field: uesio/studio.type
+                                                                                      value: domain
+                                                                                  text: https://${uesio/studio.domain}
+                                                                              - uesio/io.text:
+                                                                                  uesio.variant: uesio/io.icon
+                                                                                  text: open_in_new
                                                   signals:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}/site/${uesio/studio.name}"
+                                                      preventLinkTag: true
