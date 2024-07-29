@@ -48,7 +48,7 @@
 	"files": [],
 	"devDependencies": {
 		"@dagrejs/dagre": "^1.1.1",
-		"@floating-ui/react": "^0.26.9",
+		"@floating-ui/react": "^0.26.20",
 		"@fullcalendar/core": "^6.1.10",
 		"@fullcalendar/daygrid": "^6.1.10",
 		"@fullcalendar/interaction": "^6.1.10",
