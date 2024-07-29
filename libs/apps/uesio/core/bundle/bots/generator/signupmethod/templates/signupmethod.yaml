@@ -1,0 +1,12 @@
+name: ${name}
+authsource: ${authSource}
+profile: ${profile}
+usernameTemplate: ${usernameTemplate}
+usernameRegex: ${usernameRegex}
+usernameFormatExplanation: ${usernameFormatExplanation}
+autoLogin: ${autoLogin}
+enableSelfSignup: ${enableSelfSignup}
+landingRoute: ${landingRoute}
+createLoginBot: ${createLoginBot}
+signupBot: ${signupBot}
+resetPasswordBot: ${resetPasswordBot}

@@ -292,6 +292,10 @@ func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[
 		payload["email"] = user.Email
 	}
 
+	if signupMethod.ResetPasswordBot == "" {
+		return loginmethod, nil
+	}
+
 	return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
 
 }
@@ -398,6 +402,10 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 	// For security purposes, don't send passwords to create login bots.
 	delete(payload, "password")
+
+	if signupMethod.CreateLoginBot == "" {
+		return nil
+	}
 
 	return c.callListenerBot(signupMethod.CreateLoginBot, code, payload)
 

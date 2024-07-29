@@ -1,0 +1,6 @@
+name: signupmethod_admin
+dialect: JAVASCRIPT
+label: Admin Signup Method
+type: GENERATOR
+params:
+public: true
