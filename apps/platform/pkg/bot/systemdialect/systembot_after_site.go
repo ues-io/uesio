@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -116,6 +118,24 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 			},
 		}, siteAdminSession, datasource.GetConnectionSaveOptions(connection))
 
+	})
+	if err != nil {
+		return err
+	}
+
+	// If we are deleting sites, also truncate their data
+	err = request.LoopDeletes(func(change *wire.ChangeItem) error {
+		siteUniqueKey, err := change.GetOldFieldAsString(commonfields.UniqueKey)
+		if err != nil {
+			return err
+		}
+		if siteUniqueKey == "" {
+			return errors.New("unable to get site unique key, cannot truncate data")
+		}
+		if err = connection.TruncateTenantData(sess.MakeSiteTenantID(siteUniqueKey)); err != nil {
+			return errors.New("unable to truncate site data: " + err.Error())
+		}
+		return nil
 	})
 	if err != nil {
 		return err
