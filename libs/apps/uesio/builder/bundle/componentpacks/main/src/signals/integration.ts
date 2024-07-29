@@ -1,15 +1,11 @@
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import {
 	ComponentProperty,
 	StructProperty,
 } from "../properties/componentproperty"
-import { api, metadata } from "@uesio/ui"
+import { api, metadata, signal } from "@uesio/ui"
 
-interface RunActionSignal extends SignalDefinition {
+interface RunActionSignal extends signal.SignalDefinition {
 	integrationType: metadata.MetadataKey
 	integration: metadata.MetadataKey
 	action: string

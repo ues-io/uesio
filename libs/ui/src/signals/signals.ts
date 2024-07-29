@@ -16,7 +16,11 @@ import oauth2Signals from "../bands/oauth2/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
-import { COMPONENT_CONTEXT } from "../componentexports"
+import {
+	COMPONENT_CONTEXT,
+	shouldAll,
+	SIGNAL_CONDITIONS,
+} from "../componentexports"
 const registry: Record<string, SignalDescriptor> = {
 	...authSignals,
 	...collectionSignals,
@@ -34,6 +38,11 @@ const registry: Record<string, SignalDescriptor> = {
 
 const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || getComponentSignalDefinition()
+	const conditions = signal[SIGNAL_CONDITIONS]
+
+	if (!shouldAll(conditions, context)) {
+		return context
+	}
 	return descriptor.dispatcher(
 		signal,
 		injectDynamicContext(context, signal?.[COMPONENT_CONTEXT])

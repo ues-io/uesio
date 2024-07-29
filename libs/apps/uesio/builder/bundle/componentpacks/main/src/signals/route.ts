@@ -1,9 +1,5 @@
-import { api, metadata, param, wire } from "@uesio/ui"
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { api, metadata, param, wire, signal } from "@uesio/ui"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import {
 	ComponentProperty,
 	StructProperty,
@@ -12,7 +8,7 @@ import {
 // The key for the entire band
 const BAND = "route"
 
-type RouteSignal = SignalDefinition & {
+type RouteSignal = signal.SignalDefinition & {
 	newtab?: boolean
 }
 

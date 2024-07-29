@@ -1,9 +1,5 @@
-import { context, wire } from "@uesio/ui"
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { context, wire, signal } from "@uesio/ui"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 
 import {
 	getComponentDefs,
@@ -74,7 +70,7 @@ type ComponentSignalDefinition = {
 	targettype: "specific" | "multiple"
 	target?: string
 	componentid: string
-} & SignalDefinition
+} & signal.SignalDefinition
 
 // The key for the entire band
 const BAND = "component"

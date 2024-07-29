@@ -1,0 +1,5 @@
+name: sitesettings
+path: app/{app:\w*\/\w*}/site/{sitename}/settings
+view: sitesettings
+theme: default
+title: "Site Settings: $Param{sitename}"

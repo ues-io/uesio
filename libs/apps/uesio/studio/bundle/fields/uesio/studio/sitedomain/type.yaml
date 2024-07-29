@@ -1,5 +1,5 @@
 name: type
 type: SELECT
 selectList: sitedomaintype
-label: Domain
+label: Domain Type
 required: true

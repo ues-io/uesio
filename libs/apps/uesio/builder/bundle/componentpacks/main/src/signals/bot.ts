@@ -1,15 +1,11 @@
-import {
-	SignalBandDefinition,
-	SignalDefinition,
-	SignalDescriptor,
-} from "../api/signalsapi"
+import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import {
 	ComponentProperty,
 	StructProperty,
 } from "../properties/componentproperty"
-import { api } from "@uesio/ui"
+import { api, signal } from "@uesio/ui"
 
-interface CallBotSignal extends SignalDefinition {
+interface CallBotSignal extends signal.SignalDefinition {
 	bot: string
 }
 
