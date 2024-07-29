@@ -181,6 +181,9 @@ definition:
                                                         uesio.styleTokens:
                                                           root:
                                                             - mt-4
+                                                        uesio.display:
+                                                          - type: hasValue
+                                                            value: ${uesio/studio.sitedomains}
                                                         components:
                                                           - uesio/io.titlebar:
                                                               uesio.variant: uesio/appkit.item_sub
