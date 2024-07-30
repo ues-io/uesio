@@ -17,8 +17,6 @@ function starter_complete(bot) {
 		version,
 	})
 
-	bot.log.info("siteid", site.id)
-
 	bot.createUser({
 		siteId: site.id,
 		firstName: "George",

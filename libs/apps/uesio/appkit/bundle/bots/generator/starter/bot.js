@@ -20,4 +20,7 @@ function starter(bot) {
 	// Create a signup method
 	// Create public profile/permission set
 	bot.runGenerator("uesio/appkit", "signupmethod_admin", {})
+
+	// Set up the bundledef and other dependencies
+	bot.runGenerator("uesio/appkit", "starter_bundledef", {})
 }
