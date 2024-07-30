@@ -12,10 +12,26 @@ export type ChartProps = {
 	type: "line" | "bar"
 }
 
+type TicksOptions = {
+	count?: number
+}
+
+type ScaleOptions = {
+	beginAtZero?: boolean
+	ticks?: TicksOptions
+	suggestedMax?: number
+}
+
+type ScalesOptions = {
+	y?: ScaleOptions
+	x?: ScaleOptions
+}
+
 export type ChartDefinition = {
 	labels: LabelsDefinition
 	title?: string
 	series: SeriesDefinition[]
+	scales?: ScalesOptions
 } & definition.BaseDefinition
 
 const StyleDefaults = Object.freeze({
@@ -75,6 +91,7 @@ const ChartComponent: definition.UtilityComponent<ChartProps> = (props) => {
 					options={{
 						maintainAspectRatio: false,
 						responsive: true,
+						scales: definition.scales,
 					}}
 				/>
 			</div>

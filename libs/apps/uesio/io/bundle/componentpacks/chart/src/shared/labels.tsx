@@ -1,4 +1,4 @@
-import { wire, collection } from "@uesio/ui"
+import { wire, collection, context } from "@uesio/ui"
 import { SeriesDefinition } from "./aggregate"
 
 type Categories = Record<string, string>
@@ -23,6 +23,7 @@ type DataLabels = {
 	source: "DATA"
 	timeunit?: "YEAR" | "MONTH" | "DAY"
 	timeunitfill?: "YEAR" | "MONTH" | "WEEK"
+	timeunitdefaultvalue?: string
 	format?: {
 		month?: "long" | "short" | "numeric" | "narrow" | "2-digit"
 		year?: "numeric" | "2-digit"
@@ -30,6 +31,13 @@ type DataLabels = {
 }
 
 type LabelsDefinition = WireLabels | ValueLabels | DataLabels
+
+const getDayMonthYearDateKeyFromDateString = (dateValue: string) => {
+	if (dateValue === "THIS_MONTH" || dateValue === "THIS_WEEK") {
+		return getDayMonthYearDateKey(new Date())
+	}
+	return dateValue
+}
 
 const getMonthYearDateKey = (date: Date) =>
 	`${date.getUTCFullYear()}-${(date.getUTCMonth() + "").padStart(2, "0")}`
@@ -89,13 +97,27 @@ const getCategoryFunc = (
 	}
 }
 
-const getDayDataLabels = (labels: DataLabels, categories: Categories) => {
+const getDayDataLabels = (
+	labels: DataLabels,
+	categories: Categories,
+	context: context.Context
+) => {
 	// Loop through all our data to get a full list of categories based
 	// on our category field
 
 	const categoryKeys = Object.keys(categories)
 	const sortedCategories: Categories = {}
-	if (!categoryKeys.length) return sortedCategories
+	if (!categoryKeys.length) {
+		if (!labels.timeunitdefaultvalue) {
+			return sortedCategories
+		}
+
+		categoryKeys.push(
+			getDayMonthYearDateKeyFromDateString(
+				context.mergeString(labels.timeunitdefaultvalue)
+			)
+		)
+	}
 
 	// Now sort our buckets
 	const sortedKeys = categoryKeys.sort()
@@ -145,13 +167,27 @@ const getDayDataLabels = (labels: DataLabels, categories: Categories) => {
 	return sortedCategories
 }
 
-const getMonthDataLabels = (labels: DataLabels, categories: Categories) => {
+const getMonthDataLabels = (
+	labels: DataLabels,
+	categories: Categories,
+	context: context.Context
+) => {
 	// Loop through all our data to get a full list of categories based
 	// on our category field
 
 	const categoryKeys = Object.keys(categories)
 	const sortedCategories: Categories = {}
-	if (!categoryKeys.length) return sortedCategories
+	if (!categoryKeys.length) {
+		if (!labels.timeunitdefaultvalue) {
+			return sortedCategories
+		}
+
+		categoryKeys.push(
+			getDayMonthYearDateKeyFromDateString(
+				context.mergeString(labels.timeunitdefaultvalue)
+			)
+		)
+	}
 
 	// Now sort our buckets
 	const sortedKeys = categoryKeys.sort()
@@ -239,7 +275,8 @@ const getTextDataLabels = (
 const getDateDataLabels = (
 	wire: wire.Wire,
 	labels: DataLabels,
-	categoryField: collection.Field
+	categoryField: collection.Field,
+	context: context.Context
 ) => {
 	const categories: Categories = {}
 	const categoryFunc = getCategoryFunc(labels, categoryField)
@@ -252,9 +289,9 @@ const getDateDataLabels = (
 
 	switch (labels.timeunit) {
 		case "MONTH":
-			return getMonthDataLabels(labels, categories)
+			return getMonthDataLabels(labels, categories, context)
 		case "DAY":
-			return getDayDataLabels(labels, categories)
+			return getDayDataLabels(labels, categories, context)
 		default:
 			throw new Error("Invalid Timeunit")
 	}
@@ -263,7 +300,8 @@ const getDateDataLabels = (
 const getDataLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: DataLabels,
-	series: SeriesDefinition
+	series: SeriesDefinition,
+	context: context.Context
 ) => {
 	const wire = wires[series.wire]
 	if (!wire) throw new Error("Wire not found: " + series.wire)
@@ -277,7 +315,7 @@ const getDataLabels = (
 	switch (fieldType) {
 		case "DATE":
 		case "TIMESTAMP":
-			return getDateDataLabels(wire, labels, categoryField)
+			return getDateDataLabels(wire, labels, categoryField, context)
 		case "REFERENCE":
 		case "USER":
 			return getReferenceDataLabels(wire, labels, categoryField)
@@ -292,12 +330,13 @@ const getDataLabels = (
 const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
-	serieses: SeriesDefinition[]
+	serieses: SeriesDefinition[],
+	context: context.Context
 ) =>
 	serieses.reduce(
 		(categories, series) => ({
 			...categories,
-			...getLabelsForSeries(wires, labels, series),
+			...getLabelsForSeries(wires, labels, series, context),
 		}),
 		{} as Categories
 	)
@@ -305,11 +344,12 @@ const getLabels = (
 const getLabelsForSeries = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
-	series: SeriesDefinition
+	series: SeriesDefinition,
+	context: context.Context
 ) => {
 	switch (labels.source) {
 		case "DATA":
-			return getDataLabels(wires, labels, series)
+			return getDataLabels(wires, labels, series, context)
 		default:
 			return {}
 	}

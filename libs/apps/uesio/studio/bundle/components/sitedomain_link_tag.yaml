@@ -1,0 +1,54 @@
+name: sitedomain_link_tag
+category: DATA
+title: List Header
+type: DECLARATIVE
+properties:
+sections:
+definition:
+  - uesio/io.tile:
+      uesio.styleTokens:
+        root:
+          - group
+      signals:
+        - signal: "route/REDIRECT"
+          path: "https://${uesio/studio.domain}"
+          newtab: true
+          uesio.conditions:
+            - field: uesio/studio.type
+              value: domain
+        - signal: "route/REDIRECT"
+          path: "https://${uesio/studio.domain}.$Site{domain}"
+          newtab: true
+          uesio.conditions:
+            - field: uesio/studio.type
+              value: subdomain
+      content:
+        - uesio/io.group:
+            components:
+              - uesio/io.text:
+                  uesio.variant: uesio/appkit.badge
+                  uesio.styleTokens:
+                    root:
+                      - lowercase
+                      - bg-slate-200
+                      - group-hover:bg-emerald-200
+                  uesio.display:
+                    - type: fieldValue
+                      field: uesio/studio.type
+                      value: subdomain
+                  text: https://${uesio/studio.domain}.$Site{domain}
+              - uesio/io.text:
+                  uesio.variant: uesio/appkit.badge
+                  uesio.styleTokens:
+                    root:
+                      - lowercase
+                      - bg-slate-200
+                      - group-hover:bg-emerald-200
+                  uesio.display:
+                    - type: fieldValue
+                      field: uesio/studio.type
+                      value: domain
+                  text: https://${uesio/studio.domain}
+              - uesio/io.text:
+                  uesio.variant: uesio/io.icon
+                  text: open_in_new

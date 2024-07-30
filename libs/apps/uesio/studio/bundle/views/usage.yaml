@@ -116,6 +116,13 @@ definition:
                       source: DATA
                       timeunit: DAY
                       timeunitfill: MONTH
+                      timeunitdefaultvalue: $ConditionValue{usage:day}
+                    scales:
+                      y:
+                        beginAtZero: true
+                        ticks:
+                          count: 6
+                        suggestedMax: 100
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
