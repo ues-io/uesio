@@ -27,7 +27,7 @@ const aggregate = (
 	serieses: SeriesDefinition[],
 	context: context.Context
 ) => {
-	const categories = getLabels(wires, labels, serieses)
+	const categories = getLabels(wires, labels, serieses, context)
 	const datasets = serieses.flatMap((series, index) => {
 		const { wire: wireName, valueField, categoryField, label } = series
 		const wire = wires[wireName]

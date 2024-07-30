@@ -26,6 +26,7 @@ definition:
             uesio/studio.minor:
             uesio/studio.patch:
             uesio/studio.version:
+            uesio/studio.description:
         uesio/studio.title:
         uesio/studio.enable_seo:
         uesio/studio.app:
@@ -35,6 +36,10 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
             uesio/studio.icon:
+        uesio/studio.sitedomains:
+          fields:
+            uesio/studio.type:
+            uesio/studio.domain:
       conditions:
         - field: uesio/studio.name
           valueSource: PARAM
@@ -43,6 +48,54 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    users:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.type:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.picture:
+      init:
+        query: false
+      conditions:
+        - field: uesio/core.type
+          value: PERSON
+        - field: uesio/core.username
+          operator: NOT_IN
+          values:
+            - system
+            - guest
+      batchsize: 5
+    usage:
+      collection: uesio/core.usage
+      conditions:
+        - field: metadatatype
+          value: ROUTE
+        - field: actiontype
+          value: LOAD
+        - field: day
+          id: day
+          operator: IN
+          value: THIS_MONTH
+      init:
+        query: false
+      order:
+        - field: day
+          desc: true
+      loadAll: true
+  events:
+    onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
+      - signal: "wire/LOAD"
+        wires:
+          - usage
+          - users
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -56,7 +109,7 @@ definition:
                 selected: home
         content:
           - uesio/io.item:
-              uesio.id: siteDeck
+              uesio.id: siteItem
               wire: sites
               mode: READ
               components:
@@ -64,6 +117,34 @@ definition:
                     uesio.variant: uesio/io.main
                     title: ${uesio/studio.name}
                     subtitle: Site
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.box:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-right
+                                components:
+                                  - uesio/io.text:
+                                      uesio.styleTokens:
+                                        root:
+                                          - bg-emerald-600
+                                          - text-white
+                                          - text-xs
+                                          - py-3
+                                          - px-2.5
+                                      uesio.variant: uesio/appkit.badge
+                                      text: Active
+                                      element: div
+                                  - uesio/io.text:
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-sm
+                                          - font-light
+                                          - text-slate-800
+                                          - p-1
+                                      text: v${bundle->major}.${bundle->minor}.${bundle->patch}
+                                      element: div
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
@@ -71,5 +152,97 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-
+                      - uesio/io.linechart:
+                          uesio.styleTokens:
+                            root:
+                              - mb-10
+                            chart:
+                              - h-64
+                          series:
+                            - name: usage
+                              label: Route Loads This Month
+                              valueField: uesio/core.total
+                              categoryField: uesio/core.day
+                              wire: usage
+                          labels:
+                            source: DATA
+                            timeunit: DAY
+                            timeunitfill: MONTH
+                            timeunitdefaultvalue: $ConditionValue{usage:day}
+                          scales:
+                            y:
+                              beginAtZero: true
+                              ticks:
+                                count: 5
+                              suggestedMax: 100
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.grid:
+                          uesio.variant: uesio/io.two_columns
+                          uesio.styleTokens:
+                            root:
+                              - gap-10
+                          items:
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.titlebar:
+                                      uesio.variant: uesio/io.section
+                                      title: Live Site Access Links
+                                      subtitle: Active domains for this site.
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.sitedomains
+                                      labelPosition: none
+                                      reference:
+                                        components:
+                                          - uesio/studio.sitedomain_link_tag:
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.titlebar:
+                                      uesio.variant: uesio/io.section
+                                      title: Active Bundle Version
+                                      subtitle: The bundle that this site is currently running.
+                                  - uesio/io.text:
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-2xl
+                                          - text-slate-800
+                                      text: v${bundle->version}
+                                      element: div
+                                  - uesio/io.text:
+                                      uesio.styleTokens:
+                                        root:
+                                          - text-sm
+                                          - text-slate-500
+                                          - font-light
+                                      text: ${bundle->description}
+                                      element: div
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Top Users
+                          subtitle: Users with the most usage.
+                      - uesio/io.deck:
+                          uesio.id: userslist
+                          wire: users
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
+                                      element: div
+                                  - uesio/io.text:
+                                      text: ${uesio/core.id}
+                                      uesio.variant: uesio/io.aside
+                                      element: div
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
+                                avatar:
+                                  - uesio/io.avatar:
+                                      image: $UserFile{uesio/core.picture}
+                                      text: ${uesio/core.initials}
   panels:

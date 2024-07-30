@@ -107,19 +107,6 @@ definition:
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.item
-                          signals:
-                            - signal: "route/REDIRECT"
-                              path: "https://${uesio/studio.domain}"
-                              newtab: true
-                              uesio.conditions:
-                                - field: uesio/studio.type
-                                  value: domain
-                            - signal: "route/REDIRECT"
-                              path: "https://${uesio/studio.domain}.$Site{domain}"
-                              newtab: true
-                              uesio.conditions:
-                                - field: uesio/studio.type
-                                  value: subdomain
                           content:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/appkit.item
@@ -144,6 +131,12 @@ definition:
                                           value: ${uesio/studio.type}
                                         - signal: panel/TOGGLE
                                           panel: confirmDelete
+                            - uesio/io.box:
+                                uesio.styleTokens:
+                                  root:
+                                    - mt-4
+                                components:
+                                  - uesio/studio.sitedomain_link_tag:
   panels:
     newDomain:
       uesio.type: uesio/io.dialog
