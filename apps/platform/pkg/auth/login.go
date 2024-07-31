@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -105,7 +106,7 @@ func ResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user 
 	filejson.RespondJSON(w, r, response)
 }
 
-func GetUserFromFederationID(authSourceID string, federationID string, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
+func GetUserFromFederationID(authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
 
 	if session.GetWorkspace() != nil {
 		return nil, nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
@@ -114,7 +115,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, session *
 	adminSession := sess.GetAnonSessionFrom(session)
 
 	// 4. Check for Existing User
-	loginMethod, err := GetLoginMethod(federationID, authSourceID, adminSession)
+	loginMethod, err := GetLoginMethod(federationID, authSourceID, connection, adminSession)
 	if err != nil {
 		return nil, nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}

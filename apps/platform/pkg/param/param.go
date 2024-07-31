@@ -27,6 +27,18 @@ func GetOptionalString(params map[string]interface{}, paramName, defaultValue st
 	return defaultValue
 }
 
+func GetBoolean(params map[string]interface{}, paramName string) bool {
+	paramValue, hasValue := params[paramName]
+	if !hasValue {
+		return false
+	}
+	boolValue, isBool := paramValue.(bool)
+	if !isBool {
+		return false
+	}
+	return boolValue
+}
+
 func GetAsInt(m map[string]interface{}, key string) (int, bool) {
 	if value, ok := m[key]; ok {
 		if intValue, isInt := value.(int); isInt {

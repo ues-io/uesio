@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/sethvargo/go-password/password"
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -60,6 +61,10 @@ func (gba *GeneratorBotAPI) GetAppName() string {
 
 func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
 	return NewSessionAPI(gba.session)
+}
+
+func (gba *GeneratorBotAPI) GetUser() *UserAPI {
+	return NewUserAPI(gba.session.GetContextUser())
 }
 
 // GetAppName returns the name of the current workspace's app
@@ -149,6 +154,10 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 	}
 	return map[string]interface{}{}, nil
 
+}
+
+func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
+	return password.Generate(10, 1, 1, false, false)
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

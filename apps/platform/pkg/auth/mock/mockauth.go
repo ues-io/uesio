@@ -57,7 +57,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	if err != nil {
 		return nil, nil, errors.New("Mock login:" + err.Error())
 	}
-	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.session)
+	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
 }
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
 	return errors.New("Mock login: unfortunately you cannot sign up for mock login")

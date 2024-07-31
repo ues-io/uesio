@@ -109,7 +109,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	if err != nil {
 		return nil, nil, err
 	}
-	return auth.GetUserFromFederationID(c.authSource.GetKey(), validated.Subject, c.session)
+	return auth.GetUserFromFederationID(c.authSource.GetKey(), validated.Subject, c.connection, c.session)
 }
 
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {

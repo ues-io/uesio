@@ -20,6 +20,9 @@ type CreateUserOptions struct {
 	Email        string `bot:"email"`
 	Profile      string `bot:"profile"`
 	SignupMethod string `bot:"signupMethod"`
+	Password     string `bot:"password"`
+	SetTemporary bool   `bot:"setTemporary"`
+	ForceReset   bool   `bot:"forceReset"`
 }
 
 func NewCreateUserOptions(siteID string, params map[string]interface{}) (*CreateUserOptions, error) {
@@ -62,6 +65,9 @@ func NewCreateUserOptions(siteID string, params map[string]interface{}) (*Create
 		Profile:      profile,
 		SignupMethod: signupMethodName,
 		SiteID:       siteID,
+		Password:     param.GetOptionalString(params, "password", ""),
+		SetTemporary: param.GetBoolean(params, "setTemporary"),
+		ForceReset:   param.GetBoolean(params, "forceReset"),
 	}, nil
 }
 
@@ -70,24 +76,16 @@ func CreateUser(options *CreateUserOptions, connection wire.Connection, session 
 		return nil, errors.New("Invalid Create options")
 	}
 
-	firstName := options.FirstName
-	lastName := options.LastName
-	username := options.Username
-	email := options.Email
-	profile := options.Profile
-	signupMethodName := options.SignupMethod
-	siteID := options.SiteID
-
 	user := &meta.User{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Username:  username,
-		Profile:   profile,
+		FirstName: options.FirstName,
+		LastName:  options.LastName,
+		Email:     options.Email,
+		Username:  options.Username,
+		Profile:   options.Profile,
 		Type:      "PERSON",
 	}
 
-	siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
+	siteAdminSession, err := datasource.AddSiteAdminContextByID(options.SiteID, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -99,14 +97,17 @@ func CreateUser(options *CreateUserOptions, connection wire.Connection, session 
 	}
 
 	// Fourth, create a login method.
-	signupMethod, err := auth.GetSignupMethod(signupMethodName, siteAdminSession)
+	signupMethod, err := auth.GetSignupMethod(options.SignupMethod, siteAdminSession)
 	if err != nil {
 		return nil, err
 	}
 
 	err = auth.CreateLoginWithConnection(signupMethod, map[string]interface{}{
-		"username": username,
-		"email":    email,
+		"username":     options.Username,
+		"email":        options.Email,
+		"password":     options.Password,
+		"setTemporary": options.SetTemporary,
+		"forceReset":   options.ForceReset,
 	}, connection, siteAdminSession)
 	if err != nil {
 		return nil, err

@@ -11,6 +11,9 @@ function starter(bot) {
 	// Create a users view/route
 	bot.runGenerator("uesio/appkit", "view_users", {})
 
+	// Create a login view/route
+	bot.runGenerator("uesio/appkit", "view_login", {})
+
 	// Create admin profile/permission set
 	bot.runGenerator("uesio/appkit", "profile_admin", {})
 
