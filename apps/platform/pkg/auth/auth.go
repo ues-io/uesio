@@ -299,7 +299,7 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	return signupMethod, nil
 }
 
-func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
+func getLoginMethod(value, field, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -350,6 +350,7 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 					Value: value,
 				},
 			},
+			Connection: connection,
 		},
 		session,
 	)
@@ -369,12 +370,12 @@ func getLoginMethod(value, field, authSourceID string, session *sess.Session) (*
 	return &loginMethod, nil
 }
 
-func GetLoginMethod(federationID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
-	return getLoginMethod(federationID, "uesio/core.federation_id", authSourceID, session)
+func GetLoginMethod(federationID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(federationID, "uesio/core.federation_id", authSourceID, connection, session)
 }
 
-func GetLoginMethodByUserID(userID string, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
-	return getLoginMethod(userID, "uesio/core.user", authSourceID, session)
+func GetLoginMethodByUserID(userID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(userID, "uesio/core.user", authSourceID, connection, session)
 }
 
 func CreateLoginMethod(loginMethod *meta.LoginMethod, connection wire.Connection, session *sess.Session) error {

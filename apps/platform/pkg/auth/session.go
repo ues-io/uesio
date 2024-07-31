@@ -24,7 +24,7 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	key := cutToken[8:]
 
 	adminSession := sess.GetAnonSession(context.Background(), site)
-	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", adminSession)
+	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", nil, adminSession)
 	if err != nil || loginmethod == nil {
 		return nil, exceptions.NewBadRequestException("The api key you are trying to log in with does not exist")
 	}

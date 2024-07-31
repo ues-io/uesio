@@ -1,0 +1,6 @@
+name: view_login
+dialect: JAVASCRIPT
+label: Login
+type: GENERATOR
+params:
+public: true

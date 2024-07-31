@@ -196,7 +196,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 
 	claims := sess.(samlsp.JWTSessionClaims)
 
-	user, _, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.session)
+	user, _, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.connection, c.session)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

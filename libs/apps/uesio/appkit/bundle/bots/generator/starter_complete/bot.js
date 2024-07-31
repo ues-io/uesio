@@ -17,13 +17,19 @@ function starter_complete(bot) {
 		version,
 	})
 
+	const tempPassword = bot.generatePassword()
+
+	const adminUser = bot.getUser()
+
 	bot.createUser({
 		siteId: site.id,
-		firstName: "George",
-		lastName: "Washington",
-		username: "george",
-		email: "plusplusben@gmail.com",
+		firstName: adminUser.getFirstName(),
+		lastName: adminUser.getLastName(),
+		username: adminUser.getUsername(),
+		email: adminUser.getEmail(),
 		profile: appName + ".admin",
 		signupMethod: appName + ".admin",
+		password: tempPassword,
+		setTemporary: true,
 	})
 }

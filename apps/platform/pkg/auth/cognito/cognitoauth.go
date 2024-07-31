@@ -112,7 +112,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	authSourceKey := "uesio/core.platform"
 	// END TEMPORARY FIX
 
-	return auth.GetUserFromFederationID(authSourceKey, claims["sub"].(string), c.session)
+	return auth.GetUserFromFederationID(authSourceKey, claims["sub"].(string), c.connection, c.session)
 
 }
 

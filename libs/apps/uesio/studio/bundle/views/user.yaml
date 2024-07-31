@@ -67,6 +67,7 @@ definition:
         uesio/core.user:
         uesio/core.auth_source:
         uesio/core.federation_id:
+        uesio/core.temporary_password:
       conditions:
         - field: uesio/core.user
           valueSource: LOOKUP
@@ -346,20 +347,15 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 content:
-                                  - uesio/io.grid:
-                                      uesio.styleTokens:
-                                        root:
-                                          - grid-cols-[1fr_auto]
-                                          - items-center
-                                      items:
-                                        - uesio/io.box:
-                                            components:
-                                              - uesio/io.text:
-                                                  text: ${uesio/core.auth_source}
-                                                  element: div
-                                              - uesio/io.text:
-                                                  text: ${uesio/core.federation_id}
-                                                  element: div
+                                  - uesio/io.titlebar:
+                                      uesio.variant: uesio/appkit.item
+                                      title: ${uesio/core.federation_id}
+                                      subtitle: ${uesio/core.auth_source}
+                                      avatar:
+                                        - uesio/io.text:
+                                            uesio.variant: uesio/appkit.avataricon
+                                            text: fingerprint
+                                      actions:
                                         - uesio/io.box:
                                             components:
                                               - uesio/io.button:
@@ -374,6 +370,23 @@ definition:
                                                         - loginmethods
                                                   icon: delete
                                                   uesio.variant: uesio/io.nav
+                                  - uesio/io.box:
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-4
+                                      uesio.display:
+                                        - type: hasValue
+                                          value: ${uesio/core.temporary_password}
+                                      components:
+                                        - uesio/io.titlebar:
+                                            uesio.variant: uesio/appkit.item_sub
+                                            uesio.styleTokens:
+                                              subtitle:
+                                                - select-all
+                                                - whitespace-pre
+                                                - font-mono
+                                            title: Temporary Password
+                                            subtitle: ${uesio/core.temporary_password}
   panels:
     deleteUser:
       uesio.type: uesio/io.dialog

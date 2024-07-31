@@ -29,3 +29,11 @@ func (u *UserAPI) GetEmail() string {
 func (u *UserAPI) GetUsername() string {
 	return u.user.Username
 }
+
+func (u *UserAPI) GetFirstName() string {
+	return u.user.FirstName
+}
+
+func (u *UserAPI) GetLastName() string {
+	return u.user.LastName
+}

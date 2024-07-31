@@ -1,2 +1,4 @@
 name: ${name}
 homeRoute: ${name}.home
+loginRoute: ${name}.login
+publicProfile: ${name}.public

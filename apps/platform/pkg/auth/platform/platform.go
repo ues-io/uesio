@@ -17,6 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -148,7 +149,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 		return nil, nil, exceptions.NewBadRequestException("You must enter a password")
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
+	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, nil, exceptions.NewBadRequestException("Failed getting login method data: " + err.Error())
 	}
@@ -255,7 +256,7 @@ func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[
 	code := generateCode()
 
 	adminSession := sess.GetAnonSessionFrom(c.session)
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), adminSession)
+	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, adminSession)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -265,7 +266,7 @@ func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[
 		return nil, err
 	}
 
-	loginmethod, err = auth.GetLoginMethodByUserID(user.ID, c.authSource.GetKey(), c.session)
+	loginmethod, err = auth.GetLoginMethodByUserID(user.ID, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +321,7 @@ func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, paylo
 		return nil, exceptions.NewBadRequestException("This password does not meet the password policy requirements: " + err.Error())
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
+	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
@@ -373,14 +374,14 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 
 	// 2. If the payload includes a "password" and a "setTemporary" flag, set the password into
 	//    the temporary password field as well.
-	_, setTemporary := payload["setTemporary"]
+	setTemporary := param.GetBoolean(payload, "setTemporary")
 	if hasPassword && setTemporary {
 		loginMethod.TemporaryPassword = password.(string)
 	}
 
 	// 3. If the payload includes a "password" and a "forceReset" flag, set the forceReset flag on
 	//    the login method.
-	_, forceReset := payload["forceReset"]
+	forceReset := param.GetBoolean(payload, "forceReset")
 	if forceReset {
 		loginMethod.ForceReset = true
 	}
@@ -391,9 +392,10 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}
 
 	if hasPassword {
-		err := c.ConfirmSignUp(signupMethod, map[string]interface{}{
+		_, err := c.ConfirmResetPassword(signupMethod, map[string]interface{}{
 			"username":         user.Username,
 			"verificationcode": code,
+			"newpassword":      password,
 		})
 		if err != nil {
 			return err
@@ -421,7 +423,7 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[
 		return exceptions.NewBadRequestException("Verification code not provided")
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.session)
+	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
