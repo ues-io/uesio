@@ -108,7 +108,7 @@ definition:
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS
-                                          signupMethod: uesio/studio.platform
+                                          authSource: uesio/core.platform
                                           payload:
                                             username: ${uesio/core.username}
                                         - signal: notification/ADD

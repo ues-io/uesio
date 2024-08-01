@@ -6,40 +6,30 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func ResetPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.LoginMethod, error) {
+func ResetPassword(ctx context.Context, authSourceID string, payload map[string]interface{}, site *meta.Site) (*meta.LoginMethod, error) {
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	signupMethod, err := GetSignupMethod(signupMethodID, session)
+	authconn, err := GetAuthConnection(authSourceID, nil, session)
 	if err != nil {
 		return nil, err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
-	if err != nil {
-		return nil, err
-	}
-
-	return authconn.ResetPassword(signupMethod, payload, false)
+	return authconn.ResetPassword(payload, false)
 }
 
-func ConfirmResetPassword(ctx context.Context, signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
+func ConfirmResetPassword(ctx context.Context, authSourceID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
 
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	signupMethod, err := GetSignupMethod(signupMethodID, session)
+	authconn, err := GetAuthConnection(authSourceID, nil, session)
 	if err != nil {
 		return nil, err
 	}
-
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, session)
-	if err != nil {
-		return nil, err
-	}
-	return authconn.ConfirmResetPassword(signupMethod, payload)
+	return authconn.ConfirmResetPassword(payload)
 }

@@ -4,6 +4,7 @@ function profile_public(bot) {
 		name: "public",
 		routes: {
 			[`${namespace}.login`]: true,
+			[`${namespace}.requestpassword`]: true,
 		},
 	})
 

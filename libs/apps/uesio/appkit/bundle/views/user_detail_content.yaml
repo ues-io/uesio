@@ -162,7 +162,7 @@ definition:
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS
-                                          signupMethod: $Param{signupmethod}
+                                          authSource: uesio/core.platform
                                           payload:
                                             username: ${uesio/core.username}
                                         - signal: notification/ADD
@@ -203,6 +203,3 @@ definition:
       type: RECORD
       required: true
       collection: uesio/core.user
-    signupmethod:
-      type: TEXT
-      required: true

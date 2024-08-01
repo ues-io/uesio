@@ -14,7 +14,7 @@ export default function resetpassword(bot: ListenerBotApi) {
 	const link = host + redirect + "?code=" + code + "&username=" + username
 	const contenttype = "text/html"
 	const from = "info@ues.io"
-	const subject = "Password change requested in ues.io studio"
+	const subject = "Password change requested in a ues.io AppKit app"
 	const body = `
 	<!DOCTYPE html>
 	<html>

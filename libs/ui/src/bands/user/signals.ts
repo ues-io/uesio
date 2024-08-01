@@ -14,11 +14,11 @@ interface SignupSignal extends SignalDefinition {
 	payload: Record<string, string>
 }
 interface ResetPasswordSignal extends SignalDefinition {
-	signupMethod: string
+	authSource: string
 	payload: Record<string, string>
 }
 interface ResetPasswordConfirmSignal extends SignalDefinition {
-	signupMethod: string
+	authSource: string
 	payload: Record<string, string>
 }
 interface CreateLoginSignal extends SignalDefinition {
@@ -44,7 +44,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ResetPasswordSignal, context: Context) =>
 			operations.resetPassword(
 				context,
-				signal.signupMethod,
+				signal.authSource,
 				signal.payload
 			),
 	},
@@ -52,7 +52,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ResetPasswordConfirmSignal, context: Context) =>
 			operations.resetPasswordConfirm(
 				context,
-				signal.signupMethod,
+				signal.authSource,
 				signal.payload
 			),
 	},

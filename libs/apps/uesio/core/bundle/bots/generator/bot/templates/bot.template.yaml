@@ -1,0 +1,6 @@
+name: ${name}
+dialect: ${dialect}
+type: ${type}
+params: ${botParams}
+collection: ${collection}
+public: true

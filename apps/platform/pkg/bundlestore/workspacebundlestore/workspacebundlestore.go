@@ -336,6 +336,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 					Value: recordIDString,
 				},
 			},
+			Connection: b.Connection,
 		},
 		b.getStudioAnonSession(),
 	)

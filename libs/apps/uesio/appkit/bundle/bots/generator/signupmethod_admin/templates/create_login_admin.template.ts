@@ -1,7 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function createlogin(bot: ListenerBotApi) {
+export default function create_login_admin(bot: ListenerBotApi) {
 	const hasPassword = bot.params.get("hasPassword")
+	// Don't send emails if the password was already provided
 	if (hasPassword) {
 		return
 	}
@@ -14,12 +15,12 @@ export default function createlogin(bot: ListenerBotApi) {
 	const contentType = "text/html"
 	const from = "info@ues.io"
 	const fromName = "ues.io"
-	const subject = "User created in ues.io studio"
+	const subject = "User created in an AppKit app"
 	const body = `
 	<!DOCTYPE html>
 	<html>
 		<body>
-			A user account has been created for you in ues.io studio.<br/>
+			A user account has been created for you in an AppKit app.<br/>
 			Your username is: ${username}.<br/>
 			<br/>
 			You can set your password and log in using the link below:<br/>

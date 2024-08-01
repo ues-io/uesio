@@ -283,23 +283,6 @@ definition:
                                                       text: "An email has been sent to the user!"
                                                       details: New password can be inserted
                                                       severity: success
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: Reset Password
-                                                  signals:
-                                                    - signal: user/RESET_PASSWORD
-                                                      signupMethod: ${uesio/core.uniquekey}
-                                                      payload:
-                                                        username: $Param{userid}
-                                                      onerror:
-                                                        continue: false
-                                                        notify: true
-                                                        signals:
-                                                          - signal: notification/ADD_ERRORS
-                                                    - signal: notification/ADD
-                                                      text: "An email has been sent to the user!"
-                                                      details: Now the password can be changed
-                                                      severity: success
                                         - uesio/io.group:
                                             uesio.display:
                                               - field: authsource
@@ -358,6 +341,28 @@ definition:
                                       actions:
                                         - uesio/io.box:
                                             components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.nav
+                                                  icon: lock_reset
+                                                  tooltip: Reset Password
+                                                  uesio.context:
+                                                    siteadmin:
+                                                      name: $Param{sitename}
+                                                      app: $Param{app}
+                                                  signals:
+                                                    - signal: user/RESET_PASSWORD
+                                                      authSource: ${uesio/core.auth_source}
+                                                      payload:
+                                                        username: $Param{userid}
+                                                      onerror:
+                                                        continue: false
+                                                        notify: true
+                                                        signals:
+                                                          - signal: notification/ADD_ERRORS
+                                                    - signal: notification/ADD
+                                                      text: "An email has been sent to the user!"
+                                                      details: Now the password can be changed
+                                                      severity: success
                                               - uesio/io.button:
                                                   uesio.context:
                                                     siteadmin:

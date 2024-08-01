@@ -120,11 +120,11 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return errors.New("Signup with cognito is not supported")
 }
 
-func (c *Connection) ResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, errors.New("Password Reset with cognito is not supported")
 }
 
-func (c *Connection) ConfirmResetPassword(signupMethod *meta.SignupMethod, payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload map[string]interface{}) (*meta.User, error) {
 	return nil, errors.New("Password Reset with cognito is not supported")
 }
 

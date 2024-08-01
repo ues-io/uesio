@@ -21,13 +21,12 @@ import (
 
 func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*preload.LoginResponse, error) {
 
-	signupMethod := loginMethod.SignupMethod
-	redirect := "/site/app/uesio/core/changepassword?signupmethod=" + signupMethod
+	redirect := "/site/app/uesio/core/changepassword"
 	username := user.Username
 
 	code := loginMethod.VerificationCode
 
-	redirectPath := redirect + "&code=" + code + "&username=" + username
+	redirectPath := redirect + "?code=" + code + "&username=" + username
 
 	return &preload.LoginResponse{
 		User:         preload.GetUserMergeData(session),
