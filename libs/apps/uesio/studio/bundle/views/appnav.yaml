@@ -102,93 +102,46 @@ definition:
           - uesio/io.navsection:
               title: App Admin
               content:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: home
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: home
+                    text: Home
+                    icon: home
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${apps:uesio/core.uniquekey}
-                    content:
-                      - uesio/io.text:
-                          text: Home
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: home
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: settings
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: settings
+                    text: Settings
+                    icon: settings
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${apps:uesio/core.uniquekey}/settings
-                    content:
-                      - uesio/io.text:
-                          text: Settings
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: settings
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: bundles
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: bundles
+                    text: Bundles
+                    icon: inventory_2
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${apps:uesio/core.uniquekey}/bundles
-                    content:
-                      - uesio/io.text:
-                          text: Bundles
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: inventory_2
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: publish
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: publish
+                    text: Publish
+                    icon: outbox
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${apps:uesio/core.uniquekey}/publish
-                    content:
-                      - uesio/io.text:
-                          text: Publish
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: outbox
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: teams
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: teams
+                    text: Teams
+                    icon: groups
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${apps:uesio/core.uniquekey}/teams
-                    content:
-                      - uesio/io.text:
-                          text: Teams
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: groups
           - uesio/io.navsection:
               title: Workspaces
               actions:
@@ -221,19 +174,13 @@ definition:
                     uesio.id: workspaceslist
                     wire: workspaces
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
+                      - uesio/appkit.tile_side_nav:
                           uesio.id: "open-workspace-$Record{uesio/studio.name}"
+                          text: ${uesio/studio.name}
+                          icon: handyman
                           signals:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}/workspace/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                text: handyman
           - uesio/io.navsection:
               title: Sites
               actions:
@@ -249,51 +196,37 @@ definition:
                     uesio.id: siteslist
                     wire: sites
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
+                      - uesio/appkit.tile_side_nav:
+                          text: ${uesio/studio.name}
+                          icon: public
                           signals:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}/site/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                text: public
           - uesio/io.navsection:
               title: Licenses
               uesio.display:
                 - type: featureFlag
                   name: manage_billing_licensing
               content:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: costs
+                    text: Billing & Costs
+                    icon: receipt_long
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{app}/licensesused"
-                    content:
-                      - uesio/io.text:
-                          text: "Billing & Costs"
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: receipt_long
                     uesio.display:
                       - type: featureFlag
                         name: manage_billing_licensing
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: income
+                    text: Pricing & Income
+                    icon: payments
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{app}/licensesprovided"
-                    content:
-                      - uesio/io.text:
-                          text: "Pricing & Income"
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: payments
                     uesio.display:
                       - type: featureFlag
                         name: manage_billing_licensing

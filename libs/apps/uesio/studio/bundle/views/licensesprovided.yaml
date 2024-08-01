@@ -74,6 +74,7 @@ definition:
                 wire: apps
               params:
                 app: $Param{app}
+                selected: income
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.main

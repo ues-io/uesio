@@ -1,0 +1,39 @@
+name: tile_side_nav
+category: INTERACTION
+type: DECLARATIVE
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/io.nav
+      uesio.id: $Prop{uesio.id}
+      uesio.classes:
+        selected:
+          - type: group
+            conjunction: OR
+            conditions:
+              - type: group
+                conditions:
+                  - type: hasValue
+                    value: $Prop{selectedid}
+                  - type: mergeValue
+                    sourceValue: $Prop{selectedid}
+                    value: $Prop{uesio.id}
+              - type: group
+                conditions:
+                  - type: hasValue
+                    value: $Prop{selectedConditions}
+                  - type: group
+                    conditions: $Prop{selectedConditions}
+      signals: $Prop{signals}
+      content:
+        - uesio/io.text:
+            text: $Prop{text}
+      avatar:
+        - uesio/io.text:
+            uesio.variant: uesio/io.icon
+            text: $Prop{icon}
+title: Sidebar Navigation Tile
+discoverable: true
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

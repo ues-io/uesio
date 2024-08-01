@@ -13,77 +13,41 @@ definition:
           - uesio/io.navsection:
               title: User Profile
               content:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: personalinfo
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: personalinfo
+                    text: Personal Info
+                    icon: person
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: myprofile
-                    content:
-                      - uesio/io.text:
-                          text: Personal Info
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: person
-                - uesio/io.tile:
+                - uesio/appkit.tile_side_nav:
                     uesio.display:
                       - type: featureFlag
                         name: manage_billing_licensing
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: payments
+                    uesio.id: payments
+                    text: Payments
+                    icon: credit_card
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: mypayments
-                    content:
-                      - uesio/io.text:
-                          text: Payments
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: credit_card
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: tokens
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: tokens
+                    text: User Access Tokens
+                    icon: token
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: user/security/access-tokens
-                    content:
-                      - uesio/io.text:
-                          text: User Access Tokens
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: token
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: usage
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: usage
+                    text: Usage & Billing
+                    icon: credit_card
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: user/usage
-                    content:
-                      - uesio/io.text:
-                          text: Usage & Billing
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: credit_card
         footer:
           - uesio/core.view:
               view: profiletag

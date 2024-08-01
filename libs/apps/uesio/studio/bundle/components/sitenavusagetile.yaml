@@ -20,23 +20,16 @@ properties:
     name: path
     label: Relative path to navigate to within the Site Admin /usage route prefix
 definition:
-  - uesio/io.tile:
-      uesio.variant: uesio/io.nav
-      uesio.classes:
-        selected:
-          - type: paramValue
-            param: selectedusagemetadatatype
-            value: $Prop{usageMetadataType}
-          - type: paramValue
-            param: selectedusageactiontype
-            value: $Prop{usageActionType}
+  - uesio/appkit.tile_side_nav:
+      text: $Prop{title}
+      icon: $Prop{icon}
+      selectedConditions:
+        - type: paramValue
+          param: selectedusagemetadatatype
+          value: $Prop{usageMetadataType}
+        - type: paramValue
+          param: selectedusageactiontype
+          value: $Prop{usageActionType}
       signals:
         - signal: "route/NAVIGATE"
           path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/usage/$Prop{path}
-      content:
-        - uesio/io.text:
-            text: $Prop{title}
-      avatar:
-        - uesio/io.text:
-            uesio.variant: uesio/io.icon
-            text: $Prop{icon}

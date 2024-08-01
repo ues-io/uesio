@@ -13,40 +13,22 @@ definition:
           - uesio/io.navsection:
               title: Organization Profile
               content:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: orginfo
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: orginfo
+                    text: Organization Info
+                    icon: domain
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: org/info/$Param{orgname}
-                    content:
-                      - uesio/io.text:
-                          text: Organization Info
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: domain
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: usage
+                - uesio/appkit.tile_side_nav:
+                    uesio.id: usage
+                    text: Usage & Billing
+                    icon: credit_card
+                    selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: org/usage/$Param{orgname}
-                    content:
-                      - uesio/io.text:
-                          text: Usage & Billing
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: credit_card
         footer:
           - uesio/core.view:
               view: profiletag
