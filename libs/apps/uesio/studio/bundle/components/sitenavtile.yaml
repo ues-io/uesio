@@ -14,20 +14,11 @@ properties:
     name: id
     label: Id for the tile (should be unique within other Site Nav Tiles)
 definition:
-  - uesio/io.tile:
-      uesio.variant: uesio/io.nav
-      uesio.classes:
-        selected:
-          - type: paramValue
-            param: selected
-            value: $Prop{id}
+  - uesio/appkit.tile_side_nav:
+      uesio.id: $Prop{id}
+      text: $Prop{title}
+      icon: $Prop{icon}
+      selectedid: $Param{selected}
       signals:
         - signal: "route/NAVIGATE"
           path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/$Prop{id}
-      content:
-        - uesio/io.text:
-            text: $Prop{title}
-      avatar:
-        - uesio/io.text:
-            uesio.variant: uesio/io.icon
-            text: $Prop{icon}

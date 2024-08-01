@@ -25,78 +25,38 @@ definition:
           - uesio/io.navsection:
               title: Instance Admin
               content:
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: home
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: home
+                    text: Home
+                    icon: home
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: admin
-                    content:
-                      - uesio/io.text:
-                          text: Home
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: home
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: managebundles
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: managebundles
+                    text: Manage Bundles
+                    icon: outbox
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: managebundles
-                    content:
-                      - uesio/io.text:
-                          text: Manage Bundles
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: outbox
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: manageplans
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: manageplans
+                    text: Manage Plans
+                    icon: credit_card
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: manageplans
-                    content:
-                      - uesio/io.text:
-                          text: Manage Plans
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: credit_card
-                - uesio/io.tile:
-                    uesio.variant: uesio/io.nav
+                - uesio/appkit.tile_side_nav:
                     uesio.id: officialbundlestore
-                    uesio.classes:
-                      selected:
-                        - type: paramValue
-                          param: selected
-                          value: officialbundlestore
+                    text: Official Bundle Store
+                    icon: shop
+                    selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: bundlestore
-                    content:
-                      - uesio/io.text:
-                          text: Official Bundle Store
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: shop
         footer:
           - uesio/core.view:
               view: profiletag

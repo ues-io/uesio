@@ -31,76 +31,25 @@ components:
             components:
               - uesio/io.navsection:
                   content:
-                    - uesio/io.box:
-                        uesio.styleTokens:
-                          root:
-                            - flex
-                            - gap-2
-                            - items-center
-                        components:
-                          - uesio/io.tile:
-                              uesio.variant: uesio/io.nav
-                              uesio.styleTokens:
-                                root:
-                                  - flex
-                                  - grow
-                              content:
-                                - uesio/io.text:
-                                    text: Home
-                              avatar:
-                                - uesio/io.text:
-                                    uesio.variant: uesio/io.icon
-                                    text: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                    - uesio/io.box:
-                        uesio.styleTokens:
-                          root:
-                            - flex
-                            - gap-2
-                            - items-center
-                        components:
-                          - uesio/io.tile:
-                              uesio.variant: uesio/io.nav
-                              uesio.styleTokens:
-                                root:
-                                  - flex
-                                  - grow
-                              content:
-                                - uesio/io.text:
-                                    text: Settings
-                              avatar:
-                                - uesio/io.text:
-                                    uesio.variant: uesio/io.icon
-                                    text: settings
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: settings
-                    - uesio/io.box:
-                        uesio.styleTokens:
-                          root:
-                            - flex
-                            - gap-2
-                            - items-center
-                        components:
-                          - uesio/io.tile:
-                              uesio.variant: uesio/io.nav
-                              uesio.styleTokens:
-                                root:
-                                  - flex
-                                  - grow
-                              content:
-                                - uesio/io.text:
-                                    text: Users
-                              avatar:
-                                - uesio/io.text:
-                                    uesio.variant: uesio/io.iconoutline
-                                    text: badge
-                              signals:
-                                - signal: route/NAVIGATE_TO_ASSIGNMENT
-                                  collection: uesio/core.user
-                                  viewtype: list
+                    - uesio/appkit.tile_side_nav:
+                        text: Home
+                        icon: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                    - uesio/appkit.tile_side_nav:
+                        text: Settings
+                        icon: settings
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: settings
+                    - uesio/appkit.tile_side_nav:
+                        text: Users
+                        icon: badge
+                        signals:
+                          - signal: route/NAVIGATE_TO_ASSIGNMENT
+                            collection: uesio/core.user
+                            viewtype: list
               - uesio/core.slot:
                   name: extra
       footer:
