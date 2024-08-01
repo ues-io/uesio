@@ -2,7 +2,8 @@ function bot(botapi) {
 	// Get the name of the context workspace's app
 	const app = botapi.getAppName()
 	const params = botapi.params.getAll()
-	const { name, collection } = params
+	const { name, collection, content } = params
+	const botParams = params.params
 	const type = (params.type || "LISTENER").toLowerCase()
 	const dialect = (params.dialect || "TYPESCRIPT").toLowerCase()
 	// In order to avoid conflicts with Generator merges clobbering JS variable merges
@@ -23,15 +24,40 @@ function bot(botapi) {
 	}
 	path += `/${name}/bot`
 	if (dialect === "typescript") {
+		if (content) {
+			botapi.generateStringFile(`${path}.ts`, content)
+		} else {
+			botapi.generateFile(
+				`${path}.ts`,
+				newBotParams,
+				`templates/${type}/bot.template.ts`
+			)
+		}
+	}
+	if (dialect === "javascript") {
+		if (content) {
+			botapi.generateStringFile(`${path}.js`, content)
+		}
+	}
+
+	if (botParams) {
 		botapi.generateFile(
-			`${path}.ts`,
-			newBotParams,
-			`templates/${type}/bot.template.ts`
+			`${path}.yaml`,
+			{
+				...params,
+				name,
+				type: type.toUpperCase(),
+				dialect: dialect.toUpperCase(),
+				botParams,
+				collection: collection || "",
+			},
+			`templates/bot.template.yaml`
+		)
+	} else {
+		botapi.generateFile(
+			`${path}.yaml`,
+			{ ...params, name },
+			`templates/${type}/bot.template.yaml`
 		)
 	}
-	botapi.generateFile(
-		`${path}.yaml`,
-		{ ...params, name },
-		`templates/${type}/bot.template.yaml`
-	)
 }

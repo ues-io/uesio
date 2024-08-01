@@ -75,15 +75,15 @@ const logout = async (context: Context) => {
 
 const resetPassword = async (
 	context: Context,
-	signupMethod: string,
+	authSource: string,
 	payload: Payload
 ) => {
 	if (!payload)
 		throw new Error("No credentials were provided for reset password.")
 	const mergedPayload = context.mergeStringMap(payload)
-	const mergedSignupMethod = context.mergeString(signupMethod)
+	const mergedAuthSource = context.mergeString(authSource)
 	try {
-		await platform.resetPassword(context, mergedSignupMethod, mergedPayload)
+		await platform.resetPassword(context, mergedAuthSource, mergedPayload)
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
@@ -93,7 +93,7 @@ const resetPassword = async (
 
 const resetPasswordConfirm = async (
 	context: Context,
-	signupMethod: string,
+	authSource: string,
 	payload: Payload
 ) => {
 	if (!payload)
@@ -101,11 +101,11 @@ const resetPasswordConfirm = async (
 			"No credentials were provided for reset password confirmation."
 		)
 	const mergedPayload = context.mergeStringMap(payload)
-	const mergedSignupMethod = context.mergeString(signupMethod)
+	const mergedAuthSource = context.mergeString(authSource)
 	try {
 		const response = await platform.resetPasswordConfirm(
 			context,
-			mergedSignupMethod,
+			mergedAuthSource,
 			mergedPayload
 		)
 		dispatch(setUser(response.user))

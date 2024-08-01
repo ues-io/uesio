@@ -50,8 +50,8 @@ const signals: SignalBandDefinition = {
 			description: "Reset Password",
 			properties: () => [
 				{
-					name: "signupMethod",
-					label: "Signup Method",
+					name: "authSource",
+					label: "Auth Source",
 					type: "TEXT",
 				},
 				{
@@ -66,8 +66,8 @@ const signals: SignalBandDefinition = {
 			description: "Reset Password Confirmation",
 			properties: () => [
 				{
-					name: "signupMethod",
-					label: "Signup Method",
+					name: "authSource",
+					label: "Auth Source",
 					type: "TEXT",
 				},
 				{

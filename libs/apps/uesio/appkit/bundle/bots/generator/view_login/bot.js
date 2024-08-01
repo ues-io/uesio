@@ -6,4 +6,12 @@ function view_login(bot) {
 		theme: "uesio/core.default",
 		title: "Login",
 	})
+
+	bot.runGenerator("uesio/core", "route", {
+		name: "requestpassword",
+		path: "requestpassword",
+		view: "uesio/core.requestpassword",
+		theme: "uesio/core.default",
+		title: "Request Password",
+	})
 }
