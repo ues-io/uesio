@@ -13,17 +13,19 @@ definition:
           - uesio/io.navsection:
               title: Organization Profile
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: orginfo
-                    text: Organization Info
+                    title: Organization Info
                     icon: domain
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: org/info/$Param{orgname}
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: usage
-                    text: Usage & Billing
+                    title: Usage & Billing
                     icon: credit_card
                     selectedid: $Param{selected}
                     signals:

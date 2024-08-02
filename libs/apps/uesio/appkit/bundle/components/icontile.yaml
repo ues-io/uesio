@@ -37,6 +37,25 @@ properties:
 definition:
   - uesio/io.tile:
       signals: $Prop{signals}
+      uesio.id: $Prop{uesio.id}
+      uesio.classes:
+        selected:
+          - type: group
+            conjunction: OR
+            conditions:
+              - type: group
+                conditions:
+                  - type: hasValue
+                    value: $Prop{selectedid}
+                  - type: mergeValue
+                    sourceValue: $Prop{selectedid}
+                    value: $Prop{uesio.id}
+              - type: group
+                conditions:
+                  - type: hasValue
+                    value: $Prop{selectedConditions}
+                  - type: group
+                    conditions: $Prop{selectedConditions}
       uesio.variant: $Prop{tileVariant}
       content:
         - uesio/io.text:

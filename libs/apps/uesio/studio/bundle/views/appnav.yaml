@@ -102,41 +102,46 @@ definition:
           - uesio/io.navsection:
               title: App Admin
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: home
-                    text: Home
+                    title: Home
                     icon: home
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${apps:uesio/core.uniquekey}
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: settings
-                    text: Settings
+                    title: Settings
                     icon: settings
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${apps:uesio/core.uniquekey}/settings
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: bundles
-                    text: Bundles
+                    title: Bundles
                     icon: inventory_2
                     selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${apps:uesio/core.uniquekey}/bundles
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: publish
-                    text: Publish
+                    title: Publish
                     icon: outbox
                     selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: app/${apps:uesio/core.uniquekey}/publish
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: teams
-                    text: Teams
+                    title: Teams
                     icon: groups
                     selectedid: $Param{selected}
                     signals:
@@ -174,9 +179,10 @@ definition:
                     uesio.id: workspaceslist
                     wire: workspaces
                     components:
-                      - uesio/appkit.tile_side_nav:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/io.nav
                           uesio.id: "open-workspace-$Record{uesio/studio.name}"
-                          text: ${uesio/studio.name}
+                          title: ${uesio/studio.name}
                           icon: handyman
                           signals:
                             - signal: "route/NAVIGATE"
@@ -196,8 +202,9 @@ definition:
                     uesio.id: siteslist
                     wire: sites
                     components:
-                      - uesio/appkit.tile_side_nav:
-                          text: ${uesio/studio.name}
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/io.nav
+                          title: ${uesio/studio.name}
                           icon: public
                           signals:
                             - signal: "route/NAVIGATE"
@@ -208,9 +215,10 @@ definition:
                 - type: featureFlag
                   name: manage_billing_licensing
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: costs
-                    text: Billing & Costs
+                    title: Billing & Costs
                     icon: receipt_long
                     selectedid: $Param{selected}
                     signals:
@@ -219,9 +227,10 @@ definition:
                     uesio.display:
                       - type: featureFlag
                         name: manage_billing_licensing
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: income
-                    text: Pricing & Income
+                    title: Pricing & Income
                     icon: payments
                     selectedid: $Param{selected}
                     signals:

@@ -25,33 +25,37 @@ definition:
           - uesio/io.navsection:
               title: Workspace Admin
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: home
-                    text: Home
+                    title: Home
                     icon: home
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: settings
-                    text: Settings
+                    title: Settings
                     icon: settings
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/settings
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: installed
-                    text: Installed Bundles
+                    title: Installed Bundles
                     icon: backpack
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/installed
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: packaging
-                    text: Packaging
+                    title: Packaging
                     icon: package
                     selectedid: $Param{selected}
                     signals:
@@ -60,58 +64,64 @@ definition:
           - uesio/io.navsection:
               title: Data Structure & Content
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_bots
                     uesio.id: bots
-                    text: Bots
+                    title: Bots
                     icon: smart_toy
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/bots
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: collections
-                    text: Collections
+                    title: Collections
                     icon: list
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_integrations
                     uesio.id: integrations
-                    text: Integrations
+                    title: Integrations
                     icon: electrical_services
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrations
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_integration_types
                     uesio.id: integrationtypes
-                    text: Integration Types
+                    title: Integration Types
                     icon: code
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/integrationtypes
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: selectlists
-                    text: Select Lists
+                    title: Select Lists
                     icon: playlist_add_check
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/selectlists
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: files
-                    text: Files
+                    title: Files
                     icon: collections
                     selectedid: $Param{selected}
                     signals:
@@ -120,36 +130,40 @@ definition:
           - uesio/io.navsection:
               title: User Interface
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: views
-                    text: Views
+                    title: Views
                     icon: view_quilt
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: routes
-                    text: Routes
+                    title: Routes
                     icon: map
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_components
                     uesio.id: components
-                    text: Components
+                    title: Components
                     icon: widgets
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: themes
-                    text: Themes
+                    title: Themes
                     icon: palette
                     selectedid: $Param{selected}
                     signals:
@@ -158,82 +172,91 @@ definition:
           - uesio/io.navsection:
               title: Security & Access
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: permissionsets
-                    text: Permission Sets
+                    title: Permission Sets
                     icon: rule
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: profiles
-                    text: Profiles
+                    title: Profiles
                     icon: group
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: configvalues
-                    text: Config Values
+                    title: Config Values
                     icon: tune
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configvalues
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: secrets
-                    text: Secrets
+                    title: Secrets
                     icon: lock
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/secrets
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: credentials
-                    text: Credentials
+                    title: Credentials
                     icon: vpn_key
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_feature_flags
                     uesio.id: featureflags
-                    text: Feature Flags
+                    title: Feature Flags
                     icon: new_releases
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/featureflags
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_auth_sources
                     uesio.id: authsources
-                    text: Auth Sources
+                    title: Auth Sources
                     icon: dynamic_feed
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: signupmethods
-                    text: Signup Methods
+                    title: Signup Methods
                     icon: person_add
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/signupmethods
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_user_access_tokens
                     uesio.id: useraccesstokens
-                    text: User Access Tokens
+                    title: User Access Tokens
                     icon: token
                     selectedid: $Param{selected}
                     signals:
@@ -242,17 +265,19 @@ definition:
           - uesio/io.navsection:
               title: Internationalization
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: labels
-                    text: Labels
+                    title: Labels
                     icon: label
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: translations
-                    text: Translations
+                    title: Translations
                     icon: translate
                     selectedid: $Param{selected}
                     signals:

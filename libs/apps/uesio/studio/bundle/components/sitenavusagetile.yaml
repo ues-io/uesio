@@ -20,8 +20,9 @@ properties:
     name: path
     label: Relative path to navigate to within the Site Admin /usage route prefix
 definition:
-  - uesio/appkit.tile_side_nav:
-      text: $Prop{title}
+  - uesio/appkit.icontile:
+      tileVariant: uesio/io.nav
+      title: $Prop{title}
       icon: $Prop{icon}
       selectedConditions:
         - type: paramValue
