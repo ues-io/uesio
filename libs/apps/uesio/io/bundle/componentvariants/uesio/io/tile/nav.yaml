@@ -5,7 +5,7 @@ definition:
   uesio.styleTokens:
     root:
       - py-1.5
-      - px-2.5
+      - px-2
       - text-slate-700
       - focus:bg-white
       - focus:outline-offset-[-1px]

@@ -13,5 +13,6 @@ definition:
       - leading-none
     subtitle:
       - empty:hidden
+      - leading-none
     actions:
       - leading-none

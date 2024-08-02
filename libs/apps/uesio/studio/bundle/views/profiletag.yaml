@@ -15,7 +15,7 @@ definition:
               image: $User{picture}
         actions:
           - uesio/io.button:
-              uesio.variant: uesio/studio.headernavicon
+              uesio.variant: uesio/appkit.navicon
               icon: settings
               uesio.id: settings
               uesio.display:
@@ -25,13 +25,13 @@ definition:
                 - signal: "route/NAVIGATE"
                   path: "admin"
           - uesio/io.button:
-              uesio.variant: uesio/studio.headernavicon
+              uesio.variant: uesio/appkit.navicon
               icon: logout
               uesio.id: logout
               signals:
                 - signal: "user/LOGOUT"
           - uesio/io.button:
-              uesio.variant: uesio/studio.headernavicon
+              uesio.variant: uesio/appkit.navicon
               uesio.id: user-profile
               icon: account_circle
               signals:
