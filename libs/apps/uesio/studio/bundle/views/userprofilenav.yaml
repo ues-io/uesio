@@ -13,36 +13,40 @@ definition:
           - uesio/io.navsection:
               title: User Profile
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: personalinfo
-                    text: Personal Info
+                    title: Personal Info
                     icon: person
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: myprofile
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.display:
                       - type: featureFlag
                         name: manage_billing_licensing
                     uesio.id: payments
-                    text: Payments
+                    title: Payments
                     icon: credit_card
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: mypayments
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: tokens
-                    text: User Access Tokens
+                    title: User Access Tokens
                     icon: token
                     selectedid: $Param{selected}
                     signals:
                       - signal: route/NAVIGATE
                         path: user/security/access-tokens
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: usage
-                    text: Usage & Billing
+                    title: Usage & Billing
                     icon: credit_card
                     selectedid: $Param{selected}
                     signals:

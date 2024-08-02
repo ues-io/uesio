@@ -14,9 +14,10 @@ properties:
     name: id
     label: Id for the tile (should be unique within other Site Nav Tiles)
 definition:
-  - uesio/appkit.tile_side_nav:
+  - uesio/appkit.icontile:
+      tileVariant: uesio/io.nav
       uesio.id: $Prop{id}
-      text: $Prop{title}
+      title: $Prop{title}
       icon: $Prop{icon}
       selectedid: $Param{selected}
       signals:

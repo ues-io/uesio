@@ -25,33 +25,37 @@ definition:
           - uesio/io.navsection:
               title: Instance Admin
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: home
-                    text: Home
+                    title: Home
                     icon: home
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: admin
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: managebundles
-                    text: Manage Bundles
+                    title: Manage Bundles
                     icon: outbox
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: managebundles
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: manageplans
-                    text: Manage Plans
+                    title: Manage Plans
                     icon: credit_card
                     selectedid: $Param{selected}
                     signals:
                       - signal: "route/NAVIGATE"
                         path: manageplans
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: officialbundlestore
-                    text: Official Bundle Store
+                    title: Official Bundle Store
                     icon: shop
                     selectedid: $Param{selected}
                     signals:

@@ -31,20 +31,23 @@ components:
             components:
               - uesio/io.navsection:
                   content:
-                    - uesio/appkit.tile_side_nav:
-                        text: Home
+                    - uesio/appkit.icontile:
+                        tileVariant: uesio/io.nav
+                        title: Home
                         icon: home
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                    - uesio/appkit.tile_side_nav:
-                        text: Settings
+                    - uesio/appkit.icontile:
+                        tileVariant: uesio/io.nav
+                        title: Settings
                         icon: settings
                         signals:
                           - signal: route/NAVIGATE
                             path: settings
-                    - uesio/appkit.tile_side_nav:
-                        text: Users
+                    - uesio/appkit.icontile:
+                        tileVariant: uesio/io.nav
+                        title: Users
                         icon: badge
                         signals:
                           - signal: route/NAVIGATE_TO_ASSIGNMENT

@@ -25,9 +25,10 @@ definition:
           - uesio/io.navsection:
               title: Site Admin
               content:
-                - uesio/appkit.tile_side_nav:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: home
-                    text: Home
+                    title: Home
                     icon: home
                     selectedid: $Param{selected}
                     signals:
