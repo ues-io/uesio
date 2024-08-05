@@ -72,6 +72,20 @@ definition:
                     actions:
                       - uesio/io.group:
                           uesio.display:
+                            - type: fieldValue
+                              field: uesio/studio.type
+                              value: GENERATOR
+                          components:
+                            - uesio/studio.generatorbutton:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                buttonVariant: uesio/io.secondary
+                                label: Run this generator
+                                generator: ${uesio/studio.namespace}.${uesio/studio.name}
+                      - uesio/io.group:
+                          uesio.display:
                             - type: paramValue
                               param: app
                               operator: EQUALS

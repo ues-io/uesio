@@ -191,7 +191,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 			{open && (
 				<GeneratorDialog
 					setOpen={setOpen}
-					generator={generator}
+					generator={context.mergeString(generator)}
 					context={context}
 				/>
 			)}
