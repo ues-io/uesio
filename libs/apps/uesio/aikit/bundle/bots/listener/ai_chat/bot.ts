@@ -45,7 +45,14 @@ export default function ai_chat(bot: ListenerBotApi) {
 			messages,
 			system: systemPrompt,
 		}
-	) as string
+	) as {
+		text: string
+		type: string
+	}[]
+
+	if (!result.length) {
+		throw new Error("Invalid Result")
+	}
 
 	bot.save("uesio/aikit.thread_item", [
 		{
@@ -56,7 +63,7 @@ export default function ai_chat(bot: ListenerBotApi) {
 			},
 		},
 		{
-			"uesio/aikit.content": result,
+			"uesio/aikit.content": result[0].text,
 			"uesio/aikit.type": "ASSISTANT",
 			"uesio/aikit.thread": {
 				"uesio/core.id": thread,

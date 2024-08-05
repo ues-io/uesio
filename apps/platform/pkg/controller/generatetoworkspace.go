@@ -51,6 +51,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 			Success: false,
 			Error:   err.Error(),
 		})
+		return
 	}
 	filejson.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,

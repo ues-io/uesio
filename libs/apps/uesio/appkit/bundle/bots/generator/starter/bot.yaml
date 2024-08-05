@@ -3,6 +3,7 @@ dialect: JAVASCRIPT
 label: Starter
 type: GENERATOR
 params:
-  - name: test
-    prompt: Test Parameter
+  - name: use_ai_for_data_model
+    type: CHECKBOX
+    prompt: Use AI to generate a collection for this app.
 public: true

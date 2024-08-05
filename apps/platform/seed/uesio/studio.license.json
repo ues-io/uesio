@@ -61,6 +61,26 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
+		},
+		"uesio/studio.applicensed": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 0
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
+		},
+		"uesio/studio.applicensed": {
+			"uesio/core.uniquekey": "uesio/appkit"
+		},
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 0
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/sitekit"
 		},
 		"uesio/studio.applicensed": {
@@ -75,6 +95,16 @@
 		},
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/studio"
+		},
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 0
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/aikit"
+		},
+		"uesio/studio.applicensed": {
+			"uesio/core.uniquekey": "uesio/appkit"
 		},
 		"uesio/studio.active": true,
 		"uesio/studio.monthlyprice": 0
@@ -115,36 +145,6 @@
 		},
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/studio"
-		},
-		"uesio/studio.active": true,
-		"uesio/studio.monthlyprice": 0
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/io"
-		},
-		"uesio/studio.applicensed": {
-			"uesio/core.uniquekey": "uesio/aikit"
-		},
-		"uesio/studio.active": true,
-		"uesio/studio.monthlyprice": 0
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/io"
-		},
-		"uesio/studio.applicensed": {
-			"uesio/core.uniquekey": "uesio/appkit"
-		},
-		"uesio/studio.active": true,
-		"uesio/studio.monthlyprice": 0
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/builder"
-		},
-		"uesio/studio.applicensed": {
-			"uesio/core.uniquekey": "uesio/aikit"
 		},
 		"uesio/studio.active": true,
 		"uesio/studio.monthlyprice": 0

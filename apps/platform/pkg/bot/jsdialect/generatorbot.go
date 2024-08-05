@@ -176,6 +176,10 @@ func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[stri
 	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
 }
 
+func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+	return runIntegrationAction(integrationID, action, options, gba.session.RemoveWorkspaceContext(), gba.connection)
+}
+
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
 	buf := &bytes.Buffer{}
