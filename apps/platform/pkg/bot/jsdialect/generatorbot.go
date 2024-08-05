@@ -20,6 +20,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+var passwordGenerator *password.Generator
+
+func init() {
+	passwordGenerator, _ = password.NewGenerator(&password.GeneratorInput{
+		Symbols: "!@#$%^&*(){}[]",
+	})
+}
+
 func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
 	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
 	if err != nil {
@@ -157,7 +165,7 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 }
 
 func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
-	return password.Generate(10, 1, 1, false, false)
+	return passwordGenerator.Generate(10, 1, 1, false, false)
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
