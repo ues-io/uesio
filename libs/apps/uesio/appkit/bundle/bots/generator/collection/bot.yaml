@@ -1,0 +1,10 @@
+name: collection
+dialect: "JAVASCRIPT"
+label: Generate a new collection with views and routes
+type: "GENERATOR"
+params:
+  - name: collection
+    prompt: Collection Name
+    type: METADATANAME
+    required: true
+public: true

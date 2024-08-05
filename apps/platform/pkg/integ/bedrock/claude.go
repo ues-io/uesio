@@ -11,8 +11,10 @@ type MessagesModelUsage struct {
 }
 
 type MessagesContent struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
+	Type  string         `json:"type" bot:"type"`
+	Text  string         `json:"text,omitempty" bot:"text,omitempty"`
+	Name  string         `json:"name,omitempty" bot:"name,omitempty"`
+	Input map[string]any `json:"input,omitempty" bot:"input,omitempty"`
 }
 
 type MessagesModelOutput struct {
@@ -71,7 +73,7 @@ func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, err
 	})
 }
 
-func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result string, inputTokens, outputTokens int64, err error) {
+func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error) {
 	var modelOutput MessagesModelOutput
 	if err := json.Unmarshal(body, &modelOutput); err != nil {
 		return "", 0, 0, err
@@ -88,7 +90,7 @@ func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result string, inpu
 		return "", 0, 0, errors.New("No usage information provided")
 	}
 
-	return content[0].Text, usage.InputTokens, usage.OutputTokens, nil
+	return content, usage.InputTokens, usage.OutputTokens, nil
 
 }
 

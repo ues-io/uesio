@@ -2,9 +2,9 @@ name: uesio/appkit
 starterBot: uesio/appkit.starter
 starterCompleteBot: uesio/appkit.starter_complete
 dependencies:
-  uesio/builder:
-    version: v0.0.1
   uesio/core:
     version: v0.0.1
   uesio/io:
+    version: v0.0.1
+  uesio/aikit:
     version: v0.0.1

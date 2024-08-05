@@ -662,6 +662,8 @@ func TestBot_ValidateParams(t *testing.T) {
 			input: map[string]interface{}{
 				"foo": "true",
 				"bar": "false",
+				"goo": true,
+				"hoo": false,
 			},
 			wantErr: "",
 		},

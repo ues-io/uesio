@@ -76,7 +76,7 @@ type connection struct {
 
 type ModelHandler interface {
 	GetBody(options *InvokeModelOptions) ([]byte, error)
-	GetInvokeResult(body []byte) (result string, inputTokens, outputTokens int64, err error)
+	GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error)
 	HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error)
 }
 

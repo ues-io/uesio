@@ -436,6 +436,10 @@ func ValidateParams(params BotParams, paramValues map[string]interface{}, bundle
 			}
 		case "CHECKBOX":
 			// Cast to the corresponding type
+			_, ok := paramValue.(bool)
+			if ok {
+				return nil
+			}
 			if _, err := strconv.ParseBool(paramValue.(string)); err != nil {
 				return exceptions.NewInvalidParamException("param value must either be 'true' or 'false'", param.Name)
 			}

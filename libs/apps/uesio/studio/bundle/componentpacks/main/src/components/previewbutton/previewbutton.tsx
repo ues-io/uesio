@@ -92,6 +92,11 @@ const getWireFieldFromParamDef = (
 					grouping: def.grouping,
 				},
 			}
+		case "CHECKBOX":
+			return {
+				...baseField,
+				type: def.type,
+			}
 		case "SELECT":
 			return {
 				...baseField,

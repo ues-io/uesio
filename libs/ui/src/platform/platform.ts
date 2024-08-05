@@ -412,8 +412,7 @@ const platform = {
 				`${prefix}/metadata/generate/${namespace}/${name}`,
 				params
 			)
-			const result = await respondJSON(response)
-			return result
+			return respondJSON(response)
 		} catch (err) {
 			return {
 				success: false,

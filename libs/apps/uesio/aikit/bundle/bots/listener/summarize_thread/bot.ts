@@ -43,7 +43,13 @@ export default function summarize_thread(bot: ListenerBotApi) {
 			messages,
 			system: "You are an assistant who summarizes chat threads. Please bring out the important points of the conversation into a title. Try to be brief and only respond with the title.",
 		}
-	) as string
+	) as {
+		text: string
+	}[]
 
-	bot.addResult("summary", result)
+	if (!result.length) {
+		throw new Error("Invalid Result")
+	}
+
+	bot.addResult("summary", result[0].text)
 }
