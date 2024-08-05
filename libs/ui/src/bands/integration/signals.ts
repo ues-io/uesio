@@ -60,6 +60,17 @@ const signals: Record<string, SignalDescriptor> = {
 					const chunks = [] as (string | object)[]
 					const chunkWriterStream = new WritableStream<string>({
 						async write(chunk) {
+							// Check if the text contains a special error message boundary
+							if (chunk.includes(errorBoundaryStart)) {
+								throw new Error(
+									chunk.substring(
+										chunk.indexOf(errorBoundaryStart) +
+											errorBoundaryStart.length,
+										chunk.indexOf(errorBoundaryEnd)
+									)
+								)
+							}
+
 							chunks.push(chunk)
 							if (stepId && onChunk) {
 								if (typeof onChunk === "function") {
@@ -88,19 +99,6 @@ const signals: Record<string, SignalDescriptor> = {
 					finalResult = await response.text()
 				}
 
-				// Check if the text contains a special error message boundary
-				if (
-					typeof finalResult === "string" &&
-					finalResult.includes(errorBoundaryStart)
-				) {
-					throw new Error(
-						finalResult.substring(
-							finalResult.indexOf(errorBoundaryStart) +
-								errorBoundaryStart.length,
-							finalResult.indexOf(errorBoundaryEnd)
-						)
-					)
-				}
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
 				if (stepId) {
