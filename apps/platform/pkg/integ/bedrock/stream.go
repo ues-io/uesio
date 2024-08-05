@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 	brtypes "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -106,7 +107,8 @@ func (c *connection) streamModel(requestOptions map[string]interface{}) (interfa
 				break outer
 			}
 			if reader != nil && reader.Err() != nil {
-				outputStream.Err() <- reader.Err()
+				outputStream.Err() <- exceptions.NewBadRequestException(reader.Err().Error())
+				break outer
 			}
 		}
 	})(c.session.Context())

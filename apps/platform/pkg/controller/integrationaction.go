@@ -89,28 +89,6 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(statusCode)
 		}
 
-		go func() {
-			for {
-				select {
-				case chunk := <-v.Chunk():
-					if chunk == nil {
-						return
-					}
-					// Have to append newline to every chunk, otherwise it doesn't work as expected
-					if _, err := w.Write(chunk); err != nil {
-						streamErrorHandler(w, err)
-						return
-					}
-					// Have to flush each chunk!
-					if flusher, ok := w.(http.Flusher); ok {
-						flusher.Flush() // Trigger "chunked" encoding and send a chunk...
-					}
-				case <-ctx.Done():
-					return
-				}
-			}
-		}()
-
 		sigTerm := make(chan os.Signal, 1)
 		signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
 		for {
@@ -126,6 +104,21 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 				return
 			case <-v.Done():
 				w.WriteHeader(200)
+				return
+			case chunk := <-v.Chunk():
+				if chunk == nil {
+					return
+				}
+				// Have to append newline to every chunk, otherwise it doesn't work as expected
+				if _, err := w.Write(chunk); err != nil {
+					streamErrorHandler(w, err)
+					return
+				}
+				// Have to flush each chunk!
+				if flusher, ok := w.(http.Flusher); ok {
+					flusher.Flush() // Trigger "chunked" encoding and send a chunk...
+				}
+			case <-ctx.Done():
 				return
 			}
 		}
