@@ -13,12 +13,11 @@ GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/namespaces
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 5
+jsonpath "$" count == 4
 jsonpath "$[0]" == "uesio/tests"
 jsonpath "$[1]" == "uesio/aikit"
-jsonpath "$[2]" == "uesio/builder"
-jsonpath "$[3]" == "uesio/core"
-jsonpath "$[4]" == "uesio/io"
+jsonpath "$[2]" == "uesio/core"
+jsonpath "$[3]" == "uesio/io"
 
 # Get a list of all collections available from a siteadmin context
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/collections/list
