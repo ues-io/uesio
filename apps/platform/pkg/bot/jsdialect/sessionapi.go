@@ -53,10 +53,11 @@ func (w *WorkspaceAPI) GetUrlPrefix() string {
 }
 
 type AppAPI struct {
-	name     string
-	fullName string
-	icon     string
-	color    string
+	name        string
+	fullName    string
+	icon        string
+	color       string
+	description string
 }
 
 func (a *AppAPI) GetName() string {
@@ -134,6 +135,7 @@ func (s *SessionAPI) GetApp(connection wire.Connection) *AppAPI {
 
 	appApi.color = appDataForNamespace.Color
 	appApi.icon = appDataForNamespace.Icon
+	appApi.description = appDataForNamespace.Description
 
 	return appApi
 }

@@ -25,6 +25,7 @@ type ParamBase = {
 		| "NUMBER"
 		| "SELECT"
 		| "CHECKBOX"
+	displayAs?: string
 	required?: boolean
 	prompt?: string
 	conditions?: ParamCondition[]

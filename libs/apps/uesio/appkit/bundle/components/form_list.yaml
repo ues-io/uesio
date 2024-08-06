@@ -117,8 +117,9 @@ definition:
                             prepend: true
                         uesio.display:
                           - type: mergeValue
-                            sourceValue: $ComponentState{[$Prop{linkedComponentType}][$Prop{linkedComponentId}][mode]}
                             value: EDIT
+                            operator: EQUALS
+                            sourceValue: $FieldMode{}
                     - uesio/io.button:
                         text: Delete
                         icon: delete

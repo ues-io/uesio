@@ -34,6 +34,7 @@ func GetParamResponse(params meta.BotParams) meta.BotParamsResponse {
 			Choices:      param.Choices,
 			SelectList:   param.SelectList,
 			Required:     param.Required,
+			DisplayAs:    param.DisplayAs,
 			Conditions:   getParamConditionsResponse(param.Conditions),
 		})
 	}

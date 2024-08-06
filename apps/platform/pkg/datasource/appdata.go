@@ -16,9 +16,10 @@ type MetadataResponse struct {
 }
 
 type NamespaceInfo struct {
-	Color     string `json:"color"`
-	Icon      string `json:"icon"`
-	Namespace string `json:"namespace"`
+	Color       string `json:"color"`
+	Icon        string `json:"icon"`
+	Namespace   string `json:"namespace"`
+	Description string `json:"description"`
 }
 
 func GetAppData(ctx context.Context, namespaces []string, connection wire.Connection) (map[string]NamespaceInfo, error) {
@@ -40,6 +41,9 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 			{
 				ID: "uesio/studio.icon",
 			},
+			{
+				ID: "uesio/studio.description",
+			},
 		},
 		Connection: connection,
 	}, sess.GetStudioAnonSession(ctx))
@@ -52,9 +56,10 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 	for index := range apps {
 		app := apps[index]
 		appData[app.UniqueKey] = NamespaceInfo{
-			Color:     app.Color,
-			Icon:      app.Icon,
-			Namespace: app.UniqueKey,
+			Color:       app.Color,
+			Icon:        app.Icon,
+			Namespace:   app.UniqueKey,
+			Description: app.Description,
 		}
 	}
 

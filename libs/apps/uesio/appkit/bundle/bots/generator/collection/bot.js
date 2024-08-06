@@ -3,6 +3,8 @@ function collectionadmin(bot) {
 
 	const namespace = bot.getAppName()
 
+	var fullCollectionName = namespace + "." + collectionName
+
 	bot.runGenerator("uesio/core", "collection", {
 		name: collectionName,
 		label: collectionName,
@@ -38,7 +40,8 @@ function collectionadmin(bot) {
 									properties: {
 										name: {
 											type: "string",
-											description: "The field name",
+											description:
+												"The field name. This should be kebab-case. No uppercase characters are allowed.",
 										},
 										type: {
 											type: "string",
@@ -69,19 +72,18 @@ function collectionadmin(bot) {
 
 	const fields = result[0].input.fields
 
-	fields.forEach((field) => {
+	const fieldIds = fields.map((field) => {
 		bot.runGenerator("uesio/core", "field", {
-			collection: namespace + "." + collectionName,
+			collection: fullCollectionName,
 			name: field.name,
 			label: field.name,
 			type: field.type,
 		})
+		return namespace + "." + field.name
 	})
 
-	/*
-	bot.runGenerator("uesio/core", "view_list", {
-		collection: collection,
-		fields: fields,
+	bot.runGenerator("uesio/appkit", "view_list", {
+		collection: fullCollectionName,
+		fields: fieldIds,
 	})
-	*/
 }
