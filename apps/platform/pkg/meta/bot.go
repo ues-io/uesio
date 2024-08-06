@@ -164,6 +164,7 @@ type BotParam struct {
 	Required     bool                `yaml:"required" json:"required"`
 	Default      string              `yaml:"default,omitempty" json:"default"`
 	SelectList   string              `yaml:"selectList,omitempty" json:"selectList"`
+	DisplayAs    string              `yaml:"displayAs,omitempty" json:"displayAs"`
 	Choices      []string            `yaml:"choices,omitempty" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"conditions"`
 }
@@ -191,6 +192,7 @@ type BotParamResponse struct {
 	Grouping     string                      `json:"grouping,omitempty"`
 	Default      string                      `json:"default,omitempty"`
 	Required     bool                        `json:"required"`
+	DisplayAs    string                      `json:"displayAs"`
 	SelectList   string                      `json:"selectList,omitempty"`
 	Choices      []string                    `json:"choices,omitempty"`
 	Conditions   []BotParamConditionResponse `json:"conditions,omitempty"`

@@ -5,5 +5,8 @@ type: GENERATOR
 params:
   - name: use_ai_for_data_model
     type: CHECKBOX
-    prompt: Use AI to generate a collection for this app.
+    prompt: Use AI to generate initial collections for this app.
+    default: false
+    displayAs: TOGGLE
 public: true
+timeout: 30

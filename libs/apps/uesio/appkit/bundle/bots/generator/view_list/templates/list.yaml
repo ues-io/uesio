@@ -1,0 +1,46 @@
+# Wires connect to data in collections
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: List View
+                          icon: playing_cards
+      content:
+        - uesio/appkit.form_list:
+            wire: ${wirename}
+            avataricon: playing_cards
+            linkedComponentType: uesio/io.table
+            linkedComponentId: ${wirename}Table
+            filters:
+            content:
+              - uesio/io.table:
+                  uesio.variant: uesio/appkit.main
+                  selectable: true
+                  rowactions:
+                    - icon: visibility
+                      text: View
+                      type: DEFAULT
+                      uesio.display:
+                        - type: recordIsNotNew
+                      signals:
+                        - signal: route/NAVIGATE_TO_ASSIGNMENT
+                          viewtype: detail
+                          recordid: ${uesio/core.id}
+                          collection: ${collection}
+                  columns: ${tableColumns}
+                  uesio.id: ${wirename}Table
+                  wire: ${wirename}
+                  pagesize: 10

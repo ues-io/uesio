@@ -65,6 +65,7 @@ const getDisplayConditionsFromBotParamConditions = (
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({
 	"uesio/io.field": {
 		fieldId: def.name,
+		displayAs: def.displayAs,
 		"uesio.display": getDisplayConditionsFromBotParamConditions(
 			def.conditions
 		),
