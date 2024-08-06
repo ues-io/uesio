@@ -36,4 +36,10 @@ function view_list(bot) {
 		theme: "uesio/core.default",
 		title: `${collectionName} List`,
 	})
+
+	bot.runGenerator("uesio/core", "routeassignment", {
+		type: "list",
+		route: `${collectionName}_list`,
+		collection,
+	})
 }

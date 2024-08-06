@@ -30,6 +30,7 @@ components:
                 - gap-8
             components:
               - uesio/io.navsection:
+                  title: Admin
                   content:
                     - uesio/appkit.icontile:
                         tileVariant: uesio/io.nav
@@ -49,10 +50,15 @@ components:
                         tileVariant: uesio/io.nav
                         title: Users
                         icon: badge
+                        iconVariant: uesio/io.iconoutline
                         signals:
                           - signal: route/NAVIGATE_TO_ASSIGNMENT
                             collection: uesio/core.user
                             viewtype: list
+              - uesio/appkit.sitenav:
+                  title: Collections
+                  excludeCollections:
+                    - uesio/core.user
               - uesio/core.slot:
                   name: extra
       footer:

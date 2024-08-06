@@ -1,6 +1,0 @@
-- uesio/io.image:
-    uesio.styleTokens:
-      root:
-        - m-3
-    file: ${logo}
-    height: ${logoheight}

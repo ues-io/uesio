@@ -1,5 +1,7 @@
-function collectionadmin(bot) {
+function collection(bot) {
 	var collectionName = bot.params.get("collection")
+	var collectionLabel = bot.params.get("label")
+	var collectionPluralLabel = bot.params.get("pluralLabel")
 
 	const namespace = bot.getAppName()
 
@@ -7,8 +9,8 @@ function collectionadmin(bot) {
 
 	bot.runGenerator("uesio/core", "collection", {
 		name: collectionName,
-		label: collectionName,
-		pluralLabel: collectionName,
+		label: collectionLabel,
+		pluralLabel: collectionPluralLabel,
 	})
 
 	const result = bot.runIntegrationAction(
@@ -41,12 +43,17 @@ function collectionadmin(bot) {
 										name: {
 											type: "string",
 											description:
-												"The field name. This should be kebab-case. No uppercase characters are allowed.",
+												"The field name. This should be snake case. No uppercase characters are allowed.",
 										},
 										type: {
 											type: "string",
 											description:
 												"The data type of the field. The only valid values for this type are TEXT, NUMBER, or CHECKBOX",
+										},
+										label: {
+											type: "string",
+											description:
+												"This is the nice, human-readable label for this field. It should start with a capital letter and spaces are allowed.",
 										},
 									},
 									required: ["name"],
@@ -68,7 +75,7 @@ function collectionadmin(bot) {
 		throw new Error("Invalid Result")
 	}
 
-	bot.log.info("ai result", result)
+	//bot.log.info("ai result", result)
 
 	const fields = result[0].input.fields
 
@@ -76,7 +83,7 @@ function collectionadmin(bot) {
 		bot.runGenerator("uesio/core", "field", {
 			collection: fullCollectionName,
 			name: field.name,
-			label: field.name,
+			label: field.label,
 			type: field.type,
 		})
 		return namespace + "." + field.name

@@ -61,6 +61,16 @@ function starter(bot) {
 												description:
 													"The table name. These should be singular and all lowercase",
 											},
+											label: {
+												type: "string",
+												description:
+													"A human readable label for this table. It should start with a capital letter and spaces are allowed. It should still be singular.",
+											},
+											pluralLabel: {
+												type: "string",
+												description:
+													"This should be the plural version of the label.",
+											},
 										},
 										required: ["name"],
 									},
@@ -81,13 +91,15 @@ function starter(bot) {
 			throw new Error("Invalid Result")
 		}
 
-		bot.log.info("ai result", result)
+		//bot.log.info("ai result", result)
 
 		const collections = result[0].input.tables
 
 		collections.forEach((collection) => {
 			bot.runGenerator("uesio/appkit", "collection", {
 				collection: collection.name,
+				label: collection.label,
+				pluralLabel: collection.pluralLabel,
 			})
 		})
 	}
