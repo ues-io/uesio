@@ -62,7 +62,7 @@ func getBotProgramCacheKey(bot *meta.Bot, session *sess.Session) string {
 		// In workspace mode, we need to cache by the database id (the Unique Key),
 		// to ensure we don't have cross-workspace collisions.
 		// To prevent needing to do cache invalidation, add the Bot modification timestamp to the key.
-		return fmt.Sprintf("%s:%d", bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
+		return fmt.Sprintf("%s:%s:%d", bot.GetKey(), bot.GetDBID(session.GetWorkspace().UniqueKey), bot.UpdatedAt)
 	} else {
 		site := session.GetContextSite()
 		// In site mode, include the app and bundle version along with the bot's key in the cache key,
