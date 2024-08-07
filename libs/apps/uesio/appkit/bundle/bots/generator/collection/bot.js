@@ -22,7 +22,7 @@ function collection(bot) {
 				{
 					role: "user",
 					content:
-						"Please use the tool provided to create 4 fields for this database object called: " +
+						"Please use the tool provided to create 5 fields for this database object called: " +
 						collectionName,
 				},
 			],

@@ -39,7 +39,7 @@ function starter(bot) {
 				messages: [
 					{
 						role: "user",
-						content: `Please use the tool provided to create a primary table for this app called: ${appName} with a description of : ${description}. This name should be the primary types of that would be tracked in this app. There is already a table called "user", so there is no need to create that table.`,
+						content: `Please use the tool provided to create 3 or fewer tables for this app called: ${appName} with a description of : ${description}. This name should be the primary types of that would be tracked in this app. There is already a table called "user", so there is no need to create that table.`,
 					},
 				],
 				system: "You are an assistant who creates data models for databases. You think deeply about the correct names for the objects and fields for long-term maintainability and readability.",
