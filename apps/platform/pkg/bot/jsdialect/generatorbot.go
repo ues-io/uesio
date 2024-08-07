@@ -3,8 +3,10 @@ package jsdialect
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/sethvargo/go-password/password"
@@ -173,10 +175,26 @@ func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
+	fmt.Println("Running Generator: " + namespace + "/" + name)
+	var mem runtime.MemStats
+
+	runtime.ReadMemStats(&mem)
+	fmt.Println(mem.Alloc)
+	fmt.Println(mem.TotalAlloc)
+	fmt.Println(mem.HeapAlloc)
+	fmt.Println(mem.HeapSys)
 	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
 }
 
 func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+	fmt.Println("Running Integration Action: " + integrationID)
+	var mem runtime.MemStats
+
+	runtime.ReadMemStats(&mem)
+	fmt.Println(mem.Alloc)
+	fmt.Println(mem.TotalAlloc)
+	fmt.Println(mem.HeapAlloc)
+	fmt.Println(mem.HeapSys)
 	return runIntegrationAction(integrationID, action, options, gba.session.RemoveWorkspaceContext(), gba.connection)
 }
 
