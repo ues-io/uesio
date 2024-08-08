@@ -95,6 +95,12 @@ func Test_MergeYAMLString(t *testing.T) {
 			response: simple,
 		},
 		{
+			name:     "Merge Value Missing",
+			params:   map[string]interface{}{},
+			template: simpleMerge,
+			response: simpleMerge,
+		},
+		{
 			name: "Inline Merge Value",
 			params: map[string]interface{}{
 				"mymerge": "myvalue",

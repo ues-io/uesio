@@ -1,31 +1,60 @@
 function starter(bot) {
-	// Create a nav view
-	bot.runGenerator("uesio/appkit", "view_leftnav", {})
-
-	// Create a home view/route
-	bot.runGenerator("uesio/appkit", "view_home", {})
-
-	// Create a settings view/route
-	bot.runGenerator("uesio/appkit", "view_settings", {})
-
-	// Create a users view/route
-	bot.runGenerator("uesio/appkit", "view_users", {})
-
-	// Create a login view/route
-	bot.runGenerator("uesio/appkit", "view_login", {})
-
-	// Create admin profile/permission set
-	bot.runGenerator("uesio/appkit", "profile_admin", {})
-
-	// Create public profile/permission set
-	bot.runGenerator("uesio/appkit", "profile_public", {})
-
-	// Create a signup method
-	// Create public profile/permission set
-	bot.runGenerator("uesio/appkit", "signupmethod_admin", {})
-
-	// Set up the bundledef and other dependencies
-	bot.runGenerator("uesio/appkit", "starter_bundledef", {})
+	bot.runGenerators([
+		{
+			// Create a nav view
+			namespace: "uesio/appkit",
+			name: "view_leftnav",
+			params: {},
+		},
+		{
+			// Create a home view/route
+			namespace: "uesio/appkit",
+			name: "view_home",
+			params: {},
+		},
+		{
+			// Create a settings view/route
+			namespace: "uesio/appkit",
+			name: "view_settings",
+			params: {},
+		},
+		{
+			// Create a users view/route
+			namespace: "uesio/appkit",
+			name: "view_users",
+			params: {},
+		},
+		{
+			// Create a login view/route
+			namespace: "uesio/appkit",
+			name: "view_login",
+			params: {},
+		},
+		{
+			// Create admin profile/permission set
+			namespace: "uesio/appkit",
+			name: "profile_admin",
+			params: {},
+		},
+		{
+			// Create public profile/permission set
+			namespace: "uesio/appkit",
+			name: "profile_public",
+			params: {},
+		},
+		{
+			// Create a signup method
+			namespace: "uesio/appkit",
+			name: "signupmethod_admin",
+			params: {},
+		},
+		{
+			// Set up the bundledef and other dependencies
+			namespace: "uesio/appkit",
+			name: "starter_bundledef",
+			params: {},
+		},
+	])
 
 	if (bot.params.get("use_ai_for_data_model")) {
 		const appInfo = bot.getApp()
@@ -93,14 +122,16 @@ function starter(bot) {
 
 		//bot.log.info("ai result", result)
 
-		const collections = result[0].input.tables
-
-		collections.forEach((collection) => {
-			bot.runGenerator("uesio/appkit", "collection", {
-				collection: collection.name,
-				label: collection.label,
-				pluralLabel: collection.pluralLabel,
-			})
-		})
+		bot.runGenerators(
+			result[0].input.tables.map((collection) => ({
+				namespace: "uesio/appkit",
+				name: "collection",
+				params: {
+					collection: collection.name,
+					label: collection.label,
+					pluralLabel: collection.pluralLabel,
+				},
+			}))
+		)
 	}
 }

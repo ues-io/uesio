@@ -11,9 +11,6 @@ function view_list(bot) {
 		.map((field) => `- field: ${field}\n`)
 		.join("")
 
-	bot.log.info("collection", collection)
-	bot.log.info("fields", fields)
-
 	var definition = bot.mergeYamlTemplate(
 		{
 			collection,
