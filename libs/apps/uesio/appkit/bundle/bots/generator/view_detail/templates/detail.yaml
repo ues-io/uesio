@@ -1,0 +1,52 @@
+# Wires connect to data in collections
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+    conditions:
+      - field: uesio/core.id
+        valueSource: PARAM
+        param: recordid
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.viewlayout:
+      left:
+        - uesio/core.view:
+            view: ${namespace}.leftnav
+            slots:
+              crumbs:
+                - uesio/io.group:
+                    uesio.variant: uesio/appkit.breadcrumbs
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: List View
+                          icon: playing_cards
+      content:
+        - uesio/io.box:
+            uesio.display:
+              - type: paramIsSet
+                param: recordid
+            components:
+              - uesio/appkit.layout_detail_split:
+                  main:
+                    - uesio/appkit.form_detail:
+                        wire: ${wirename}
+                        content:
+                          - uesio/io.box:
+                              uesio.variant: uesio/appkit.primarysection
+                              components: ${formFields}
+                  left:
+        - uesio/io.box:
+            uesio.variant: uesio/io.section
+            uesio.display:
+              - type: paramIsNotSet
+                param: recordid
+            components:
+              - uesio/io.text:
+                  text: Select a record
+params:
+  recordid:
+    type: RECORD
+    required: true
+    collection: ${collection}

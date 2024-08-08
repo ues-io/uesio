@@ -6,8 +6,10 @@ import (
 	"io"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/sethvargo/go-password/password"
+	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -15,6 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -47,6 +50,12 @@ func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bun
 		bot:        bot,
 		connection: connection,
 	}
+}
+
+type GeneratorBotOptions struct {
+	Namespace string                 `bot:"namespace"`
+	Name      string                 `bot:"name"`
+	Params    map[string]interface{} `bot:"params"`
 }
 
 type GeneratorBotAPI struct {
@@ -174,6 +183,40 @@ func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
 	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+}
+
+func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) error {
+	eg := new(errgroup.Group)
+	creates := map[string]*bytes.Buffer{}
+	mu := sync.Mutex{}
+	for _, generator := range generators {
+		eg.Go(func() error {
+			return datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
+				buf := &bytes.Buffer{}
+				mu.Lock()
+				creates[s] = buf
+				mu.Unlock()
+				return retrieve.NopWriterCloser(buf), nil
+			}, generator.Namespace, generator.Name, generator.Params, gba.connection, gba.session)
+		})
+	}
+	err := eg.Wait()
+	if err != nil {
+		return err
+	}
+
+	for fileName, buf := range creates {
+		w, err := gba.create(fileName)
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(w, buf)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
@@ -309,7 +352,10 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 		if len(match) == 2 {
 			matchExpression := match[0] //${mymerge}
 			merge := match[1]           // mymerge
-			mergeValue := params[merge]
+			mergeValue, hasValue := params[merge]
+			if !hasValue {
+				return nil
+			}
 			mergeString, ok := mergeValue.(string)
 			if ok {
 
