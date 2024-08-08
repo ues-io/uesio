@@ -11,6 +11,7 @@ type ButtonDefinition = {
 	icon?: string
 	iconPlacement?: ButtonIconPlacement
 	iconFill?: boolean
+	pendingText?: string
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
 	tooltip?: string
@@ -21,6 +22,7 @@ const StyleDefaults = Object.freeze({
 	label: [],
 	selected: [],
 	icon: [],
+	pending: [],
 })
 
 const Button: definition.UC<ButtonDefinition> = (props) => {
@@ -34,8 +36,16 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 
 	const [isPending, setPending] = useState(false)
 
-	const { signals, hotkey, text, icon, iconPlacement, iconFill, tooltip } =
-		definition
+	const {
+		signals,
+		hotkey,
+		text,
+		icon,
+		iconPlacement,
+		iconFill,
+		tooltip,
+		pendingText,
+	} = definition
 
 	const [link, handler] = api.signal.useLinkHandler(
 		signals,
@@ -50,7 +60,8 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			id={api.component.getComponentIdFromProps(props)}
 			variant={definition[component.STYLE_VARIANT]}
 			classes={classes}
-			disabled={isPending}
+			isPending={isPending}
+			pendingLabel={pendingText}
 			iconPlacement={iconPlacement}
 			label={text}
 			link={link}
