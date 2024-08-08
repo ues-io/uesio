@@ -11,6 +11,8 @@ interface ButtonUtilityProps {
 	isSelected?: boolean
 	icon?: ReactNode
 	iconPlacement?: ButtonIconPlacement
+	isPending?: boolean
+	pendingLabel?: string
 	disabled?: boolean
 	tooltip?: string
 	tooltipPlacement?: Placement
@@ -23,6 +25,7 @@ const StyleDefaults = Object.freeze({
 	selected: [],
 	disabled: [],
 	label: [],
+	pending: [],
 })
 
 const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
@@ -38,6 +41,8 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		isSelected,
 		icon,
 		iconPlacement = "start",
+		isPending,
+		pendingLabel,
 		id,
 		tooltip,
 		context,
@@ -46,31 +51,35 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		link,
 	} = props
 
+	const isDisabled = isPending || disabled
+	const currentLabel = isPending && pendingLabel ? pendingLabel : label
+
 	const Tag = link ? "a" : "button"
 	const button = (
 		<Tag
 			id={id}
 			href={link}
-			disabled={disabled}
+			disabled={isDisabled}
 			onClick={onClick}
 			className={styles.process(
 				undefined,
 				classes.root,
 				disabled && classes.disabled,
-				isSelected && classes.selected
+				isSelected && classes.selected,
+				isPending && classes.pending
 			)}
 		>
 			{iconPlacement === "start" && icon}
-			{label && (
+			{currentLabel && (
 				<span className={classes.label}>
-					{context.mergeString(label)}
+					{context.mergeString(currentLabel)}
 				</span>
 			)}
 			{iconPlacement === "end" && icon}
 		</Tag>
 	)
 
-	return tooltip && !disabled ? (
+	return tooltip && !isDisabled ? (
 		<Tooltip
 			text={tooltip}
 			context={context}

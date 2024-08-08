@@ -21,4 +21,6 @@ definition:
       - disabled:hover:shadow-none
     icon:
       - text-inherit
+    pending:
+      - animate-pulse
 public: true

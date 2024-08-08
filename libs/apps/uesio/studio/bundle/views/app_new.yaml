@@ -81,6 +81,7 @@ definition:
                           hotkey: "meta+s"
                           uesio.variant: uesio/appkit.primary
                           uesio.id: save-new-app
+                          pendingText: "Creating App ..."
                           signals:
                             - signal: wire/SAVE
                               wires:

@@ -1,4 +1,4 @@
-import { component, definition, api, context, styles } from "@uesio/ui"
+import { component, definition, api, context } from "@uesio/ui"
 import { useState } from "react"
 import { getClaudeResponseHandler, Tool, ToolChoice } from "./claude"
 import { getClaudeArrayStreamHandler } from "./stream"
@@ -18,9 +18,6 @@ type Props = {
 	onSuccess?: (context: context.Context) => void
 }
 
-const StyleDefaults = Object.freeze({
-	pulse: ["animate-pulse"],
-})
 const stepId = "autocomplete"
 
 const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
@@ -42,8 +39,6 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
-
 	const onTextDelta = onTextJSONArrayItem
 		? getClaudeArrayStreamHandler({
 				onItem: onTextJSONArrayItem,
@@ -55,16 +50,11 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
 	return (
 		<Button
 			context={context}
-			label={isLoading ? loadingLabel : label}
+			label={label}
 			variant="uesio/io.secondary"
-			disabled={isLoading}
-			icon={
-				<Icon
-					icon={icon}
-					context={context}
-					className={isLoading ? classes.pulse : ""}
-				/>
-			}
+			isPending={isLoading}
+			pendingLabel={loadingLabel}
+			icon={<Icon icon={icon} context={context} />}
 			onClick={() => {
 				setLoading(true)
 				api.signal
