@@ -98,4 +98,9 @@ function collection(bot) {
 		collection: fullCollectionName,
 		fields: fieldIds,
 	})
+
+	bot.runGenerator("uesio/appkit", "view_new", {
+		collection: fullCollectionName,
+		fields: fieldIds,
+	})
 }
