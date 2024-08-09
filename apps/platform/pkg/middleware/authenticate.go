@@ -77,7 +77,14 @@ func Authenticate(next http.Handler) http.Handler {
 
 		user, err := auth.GetUserFromBrowserSession(browserSession, site)
 		if err != nil {
-			http.Error(w, "Failed to get user from site: "+err.Error(), http.StatusInternalServerError)
+			session.Remove(browserSession, w)
+			publicSession, err := auth.GetPublicSession(site, nil)
+			if err != nil {
+				http.Error(w, "Failed to create public session: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			auth.RedirectToLoginRoute(w, r, publicSession, auth.NotFound)
 			return
 		}
 
