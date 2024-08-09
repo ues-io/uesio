@@ -71,7 +71,7 @@ func HydrateUserPermissions(user *meta.User, session *sess.Session) error {
 func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 
 	// Get Cache site info for the host
-	cachedUser, ok := getUserCache(userid, site.GetAppFullName())
+	cachedUser, ok := getUserCache(userid, site)
 	if ok {
 		return cachedUser, nil
 	}
@@ -83,7 +83,7 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 		return nil, err
 	}
 
-	err = setUserCache(userid, site.GetAppFullName(), user)
+	err = setUserCache(userid, site, user)
 	if err != nil {
 		return nil, err
 	}

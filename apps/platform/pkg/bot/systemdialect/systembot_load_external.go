@@ -180,15 +180,11 @@ func getLoadOp(op *wire.LoadOp, collectionMetadata *wire.CollectionMetadata) (*w
 
 func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, session *sess.Session) error {
 	// Now get a public session
-	publicUser, err := auth.GetPublicUser(site, connection)
+	publicSession, err := auth.GetPublicSession(site, connection)
 	if err != nil {
 		return err
 	}
 
-	publicSession, err := auth.GetSessionFromUser("", publicUser, site)
-	if err != nil {
-		return err
-	}
 	publicSession.SetGoContext(session.Context())
 
 	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)

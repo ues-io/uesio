@@ -34,6 +34,8 @@ definition:
         - field: uesio/core.user
           valueSource: PARAM
           param: recordid
+    signupmethods:
+      collection: uesio/core.signupmethod
   # Components determine the layout and composition of your view
   components:
     - uesio/io.box:
@@ -146,56 +148,59 @@ definition:
                             - uesio/io.titlebar:
                                 title: User Administration
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.titlebar:
-                                actions:
-                                  - uesio/io.button:
-                                      uesio.display:
-                                        - type: wireHasRecords
-                                          wire: loginmethods
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-4
-                                      uesio.variant: uesio/appkit.secondary
-                                      text: Reset Password
-                                      signals:
-                                        - signal: user/RESET_PASSWORD
-                                          onerror:
+                            - uesio/io.list:
+                                wire: signupmethods
+                                components:
+                                  - uesio/io.titlebar:
+                                      actions:
+                                        - uesio/io.button:
+                                            uesio.display:
+                                              - type: wireHasRecords
+                                                wire: loginmethods
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            uesio.variant: uesio/appkit.secondary
+                                            text: Reset Password
                                             signals:
-                                              - signal: notification/ADD_ERRORS
-                                          authSource: uesio/core.platform
-                                          payload:
-                                            username: ${uesio/core.username}
-                                        - signal: notification/ADD
-                                          text: An email has been sent!
-                                          details: Please check your inbox.
-                                          severity: success
-                                  - uesio/io.button:
-                                      uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: loginmethods
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-4
-                                      uesio.variant: uesio/appkit.secondary
-                                      text: Send Login Email
-                                      signals:
-                                        - signal: user/CREATE_LOGIN
-                                          signupMethod: $Param{signupmethod}
-                                          payload:
-                                            username: ${uesio/core.username}
-                                            email: ${uesio/core.email}
-                                          onerror:
-                                            continue: false
-                                            notify: true
+                                              - signal: user/RESET_PASSWORD
+                                                onerror:
+                                                  signals:
+                                                    - signal: notification/ADD_ERRORS
+                                                authSource: uesio/core.platform
+                                                payload:
+                                                  username: ${user:uesio/core.username}
+                                              - signal: notification/ADD
+                                                text: An email has been sent!
+                                                details: Please check your inbox.
+                                                severity: success
+                                        - uesio/io.button:
+                                            uesio.display:
+                                              - type: wireHasNoRecords
+                                                wire: loginmethods
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-4
+                                            uesio.variant: uesio/appkit.secondary
+                                            text: Send Login Email
                                             signals:
-                                              signal: notification/ADD_ERRORS
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - loginmethods
-                                        - signal: notification/ADD
-                                          text: "An email has been sent to the user!"
-                                          details: A new password can be created.
-                                          severity: success
+                                              - signal: user/CREATE_LOGIN
+                                                signupMethod: ${uesio/core.uniquekey}
+                                                payload:
+                                                  username: ${user:uesio/core.username}
+                                                  email: ${user:uesio/core.email}
+                                                onerror:
+                                                  continue: false
+                                                  notify: true
+                                                  signals:
+                                                    signal: notification/ADD_ERRORS
+                                              - signal: wire/LOAD
+                                                wires:
+                                                  - loginmethods
+                                              - signal: notification/ADD
+                                                text: "An email has been sent to the user!"
+                                                details: A new password can be created.
+                                                severity: success
                       - uesio/appkit.section_audit_info:
               left:
   params:

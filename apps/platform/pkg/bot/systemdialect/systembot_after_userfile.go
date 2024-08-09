@@ -23,7 +23,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 	// 2. If a new user file corresponding to a STUDIO file (static file) is inserted,
 	// we need to transfer the Path property to the studio file as well
 
-	appFullName := session.GetSite().GetAppFullName()
+	site := session.GetSite()
 
 	var userKeysToDelete []string
 	studioFileUpdates := wire.Collection{}
@@ -44,7 +44,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 				return err
 			}
 			if relatedField == "uesio/core.picture" {
-				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecordId, appFullName))
+				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecordId, site))
 			}
 		} else if relatedCollection == studioFileCollectionId {
 			pathField, err := change.GetField("uesio/core.path")
@@ -87,7 +87,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 		}
 		if (relatedCollection == "uesio/core.user") &&
 			(relatedField == "uesio/core.picture") {
-			userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), appFullName))
+			userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecord.(string), site))
 		}
 	}
 	// Continue on even if there are failures here, maybe in the future we can schedule an update to clean up bad keys

@@ -68,6 +68,14 @@ func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, err
 	return GetUserByKey("guest", sess.GetAnonSession(context.Background(), site), connection)
 }
 
+func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Session, error) {
+	publicUser, err := GetPublicUser(site, connection)
+	if err != nil {
+		return nil, err
+	}
+	return GetSessionFromUser("", publicUser, site)
+}
+
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("No Site Provided")

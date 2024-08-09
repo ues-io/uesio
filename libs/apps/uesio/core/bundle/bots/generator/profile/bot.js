@@ -7,6 +7,7 @@ function profile(bot) {
 		{
 			name,
 			permissionSets,
+			homeRoute: bot.params.get("homeRoute"),
 		},
 		"templates/profile.yaml"
 	)

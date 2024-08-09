@@ -17,10 +17,8 @@ func init() {
 	hostCache = cache.NewRedisCache[*meta.Site]("host")
 }
 
-func GetUserCacheKey(userid, siteId string) string {
-	// 11/7/23 - added "v2:"" to force a cache bust because we added "uesio/core.owner" to the fields
-	// After a few days of this being live in Prod, we can remove "v2:" prefix again
-	return fmt.Sprintf("v2:%s:%s", userid, siteId)
+func GetUserCacheKey(userid string, site *meta.Site) string {
+	return fmt.Sprintf("%s:%s:%s", userid, site.GetAppFullName(), site.ID)
 }
 
 func getHostKey(domainType, domainValue string) string {
@@ -31,12 +29,12 @@ func DeleteUserCacheEntries(userKeys ...string) error {
 	return userCache.Del(userKeys...)
 }
 
-func setUserCache(userUniqueKey, siteId string, user *meta.User) error {
-	return userCache.Set(GetUserCacheKey(userUniqueKey, siteId), user)
+func setUserCache(userUniqueKey string, site *meta.Site, user *meta.User) error {
+	return userCache.Set(GetUserCacheKey(userUniqueKey, site), user)
 }
 
-func getUserCache(userUniqueKey, siteId string) (*meta.User, bool) {
-	user, err := userCache.Get(GetUserCacheKey(userUniqueKey, siteId))
+func getUserCache(userUniqueKey string, site *meta.Site) (*meta.User, bool) {
+	user, err := userCache.Get(GetUserCacheKey(userUniqueKey, site))
 	if err != nil || user == nil {
 		return nil, false
 	}

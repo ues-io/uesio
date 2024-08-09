@@ -21,7 +21,7 @@ func runUserAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 func clearUserCache(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	keys := []string{}
 	for _, id := range getIDsFromUpdatesAndDeletes(request) {
-		keys = append(keys, auth.GetUserCacheKey(id, session.GetContextSite().GetAppFullName()))
+		keys = append(keys, auth.GetUserCacheKey(id, session.GetContextSite()))
 	}
 	return auth.DeleteUserCacheEntries(keys...)
 }
