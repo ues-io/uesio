@@ -6,12 +6,18 @@
 		{
 			"files": ["*.ts", "*.tsx"],
 			"extends": ["plugin:@nx/typescript"],
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-extra-semi": "error",
+				"no-extra-semi": "off"
+			}
 		},
 		{
 			"files": ["*.js", "*.jsx"],
 			"extends": ["plugin:@nx/javascript"],
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-extra-semi": "error",
+				"no-extra-semi": "off"
+			}
 		},
 		{
 			"files": ["**/*.spec.ts", "**/*.spec.tsx", "**/test/utils/*.ts"],
@@ -63,7 +69,9 @@
 				"@typescript-eslint/no-explicit-any": "error",
 				"@typescript-eslint/no-unused-vars": [
 					"error",
-					{ "ignoreRestSiblings": true }
+					{
+						"ignoreRestSiblings": true
+					}
 				],
 				"@nx/enforce-module-boundaries": [
 					"error",
