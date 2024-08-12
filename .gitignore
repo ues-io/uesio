@@ -77,3 +77,4 @@ cypress/videos
 # Ad-hoc query results
 queries/results
 .nx/cache
+.nx/workspace-data

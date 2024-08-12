@@ -24,3 +24,4 @@ workspace.json
 # Ignore prettier errors for generated files
 **/generated/@types/**
 /.nx/cache
+/.nx/workspace-data
