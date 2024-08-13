@@ -13,7 +13,7 @@ const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection
 func (c *Connection) SetRecordAccessTokens(request *wire.SaveOp, session *sess.Session) error {
 
 	tenantID := session.GetTenantID()
-	collectionName := request.Metadata.GetFullName()
+	collectionName := request.CollectionName
 	batch := &pgx.Batch{}
 
 	numDeletes := len(request.Deletes)
@@ -32,8 +32,13 @@ func (c *Connection) SetRecordAccessTokens(request *wire.SaveOp, session *sess.S
 		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs, collectionName, tenantID)
 	}
 
-	err := request.LoopChanges(func(change *wire.ChangeItem) error {
-		if request.Metadata.IsWriteProtected() {
+	collectionMetadata, err := request.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+
+	err = request.LoopChanges(func(change *wire.ChangeItem) error {
+		if collectionMetadata.IsWriteProtected() {
 			for _, token := range change.ReadWriteTokens {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,

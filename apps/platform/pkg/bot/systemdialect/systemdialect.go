@@ -35,7 +35,7 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 
 	var botFunction BotFunc
 
-	switch request.Metadata.GetFullName() {
+	switch request.CollectionName {
 	case "uesio/core.userfile":
 		botFunction = runUserFileBeforeSaveBot
 	case "uesio/studio.field":
@@ -69,7 +69,7 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction BotFunc
 
-	switch request.Metadata.GetFullName() {
+	switch request.CollectionName {
 	case "uesio/core.user":
 		botFunction = runUserAfterSaveBot
 	case "uesio/core.userfile":
@@ -232,11 +232,11 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.
 		botFunction = runUesioExternalSaveBot
 	}
 
-	switch op.Metadata.GetFullName() {
+	switch op.CollectionName {
 
 	}
 
-	if meta.IsBundleableCollection(op.Metadata.GetFullName()) {
+	if meta.IsBundleableCollection(op.CollectionName) {
 		botFunction = runStudioMetadataSaveBot
 	}
 

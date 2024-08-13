@@ -51,14 +51,19 @@ func HandleUpsertLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, []wire.LoadRequestField{
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
+
+	return LoadLooper(connection, op.CollectionName, idMap, []wire.LoadRequestField{
 		{
 			ID: commonfields.Id,
 		},
 		{
 			ID: commonfields.UniqueKey,
 		},
-	}, commonfields.UniqueKey, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	}, commonfields.UniqueKey, metadata, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.

@@ -22,7 +22,12 @@ func runUserTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		return err
 	}
 
-	err = datasource.HydrateTokenMap(tokenMap, uatc, connection, session, true)
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
+
+	err = datasource.HydrateTokenMap(tokenMap, uatc, connection, metadata, session, true)
 	if err != nil {
 		return err
 	}

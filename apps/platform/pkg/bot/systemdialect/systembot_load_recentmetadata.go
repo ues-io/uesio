@@ -110,7 +110,12 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		BatchSize: 20,
 	}
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
+
+	newOp.AttachMetadataCache(metadata)
 
 	recentmetadataCollectionMetadata, err := metadata.GetCollection("uesio/studio.recentmetadata")
 	if err != nil {

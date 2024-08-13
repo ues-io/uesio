@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -27,14 +26,14 @@ func (ol *OpList) getCurrentIndex() int {
 	}
 	if ol.Counter == 0 {
 		ol.List = append(ol.List, &wire.SaveOp{
-			WireName: ol.Request.Wire,
-			Inserts:  wire.ChangeItems{},
-			Updates:  wire.ChangeItems{},
-			Deletes:  wire.ChangeItems{},
-			Options:  ol.Request.Options,
-			Errors:   &ol.Request.Errors,
-			Metadata: ol.Metadata,
-			Params:   ol.Request.Params,
+			CollectionName: ol.Request.Collection,
+			WireName:       ol.Request.Wire,
+			Inserts:        wire.ChangeItems{},
+			Updates:        wire.ChangeItems{},
+			Deletes:        wire.ChangeItems{},
+			Options:        ol.Request.Options,
+			Errors:         &ol.Request.Errors,
+			Params:         ol.Request.Params,
 		})
 	}
 	ol.Counter++
@@ -79,7 +78,7 @@ func NewOpList(request *SaveRequest, collectionMetadata *wire.CollectionMetadata
 	}
 }
 
-func splitSave(request *SaveRequest, collectionMetadata *wire.CollectionMetadata, session *sess.Session) ([]*wire.SaveOp, error) {
+func splitSave(request *SaveRequest, collectionMetadata *wire.CollectionMetadata) ([]*wire.SaveOp, error) {
 
 	opList := NewOpList(request, collectionMetadata)
 

@@ -93,7 +93,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 				newWorkspace,
 			},
 		},
-	}, session, datasource.GetConnectionSaveOptions(connection))
+	}, session, datasource.NewSaveOptions(connection, nil))
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 				"workspaceid": newWorkspace.ID,
 			},
 		},
-	}, session, datasource.GetConnectionSaveOptions(connection))
+	}, session, datasource.NewSaveOptions(connection, nil))
 	if err != nil {
 		return err
 	}
@@ -218,6 +218,6 @@ func cascadeDeleteWorkspaces(request *wire.SaveOp, connection wire.Connection, s
 		return nil
 	}
 
-	return datasource.SaveWithOptions(requests, adminSession, datasource.GetConnectionSaveOptions(connection))
+	return datasource.SaveWithOptions(requests, adminSession, datasource.NewSaveOptions(connection, nil))
 
 }

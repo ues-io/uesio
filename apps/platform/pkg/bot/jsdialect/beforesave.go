@@ -35,15 +35,15 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 }
 
 func (bs *BeforeSaveAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, bs.session, bs.connection)
+	return botSave(collection, changes, options, bs.session, bs.connection, nil)
 }
 
 func (bs *BeforeSaveAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, bs.session, bs.connection)
+	return botDelete(collection, deletes, bs.session, bs.connection, nil)
 }
 
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, bs.session, bs.connection)
+	return botLoad(request, bs.session, bs.connection, nil)
 }
 
 func (bs *BeforeSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {

@@ -473,6 +473,8 @@ func GetMetadataForLoad(
 ) error {
 	collectionKey := op.CollectionName
 
+	op.AttachMetadataCache(metadataResponse)
+
 	// Keep a running tally of all requested collections
 	metadataRequest := &MetadataRequest{}
 	if err := metadataRequest.AddCollection(collectionKey); err != nil {
@@ -732,6 +734,9 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	}
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
+
+		// Attach the collection metadata to the LoadOp so that Load Bots can access it
+		op.AttachMetadataCache(metadataResponse)
 		// Special processing for View-only wires
 		if op.ViewOnly {
 			if err = GetMetadataForViewOnlyWire(op, metadataResponse, nil, session); err != nil {
@@ -800,7 +805,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	}
 	if len(opsNeedingRecordLevelAccessCheck) > 0 {
 		// Attach user access tokens to the session
-		if err = GenerateUserAccessTokens(connection, session); err != nil {
+		if err = GenerateUserAccessTokens(connection, metadataResponse, session); err != nil {
 			return nil, err
 		}
 		for _, op := range opsNeedingRecordLevelAccessCheck {
@@ -846,9 +851,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		collectionKey := collectionMetadata.GetFullName()
 
 		integrationName := collectionMetadata.GetIntegrationName()
-
-		// Attach the collection metadata to the LoadOp so that Load Bots can access it
-		op.AttachMetadataCache(metadataResponse)
 
 		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
 		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)

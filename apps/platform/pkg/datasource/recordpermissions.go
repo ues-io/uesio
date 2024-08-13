@@ -69,9 +69,17 @@ func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire
 func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	referencedCollections := wire.ReferenceRegistry{}
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
 
-	fieldMetadata, err := op.Metadata.GetField(op.Metadata.AccessField)
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
 	if err != nil {
 		return err
 	}
@@ -92,7 +100,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 	refReq.AddFields(fields.getRequestFields())
 
 	if err = op.LoopAllChanges(func(change *wire.ChangeItem) error {
-		fk, err := change.GetReferenceKey(op.Metadata.AccessField)
+		fk, err := change.GetReferenceKey(collectionMetadata.AccessField)
 		if err != nil {
 			return err
 		}
@@ -107,7 +115,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	return HandleReferences(connection, referencedCollections, session, &ReferenceOptions{
+	return HandleReferences(connection, referencedCollections, metadata, session, &ReferenceOptions{
 		MergeItems: true,
 	})
 }
@@ -243,19 +251,27 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 
 func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	if !op.Metadata.IsWriteProtected() {
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+
+	if !collectionMetadata.IsWriteProtected() {
 		return nil
 	}
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
 
-	challengeMetadata, err := getChallengeCollection(metadata, op.Metadata)
+	challengeMetadata, err := getChallengeCollection(metadata, collectionMetadata)
 	if err != nil {
 		return err
 	}
 
 	// If we have an access field, we need to load in all data from that field
-	if op.Metadata.AccessField != "" {
+	if collectionMetadata.AccessField != "" {
 
 		// Shortcut - if user can modify all records, no need to do any other checks
 		if session.GetContextPermissions().HasModifyAllRecordsPermission(challengeMetadata.GetFullName()) {
@@ -301,7 +317,7 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 	}
 
 	return op.LoopAllChanges(func(change *wire.ChangeItem) error {
-		if op.Metadata.AccessField != "" {
+		if collectionMetadata.AccessField != "" {
 			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
 		}
 		return handleStandardChange(change, tokenFuncs, session)

@@ -293,11 +293,11 @@ func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) 
 }
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, gba.session, gba.connection)
+	return botLoad(request, gba.session, gba.connection, nil)
 }
 
 func (gba *GeneratorBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
-	return botSave(collection, changes, options, gba.session, gba.connection)
+	return botSave(collection, changes, options, gba.session, gba.connection, nil)
 }
 
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {

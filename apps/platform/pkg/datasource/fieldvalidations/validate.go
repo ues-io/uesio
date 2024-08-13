@@ -6,8 +6,13 @@ import (
 
 func Validate(op *wire.SaveOp) error {
 
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+
 	var validations []ValidationFunc
-	for _, field := range op.Metadata.Fields {
+	for _, field := range collectionMetadata.Fields {
 		validationMetadata := field.ValidationMetadata
 		if field.Required {
 			validations = append(validations, ValidateRequiredField(field))

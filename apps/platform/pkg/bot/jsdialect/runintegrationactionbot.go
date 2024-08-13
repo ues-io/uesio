@@ -73,13 +73,13 @@ func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]in
 }
 
 func (b *RunIntegrationActionBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+	return botSave(collection, changes, options, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (b *RunIntegrationActionBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+	return botDelete(collection, deletes, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (b *RunIntegrationActionBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+	return botLoad(request, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }

@@ -1,8 +1,6 @@
 package jsdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -19,9 +17,10 @@ type SaveRequestMetadata struct {
 }
 
 func NewSaveRequestMetadata(op *wire.SaveOp) *SaveRequestMetadata {
+	collectionMetadata, _ := op.GetCollectionMetadata()
 	return &SaveRequestMetadata{
-		CollectionMetadata: NewBotCollectionMetadata(op.Metadata),
-		CollectionName:     op.Metadata.GetFullName(),
+		CollectionMetadata: NewBotCollectionMetadata(collectionMetadata),
+		CollectionName:     op.CollectionName,
 		Upsert:             op.Options != nil && op.Options.Upsert,
 	}
 }
@@ -62,7 +61,7 @@ func (sba *SaveBotAPI) getSession() *sess.Session {
 }
 
 func (sba *SaveBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection())
+	return botLoad(request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (sba *SaveBotAPI) GetCredentials() map[string]interface{} {
@@ -79,10 +78,11 @@ func (sba *SaveBotAPI) GetIntegration() *IntegrationMetadata {
 	return (*IntegrationMetadata)(sba.integrationConnection.GetIntegration())
 }
 func (sb *SaveBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
-	if sb.connection == nil {
-		return nil, errors.New("no collection metadata available for this connection")
+	metadata, err := sb.saveOp.GetMetadata()
+	if err != nil {
+		return nil, err
 	}
-	collectionMetadata, err := sb.connection.GetMetadata().GetCollection(collectionKey)
+	collectionMetadata, err := metadata.GetCollection(collectionKey)
 	if err != nil {
 		return nil, err
 	}

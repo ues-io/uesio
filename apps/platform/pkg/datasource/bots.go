@@ -82,7 +82,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 
 func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	collectionName := request.Metadata.GetFullName()
+	collectionName := request.CollectionName
 
 	var robots meta.BotCollection
 
@@ -147,7 +147,7 @@ func runDynamicCollectionSaveBots(op *wire.SaveOp, connection wire.Connection, s
 	if err != nil {
 		return err
 	}
-	namespace, name, err := meta.ParseKey(op.Metadata.GetFullName())
+	namespace, name, err := meta.ParseKey(op.CollectionName)
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 
 func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	collectionName := request.Metadata.GetFullName()
+	collectionName := request.CollectionName
 
 	var robots meta.BotCollection
 

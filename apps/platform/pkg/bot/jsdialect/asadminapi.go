@@ -13,11 +13,11 @@ type AsAdminApi struct {
 }
 
 func (aaa *AsAdminApi) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, datasource.GetSiteAdminSession(aaa.session), aaa.connection)
+	return botSave(collection, changes, options, datasource.GetSiteAdminSession(aaa.session), aaa.connection, nil)
 }
 
 func (aaa *AsAdminApi) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, datasource.GetSiteAdminSession(aaa.session), aaa.connection)
+	return botDelete(collection, deletes, datasource.GetSiteAdminSession(aaa.session), aaa.connection, nil)
 }
 
 func (aaa *AsAdminApi) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
@@ -33,5 +33,5 @@ func (aaa *AsAdminApi) GetConfigValue(configValueKey string) (string, error) {
 }
 
 func (aaa *AsAdminApi) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, datasource.GetSiteAdminSession(aaa.session), aaa.connection)
+	return botLoad(request, datasource.GetSiteAdminSession(aaa.session), aaa.connection, nil)
 }

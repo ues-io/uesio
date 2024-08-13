@@ -15,8 +15,8 @@ var OWNER_TOKEN = "uesio.owner"
 var INSTALLED_TOKEN = "uesio.installed"
 var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 
-func getTokensForRequest(connection wire.Connection, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
-	metadata := connection.GetMetadata()
+func getTokensForRequest(connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
+
 	uatc := meta.UserAccessTokenCollection{}
 	var tokens []meta.BundleableItem
 
@@ -76,7 +76,7 @@ func getTokensForRequest(connection wire.Connection, session *sess.Session, toke
 	return uatc, nil
 }
 
-func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, session *sess.Session, reason bool) error {
+func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session, reason bool) error {
 	user := session.GetContextUser()
 	if !tokenMap.Has(OWNER_TOKEN) {
 		tokenMap.Add(OWNER_TOKEN, []sess.TokenValue{{
@@ -112,7 +112,6 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 	// To ensure we have access to all the collections involved in user access token calculation,
 	// get an admin session
 	adminSession := GetSiteAdminSession(session)
-	metadata := connection.GetMetadata()
 
 	for _, token := range tokenDefs {
 
@@ -154,6 +153,8 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 			if err != nil {
 				return err
 			}
+
+			loadOp.AttachMetadataCache(metadata)
 
 			err = connection.Load(loadOp, adminSession)
 			if err != nil {
@@ -199,16 +200,16 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 	return nil
 }
 
-func GenerateUserAccessTokens(connection wire.Connection, session *sess.Session) error {
+func GenerateUserAccessTokens(connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session) error {
 
 	tokenMap := session.GetTokenMap()
 
-	tokenDefs, err := getTokensForRequest(connection, session, tokenMap)
+	tokenDefs, err := getTokensForRequest(connection, metadata, session, tokenMap)
 	if err != nil {
 		return err
 	}
 
-	err = HydrateTokenMap(tokenMap, tokenDefs, connection, session, false)
+	err = HydrateTokenMap(tokenMap, tokenDefs, connection, metadata, session, false)
 	if err != nil {
 		return err
 	}

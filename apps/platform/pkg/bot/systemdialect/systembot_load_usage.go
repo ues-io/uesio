@@ -56,7 +56,10 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.BatchNumber = newOp.BatchNumber
 	op.HasMoreBatches = newOp.HasMoreBatches
 
-	metadataResponse := connection.GetMetadata()
+	metadataResponse, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
 
 	err = usageData.TransferFieldMetadata("uesio/studio.usage", studioMetadata, metadataResponse)
 	if err != nil {
@@ -90,7 +93,7 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.Collection = usageData
 
 	//get user references with the current site session
-	return datasource.HandleReferences(connection, referencedCollections, session, &datasource.ReferenceOptions{
+	return datasource.HandleReferences(connection, referencedCollections, metadataResponse, session, &datasource.ReferenceOptions{
 		AllowMissingItems: true,
 	})
 

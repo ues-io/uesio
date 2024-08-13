@@ -1,8 +1,6 @@
 package jsdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -21,6 +19,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 		},
 		errors:     []string{},
 		connection: connection,
+		metadata:   &wire.MetadataCache{},
 		bot:        bot,
 		Results:    map[string]interface{}{},
 		LogApi:     NewBotLogAPI(bot, session.Context()),
@@ -34,6 +33,7 @@ type CallBotAPI struct {
 	connection wire.Connection
 	bot        *meta.Bot
 	errors     []string
+	metadata   *wire.MetadataCache
 	Results    map[string]interface{}
 	AsAdmin    AsAdminApi  `bot:"asAdmin"`
 	LogApi     *BotLogAPI  `bot:"log"`
@@ -53,15 +53,15 @@ func (cba *CallBotAPI) AddResult(key string, value interface{}) {
 }
 
 func (cba *CallBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, cba.Session, cba.connection)
+	return botSave(collection, changes, options, cba.Session, cba.connection, cba.metadata)
 }
 
 func (cba *CallBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, cba.Session, cba.connection)
+	return botDelete(collection, deletes, cba.Session, cba.connection, cba.metadata)
 }
 
 func (cba *CallBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, cba.Session, cba.connection)
+	return botLoad(request, cba.Session, cba.connection, cba.metadata)
 }
 
 func (cba *CallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
@@ -101,10 +101,8 @@ func (cba *CallBotAPI) CopyUserFile(sourceFileID, destCollectionID, destRecordID
 }
 
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
-	if cba.connection == nil {
-		return nil, errors.New("no collection metadata available for this connection")
-	}
-	collectionMetadata, err := cba.connection.GetMetadata().GetCollection(collectionKey)
+
+	collectionMetadata, err := cba.metadata.GetCollection(collectionKey)
 	if err != nil {
 		return nil, err
 	}

@@ -104,7 +104,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 				Changes:    &studioFileUpdates,
 				Params:     request.Params,
 			},
-		}, session, datasource.GetConnectionSaveOptions(connection)); err != nil {
+		}, session, datasource.NewSaveOptions(connection, nil)); err != nil {
 			return err
 		}
 	}
@@ -116,7 +116,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 				Changes:    &studioBotUpdates,
 				Params:     request.Params,
 			},
-		}, session, datasource.GetConnectionSaveOptions(connection))
+		}, session, datasource.NewSaveOptions(connection, nil))
 	}
 
 	return err

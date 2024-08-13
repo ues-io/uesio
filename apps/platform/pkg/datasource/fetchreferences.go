@@ -15,8 +15,9 @@ func processLocalReferences(
 	refValue interface{},
 	refCollectionMetadata *wire.CollectionMetadata,
 ) (bool, error) {
+
 	// Special case for allowing self-references
-	if op.Metadata.GetFullName() == refCollectionMetadata.GetFullName() {
+	if op.CollectionName == refCollectionMetadata.GetFullName() {
 
 		baseUniqueKeyValue, err := GetUniqueKeyValue(change)
 		if err != nil {
@@ -66,14 +67,22 @@ func FetchReferences(
 	session *sess.Session,
 ) error {
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
+
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
 
 	referencedIDCollections := wire.ReferenceRegistry{}
 	referencedUniqueKeyCollections := wire.ReferenceRegistry{}
 
 	// Load All Reference Fields for Inserts and add to changes
-	for i := range op.Metadata.Fields {
-		field := op.Metadata.Fields[i]
+	for i := range collectionMetadata.Fields {
+		field := collectionMetadata.Fields[i]
 		if wire.IsReference(field.Type) {
 
 			referencedCollection := field.ReferenceMetadata.GetCollection()
@@ -139,7 +148,7 @@ func FetchReferences(
 					})
 				}
 
-				return fmt.Errorf("There was a problem getting reference info on field: %s in collection: %s", field.GetFullName(), op.Metadata.GetFullName())
+				return fmt.Errorf("There was a problem getting reference info on field: %s in collection: %s", field.GetFullName(), op.CollectionName)
 
 			})
 			if err != nil {
@@ -149,14 +158,14 @@ func FetchReferences(
 		}
 	}
 
-	err := HandleReferences(connection, referencedIDCollections, session, &ReferenceOptions{
+	err = HandleReferences(connection, referencedIDCollections, metadata, session, &ReferenceOptions{
 		MergeItems: true,
 	})
 	if err != nil {
 		return err
 	}
 
-	return HandleReferences(connection, referencedUniqueKeyCollections, session, &ReferenceOptions{
+	return HandleReferences(connection, referencedUniqueKeyCollections, metadata, session, &ReferenceOptions{
 		MergeItems: true,
 	})
 

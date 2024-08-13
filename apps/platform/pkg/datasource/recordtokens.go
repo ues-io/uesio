@@ -31,7 +31,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 		return err
 	}
 
-	err = resetTokenBatches(loadOp, connection, GetSiteAdminSession(session))
+	err = resetTokenBatches(loadOp, GetSiteAdminSession(session))
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -48,7 +48,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 	return nil
 }
 
-func resetTokenBatches(loadOp *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func resetTokenBatches(loadOp *wire.LoadOp, session *sess.Session) error {
 
 	for {
 		_, err := Load([]*wire.LoadOp{loadOp}, session, nil)

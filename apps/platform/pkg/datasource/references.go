@@ -17,6 +17,7 @@ func LoadLooper(
 	idMap wire.LocatorMap,
 	fields []wire.LoadRequestField,
 	matchField string,
+	metadata *wire.MetadataCache,
 	session *sess.Session,
 	looper func(meta.Item, []wire.ReferenceLocator, string) error,
 ) error {
@@ -38,6 +39,8 @@ func LoadLooper(
 		},
 		Query: true,
 	}
+
+	op.AttachMetadataCache(metadata)
 
 	err := connection.Load(op, session)
 	if err != nil {
@@ -84,6 +87,7 @@ type ReferenceOptions struct {
 func HandleReferences(
 	connection wire.Connection,
 	referencedCollections wire.ReferenceRegistry,
+	metadata *wire.MetadataCache,
 	session *sess.Session,
 	options *ReferenceOptions,
 ) error {
@@ -98,7 +102,7 @@ func HandleReferences(
 			continue
 		}
 
-		collectionMetadata, err := connection.GetMetadata().GetCollection(collectionName)
+		collectionMetadata, err := metadata.GetCollection(collectionName)
 		if err != nil {
 			return err
 		}
@@ -126,7 +130,7 @@ func HandleReferences(
 
 		ref.AddFields(refFields)
 
-		err = LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+		err = LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			// This is a weird situation.
 			// It means we found a value that we didn't ask for.
@@ -185,8 +189,12 @@ func HandleReferences(
 	return nil
 }
 
-func HandleMultiCollectionReferences(connection wire.Connection, referencedCollections wire.ReferenceRegistry,
-	session *sess.Session) error {
+func HandleMultiCollectionReferences(
+	connection wire.Connection,
+	referencedCollections wire.ReferenceRegistry,
+	metadata *wire.MetadataCache,
+	session *sess.Session,
+) error {
 	// 1. Check the map to see if the common collection is present
 	common, ok := referencedCollections[constant.CommonCollection]
 	if !ok {
@@ -211,7 +219,7 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 		},
 	})
 
-	err := LoadLooper(connection, constant.CommonCollection, common.IDMap, common.Fields, common.GetMatchField(), session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	err := LoadLooper(connection, constant.CommonCollection, common.IDMap, common.Fields, common.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.
@@ -261,5 +269,5 @@ func HandleMultiCollectionReferences(connection wire.Connection, referencedColle
 		}
 	}
 
-	return multiCollectionsRefs.Load(connection.GetMetadata(), session, nil)
+	return multiCollectionsRefs.Load(metadata, session, nil)
 }

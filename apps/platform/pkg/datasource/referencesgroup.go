@@ -32,6 +32,7 @@ func HandleReferencesGroup(
 	connection wire.Connection,
 	collection meta.Group,
 	referencedGroupCollections wire.ReferenceGroupRegistry,
+	metadata *wire.MetadataCache,
 	session *sess.Session,
 ) error {
 	ops := []*wire.LoadOp{}
@@ -94,6 +95,7 @@ func HandleReferencesGroup(
 	}
 
 	for _, op := range ops {
+		op.AttachMetadataCache(metadata)
 		err := loadData(op, connection, session, 0)
 		if err != nil {
 			return err

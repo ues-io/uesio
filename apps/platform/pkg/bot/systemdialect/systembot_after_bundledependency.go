@@ -114,7 +114,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 					Upsert: true,
 				},
 			},
-		}, session, datasource.GetConnectionSaveOptions(connection))
+		}, session, datasource.NewSaveOptions(connection, nil))
 		if err != nil {
 			return err
 		}
@@ -130,7 +130,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 				Upsert: true,
 			},
 		},
-	}, session, datasource.GetConnectionSaveOptions(connection))
+	}, session, datasource.NewSaveOptions(connection, nil))
 
 	return err
 

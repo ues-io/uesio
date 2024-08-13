@@ -29,7 +29,7 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 
 	tenantID := session.GetTenantID()
 
-	collectionName := request.Metadata.GetFullName()
+	collectionName := request.CollectionName
 
 	batch := &pgx.Batch{}
 

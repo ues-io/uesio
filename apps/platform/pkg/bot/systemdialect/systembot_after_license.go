@@ -143,6 +143,6 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 				Upsert: true,
 			},
 		},
-	}, session, datasource.GetConnectionSaveOptions(connection))
+	}, session, datasource.NewSaveOptions(connection, nil))
 
 }

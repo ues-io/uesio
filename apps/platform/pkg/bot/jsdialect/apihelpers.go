@@ -12,7 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func botSave(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
+func botSave(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -21,7 +21,7 @@ func botSave(collection string, changes wire.Collection, options *wire.SaveOptio
 			Options:    options,
 		},
 	}
-	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	err := datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, metadata))
 	err = datasource.HandleSaveRequestErrors(requests, err)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func botSave(collection string, changes wire.Collection, options *wire.SaveOptio
 	return &changes, nil
 }
 
-func botDelete(collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection) error {
+func botDelete(collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -37,11 +37,11 @@ func botDelete(collection string, deletes wire.Collection, session *sess.Session
 			Deletes:    &deletes,
 		},
 	}
-	err := datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	err := datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, metadata))
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
+func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
 	collection := &wire.Collection{}
 
 	op := &wire.LoadOp{
@@ -58,7 +58,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connectio
 
 	_, err := datasource.Load([]*wire.LoadOp{op}, session, &datasource.LoadOptions{
 		Connection: connection,
-		Metadata:   datasource.GetConnectionMetadata(connection),
+		Metadata:   metadata,
 	})
 	if err != nil {
 		return nil, err

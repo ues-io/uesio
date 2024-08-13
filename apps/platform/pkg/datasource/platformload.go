@@ -67,7 +67,6 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
 	if _, err := Load([]*wire.LoadOp{op}, session, &LoadOptions{
 		Connection: options.Connection,
-		Metadata:   GetConnectionMetadata(options.Connection),
 	}); err != nil {
 		return err
 	}
