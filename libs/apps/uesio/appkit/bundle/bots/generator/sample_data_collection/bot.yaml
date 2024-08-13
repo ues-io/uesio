@@ -1,0 +1,14 @@
+name: sample_data_collection
+dialect: JAVASCRIPT
+label: Sample Data For Collection
+type: GENERATOR
+params:
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  - name: description
+    type: LONGTEXT
+    prompt: Describe the type of sample data you'd like created.
+public: true
+timeout: 30

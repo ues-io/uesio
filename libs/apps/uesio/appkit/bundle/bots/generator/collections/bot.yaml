@@ -1,0 +1,10 @@
+name: collections
+dialect: "JAVASCRIPT"
+label: Use AI to generate a new collections for an app based on a description.
+type: "GENERATOR"
+params:
+  - name: description
+    prompt: App Schema Description
+    type: LONGTEXT
+public: true
+timeout: 30

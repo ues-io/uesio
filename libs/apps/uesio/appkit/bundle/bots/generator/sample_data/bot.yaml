@@ -1,0 +1,10 @@
+name: sample_data
+dialect: JAVASCRIPT
+label: Sample Data
+type: GENERATOR
+params:
+  - name: description
+    type: LONGTEXT
+    prompt: Describe the type of sample data you'd like created.
+public: true
+timeout: 30

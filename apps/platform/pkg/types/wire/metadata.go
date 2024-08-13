@@ -59,6 +59,37 @@ func (mc *MetadataCache) GetSelectLists() map[string]*SelectListMetadata {
 	return mc.selectLists
 }
 
+func NewCollectionMetadata(e *meta.Collection) *CollectionMetadata {
+	return &CollectionMetadata{
+		Name:        e.Name,
+		Namespace:   e.Namespace,
+		Type:        e.Type,
+		NameField:   getNameField(e),
+		UniqueKey:   e.UniqueKeyFields,
+		Createable:  !e.ReadOnly,
+		Accessible:  true,
+		Updateable:  !e.ReadOnly,
+		Deleteable:  !e.ReadOnly,
+		Fields:      map[string]*FieldMetadata{},
+		Access:      e.Access,
+		AccessField: e.AccessField,
+		TableName:   e.TableName,
+		Public:      e.Public,
+		Label:       e.Label,
+		PluralLabel: e.PluralLabel,
+		Integration: e.IntegrationRef,
+		LoadBot:     e.LoadBot,
+		SaveBot:     e.SaveBot,
+	}
+}
+
+func getNameField(c *meta.Collection) string {
+	if c.NameField != "" {
+		return c.NameField
+	}
+	return commonfields.Id
+}
+
 type CollectionMetadata struct {
 	Name                  string                       `json:"name"`
 	Namespace             string                       `json:"namespace"`

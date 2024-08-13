@@ -191,13 +191,15 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	mu := sync.Mutex{}
 	for _, generator := range generators {
 		eg.Go(func() error {
+			// We can't reuse the connection here because this is running code in
+			// parallel now.
 			return datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
 				buf := &bytes.Buffer{}
 				mu.Lock()
 				creates[s] = buf
 				mu.Unlock()
 				return retrieve.NopWriterCloser(buf), nil
-			}, generator.Namespace, generator.Name, generator.Params, gba.connection, gba.session)
+			}, generator.Namespace, generator.Name, generator.Params, nil, gba.session)
 		})
 	}
 	err := eg.Wait()
@@ -292,6 +294,10 @@ func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) 
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, gba.session, gba.connection)
+}
+
+func (gba *GeneratorBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
+	return botSave(collection, changes, options, gba.session, gba.connection)
 }
 
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
