@@ -117,7 +117,7 @@ function collection(bot) {
 			tools: [createFieldsTool],
 			tool_choice: {
 				type: "tool",
-				name: "create_fields",
+				name: createFieldsTool.name,
 			},
 		}
 	)
@@ -140,6 +140,16 @@ function collection(bot) {
 			accept: field.accept,
 		})
 		return namespace + "." + field.name
+	})
+
+	// Add an autonumber field
+	bot.runGenerator("uesio/core", "field", {
+		collection: fullCollectionName,
+		name: "external_id",
+		label: "External ID",
+		type: "AUTONUMBER",
+		autonumber_prefix: collectionName.substring(0, 3).toUpperCase(),
+		autonumber_leadingzeros: 5,
 	})
 
 	bot.runGenerator("uesio/appkit", "view_list", {

@@ -6,44 +6,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant"
-	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
-
-func GetCollectionMetadata(e *meta.Collection) *wire.CollectionMetadata {
-	fieldMetadata := map[string]*wire.FieldMetadata{}
-
-	return &wire.CollectionMetadata{
-		Name:        e.Name,
-		Namespace:   e.Namespace,
-		Type:        e.Type,
-		NameField:   GetNameField(e),
-		UniqueKey:   e.UniqueKeyFields,
-		Createable:  !e.ReadOnly,
-		Accessible:  true,
-		Updateable:  !e.ReadOnly,
-		Deleteable:  !e.ReadOnly,
-		Fields:      fieldMetadata,
-		Access:      e.Access,
-		AccessField: e.AccessField,
-		TableName:   e.TableName,
-		Public:      e.Public,
-		Label:       e.Label,
-		PluralLabel: e.PluralLabel,
-		Integration: e.IntegrationRef,
-		LoadBot:     e.LoadBot,
-		SaveBot:     e.SaveBot,
-	}
-}
-
-func GetNameField(c *meta.Collection) string {
-	if c.NameField != "" {
-		return c.NameField
-	}
-	return commonfields.Id
-}
 
 func GetFieldMetadata(f *meta.Field, session *sess.Session) *wire.FieldMetadata {
 	fieldMetadata := &wire.FieldMetadata{
@@ -244,7 +210,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 		return nil, err
 	}
 
-	collectionMetadata = GetCollectionMetadata(collection)
+	collectionMetadata = wire.NewCollectionMetadata(collection)
 
 	// To fetch record challenge tokens, enter an admin context, since we don't have separate permissions for these things.
 	adminSession := GetSiteAdminSession(session)

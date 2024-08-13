@@ -171,7 +171,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	return deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, nil, connection, wsSession, nil)
+	return deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
 
 }
 
