@@ -83,7 +83,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 
 		// Split changes into inserts, updates, and deletes
-		ops, err := splitSave(request, collectionMetadata, session)
+		ops, err := splitSave(request, collectionMetadata)
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 	}
 
-	err = SaveOps(allOps, connection, session)
+	err = SaveOps(allOps, metadataResponse, connection, session)
 	if err != nil {
 		if !hasExistingConnection {
 			err := connection.RollbackTransaction()
@@ -137,19 +137,25 @@ func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *exceptions.SaveExcep
 }
 
 func isExternalIntegrationCollection(op *wire.SaveOp) bool {
-	integrationName := op.Metadata.GetIntegrationName()
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return false
+	}
+	integrationName := collectionMetadata.GetIntegrationName()
 	return integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE
 }
 
 func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	collectionKey := op.Metadata.GetFullName()
-	integrationName := op.Metadata.GetIntegrationName()
+	collectionKey := op.CollectionName
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+	integrationName := collectionMetadata.GetIntegrationName()
 	isExternalIntegrationSave := isExternalIntegrationCollection(op)
 
 	permissions := session.GetContextPermissions()
-
-	var err error
 
 	if !isExternalIntegrationSave {
 		// TODO Maybe do this for external integration saves at some point
@@ -278,12 +284,16 @@ func performExternalIntegrationSave(integrationName string, op *wire.SaveOp, con
 	if err != nil {
 		return err
 	}
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
 	op.AttachIntegrationConnection(integrationConnection)
 	integrationType := integrationConnection.GetIntegrationType()
 	// If there's a collection-specific save bot defined, use that,
 	// otherwise default to the integration's defined save bot.
 	// If there's neither, then there's nothing to do.
-	botKey := op.Metadata.SaveBot
+	botKey := collectionMetadata.SaveBot
 	if botKey == "" && integrationType != nil {
 		botKey = integrationType.SaveBot
 	}
@@ -293,19 +303,26 @@ func performExternalIntegrationSave(integrationName string, op *wire.SaveOp, con
 	return nil
 }
 
-func SaveOps(batch []*wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func SaveOps(batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire.Connection, session *sess.Session) error {
 
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(connection, session)
+	err := GenerateUserAccessTokens(connection, metadata, session)
 	if err != nil {
 		return err
 	}
 
 	for _, op := range batch {
 
-		if op.Metadata.IsDynamic() {
+		op.AttachMetadataCache(metadata)
+
+		collectionMetadata, err := op.GetCollectionMetadata()
+		if err != nil {
+			return err
+		}
+
+		if collectionMetadata.IsDynamic() {
 			err2 := runDynamicCollectionSaveBots(op, connection, session)
 			if err2 != nil {
 				// If this error is already in the save op, don't add it again

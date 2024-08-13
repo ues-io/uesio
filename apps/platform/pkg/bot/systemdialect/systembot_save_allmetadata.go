@@ -105,7 +105,7 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 		messagePayload, err := json.Marshal(&workspacebundlestore.WorkspaceMetadataChange{
 			AppName:        wsAccessResult.GetAppName(),
 			WorkspaceID:    useWorkspaceId,
-			CollectionName: op.Metadata.GetFullName(),
+			CollectionName: op.CollectionName,
 			ChangedItems:   changedMetadataItemKeys[i:end],
 		})
 		if err != nil {

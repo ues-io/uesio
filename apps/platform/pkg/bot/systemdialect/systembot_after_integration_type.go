@@ -88,6 +88,6 @@ func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connec
 		return nil
 	}
 
-	return datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	return datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, nil))
 
 }

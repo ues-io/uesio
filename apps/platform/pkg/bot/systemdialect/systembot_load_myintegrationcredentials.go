@@ -183,7 +183,6 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 
 	_, err = datasource.Load([]*wire.LoadOp{newOp}, versionSession, &datasource.LoadOptions{
 		Connection: connection,
-		Metadata:   connection.GetMetadata(),
 	})
 	if err != nil {
 		return nil, err

@@ -74,25 +74,18 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	return nil
 }
 
-func GetConnectionMetadata(connection wire.Connection) *wire.MetadataCache {
-	if connection == nil {
-		return nil
-	}
-	return connection.GetMetadata()
-}
-
-func GetConnectionSaveOptions(connection wire.Connection) *SaveOptions {
-	if connection == nil {
+func NewSaveOptions(connection wire.Connection, metadata *wire.MetadataCache) *SaveOptions {
+	if connection == nil && metadata == nil {
 		return nil
 	}
 	return &SaveOptions{
 		Connection: connection,
-		Metadata:   connection.GetMetadata(),
+		Metadata:   metadata,
 	}
 }
 
 func doPlatformSave(requests []SaveRequest, connection wire.Connection, session *sess.Session) error {
-	err := SaveWithOptions(requests, session, GetConnectionSaveOptions(connection))
+	err := SaveWithOptions(requests, session, NewSaveOptions(connection, nil))
 	return HandleSaveRequestErrors(requests, err)
 }
 

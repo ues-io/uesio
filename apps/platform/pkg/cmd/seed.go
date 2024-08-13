@@ -140,7 +140,7 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		getSeedSR("uesio/studio.team", &teams),
 		getSeedSR("uesio/studio.teammember", &teammembers),
 		getSeedSR("uesio/studio.bundlelisting", &bundlelistings),
-	}, session, datasource.GetConnectionSaveOptions(connection))
+	}, session, datasource.NewSaveOptions(connection, nil))
 }
 
 func seed(cmd *cobra.Command, args []string) {

@@ -99,10 +99,8 @@ func UpsertIntegrationCredential(integrationCredential *wire.Item, coreSession *
 			Params: datasource.GetParamsFromSession(coreSession),
 		},
 	}
-	if err := datasource.SaveWithOptions(requests, coreSession, datasource.GetConnectionSaveOptions(platformConn)); err != nil {
-		return err
-	}
-	return nil
+	return datasource.SaveWithOptions(requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
+
 }
 
 // DeleteIntegrationCredential deletes a provided integration credential
@@ -118,10 +116,8 @@ func DeleteIntegrationCredential(integrationCredential *wire.Item, coreSession *
 			Params: datasource.GetParamsFromSession(coreSession),
 		},
 	}
-	if err := datasource.SaveWithOptions(requests, coreSession, datasource.GetConnectionSaveOptions(platformConn)); err != nil {
-		return err
-	}
-	return nil
+	return datasource.SaveWithOptions(requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
+
 }
 
 // GetIntegrationCredential retrieves any existing integration credential record for the provided user / integration
@@ -168,7 +164,6 @@ func GetIntegrationCredential(
 		coreSession,
 		&datasource.LoadOptions{
 			Connection: connection,
-			Metadata:   connection.GetMetadata(),
 		},
 	); err != nil {
 		return nil, errors.New("unable to load existing integration credentials: " + err.Error())

@@ -166,15 +166,15 @@ func (r *RouteBotResponseAPI) RedirectToURL(url string) {
 //}
 
 func (rba *RouteBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, rba.session, rba.connection)
+	return botSave(collection, changes, options, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, rba.session, rba.connection)
+	return botDelete(collection, deletes, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, rba.session, rba.connection)
+	return botLoad(request, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {

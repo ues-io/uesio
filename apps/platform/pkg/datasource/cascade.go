@@ -40,7 +40,6 @@ func getCascadeDeletes(
 
 	_, err := Load([]*wire.LoadOp{loadOp}, session, &LoadOptions{
 		Connection: connection,
-		Metadata:   GetConnectionMetadata(connection),
 	})
 	if err != nil {
 		return nil, err
@@ -50,7 +49,10 @@ func getCascadeDeletes(
 		cascadeDeleteFKs[meta.USERFILEMETADATA_COLLECTION_NAME] = *userFilesToDelete
 	}
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return nil, err
+	}
 	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -63,7 +65,7 @@ func getCascadeDeletes(
 
 				referencedCollection := referenceGroupMetadata.Collection
 
-				if op.Metadata.GetFullName() != collectionKey || len(op.Deletes) == 0 {
+				if op.CollectionName != collectionKey || len(op.Deletes) == 0 {
 					continue
 				}
 
@@ -88,6 +90,8 @@ func getCascadeDeletes(
 					Query:  true,
 					Params: op.Params,
 				}
+
+				op.AttachMetadataCache(metadata)
 
 				err := connection.Load(op, session)
 				if err != nil {
@@ -179,5 +183,5 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 			})
 		}
 	}
-	return SaveWithOptions(saves, adminSession, GetConnectionSaveOptions(connection))
+	return SaveWithOptions(saves, adminSession, NewSaveOptions(connection, nil))
 }

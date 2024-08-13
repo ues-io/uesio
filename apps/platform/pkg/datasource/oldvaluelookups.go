@@ -68,7 +68,17 @@ func HandleOldValuesLookup(
 
 	allFields := []wire.LoadRequestField{}
 
-	for fieldID := range op.Metadata.Fields {
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
+
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
+
+	for fieldID := range collectionMetadata.Fields {
 
 		// TEMPORARY FIX:
 		// Currently we allow unique keys to contain pieces of reference fields, e.g.
@@ -87,7 +97,7 @@ func HandleOldValuesLookup(
 		// the workspace (e.g. workspace name, workspace app would NOT be allowed to be
 		// stored / used in the unique key for View)
 
-		fieldMetadata, err := op.Metadata.GetField(fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
 			return err
 		}
@@ -95,7 +105,7 @@ func HandleOldValuesLookup(
 
 			isPartOfKey := false
 
-			for _, keypart := range op.Metadata.UniqueKey {
+			for _, keypart := range collectionMetadata.UniqueKey {
 				if keypart == fieldID {
 					isPartOfKey = true
 					break
@@ -145,7 +155,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, commonfields.Id, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	return LoadLooper(connection, op.CollectionName, idMap, allFields, commonfields.Id, metadata, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		if item == nil {
 			// This should result in an error, unless we have explicitly indicated that

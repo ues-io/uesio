@@ -106,9 +106,16 @@ func (op *LoadOp) GetIntegrationConnection() (*IntegrationConnection, error) {
 func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
 	if op.metadata != nil {
 		return op.metadata.GetCollection(op.CollectionName)
-	} else {
-		return nil, errors.New("no metadata available on LoadOp")
 	}
+	return nil, errors.New("no collection metadata available on LoadOp")
+
+}
+
+func (op *LoadOp) GetMetadata() (*MetadataCache, error) {
+	if op.metadata != nil {
+		return op.metadata, nil
+	}
+	return nil, errors.New("no metadata available on LoadOp")
 }
 
 func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {

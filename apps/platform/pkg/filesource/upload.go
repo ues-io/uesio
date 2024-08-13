@@ -62,6 +62,11 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	// First get create all the metadata
 	for _, op := range ops {
 
+		err := datasource.GetMetadataResponse(metadataResponse, op.CollectionID, op.FieldID, session)
+		if err != nil {
+			return nil, err
+		}
+
 		if op.RecordID == "" {
 			if op.RecordUniqueKey == "" {
 				return nil, errors.New("You must provide either a RecordID, or a RecordUniqueKey for a file upload")
@@ -94,7 +99,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			{
 				ID: commonfields.UniqueKey,
 			},
-		}, commonfields.UniqueKey, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+		}, commonfields.UniqueKey, metadataResponse, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			if item == nil {
 				return errors.New("Could not match upload on unique key: " + ID)
@@ -119,10 +124,6 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	tenantID := session.GetTenantID()
 
 	for _, op := range ops {
-		err := datasource.GetMetadataResponse(metadataResponse, op.CollectionID, op.FieldID, session)
-		if err != nil {
-			return nil, err
-		}
 
 		ufm := &meta.UserFileMetadata{
 			CollectionID:  op.CollectionID,
@@ -145,7 +146,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			conn = newConn
 			fileSourceConnections[ufm.FileSourceID] = newConn
 		}
-		err = conn.Upload(op.Data, ufm.GetFullPath(tenantID))
+		err := conn.Upload(op.Data, ufm.GetFullPath(tenantID))
 		if err != nil {
 			return nil, err
 		}
@@ -198,7 +199,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 
 	}
 
-	err = datasource.SaveWithOptions(fieldUpdates, session, datasource.GetConnectionSaveOptions(connection))
+	err = datasource.SaveWithOptions(fieldUpdates, session, datasource.NewSaveOptions(connection, metadataResponse))
 	if err != nil {
 		return nil, errors.New("Failed to update field for the given file: " + err.Error())
 	}

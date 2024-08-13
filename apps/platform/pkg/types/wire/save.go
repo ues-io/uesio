@@ -15,16 +15,17 @@ import (
 )
 
 type SaveOp struct {
-	WireName    string
-	Inserts     ChangeItems
-	Updates     ChangeItems
-	Deletes     ChangeItems
-	Options     *SaveOptions
-	Errors      *[]exceptions.SaveException
-	InsertCount int
-	Metadata    *CollectionMetadata
-	Params      map[string]interface{}
+	CollectionName string
+	WireName       string
+	Inserts        ChangeItems
+	Updates        ChangeItems
+	Deletes        ChangeItems
+	Options        *SaveOptions
+	Errors         *[]exceptions.SaveException
+	InsertCount    int
+	Params         map[string]interface{}
 
+	metadata              *MetadataCache
 	integrationConnection *IntegrationConnection
 }
 
@@ -125,6 +126,26 @@ func (op *SaveOp) LoopAllChanges(changeFunc func(change *ChangeItem) error) erro
 		return err
 	}
 	return op.LoopDeletes(changeFunc)
+}
+
+func (op *SaveOp) GetCollectionMetadata() (*CollectionMetadata, error) {
+	if op.metadata != nil {
+		return op.metadata.GetCollection(op.CollectionName)
+	}
+	return nil, errors.New("no collection metadata available on SaveOp")
+
+}
+
+func (op *SaveOp) GetMetadata() (*MetadataCache, error) {
+	if op.metadata != nil {
+		return op.metadata, nil
+	}
+	return nil, errors.New("no metadata available on SaveOp")
+}
+
+func (op *SaveOp) AttachMetadataCache(response *MetadataCache) *SaveOp {
+	op.metadata = response
+	return op
 }
 
 func (ci *ChangeItems) GetIDs() []string {

@@ -84,10 +84,15 @@ func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
 
 func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	collectionKey := op.Metadata.GetFullName()
+	collectionKey := op.CollectionName
+
+	collectionMetadata, err := op.GetCollectionMetadata()
+	if err != nil {
+		return err
+	}
 	autonumberStart := 0
 	if op.HasInserts() {
-		autonumberResult, err := getAutonumber(connection, op.Metadata, session)
+		autonumberResult, err := getAutonumber(connection, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
@@ -95,7 +100,7 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 	}
 
 	var populations []ChangeProcessor
-	for _, field := range op.Metadata.Fields {
+	for _, field := range collectionMetadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().Unix()

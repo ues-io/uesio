@@ -16,7 +16,6 @@ type Connection interface {
 	Migrate(options *migrations.MigrateOptions) error
 	TruncateTenantData(tenantID string) error
 	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
-	GetMetadata() *MetadataCache
 	GetCredentials() *Credentials
 	GetDataSource() string
 	BeginTransaction() error

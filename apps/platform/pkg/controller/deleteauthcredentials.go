@@ -49,11 +49,9 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If we have a credential, delete it, otherwise, there's nothing to do
-	if credential != nil {
-		if err = oauth2.DeleteIntegrationCredential(credential, session, conn); err != nil {
-			ctlutil.HandleError(w, errors.New("unable to delete integration credential: "+err.Error()))
-			return
-		}
+	if err = oauth2.DeleteIntegrationCredential(credential, coreSession, conn); err != nil {
+		ctlutil.HandleError(w, errors.New("unable to delete integration credential: "+err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)

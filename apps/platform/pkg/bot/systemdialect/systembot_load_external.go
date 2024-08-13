@@ -37,7 +37,7 @@ func differentHostLoad(op *wire.LoadOp, connection wire.Connection, session *ses
 
 	botAPI := jsdialect.NewBotHttpAPI(integrationConnection)
 
-	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
+	collectionMetadata, err := op.GetCollectionMetadata()
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, 
 
 	publicSession.SetGoContext(session.Context())
 
-	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
+	collectionMetadata, err := op.GetCollectionMetadata()
 	if err != nil {
 		return err
 	}

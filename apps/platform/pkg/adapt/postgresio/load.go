@@ -199,7 +199,10 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		session = session.RemoveWorkspaceContext()
 	}
 
-	metadata := c.metadata
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
 
 	db := c.GetClient()
 
@@ -434,17 +437,17 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	}
 	op.BatchNumber++
 
-	err = datasource.HandleReferencesGroup(c, op.Collection, fieldsResponse.ReferencedGroupCollections, session)
+	err = datasource.HandleReferencesGroup(c, op.Collection, fieldsResponse.ReferencedGroupCollections, metadata, session)
 	if err != nil {
 		return err
 	}
 
-	err = datasource.HandleMultiCollectionReferences(c, fieldsResponse.ReferencedColletions, session)
+	err = datasource.HandleMultiCollectionReferences(c, fieldsResponse.ReferencedColletions, metadata, session)
 	if err != nil {
 		return err
 	}
 
-	return datasource.HandleReferences(c, fieldsResponse.ReferencedColletions, session, &datasource.ReferenceOptions{
+	return datasource.HandleReferences(c, fieldsResponse.ReferencedColletions, metadata, session, &datasource.ReferenceOptions{
 		AllowMissingItems: true,
 	})
 }

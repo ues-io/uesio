@@ -60,7 +60,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 					Upsert: true,
 				},
 			},
-		}, siteAdminSession, datasource.GetConnectionSaveOptions(connection))
+		}, siteAdminSession, datasource.NewSaveOptions(connection, nil))
 
 	})
 	if err != nil {
@@ -116,7 +116,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 					Upsert: true,
 				},
 			},
-		}, siteAdminSession, datasource.GetConnectionSaveOptions(connection))
+		}, siteAdminSession, datasource.NewSaveOptions(connection, nil))
 
 	})
 	if err != nil {

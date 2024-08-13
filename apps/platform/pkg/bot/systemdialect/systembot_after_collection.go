@@ -145,6 +145,6 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 		return nil
 	}
 
-	return datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+	return datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, nil))
 
 }

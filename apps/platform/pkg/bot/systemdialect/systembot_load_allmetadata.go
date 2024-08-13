@@ -50,22 +50,24 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 		Order:          newCollection.MapOrder(op.Order),
 	}
 
-	studioConnection, err := datasource.GetPlatformConnection(nil, session, nil)
+	studioMetadata := &wire.MetadataCache{}
+
+	err := datasource.GetMetadataForLoad(newOp, studioMetadata, nil, sess.GetStudioAnonSession(session.Context()))
 	if err != nil {
 		return err
 	}
 
-	err = datasource.GetMetadataForLoad(newOp, studioConnection.GetMetadata(), nil, sess.GetStudioAnonSession(session.Context()))
+	err = runAllMetadataLoadBot(newOp, connection, session)
 	if err != nil {
 		return err
 	}
 
-	err = runAllMetadataLoadBot(newOp, studioConnection, session)
+	coreMetadata, err := op.GetMetadata()
 	if err != nil {
 		return err
 	}
 
-	err = newCollection.TransferFieldMetadata(studioCollectionName, studioConnection.GetMetadata(), connection.GetMetadata())
+	err = newCollection.TransferFieldMetadata(studioCollectionName, studioMetadata, coreMetadata)
 	if err != nil {
 		return err
 	}
@@ -153,7 +155,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		return errors.New("invalid metadata type provided for type condition")
 	}
 
-	metadata := connection.GetMetadata()
+	metadata, err := op.GetMetadata()
+	if err != nil {
+		return err
+	}
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
