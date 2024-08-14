@@ -1,6 +1,6 @@
 function starter_complete(bot) {
 	if (bot.params.get("use_ai_for_data_model")) {
-		//bot.runGenerator("uesio/appkit", "sample_data", {})
+		bot.runGenerator("uesio/appkit", "sample_data", {})
 	}
 
 	// Bundle it all

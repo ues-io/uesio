@@ -53,6 +53,11 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, session, options.Connection)
+	if err != nil {
+		return err
+	}
+
 	// Get an admin session to use for fetching metadata only
 	adminSession := GetSiteAdminSession(session)
 
@@ -63,7 +68,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 		collectionKey := request.Collection
 
-		err := GetFullMetadataForCollection(metadataResponse, collectionKey, adminSession)
+		err := GetFullMetadataForCollection(metadataResponse, collectionKey, adminSession, connection)
 		if err != nil {
 			return err
 		}
@@ -94,11 +99,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	hasExistingConnection := options.Connection != nil
 
 	// 3. Get metadata for each datasource and collection
-
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
-	if err != nil {
-		return err
-	}
 
 	if !hasExistingConnection {
 		err := connection.BeginTransaction()

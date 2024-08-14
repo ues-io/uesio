@@ -52,7 +52,7 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 
 	studioMetadata := &wire.MetadataCache{}
 
-	err := datasource.GetMetadataForLoad(newOp, studioMetadata, nil, sess.GetStudioAnonSession(session.Context()))
+	err := datasource.GetMetadataForLoad(newOp, studioMetadata, nil, sess.GetStudioAnonSession(session.Context()), connection)
 	if err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		group.AddItem(item)
 		err = bundle.Load(item, &bundlestore.GetItemOptions{
 			IncludeUserFields: true,
-		}, session, nil)
+		}, session, connection)
 		if err != nil {
 			return err
 		}
@@ -289,7 +289,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			err = bundle.LoadAllFromNamespaces(namespaces, group, &bundlestore.GetAllItemsOptions{
 				Conditions:        conditions,
 				IncludeUserFields: true,
-			}, session, nil)
+			}, session, connection)
 			if err != nil {
 				return err
 			}

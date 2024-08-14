@@ -20,7 +20,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type RunIntegrationActionResponse struct {
@@ -46,7 +45,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
 		return
@@ -146,7 +145,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
 		return

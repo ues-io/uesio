@@ -3,6 +3,7 @@ package postgresio
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -19,12 +20,13 @@ type QueryAble interface {
 }
 
 type Connection struct {
-	metadata    *wire.MetadataCache
 	credentials *wire.Credentials
 	client      *pgxpool.Pool
 	transaction pgx.Tx
 	datasource  string
 	ctx         context.Context
+	loadMux     *sync.Mutex
+	saveMux     *sync.Mutex
 }
 
 func (c *Connection) Context() context.Context {
@@ -33,10 +35,6 @@ func (c *Connection) Context() context.Context {
 
 func (c *Connection) GetCredentials() *wire.Credentials {
 	return c.credentials
-}
-
-func (c *Connection) GetMetadata() *wire.MetadataCache {
-	return c.metadata
 }
 
 func (c *Connection) BeginTransaction() error {
@@ -84,7 +82,35 @@ func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
 
-func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentials, metadata *wire.MetadataCache, datasource string) (wire.Connection, error) {
+func (c *Connection) SendBatch(batch *pgx.Batch) error {
+	c.saveMux.Lock()
+	defer c.saveMux.Unlock()
+	return c.GetClient().SendBatch(c.ctx, batch).Close()
+}
+
+func (c *Connection) Query(fn func(scan func(dest ...any) error, index int) (bool, error), query string, values ...any) error {
+	c.loadMux.Lock()
+	defer c.loadMux.Unlock()
+	rows, err := c.GetClient().Query(c.ctx, query, values...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	index := 0
+	for rows.Next() {
+		done, err := fn(rows.Scan, index)
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		index++
+	}
+	return rows.Err()
+}
+
+func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentials, datasource string) (wire.Connection, error) {
 
 	client, err := connect(ctx, credentials)
 	if err != nil {
@@ -92,10 +118,11 @@ func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentia
 	}
 
 	return &Connection{
-		metadata:    metadata,
 		credentials: credentials,
 		client:      client,
 		datasource:  datasource,
 		ctx:         ctx,
+		loadMux:     &sync.Mutex{},
+		saveMux:     &sync.Mutex{},
 	}, nil
 }

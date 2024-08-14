@@ -191,15 +191,13 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	mu := sync.Mutex{}
 	for _, generator := range generators {
 		eg.Go(func() error {
-			// We can't reuse the connection here because this is running code in
-			// parallel now.
 			return datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
 				buf := &bytes.Buffer{}
 				mu.Lock()
 				creates[s] = buf
 				mu.Unlock()
 				return retrieve.NopWriterCloser(buf), nil
-			}, generator.Namespace, generator.Name, generator.Params, nil, gba.session)
+			}, generator.Namespace, generator.Name, generator.Params, gba.connection, gba.session)
 		})
 	}
 	err := eg.Wait()

@@ -21,7 +21,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 		},
 	}
 
-	connection, err := GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	connection, err := GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}

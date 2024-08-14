@@ -4,3 +4,4 @@ label: Starter Complete
 type: GENERATOR
 params:
 public: true
+timeout: 30

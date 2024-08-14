@@ -22,11 +22,6 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, errors.New("Collection is required for an upload job")
 	}
 
-	metadata, err := getBatchMetadata(spec.Collection, session)
-	if err != nil {
-		return nil, err
-	}
-
 	// Unfortunately, we have to read the whole thing into memory
 	bodybytes, err := io.ReadAll(body)
 	if err != nil {
@@ -116,7 +111,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	}
 
-	connection, err := datasource.GetPlatformConnection(metadata, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		return nil, err
 	}

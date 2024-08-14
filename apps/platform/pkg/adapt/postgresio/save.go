@@ -25,8 +25,6 @@ func queue(batch *pgx.Batch, query string, arguments ...any) {
 
 func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 
-	db := c.GetClient()
-
 	tenantID := session.GetTenantID()
 
 	collectionName := request.CollectionName
@@ -91,6 +89,6 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 		queue(batch, DELETE_QUERY, deleteIDs, collectionName, tenantID)
 	}
 
-	return db.SendBatch(c.ctx, batch).Close()
+	return c.SendBatch(batch)
 
 }

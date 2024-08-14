@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session) error {
+func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session, connection wire.Connection) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
 			LoadAllFields:    true,
@@ -26,7 +26,7 @@ func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collecti
 		return err
 	}
 
-	return collections.Load(metadataResponse, session, nil)
+	return collections.Load(metadataResponse, session, connection)
 }
 
 func GetMetadataResponse(metadataResponse *wire.MetadataCache, collectionID, fieldID string, session *sess.Session) error {

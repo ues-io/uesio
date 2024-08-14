@@ -470,6 +470,7 @@ func GetMetadataForLoad(
 	metadataResponse *wire.MetadataCache,
 	ops []*wire.LoadOp,
 	session *sess.Session,
+	connection wire.Connection,
 ) error {
 	collectionKey := op.CollectionName
 
@@ -523,7 +524,6 @@ func GetMetadataForLoad(
 		}
 	}
 
-	// TBD: Why does this have to be nil???
 	if err := metadataRequest.Load(metadataResponse, session, nil); err != nil {
 		return err
 	}
@@ -732,6 +732,12 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
 	}
+
+	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, session, options.Connection)
+	if err != nil {
+		return nil, err
+	}
+
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 
@@ -774,7 +780,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			})
 		}
 
-		if err = GetMetadataForLoad(op, metadataResponse, ops, session); err != nil {
+		if err = GetMetadataForLoad(op, metadataResponse, ops, session, connection); err != nil {
 			return nil, err
 		}
 
@@ -787,11 +793,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			allOps = append(allOps, op)
 		}
 
-	}
-
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, metadataResponse, session, options.Connection)
-	if err != nil {
-		return nil, err
 	}
 
 	userPerms := session.GetContextPermissions()

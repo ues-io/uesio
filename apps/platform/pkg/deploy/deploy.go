@@ -91,7 +91,7 @@ func GenerateToWorkspace(namespace, name string, params map[string]interface{}, 
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
 
-	connection, err := datasource.GetPlatformConnection(nil, session.RemoveWorkspaceContext(), nil)
+	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}

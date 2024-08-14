@@ -11,7 +11,7 @@ import (
 
 func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 
-	connection, err := datasource.GetPlatformConnection(nil, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		return err
 	}
