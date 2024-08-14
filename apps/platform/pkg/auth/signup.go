@@ -36,7 +36,7 @@ func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, ses
 		return nil, exceptions.NewForbiddenException("this site does not support self-signup")
 	}
 
-	connection, err := datasource.GetPlatformConnection(nil, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		return nil, err
 	}

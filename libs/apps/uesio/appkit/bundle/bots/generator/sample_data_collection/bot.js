@@ -74,6 +74,11 @@ function sample_data_collection(bot) {
 		}
 	})
 
+	//bot.log.info("fields", fields)
+	if (!Object.keys(fields).length) {
+		return
+	}
+
 	const createRecordsTool = {
 		name: "create_sample_data",
 		description: "Create sample data records",

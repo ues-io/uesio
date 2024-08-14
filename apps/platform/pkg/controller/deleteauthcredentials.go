@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
@@ -25,7 +24,7 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 
-	conn, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	conn, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("unable to obtain platform connection: "+err.Error()))
 		return

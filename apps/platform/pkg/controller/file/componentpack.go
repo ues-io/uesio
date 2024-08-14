@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +25,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	componentPack := meta.NewBaseComponentPack(namespace, name)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

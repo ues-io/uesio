@@ -15,7 +15,7 @@ var OWNER_TOKEN = "uesio.owner"
 var INSTALLED_TOKEN = "uesio.installed"
 var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 
-func getTokensForRequest(connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
+func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
 
 	uatc := meta.UserAccessTokenCollection{}
 	var tokens []meta.BundleableItem
@@ -144,7 +144,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Query:          true,
 			}
 
-			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession)
+			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession, connection)
 			if err != nil {
 				return err
 			}
@@ -204,7 +204,7 @@ func GenerateUserAccessTokens(connection wire.Connection, metadata *wire.Metadat
 
 	tokenMap := session.GetTokenMap()
 
-	tokenDefs, err := getTokensForRequest(connection, metadata, session, tokenMap)
+	tokenDefs, err := getTokensForRequest(metadata, session, tokenMap)
 	if err != nil {
 		return err
 	}

@@ -204,8 +204,6 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	db := c.GetClient()
-
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
@@ -350,19 +348,14 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	//fmt.Println(loadQuery)
 	//fmt.Println(builder.Values)
 
-	rows, err := db.Query(c.ctx, loadQuery, builder.Values...)
-	if err != nil {
-		return TranslatePGError(err)
-	}
-	defer rows.Close()
-
 	op.HasMoreBatches = false
 	formulaPopulations := formula.GetFormulaFunction(c.ctx, fieldsResponse.FormulaFields, collectionMetadata)
-	index := 0
-	for rows.Next() {
+
+	err = c.Query(func(scan func(dest ...any) error, index int) (bool, error) {
+
 		if op.BatchSize == index {
 			op.HasMoreBatches = true
-			break
+			return true, nil
 		}
 
 		item := op.Collection.NewItem()
@@ -376,16 +369,16 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			for range op.GroupBy {
 				scanItems = append(scanItems, nil)
 			}
-			err := rows.Scan(scanItems...)
+			err := scan(scanItems...)
 			if err != nil {
-				return TranslatePGError(err)
+				return false, err
 			}
 			fakeID, _ := shortid.Generate()
 			item.SetField(commonfields.Id, fakeID)
 		} else {
-			err := rows.Scan(item)
+			err := scan(item)
 			if err != nil {
-				return TranslatePGError(err)
+				return false, err
 			}
 		}
 
@@ -393,14 +386,14 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			for _, fieldMetadata := range refCol.RefFields {
 				refObj, err := item.GetField(fieldMetadata.GetFullName())
 				if err != nil {
-					return err
+					return false, err
 				}
 				if refObj == nil {
 					continue
 				}
 				refKey, err := wire.GetReferenceKey(refObj)
 				if err != nil {
-					return err
+					return false, err
 				}
 				if refKey == "" {
 					continue
@@ -414,18 +407,18 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 
 		err = formulaPopulations(item)
 		if err != nil {
-			return err
+			return false, err
 		}
 
 		err = op.Collection.AddItem(item)
 		if err != nil {
-			return err
+			return false, err
 		}
 
-		index++
+		return false, nil
 
-	}
-	if err = rows.Err(); err != nil {
+	}, loadQuery, builder.Values...)
+	if err != nil {
 		return TranslatePGError(err)
 	}
 

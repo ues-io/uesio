@@ -153,7 +153,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 
-	connection, err := datasource.GetPlatformConnection(nil, anonSession, nil)
+	connection, err := datasource.GetPlatformConnection(anonSession, nil)
 	cobra.CheckErr(err)
 
 	err = connection.BeginTransaction()

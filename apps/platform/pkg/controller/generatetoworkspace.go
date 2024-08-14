@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
@@ -30,7 +29,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

@@ -108,9 +108,6 @@ func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *wire.SaveO
 	}
 }
 
-func GetPlatformConnection(metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
-	if metadata == nil {
-		metadata = &wire.MetadataCache{}
-	}
-	return GetConnection(meta.PLATFORM_DATA_SOURCE, metadata, session, connection)
+func GetPlatformConnection(session *sess.Session, connection wire.Connection) (wire.Connection, error) {
+	return GetConnection(meta.PLATFORM_DATA_SOURCE, session, connection)
 }

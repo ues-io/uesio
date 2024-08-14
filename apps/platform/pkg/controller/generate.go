@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func Generate(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +23,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, s, nil)
+	connection, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

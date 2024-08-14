@@ -43,7 +43,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	connection, err := datasource.GetPlatformConnection(nil, s, nil)
+	connection, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
 		ctlutil.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
 		return

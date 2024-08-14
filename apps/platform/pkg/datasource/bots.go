@@ -310,7 +310,7 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 
 func CallListenerBotInTransaction(namespace, name string, params map[string]interface{}, session *sess.Session) (map[string]interface{}, error) {
 
-	connection, err := GetPlatformConnection(nil, session, nil)
+	connection, err := GetPlatformConnection(session, nil)
 	if err != nil {
 		return nil, err
 	}

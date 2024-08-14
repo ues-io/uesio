@@ -48,7 +48,7 @@ func setupPlatformSubscription() {
 		}
 	}
 	s := getMinimumViableSession()
-	conn, err := datasource.GetPlatformConnection(nil, s, nil)
+	conn, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
 		slog.Error("unable to establish platform connection! " + err.Error())
 		panic("unable to establish platform connection!")

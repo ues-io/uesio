@@ -16,7 +16,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -33,7 +32,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	viewtype := vars["viewtype"]
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -71,7 +70,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 	contextPrefix := session.GetContextURLPrefix()
 	prefix := contextPrefix + "/routes/path/" + namespace + "/"
 
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -103,7 +102,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	routeName := vars["name"]
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -280,7 +279,7 @@ func ServeRouteByKey(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	routeName := vars["name"]
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		HandleErrorRoute(w, r, session, r.URL.Path, namespace, err, true)
 		return
@@ -313,7 +312,7 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, namespace, err, true)
 		return nil, err

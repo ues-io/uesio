@@ -16,7 +16,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -49,7 +48,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(&wire.MetadataCache{}, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return

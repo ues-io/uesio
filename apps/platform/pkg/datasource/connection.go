@@ -13,7 +13,7 @@ var dataSourceTypesByName = map[string]string{
 	meta.PLATFORM_DATA_SOURCE: "uesio.postgresio",
 }
 
-func GetConnection(dataSourceKey string, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
+func GetConnection(dataSourceKey string, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
 
 	// If we were provided a default connection for this datasource,
 	// use that instead
@@ -51,5 +51,5 @@ func GetConnection(dataSourceKey string, metadata *wire.MetadataCache, session *
 		return nil, err
 	}
 
-	return adapter.GetConnection(session.Context(), credentials, metadata, dataSourceKey)
+	return adapter.GetConnection(session.Context(), credentials, dataSourceKey)
 }

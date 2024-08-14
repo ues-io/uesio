@@ -12,7 +12,7 @@ import (
 
 func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
 
-	connection, err := datasource.GetPlatformConnection(nil, session, nil)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		return err
 	}
