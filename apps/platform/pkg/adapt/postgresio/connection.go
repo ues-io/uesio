@@ -25,8 +25,7 @@ type Connection struct {
 	transaction pgx.Tx
 	datasource  string
 	ctx         context.Context
-	loadMux     *sync.Mutex
-	saveMux     *sync.Mutex
+	mux         *sync.Mutex
 }
 
 func (c *Connection) Context() context.Context {
@@ -83,14 +82,24 @@ func (c *Connection) GetDataSource() string {
 }
 
 func (c *Connection) SendBatch(batch *pgx.Batch) error {
-	c.saveMux.Lock()
-	defer c.saveMux.Unlock()
-	return c.GetClient().SendBatch(c.ctx, batch).Close()
+	c.mux.Lock()
+	defer c.mux.Unlock()
+	results := c.GetClient().SendBatch(c.ctx, batch)
+
+	execCount := batch.Len()
+	for i := 0; i < execCount; i++ {
+		_, err := results.Exec()
+		if err != nil {
+			results.Close()
+			return err
+		}
+	}
+	return results.Close()
 }
 
 func (c *Connection) Query(fn func(scan func(dest ...any) error, index int) (bool, error), query string, values ...any) error {
-	c.loadMux.Lock()
-	defer c.loadMux.Unlock()
+	c.mux.Lock()
+	defer c.mux.Unlock()
 	rows, err := c.GetClient().Query(c.ctx, query, values...)
 	if err != nil {
 		return err
@@ -122,7 +131,6 @@ func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentia
 		client:      client,
 		datasource:  datasource,
 		ctx:         ctx,
-		loadMux:     &sync.Mutex{},
-		saveMux:     &sync.Mutex{},
+		mux:         &sync.Mutex{},
 	}, nil
 }

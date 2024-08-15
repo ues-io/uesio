@@ -524,7 +524,7 @@ func GetMetadataForLoad(
 		}
 	}
 
-	if err := metadataRequest.Load(metadataResponse, session, nil); err != nil {
+	if err := metadataRequest.Load(metadataResponse, session, connection); err != nil {
 		return err
 	}
 
@@ -644,7 +644,7 @@ func GetMetadataForViewOnlyWire(
 		getMetadataForViewOnlyField(requestField, metadataRequest)
 	}
 	// TBD : WHY does connection have to be nil?
-	return metadataRequest.Load(metadataResponse, session, nil)
+	return metadataRequest.Load(metadataResponse, session, connection)
 }
 
 func getMetadataForOrderField(collectionKey string, fieldName string, metadataRequest *MetadataRequest, session *sess.Session) error {
@@ -745,7 +745,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		op.AttachMetadataCache(metadataResponse)
 		// Special processing for View-only wires
 		if op.ViewOnly {
-			if err = GetMetadataForViewOnlyWire(op, metadataResponse, nil, session); err != nil {
+			if err = GetMetadataForViewOnlyWire(op, metadataResponse, connection, session); err != nil {
 				return nil, err
 			}
 			continue

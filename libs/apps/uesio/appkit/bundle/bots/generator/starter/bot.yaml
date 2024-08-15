@@ -8,5 +8,10 @@ params:
     prompt: Use AI to generate initial collections for this app.
     default: false
     displayAs: TOGGLE
+  - name: use_ai_for_sample_data
+    type: CHECKBOX
+    prompt: Use AI to generate sample data for this app.
+    default: false
+    displayAs: TOGGLE
 public: true
 timeout: 30

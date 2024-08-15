@@ -1,5 +1,6 @@
 function starter_complete(bot) {
-	if (bot.params.get("use_ai_for_data_model")) {
+	const doSampleData = bot.params.get("use_ai_for_sample_data")
+	if (doSampleData && doSampleData !== "false") {
 		bot.runGenerator("uesio/appkit", "sample_data", {})
 	}
 

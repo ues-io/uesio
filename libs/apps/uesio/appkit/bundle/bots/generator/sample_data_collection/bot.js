@@ -1,6 +1,6 @@
 function sample_data_collection(bot) {
 	const collection = bot.params.get("collection")
-	bot.log.info("Getting sample data for collection: " + collection)
+	//bot.log.info("Getting sample data for collection: " + collection)
 
 	var collectionFieldsMeta = bot.load({
 		collection: "uesio/core.field",
@@ -15,6 +15,7 @@ function sample_data_collection(bot) {
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 	const appInfo = bot.getApp()
 	const appName = bot.getAppName()
+	const user = bot.getUser()
 	const description = appInfo.description
 
 	const systemPrompt = `
@@ -32,6 +33,9 @@ function sample_data_collection(bot) {
 	const requiredFields = []
 	const fields = {}
 
+	const refFields = {}
+	const refCollections = {}
+
 	collectionFieldsMeta.forEach((field) => {
 		const fieldName = field["uesio/core.name"]
 		const fieldNamespace = field["uesio/core.namespace"]
@@ -44,6 +48,8 @@ function sample_data_collection(bot) {
 				type: "string",
 				description: `
 					This field's label is ${fieldLabel}.
+					Do not use "unknown" here. If you don't have enough information,
+					just make up something.
 				`,
 			}
 			if (required) {
@@ -71,6 +77,42 @@ function sample_data_collection(bot) {
 			if (required) {
 				requiredFields.push(fieldName)
 			}
+		}
+		if (fieldType === "CHECKBOX") {
+			fields[fieldFullName] = {
+				type: "boolean",
+				description: `
+					This field's label is ${fieldLabel}.
+				`,
+			}
+			if (required) {
+				requiredFields.push(fieldName)
+			}
+		}
+		if (fieldType === "DATE") {
+			fields[fieldFullName] = {
+				type: "string",
+				format: "date",
+				description: `
+					This field's label is ${fieldLabel}.
+				`,
+			}
+			if (required) {
+				requiredFields.push(fieldName)
+			}
+		}
+		if (fieldType === "REFERENCE") {
+			const refInfo = field["uesio/core.reference"]
+			const refCollection = refInfo["uesio/core.collection"]
+			refFields[fieldFullName] = refCollection
+			if (refCollection == "uesio/core.user") {
+				return
+			}
+			// Don't get sample data for self-references
+			if (refCollection == collection) {
+				return
+			}
+			refCollections[refCollection] = []
 		}
 	})
 
@@ -125,7 +167,55 @@ function sample_data_collection(bot) {
 
 	const records = result[0].input.records
 
-	bot.log.info("Records", records)
+	// Handle Reference Fields
+	Object.keys(refCollections).forEach((refCollection) => {
+		let attempts = 0
+		// Poll until you find some records to use
+		while (attempts < 10) {
+			attempts++
+			//bot.log.info("attempting ref load", refCollection)
+			const refData = bot.load({
+				collection: refCollection,
+				batchsize: 10,
+				fields: [
+					{
+						id: "uesio/core.id",
+					},
+				],
+			})
+
+			if (refData && refData.length) {
+				refCollections[refCollection] = refData
+				break
+			}
+			bot.sleep(500)
+			//bot.log.info("Sleeping", refCollection)
+		}
+	})
+
+	// Time to add in reference info if we have it.
+
+	if (Object.keys(refFields).length) {
+		records.forEach((record) => {
+			Object.keys(refFields).forEach((refField) => {
+				const refCollection = refFields[refField]
+				if (refCollection === "uesio/core.user") {
+					// just put in the current user's id
+					record[refField] = {
+						"uesio/core.id": user.getId(),
+					}
+					return
+				}
+				const recordData = refCollections[refCollection]
+				if (recordData && recordData.length) {
+					const min = 0
+					const max = recordData.length
+					const random = Math.floor(Math.random() * (max - min) + min)
+					record[refField] = recordData[random]
+				}
+			})
+		})
+	}
 
 	bot.save(collection, records)
 }

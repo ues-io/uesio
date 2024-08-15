@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/sethvargo/go-password/password"
 	"golang.org/x/sync/errgroup"
@@ -106,6 +107,10 @@ func (gba *GeneratorBotAPI) GetName() string {
 // GetNamespace returns the namespace of the bot
 func (gba *GeneratorBotAPI) GetNamespace() string {
 	return gba.bot.GetNamespace()
+}
+
+func (gba *GeneratorBotAPI) Sleep(ms int64) {
+	time.Sleep(time.Duration(ms) * time.Millisecond)
 }
 
 func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (map[string]interface{}, error) {

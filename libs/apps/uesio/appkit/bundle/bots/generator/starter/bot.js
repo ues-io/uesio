@@ -56,7 +56,8 @@ function starter(bot) {
 		},
 	])
 
-	if (bot.params.get("use_ai_for_data_model")) {
+	const doDataModel = bot.params.get("use_ai_for_data_model")
+	if (doDataModel && doDataModel !== "false") {
 		bot.runGenerator("uesio/appkit", "collections", {})
 	}
 }
