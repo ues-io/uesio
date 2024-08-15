@@ -11,6 +11,8 @@ import (
 const TOKEN_QUERY = "SELECT token FROM public.tokens WHERE recordid = $1 AND tenant = $2"
 
 func (c *Connection) GetRecordAccessTokens(recordID string, session *sess.Session) ([]string, error) {
+	c.mux.Lock()
+	defer c.mux.Unlock()
 	rows, err := c.GetClient().Query(c.ctx, TOKEN_QUERY, recordID, session.GetTenantID())
 	if err != nil {
 		return nil, errors.New("Failed to load tokens:" + err.Error())

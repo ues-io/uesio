@@ -2,9 +2,11 @@ package systemdialect
 
 import (
 	"encoding/json"
+	"reflect"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -30,12 +32,44 @@ func (c *NamespaceSwapCollection) NewItem() meta.Item {
 	return &wire.Item{}
 }
 
-func (c *NamespaceSwapCollection) AddItem(item meta.Item) error {
-	// Loop over the item an convert the fields
+func (c *NamespaceSwapCollection) SwapItem(item meta.Item) (*wire.Item, error) {
 	swappedItem := &wire.Item{}
 	err := item.Loop(func(s string, i interface{}) error {
+		reflectValue := reflecttool.ReflectValue(i)
+		kind := reflectValue.Kind()
+		if kind == reflect.Struct {
+			result := &wire.Item{}
+
+			jsonBytes, err := json.Marshal(i)
+			if err != nil {
+				return err
+			}
+
+			err = json.Unmarshal(jsonBytes, result)
+			if err != nil {
+				return err
+			}
+			i = result
+		}
+		subItem, ok := i.(meta.Item)
+		if ok {
+			newItem, err := c.SwapItem(subItem)
+			if err != nil {
+				return err
+			}
+			i = newItem
+		}
 		return swappedItem.SetField(c.SwapNSBack(s), i)
 	})
+	if err != nil {
+		return nil, err
+	}
+	return swappedItem, nil
+}
+
+func (c *NamespaceSwapCollection) AddItem(item meta.Item) error {
+	// Loop over the item an convert the fields
+	swappedItem, err := c.SwapItem(item)
 	if err != nil {
 		return err
 	}

@@ -18,24 +18,17 @@ const (
 func (c *Connection) TruncateTenantData(tenantID string) error {
 	slog.Info("Truncating all data from tenant: " + tenantID)
 
-	db := c.GetClient()
 	batch := &pgx.Batch{}
 
 	batch.Queue(TRUNCATE_DATA_QUERY, tenantID)
 	batch.Queue(TRUNCATE_TOKENS_QUERY, tenantID)
 
-	results := db.SendBatch(c.ctx, batch)
-	execCount := batch.Len()
-	for i := 0; i < execCount; i++ {
-		_, err := results.Exec()
-		if err != nil {
-			results.Close()
-			msg := fmt.Sprintf("error truncating data from tenant '%s': %s", tenantID, err.Error())
-			slog.Error(msg)
-			return errors.New(msg)
-		}
+	err := c.SendBatch(batch)
+	if err != nil {
+		msg := fmt.Sprintf("error truncating data from tenant '%s': %s", tenantID, err.Error())
+		slog.Error(msg)
+		return errors.New(msg)
 	}
-	results.Close()
 
 	return nil
 

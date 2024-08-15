@@ -66,17 +66,6 @@ func (c *Connection) SetRecordAccessTokens(request *wire.SaveOp, session *sess.S
 		return err
 	}
 
-	results := c.GetClient().SendBatch(c.ctx, batch)
-	execCount := batch.Len()
-	for i := 0; i < execCount; i++ {
-		_, err := results.Exec()
-		if err != nil {
-			results.Close()
-			return err
-		}
-	}
-	results.Close()
-
-	return nil
+	return c.SendBatch(batch)
 
 }

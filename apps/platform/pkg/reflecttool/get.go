@@ -9,8 +9,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
-func reflectValue(obj interface{}) reflect.Value {
-	if reflect.TypeOf(obj).Kind() == reflect.Ptr {
+func ReflectValue(obj interface{}) reflect.Value {
+	objType := reflect.TypeOf(obj)
+	if objType != nil && objType.Kind() == reflect.Ptr {
 		return reflect.ValueOf(obj).Elem()
 	}
 	return reflect.ValueOf(obj)
@@ -29,7 +30,7 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 			return nil, errors.New("invalid map value")
 		}
 
-		objValue := reflectValue(obj)
+		objValue := ReflectValue(obj)
 		objKind := objValue.Kind()
 		objType := objValue.Type()
 		if objKind == reflect.Map {

@@ -10,6 +10,7 @@ properties:
 variants:
   - uesio/io.tile:uesio/io.nav
   - uesio/io.text:uesio/io.icon
+  - uesio/io.button:uesio/appkit.navicon_small
 sections:
   - type: HOME
     properties:
