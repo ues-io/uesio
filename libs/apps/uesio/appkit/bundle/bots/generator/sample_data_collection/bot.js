@@ -1,6 +1,6 @@
 function sample_data_collection(bot) {
 	const collection = bot.params.get("collection")
-	//bot.log.info("Getting sample data for collection: " + collection)
+	const instructions = bot.params.get("instructions")
 
 	var collectionFieldsMeta = bot.load({
 		collection: "uesio/core.field",
@@ -14,9 +14,9 @@ function sample_data_collection(bot) {
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 	const appInfo = bot.getApp()
-	const appName = bot.getAppName()
 	const user = bot.getUser()
-	const description = appInfo.description
+	const appName = appInfo.getName()
+	const description = appInfo.getDescription()
 
 	const systemPrompt = `
 		You are an assistant who specializes in creating sample data for databases.
@@ -24,10 +24,19 @@ function sample_data_collection(bot) {
 		that is relevant to the instructions given.
 	`
 
+	const additional = instructions
+		? `
+		The following additional instructions were given:
+		${instructions}
+	`
+		: ""
+
 	const prompt = `
 		Use the tool provided to create 5 records of sample data for an app called: ${appName}
 		with a description of : ${description}. The name of the table that you are
-		creating data for is ${collection}.
+		creating data for is ${collection.split(".").pop()}.
+
+		${additional}
 	`
 
 	const requiredFields = []

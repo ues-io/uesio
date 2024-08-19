@@ -105,6 +105,11 @@ const getWireFieldFromParamDef = (
 					name: def.selectList,
 				},
 			}
+		case "LONGTEXT":
+			return {
+				...baseField,
+				type: def.type,
+			}
 		default:
 			return {
 				...baseField,

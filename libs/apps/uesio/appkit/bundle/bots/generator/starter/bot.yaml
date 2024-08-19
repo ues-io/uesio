@@ -8,10 +8,25 @@ params:
     prompt: Use AI to generate initial collections for this app.
     default: false
     displayAs: TOGGLE
+  - name: data_model_instructions
+    type: LONGTEXT
+    prompt: Additional instructions for generating the data model.
+    conditions:
+      - param: use_ai_for_data_model
+        value: true
   - name: use_ai_for_sample_data
     type: CHECKBOX
     prompt: Use AI to generate sample data for this app.
     default: false
     displayAs: TOGGLE
+    conditions:
+      - param: use_ai_for_data_model
+        value: true
+  - name: sample_data_instructions
+    type: LONGTEXT
+    prompt: Additional instructions for generating sample data.
+    conditions:
+      - param: use_ai_for_sample_data
+        value: true
 public: true
 timeout: 30

@@ -17,6 +17,7 @@ type ParamBase = {
 	type?:
 		| "RECORD"
 		| "TEXT"
+		| "LONGTEXT"
 		| "LIST"
 		| "MAP"
 		| "METADATA"
@@ -60,6 +61,11 @@ type CheckboxParam = ParamBase & {
 	default?: boolean
 }
 
+type LongTextParam = ParamBase & {
+	type: "LONGTEXT"
+	default?: boolean
+}
+
 export type SelectParam = ParamBase & {
 	type: "SELECT"
 	default?: string
@@ -89,6 +95,7 @@ type MetadataNameParam = ParamBase & {
 export type ParamDefinition =
 	| RecordParam
 	| TextParam
+	| LongTextParam
 	| ListParam
 	| MapParam
 	| SelectParam
