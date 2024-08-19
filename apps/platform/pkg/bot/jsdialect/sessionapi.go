@@ -66,6 +66,9 @@ func (a *AppAPI) GetName() string {
 func (a *AppAPI) GetIcon() string {
 	return a.icon
 }
+func (a *AppAPI) GetDescription() string {
+	return a.description
+}
 func (a *AppAPI) GetColor() string {
 	return a.color
 }

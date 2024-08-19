@@ -1,8 +1,10 @@
 function collections(bot) {
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 	const appInfo = bot.getApp()
-	const appName = bot.getAppName()
-	const description = appInfo.description
+	const appFullName = bot.getAppName()
+	const appDescription = appInfo.getDescription()
+	const appName = appInfo.getName()
+	const instructions = bot.params.get("instructions")
 
 	const systemPrompt = `
 		You are an assistant who specializes in creating data models for databases.
@@ -10,11 +12,20 @@ function collections(bot) {
 		the simplest and most straightforward way possible.
 	`
 
+	const additional = instructions
+		? `
+		The following additional instructions were given:
+		${instructions}
+	`
+		: ""
+
 	const prompt = `
-		Use the tool provided to create up to 5 tables for this app called: ${appName}
-		with a description of : ${description}. These table names will form the basis of the
+		Use the tool provided to create up to 5 tables for this app called: "${appName}"
+		with a description of: "${appDescription}". These table names will form the basis of the
 		data model for this app. There is already a table called "user", so there is no
 		need to create that table.
+
+		${additional}
 	`
 
 	const nameParam = {
@@ -91,7 +102,7 @@ function collections(bot) {
 
 	//bot.log.info("ai result", result)
 	const existingCollections = result[0].input.tables
-		.map((collection) => `${appName}.${collection.name}`)
+		.map((collection) => `${appFullName}.${collection.name}`)
 		.concat(["uesio/core.user"])
 
 	bot.runGenerators(

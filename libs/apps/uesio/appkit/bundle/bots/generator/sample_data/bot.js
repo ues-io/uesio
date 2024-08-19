@@ -1,5 +1,6 @@
 function sample_data(bot) {
 	const appName = bot.getAppName()
+	const instructions = bot.params.get("instructions")
 
 	var collectionMeta = bot.load({
 		collection: "uesio/core.collection",
@@ -18,6 +19,7 @@ function sample_data(bot) {
 			name: "sample_data_collection",
 			params: {
 				collection: `${collection["uesio/core.namespace"]}.${collection["uesio/core.name"]}`,
+				instructions,
 			},
 		}))
 	)

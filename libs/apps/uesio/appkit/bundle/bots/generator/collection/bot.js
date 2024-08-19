@@ -67,7 +67,7 @@ function collection(bot) {
 			If it is reference, chose the table that this field is a foreign key
 			reference to from one of the following tables. And use that table's name
 			as the value for this parameter.
-			${existingCollections.join("\n")}
+			${existingCollections.map((existing) => existing.split(".").pop()).join("\n")}
 			The only valid values for this parameter are in the list above.
 		`,
 	}
@@ -144,13 +144,20 @@ function collection(bot) {
 		nameField: nameField ? nameField.name : undefined,
 	})
 
+	const getRefCollection = (refCol) => {
+		if (refCol === "user") {
+			return "uesio/core.user"
+		}
+		return namespace + "." + refCol
+	}
+
 	const fieldIds = fields.map((field) => {
 		bot.runGenerator("uesio/core", "field", {
 			collection: fullCollectionName,
 			name: field.name,
 			label: field.label,
 			type: field.type,
-			ref_collection: field.referencedCollection,
+			ref_collection: getRefCollection(field.referencedCollection),
 			accept: field.accept,
 		})
 		return namespace + "." + field.name
