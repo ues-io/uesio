@@ -78,17 +78,6 @@ function sample_data_collection(bot) {
 				requiredFields.push(fieldName)
 			}
 		}
-		if (fieldType === "CHECKBOX") {
-			fields[fieldFullName] = {
-				type: "boolean",
-				description: `
-					This field's label is ${fieldLabel}.
-				`,
-			}
-			if (required) {
-				requiredFields.push(fieldName)
-			}
-		}
 		if (fieldType === "DATE") {
 			fields[fieldFullName] = {
 				type: "string",
