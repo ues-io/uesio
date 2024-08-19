@@ -12,4 +12,7 @@ params:
   - name: pluralLabel
     prompt: Collection Plural Label
     type: TEXT
+  - name: nameField
+    prompt: Name Field
+    type: TEXT
 public: true

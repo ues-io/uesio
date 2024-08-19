@@ -8,12 +8,6 @@ function collection(bot) {
 
 	var fullCollectionName = namespace + "." + collectionName
 
-	bot.runGenerator("uesio/core", "collection", {
-		name: collectionName,
-		label: collectionLabel,
-		pluralLabel: collectionPluralLabel,
-	})
-
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 
 	const systemPrompt = `
@@ -56,6 +50,16 @@ function collection(bot) {
 		`,
 	}
 
+	const isNameFieldParam = {
+		type: "boolean",
+		description: `
+			Only provide a value for this parameter if the field's type is TEXT.
+			Set this parameter to "true" if this field could be used as the primary label
+			for this record. Usually this is for the field called "Name" or "Label".
+			Only set this to true for one of the fields.
+		`,
+	}
+
 	const referencedCollectionParam = {
 		type: "string",
 		description: `
@@ -93,6 +97,7 @@ function collection(bot) {
 							label: labelParam,
 							referencedCollection: referencedCollectionParam,
 							accept: acceptTypeParam,
+							isNameField: isNameFieldParam,
 						},
 						required: ["name", "type", "label"],
 					},
@@ -129,6 +134,15 @@ function collection(bot) {
 	//bot.log.info("ai result", result)
 
 	const fields = result[0].input.fields
+
+	const nameField = fields.find((field) => field.isNameField)
+
+	bot.runGenerator("uesio/core", "collection", {
+		name: collectionName,
+		label: collectionLabel,
+		pluralLabel: collectionPluralLabel,
+		nameField: nameField ? nameField.name : undefined,
+	})
 
 	const fieldIds = fields.map((field) => {
 		bot.runGenerator("uesio/core", "field", {
