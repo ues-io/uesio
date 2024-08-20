@@ -14,12 +14,16 @@ definition:
         uesio/core.profile:
         uesio/core.picture:
       batchsize: 200
+      requirewriteaccess: true
       conditions:
         - field: uesio/core.username
           operator: NOT_IN
           values:
             - system
             - guest
+        - field: uesio/core.type
+          operator: NOT_EQ
+          value: ORG
   # Components determine the layout and composition of your view
   components:
     - uesio/io.titlebar:

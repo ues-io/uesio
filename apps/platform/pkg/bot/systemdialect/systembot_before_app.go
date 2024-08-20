@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -30,7 +32,7 @@ func runAppBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		}
 		name, err := change.GetFieldAsString("uesio/studio.name")
 		if err != nil {
-			return err
+			return errors.New("The name field is required to create an app")
 		}
 		return change.SetField("uesio/studio.fullname", userKey+"/"+name)
 

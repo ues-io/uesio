@@ -12,7 +12,7 @@ const StyleDefaults = Object.freeze({
 		"grid-cols-[repeat(16,_minmax(0,_1fr))]",
 		"gap-1",
 		"cursor-pointer",
-		"m-2",
+		"justify-center",
 	],
 	color: [
 		"h-[13px]",
