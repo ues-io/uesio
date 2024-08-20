@@ -39,6 +39,46 @@ const APP_ICONS = [
 	"payments",
 	"restaurant",
 	"music_note",
+	"local_shipping",
+	"savings",
+	"support_agent",
+	"rocket_launch",
+	"diamond",
+	"forest",
+	"cookie",
+	"skull",
+	"prescriptions",
+	"barefoot",
+	"playing_cards",
+	"microbiology",
+	"mist",
+	"label",
+	"fingerprint",
+	"cardiology",
+	"extension",
+	"support",
+	"interests",
+	"code_blocks",
+	"chat",
+	"hub",
+	"timer",
+	"storefront",
+	"factory",
+	"warehouse",
+	"traffic",
+	"sailing",
+	"school",
+	"construction",
+	"sports_soccer",
+	"piano",
+	"camping",
+	"lunch_dining",
+	"icecream",
+	"travel",
+	"coffee",
+	"self_care",
+	"skillet",
+	"grocery",
 ]
 
 const getRandomIcon = () =>
@@ -48,19 +88,32 @@ const StyleDefaults = Object.freeze({
 	root: [
 		"leading-none",
 		"grid",
-		"grid-cols-8",
+		"grid-cols-12",
 		"cursor-pointer",
-		"justify-items-left",
+		"gap-y-1.5",
 	],
 	iconwrapper: [
-		"inline-block",
-		"rounded-full",
-		"p-1",
-		"border-[5px]",
+		"grid",
+		"relative",
 		"transition-all",
 		"border-transparent",
+		"justify-center",
 	],
-	icon: ["text-[14pt]"],
+	iconwrapperSelected: [
+		"before:rounded-full",
+		"before:absolute",
+		"before:h-8",
+		"before:w-8",
+		"before:border-[5px]",
+		"before:border-inherit",
+		"before:-z-10",
+		"before:top-1/2",
+		"before:-translate-y-1/2",
+		"before:left-1/2",
+		"before:-translate-x-1/2",
+	],
+	icon: ["text-base", "text-slate-700"],
+	iconSelected: ["text-inherit"],
 })
 
 const AppIconPicker: definition.UC<AppIconPickerDefinition> = (props) => {
@@ -114,14 +167,18 @@ const AppIconPicker: definition.UC<AppIconPickerDefinition> = (props) => {
 								undefined,
 								classes.iconwrapper,
 								isSelected && `border-[${color}]`,
-								isSelected && `text-[${color}]`
+								isSelected && `text-[${color}]`,
+								isSelected && classes.iconwrapperSelected
 							)}
 							onClick={() => {
 								record.update(fieldId, icon, context)
 							}}
 						>
 							<Icon
-								className={classes.icon}
+								className={styles.cx(
+									classes.icon,
+									isSelected && classes.iconSelected
+								)}
 								icon={icon}
 								context={context}
 							/>

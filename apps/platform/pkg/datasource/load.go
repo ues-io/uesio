@@ -688,7 +688,7 @@ func GetDefaultOrder() wire.LoadRequestOrder {
 
 // getOpsNeedingRecordLevelAccessCheck filters a list of LoadOps to only those that need a record-level access check
 // for the purposes of performing the provided queries.
-func getOpsNeedingRecordLevelAccessCheck(ops []*wire.LoadOp, metadataResponse *wire.MetadataCache, userPerms *meta.PermissionSet) ([]*wire.LoadOp, error) {
+func getOpsNeedingRecordLevelAccessCheck(ops []*wire.LoadOp, metadataResponse *wire.MetadataCache, userPerms *meta.PermissionSet, session *sess.Session) ([]*wire.LoadOp, error) {
 	var opsNeedingRecordLevelAccessCheck []*wire.LoadOp
 	for _, op := range ops {
 		if op.ViewOnly {
@@ -703,6 +703,13 @@ func getOpsNeedingRecordLevelAccessCheck(ops []*wire.LoadOp, metadataResponse *w
 		if !needsAccessCheck {
 			continue
 		}
+
+		// Special case for workspace mode and users
+		if session.GetWorkspace() != nil && op.CollectionName == "uesio/core.user" {
+			opsNeedingRecordLevelAccessCheck = append(opsNeedingRecordLevelAccessCheck, op)
+			continue
+		}
+
 		// Check whether the running user has view all / modify all records permission for the collection,
 		// depending on whether the op requires write access or not.
 
@@ -800,7 +807,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	// Do an initial loop to determine whether or not we need to do record-level access checks
 	// for the current user. If we do, then we need to generate access tokens and send this in to the load implementations.
 	// If we don't, then we can skip this step.
-	opsNeedingRecordLevelAccessCheck, err := getOpsNeedingRecordLevelAccessCheck(ops, metadataResponse, userPerms)
+	opsNeedingRecordLevelAccessCheck, err := getOpsNeedingRecordLevelAccessCheck(ops, metadataResponse, userPerms, session)
 	if err != nil {
 		return nil, err
 	}
