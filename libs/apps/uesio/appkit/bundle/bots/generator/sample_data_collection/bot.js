@@ -32,9 +32,9 @@ function sample_data_collection(bot) {
 		: ""
 
 	const prompt = `
-		Use the tool provided to create 5 records of sample data for an app called: ${appName}
-		with a description of : ${description}. The name of the table that you are
-		creating data for is ${collection.split(".").pop()}.
+		Use the tool provided to create 5 records of sample data for an table called: ${collection.split(".").pop()}
+		The name of the app that you are creating data for is ${appName},
+		with a description of : ${description}.
 
 		${additional}
 	`
