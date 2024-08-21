@@ -7,7 +7,11 @@ function collection(bot) {
 
 	const namespace = bot.getAppName()
 
-	var fullCollectionName = namespace + "." + collectionName
+	const fullCollectionName = namespace + "." + collectionName
+
+	const existingCollectionsShort = existingCollections.map((existing) =>
+		existing.split(".").pop()
+	)
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 
@@ -22,7 +26,7 @@ function collection(bot) {
 		a database table called: ${collectionName}. The primary key for this table as well
 		as audit fields such as created date, updated date, created by and updated by already
 		exist and should not be created again. The other tables that already exist are.
-		${existingCollections.map((existing) => existing.split(".").pop()).join("\n")}
+		${existingCollectionsShort.join("\n")}
 	`
 
 	const nameParam = {
@@ -69,7 +73,7 @@ function collection(bot) {
 			If it is reference, chose the table that this field is a foreign key
 			reference to from one of the following tables. And use that table's name
 			as the value for this parameter.
-			${existingCollections.map((existing) => existing.split(".").pop()).join("\n")}
+			${existingCollectionsShort.join("\n")}
 			The only valid values for this parameter are in the list above.
 		`,
 	}
@@ -137,7 +141,31 @@ function collection(bot) {
 
 	const fields = result[0].input.fields
 
-	const nameField = fields.find((field) => field.isNameField)
+	const validMeta = /^\w+$/
+
+	// Validate the fields
+	const validFields = fields.flatMap((field) => {
+		if (!field.name) return undefined
+		if (!validMeta.test(field.name)) return undefined
+		field.name = field.name.toLowerCase()
+		if (field.type === "REFERENCE") {
+			if (!field.referencedCollection) {
+				field.type = "TEXT"
+				return [field]
+			}
+			if (
+				!existingCollectionsShort.includes(field.referencedCollection)
+			) {
+				field.type = "TEXT"
+				field.referencedCollection = ""
+				return [field]
+			}
+		}
+
+		return [field]
+	})
+
+	const nameField = validFields.find((field) => field.isNameField)
 
 	bot.runGenerator("uesio/core", "collection", {
 		name: collectionName,
@@ -147,20 +175,21 @@ function collection(bot) {
 		nameField: nameField ? nameField.name : undefined,
 	})
 
-	const getRefCollection = (refCol) => {
+	const getRefCollection = (field) => {
+		const refCol = field.referencedCollection
 		if (refCol === "user") {
 			return "uesio/core.user"
 		}
 		return namespace + "." + refCol
 	}
 
-	const fieldIds = fields.map((field) => {
+	const fieldIds = validFields.map((field) => {
 		bot.runGenerator("uesio/core", "field", {
 			collection: fullCollectionName,
 			name: field.name,
 			label: field.label,
 			type: field.type,
-			ref_collection: getRefCollection(field.referencedCollection),
+			ref_collection: getRefCollection(field),
 			accept: field.accept,
 		})
 		return namespace + "." + field.name
