@@ -149,7 +149,6 @@ function collection(bot) {
 		if (!validMeta.test(field.name)) return undefined
 		field.name = field.name.toLowerCase()
 		if (field.type === "REFERENCE") {
-			bot.log.info("GotREF", field)
 			if (!field.referencedCollection) {
 				field.type = "TEXT"
 				return [field]
