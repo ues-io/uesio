@@ -180,7 +180,6 @@ function collection(bot) {
 		if (refCol === "user") {
 			return "uesio/core.user"
 		}
-		// Verify that the referenced collection
 		return namespace + "." + refCol
 	}
 
