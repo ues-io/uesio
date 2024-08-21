@@ -2,3 +2,4 @@ name: ${name}
 label: ${label}
 pluralLabel: ${pluralLabel}
 nameField: ${nameField}
+icon: ${icon}

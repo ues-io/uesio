@@ -597,6 +597,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 			assignment.Path = route.Path
 			assignment.CollectionLabel = collection.Label
 			assignment.CollectionPluralLabel = collection.PluralLabel
+			assignment.CollectionIcon = collection.Icon
 			deps.RouteAssignment.AddItem(assignment)
 		}
 	}

@@ -29,6 +29,7 @@ type RouteAssignment struct {
 	Path                  string     `yaml:"-" json:"-"`
 	CollectionLabel       string     `yaml:"-" json:"-"`
 	CollectionPluralLabel string     `yaml:"-" json:"-"`
+	CollectionIcon        string     `yaml:"-" json:"-"`
 	Public                bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
@@ -43,6 +44,7 @@ func (r *RouteAssignment) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("collection", r.Collection)
 	enc.AddStringKey("collectionLabel", r.CollectionLabel)
 	enc.AddStringKey("collectionPluralLabel", r.CollectionPluralLabel)
+	enc.AddStringKey("collectionIcon", r.CollectionIcon)
 	enc.AddStringKey("namespace", r.Namespace)
 	enc.AddStringKey("name", r.Collection+"_"+r.Type)
 	enc.AddStringKey("path", r.Path)

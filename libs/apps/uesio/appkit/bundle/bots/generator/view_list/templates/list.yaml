@@ -16,12 +16,11 @@ components:
                     components:
                       - uesio/appkit.icontile:
                           tileVariant: uesio/appkit.breadcrumb
-                          title: List View
-                          icon: playing_cards
+                          title: $Collection{${wirename}:pluralLabel}
+                          icon: $Collection{${wirename}:icon}
       content:
         - uesio/appkit.form_list:
             wire: ${wirename}
-            avataricon: playing_cards
             linkedComponentType: uesio/io.table
             linkedComponentId: ${wirename}Table
             filters:

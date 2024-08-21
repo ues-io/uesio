@@ -7,4 +7,5 @@ export type RouteAssignmentState = {
 	path: string
 	collectionLabel: string
 	collectionPluralLabel: string
+	collectionIcon?: string
 } & BundleableBase

@@ -219,8 +219,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""
 	},
-	RecordMeta: (expression, context) => {
-		const record = context.getRecord()
+	RecordMeta: (fullExpression, context) => {
+		const [wirename, expression] = parseWireExpression(fullExpression)
+		const record = context.getRecord(wirename)
 		if (expression === "id") {
 			return record?.getId() || ""
 		}
@@ -249,6 +250,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		if (expression === "label") {
 			return collection?.getLabel() || ""
+		}
+		if (expression === "icon") {
+			return collection?.getIcon() || ""
 		}
 		if (expression === "pluralLabel") {
 			return collection?.getPluralLabel() || ""

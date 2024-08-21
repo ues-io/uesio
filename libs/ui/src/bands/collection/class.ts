@@ -123,6 +123,7 @@ class Collection {
 		`${this.getNamespace()}.${this.getId()}` as CollectionKey
 	getLabel = () => this.source.label
 	getPluralLabel = () => this.source.pluralLabel
+	getIcon = () => this.source.icon || ""
 
 	// Just an alias of getField now
 	getFieldMetadata = (fieldName: string) => this.getField(fieldName)

@@ -191,8 +191,8 @@ definition:
                 itemNameSpaceIcon: ${collections:uesio/studio.appicon}
                 itemNameSpaceColor: ${collections:uesio/studio.appcolor}
         content:
-          - uesio/io.list:
-              uesio.id: collectionsDeck
+          - uesio/io.item:
+              uesio.id: collections
               wire: collections
               mode: READ
               components:
@@ -275,7 +275,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
+                          uesio.variant: uesio/io.three_columns
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
@@ -293,21 +293,10 @@ definition:
                                 metadata:
                                   grouping: $Param{app}.$Param{collectionname}
                                   namespace: $Param{app}
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.type
                             - uesio/io.field:
-                                fieldId: uesio/core.owner
-                            - uesio/io.field:
-                                fieldId: uesio/core.createdby
-                                user:
-                                  subtitle: $Time{uesio/core.createdat}
-                            - uesio/io.field:
-                                fieldId: uesio/core.updatedby
-                                user:
-                                  subtitle: $Time{uesio/core.updatedat}
+                                fieldId: uesio/studio.icon
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns
                           uesio.display:
@@ -357,7 +346,7 @@ definition:
                                     field: uesio/studio.type
                                     operator: EQUALS
                                     value: EXTERNAL
-
+                - uesio/appkit.section_audit_info:
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
@@ -833,6 +822,8 @@ definition:
                     namespace: $Param{app}
               - uesio/io.field:
                   fieldId: uesio/studio.type
+              - uesio/io.field:
+                  fieldId: uesio/studio.icon
               - uesio/io.field:
                   fieldId: uesio/studio.integration
                   uesio.display:

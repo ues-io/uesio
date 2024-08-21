@@ -19,8 +19,15 @@ components:
                     components:
                       - uesio/appkit.icontile:
                           tileVariant: uesio/appkit.breadcrumb
-                          title: List View
-                          icon: playing_cards
+                          title: $Collection{${wirename}:pluralLabel}
+                          icon: $Collection{${wirename}:icon}
+                          signals:
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: ${collection}
+                              viewtype: list
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: New
       content:
         - uesio/appkit.layout_detail_split:
             main:

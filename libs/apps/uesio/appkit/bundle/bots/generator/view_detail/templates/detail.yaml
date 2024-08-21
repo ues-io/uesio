@@ -20,8 +20,11 @@ components:
                     components:
                       - uesio/appkit.icontile:
                           tileVariant: uesio/appkit.breadcrumb
-                          title: List View
-                          icon: playing_cards
+                          title: $Collection{${wirename}:pluralLabel}
+                          icon: $Collection{${wirename}:icon}
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: $RecordMeta{${wirename}:name}
       content:
         - uesio/io.box:
             uesio.display:

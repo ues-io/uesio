@@ -119,7 +119,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 				path,
 				viewDef.slots,
 				slots,
-				viewContext
+				context
 			)}
 			componentType={componentType}
 		/>
