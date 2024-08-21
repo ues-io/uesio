@@ -17,7 +17,7 @@ definition:
             avatar:
               - uesio/io.text:
                   uesio.variant: uesio/io.icon
-                  text: $Prop{avataricon}
+                  text: $If{[$Prop{avataricon}][$Prop{avataricon}][$Collection{icon}]}
             actions:
               - uesio/io.group:
                   components:

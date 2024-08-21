@@ -64,6 +64,7 @@ func NewCollectionMetadata(e *meta.Collection) *CollectionMetadata {
 		Name:        e.Name,
 		Namespace:   e.Namespace,
 		Type:        e.Type,
+		Icon:        e.Icon,
 		NameField:   getNameField(e),
 		UniqueKey:   e.UniqueKeyFields,
 		Createable:  !e.ReadOnly,
@@ -94,6 +95,7 @@ type CollectionMetadata struct {
 	Name                  string                       `json:"name"`
 	Namespace             string                       `json:"namespace"`
 	Type                  string                       `json:"-"`
+	Icon                  string                       `json:"icon"`
 	UniqueKey             []string                     `json:"uniqueKey"`
 	NameField             string                       `json:"nameField"`
 	IdField               string                       `json:"-"`

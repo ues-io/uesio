@@ -12,6 +12,7 @@ export type PlainCollection = {
 	label: string
 	pluralLabel: string
 	uniqueKey?: string[]
+	icon?: string
 } & BundleableBase
 
 export type PlainCollectionMap = Record<string, PlainCollection>

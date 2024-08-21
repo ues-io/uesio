@@ -2,6 +2,7 @@ function collection(bot) {
 	var collectionName = bot.params.get("collection")
 	var collectionLabel = bot.params.get("label")
 	var collectionPluralLabel = bot.params.get("pluralLabel")
+	var collectionIcon = bot.params.get("icon")
 	var existingCollections = bot.params.get("existingCollections")
 
 	const namespace = bot.getAppName()
@@ -20,7 +21,8 @@ function collection(bot) {
 		Use the tool provided to create between 5 and 10 fields for
 		a database table called: ${collectionName}. The primary key for this table as well
 		as audit fields such as created date, updated date, created by and updated by already
-		exist and should not be created again.
+		exist and should not be created again. The other tables that already exist are.
+		${existingCollections.map((existing) => existing.split(".").pop()).join("\n")}
 	`
 
 	const nameParam = {
@@ -141,6 +143,7 @@ function collection(bot) {
 		name: collectionName,
 		label: collectionLabel,
 		pluralLabel: collectionPluralLabel,
+		icon: collectionIcon,
 		nameField: nameField ? nameField.name : undefined,
 	})
 

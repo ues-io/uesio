@@ -59,7 +59,9 @@ const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
 							"uesio/appkit.icontile": {
 								tileVariant: "uesio/io.nav",
 								title: primaryAssignment.collectionPluralLabel,
-								icon: "view_list",
+								icon:
+									primaryAssignment.collectionIcon ||
+									"view_list",
 								signals: listAssignment
 									? [
 											{

@@ -16,7 +16,7 @@ definition:
             uesio.variant: uesio/appkit.main
             avatar:
               - uesio/io.text:
-                  text: $Prop{avataricon}
+                  text: $If{[$Prop{avataricon}][$Prop{avataricon}][$Collection{icon}]}
                   uesio.variant: uesio/io.icon
             actions:
               - uesio/io.group:

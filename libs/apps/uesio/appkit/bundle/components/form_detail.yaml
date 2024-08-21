@@ -116,7 +116,7 @@ definition:
                       value: $Prop{imagefield}
                     - type: hasNoValue
                       value: $Prop{initials}
-                  text: $Prop{avataricon}
+                  text: $If{[$Prop{avataricon}][$Prop{avataricon}][$Collection{icon}]}
                   uesio.variant: uesio/io.icon
         - uesio/core.slot:
             name: content
