@@ -172,7 +172,7 @@ function collection(bot) {
 		label: collectionLabel,
 		pluralLabel: collectionPluralLabel,
 		icon: collectionIcon,
-		nameField: nameField ? nameField.name : undefined,
+		nameField: nameField ? nameField.name : "external_id",
 	})
 
 	const getRefCollection = (field) => {
