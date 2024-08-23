@@ -17,6 +17,7 @@ definition:
       - border-2
       - border-slate-800
       - hover:border-slate-900
+      - bg-white
       # TODO: Add this expand icon back when we implement the app picker
       # - relative
       # - after:right-2

@@ -1,6 +1,14 @@
 name: tile_app
 category: LAYOUT
 type: DECLARATIVE
+properties:
+  - name: tileVariant
+    label: Tile Variant
+    type: METADATA
+    defaultValue: uesio/appkit.apptag
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.tile
 definition:
   - uesio/io.tile:
       avatar:
@@ -15,7 +23,7 @@ definition:
             title: $Prop{title}
             icon: $Prop{icon}
             iconcolor: $Prop{iconcolor}
-            tileVariant: uesio/appkit.apptag
+            tileVariant: $Prop{tileVariant}
 title: App Tile Component
 discoverable: true
 description: An app tile

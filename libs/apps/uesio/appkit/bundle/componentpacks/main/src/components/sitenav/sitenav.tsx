@@ -23,6 +23,8 @@ const getAssignmentButton = (
 type SiteNavDefinition = {
 	title?: string
 	excludeCollections?: string[]
+	titlebarVariant?: string
+	tileVariant?: string
 }
 
 const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
@@ -39,6 +41,7 @@ const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
 			componentType="uesio/io.navsection"
 			definition={{
 				title: definition.title,
+				titlebarVariant: definition.titlebarVariant,
 				content: Object.entries(assignmentsByCollection).map(
 					([collection, assignments]) => {
 						if (
@@ -57,7 +60,8 @@ const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
 
 						return {
 							"uesio/appkit.icontile": {
-								tileVariant: "uesio/io.nav",
+								tileVariant:
+									definition.tileVariant || "uesio/io.nav",
 								title: primaryAssignment.collectionPluralLabel,
 								icon:
 									primaryAssignment.collectionIcon ||
