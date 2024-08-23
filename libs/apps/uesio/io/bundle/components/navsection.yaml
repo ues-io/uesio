@@ -10,11 +10,18 @@ properties:
   - type: TEXT
     name: title
     label: Title text
+  - name: titlebarVariant
+    label: Title Bar Variant
+    type: METADATA
+    defaultValue: uesio/io.nav
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.titlebar
 definition:
   - uesio/io.box:
       components:
         - uesio/io.titlebar:
-            uesio.variant: uesio/io.nav
+            uesio.variant: $Prop{titlebarVariant}
             title: $Prop{title}
             actions:
               - uesio/core.slot:
@@ -30,3 +37,5 @@ definition:
             components:
               - uesio/core.slot:
                   name: content
+variants:
+  - uesio/io.titlebar:uesio/io.nav

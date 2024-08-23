@@ -4,6 +4,14 @@ type: DECLARATIVE
 slots:
   - name: extra_actions
   - name: content
+properties:
+  - name: titlebarVariant
+    label: Title Bar Variant
+    type: METADATA
+    defaultValue: uesio/appkit.main
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.titlebar
 definition:
   - uesio/io.item:
       wire: $Prop{wire}
@@ -12,7 +20,7 @@ definition:
         - uesio/io.titlebar:
             title: $If{[$Prop{title}][$Prop{title}][$RecordMeta{name}]}
             subtitle: $If{[$Prop{subtitle}][$Prop{subtitle}][$Collection{label}]}
-            uesio.variant: uesio/appkit.main
+            uesio.variant: $Prop{titlebarVariant}
             actions:
               - uesio/io.group:
                   components:
