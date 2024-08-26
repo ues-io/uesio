@@ -2,13 +2,9 @@ package sess
 
 import (
 	"testing"
-
-	"github.com/icza/session"
 )
 
 func TestSession_GetSessionIdHash(t *testing.T) {
-
-	happyBrowserSession := session.NewSession()
 
 	tests := []struct {
 		name             string
@@ -23,7 +19,7 @@ func TestSession_GetSessionIdHash(t *testing.T) {
 		{
 			"happy path - browser session with id",
 			Session{
-				ID: happyBrowserSession.ID(),
+				ID: "some_session_id",
 			},
 			true,
 		},
