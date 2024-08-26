@@ -58,7 +58,7 @@
 		"@nx/eslint": "19.5.7",
 		"@nx/eslint-plugin": "19.5.7",
 		"@nx/jest": "19.5.7",
-		"@orangeopensource/hurl": "^4.2.0",
+		"@orangeopensource/hurl": "^4.3.3",
 		"@react-hook/resize-observer": "^1.2.6",
 		"@reduxjs/toolkit": "^1.9.7",
 		"@swc/core": "^1.5.29",
