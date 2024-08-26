@@ -1,8 +1,6 @@
 module github.com/thecloudmasters/uesio
 
-go 1.22.2
-
-toolchain go1.22.4
+go 1.23.0
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
@@ -28,7 +26,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/gomodule/redigo v1.9.2
 	github.com/gorilla/mux v1.8.1
-	github.com/icza/session v1.2.0
+	github.com/icza/session v1.3.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494
@@ -84,7 +82,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/icza/mighty v0.0.0-20230330133200-c4b03a294ed8 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
@@ -112,10 +109,9 @@ require (
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sync v0.7.0
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240624140628-dc46fd24d27d // indirect
 	google.golang.org/grpc v1.64.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
