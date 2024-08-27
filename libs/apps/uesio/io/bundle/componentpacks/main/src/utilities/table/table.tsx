@@ -1,27 +1,32 @@
-import { Fragment, ReactNode } from "react"
+import { ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
-import CheckboxField from "../field/checkbox"
-
-interface TableColumn {
-	width?: string
-}
+import TableHeader, {
+	ColumnFunc,
+	IsAllSelectedFunc,
+	OnAllSelectChange,
+	RowFunc,
+	RowIsFunc,
+	RowNumberFunc,
+	TableColumn,
+} from "./tableheader"
+import TableRow, { RowChangeFunc } from "./tablerow"
 
 interface TableUtilityProps<R, C extends TableColumn> {
 	rows: R[]
 	columns: C[]
-	isDeletedFunc?: (row: R) => boolean
-	isSelectedFunc?: (row: R, index: number) => boolean
-	isRowExpandedFunc?: (row: R) => boolean
-	isAllSelectedFunc?: () => boolean | undefined
-	onSelectChange?: (row: R, index: number, selected: boolean) => void
-	onAllSelectChange?: (selected: boolean) => void
-	columnHeaderFunc: (column: C) => ReactNode
-	columnMenuFunc?: (column: C) => ReactNode
+	isDeletedFunc?: RowIsFunc<R>
+	isSelectedFunc?: RowIsFunc<R>
+	isRowExpandedFunc?: RowIsFunc<R>
+	isAllSelectedFunc?: IsAllSelectedFunc
+	onSelectChange?: RowChangeFunc<R>
+	onAllSelectChange?: OnAllSelectChange
+	columnHeaderFunc: ColumnFunc<C>
+	columnMenuFunc?: ColumnFunc<C>
 	cellFunc: (column: C, row: R, columnIndex: number) => ReactNode
-	rowNumberFunc?: (index: number) => string
-	defaultActionFunc?: (row: R) => void
-	rowActionsFunc?: (row: R) => ReactNode
-	drawerRendererFunc?: (row: R) => ReactNode
+	rowNumberFunc?: RowNumberFunc
+	defaultActionFunc?: RowChangeFunc<R>
+	rowActionsFunc?: RowFunc<R>
+	drawerRendererFunc?: RowFunc<R>
 	rowKeyFunc: (row: R) => string
 }
 
@@ -71,163 +76,46 @@ const Table: definition.UtilityComponent<
 		"uesio/io.table"
 	)
 
-	const getRowNumberHeaderCell = () => {
-		if (isAllSelectedFunc && onAllSelectChange) {
-			const isSelected = isAllSelectedFunc()
-			return (
-				<CheckboxField
-					context={context}
-					value={isSelected}
-					setValue={(value: boolean) => onAllSelectChange(value)}
-					mode="EDIT"
-				/>
-			)
-		}
-	}
-
-	const getRowNumberCell = (
-		row: unknown,
-		index: number,
-		isSelected: boolean
-	) => {
-		if (onSelectChange) {
-			return (
-				<>
-					<div className="numberlabel">
-						{rowNumberFunc?.(index + 1)}
-					</div>
-					<CheckboxField
-						className={rowNumberFunc ? "numbercheck" : ""}
-						context={context}
-						value={isSelected}
-						setValue={(value: boolean) =>
-							onSelectChange(row, index, value)
-						}
-						mode="EDIT"
-					/>
-				</>
-			)
-		}
-		return rowNumberFunc?.(index + 1)
-	}
-
-	const getDrawer =
-		drawerRendererFunc && isRowExpandedFunc
-			? (row: unknown) =>
-					isRowExpandedFunc(row) && (
-						<tr className={styles.cx(classes.row)}>
-							<td colSpan={1000} className={classes.drawer}>
-								{drawerRendererFunc(row)}
-							</td>
-						</tr>
-					)
-			: undefined
-
 	return (
 		<div className={classes.root}>
 			<table id={id} className={classes.table}>
-				<thead className={classes.header}>
-					<tr>
-						{(rowNumberFunc || isSelectedFunc) && (
-							<th
-								className={styles.cx(
-									classes.headerCell,
-									classes.rowNumberCell
-								)}
-								key="rownumbers"
-							>
-								{getRowNumberHeaderCell()}
-							</th>
-						)}
-						{columns?.map((column, index) => (
-							<th
-								key={index}
-								className={classes.headerCell}
-								style={{ width: column?.width }}
-							>
-								<div className={classes.headerCellInner}>
-									{columnHeaderFunc(column)}
-									{columnMenuFunc && columnMenuFunc(column)}
-								</div>
-							</th>
-						))}
-						{rowActionsFunc && (
-							<th
-								className={classes.headerCell}
-								key="rowactions"
-							/>
-						)}
-					</tr>
-				</thead>
+				<TableHeader
+					classes={classes}
+					columns={columns}
+					context={context}
+					rowNumberFunc={rowNumberFunc}
+					isSelectedFunc={isSelectedFunc}
+					isAllSelectedFunc={isAllSelectedFunc}
+					onAllSelectChange={onAllSelectChange}
+					rowActionsFunc={rowActionsFunc}
+					columnHeaderFunc={columnHeaderFunc}
+					columnMenuFunc={columnMenuFunc}
+				/>
 				<tbody
 					className={styles.cx(
 						classes.body,
 						defaultActionFunc && "hasRowAction"
 					)}
 				>
-					{rows.map((row, index) => {
-						const isSelected = isSelectedFunc?.(row, index) || false
-						return (
-							<Fragment key={rowKeyFunc(row)}>
-								<tr
-									onClick={
-										defaultActionFunc
-											? () => defaultActionFunc(row)
-											: undefined
-									}
-									className={styles.cx(
-										classes.row,
-										isRowExpandedFunc?.(row) &&
-											classes.rowExpanded,
-										isDeletedFunc?.(row) &&
-											classes.rowDeleted
-									)}
-								>
-									{(rowNumberFunc || isSelectedFunc) && (
-										<td
-											className={styles.cx(
-												classes.cell,
-												classes.rowNumberCell,
-												isSelected && "isselected"
-											)}
-											key="rownumbers"
-											onClick={(e) => {
-												// Stopping propagation here to prevent actions higher in the
-												// hierarchy from firing. For example a default row action
-												// for a table row.
-												e.stopPropagation()
-												onSelectChange?.(
-													row,
-													index,
-													!isSelected
-												)
-											}}
-										>
-											{getRowNumberCell(
-												row,
-												index,
-												isSelected
-											)}
-										</td>
-									)}
-									{columns.map((column, i) => (
-										<td key={i} className={classes.cell}>
-											{cellFunc(column, row, i)}
-										</td>
-									))}
-									{rowActionsFunc && (
-										<td
-											key="rowactions"
-											className={classes.cell}
-										>
-											{rowActionsFunc(row)}
-										</td>
-									)}
-								</tr>
-								{getDrawer?.(row)}
-							</Fragment>
-						)
-					})}
+					{rows.map((row, index) => (
+						<TableRow
+							key={rowKeyFunc(row)}
+							classes={classes}
+							columns={columns}
+							row={row}
+							index={index}
+							context={context}
+							rowNumberFunc={rowNumberFunc}
+							rowActionsFunc={rowActionsFunc}
+							defaultActionFunc={defaultActionFunc}
+							isSelectedFunc={isSelectedFunc}
+							onSelectChange={onSelectChange}
+							drawerRendererFunc={drawerRendererFunc}
+							isRowExpandedFunc={isRowExpandedFunc}
+							isDeletedFunc={isDeletedFunc}
+							cellFunc={cellFunc}
+						/>
+					))}
 				</tbody>
 			</table>
 			{(!rows || rows.length < 1) && (
