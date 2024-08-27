@@ -17,8 +17,8 @@ func PackUI(options *PackOptions) error {
 	start := time.Now()
 
 	globalsMap := map[string]string{
-		"react":     "React",
-		"react-dom": "ReactDOM",
+		"react":            "React",
+		"react-dom":        "ReactDOM",
 		"react-dom/server": "ReactDOM",
 		"react-dom/client": "ReactDOM",
 		// We're adding "react/jsx-runtime" here as a global
