@@ -9,7 +9,7 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
-import { tw, cx, Class, hash } from "@twind/core"
+import { tw, Class, hash } from "@twind/core"
 import { STYLE_TOKENS } from "../componentexports"
 import interpolate from "./interpolate"
 
@@ -129,6 +129,17 @@ function useUtilityStyleTokens<K extends string>(
 }
 
 const mergeClasses = twMerge
+
+function cx(strings: TemplateStringsArray, ...interpolations: Class[]): string
+
+function cx(...input: Class[]): string
+
+function cx(
+	strings: TemplateStringsArray | Class,
+	...interpolations: Class[]
+): string {
+	return interpolate(strings, interpolations)
+}
 
 export type { StyleProps, ThemeState }
 
