@@ -5,10 +5,9 @@ import { ViewMetadata } from "../../definition/ViewMetadata"
 
 import { RootState, getCurrentState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
-import { Bundleable } from "../../metadata/types"
 
-const adapter = createEntityAdapter<ViewMetadata>({
-	selectId: (v: ViewMetadata) => getKey(v as Bundleable),
+const adapter = createEntityAdapter({
+	selectId: getKey<ViewMetadata>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.viewdef)

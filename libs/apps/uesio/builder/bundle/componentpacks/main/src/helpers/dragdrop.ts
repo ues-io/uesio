@@ -2,7 +2,6 @@ import { context, definition, component } from "@uesio/ui"
 import { getComponentDef, setDragPath, setDropPath } from "../api/stateapi"
 import { FullPath } from "../api/path"
 import { DragEventHandler, DragEvent } from "react"
-import { batch } from "react-redux"
 import { add, move } from "../api/defapi"
 
 const CURSOR_GRABBING = "cursor-grabbing"
@@ -85,16 +84,15 @@ const addComponentToCanvas = (
 ) => {
 	const componentDef = getComponentDef(componentType)
 	if (!componentDef) return
-	batch(() => {
-		add(context, drop, {
-			[componentType]: {
-				...(componentDef.defaultDefinition || {}),
-				...(extraDef || {}),
-			},
-		})
-		setDropPath(context)
-		setDragPath(context)
+
+	add(context, drop, {
+		[componentType]: {
+			...(componentDef.defaultDefinition || {}),
+			...(extraDef || {}),
+		},
 	})
+	setDropPath(context)
+	setDragPath(context)
 }
 
 const handleDrop = (
@@ -119,11 +117,11 @@ const handleDrop = (
 		}
 		case "viewdef": {
 			const [, parent] = drag.pop()
-			batch(() => {
-				move(context, parent, drop)
-				setDropPath(context)
-				setDragPath(context)
-			})
+
+			move(context, parent, drop)
+			setDropPath(context)
+			setDragPath(context)
+
 			break
 		}
 	}

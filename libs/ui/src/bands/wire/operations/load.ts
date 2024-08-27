@@ -13,11 +13,9 @@ import {
 import { dispatch } from "../../../store/store"
 import { createRecordOp } from "./createrecord"
 import partition from "lodash/partition"
-import { batch } from "react-redux"
 import { addError } from "../../../hooks/notificationapi"
 import { WireConditionState } from "../conditions/conditions"
 import { getKey } from "../../../metadata/metadata"
-import { Bundleable } from "../../../metadata/types"
 import { hash } from "@twind/core"
 
 const getParamsHash = (context: Context) => {
@@ -102,10 +100,7 @@ const isViewOnlySelectFieldWithoutOptions = (
 		!selectlist.name
 	)
 		return false
-	if (
-		selectlist.name &&
-		!context.getSelectList(getKey(selectlist as Bundleable))
-	) {
+	if (selectlist.name && !context.getSelectList(getKey(selectlist))) {
 		return true
 	}
 	return false
@@ -254,13 +249,11 @@ export default async (
 		invalidWiresResults
 	)
 
-	batch(() => {
-		dispatch(load([allResults, collections, selectlists]))
-		allResults.forEach((wire) => {
-			if (wire.create && !Object.keys(wire.data).length) {
-				createRecordOp({ context, wireName: wire.name })
-			}
-		})
+	dispatch(load([allResults, collections, selectlists]))
+	allResults.forEach((wire) => {
+		if (wire.create && !Object.keys(wire.data).length) {
+			createRecordOp({ context, wireName: wire.name })
+		}
 	})
 
 	// Run wire events

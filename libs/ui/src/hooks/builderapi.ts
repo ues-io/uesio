@@ -2,7 +2,6 @@ import { Context } from "../context/context"
 import * as api from "../api/api"
 
 import { MetadataType } from "../metadata/types"
-import { batch } from "react-redux"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { dispatchRouteDeps } from "../bands/route/utils"
@@ -50,9 +49,8 @@ const getBuilderDeps = async (context: Context) => {
 	const response = await platform.getBuilderDeps(context)
 
 	await loadScripts(response.componentpack, context)
-	batch(() => {
-		dispatchRouteDeps(response)
-	})
+
+	dispatchRouteDeps(response)
 
 	return
 }

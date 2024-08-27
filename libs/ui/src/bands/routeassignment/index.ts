@@ -2,8 +2,8 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { RouteAssignmentState } from "../../definition/routeassignment"
 import { RootState } from "../../store/store"
 
-const adapter = createEntityAdapter<RouteAssignmentState>({
-	selectId: (assignment) => assignment.name,
+const adapter = createEntityAdapter({
+	selectId: (assignment: RouteAssignmentState) => assignment.name,
 })
 
 const selectors = adapter.getSelectors(

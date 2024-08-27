@@ -3,8 +3,8 @@ import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
 import { set as setRoute } from "../route"
 
-const adapter = createEntityAdapter<ComponentState>({
-	selectId: (component) => component.id,
+const adapter = createEntityAdapter({
+	selectId: (component: ComponentState) => component.id,
 })
 
 const componentSlice = createSlice({

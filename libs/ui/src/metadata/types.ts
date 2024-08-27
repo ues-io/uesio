@@ -43,6 +43,11 @@ interface Bundleable {
 	name: string
 }
 
+interface Keyable {
+	namespace?: Namespace
+	name: string
+}
+
 type MetadataListResponse = {
 	metadataType: MetadataType
 	namespace: Namespace
@@ -51,6 +56,7 @@ type MetadataListResponse = {
 }
 
 export type {
+	Keyable,
 	Bundleable,
 	BundleableBase,
 	MetadataKey,

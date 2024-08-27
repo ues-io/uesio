@@ -4,8 +4,8 @@ import { Component } from "../../definition/component"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<Component>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<Component>,
 })
 
 const selectors = adapter.getSelectors(

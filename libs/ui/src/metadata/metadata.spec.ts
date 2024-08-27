@@ -1,5 +1,4 @@
 import { getKey } from "./metadata"
-import { Bundleable } from "./types"
 
 describe("getKey", () => {
 	test("happy path", () => {
@@ -8,6 +7,6 @@ describe("getKey", () => {
 		)
 	})
 	test("no namespace", () => {
-		expect(getKey({ name: "foo" } as Bundleable)).toStrictEqual("foo")
+		expect(getKey({ name: "foo" })).toStrictEqual("foo")
 	})
 })

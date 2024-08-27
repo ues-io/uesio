@@ -3,8 +3,8 @@ import { ThemeState } from "../../definition/theme"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<ThemeState>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<ThemeState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.theme)

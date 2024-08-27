@@ -4,8 +4,9 @@ import { ComponentVariant } from "../../definition/componentvariant"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<ComponentVariant>({
-	selectId: (cv) => `${cv.component}:${getKey(cv)}`,
+const adapter = createEntityAdapter({
+	selectId: (cv: ComponentVariant) =>
+		`${cv.component}:${getKey(cv)}` as string,
 })
 
 const selectors = adapter.getSelectors(

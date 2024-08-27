@@ -3,12 +3,12 @@ import { RootState } from "../../store/store"
 import { Component } from "./types"
 import { getKey } from "../../metadata/metadata"
 
-const componentTypeAdapter = createEntityAdapter<Component>({
-	selectId: getKey,
+const componentTypeAdapter = createEntityAdapter({
+	selectId: getKey<Component>,
 })
 
-const selectors = componentTypeAdapter.getSelectors(
-	(state: RootState) => state.componenttype
+const selectors = componentTypeAdapter.getSelectors<RootState>(
+	(state) => state.componenttype
 )
 
 export { selectors }

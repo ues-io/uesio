@@ -4,8 +4,8 @@ import { FeatureFlagState } from "../../definition/featureflag"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<FeatureFlagState>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<FeatureFlagState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.featureflag)

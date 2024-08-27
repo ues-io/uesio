@@ -7,10 +7,9 @@ import {
 import { init as initWire, load as loadWire, WireLoadAction } from "../wire"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
-import { Bundleable } from "../../metadata/types"
 
-const adapter = createEntityAdapter<SelectListMetadata>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<SelectListMetadata>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.selectlist)
@@ -19,10 +18,10 @@ const selectByName = (state: RootState, name: string) =>
 	selectors.selectAll(state).find((el) => el.name && el.name === name)
 
 const selectById = (state: RootState, id: string) =>
-	selectors.selectAll(state).find((el) => id === getKey(el as Bundleable))
+	selectors.selectAll(state).find((el) => id === getKey(el))
 
 const mergeSelectLists = (
-	state: EntityState<SelectListMetadata>,
+	state: EntityState<SelectListMetadata, string>,
 	selectlists: SelectListMetadataMap | undefined
 ) => {
 	if (!selectlists) return

@@ -4,7 +4,6 @@ import { nanoid } from "@reduxjs/toolkit"
 import { createRecord } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { PlainWireRecord } from "../../wirerecord/types"
-import { batch } from "react-redux"
 import Wire from "../class"
 
 const mergeDefaultRecord = ({
@@ -66,21 +65,20 @@ const createRecordsOp = ({
 }: CreateRecordsOpOptions) => {
 	const wire = context.getWire(wireName)
 	if (!wire) return context
-	batch(() => {
-		records.forEach((record) => {
-			dispatch(
-				createRecord({
-					recordId: nanoid(),
-					record: mergeDefaultRecord({
-						context,
-						wire,
-						record,
-					}),
-					entity: wire.getFullId(),
-					prepend: !!prepend,
-				})
-			)
-		})
+
+	records.forEach((record) => {
+		dispatch(
+			createRecord({
+				recordId: nanoid(),
+				record: mergeDefaultRecord({
+					context,
+					wire,
+					record,
+				}),
+				entity: wire.getFullId(),
+				prepend: !!prepend,
+			})
+		)
 	})
 
 	return context
