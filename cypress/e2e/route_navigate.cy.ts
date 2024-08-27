@@ -40,7 +40,7 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
 			// Visit the original route
 			visitRoute()
 			// Click the button to do a route/NAVIGATE with the param
-			cy.clickButtonIfExists("showParamButton")
+			cy.clickButton("showParamButton")
 			// Run our assertions
 			assertions()
 			// Reload the page and run our assertions again
@@ -69,7 +69,7 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
 			// Visit the original route
 			visitRoute()
 			// Click the button to do a route/NAVIGATE WITHOUT the param
-			cy.clickButtonIfExists("noParamButton")
+			cy.clickButton("noParamButton")
 			// Run our assertions
 			assertions()
 			// Reload the page and run our assertions again

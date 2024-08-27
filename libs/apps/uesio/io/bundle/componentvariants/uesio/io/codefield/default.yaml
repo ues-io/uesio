@@ -17,4 +17,5 @@ definition:
       - text-uppercase
       - tracking-wider
       - font-light
+      - w-full
 public: true

@@ -13,7 +13,7 @@ import {
 	RedirectSignal,
 } from "../bands/route/signals"
 import { getRouteUrlPrefix } from "../bands/route/operations"
-import { MouseEvent, useEffect, useRef } from "react"
+import { MouseEvent } from "react"
 
 const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
 
@@ -65,14 +65,6 @@ const useLinkHandler = (
 	context: Context,
 	setPendingState?: (isPending: boolean) => void
 ) => {
-	const isMounted = useRef<boolean>(true)
-	useEffect(
-		() => () => {
-			isMounted.current = false
-		},
-		[]
-	)
-
 	const link = getNavigateLink(signals, context)
 	if (!signals) return [undefined, undefined] as const
 	return [
@@ -88,7 +80,7 @@ const useLinkHandler = (
 			e.stopPropagation()
 			setPendingState?.(true)
 			await runMany(signals, context)
-			isMounted.current && setPendingState?.(false)
+			setPendingState?.(false)
 		},
 	] as const
 }
