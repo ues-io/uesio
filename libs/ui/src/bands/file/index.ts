@@ -4,8 +4,8 @@ import { FileState } from "../../definition/file"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadataexports"
 
-const adapter = createEntityAdapter<FileState>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<FileState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.file)

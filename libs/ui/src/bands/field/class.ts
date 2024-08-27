@@ -3,7 +3,6 @@ import { Context, newContext } from "../../context/context"
 import { addBlankSelectOption } from "./utils"
 import { getKey } from "../../metadata/metadata"
 import { SelectOption } from "../../definition/selectlist"
-import { Bundleable } from "../../metadataexports"
 
 const referenceTypes = ["REFERENCE", "USER", "FILE"]
 
@@ -59,7 +58,7 @@ class Field {
 		}
 		// If we have a name, but no options, we need to grab the full metadata from redux
 		if (!selectMetadata.options && selectMetadata.name) {
-			const key = getKey(selectMetadata as Bundleable)
+			const key = getKey(selectMetadata)
 			const reduxMetadata = context.getSelectList(key)
 			if (reduxMetadata) {
 				selectMetadata = reduxMetadata

@@ -4,8 +4,8 @@ import { LabelState } from "../../definition/label"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<LabelState>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<LabelState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.label)

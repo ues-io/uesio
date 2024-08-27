@@ -2,8 +2,8 @@ import { createEntityAdapter } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { NotificationState } from "./types"
 
-const notificationAdapter = createEntityAdapter<NotificationState>({
-	selectId: (notification) => notification.id,
+const notificationAdapter = createEntityAdapter({
+	selectId: (notification: NotificationState) => notification.id,
 })
 
 const selectors = notificationAdapter.getSelectors(

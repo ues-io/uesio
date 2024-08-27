@@ -4,8 +4,8 @@ import { ConfigValueState } from "../../definition/configvalue"
 import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
-const adapter = createEntityAdapter<ConfigValueState>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<ConfigValueState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.configvalue)

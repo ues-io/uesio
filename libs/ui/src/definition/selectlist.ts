@@ -1,12 +1,11 @@
 import { DisplayCondition } from "../component/display"
+import { Keyable } from "../metadata/types"
 
 type SelectListMetadata = {
-	name?: string
-	namespace?: string
 	options?: SelectOption[]
 	blank_option_label?: string
 	blank_option_language_label?: string
-}
+} & Keyable
 
 type SelectListMetadataMap = {
 	[key: string]: SelectListMetadata

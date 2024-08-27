@@ -64,9 +64,9 @@ const Route: UtilityComponent = (props) => {
 				params,
 			},
 			"",
-			route.path
+			path
 				? getRouteUrlPrefix(routeContext, namespace) +
-						route.path +
+						path +
 						window.location.search
 				: undefined
 		)

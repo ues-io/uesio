@@ -6,7 +6,6 @@ import {
 	platform,
 	RouteNavigateRequest,
 } from "../../platform/platform"
-import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps } from "./utils"
 import { dispatch } from "../../store/store"
@@ -175,10 +174,8 @@ const handleNavigateResponse = async (
 	// We don't need to store the dependencies in redux with the route itself
 	delete routeResponse.dependencies
 
-	batch(() => {
-		dispatch(setRoute(routeResponse))
-		dispatchRouteDeps(deps)
-	})
+	dispatch(setRoute(routeResponse))
+	dispatchRouteDeps(deps)
 
 	// Always scroll to top of view after doing a route navigate
 	if (isRealBrowser) {

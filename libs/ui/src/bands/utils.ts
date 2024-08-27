@@ -6,7 +6,7 @@ type EntityPayload = {
 
 const createEntityReducer =
 	<T extends EntityPayload, S>(reducer: (state: S, payload: T) => void) =>
-	({ entities }: EntityState<S>, { payload }: PayloadAction<T>) => {
+	({ entities }: EntityState<S, string>, { payload }: PayloadAction<T>) => {
 		const entityState = entities[payload.entity]
 		entityState && reducer(entityState, payload)
 	}

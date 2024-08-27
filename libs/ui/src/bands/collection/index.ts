@@ -9,14 +9,14 @@ import { init as initWire, load as loadWire, WireLoadAction } from "../wire"
 import { getKey } from "../../metadata/metadata"
 import { RootState } from "../../store/store"
 
-const adapter = createEntityAdapter<PlainCollection>({
-	selectId: getKey,
+const adapter = createEntityAdapter({
+	selectId: getKey<PlainCollection>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.collection)
 
 const mergeCollection = (
-	state: EntityState<PlainCollection>,
+	state: EntityState<PlainCollection, string>,
 	collections: PlainCollectionMap | undefined
 ) => {
 	if (!collections) return

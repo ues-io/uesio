@@ -1,4 +1,4 @@
-import { api, metadata, param, wire, signal } from "@uesio/ui"
+import { api, metadata, param, signal } from "@uesio/ui"
 import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
 import {
 	ComponentProperty,
@@ -63,35 +63,33 @@ const signals: SignalBandDefinition = {
 							type: "STRUCT",
 							name: "params",
 							label: "Parameters",
-							properties: params.map(
-								(paramDef: param.ParamDefinition) => {
-									const { name, type, required } = paramDef
-									if (type === "SELECT") {
-										return {
-											type: "SELECT",
-											name,
-											required,
-											selectList: {
-												name: (
-													paramDef as param.SelectParam
-												).selectList,
-											} as wire.SelectListMetadata,
-										} as ComponentProperty
-									}
-									if (type === "METADATA") {
-										return {
-											type: "TEXT",
-											name,
-											required,
-										} as ComponentProperty
-									}
+							properties: params.map((paramDef) => {
+								const { name, type, required } = paramDef
+								if (type === "SELECT") {
 									return {
-										type: type === "LIST" ? "TEXT" : type,
+										type: "SELECT",
 										name,
 										required,
-									} as ComponentProperty
+										selectList: {
+											name: (
+												paramDef as param.SelectParam
+											).selectList,
+										},
+									}
 								}
-							) as ComponentProperty[],
+								if (type === "METADATA") {
+									return {
+										type: "TEXT",
+										name,
+										required,
+									}
+								}
+								return {
+									type: type === "LIST" ? "TEXT" : type,
+									name,
+									required,
+								}
+							}),
 						} as StructProperty)
 					}
 				}

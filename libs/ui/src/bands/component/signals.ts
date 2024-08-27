@@ -1,13 +1,12 @@
-import produce from "immer"
 import { getSignal } from "../../component/registry"
 import { Context, isContextObject } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { getCurrentState, dispatch } from "../../store/store"
 import { selectTarget } from "./selectors"
 import { set as setComponent } from "../component"
-import { batch } from "react-redux"
 import { platform } from "../../platform/platform"
 import { makeComponentId } from "../../hooks/componentapi"
+import { produce } from "immer"
 
 interface ComponentSignal extends SignalDefinition {
 	component: string
@@ -87,30 +86,29 @@ const getComponentSignalDefinition = () => ({
 
 		// Loop over all ids that match the target and dispatch
 		// to them all
-		batch(() => {
-			componentStates.forEach((componentState) => {
-				dispatch(
-					setComponent({
-						id: componentState.id,
-						state: produce(componentState.state, (draft) => {
-							const returnvalue = handler.dispatcher(
-								draft,
-								signal,
-								context,
-								platform,
-								componentState.id
-							)
-							// If we returned a context object from our dispatcher,
-							// That means we want to set it as the new context.
-							if (isContextObject(returnvalue)) {
-								context = returnvalue
-								return
-							}
-							return returnvalue
-						}),
-					})
-				)
-			})
+
+		componentStates.forEach((componentState) => {
+			dispatch(
+				setComponent({
+					id: componentState.id,
+					state: produce(componentState.state, (draft) => {
+						const returnvalue = handler.dispatcher(
+							draft,
+							signal,
+							context,
+							platform,
+							componentState.id
+						)
+						// If we returned a context object from our dispatcher,
+						// That means we want to set it as the new context.
+						if (isContextObject(returnvalue)) {
+							context = returnvalue
+							return
+						}
+						return returnvalue
+					}),
+				})
+			)
 		})
 
 		return context

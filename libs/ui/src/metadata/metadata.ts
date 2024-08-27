@@ -1,6 +1,6 @@
-import { Bundleable, METADATA } from "./types"
+import { Keyable, METADATA } from "./types"
 
-const getKey = (item: Bundleable) =>
+const getKey = <T extends Keyable>(item: T) =>
 	`${item.namespace ? item.namespace + "." : ""}${item.name}`
 
 export { getKey, METADATA }

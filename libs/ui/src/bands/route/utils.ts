@@ -20,16 +20,14 @@ import { PlainWire, ServerWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
-import { Bundleable } from "../../metadata/types"
 import { ComponentPackState } from "../../definition/componentpack"
 
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
 	if (!wires || !viewdefs) return [] as PlainWire[]
 	return wires.map((wire) => {
 		const viewId = wire.view.split("(")[0]
-		const wireDef = viewdefs.find(
-			(viewdef) => getKey(viewdef as Bundleable) === viewId
-		)?.definition.wires?.[wire.name]
+		const wireDef = viewdefs.find((viewdef) => getKey(viewdef) === viewId)
+			?.definition.wires?.[wire.name]
 		if (!wireDef)
 			throw new Error(
 				`Could not find wire def for wire: ${wire.view} : ${wire.name}`

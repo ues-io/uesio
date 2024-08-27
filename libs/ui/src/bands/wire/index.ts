@@ -102,8 +102,8 @@ type WireLoadAction = PayloadAction<
 
 type SetIsLoadingAction = PayloadAction<PlainWire[]>
 
-const adapter = createEntityAdapter<PlainWire>({
-	selectId: (wire) => getFullWireId(wire.view, wire.name),
+const adapter = createEntityAdapter({
+	selectId: (wire: PlainWire) => getFullWireId(wire.view, wire.name),
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.wire)
@@ -263,7 +263,7 @@ const wireSlice = createSlice({
 			state.deletes = {}
 			state.errors = {}
 		}),
-		init: (state: EntityState<PlainWire>, action: WireLoadAction) =>
+		init: (state: EntityState<PlainWire, string>, action: WireLoadAction) =>
 			adapter.upsertMany(state, action.payload[0]),
 		empty: createEntityReducer<EntityPayload, PlainWire>((state) => {
 			state.data = {}
