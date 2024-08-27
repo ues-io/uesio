@@ -1,5 +1,5 @@
 import { component, definition, styles, api, context } from "@uesio/ui"
-import Editor, { loader, Monaco, useMonaco } from "@monaco-editor/react"
+import Editor, { loader, Monaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { CodeFieldUtilityProps } from "./types"
 import { useEffect, useMemo, useState } from "react"
@@ -176,14 +176,14 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		onMount?.(editor, monaco)
 	}
 
-	const monacoApi = useMonaco()
+	const loadingNode = (
+		<div className={classes.loading}>
+			Loading language models for {language}...
+		</div>
+	)
 
-	if (loading || !monacoApi) {
-		return (
-			<div className={classes.loading}>
-				Loading language models for {language}...
-			</div>
-		)
+	if (loading) {
+		return loadingNode
 	}
 
 	if (!loading && loadingError) {
@@ -203,6 +203,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		<div className={classes.input}>
 			<Editor
 				value={value}
+				loading={loadingNode}
 				options={{
 					scrollBeyondLastLine: false,
 					automaticLayout: true,

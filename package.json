@@ -48,7 +48,7 @@
 	"files": [],
 	"devDependencies": {
 		"@dagrejs/dagre": "^1.1.1",
-		"@floating-ui/react": "^0.26.9",
+		"@floating-ui/react": "^0.26.23",
 		"@fullcalendar/core": "^6.1.10",
 		"@fullcalendar/daygrid": "^6.1.10",
 		"@fullcalendar/interaction": "^6.1.10",
@@ -73,8 +73,8 @@
 		"@types/json-pointer": "^1.0.34",
 		"@types/lodash": "^4.14.201",
 		"@types/papaparse": "^5.3.14",
-		"@types/react": "^17.0.38",
-		"@types/react-dom": "^17.0.11",
+		"@types/react": "^18.3.4",
+		"@types/react-dom": "^18.3.0",
 		"@types/react-redux": "^7.1.24",
 		"@types/react-syntax-highlighter": "^15.5.11",
 		"@types/react-transition-group": "^4.4.6",
@@ -99,9 +99,9 @@
 		"nx": "19.5.7",
 		"papaparse": "^5.4.1",
 		"prettier": "3.2.5",
-		"react": "^17.0.2",
+		"react": "^18.3.1",
 		"react-chartjs-2": "^5.2.0",
-		"react-dom": "^17.0.2",
+		"react-dom": "^18.3.1",
 		"react-hotkeys-hook": "^4.3.7",
 		"react-markdown": "^8.0.7",
 		"react-redux": "^8.1.2",
@@ -118,11 +118,5 @@
 		"ts-node": "10.9.2",
 		"typescript": "4.9.5",
 		"yaml": "2.4.1"
-	},
-	"overrides": {
-		"sonner": {
-			"react": "$react",
-			"react-dom": "$react-dom"
-		}
 	}
 }
