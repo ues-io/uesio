@@ -13,11 +13,8 @@ import NotificationArea from "./notificationarea"
 import { Component } from "../component/component"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
-import { Preset, defineConfig, setup } from "@twind/core"
-import presetAutoprefix from "@twind/preset-autoprefix"
-import presetTailwind from "@twind/preset-tailwind"
-import { styles } from ".."
 import FontFaceObserver from "fontfaceobserver"
+import { setupStyles } from "../styles/styles"
 
 new FontFaceObserver("Material Icons").load(null, 20000).then(() => {
 	document.documentElement.classList.remove("noicons")
@@ -36,17 +33,6 @@ Promise.all([gosha.load(null, 20000), roboto.load(null, 20000)]).then(() => {
 	document.documentElement.offsetHeight
 	document.documentElement.style.display = ""
 })
-
-// This converts all our @media queries to @container queries
-const presetContainerQueries = () =>
-	({
-		finalize: (rule) => {
-			if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
-				rule.r[0] = rule.r[0].replace("@media", "@container")
-			}
-			return rule
-		},
-	}) as Preset
 
 const Route: UtilityComponent = (props) => {
 	const site = useSite()
@@ -125,40 +111,7 @@ const Route: UtilityComponent = (props) => {
 		view: makeViewId(viewId, "$root"),
 	})
 
-	const themeData = routeContext.getTheme()
-
-	// activate twind - must be called at least once
-	setup(
-		defineConfig({
-			presets: [
-				presetAutoprefix(),
-				presetTailwind(),
-				presetContainerQueries(),
-			],
-			hash: false,
-			theme: {
-				extend: {
-					colors: {
-						primary: themeData.definition.palette.primary,
-					},
-					fontFamily: {
-						sans: ["Roboto", "sans-serif"],
-					},
-					fontSize: {
-						xxs: ["8pt", "16px"],
-					},
-				},
-			},
-		}),
-		undefined,
-		// This is dumb. But twind doesn't have a nice api for creating a default
-		// instance without using the observer. So we can just give it an empty,
-		// non-attached div to observe :)
-		document.createElement("div")
-	)
-
-	// We need to process the style classes we put on the root element in index.gohtml
-	styles.process(undefined, "h-screen overflow-auto hidden contents")
+	setupStyles(routeContext.getTheme())
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)
