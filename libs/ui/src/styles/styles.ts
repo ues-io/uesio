@@ -9,9 +9,11 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
-import { tw, Class, hash } from "@twind/core"
+import { Class, getSheet, hash, Preset, Twind, twind } from "@twind/core"
 import { STYLE_TOKENS } from "../componentexports"
 import interpolate from "./interpolate"
+import presetAutoprefix from "@twind/preset-autoprefix"
+import presetTailwind from "@twind/preset-tailwind"
 
 const twMerge = extendTailwindMerge({
 	extend: {
@@ -20,6 +22,17 @@ const twMerge = extendTailwindMerge({
 		},
 	},
 })
+
+// This converts all our @media queries to @container queries
+const presetContainerQueries = () =>
+	({
+		finalize: (rule) => {
+			if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
+				rule.r[0] = rule.r[0].replace("@media", "@container")
+			}
+			return rule
+		},
+	}) as Preset
 
 const defaultTheme: ThemeState = {
 	name: "default",
@@ -35,6 +48,46 @@ const defaultTheme: ThemeState = {
 		},
 		spacing: 8,
 	},
+}
+
+let activeStyles: Twind
+let activeThemeData: ThemeState
+
+const setupStyles = (themeData: ThemeState) => {
+	if (
+		!activeStyles ||
+		JSON.stringify(activeThemeData) !== JSON.stringify(themeData)
+	) {
+		activeStyles?.destroy()
+		activeThemeData = themeData
+		activeStyles = twind(
+			{
+				presets: [
+					presetAutoprefix(),
+					presetTailwind(),
+					presetContainerQueries(),
+				],
+				hash: false,
+				theme: {
+					extend: {
+						colors: {
+							primary: themeData.definition.palette.primary,
+						},
+						fontFamily: {
+							sans: ["Roboto", "sans-serif"],
+						},
+						fontSize: {
+							xxs: ["8pt", "16px"],
+						},
+					},
+				},
+			},
+			getSheet()
+		)
+	}
+
+	// We need to process the style classes we put on the root element in index.gohtml
+	process(undefined, "h-screen overflow-auto hidden contents")
 }
 
 export interface StyleDefinition {
@@ -98,7 +151,9 @@ function getVariantTokens(
 
 function process(context: Context | undefined, ...classes: Class[]) {
 	const output = interpolate(classes, [])
-	return tw(twMerge(context ? context?.mergeString(output) : output))
+	return activeStyles(
+		twMerge(context ? context?.mergeString(output) : output)
+	)
 }
 
 function useUtilityStyleTokens<K extends string>(
@@ -148,6 +203,7 @@ export {
 	cx,
 	mergeClasses,
 	process,
+	setupStyles,
 	useUtilityStyleTokens,
 	useStyleTokens,
 	colors,

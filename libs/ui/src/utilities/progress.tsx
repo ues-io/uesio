@@ -1,23 +1,12 @@
-import { FunctionComponent } from "react"
 import { useNProgress } from "@tanem/react-nprogress"
-import { UtilityComponent, UtilityProps } from "../definition/definition"
+import { UtilityComponent } from "../definition/definition"
 import { useRouteLoading } from "../bands/route/selectors"
+import { useRef } from "react"
 
-interface ContainerProps extends UtilityProps {
+const Container: UtilityComponent<{
 	animationDuration: number
 	isFinished: boolean
-}
-
-interface BarProps extends UtilityProps {
-	animationDuration: number
-	progress: number
-}
-
-const Container: FunctionComponent<ContainerProps> = ({
-	animationDuration,
-	children,
-	isFinished,
-}) => (
+}> = ({ animationDuration, children, isFinished }) => (
 	<div
 		style={{
 			opacity: isFinished ? 0 : 1,
@@ -29,7 +18,10 @@ const Container: FunctionComponent<ContainerProps> = ({
 	</div>
 )
 
-const Bar: FunctionComponent<BarProps> = ({ animationDuration, progress }) => (
+const Bar: UtilityComponent<{
+	animationDuration: number
+	progress: number
+}> = ({ animationDuration, progress }) => (
 	<div
 		style={{
 			background: "#29d",
@@ -59,8 +51,25 @@ const Bar: FunctionComponent<BarProps> = ({ animationDuration, progress }) => (
 )
 
 const Progress: UtilityComponent = (props) => {
-	const { context } = props
 	const isAnimating = useRouteLoading()
+	const key = useRef(0)
+	if (isAnimating) {
+		key.current = key.current + 1
+	}
+	return (
+		<ProgressInternal
+			context={props.context}
+			isAnimating={isAnimating}
+			key={key.current}
+		/>
+	)
+}
+
+const ProgressInternal: UtilityComponent<{
+	isAnimating: boolean
+}> = (props) => {
+	const { context, isAnimating } = props
+
 	const { animationDuration, isFinished, progress } = useNProgress({
 		isAnimating,
 	})
