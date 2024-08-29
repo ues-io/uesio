@@ -148,7 +148,7 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
 				"Direct ancestor (via Language Label)"
 			)
 			// Initiate a route/NAVIGATE_TO_ROUTE signal via button
-			cy.clickButtonIfExists("go-to-animals-list")
+			cy.clickButton("go-to-animals-list")
 			cy.url().should("include", "/animals/list")
 			cy.get("table[id$='animalsTable']>tbody>tr").should(
 				"have.length",

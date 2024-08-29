@@ -46,7 +46,7 @@ describe("Condition activation/deactivation", () => {
 				assertConditionState(true, "ID-002")
 
 				// Toggle the condition to active
-				cy.clickButtonIfExists("toggleCondition")
+				cy.clickButton("toggleCondition")
 
 				// We should now have exactly one record in our table
 				getTableRows().should("have.length", 1)
@@ -54,17 +54,17 @@ describe("Condition activation/deactivation", () => {
 				assertConditionState(false, "ID-002")
 
 				// Toggle the condition back to inactive
-				cy.clickButtonIfExists("toggleCondition")
+				cy.clickButton("toggleCondition")
 				getTableRows().should("have.length.above", 1)
 				assertConditionState(true, "ID-002")
 
 				// Change the condition value, which should also activate it again
-				cy.clickButtonIfExists("setConditionValue")
+				cy.clickButton("setConditionValue")
 				getTableRows().should("have.length", 1)
 				assertConditionState(false, "ID-003")
 
 				// Reset all named conditions, which should deactivate the named condition
-				cy.clickButtonIfExists("resetNamedConditions")
+				cy.clickButton("resetNamedConditions")
 				getTableRows().should("have.length.above", 1)
 				assertConditionState(true, "ID-002")
 			})
