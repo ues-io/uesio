@@ -1,0 +1,6 @@
+name: view_home
+dialect: JAVASCRIPT
+label: Home
+type: GENERATOR
+params:
+public: true

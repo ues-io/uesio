@@ -1,0 +1,6 @@
+name: profile_public
+dialect: JAVASCRIPT
+label: Public Profile
+type: GENERATOR
+params:
+public: true

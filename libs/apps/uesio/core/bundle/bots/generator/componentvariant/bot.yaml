@@ -1,0 +1,13 @@
+name: componentvariant
+dialect: "JAVASCRIPT"
+label: Component Variant
+type: "GENERATOR"
+params:
+  - name: component
+    prompt: Component
+    type: METADATA
+    metadataType: COMPONENT
+  - name: name
+    prompt: Component Variant Name
+    type: METADATANAME
+public: true

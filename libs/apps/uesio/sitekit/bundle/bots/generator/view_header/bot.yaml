@@ -1,0 +1,6 @@
+name: view_header
+dialect: JAVASCRIPT
+label: Header View
+type: GENERATOR
+params:
+public: true

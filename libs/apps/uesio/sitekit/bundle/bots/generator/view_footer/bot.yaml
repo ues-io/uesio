@@ -1,0 +1,6 @@
+name: view_footer
+dialect: JAVASCRIPT
+label: Footer View
+type: GENERATOR
+params:
+public: true

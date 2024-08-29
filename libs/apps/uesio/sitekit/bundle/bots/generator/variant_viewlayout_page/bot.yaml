@@ -1,0 +1,6 @@
+name: variant_viewlayout_page
+dialect: JAVASCRIPT
+label: ViewLayout Page Variant
+type: GENERATOR
+params:
+public: true

@@ -1,0 +1,33 @@
+wires:
+components:
+  - uesio/sitekit.header:
+      uesio.styleTokens:
+        root:
+          - from-indigo-700/95
+          - to-violet-600/95
+          - bg-gradient-to-br
+          - "[background-size:100%_500%]"
+          - backdrop-blur
+      sticky: true
+      logo:
+        - uesio/io.image:
+            file: uesio/core.logowhite
+            height: 44
+            signals:
+              - signal: "route/NAVIGATE"
+                path: "home"
+      right:
+        - uesio/io.group:
+            components:
+              - uesio/io.button:
+                  uesio.variant: uesio/sitekit.secondary
+                  text: Page 1
+              - uesio/io.button:
+                  uesio.variant: uesio/sitekit.secondary
+                  text: Page 2
+              - uesio/io.button:
+                  uesio.variant: uesio/sitekit.secondary
+                  text: Page 3
+        - uesio/io.button:
+            uesio.variant: uesio/sitekit.primary
+            text: Call to Action

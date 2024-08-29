@@ -1,0 +1,4 @@
+name: ${name}
+label: ${label}
+extends: ${extends}
+definition: ${definition}
