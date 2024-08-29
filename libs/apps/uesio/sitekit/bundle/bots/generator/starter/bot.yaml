@@ -1,0 +1,18 @@
+name: starter
+dialect: JAVASCRIPT
+label: Starter
+type: GENERATOR
+params:
+  - name: use_ai_for_content_and_copy
+    type: CHECKBOX
+    prompt: Use AI to generate content and copy for this site.
+    default: false
+    displayAs: TOGGLE
+  - name: content_and_copy_instructions
+    type: LONGTEXT
+    prompt: Additional instructions for generating the content and copy.
+    conditions:
+      - param: use_ai_for_content_and_copy
+        value: true
+public: true
+timeout: 30

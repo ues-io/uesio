@@ -25,7 +25,7 @@ definition:
           value: $User{username}
         - field: uesio/studio.starter_template
           valueSource: VALUE
-          value: $If{[$FeatureFlag{use_starter_templates}][uesio/appkit:v0.0.1][]}
+          value: uesio/appkit:v0.0.1
     starter:
       collection: uesio/studio.bundlelisting
       fields:
@@ -179,9 +179,6 @@ definition:
                                                   text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
-                          uesio.display:
-                            - type: featureFlag
-                              name: use_starter_templates
                           components:
                             - uesio/io.titlebar:
                                 title: Starter Template

@@ -1,0 +1,16 @@
+wires:
+components:
+  - uesio/io.viewlayout:
+      uesio.variant: ${namespace}.page
+      header:
+        - uesio/core.view:
+            view: ${namespace}.header
+      content:
+        - uesio/io.box:
+            uesio.variant: uesio/sitekit.section
+            components:
+              - uesio/io.text:
+                  text: Hello World
+      footer:
+        - uesio/core.view:
+            view: ${namespace}.footer

@@ -1,0 +1,6 @@
+name: starter_bundledef
+dialect: JAVASCRIPT
+label: Starter Bundle Def
+type: GENERATOR
+params:
+public: true
