@@ -117,9 +117,7 @@ Cypress.Commands.add(
 Cypress.Commands.add("clickButton", (idFragment: string) => {
 	const buttonSelector = idContainsSelector("button", idFragment)
 	const anchorSelector = idContainsSelector("a", idFragment)
-	cy.get(`${buttonSelector},${anchorSelector}`).click({
-		force: true,
-	})
+	cy.get(`${buttonSelector},${anchorSelector}`).click()
 })
 
 // Checks if a given button exists in the DOM, and clicks on it if is found
@@ -133,9 +131,7 @@ Cypress.Commands.add("clickButtonIfExists", (idFragment: string) => {
 function clickIfExists(selector: string) {
 	cy.get("body").then((body) => {
 		if (body.find(selector).length > 0) {
-			cy.get(selector).click({
-				force: true,
-			})
+			cy.get(selector).click()
 		}
 	})
 }
