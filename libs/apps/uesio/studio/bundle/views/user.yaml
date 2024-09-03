@@ -486,7 +486,7 @@ definition:
                       value: ${value}
                   fieldId: name
               - uesio/io.box:
-                  uesio.variant: uesio/studio.calloutsection
+                  uesio.variant: uesio/appkit.note
                   uesio.display:
                     - type: hasValue
                       value: ${value}
@@ -499,7 +499,7 @@ definition:
                             - whitespace-pre
                             - font-mono
                             - border-1
-                            - border-yellow-500
+                            - border-black/80
                             - p-2
                             - rounded-md
                             - text-[8pt]
