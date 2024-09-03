@@ -159,7 +159,7 @@ definition:
                         panel: newWorkspace
               content:
                 - uesio/io.box:
-                    uesio.variant: uesio/studio.calloutsection
+                    uesio.variant: uesio/appkit.note
                     uesio.display:
                       - type: wireHasNoRecords
                         wire: workspaces

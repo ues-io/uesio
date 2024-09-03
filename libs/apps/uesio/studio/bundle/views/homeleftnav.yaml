@@ -91,7 +91,7 @@ definition:
                                           viewtype: createnew
                     content:
                       - uesio/io.box:
-                          uesio.variant: uesio/studio.calloutsection
+                          uesio.variant: uesio/appkit.note
                           uesio.display:
                             - type: wireHasNoRecords
                               wire: apps

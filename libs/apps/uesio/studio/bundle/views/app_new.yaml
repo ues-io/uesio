@@ -57,7 +57,7 @@ definition:
                               path: home
               content:
                 - uesio/io.box:
-                    uesio.variant: uesio/studio.calloutsection
+                    uesio.variant: uesio/appkit.note
                     components:
                       - uesio/io.text:
                           text: |
