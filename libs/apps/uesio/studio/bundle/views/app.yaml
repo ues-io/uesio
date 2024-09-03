@@ -72,7 +72,7 @@ definition:
                   wire: apps
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: App not found
                     subtitle: The app you are looking for either does not exist, or you do not have access to it.
                 - uesio/io.group:
@@ -92,7 +92,7 @@ definition:
                     wire: apps
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
+                          uesio.variant: uesio/appkit.main
                           title: ${uesio/studio.name}
                           subtitle: ${uesio/studio.description}
                           avatar:
@@ -101,7 +101,7 @@ definition:
                                 text: ${uesio/studio.icon}
                                 color: ${uesio/studio.color}
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns

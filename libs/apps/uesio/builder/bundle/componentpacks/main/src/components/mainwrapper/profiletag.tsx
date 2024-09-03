@@ -8,7 +8,7 @@ const ProfileTag: definition.UtilityComponent = (props) => {
 	return (
 		<TitleBar
 			context={context}
-			variant="uesio/builder.profile"
+			variant="uesio/appkit.item_small"
 			title="$User{username}"
 			subtitle="$User{profileLabel}"
 			avatar={

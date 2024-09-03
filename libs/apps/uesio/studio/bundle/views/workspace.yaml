@@ -33,7 +33,7 @@ definition:
               wire: workspaces
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/studio.name}
                     subtitle: $Collection{label}
                     avatar:
@@ -41,7 +41,7 @@ definition:
                           uesio.variant: uesio/io.icon
                           text: handyman
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.grid:
                     uesio.variant: uesio/io.three_columns
@@ -71,6 +71,7 @@ definition:
                                       uesio.variant: uesio/io.section
                                       title: Recent Items
                                   - uesio/io.table:
+                                      uesio.variant: uesio/appkit.main
                                       wire: recentmetadata
                                       columns:
                                         - label: Item Name

@@ -2,7 +2,7 @@ name: profiletag
 definition:
   components:
     - uesio/io.titlebar:
-        uesio.variant: uesio/builder.profile
+        uesio.variant: uesio/appkit.item_small
         title: $User{username}
         subtitle: $User{profileLabel}
         avatar:

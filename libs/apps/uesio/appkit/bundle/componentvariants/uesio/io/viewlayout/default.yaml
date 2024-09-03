@@ -1,0 +1,8 @@
+name: default
+label: Default
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    left:
+      - bg-primary-50
+public: true

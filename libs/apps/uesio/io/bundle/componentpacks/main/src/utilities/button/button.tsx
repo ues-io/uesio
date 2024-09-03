@@ -61,8 +61,7 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 			href={link}
 			disabled={isDisabled}
 			onClick={onClick}
-			className={styles.process(
-				undefined,
+			className={styles.cx(
 				classes.root,
 				disabled && classes.disabled,
 				isSelected && classes.selected,
