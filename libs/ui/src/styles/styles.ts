@@ -185,15 +185,8 @@ function useUtilityStyleTokens<K extends string>(
 
 const mergeClasses = twMerge
 
-function cx(strings: TemplateStringsArray, ...interpolations: Class[]): string
-
-function cx(...input: Class[]): string
-
-function cx(
-	strings: TemplateStringsArray | Class,
-	...interpolations: Class[]
-): string {
-	return interpolate(strings, interpolations)
+function cx(...input: Class[]): string {
+	return interpolate(input)
 }
 
 export type { StyleProps, ThemeState }
