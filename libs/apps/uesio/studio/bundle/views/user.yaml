@@ -493,6 +493,7 @@ definition:
                   components:
                     - uesio/io.text:
                         text: Your api key has been generated. You will not be shown this key again. Keep it secret, keep it safe!
+                        element: div
                     - uesio/io.text:
                         uesio.styleTokens:
                           root:
