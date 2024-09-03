@@ -15,8 +15,8 @@ definition:
       - group
       - hover:bg-white
       - border-2
-      - border-slate-800
-      - hover:border-slate-900
+      - border-fontcolor-900
+      - hover:border-fontcolor-900
       - bg-white
       # TODO: Add this expand icon back when we implement the app picker
       # - relative

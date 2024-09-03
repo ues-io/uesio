@@ -6,18 +6,26 @@ definition:
     root:
       - py-1.5
       - px-2
-      - text-slate-700
+      - text-primary-900
       - focus:bg-white
       - focus:outline-offset-[-1px]
+      - focus:text-black/90
       - items-center
-      - hover:bg-slate-100
+      - hover:bg-primary-100/70
+      - hover:border-primary-200/50
+      - saturate-50
+      - hover:saturate-100
       - gap-2.5
       - rounded
     selected:
+      - bg-accent
       - text-white
-      - bg-primary
-      - focus:bg-black
-      - hover:bg-primary
+      - saturate-100
+      - focus:bg-accent
+      - hover:bg-accent
+      - hover:saturate-100
+      - focus:text-white
+      - hover:text-white
     avatar:
       - text-base
       - flex

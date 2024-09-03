@@ -19,6 +19,7 @@ import {
 	parseTwoPartExpression,
 	parseWireExpression,
 } from "./partsparse"
+import { getThemeValue } from "../styles/styles"
 
 type MergeType =
 	| "Error"
@@ -261,9 +262,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Theme: (expression, context) => {
 		const [scope, value] = expression.split(".")
-		const theme = context.getTheme()
 		if (scope === "color") {
-			return theme.definition.palette[value]
+			return getThemeValue(context, "color." + value) as string
 		}
 		return ""
 	},

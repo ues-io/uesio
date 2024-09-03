@@ -5,7 +5,7 @@ definition:
   uesio.styleTokens:
     root:
       - text-slate-600
-      - hover:text-primary
+      - hover:text-primary-700
       - py-2
       - px-4
     label:

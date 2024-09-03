@@ -4,8 +4,8 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-700
-      - hover:text-primary
+      - text-black/80
+      - hover:text-black
       - p-2
       - uppercase
       - tracking-wider

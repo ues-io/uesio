@@ -5,10 +5,11 @@ definition:
   uesio.styleTokens:
     root:
       - border
-      - border-slate-700
+      - border-black/90
+      - text-black/90
       - rounded
       - py-1
       - px-2
-      - hover:border-slate-800
-      - hover:bg-black/10
-      - hover:text-slate-800
+      - hover:border-black
+      - hover:bg-primary-900/10
+      - hover:text-black

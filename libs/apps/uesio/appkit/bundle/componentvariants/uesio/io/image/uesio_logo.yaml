@@ -3,7 +3,7 @@ label: Uesio Logo
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-800
+      - bg-fontcolor-900
       - rounded
       - py-1.5
       - px-2
