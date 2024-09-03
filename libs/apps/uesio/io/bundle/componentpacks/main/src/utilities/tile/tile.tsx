@@ -42,11 +42,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		"uesio/io.tile"
 	)
 
-	const className = styles.process(
-		undefined,
-		classes.root,
-		isSelected && classes.selected
-	)
+	const className = styles.cx(classes.root, isSelected && classes.selected)
 	const avatarNode = avatar ? (
 		<div className={classes.avatar}>{avatar}</div>
 	) : undefined

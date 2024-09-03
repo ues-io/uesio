@@ -12,3 +12,6 @@ definition:
       - text-xs
     subtitle:
       - text-[8pt]
+    actions:
+      - flex
+      - gap-2

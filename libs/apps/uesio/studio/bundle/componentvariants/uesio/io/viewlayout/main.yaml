@@ -1,6 +1,6 @@
 name: main
 label: Main
-extends: uesio/io.default
+extends: uesio/appkit.default
 definition:
   uesio.styleTokens:
     left:

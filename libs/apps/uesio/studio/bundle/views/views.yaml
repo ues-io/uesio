@@ -60,7 +60,7 @@ definition:
                 itemIcon: view_quilt
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Views
               subtitle: What a view!
               avatar:
@@ -79,7 +79,7 @@ definition:
                             - signal: panel/TOGGLE
                               panel: newView
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.grid:
                     uesio.variant: uesio/io.three_columns
