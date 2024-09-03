@@ -1,37 +1,49 @@
 import { Class } from "@twind/core"
 
-// based on https://github.com/lukeed/clsx and https://github.com/jorgebucaran/classcat
-export function interpolate(
-	strings: TemplateStringsArray | Class,
-	interpolations: Class[]
-): string {
-	return interpolations
-		.filter(Boolean)
-		.reduce(
-			(result: string, value) => result + toString(value),
-			strings ? toString(strings as Class) : ""
-		) as string
-}
+function toVal(mix: Class) {
+	let k,
+		y,
+		str = ""
 
-function toString(value: Class): string {
-	let result = ""
-	let tmp: string
-
-	if (value && typeof value === "object") {
-		if (Array.isArray(value)) {
-			if ((tmp = interpolate(value[0], value.slice(1)))) {
-				result += " " + tmp
+	if (typeof mix === "string" || typeof mix === "number") {
+		str += mix
+	} else if (typeof mix === "object") {
+		if (Array.isArray(mix)) {
+			const len = mix.length
+			for (k = 0; k < len; k++) {
+				if (mix[k]) {
+					if ((y = toVal(mix[k]))) {
+						str && (str += " ")
+						str += y
+					}
+				}
 			}
 		} else {
-			for (const key in value) {
-				if (value[key]) result += " " + key
+			for (y in mix) {
+				if (mix?.[y]) {
+					str && (str += " ")
+					str += y
+				}
 			}
 		}
-	} else if (value !== null && typeof value !== "boolean") {
-		result += " " + value
 	}
 
-	return result
+	return str
 }
 
-export default interpolate
+export default function interpolate(...args: Class[]) {
+	let i = 0,
+		tmp,
+		x,
+		str = ""
+	const len = args.length
+	for (; i < len; i++) {
+		if ((tmp = args[i])) {
+			if ((x = toVal(tmp))) {
+				str && (str += " ")
+				str += x
+			}
+		}
+	}
+	return str
+}
