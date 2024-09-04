@@ -8,7 +8,8 @@ definition:
       - gap-3
       - text-black/80
       - p-2
-      - hover:bg-primary-100/80
       - rounded
       - relative
       - group
+    actionable:
+      - hover:bg-primary-100/80

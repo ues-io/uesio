@@ -30,19 +30,20 @@ definition:
           - justify-between
       components:
         - uesio/io.searchbox:
+            uesio.variant: uesio/appkit.main
             wire: $Prop{wire}
             searchFields: $Prop{searchFields}
             focusOnRender: true
+        - uesio/io.group:
             uesio.styleTokens:
               root:
-                - mt-4
-        - uesio/io.group:
+                - gap-4
             components:
               - uesio/io.filter:
                   wire: $Prop{wire}
-                  wrapperVariant: uesio/io.filter
+                  uesio.variant: uesio/io.customselectfield:uesio/appkit.filter
                   fieldId: uesio/studio.type
-                  labelPosition: top
+                  labelPosition: none
                   displayAs: "MULTISELECT"
                   uesio.display:
                     - type: hasValue
@@ -52,5 +53,5 @@ definition:
                   wrapperVariant: uesio/io.filter
                   conditionId: localMetadataOnly
                   displayAs: TOGGLE
-                  labelPosition: top
+                  labelPosition: left
                   label: Only local $Collection{$Prop{wire}:pluralLabel}

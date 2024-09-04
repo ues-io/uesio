@@ -1,10 +1,9 @@
-import { api, styles, component, signal, definition } from "@uesio/ui"
+import { api, component, signal, definition } from "@uesio/ui"
 import { useState } from "react"
 import {
 	ButtonIconPlacement,
 	default as IOButton,
 } from "../../utilities/button/button"
-import Icon from "../../utilities/icon/icon"
 
 type ButtonDefinition = {
 	text?: string
@@ -17,17 +16,8 @@ type ButtonDefinition = {
 	tooltip?: string
 }
 
-const StyleDefaults = Object.freeze({
-	root: [],
-	label: [],
-	selected: [],
-	icon: [],
-	pending: [],
-})
-
 const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
@@ -59,28 +49,18 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		<IOButton
 			id={api.component.getComponentIdFromProps(props)}
 			variant={definition[component.STYLE_VARIANT]}
-			classes={classes}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			isPending={isPending}
 			pendingLabel={pendingText}
 			iconPlacement={iconPlacement}
+			iconFill={iconFill}
 			label={text}
 			link={link}
 			onClick={handler}
 			context={context}
 			tooltip={tooltip}
 			isSelected={isSelected}
-			icon={
-				icon ? (
-					<Icon
-						classes={{
-							root: classes.icon,
-						}}
-						fill={iconFill}
-						context={context}
-						icon={context.mergeString(icon)}
-					/>
-				) : undefined
-			}
+			iconText={icon}
 		/>
 	)
 }

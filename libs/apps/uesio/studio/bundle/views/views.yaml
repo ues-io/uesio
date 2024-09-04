@@ -59,68 +59,57 @@ definition:
                 itemType: views
                 itemIcon: view_quilt
         content:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/appkit.main
-              title: Views
-              subtitle: What a view!
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: view_quilt
-              actions:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.button:
-                          text: Create a New View
-                          uesio.variant: uesio/io.primary
-                          hotkey: "n"
-                          uesio.id: new-view
-                          signals:
-                            - signal: panel/TOGGLE
-                              panel: newView
-          - uesio/io.box:
-              uesio.variant: uesio/appkit.primarysection
-              components:
-                - uesio/io.grid:
-                    uesio.variant: uesio/io.three_columns
-                    uesio.styleTokens:
-                      root:
-                        - gap-10
-                    items:
-                      - uesio/io.griditem:
-                          uesio.styleTokens:
-                            root:
-                              - col-span-1
-                              - lg:col-span-2
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/appkit.main
+                    title: Views
+                    subtitle: What a view!
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: view_quilt
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/studio.listheader:
-                                wire: allviews
-                            - uesio/io.table:
-                                uesio.id: viewsTable
-                                wire: allviews
-                                columns:
-                                  - label: View
-                                    components:
-                                      - uesio/io.iconlabel:
-                                          uesio.variant: uesio/io.namespacefield
-                                          text: ${uesio/studio.label}
-                                          subtitle: ${uesio/studio.namespace}
-                                          icon: ${uesio/studio.appicon}
-                                          color: ${uesio/studio.appcolor}
-                                  - field: uesio/core.updatedby
-                                    user:
-                                      subtitle: $Time{uesio/core.updatedat}
-                                  - field: uesio/core.createdby
-                                    user:
-                                      subtitle: $Time{uesio/core.createdat}
-                                rowactions:
-                                  - text: Details
-                                    type: DEFAULT
-                                    signals:
-                                      - signal: route/NAVIGATE
-                                        path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
-                                pagesize: 10
-                      - uesio/io.griditem:
+                            - uesio/io.button:
+                                text: Create a New View
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
+                                uesio.id: new-view
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newView
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.primarysection
+                    components:
+                      - uesio/studio.listheader:
+                          wire: allviews
+                      - uesio/io.table:
+                          uesio.variant: uesio/appkit.main
+                          uesio.id: viewsTable
+                          wire: allviews
+                          columns:
+                            - label: View
+                              components:
+                                - uesio/appkit.item:
+                                    title: ${uesio/studio.label}
+                                    subtitle: ${uesio/studio.namespace}
+                                    icon: ${uesio/studio.appicon}
+                                    iconcolor: ${uesio/studio.appcolor}
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
+                          pagesize: 10
   panels:
     newView:
       uesio.type: uesio/io.dialog

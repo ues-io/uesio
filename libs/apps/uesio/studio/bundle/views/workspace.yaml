@@ -76,15 +76,11 @@ definition:
                                       columns:
                                         - label: Item Name
                                           components:
-                                            - uesio/io.titlebar:
-                                                uesio.variant: uesio/appkit.item
+                                            - uesio/appkit.item:
                                                 title: ${uesio/studio.label}
                                                 subtitle: ${workspaces:uesio/studio.app->uesio/studio.fullname}
-                                                avatar:
-                                                  - uesio/io.text:
-                                                      uesio.variant: uesio/appkit.avataricon
-                                                      text: ${workspaces:uesio/studio.app->uesio/studio.icon}
-                                                      color: ${workspaces:uesio/studio.app->uesio/studio.color}
+                                                icon: ${workspaces:uesio/studio.app->uesio/studio.icon}
+                                                iconcolor: ${workspaces:uesio/studio.app->uesio/studio.color}
                                         - field: uesio/core.dynamiccollection
                                           label: Metadata Type
                                         - field: uesio/core.updatedby

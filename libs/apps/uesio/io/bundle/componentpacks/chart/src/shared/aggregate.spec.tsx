@@ -1,4 +1,4 @@
-import { collection, context, wire } from "@uesio/ui"
+import { collection, context, wire, styles, test } from "@uesio/ui"
 import { aggregate } from "./aggregate"
 import { LabelsDefinition } from "./labels"
 
@@ -89,6 +89,9 @@ describe("Chart: aggregate", () => {
 		fields: [{ id: "luigi/foo.status" }, { id: "uesio/core.id" }],
 	})
 	wireInstance.attachCollection(plainCollection)
+	test.create({})
+	const contextInstance = new context.Context()
+	styles.setupStyles(contextInstance)
 
 	it("should do a count by default on non-numeric value fields", () => {
 		const wires = {
@@ -106,7 +109,7 @@ describe("Chart: aggregate", () => {
 				name: "RegistrationsByStatus",
 			},
 		]
-		const contextInstance = new context.Context()
+
 		const [datasets, categories] = aggregate(
 			wires,
 			labelsDefinition,
@@ -118,8 +121,8 @@ describe("Chart: aggregate", () => {
 				label: "Registrations by Status",
 				cubicInterpolationMode: "monotone",
 				data: [2, 2, 1],
-				backgroundColor: "rgb(255, 99, 132)",
-				borderColor: "rgb(255, 99, 132)",
+				backgroundColor: "#e11d48",
+				borderColor: "#e11d48",
 			},
 		])
 		expect(categories).toEqual({
@@ -145,7 +148,6 @@ describe("Chart: aggregate", () => {
 				name: "NumberByStatus",
 			},
 		]
-		const contextInstance = new context.Context()
 		const [datasets, categories] = aggregate(
 			wires,
 			labelsDefinition,
@@ -157,8 +159,8 @@ describe("Chart: aggregate", () => {
 				label: "Total Number by Status",
 				cubicInterpolationMode: "monotone",
 				data: [3, 7, 5],
-				backgroundColor: "rgb(255, 99, 132)",
-				borderColor: "rgb(255, 99, 132)",
+				backgroundColor: "#e11d48",
+				borderColor: "#e11d48",
 			},
 		])
 		expect(categories).toEqual({

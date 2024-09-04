@@ -209,7 +209,7 @@ function useUtilityStyleTokens<K extends string>(
 }
 
 function getThemeValue(context: Context, key: string) {
-	return activeStyles.theme(key)
+	return activeStyles?.theme(key) || ""
 }
 
 const mergeClasses = twMerge
