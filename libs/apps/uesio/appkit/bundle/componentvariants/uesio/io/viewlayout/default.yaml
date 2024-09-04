@@ -4,5 +4,5 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     left:
-      - bg-primary-50
+      - bg-primary-50/70
 public: true

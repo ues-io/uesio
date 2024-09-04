@@ -82,7 +82,7 @@ definition:
                     wire: translations
                     components:
                       - uesio/io.tile:
-                          uesio.variant: uesio/io.item
+                          uesio.variant: uesio/appkit.card
                           signals:
                             - signal: route/NAVIGATE
                               path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}

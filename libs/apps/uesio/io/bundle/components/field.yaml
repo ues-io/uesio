@@ -22,7 +22,8 @@ variants:
   - uesio/io.listmenu:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.tile:uesio/io.default
-  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.tile:uesio/io.item
+  - uesio/io.titlebar:uesio/io.item
 slots:
   - name: components
     path: /list

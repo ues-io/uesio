@@ -9,7 +9,7 @@ definition:
       - w-8
       - h-8
       - rounded-full
-      - hover:bg-primary-100/70
+      - hover:bg-primary-200/60
       - text-sm
       - text-slate-800
     icon:

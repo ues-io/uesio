@@ -119,10 +119,7 @@ definition:
                                 icon: web
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/studio.appitem
-                                uesio.styleTokens:
-                                  avatar:
-                                    - bg-[${uesio/studio.color}]
+                                uesio.variant: uesio/appkit.item
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio/core.uniquekey}"
@@ -136,7 +133,10 @@ definition:
                                       uesio.variant: uesio/io.aside
                                 avatar:
                                   - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
+                                      uesio.styleTokens:
+                                        root:
+                                          - bg-[${uesio/studio.color}]
+                                      uesio.variant: uesio/appkit.avataricon
                                       color: "white"
                                       text: ${uesio/studio.icon}
           - uesio/io.box:
@@ -165,14 +165,14 @@ definition:
                                 icon: domain
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/studio.appitem
+                                uesio.variant: uesio/appkit.item
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/core.uniquekey}
                                       element: div
                                 avatar:
                                   - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
+                                      uesio.variant: uesio/appkit.avataricon
                                       color: "#21242D"
                                       text: domain
                                 signals:

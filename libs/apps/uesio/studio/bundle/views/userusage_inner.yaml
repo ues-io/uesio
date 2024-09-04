@@ -71,11 +71,11 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.titlebar:
-        uesio.variant: uesio/io.main
+        uesio.variant: uesio/appkit.main
         title: Usage & Billing
         subtitle: ${user:uesio/core.uniquekey}
     - uesio/io.box:
-        uesio.variant: uesio/io.section
+        uesio.variant: uesio/appkit.primarysection
         components:
           - uesio/io.titlebar:
               uesio.variant: uesio/io.section
@@ -93,7 +93,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.card:
-                    scrollpanelVariant: uesio/io.card
+                    scrollpanelVariant: uesio/appkit.card
                     title: ${name}
                     subtitle: ${description}
                     actions:
@@ -190,7 +190,7 @@ definition:
                               wire: user_selected_plan
                               field: uesio/core.id
                       - uesio/io.tile:
-                          uesio.variant: uesio/studio.appitem
+                          uesio.variant: uesio/appkit.item
                           uesio.display:
                             - type: fieldValue
                               operator: EQUALS
@@ -202,14 +202,15 @@ definition:
                               - p-0
                               - hover:bg-white
                               - font-light
-                            avatar:
-                              - bg-green-700
                           content:
                             - uesio/io.text:
                                 text: Your Current Plan
                           avatar:
                             - uesio/io.text:
-                                uesio.variant: uesio/io.icon
+                                uesio.styleTokens:
+                                  root:
+                                    - bg-green-700
+                                uesio.variant: uesio/appkit.avataricon
                                 color: "white"
                                 text: check
     - uesio/io.box:

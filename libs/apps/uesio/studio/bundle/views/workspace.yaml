@@ -76,13 +76,10 @@ definition:
                                       columns:
                                         - label: Item Name
                                           components:
-                                            - uesio/io.tile:
+                                            - uesio/io.titlebar:
                                                 uesio.variant: uesio/appkit.item
-                                                content:
-                                                  - uesio/io.titlebar:
-                                                      uesio.variant: uesio/appkit.item
-                                                      title: ${uesio/studio.label}
-                                                      subtitle: ${workspaces:uesio/studio.app->uesio/studio.fullname}
+                                                title: ${uesio/studio.label}
+                                                subtitle: ${workspaces:uesio/studio.app->uesio/studio.fullname}
                                                 avatar:
                                                   - uesio/io.text:
                                                       uesio.variant: uesio/appkit.avataricon

@@ -13,6 +13,6 @@ variants:
   - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.default
   - uesio/io.tile:uesio/io.default
-  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.titlebar:uesio/io.item
   - uesio/io.titlebar:uesio/io.dialog
   - uesio/io.listfield:uesio/io.default

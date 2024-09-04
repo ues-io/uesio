@@ -103,7 +103,7 @@ definition:
                           wire: bulkjobs
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/io.item
+                                uesio.variant: uesio/appkit.card
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}/${uesio/core.id}/batches"

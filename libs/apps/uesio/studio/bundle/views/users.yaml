@@ -121,7 +121,7 @@ definition:
                     wire: users
                     components:
                       - uesio/io.tile:
-                          uesio.variant: uesio/io.item
+                          uesio.variant: uesio/appkit.card
                           content:
                             - uesio/io.text:
                                 text: ${uesio/core.firstname} ${uesio/core.lastname}

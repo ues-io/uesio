@@ -1,6 +1,5 @@
 import { definition, context as ctx, collection, wire, api } from "@uesio/ui"
 import ReferenceField, { ReferenceFieldOptions } from "./reference"
-import Tile from "../tile/tile"
 import Avatar from "../avatar/avatar"
 import TitleBar from "../titlebar/titlebar"
 
@@ -59,19 +58,18 @@ const UserField: definition.UtilityComponent<UserFieldProps> = (props) => {
 	)
 
 	return (
-		<Tile
+		<TitleBar
 			avatar={
 				<Avatar image={fileURL} text={initials} context={context} />
 			}
+			classes={{
+				root: "py-0.5",
+			}}
+			variant="uesio/io.item"
+			title={fullName}
+			subtitle={options?.subtitle}
 			context={context}
-		>
-			<TitleBar
-				variant="uesio/io.infotag"
-				title={fullName}
-				subtitle={options?.subtitle}
-				context={context}
-			/>
-		</Tile>
+		/>
 	)
 }
 

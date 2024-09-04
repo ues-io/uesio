@@ -5,11 +5,11 @@ extends: uesio/io.icon
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-100
-      - group-hover:bg-slate-200
+      - bg-primary-100
+      - group-hover:brightness-95
       - rounded-full
       - text-base
-      - text-slate-700
+      - text-black/80
       - h-8
       - w-8
       - grid

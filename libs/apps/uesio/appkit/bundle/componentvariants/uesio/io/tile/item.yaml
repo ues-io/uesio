@@ -1,14 +1,5 @@
 name: item
 label: Item
 public: true
-extends: uesio/io.default
+extends: uesio/io.item
 definition:
-  uesio.styleTokens:
-    root:
-      - gap-3
-      - text-slate-700
-      - p-2
-      - hover:bg-slate-50
-      - rounded
-      - relative
-      - group

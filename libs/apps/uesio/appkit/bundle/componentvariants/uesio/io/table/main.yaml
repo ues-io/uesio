@@ -49,10 +49,10 @@ definition:
     cell:
       - p-0
       - border-b-1
-      - border-slate-200
+      - border-primary-900/10
     body:
       - "[&.hasRowAction>tr]:hover:cursor-pointer"
-      - "[&.hasRowAction>tr]:hover:bg-slate-50"
+      - "[&.hasRowAction>tr]:hover:bg-primary-50/50"
     rowDeleted:
       - bg-rose-50
     noData:

@@ -37,14 +37,14 @@ const StyleDefaults = Object.freeze({
 		"after:pointer-events-none",
 		"after:outline-dashed",
 		"after:outline-1",
-		"after:outline-[$Theme{color.primary}]",
+		"after:outline-accent",
 		"after:-outline-offset-[2px]",
 		"after:z-10",
 		"empty:block",
 	],
 	selectedAlways: ["relative"],
-	arrow: ["fill-[$Theme{color.primary}]"],
-	popper: ["bg-[$Theme{color.primary}]", "rounded"],
+	arrow: ["fill-accent"],
+	popper: ["bg-accent", "rounded"],
 	dragging: ["opacity-20"],
 })
 

@@ -1,4 +1,4 @@
-import { component, styles, api, definition, signal } from "@uesio/ui"
+import { component, api, definition, signal } from "@uesio/ui"
 import { default as IOTile } from "../../utilities/tile/tile"
 
 type TileDefinition = {
@@ -7,17 +7,9 @@ type TileDefinition = {
 	content?: definition.DefinitionList
 }
 
-const StyleDefaults = Object.freeze({
-	root: [],
-	content: [],
-	avatar: [],
-	selected: [],
-})
-
 const Tile: definition.UC<TileDefinition> = (props) => {
 	const { definition, context, path, componentType } = props
 
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
@@ -32,8 +24,8 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 	return (
 		<IOTile
 			id={api.component.getComponentIdFromProps(props)}
-			classes={classes}
 			variant={definition[component.STYLE_VARIANT]}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}
