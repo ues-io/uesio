@@ -4,8 +4,9 @@ public: true
 definition:
   uesio.styleTokens:
     root:
-      - bg-primary-100
+      - bg-primary-200/60
       - p-4
+      - mb-4
       - text-sm
       - leading-relaxed
       - rounded-md

@@ -9,6 +9,7 @@ definition:
       - mb-6
       - border-1
       - border-slate-300
+    actionable:
       - hover:bg-slate-100
       - hover:border-slate-700
 public: true

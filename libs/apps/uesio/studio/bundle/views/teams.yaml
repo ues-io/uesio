@@ -86,7 +86,7 @@ definition:
                           wire: teams
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/io.item
+                                uesio.variant: uesio/appkit.card
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/teams/${uesio/studio.name}"

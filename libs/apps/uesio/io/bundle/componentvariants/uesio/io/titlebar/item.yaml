@@ -1,0 +1,19 @@
+name: item
+label: Item
+public: true
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - items-center
+      - gap-3
+    content:
+      - gap-1
+    title:
+      - text-sm
+      - leading-none
+    subtitle:
+      - empty:hidden
+      - leading-none
+    actions:
+      - leading-none

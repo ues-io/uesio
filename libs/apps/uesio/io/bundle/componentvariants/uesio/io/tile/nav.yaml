@@ -7,10 +7,7 @@ definition:
       - py-1.5
       - px-2
       - text-black/80
-      - focus:outline-offset-[-1px]
-      - focus:text-black/90
       - items-center
-      - hover:bg-primary-100/80
       - gap-2.5
       - rounded
     selected:
@@ -23,4 +20,8 @@ definition:
     avatar:
       - text-base
       - flex
+    actionable:
+      - hover:bg-primary-100/80
+      - focus:outline-offset-[-1px]
+      - focus:text-black/90
 public: true

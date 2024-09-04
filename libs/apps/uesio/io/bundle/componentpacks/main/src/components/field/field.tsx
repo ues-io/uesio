@@ -92,8 +92,6 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 }
 
 const StyleDefaults = Object.freeze({
-	input: [],
-	readonly: [],
 	wrapper: [],
 })
 
@@ -148,7 +146,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const common = {
-		classes,
 		readonly: readonly === true || mode === "READ",
 		path,
 		context,

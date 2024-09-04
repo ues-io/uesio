@@ -1,0 +1,14 @@
+name: card
+label: Card
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-4
+      - bg-primary-50
+      - p-5
+      - border
+      - border-primary-900/30
+      - rounded
+      - my-2
+public: true

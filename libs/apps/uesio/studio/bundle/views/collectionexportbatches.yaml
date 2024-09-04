@@ -85,7 +85,7 @@ definition:
                           wire: bulkbatches
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/io.item
+                                uesio.variant: uesio/appkit.card
                                 content:
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdat

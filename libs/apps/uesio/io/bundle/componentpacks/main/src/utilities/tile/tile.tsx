@@ -23,6 +23,7 @@ const StyleDefaults = Object.freeze({
 	content: ["empty:hidden"],
 	avatar: ["empty:hidden"],
 	selected: [],
+	actionable: [],
 })
 
 const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
@@ -42,7 +43,11 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		"uesio/io.tile"
 	)
 
-	const className = styles.cx(classes.root, isSelected && classes.selected)
+	const className = styles.cx(
+		classes.root,
+		isSelected && classes.selected,
+		onClick && classes.actionable
+	)
 	const avatarNode = avatar ? (
 		<div className={classes.avatar}>{avatar}</div>
 	) : undefined

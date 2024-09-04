@@ -6,10 +6,10 @@ definition:
   uesio.styleTokens:
     root:
     input:
-      - border-slate-700
-      - bg-slate-50
+      - border-primary-900/90
+      - bg-primary-50/70
     notfound:
-      - text-slate-500
+      - text-black/60
     editbutton:
     selecteditemwrapper:
     selectediteminner:

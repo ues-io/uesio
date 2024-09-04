@@ -6,6 +6,7 @@ import * as collection from "./collectionexports"
 import * as component from "./componentexports"
 import * as context from "./context/context"
 import * as definition from "./definition/definition"
+import * as test from "./testexports"
 import * as hooks from "./hooks/hooks"
 import * as api from "./api/api"
 import loader from "./loader/loader"
@@ -37,6 +38,7 @@ export {
 	platform,
 	signal,
 	styles,
+	test,
 	util,
 	wire,
 }

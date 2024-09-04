@@ -2,6 +2,7 @@ import { MouseEvent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
+import Icon from "../icon/icon"
 
 export type ButtonIconPlacement = "start" | "end"
 
@@ -10,6 +11,8 @@ interface ButtonUtilityProps {
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode
+	iconText?: string
+	iconFill?: boolean
 	iconPlacement?: ButtonIconPlacement
 	isPending?: boolean
 	pendingLabel?: string
@@ -26,6 +29,7 @@ const StyleDefaults = Object.freeze({
 	disabled: [],
 	label: [],
 	pending: [],
+	icon: [],
 })
 
 const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
@@ -41,6 +45,8 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 		isSelected,
 		icon,
 		iconPlacement = "start",
+		iconFill,
+		iconText,
 		isPending,
 		pendingLabel,
 		id,
@@ -53,6 +59,19 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 
 	const isDisabled = isPending || disabled
 	const currentLabel = isPending && pendingLabel ? pendingLabel : label
+
+	const iconNode = iconText ? (
+		<Icon
+			classes={{
+				root: classes.icon,
+			}}
+			fill={iconFill}
+			context={context}
+			icon={context.mergeString(iconText)}
+		/>
+	) : (
+		icon
+	)
 
 	const Tag = link ? "a" : "button"
 	const button = (
@@ -68,13 +87,13 @@ const Button: definition.UtilityComponent<ButtonUtilityProps> = (props) => {
 				isPending && classes.pending
 			)}
 		>
-			{iconPlacement === "start" && icon}
+			{iconPlacement === "start" && iconNode}
 			{currentLabel && (
 				<span className={classes.label}>
 					{context.mergeString(currentLabel)}
 				</span>
 			)}
-			{iconPlacement === "end" && icon}
+			{iconPlacement === "end" && iconNode}
 		</Tag>
 	)
 

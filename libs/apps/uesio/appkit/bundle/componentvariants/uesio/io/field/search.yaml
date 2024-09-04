@@ -8,22 +8,22 @@ definition:
       - after:left-3
       - after:content-["search"]
       - after:font-[Material_Icons]
-      - after:text-slate-800
+      - after:text-primary-900/90
       - after:text-lg
       - after:absolute
       - after:top-1/2
       - after:translate-y-[-50%]
       - after:pointer-events-none
     input:
-      - border-1
-      - border-slate-700
-      - bg-slate-50
+      - border
+      - border-primary-900/90
+      - bg-primary-50/70
       - px-2.5
       - py-2
       - pl-10
       - rounded
       - text-sm
-      - text-slate-700
-      - placeholder:text-slate-500
+      - text-black/80
+      - placeholder:text-black/60
       - placeholder:font-light
       - outline-offset-0

@@ -1,16 +1,15 @@
-import { component, styles, definition } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 import { default as IOGrid } from "../../utilities/grid/grid"
-
-const StyleDefaults = Object.freeze({
-	root: [],
-})
 
 const Grid: definition.UC = (props) => {
 	const { definition, context, componentType } = props
 
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
-		<IOGrid classes={classes} context={props.context}>
+		<IOGrid
+			variant={definition[component.STYLE_VARIANT]}
+			styleTokens={definition[component.STYLE_TOKENS]}
+			context={props.context}
+		>
 			<component.Slot
 				definition={definition}
 				listName="items"

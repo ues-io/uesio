@@ -140,7 +140,7 @@ definition:
                     wire: teammembers
                     components:
                       - uesio/io.tile:
-                          uesio.variant: uesio/io.item
+                          uesio.variant: uesio/appkit.card
                           content:
                             - uesio/io.grid:
                                 uesio.styleTokens:

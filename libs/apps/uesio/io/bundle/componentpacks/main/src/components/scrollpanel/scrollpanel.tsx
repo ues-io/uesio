@@ -1,4 +1,4 @@
-import { api, definition, component, styles, signal } from "@uesio/ui"
+import { api, definition, component, signal } from "@uesio/ui"
 import { default as ScrollPanelUtility } from "../../utilities/scrollpanel/scrollpanel"
 
 type Props = {
@@ -8,24 +8,16 @@ type Props = {
 	signals?: signal.SignalDefinition[]
 }
 
-const StyleDefaults = Object.freeze({
-	root: [],
-	header: [],
-	footer: [],
-	inner: [],
-})
-
 const ScrollPanel: definition.UC<Props> = (props) => {
 	const { definition, context, path, componentType } = props
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const handler = api.signal.getHandler(definition.signals, context)
 	return (
 		<ScrollPanelUtility
 			id={api.component.getComponentIdFromProps(props)}
 			variant={definition[component.STYLE_VARIANT]}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			context={context}
-			classes={classes}
 			onClick={handler}
 			header={
 				<component.Slot

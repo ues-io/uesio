@@ -1,4 +1,4 @@
-import { api, signal, definition, styles } from "@uesio/ui"
+import { api, signal, definition, component } from "@uesio/ui"
 import { default as IOImage } from "../../utilities/image/image"
 
 type ImageDefinition = {
@@ -13,15 +13,9 @@ type ImageDefinition = {
 	src?: string
 }
 
-const StyleDefaults = Object.freeze({
-	root: [],
-})
-
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
 	const { loading, src, file, width, height, alt } = definition
-
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 
 	const [link, handler] = api.signal.useLinkHandler(
 		definition.signals,
@@ -31,11 +25,12 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 	return (
 		<IOImage
 			id={api.component.getComponentIdFromProps(props)}
+			variant={definition[component.STYLE_VARIANT]}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			onClick={handler}
 			link={link}
 			context={context}
 			loading={loading}
-			className={classes.root}
 			src={src}
 			file={file}
 			alt={alt}
