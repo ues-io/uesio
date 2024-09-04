@@ -15,7 +15,7 @@ definition:
     title:
       - p-1
       - text-xs
-      - text-slate-600
+      - text-fontcolor-600/80
       - font-light
       - uppercase
       - tracking-wider

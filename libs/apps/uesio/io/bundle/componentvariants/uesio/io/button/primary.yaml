@@ -4,7 +4,7 @@ extends: uesio/io.secondary
 definition:
   uesio.styleTokens:
     root:
-      - bg-primary
-      - border-orange-700
-      - text-slate-50
+      - bg-accent
+      - border-accent
+      - text-white
 public: true

@@ -11,7 +11,7 @@ const Avatar: definition.UtilityComponent<AvatarProps> = (props) => {
 	const mergedText = context.mergeString(text)
 
 	const bgImageClass = mergedImage ? `bg-[url(${mergedImage})]` : "initial"
-	const bgColorClass = mergedImage ? "bg-transparent" : "bg-primary"
+	const bgColorClass = mergedImage ? "bg-transparent" : "bg-accent"
 
 	const classes = styles.useUtilityStyleTokens(
 		{

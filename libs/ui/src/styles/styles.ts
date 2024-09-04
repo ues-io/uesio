@@ -1,4 +1,4 @@
-import { ThemeState } from "../definition/theme"
+import { PaletteValue, ThemeState } from "../definition/theme"
 import { UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
@@ -9,11 +9,20 @@ import {
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
-import { Class, getSheet, hash, Preset, Twind, twind } from "@twind/core"
+import {
+	Class,
+	getSheet,
+	hash,
+	Preset,
+	ThemeFunction,
+	Twind,
+	twind,
+} from "@twind/core"
 import { STYLE_TOKENS } from "../componentexports"
 import interpolate from "./interpolate"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
+import { isStandardColorName } from "./colors"
 
 const twMerge = extendTailwindMerge({
 	extend: {
@@ -22,6 +31,38 @@ const twMerge = extendTailwindMerge({
 		},
 	},
 })
+
+const processThemeColor = (
+	themeFunc: ThemeFunction,
+	key: string,
+	value: PaletteValue
+) => {
+	// If we're one of the color values
+	if (isStandardColorName(value)) {
+		return [
+			key,
+			{
+				...(themeFunc("colors." + value) as unknown as object),
+				DEFAULT: themeFunc("colors." + value + ".600"),
+			},
+		]
+	}
+	return [key, value]
+}
+
+const processThemeColors = (
+	themeFunc: ThemeFunction,
+	themeData: ThemeState
+) => {
+	const palette = themeData.definition?.palette
+	return palette
+		? Object.fromEntries(
+				Object.entries(palette).map(([key, value]) =>
+					processThemeColor(themeFunc, key, value)
+				)
+			)
+		: {}
+}
 
 // This converts all our @media queries to @container queries
 const presetContainerQueries = () =>
@@ -34,26 +75,11 @@ const presetContainerQueries = () =>
 		},
 	}) as Preset
 
-const defaultTheme: ThemeState = {
-	name: "default",
-	namespace: "uesio/core",
-	definition: {
-		palette: {
-			primary: "#1976d2",
-			secondary: "#dc004e",
-			error: "#f44336",
-			warning: "#ff9800",
-			info: "#2196f3",
-			success: "#4caf50",
-		},
-		spacing: 8,
-	},
-}
-
 let activeStyles: Twind
 let activeThemeData: ThemeState
 
-const setupStyles = (themeData: ThemeState) => {
+const setupStyles = (context: Context) => {
+	const themeData = context.getTheme()
 	if (
 		!activeStyles ||
 		JSON.stringify(activeThemeData) !== JSON.stringify(themeData)
@@ -70,9 +96,8 @@ const setupStyles = (themeData: ThemeState) => {
 				hash: false,
 				theme: {
 					extend: {
-						colors: {
-							primary: themeData.definition.palette.primary,
-						},
+						colors: ({ theme }) =>
+							processThemeColors(theme, themeData),
 						fontFamily: {
 							sans: ["Roboto", "sans-serif"],
 						},
@@ -183,6 +208,10 @@ function useUtilityStyleTokens<K extends string>(
 	)
 }
 
+function getThemeValue(context: Context, key: string) {
+	return activeStyles.theme(key)
+}
+
 const mergeClasses = twMerge
 
 function cx(...input: Class[]): string {
@@ -192,13 +221,13 @@ function cx(...input: Class[]): string {
 export type { StyleProps, ThemeState }
 
 export {
-	defaultTheme,
 	cx,
 	mergeClasses,
 	process,
 	setupStyles,
 	useUtilityStyleTokens,
 	useStyleTokens,
+	getThemeValue,
 	colors,
 	hash,
 }

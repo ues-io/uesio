@@ -5,7 +5,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - gap-4
+      - gap-3
       - text-slate-700
       - p-2
       - hover:bg-slate-50

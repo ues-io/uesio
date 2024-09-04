@@ -39,7 +39,11 @@ const ColorPicker: definition.UC<ColorPickerDefinition> = (props) => {
 	useEffect(() => {
 		if (!colorValue) {
 			// Update to a random color if we haven't set one.
-			record?.update(fieldId, styles.colors.getRandomColor(), context)
+			record?.update(
+				fieldId,
+				styles.colors.getRandomColor(context),
+				context
+			)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [colorValue, fieldId])
@@ -62,15 +66,20 @@ const ColorPicker: definition.UC<ColorPickerDefinition> = (props) => {
 			<div className={classes.root}>
 				{styles.colors.MEDIUM_SHADES.map((shade) =>
 					styles.colors.ACCENT_COLORS.map((color) => {
-						const palette = styles.colors.COLORS[color]
-						const hex = palette[shade]
+						const hex = styles.getThemeValue(
+							context,
+							`colors.${color}.${shade}`
+						) as string
 						const isSelected = colorValue === hex
 						return (
 							<div
 								key={`${color}-${shade}`}
 								className={styles.process(
-									undefined,
+									context,
 									classes.color,
+									isSelected
+										? `border-${color}-${shade}`
+										: `bg-${color}-${shade}`,
 									{
 										[classes.selected]: isSelected,
 									}
@@ -78,14 +87,6 @@ const ColorPicker: definition.UC<ColorPickerDefinition> = (props) => {
 								onClick={() =>
 									record.update(fieldId, hex, context)
 								}
-								style={{
-									...(!isSelected && {
-										backgroundColor: hex,
-									}),
-									...(isSelected && {
-										borderColor: hex,
-									}),
-								}}
 							/>
 						)
 					})

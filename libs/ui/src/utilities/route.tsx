@@ -111,7 +111,7 @@ const Route: UtilityComponent = (props) => {
 		view: makeViewId(viewId, "$root"),
 	})
 
-	setupStyles(routeContext.getTheme())
+	setupStyles(routeContext)
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)

@@ -1,9 +1,11 @@
 name: default
 definition:
   palette:
-    primary: "#FF5E2F"
+    primary: blue
     secondary: "#dc004e"
     error: "#f44336"
     warning: "#ff9800"
     info: "#2196f3"
     success: "#4caf50"
+    fontcolor: slate
+    accent: "#ff5e2f"

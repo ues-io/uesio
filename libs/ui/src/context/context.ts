@@ -15,7 +15,6 @@ import { selectByName as selectFeatureFlagByName } from "../bands/featureflag"
 import { selectors as configValueSelectors } from "../bands/configvalue"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
-import { defaultTheme } from "../styles/styles"
 import get from "lodash/get"
 import { getAncestorPath, parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
@@ -471,7 +470,7 @@ class Context {
 
 	getTheme = () =>
 		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
-		defaultTheme
+		{}
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 

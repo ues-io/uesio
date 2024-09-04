@@ -36,7 +36,7 @@ const StyleDefaults = Object.freeze({
 		"p-24",
 		"outline-1",
 		"outline-dashed",
-		"outline-primary",
+		"outline-primary-700",
 		"text-slate-700",
 		"font-light",
 		"text-sm",
@@ -48,7 +48,7 @@ const StyleDefaults = Object.freeze({
 		"gap-4",
 		"rounded",
 	],
-	icon: ["text-7xl", "text-primary"],
+	icon: ["text-7xl", "text-primary-700"],
 })
 
 const ImportButton: definition.UtilityComponent<Props> = (props) => {

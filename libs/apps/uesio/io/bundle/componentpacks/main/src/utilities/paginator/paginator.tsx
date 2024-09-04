@@ -21,7 +21,7 @@ const StyleDefaults = Object.freeze({
 		"cursor-pointer",
 		"text-slate-700",
 	],
-	currentpage: ["text-white", "cursor-default", "bg-primary"],
+	currentpage: ["text-white", "cursor-default", "bg-accent"],
 })
 
 const Paginator: definition.UtilityComponent<PaginatorUtilityProps> = (

@@ -8,8 +8,9 @@ definition:
       - bg-white
       - border-0
     avatar:
-      - bg-rose-100
+      - bg-primary-50
       - rounded-md
       - border-0
-      - text-rose-800
+      - text-primary-900
       - text-3xl
+      - border-primary-100

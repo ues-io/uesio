@@ -4,10 +4,13 @@ public: true
 definition:
   uesio.styleTokens:
     root:
-      - bg-indigo-100
+      - bg-primary-100
       - p-4
-      - text-base
-      - font-light
-      - text-indigo-900
+      - text-sm
+      - leading-relaxed
       - rounded-md
-      - mb-4
+      - text-black/80
+      - font-light
+      - grid
+      - gap-3
+      - whitespace-pre-line
