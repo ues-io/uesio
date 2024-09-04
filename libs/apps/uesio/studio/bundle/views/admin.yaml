@@ -13,11 +13,18 @@ definition:
                 selected: home
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Instance Administration
               subtitle: You're the boss.
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
+              avatar:
                 - uesio/io.text:
-                    text: This is where you manage your ues.io instance. More features are coming here soon.
+                    uesio.variant: uesio/io.icon
+                    text: home
+          - uesio/io.box:
+              uesio.variant: uesio/appkit.primarysection
+              components:
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.note
+                    components:
+                      - uesio/io.text:
+                          text: This is where you manage your ues.io instance. More features are coming here soon.

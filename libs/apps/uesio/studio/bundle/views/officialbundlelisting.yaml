@@ -71,7 +71,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/studio.app->uesio/studio.fullname}
                     subtitle: ${uesio/studio.description}
                     avatar:
@@ -110,15 +110,13 @@ definition:
                                     severity: info
                                     duration: "5"
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Versions
                 - uesio/io.table:
-                    uesio.styleTokens:
-                      root:
-                        - pb-8
+                    uesio.variant: uesio/appkit.main
                     uesio.id: versionsTable
                     wire: versions
                     columns:

@@ -6,5 +6,6 @@ title: Site File Download Volume
 params:
   metadatatype: FILESOURCE
   metadatatypelabel: File
+  metadatatypeicon: download_done
   actiontype: DOWNLOAD_BYTES
   actiontypelabel: Download Volume (bytes)

@@ -156,7 +156,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: Manage App Bundles
                     subtitle: $Param{appBundle}
                     actions:
@@ -259,8 +259,12 @@ definition:
                                 uesio.display:
                                   - field: uesio/studio.status
                                     value: PUBLISHED
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: outbox
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.two_columns
@@ -303,6 +307,7 @@ definition:
                     title: History
                     uesio.variant: uesio/io.section
                 - uesio/io.table:
+                    uesio.variant: uesio/appkit.main
                     uesio.id: bundlelistinghistoryTable
                     wire: bundlelistinghistory
                     mode: READ

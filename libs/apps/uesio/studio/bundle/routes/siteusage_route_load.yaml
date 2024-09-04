@@ -6,5 +6,6 @@ title: Site Route Load Usage
 params:
   metadatatype: ROUTE
   metadatatypelabel: Route
+  metadatatypeicon: map
   actiontype: LOAD
   actiontypelabel: Loads

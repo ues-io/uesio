@@ -5,14 +5,14 @@ definition:
   uesio.styleTokens:
     root:
       - p-5
-      - bg-slate-100
+      - bg-primary-50/70
       - rounded-t
     title:
       - font-medium
       - text-sm
-      - text-slate-800
+      - text-black/80
     subtitle:
       - text-xs
       - font-light
-      - text-slate-600
+      - text-black/60
 public: true

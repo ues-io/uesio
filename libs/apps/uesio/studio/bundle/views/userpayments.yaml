@@ -84,7 +84,7 @@ definition:
                 selected: payments
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Payments
               actions:
                 - uesio/io.group:
@@ -102,7 +102,7 @@ definition:
                             - signal: "route/REDIRECT"
                               path: $Param{redirectUrl}
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.grid:
                     uesio.styleTokens:

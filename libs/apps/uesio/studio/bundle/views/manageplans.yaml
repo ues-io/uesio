@@ -31,8 +31,9 @@ definition:
                 selected: manageplans
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Manage Plans
+              subtitle: Spend money to make money.
               actions:
                 - uesio/io.group:
                     components:
@@ -42,16 +43,22 @@ definition:
                           signals:
                             - signal: panel/TOGGLE
                               panel: newPlan
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: credit_card
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.searchbox:
+                    uesio.variant: uesio/appkit.main
                     wire: plans
                     focusOnRender: true
                     searchFields:
                       - uesio/core.uniquekey
                 - uesio/io.table:
                     uesio.id: plansTable
+                    uesio.variant: uesio/appkit.main
                     wire: plans
                     columns:
                       - field: uesio/studio.name
@@ -66,6 +73,7 @@ definition:
                           subtitle: $Time{uesio/core.updatedat}
                     rowactions:
                       - text: Details
+                        type: DEFAULT
                         signals:
                           - signal: route/NAVIGATE
                             path: manageplans/${uesio/core.uniquekey}

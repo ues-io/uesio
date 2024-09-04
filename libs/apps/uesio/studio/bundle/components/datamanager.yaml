@@ -10,5 +10,7 @@ variants:
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.listmenu:uesio/io.default
   - uesio/io.button:uesio/io.rowaction
+  - uesio/io.table:uesio/appkit.main
+  - uesio/io.searchbox:uesio/appkit.main
 utilities:
   - uesio/io.table

@@ -72,42 +72,49 @@ definition:
                 selected: managebundles
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Manage Bundle Listings
+              subtitle: Choose wisely.
               actions:
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: outbox
+          - uesio/io.box:
+              uesio.variant: uesio/appkit.primarysection
+              components:
                 - uesio/io.group:
                     components:
+                      - uesio/io.searchbox:
+                          uesio.variant: uesio/appkit.main
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}
+                          wire: bundlelisting
+                          focusOnRender: true
+                          searchFields:
+                            - uesio/core.uniquekey
                       - uesio/io.filter:
                           uesio.context:
                             siteadmin:
                               name: $Param{sitename}
                               app: $Param{app}
                           wire: bundlelisting
+                          labelPosition: none
                           fieldId: uesio/studio.status
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.searchbox:
-                    uesio.context:
-                      siteadmin:
-                        name: $Param{sitename}
-                        app: $Param{app}
-                    wire: bundlelisting
-                    focusOnRender: true
-                    searchFields:
-                      - uesio/core.uniquekey
                 - uesio/io.table:
+                    uesio.variant: uesio/appkit.main
                     uesio.id: orgsTable
                     wire: bundlelisting
                     columns:
                       - label: App
                         components:
-                          - uesio/io.iconlabel:
-                              uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.app->uesio/studio.fullname}
+                          - uesio/appkit.item:
+                              title: ${title}
+                              subtitle: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
-                              color: ${uesio/studio.app->uesio/studio.color}
-                      - field: uesio/studio.title
+                              iconcolor: ${uesio/studio.app->uesio/studio.color}
                       - field: uesio/studio.status
                       - field: uesio/core.createdby
                         user:
@@ -117,6 +124,7 @@ definition:
                           subtitle: $Time{uesio/core.updatedat}
                     rowactions:
                       - text: Details
+                        type: DEFAULT
                         signals:
                           - signal: "route/NAVIGATE"
                             path: "managebundles/${uesio/studio.app->uesio/core.uniquekey}"
