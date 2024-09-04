@@ -15,7 +15,7 @@ definition:
       - gap-1.5
       - ml-3.5
       - "[min-width:0]"
-      - after:text-slate-200
+      - after:text-primary-900/20
       - after:-left-2.5
       - after:content-["/"]
       - after:text-xl

@@ -1,4 +1,4 @@
-import { api, component, styles, definition } from "@uesio/ui"
+import { api, styles, definition, component } from "@uesio/ui"
 import { AcceptedElements, default as IOText } from "../../utilities/text/text"
 
 type TextDefinition = {

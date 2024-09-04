@@ -92,7 +92,7 @@ definition:
                 itemIcon: list
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Collections
               subtitle: Gotta catch 'em all!
               avatar:
@@ -105,13 +105,13 @@ definition:
                       - uesio/io.button:
                           text: Create a New Collection
                           hotkey: "n"
-                          uesio.variant: uesio/io.primary
+                          uesio.variant: uesio/appkit.primary
                           uesio.id: new-collection
                           signals:
                             - signal: panel/TOGGLE
                               panel: newCollection
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.grid:
                     uesio.variant: uesio/io.three_columns
