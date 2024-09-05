@@ -102,7 +102,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
                           title: Latest Updates & News
-                      - uesio/io.list:
+                      - uesio/io.deck:
                           wire: blogentries
                           mode: READ
                           emptyState:
@@ -112,7 +112,7 @@ definition:
                                 icon: newspaper
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/io.action
+                                uesio.variant: uesio/appkit.card
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}
@@ -125,17 +125,21 @@ definition:
                                   - signal: "route/REDIRECT"
                                     path: "https://$Site{domain}/blog/${uesio/studio.slug}"
                                     newtab: true
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/appkit.avataricon
+                                      text: newspaper
                 - uesio/io.griditem:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
                           title: Recent Documentation
-                      - uesio/io.list:
+                      - uesio/io.deck:
                           wire: recentdocs
                           mode: READ
                           components:
                             - uesio/io.tile:
-                                uesio.variant: uesio/io.action
+                                uesio.variant: uesio/appkit.card
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}
@@ -148,3 +152,7 @@ definition:
                                   - signal: "route/REDIRECT"
                                     path: "https://docs.$Site{domain}/${uesio/studio.slug}"
                                     newtab: true
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/appkit.avataricon
+                                      text: school

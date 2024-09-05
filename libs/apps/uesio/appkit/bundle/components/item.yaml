@@ -5,6 +5,9 @@ properties:
   - type: TEXT
     name: title
     label: Title text
+  - type: TEXT
+    name: subtitle
+    label: Sub Title text
   - type: ICON
     name: icon
   - type: TEXT
@@ -15,6 +18,11 @@ properties:
 definition:
   - uesio/io.tile:
       uesio.variant: uesio/appkit.item
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+        actionable:
+          - $Region{actionable}
       content:
         - uesio/io.titlebar:
             uesio.variant: uesio/appkit.item
@@ -31,6 +39,9 @@ definition:
               - type: hasNoValue
                 value: $Prop{imagefield}
             uesio.variant: uesio/appkit.avataricon
+            uesio.styleTokens:
+              root:
+                - $Region{avatar}
             color: $Prop{iconcolor}
             text: $Prop{icon}
         - uesio/io.avatar:

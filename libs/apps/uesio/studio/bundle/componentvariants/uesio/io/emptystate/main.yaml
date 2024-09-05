@@ -7,12 +7,15 @@ definition:
       - grid
       - items-center
       - justify-center
+      - content-center
       - text-center
       - border-slate-300
       - border-1
       - border-dashed
       - rounded-lg
       - p-16
+      - mb-10
+      - mt-2
     title:
       - text-lg
       - text-slate-500

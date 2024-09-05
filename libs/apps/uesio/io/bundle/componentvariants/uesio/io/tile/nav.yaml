@@ -23,5 +23,4 @@ definition:
     actionable:
       - hover:bg-primary-100/80
       - focus:outline-offset-[-1px]
-      - focus:text-black/90
 public: true

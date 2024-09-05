@@ -27,7 +27,7 @@ definition:
       - grid-flow-col
       - auto-cols-auto
       - gap-2
-      - bg-primary-200/60
+      - bg-primary-100/60
       - text-black/80
       - rounded-full
       - pl-2.5

@@ -110,7 +110,7 @@ interface ComponentContext {
 }
 
 interface PropsContext {
-	data: Record<string, unknown>
+	data: Record<string, FieldValue>
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -683,7 +683,7 @@ class Context {
 			data,
 		})
 
-	addPropsFrame = (data: Record<string, unknown>) =>
+	addPropsFrame = (data: Record<string, FieldValue>) =>
 		this.#addFrame({
 			type: PROPS,
 			data,
@@ -713,6 +713,7 @@ class Context {
 			? getMergeRegexForTypes(options.types)
 			: defaultMergeRegex
 		let expressionReturnValue: FieldValue
+		let isSingleMerge = false
 		const mergedString = template.replace(
 			mergeRegex,
 			(match, mergeType, expression, offset) => {
@@ -728,6 +729,7 @@ class Context {
 
 				if (offset === 0 && match.length === template.length) {
 					expressionReturnValue = expressionResult
+					isSingleMerge = true
 					return ""
 				}
 
@@ -742,7 +744,7 @@ class Context {
 			}
 		)
 		// If we only have one expression result, and it is not a string, then return it as its value
-		if (expressionReturnValue !== undefined) {
+		if (isSingleMerge) {
 			return expressionReturnValue
 		}
 		return mergedString

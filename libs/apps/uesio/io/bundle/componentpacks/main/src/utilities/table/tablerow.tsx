@@ -56,7 +56,7 @@ const getDrawer = <R,>(
 	classes: RowClasses,
 	drawerRendererFunc: RowFunc<R>
 ) => (
-	<tr className={styles.cx(classes.row)}>
+	<tr className={classes.row}>
 		<td colSpan={1000} className={classes.drawer}>
 			{drawerRendererFunc(row)}
 		</td>

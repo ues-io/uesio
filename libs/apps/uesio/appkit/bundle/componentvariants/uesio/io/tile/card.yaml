@@ -5,10 +5,12 @@ definition:
   uesio.styleTokens:
     root:
       - gap-4
-      - bg-primary-50
+      - bg-primary-50/70
+      - hover:bg-primary-50
       - p-5
       - border
       - border-primary-900/30
+      - hover:border-primary-900/50
       - rounded
       - my-2
 public: true

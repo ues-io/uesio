@@ -46,7 +46,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 	const className = styles.cx(
 		classes.root,
 		isSelected && classes.selected,
-		onClick && classes.actionable
+		onClick && !isSelected && classes.actionable
 	)
 	const avatarNode = avatar ? (
 		<div className={classes.avatar}>{avatar}</div>

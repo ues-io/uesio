@@ -5,8 +5,7 @@ extends: uesio/io.icon
 definition:
   uesio.styleTokens:
     root:
-      - bg-primary-100
-      - group-hover:brightness-95
+      - bg-primary-100/60
       - rounded-full
       - text-base
       - text-black/80

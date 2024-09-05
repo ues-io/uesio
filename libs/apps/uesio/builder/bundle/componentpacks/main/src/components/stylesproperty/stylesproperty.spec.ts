@@ -1,3 +1,4 @@
+import { context, styles, test as uesioTest } from "@uesio/ui"
 import { addTokenToList } from "./stylesproperty"
 
 const testCases = [
@@ -58,6 +59,9 @@ const testCases = [
 ]
 
 describe("addTokenToList", () => {
+	uesioTest.create({})
+	const contextInstance = new context.Context()
+	styles.setupStyles(contextInstance)
 	testCases.forEach((tc) => {
 		test(tc.name, () => {
 			expect(addTokenToList(tc.newToken, tc.list)).toEqual(tc.expected)

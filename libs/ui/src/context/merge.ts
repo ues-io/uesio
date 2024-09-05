@@ -312,11 +312,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!errors?.length) return ""
 		return errors[0]
 	},
-	Prop: (expression, context) =>
-		// Technically the result doesn't have to be a string,
-		// but until we improve merge typing to allow for non-string values,
-		// we'll pretend the prop will always be a string
-		(context.getProp(expression) as string) ?? "",
+	Prop: (expression, context) => context.getProp(expression),
 	Region: (expression, context) => {
 		const styleTokens = context.getProp("uesio.styleTokens") as Record<
 			string,

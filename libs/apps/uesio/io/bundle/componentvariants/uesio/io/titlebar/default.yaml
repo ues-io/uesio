@@ -11,10 +11,10 @@ definition:
       - grow
       - justify-center
     title:
-      - text-slate-700
+      - text-black/80
       - text-base
     subtitle:
-      - text-slate-500
+      - text-black/60
       - text-xs
       - font-light
     actions:

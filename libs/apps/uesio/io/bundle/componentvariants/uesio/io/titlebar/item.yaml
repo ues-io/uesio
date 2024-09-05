@@ -8,12 +8,12 @@ definition:
       - items-center
       - gap-3
     content:
-      - gap-1
+      - gap-0.5
     title:
       - text-sm
       - leading-none
     subtitle:
       - empty:hidden
-      - leading-none
+      - leading-tight
     actions:
       - leading-none
