@@ -50,7 +50,7 @@ definition:
                 itemIcon: backpack
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Installed Bundles
               avatar:
                 - uesio/io.text:
@@ -66,9 +66,10 @@ definition:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}/workspace/$Param{workspacename}/bundlestore"
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.table:
+                    uesio.variant: uesio/appkit.main
                     uesio.id: installedbundlestable
                     wire: installedapps
                     columns:
@@ -82,6 +83,7 @@ definition:
                       - field: uesio/studio.bundle->uesio/studio.version
                     rowactions:
                       - text: Details
+                        type: DEFAULT
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.uniquekey}

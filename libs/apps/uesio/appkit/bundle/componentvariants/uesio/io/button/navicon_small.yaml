@@ -8,4 +8,5 @@ definition:
       - w-5
       - h-5
       - rounded
+      - hover:bg-primary-200/60
     icon:

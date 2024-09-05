@@ -180,7 +180,7 @@ export const addTokenToList = (
 	existingTokens: string[]
 ): string[] =>
 	styles
-		.mergeClasses([
+		.cx([
 			...(existingTokens || []).map(escapeTokenForMerge),
 			escapeTokenForMerge(newToken),
 		])

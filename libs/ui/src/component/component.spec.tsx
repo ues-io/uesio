@@ -57,20 +57,16 @@ const componentTypeWithSlots = {
 
 const resolveDeclarativeComponentDefinitionTests = [
 	{
-		name: "no props provided - should merge empty strings",
+		name: "no props provided - should not merge empty strings",
 		context: new Context(),
 		inputDefinition: {},
 		componentDef: componentTypeWithoutSlots,
 		expected: [
 			{
-				"uesio/io.text": {
-					text: "",
-				},
+				"uesio/io.text": {},
 			},
 			{
-				"uesio/io.text": {
-					text: "",
-				},
+				"uesio/io.text": {},
 			},
 		],
 	},

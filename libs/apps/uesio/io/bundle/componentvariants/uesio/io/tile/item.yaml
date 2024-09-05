@@ -12,4 +12,4 @@ definition:
       - relative
       - group
     actionable:
-      - hover:bg-primary-100/80
+      - hover:bg-primary-50/70

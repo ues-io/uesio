@@ -24,14 +24,6 @@ import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { isStandardColorName } from "./colors"
 
-const twMerge = extendTailwindMerge({
-	extend: {
-		classGroups: {
-			"font-size": ["xxs"],
-		},
-	},
-})
-
 const processThemeColor = (
 	themeFunc: ThemeFunction,
 	key: string,
@@ -77,6 +69,7 @@ const presetContainerQueries = () =>
 
 let activeStyles: Twind
 let activeThemeData: ThemeState
+let twMerge: ReturnType<typeof extendTailwindMerge>
 
 const setupStyles = (context: Context) => {
 	const themeData = context.getTheme()
@@ -109,6 +102,14 @@ const setupStyles = (context: Context) => {
 			},
 			getSheet()
 		)
+
+		twMerge = extendTailwindMerge({
+			extend: {
+				classGroups: {
+					"font-size": ["xxs"],
+				},
+			},
+		})
 	}
 
 	// We need to process the style classes we put on the root element in index.gohtml
@@ -212,17 +213,14 @@ function getThemeValue(context: Context, key: string) {
 	return activeStyles?.theme(key) || ""
 }
 
-const mergeClasses = twMerge
-
 function cx(...input: Class[]): string {
-	return interpolate(input)
+	return twMerge?.(interpolate(input)) || ""
 }
 
 export type { StyleProps, ThemeState }
 
 export {
 	cx,
-	mergeClasses,
 	process,
 	setupStyles,
 	useUtilityStyleTokens,

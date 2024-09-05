@@ -127,8 +127,8 @@ const resolveDeclarativeComponentDefinition = (
 				stripSlotsFromDefinition(
 					definition,
 					componentTypeDef.slots
-				) as unknown as Record<string, Mergeable>
-			) as Record<string, unknown>
+				) as Record<string, Mergeable>
+			) as Record<string, Mergeable>
 		)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
