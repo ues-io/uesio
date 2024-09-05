@@ -6,5 +6,6 @@ title: Site File Download Usage
 params:
   metadatatype: FILESOURCE
   metadatatypelabel: File
+  metadatatypeicon: download_for_offline
   actiontype: DOWNLOAD
   actiontypelabel: Downloads

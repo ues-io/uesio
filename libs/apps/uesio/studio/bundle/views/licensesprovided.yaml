@@ -77,9 +77,9 @@ definition:
                 selected: income
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Licenses
-              subtitle: List of applications licensed to use your application $Param{app}
+              subtitle: Apps licensed to use $Param{app}
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
@@ -94,7 +94,7 @@ definition:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}/licensespricing"
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
@@ -112,6 +112,7 @@ definition:
                                     wire: licensetemplate
                 - uesio/io.table:
                     uesio.id: licensesTable
+                    uesio.variant: uesio/appkit.main
                     wire: licenses
                     columns:
                       - label: LICENSED APP

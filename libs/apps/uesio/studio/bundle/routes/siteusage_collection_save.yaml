@@ -6,5 +6,6 @@ title: Site Collection Save Usage
 params:
   metadatatype: COLLECTION
   metadatatypelabel: Collection
+  metadatatypeicon: save
   actiontype: SAVE
   actiontypelabel: Saves

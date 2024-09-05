@@ -42,7 +42,7 @@ definition:
               view: workspacenav
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Bundle Store
               subtitle: search for bundles
               avatar:
@@ -50,7 +50,7 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: shop
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.group:
                     uesio.styleTokens:

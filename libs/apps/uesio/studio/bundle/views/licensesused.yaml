@@ -64,7 +64,7 @@ definition:
                 selected: costs
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Billing & Costs
               subtitle: $Param{app}
               avatar:
@@ -72,13 +72,14 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: receipt_long
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
                     title: Invoices
                     subtitle: a list of goods sent or services provided, with a statement of the sum due for these.
                 - uesio/io.table:
+                    uesio.variant: uesio/appkit.main
                     uesio.id: invoiceTable
                     wire: invoices
                     pagesize: 10
@@ -99,6 +100,7 @@ definition:
                     title: Licenses
                     subtitle: List of applications licensed for use by $Param{app}
                 - uesio/io.table:
+                    uesio.variant: uesio/appkit.main
                     uesio.id: licensesTable
                     wire: licenses
                     pagesize: 10

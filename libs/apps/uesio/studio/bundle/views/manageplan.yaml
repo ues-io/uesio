@@ -67,7 +67,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: $Param{planName}
                     subtitle: ${uesio/studio.description}
                     actions:
@@ -85,11 +85,15 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: deletePlan
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: credit_card
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
+                          uesio.variant: uesio/appkit.three_columns
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
@@ -132,6 +136,7 @@ definition:
                                     panel: newLimit
                 - uesio/io.table:
                     uesio.id: plansLimitsTable
+                    uesio.variant: uesio/appkit.main
                     wire: plan_limit
                     columns:
                       - field: uesio/studio.metadatatype

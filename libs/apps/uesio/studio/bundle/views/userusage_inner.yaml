@@ -74,6 +74,10 @@ definition:
         uesio.variant: uesio/appkit.main
         title: Usage & Billing
         subtitle: ${user:uesio/core.uniquekey}
+        avatar:
+          - uesio/io.text:
+              uesio.variant: uesio/io.icon
+              text: credit_card
     - uesio/io.box:
         uesio.variant: uesio/appkit.primarysection
         components:
@@ -93,7 +97,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.card:
-                    scrollpanelVariant: uesio/appkit.card
+                    scrollpanelVariant: uesio/io.card
                     title: ${name}
                     subtitle: ${description}
                     actions:

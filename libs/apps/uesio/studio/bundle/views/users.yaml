@@ -89,7 +89,7 @@ definition:
                 itemIcon: person
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Users
               subtitle: User is as user does
               actions:
@@ -102,10 +102,15 @@ definition:
                           signals:
                             - signal: "panel/TOGGLE"
                               panel: "newUser"
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: person
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.searchbox:
+                    uesio.variant: uesio/appkit.main
                     uesio.context:
                       siteadmin:
                         name: $Param{sitename}

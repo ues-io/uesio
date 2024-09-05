@@ -23,7 +23,6 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 			blocker: [
 				"absolute",
 				"backdrop-blur-sm",
-				"backdrop-grayscale-[50%]",
 				"backdrop-brightness-50",
 				"flex",
 			],

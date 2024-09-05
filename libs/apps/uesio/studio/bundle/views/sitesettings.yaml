@@ -80,7 +80,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: Site Settings
                     subtitle: ${uesio/studio.name}
                     avatar:
@@ -136,7 +136,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: deleteSite
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.grid:
                           uesio.variant: uesio/io.four_columns

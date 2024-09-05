@@ -6,5 +6,6 @@ title: Site Collection Load Usage
 params:
   metadatatype: COLLECTION
   metadatatypelabel: Collection
+  metadatatypeicon: input
   actiontype: LOAD
   actiontypelabel: Loads

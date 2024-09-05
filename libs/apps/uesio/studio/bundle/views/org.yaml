@@ -84,7 +84,7 @@ definition:
               uesio.id: orgDetail
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/core.username}
                     subtitle: Organization
                     actions:
@@ -103,8 +103,12 @@ definition:
                                     wire: org
                                     operator: EQUALS
                                     value: "$User{id}"
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: domain
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
@@ -125,6 +129,7 @@ definition:
                                           value: "$User{id}"
                       - uesio/io.table:
                           uesio.id: orgusersTable
+                          uesio.variant: uesio/appkit.main
                           pagesize: 5
                           wire: orgusers
                           mode: READ
@@ -153,6 +158,7 @@ definition:
                           title: Owned Apps
                       - uesio/io.table:
                           uesio.id: apptable
+                          uesio.variant: uesio/appkit.main
                           pagesize: 5
                           wire: orgapps
                           columns:

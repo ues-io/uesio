@@ -47,7 +47,7 @@ definition:
                 selected: sitecollections
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Collection
               subtitle: $Param{collectionname}
               actions:
@@ -93,8 +93,12 @@ definition:
                             - signal: wire/LOAD
                               wires:
                                 - collectionData
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: list
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               uesio.context:
                 siteadmin:
                   name: $Param{sitename}

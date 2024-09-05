@@ -35,7 +35,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/core.username}
                     subtitle: ${uesio/core.firstname} ${uesio/core.lastname}
                     actions:
@@ -63,8 +63,13 @@ definition:
                                 signals:
                                   - signal: wire/CANCEL
                                     wire: "users"
+                    avatar:
+                      - uesio/io.avatar:
+                          uesio.variant: uesio/appkit.main
+                          text: ${initials}
+                          image: $UserFile{uesio/core.picture}
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.box:
                           components:
