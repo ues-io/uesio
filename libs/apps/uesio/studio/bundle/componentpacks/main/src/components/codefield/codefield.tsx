@@ -1,9 +1,7 @@
-import { FunctionComponent } from "react"
 import { definition, component, context } from "@uesio/ui"
 
 type CodeFieldDefinition = {
 	fieldId: string
-	height: string
 	language?: CodeFieldLanguage
 	id?: string
 	mode?: context.FieldMode
@@ -11,11 +9,7 @@ type CodeFieldDefinition = {
 
 type CodeFieldLanguage = "yaml" | "json" | "javascript" | "typescript"
 
-interface Props extends definition.BaseProps {
-	definition: CodeFieldDefinition
-}
-
-const CodeField: FunctionComponent<Props> = (props) => {
+const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const IOCodeField = component.getUtility("uesio/io.codefield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const { context, definition } = props

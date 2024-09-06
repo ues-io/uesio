@@ -97,7 +97,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.card:
-                    scrollpanelVariant: uesio/io.card
+                    scrollpanelVariant: uesio/appkit.card
                     title: ${name}
                     subtitle: ${description}
                     actions:
@@ -135,6 +135,9 @@ definition:
                               operator: EQUALS
                               value: ${plans:uesio/core.id}
                               field: uesio/studio.plan->uesio/core.id
+                          emptyState:
+                            - uesio/io.text:
+                                text:
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/studio.pricinglimit

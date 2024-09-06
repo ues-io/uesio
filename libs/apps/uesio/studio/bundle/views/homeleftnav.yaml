@@ -120,8 +120,15 @@ definition:
                           components:
                             - uesio/appkit.item:
                                 uesio.styleTokens:
+                                  root:
+                                    - border-r-2
+                                    - border-l-1
+                                    - border-b-2
+                                    - border-t-1
+                                    - border-transparent
                                   actionable:
-                                    - hover:bg-primary-100/60
+                                    - hover:bg-white
+                                    - hover:border-fontcolor-900
                                   avatar:
                                     - bg-[${uesio/studio.color}]
                                 title: ${uesio/core.uniquekey}
@@ -158,11 +165,15 @@ definition:
                           components:
                             - uesio/appkit.item:
                                 uesio.styleTokens:
+                                  root:
+                                    - border-r-2
+                                    - border-l-1
+                                    - border-b-2
+                                    - border-t-1
+                                    - border-transparent
                                   actionable:
-                                    - hover:bg-primary-100/60
-                                  avatar:
-                                    - bg-primary-100
-                                    - group-hover:bg-primary-200
+                                    - hover:bg-white
+                                    - hover:border-fontcolor-900
                                 title: ${uesio/core.uniquekey}
                                 icon: domain
                                 signals:

@@ -17,6 +17,13 @@ definition:
           value: $Param{app}:$Param{workspacename}
     recentmetadata:
       collection: uesio/studio.recentmetadata
+    genbots:
+      collection: uesio/studio.bot
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.tag
+          value: uesio/core.workspacehome
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -87,33 +94,25 @@ definition:
                 - uesio/io.tabs:
                     uesio.variant: uesio/appkit.main
                     tabs:
-                      - label: Quick Actions
-                        id: quickactions
+                      - label: Generators
+                        id: generators
                         components:
                           - uesio/io.scrollpanel:
                               uesio.variant: uesio/appkit.sidebar
                               content:
-                                - uesio/io.grid:
+                                - uesio/io.deck:
+                                    wire: genbots
                                     uesio.variant: uesio/appkit.tiles
-                                    items:
+                                    components:
                                       - uesio/appkit.item:
-                                          title: Collections
-                                          subtitle: Define your data types with ues.io's built-in database.
-                                          icon: list
+                                          uesio.styleTokens:
+                                            badge:
+                                              - bg-[${appcolor}]
+                                              - text-white
+                                          title: ${label}
+                                          subtitle: ${description}
+                                          icon: smart_toy
+                                          badge: ${appname}
                                           signals:
                                             - signal: route/NAVIGATE
-                                              path: app/$Param{app}/workspace/$Param{workspacename}/collections
-                                      - uesio/appkit.item:
-                                          title: Views
-                                          subtitle: Build user interfaces with dynamic components that interact with your collections.
-                                          icon: view_quilt
-                                          signals:
-                                            - signal: route/NAVIGATE
-                                              path: app/$Param{app}/workspace/$Param{workspacename}/views
-                                      - uesio/appkit.item:
-                                          title: Routes
-                                          subtitle: Choose the URL paths where users can access your views.
-                                          icon: map
-                                          signals:
-                                            - signal: route/NAVIGATE
-                                              path: app/$Param{app}/workspace/$Param{workspacename}/routes
+                                              path: "bleh"

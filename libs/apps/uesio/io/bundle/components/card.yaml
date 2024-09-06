@@ -6,6 +6,7 @@ slots:
   - name: content
   - name: footer
   - name: actions
+  - name: avatar
 description: A Card component
 discoverable: true
 properties:
@@ -50,6 +51,9 @@ definition:
             actions:
               - uesio/core.slot:
                   name: actions
+            avatar:
+              - uesio/core.slot:
+                  name: avatar
       content:
         - uesio/core.slot:
             name: content

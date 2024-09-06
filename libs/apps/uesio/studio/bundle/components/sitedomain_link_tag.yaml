@@ -8,7 +8,8 @@ definition:
   - uesio/io.tile:
       uesio.styleTokens:
         root:
-          - group
+          - group/domain
+          - w-min
       signals:
         - signal: "route/REDIRECT"
           path: "https://${uesio/studio.domain}"
@@ -31,7 +32,7 @@ definition:
                     root:
                       - lowercase
                       - bg-slate-200
-                      - group-hover:bg-emerald-200
+                      - group-hover/domain:bg-emerald-200
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type
@@ -43,7 +44,7 @@ definition:
                     root:
                       - lowercase
                       - bg-slate-200
-                      - group-hover:bg-emerald-200
+                      - group-hover/domain:bg-emerald-200
                   uesio.display:
                     - type: fieldValue
                       field: uesio/studio.type

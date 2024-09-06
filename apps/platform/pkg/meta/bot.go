@@ -226,6 +226,8 @@ type Bot struct {
 	Definition     *YAMLDef  `yaml:"definition,omitempty" json:"uesio/studio.definition"`
 	Timeout        int       `yaml:"timeout,omitempty" json:"uesio/studio.timeout"`
 	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	Tags           []string  `yaml:"tags,omitempty" json:"uesio/studio.tags"`
+	Description    string    `yaml:"description,omitempty" json:"uesio/studio.description"`
 	FileContents   string    `yaml:"-" json:"-"`
 }
 

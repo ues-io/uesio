@@ -1,0 +1,10 @@
+name: badge_tiny
+label: Tiny Badge
+public: true
+extends: uesio/appkit.badge
+definition:
+  uesio.styleTokens:
+    root:
+      - text-[7pt]
+      - py-2
+      - px-1.5

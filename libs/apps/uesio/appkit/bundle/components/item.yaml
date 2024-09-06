@@ -1,6 +1,8 @@
 name: item
 category: LAYOUT
 type: DECLARATIVE
+slots:
+  - name: actions
 properties:
   - type: TEXT
     name: title
@@ -24,10 +26,27 @@ definition:
         actionable:
           - $Region{actionable}
       content:
+        - uesio/io.text:
+            uesio.variant: uesio/appkit.badge_tiny
+            uesio.styleTokens:
+              root:
+                - absolute
+                - -top-0.5
+                - -right-0.5
+                - border-2
+                - border-white
+                - $Region{badge}
+            text: $Prop{badge}
+            uesio.display:
+              - type: hasValue
+                value: $Prop{badge}
         - uesio/io.titlebar:
             uesio.variant: uesio/appkit.item
             title: $Prop{title}
             subtitle: $Prop{subtitle}
+            actions:
+              - uesio/core.slot:
+                  name: actions
       signals: $Prop{signals}
       avatar:
         - uesio/io.text:

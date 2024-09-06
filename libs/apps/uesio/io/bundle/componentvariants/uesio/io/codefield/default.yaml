@@ -5,10 +5,10 @@ definition:
   uesio.styleTokens:
     input:
       - p-0
-      - h-[320px]
+      - h-[400px]
     loading:
       - p-4
-      - h-[320px]
+      - h-[400px]
       - border
       - border-slate-300
       - rounded

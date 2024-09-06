@@ -91,6 +91,7 @@ const (
 	itemField          = "uesio/studio.item"
 	groupingField      = "uesio/studio.grouping"
 	namespaceField     = "uesio/studio.namespace"
+	tagField           = "uesio/studio.tag"
 	allMetadataField   = "uesio/studio.allmetadata"
 	isCommonFieldField = "uesio/studio.iscommonfield"
 )
@@ -117,8 +118,9 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
 	groupingCondition := extractConditionByField(op.Conditions, groupingField)
-	if itemCondition != nil || groupingCondition != nil {
-		return errors.New("item or grouping conditions are not allowed unless the allmetadata condition is set")
+	tagCondition := extractConditionByField(op.Conditions, tagField)
+	if itemCondition != nil || groupingCondition != nil || tagCondition != nil {
+		return errors.New("item, tag or grouping conditions are not allowed unless the allmetadata condition is set")
 	}
 
 	if !wsAccessResult.IsSiteAdmin() {
@@ -143,6 +145,7 @@ func isDefaultOrder(order []wire.LoadRequestOrder) bool {
 func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
+	tagCondition := extractConditionByField(op.Conditions, tagField)
 	groupingCondition := extractConditionByField(op.Conditions, groupingField)
 	namespaceCondition := extractConditionByField(op.Conditions, namespaceField)
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
@@ -210,6 +213,16 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		Label:      "App Color",
 	})
 
+	collectionMetadata.SetField(&wire.FieldMetadata{
+		Name:       "appname",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Name",
+	})
+
 	// Determine the namespaces to request using a namespace condition, if present and active,
 	// otherwise use all context namespaces
 	var namespaces []string
@@ -246,7 +259,8 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			if condition.Field == allMetadataField ||
 				condition.Type == "SEARCH" ||
 				condition.Field == isCommonFieldField ||
-				condition.Field == namespaceField {
+				condition.Field == namespaceField ||
+				condition.Field == tagField {
 				continue
 			}
 			// Special handling for the grouping condition
@@ -319,6 +333,26 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			}
 		}
 
+		if tagCondition != nil {
+			tagValue := tagCondition.Value.(string)
+			if tagValue != "" {
+				tags, err := item.GetField("uesio/studio.tags")
+				if err != nil {
+					return nil
+				}
+				if tags == nil {
+					return nil
+				}
+				tagSlice, ok := tags.([]string)
+				if !ok {
+					return nil
+				}
+				if !slices.Contains(tagSlice, tagValue) {
+					return nil
+				}
+			}
+		}
+
 		opItem := op.Collection.NewItem()
 		itemsSlice = append(itemsSlice, opItem)
 
@@ -327,9 +361,12 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return errors.New("invalid namespace: could not get app data")
 		}
 
+		_, appName, _ := meta.ParseNamespace(namespace)
+
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
+		opItem.SetField("uesio/studio.appname", appName)
 		// TODO: Only iterate over the Load request fields, if provided.
 		// This will likely break a lot of Studio Views
 		// but we need to stop sending so much unused stuff to the client.
