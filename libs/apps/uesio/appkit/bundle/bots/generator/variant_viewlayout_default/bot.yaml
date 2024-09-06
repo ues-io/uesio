@@ -1,0 +1,6 @@
+name: variant_viewlayout_default
+dialect: JAVASCRIPT
+label: ViewLayout Default Variant
+type: GENERATOR
+params:
+public: true

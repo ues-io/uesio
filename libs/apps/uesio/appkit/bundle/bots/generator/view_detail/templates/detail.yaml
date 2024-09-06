@@ -10,6 +10,7 @@ wires:
 # Components determine the layout and composition of your view
 components:
   - uesio/io.viewlayout:
+      uesio.variant: ${namespace}.default
       left:
         - uesio/core.view:
             view: ${namespace}.leftnav

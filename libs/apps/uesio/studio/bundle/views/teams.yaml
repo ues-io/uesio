@@ -62,7 +62,7 @@ definition:
                   wire: apps
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: Teams
                     subtitle: There's no I in team, but there is M and E.
                     avatar:
@@ -79,7 +79,7 @@ definition:
                                   - signal: "panel/TOGGLE"
                                     panel: "newTeam"
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.deck:
                           uesio.id: teamslist
@@ -95,7 +95,7 @@ definition:
                                       text: ${uesio/studio.name}
                                 avatar:
                                   - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
+                                      uesio.variant: uesio/appkit.avataricon
                                       text: groups
   panels:
     newTeam:

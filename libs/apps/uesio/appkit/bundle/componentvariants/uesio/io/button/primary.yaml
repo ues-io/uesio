@@ -8,3 +8,8 @@ definition:
       - bg-accent
       - border-accent
       - text-white
+      - border-l-1
+      - border-t-1
+      - border-b-2
+      - border-r-2
+      - border-fontcolor-900/90

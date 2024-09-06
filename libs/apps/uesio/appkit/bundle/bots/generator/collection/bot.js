@@ -3,15 +3,28 @@ function collection(bot) {
 	var collectionLabel = bot.params.get("label")
 	var collectionPluralLabel = bot.params.get("pluralLabel")
 	var collectionIcon = bot.params.get("icon")
-	var existingCollections = bot.params.get("existingCollections")
+	var additionalCollections = bot.params.get("additionalCollections")
 
 	const namespace = bot.getAppName()
 
 	const fullCollectionName = namespace + "." + collectionName
 
-	const existingCollectionsShort = existingCollections.map((existing) =>
-		existing.split(".").pop()
-	)
+	const existingCollections = bot
+		.load({
+			collection: "uesio/core.collection",
+			conditions: [
+				{
+					field: "uesio/studio.namespace",
+					value: namespace,
+				},
+			],
+		})
+		.map((record) => record["uesio/core.uniquekey"])
+
+	const existingCollectionsShort = existingCollections
+		.map((existing) => existing.split(".").pop())
+		.concat("user")
+		.concat(...(additionalCollections || []))
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 

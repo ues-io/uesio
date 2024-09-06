@@ -1,0 +1,83 @@
+name: generate
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    genbot:
+      collection: uesio/studio.bot
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: generator:$Param{namespace}.$Param{generatorname}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: workspacenav
+              params:
+                selected: generators
+                itemType: generator
+                itemIcon: smart_toy
+                itemName: $Param{generatorname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${genbot:uesio/studio.appicon}
+                itemNameSpaceColor: ${genbot:uesio/studio.appcolor}
+        content:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.item:
+                    uesio.id: generatoritem
+                    wire: genbot
+                    mode: READ
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: ${uesio/studio.name}
+                          subtitle: Generator
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: ${uesio/studio.appicon}
+                                color: ${uesio/studio.appcolor}
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      uesio.variant: uesio/appkit.primary
+                                      text: Run Generator
+                                      signals:
+                                        - signal: component/CALL
+                                          component: uesio/studio.generatorform
+                                          componentsignal: RUN
+                                          targettype: specific
+                                          target: generator
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/studio.generatorform:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                uesio.id: generator
+                                generator: $Param{namespace}.$Param{generatorname}

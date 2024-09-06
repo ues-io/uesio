@@ -6,5 +6,9 @@ definition:
   uesio.styleTokens:
     root:
       - min-w-[88px]
-      - text-slate-800
-      - border-slate-700
+      - text-fontcolor-900/90
+      - border-l-1
+      - border-t-1
+      - border-b-2
+      - border-r-2
+      - border-fontcolor-900/90

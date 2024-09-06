@@ -74,7 +74,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New View
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                                 hotkey: "n"
                                 uesio.id: new-view
                                 signals:

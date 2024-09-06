@@ -1,0 +1,11 @@
+name: generatorform
+pack: main
+entrypoint: components/generatorform/generatorform
+utilities:
+  - uesio/io.grid
+  - uesio/io.metadatafield
+  - uesio/io.textfield
+  - uesio/io.dynamicform
+  - uesio/io.group
+components:
+  - uesio/io.field

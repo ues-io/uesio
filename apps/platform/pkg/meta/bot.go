@@ -15,7 +15,7 @@ import (
 func NewBot(key string) (*Bot, error) {
 	keyArray := strings.Split(key, ":")
 	keyArraySize := len(keyArray)
-	if (keyArraySize) < 1 {
+	if (keyArraySize) < 2 {
 		return nil, errors.New("Invalid Bot Key")
 	}
 	botType := keyArray[0]
@@ -42,7 +42,7 @@ func NewBot(key string) (*Bot, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewBaseBot(botType, collectionKey, namespace, name), nil
+	return NewBaseBot(strings.ToUpper(botType), collectionKey, namespace, name), nil
 }
 
 func NewBeforeSaveBot(namespace, name, collection string) *Bot {

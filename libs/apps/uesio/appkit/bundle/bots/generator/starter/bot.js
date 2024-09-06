@@ -1,6 +1,12 @@
 function starter(bot) {
 	bot.runGenerators([
 		{
+			// Create a default layout variant
+			namespace: "uesio/appkit",
+			name: "variant_viewlayout_default",
+			params: {},
+		},
+		{
 			// Create a nav view
 			namespace: "uesio/appkit",
 			name: "view_leftnav",

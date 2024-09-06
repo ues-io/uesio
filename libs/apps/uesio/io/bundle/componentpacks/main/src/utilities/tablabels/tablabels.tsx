@@ -61,8 +61,10 @@ const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 				.map((tab, index) => {
 					currentLabelWidth += sizes.childSizes[index]
 					const isLast = index === tabs.length - 1
+					const isFirst = index === 0
 					const menuWidth = isLast ? 0 : MENU_WIDTH
 					const isVisible =
+						isFirst ||
 						currentLabelWidth < sizes.fullWidth - menuWidth
 					if (!isVisible) overflowTabs.push(tab)
 					return (

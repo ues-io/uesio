@@ -115,4 +115,4 @@ definition:
                                           badge: ${appname}
                                           signals:
                                             - signal: route/NAVIGATE
-                                              path: "bleh"
+                                              path: app/$Param{app}/workspace/$Param{workspacename}/generate/${namespace}/${name}

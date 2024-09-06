@@ -14,6 +14,7 @@ definition:
       - border-fontcolor-900
       - rounded
       - my-2
+      - group
     actionable:
       - hover:bg-primary-50
 public: true

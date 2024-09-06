@@ -1,0 +1,5 @@
+name: generate
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/generate/{namespace:\w*\/\w*}/{generatorname}
+view: generate
+theme: default
+title: "Run Generator: $Param{generatorname}"
