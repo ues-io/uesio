@@ -94,7 +94,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/studio.name}
                     subtitle: Team
                     avatar:
@@ -117,7 +117,7 @@ definition:
                                     panel: deleteTeam
                                 uesio.variant: uesio/io.secondary
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.titlebar:
                     title: Team Members
@@ -157,9 +157,8 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - teammembers
-                                      text: Remove
-                                      uesio.variant: uesio/io.nav
-
+                                      icon: delete
+                                      uesio.variant: uesio/appkit.itemaction
   panels:
     deleteTeam:
       uesio.type: uesio/io.dialog

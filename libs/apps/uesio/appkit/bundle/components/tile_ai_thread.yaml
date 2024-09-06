@@ -18,14 +18,7 @@ definition:
             actions:
               - uesio/io.button:
                   icon: delete
-                  uesio.styleTokens:
-                    root:
-                      - invisible
-                      - group-hover:visible
-                      - px-2
-                      - py-1.5
-                      - text-slate-600
-                      - hover:text-slate-800
+                  uesio.variant: uesio/appkit.itemaction
                   signals:
                     - signal: wire/MARK_FOR_DELETE
                     - signal: wire/SAVE

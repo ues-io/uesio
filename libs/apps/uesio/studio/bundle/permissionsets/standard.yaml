@@ -48,6 +48,7 @@ views:
   uesio/studio.integrations: true
   uesio/studio.integrationtype: true
   uesio/studio.integrationtypes: true
+  uesio/studio.generate: true
   uesio/studio.home: true
   uesio/studio.homecontent: true
   uesio/studio.homeleftnav: true
@@ -152,6 +153,7 @@ routes:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.files: true
+  uesio/studio.generate: true
   uesio/studio.home: true
   uesio/studio.installed: true
   uesio/studio.installedbundle: true

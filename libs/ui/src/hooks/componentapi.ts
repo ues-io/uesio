@@ -131,6 +131,17 @@ const useStateSlice = <T extends Definition>(
 	return [state ?? initialState, stateSetter]
 }
 
+const setStateSlice = <T extends Definition>(
+	slice: string,
+	componentId: string,
+	value?: T
+) => {
+	setState(componentId, {
+		...getExternalState<Record<string, T>>(componentId),
+		[slice]: value,
+	})
+}
+
 const getExternalState = <T extends PlainComponentState>(
 	componentId: string
 ): T | undefined => selectState<T>(getCurrentState(), componentId)
@@ -174,6 +185,7 @@ export {
 	getExternalState,
 	getExternalStates,
 	getExternalEntity,
+	setStateSlice,
 	removeState,
 	getVariantId,
 	useAllVariants,

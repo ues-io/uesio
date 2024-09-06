@@ -6,6 +6,7 @@ wires:
 # Components determine the layout and composition of your view
 components:
   - uesio/io.viewlayout:
+      uesio.variant: ${namespace}.default
       left:
         - uesio/core.view:
             view: ${namespace}.leftnav
@@ -24,6 +25,10 @@ components:
             linkedComponentType: uesio/io.table
             linkedComponentId: ${wirename}Table
             filters:
+              - uesio/io.searchbox:
+                  uesio.variant: uesio/appkit.main
+                  wire: ${wirename}
+                  placeholder: Search $Collection{${wirename}:pluralLabel}
             content:
               - uesio/io.table:
                   uesio.variant: uesio/appkit.main

@@ -110,6 +110,11 @@ const getWireFieldFromParamDef = (
 				...baseField,
 				type: def.type,
 			}
+		case "NUMBER":
+			return {
+				...baseField,
+				type: def.type,
+			}
 		default:
 			return {
 				...baseField,

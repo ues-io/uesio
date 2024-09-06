@@ -4,9 +4,12 @@ label: Generate Collections
 description: Use AI to generate a new collections for this app.
 type: "GENERATOR"
 params:
-  - name: description
-    prompt: App Schema Description
+  - name: instructions
+    prompt: App Schema Instructions
     type: LONGTEXT
+  - name: number_of_collections
+    prompt: Number of Collections to Create
+    type: NUMBER
 public: true
 timeout: 30
 tags:

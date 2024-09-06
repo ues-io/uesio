@@ -1,7 +1,7 @@
 name: default
 definition:
   palette:
-    primary: sky
+    primary: blue
     secondary: "#dc004e"
     error: "#f44336"
     warning: "#ff9800"

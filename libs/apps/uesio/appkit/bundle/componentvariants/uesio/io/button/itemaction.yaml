@@ -1,0 +1,9 @@
+name: itemaction
+label: Item Action
+public: true
+extends: uesio/appkit.navicon
+definition:
+  uesio.styleTokens:
+    root:
+      - invisible
+      - group-hover:visible

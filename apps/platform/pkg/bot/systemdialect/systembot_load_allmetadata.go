@@ -371,6 +371,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		// This will likely break a lot of Studio Views
 		// but we need to stop sending so much unused stuff to the client.
 		for _, fieldName := range group.GetFields() {
+			// Don't set the unique key field
+			if fieldName == "uesio/studio.uniquekey" {
+				continue
+			}
 			value, err := item.GetField(fieldName)
 			if err != nil {
 				return err

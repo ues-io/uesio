@@ -5,6 +5,27 @@ function collections(bot) {
 	const appDescription = appInfo.getDescription()
 	const appName = appInfo.getName()
 	const instructions = bot.params.get("instructions")
+	let numberToCreate = bot.params.get("number_of_collections") || 5
+
+	if (numberToCreate > 5) {
+		numberToCreate = 5
+	}
+
+	const existingCollections = bot
+		.load({
+			collection: "uesio/core.collection",
+			conditions: [
+				{
+					field: "uesio/studio.namespace",
+					value: appFullName,
+				},
+			],
+		})
+		.map((record) => record["uesio/core.uniquekey"])
+
+	const existingCollectionsShort = existingCollections
+		.map((existing) => existing.split(".").pop())
+		.concat("user")
 
 	const validIcons = [
 		"circle",
@@ -94,11 +115,20 @@ function collections(bot) {
 	`
 		: ""
 
+	const existingCollectionsPrompt = `
+		The following tables already exist in the database:
+		${existingCollectionsShort.join("\n")}
+
+		Create new tables that will compliment the functionality of the existing ones.
+		Do not create duplicates.
+	`
+
 	const prompt = `
-		Use the tool provided to create up to 5 tables for this app called: "${appName}"
+		Use the tool provided to create up to ${numberToCreate} tables for this app called: "${appName}"
 		with a description of: "${appDescription}". These table names will form the basis of the
-		data model for this app. There is already a table called "user", so there is no
-		need to create that table. For icons, do not use the same icon more than once.
+		data model for this app. For icons, do not use the same icon more than once.
+
+		${existingCollectionsPrompt}
 
 		${additional}
 	`
@@ -186,9 +216,9 @@ function collections(bot) {
 	}
 
 	//bot.log.info("ai result", result)
-	const existingCollections = result[0].input.tables
-		.map((collection) => `${appFullName}.${collection.name}`)
-		.concat(["uesio/core.user"])
+	const additionalCollections = result[0].input.tables.map(
+		(collection) => collection.name
+	)
 
 	bot.runGenerators(
 		result[0].input.tables.map((collection) => ({
@@ -199,7 +229,7 @@ function collections(bot) {
 				label: collection.label,
 				pluralLabel: collection.pluralLabel,
 				icon: collection.icon,
-				existingCollections,
+				additionalCollections,
 			},
 		}))
 	)

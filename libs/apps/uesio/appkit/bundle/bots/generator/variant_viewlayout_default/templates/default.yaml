@@ -1,0 +1,3 @@
+extends: uesio/appkit.default
+uesio.styleTokens:
+  root:

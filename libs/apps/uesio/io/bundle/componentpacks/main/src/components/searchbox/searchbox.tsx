@@ -91,7 +91,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 				context={context}
 				type="search"
 				variant={fieldVariant}
-				placeholder={placeholder}
+				placeholder={context.mergeString(placeholder)}
 				setValue={(value: string) => {
 					setText(value)
 					debouncedSearch(value)
