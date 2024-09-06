@@ -12,6 +12,7 @@ const StyleDefaults = Object.freeze({
 	header: [],
 	footer: [],
 	inner: [],
+	actionable: [],
 })
 
 const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
@@ -22,13 +23,17 @@ const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 			props,
 			"uesio/io.scrollpanel"
 		)
+
 		return (
 			<div
 				id={props.id}
 				role={onClick ? "button" : undefined}
 				onClick={onClick}
 				ref={ref}
-				className={classes.root}
+				className={styles.cx(
+					classes.root,
+					onClick && classes.actionable
+				)}
 			>
 				<div className={classes.header}>{props.header}</div>
 				<div className={classes.inner}>{props.children}</div>

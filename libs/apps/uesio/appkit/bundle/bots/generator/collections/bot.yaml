@@ -1,6 +1,7 @@
 name: collections
 dialect: "JAVASCRIPT"
-label: Use AI to generate a new collections for an app based on a description.
+label: Generate Collections
+description: Use AI to generate a new collections for this app.
 type: "GENERATOR"
 params:
   - name: description
@@ -8,3 +9,5 @@ params:
     type: LONGTEXT
 public: true
 timeout: 30
+tags:
+  - uesio/core.workspacehome

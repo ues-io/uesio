@@ -6,11 +6,14 @@ definition:
     root:
       - gap-4
       - bg-primary-50/70
-      - hover:bg-primary-50
       - p-5
-      - border
-      - border-primary-900/30
-      - hover:border-primary-900/50
+      - border-t-1
+      - border-l-1
+      - border-b-2
+      - border-r-2
+      - border-fontcolor-900
       - rounded
       - my-2
+    actionable:
+      - hover:bg-primary-50
 public: true

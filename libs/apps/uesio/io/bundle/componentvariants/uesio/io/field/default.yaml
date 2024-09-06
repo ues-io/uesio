@@ -14,6 +14,6 @@ definition:
       - border-slate-300
       - rounded
     readonly:
-      - bg-slate-100
+      - bg-primary-50/70
       - border-transparent
 public: true

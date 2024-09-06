@@ -39,86 +39,85 @@ definition:
                 app: $Param{app}
                 selected: settings
         content:
-          - uesio/io.item:
-              wire: apps
-              mode: EDIT
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: App Settings
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: settings
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: $Label{uesio/io.save}
-                                hotkey: "meta+s"
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: apps
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - apps
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.cancel}
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: apps
-                                signals:
-                                  - signal: wire/CANCEL
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.item:
+                    wire: apps
+                    mode: EDIT
                     components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.two_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.name
-                            - uesio/io.field:
-                                fieldId: uesio/studio.user
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.two_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.description
-                            - uesio/io.field:
-                                fieldId: uesio/studio.public
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.two_columns
-                          items:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: App Settings
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: settings
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: apps
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - apps
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: apps
+                                      signals:
+                                        - signal: wire/CANCEL
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.user
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.description
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.public
                             - uesio/studio.colorpicker:
                                 fieldId: uesio/studio.color
                             - uesio/studio.appiconpicker:
                                 fieldId: uesio/studio.icon
                                 colorFieldId: uesio/studio.color
-                - uesio/appkit.section_audit_info:
-                - uesio/io.box:
-                    uesio.variant: uesio/io.danger
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Danger Zone
+                      - uesio/appkit.section_audit_info:
                       - uesio/io.box:
+                          uesio.variant: uesio/io.danger
                           components:
                             - uesio/io.titlebar:
-                                title: Delete app
-                                subtitle: Once you delete an app, all associated sites and workspaces will also be deleted. Please be sure this what you want to do!
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.id: delete-app
-                                            text: Delete this app
-                                            uesio.variant: uesio/io.destructive
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: deleteApp
+                                uesio.variant: uesio/io.section
+                                title: Danger Zone
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.titlebar:
+                                      title: Delete app
+                                      subtitle: Once you delete an app, all associated sites and workspaces will also be deleted. Please be sure this what you want to do!
+                                      actions:
+                                        - uesio/io.group:
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.id: delete-app
+                                                  text: Delete this app
+                                                  uesio.variant: uesio/io.destructive
+                                                  signals:
+                                                    - signal: panel/TOGGLE
+                                                      panel: deleteApp
   panels:
     deleteApp:
       uesio.type: uesio/io.dialog
