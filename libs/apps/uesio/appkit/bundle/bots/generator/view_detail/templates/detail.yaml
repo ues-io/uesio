@@ -23,6 +23,10 @@ components:
                           tileVariant: uesio/appkit.breadcrumb
                           title: $Collection{${wirename}:pluralLabel}
                           icon: $Collection{${wirename}:icon}
+                          signals:
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: ${collection}
+                              viewtype: list
                       - uesio/appkit.icontile:
                           tileVariant: uesio/appkit.breadcrumb
                           title: $RecordMeta{${wirename}:name}
