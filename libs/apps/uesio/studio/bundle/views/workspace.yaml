@@ -89,7 +89,7 @@ definition:
                                     signals:
                                       - signal: route/NAVIGATE
                                         path: app/$Param{app}/workspace/$Param{workspacename}/${uesio/core.dynamiccollection}/$Param{app}/${uesio/studio.name}
-                                pagesize: 5
+                                pagesize: 8
               left:
                 - uesio/io.tabs:
                     uesio.variant: uesio/appkit.main

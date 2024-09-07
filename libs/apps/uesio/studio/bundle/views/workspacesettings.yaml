@@ -33,113 +33,103 @@ definition:
                 itemType: settings
                 itemIcon: settings
         content:
-          - uesio/io.item:
-              wire: workspaces
-              uesio.id: workspaceDetails
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: Workspace Settings
-                    subtitle: ${uesio/studio.name}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: settings
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.name
-                            - uesio/io.field:
-                                fieldId: uesio/core.owner
-                            - uesio/io.field:
-                                fieldId: uesio/core.createdby
-                                user:
-                                  subtitle: $Time{uesio/core.createdat}
-                            - uesio/io.field:
-                                fieldId: uesio/core.updatedby
-                                user:
-                                  subtitle: $Time{uesio/core.updatedat}
-          - uesio/io.box:
-              uesio.variant: uesio/appkit.primarysection
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Config Values
-                - uesio/io.box:
-                    components:
-                      - uesio/studio.configsecrets:
-                          valueType: config
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Secrets
-                - uesio/io.box:
-                    components:
-                      - uesio/studio.configsecrets:
-                          valueType: secrets
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Feature Flags
-                - uesio/io.box:
-                    components:
-                      - uesio/studio.configfeatureflags:
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-          - uesio/io.box:
-              uesio.variant: uesio/io.danger
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Danger Zone
-                - uesio/io.box:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.item:
+                    wire: workspaces
+                    uesio.id: workspaceDetails
                     components:
                       - uesio/io.titlebar:
-                          uesio.styleTokens:
-                            root:
-                              - mb-5
-                          title: Remove workspace data
-                          subtitle: Once you remove workspace data, it is not recoverable!
-                          actions:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.destructive
-                                text: Remove all workspace data
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: removeAllWorkspaceData
-                      - uesio/io.titlebar:
-                          title: Delete workspace
-                          subtitle: Once you delete a workspace, all associated metadata in the workspace will also be deleted. Please be sure this what you want to do!
-                          actions:
-                            - uesio/io.group:
+                          uesio.variant: uesio/appkit.main
+                          title: Workspace Settings
+                          subtitle: ${uesio/studio.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: settings
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Config Values
+                            - uesio/io.box:
                                 components:
-                                  - uesio/io.list:
-                                      wire: workspaces
-                                      components:
+                                  - uesio/studio.configsecrets:
+                                      valueType: config
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Secrets
+                            - uesio/io.box:
+                                components:
+                                  - uesio/studio.configsecrets:
+                                      valueType: secrets
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Feature Flags
+                            - uesio/io.box:
+                                components:
+                                  - uesio/studio.configfeatureflags:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                      - uesio/appkit.section_audit_info:
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.danger
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Danger Zone
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.titlebar:
+                                      uesio.styleTokens:
+                                        root:
+                                          - mb-5
+                                      title: Remove workspace data
+                                      subtitle: Once you remove workspace data, it is not recoverable!
+                                      actions:
                                         - uesio/io.button:
-                                            text: Delete this workspace
                                             uesio.variant: uesio/io.destructive
+                                            text: Remove all workspace data
                                             signals:
                                               - signal: panel/TOGGLE
-                                                panel: deleteWorkspace
+                                                panel: removeAllWorkspaceData
+                                  - uesio/io.titlebar:
+                                      title: Delete workspace
+                                      subtitle: Once you delete a workspace, all associated metadata in the workspace will also be deleted. Please be sure this what you want to do!
+                                      actions:
+                                        - uesio/io.group:
+                                            components:
+                                              - uesio/io.button:
+                                                  text: Delete this workspace
+                                                  uesio.variant: uesio/io.destructive
+                                                  signals:
+                                                    - signal: panel/TOGGLE
+                                                      panel: deleteWorkspace
   panels:
     removeAllWorkspaceData:
       uesio.type: uesio/io.dialog
