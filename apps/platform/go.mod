@@ -5,14 +5,14 @@ go 1.23.0
 require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PaesslerAG/gval v1.2.2
-	github.com/aws/aws-sdk-go-v2 v1.30.0
+	github.com/aws/aws-sdk-go-v2 v1.30.5
 	github.com/aws/aws-sdk-go-v2/config v1.27.21
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.21
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.32
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.11.0
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.40.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1
-	github.com/aws/smithy-go v1.20.2
+	github.com/aws/smithy-go v1.20.4
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.4.14
 	github.com/dimchansky/utfbom v1.1.1
@@ -53,18 +53,18 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.12 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.13 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.17 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.14 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.19 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.21.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.25.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.29.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.22.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.7 // indirect
 	github.com/beevik/etree v1.4.0 // indirect
 	github.com/crewjam/httperr v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -86,7 +86,6 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
