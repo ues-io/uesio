@@ -9,19 +9,23 @@ definition:
       - justify-center
       - content-center
       - text-center
-      - border-slate-300
-      - border-1
-      - border-dashed
+      - border-fontcolor-200
+      - border-l-1
+      - border-t-1
+      - border-b-2
+      - border-r-2
       - rounded-lg
       - p-16
       - mb-10
-      - mt-2
+      - bg-fontcolor-50/50
     title:
       - text-lg
-      - text-slate-500
+      - text-slate-400
       - font-light
-      - p-2
     subtitle:
+      - text-sm
+      - text-slate-300
+      - font-light
     icon:
       - text-8xl
       - text-slate-200

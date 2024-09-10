@@ -74,7 +74,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: "New Team"
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newTeam"
@@ -83,20 +83,27 @@ definition:
                     components:
                       - uesio/io.deck:
                           uesio.id: teamslist
+                          uesio.variant: uesio/appkit.main
                           wire: teams
                           components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/appkit.card
+                            - uesio/io.card:
+                                uesio.variant: uesio/appkit.main
+                                title: ${uesio/studio.name}
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/teams/${uesio/studio.name}"
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/appkit.avataricon
                                       text: groups
+                      - uesio/io.emptystate:
+                          uesio.variant: uesio/studio.main
+                          title: No Teams Created Yet
+                          subtitle: Click the New Team button to add one.
+                          icon: groups
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: teams
   panels:
     newTeam:
       uesio.type: uesio/io.dialog

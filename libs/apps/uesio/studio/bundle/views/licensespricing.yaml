@@ -138,11 +138,11 @@ definition:
                 app: $Param{app}
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: Licenses Pricing Configuration
-              subtitle: List of applications licensed to use your application $Param{app}
+              subtitle: List of applications licensed to use $Param{app}
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
@@ -153,7 +153,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: add Template
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/appkit.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newLicenseTemplate
@@ -208,6 +208,7 @@ definition:
                 - uesio/io.table:
                     uesio.id: licensepricingtemplateTable
                     wire: licensepricingtemplate
+                    uesio.variant: uesio/appkit.main
                     columns:
                       - field: uesio/studio.actiontype
                       - field: uesio/studio.metadatatype

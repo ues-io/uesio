@@ -1,0 +1,5 @@
+name: site_new
+path: app/{app:\w*\/\w*}/sites/new
+view: site_new
+theme: default
+title: New Site

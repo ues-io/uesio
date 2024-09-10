@@ -30,5 +30,5 @@ variants:
   - uesio/io.tile:uesio/builder.propnodetag
   - uesio/io.tile:uesio/builder.smallpropnodetag
   - uesio/io.titlebar:uesio/builder.primary
-  - uesio/io.titlebar:uesio/builder.item_small
+  - uesio/io.titlebar:uesio/appkit.item_small
   - uesio/io.titlebar:uesio/builder.propsubsection

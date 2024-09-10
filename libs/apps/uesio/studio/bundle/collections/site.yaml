@@ -5,5 +5,5 @@ uniqueKey:
 nameField: uesio/studio.name
 access: protected
 accessField: uesio/studio.app
-label: site
-pluralLabel: sites
+label: Site
+pluralLabel: Sites

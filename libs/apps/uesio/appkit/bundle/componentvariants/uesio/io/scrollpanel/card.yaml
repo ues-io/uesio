@@ -4,26 +4,18 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - border-t-1
-      - border-l-1
-      - border-b-2
-      - border-r-2
+      - -m-5
       - bg-white
-      - border-fontcolor-900
-      - rounded
-      - group
+      - rounded-t
     header:
       - rounded-t
       - p-6
       - bg-primary-50/70
+      - group-hover/card:bg-primary-50
     inner:
       - p-6
       - empty:hidden
-      - group-hover:bg-white/80
     footer:
       - p-6
       - empty:hidden
-    actionable:
-      - hover:bg-primary-100/80
-
 public: true

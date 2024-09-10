@@ -1,0 +1,36 @@
+name: tab_generators
+definition:
+  # Wires connect to data in collections
+  wires:
+    genbots:
+      collection: uesio/studio.bot
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.tag
+          value: $Param{tag}
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.scrollpanel:
+        uesio.variant: uesio/appkit.sidebar
+        content:
+          - uesio/io.deck:
+              wire: genbots
+              uesio.variant: uesio/appkit.tiles
+              components:
+                - uesio/appkit.item:
+                    uesio.styleTokens:
+                      badge:
+                        - bg-[${appcolor}]
+                        - text-white
+                    title: ${label}
+                    subtitle: ${description}
+                    icon: smart_toy
+                    badge: ${appname}
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: app/$Param{app}/workspace/$Param{workspacename}/generate/${namespace}/${name}
+  params:
+    tag:
+      type: TEXT
+      required: true

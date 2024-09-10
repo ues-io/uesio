@@ -72,6 +72,9 @@ definition:
                           text: inventory_2
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.primarysection
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: bundles
                     components:
                       - uesio/io.searchbox:
                           uesio.variant: uesio/appkit.main
@@ -98,3 +101,14 @@ definition:
                               signals:
                                 - signal: "route/NAVIGATE"
                                   path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.primarysection
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: bundles
+                    components:
+                      - uesio/io.emptystate:
+                          uesio.variant: uesio/studio.main
+                          title: No Bundles Created Yet
+                          subtitle: Bundles are created in workspaces.
+                          icon: inventory_2

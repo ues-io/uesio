@@ -2,7 +2,7 @@ import { definition, component, styles } from "@uesio/ui"
 import {
 	getBuilderNamespaces,
 	getComponentDef,
-	getSlotsFromPath,
+	getSlotComponents,
 	replaceSlotPath,
 	setSelectedPath,
 } from "../../api/stateapi"
@@ -61,7 +61,7 @@ const IndexComponent: definition.UtilityComponent<IndexComponentProps> = (
 
 	const slotsNode =
 		componentDef.slots?.map((slot) =>
-			getSlotsFromPath(slot.path, definition)?.map((innerdef, index) => (
+			getSlotComponents(slot, definition)?.map((innerdef, index) => (
 				<IndexSlot
 					key={slot.name + index}
 					slot={slot}

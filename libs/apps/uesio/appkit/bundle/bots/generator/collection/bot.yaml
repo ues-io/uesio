@@ -1,6 +1,7 @@
 name: collection
 dialect: "JAVASCRIPT"
-label: Generate a new collection with views and routes
+label: Generate Collection
+description: Create a new collection with standard views and routes.
 type: "GENERATOR"
 params:
   - name: collection
@@ -8,3 +9,5 @@ params:
     type: METADATANAME
     required: true
 public: true
+tags:
+  - uesio/core.collections

@@ -105,20 +105,24 @@ definition:
                     wire: licenses
                     pagesize: 10
                     columns:
-                      - label: SOURCE APP
+                      - label: Source App
                         components:
-                          - uesio/io.iconlabel:
-                              uesio.variant: uesio/io.namespacefield
-                              text: ${uesio/studio.app->uesio/studio.fullname}
+                          - uesio/appkit.item:
+                              uesio.styleTokens:
+                                avatar:
+                                  - bg-[${uesio/studio.app->uesio/studio.color}]
+                              title: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
-                              color: ${uesio/studio.app->uesio/studio.color}
+                              iconcolor: white
                       - label: status
                         components:
-                          - uesio/io.iconlabel:
-                              uesio.variant: uesio/io.namespacefield
-                              text: Active
+                          - uesio/appkit.item:
+                              uesio.styleTokens:
+                                avatar:
+                                  - bg-emerald-50
+                                  - text-emerald-600
+                              title: Active
                               icon: verified
-                              color: rgb(29,173,113)
                               uesio.display:
                                 - field: uesio/studio.active
                                   value: true

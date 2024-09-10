@@ -72,9 +72,11 @@ views:
   uesio/studio.selectlist: true
   uesio/studio.selectlists: true
   uesio/studio.site: true
+  uesio/studio.site_new: true
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true
   uesio/studio.sitenav: true
+  uesio/studio.tab_generators: true
   uesio/studio.team: true
   uesio/studio.teams: true
   uesio/studio.theme: true
@@ -85,6 +87,7 @@ views:
   uesio/studio.view: true
   uesio/studio.views: true
   uesio/studio.workspace: true
+  uesio/studio.workspace_new: true
   uesio/studio.workspacesettings: true
   uesio/studio.workspacenav: true
   uesio/studio.sitecollectiondata: true
@@ -180,6 +183,7 @@ routes:
   uesio/studio.signupmethod: true
   uesio/studio.signupmethods: true
   uesio/studio.site: true
+  uesio/studio.site_new: true
   uesio/studio.siteorg: true
   uesio/studio.siteorgs: true
   uesio/studio.team: true
@@ -191,6 +195,7 @@ routes:
   uesio/studio.usertokens: true
   uesio/studio.view: true
   uesio/studio.views: true
+  uesio/studio.workspace_new: true
   uesio/studio.workspacesettings: true
   uesio/studio.workspace: true
   uesio/studio.featureflags: true

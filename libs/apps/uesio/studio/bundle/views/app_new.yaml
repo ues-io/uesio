@@ -201,28 +201,12 @@ definition:
                                             components:
                                               - uesio/io.card:
                                                   title: ${uesio/studio.title}
-                                                  uesio.display:
+                                                  selectedConditions:
                                                     - type: mergeValue
                                                       sourceValue: ${app:uesio/studio.starter_template}
                                                       operator: EQUALS
                                                       value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
-                                                  scrollpanelVariant: uesio/appkit.selectcard_selected
-                                                  content:
-                                                    - uesio/io.text:
-                                                        uesio.styleTokens:
-                                                          root:
-                                                            - font-light
-                                                            - text-sm
-                                                            - text-slate-600
-                                                        text: ${uesio/studio.starter_template_description}
-                                              - uesio/io.card:
-                                                  title: ${uesio/studio.title}
-                                                  uesio.display:
-                                                    - type: mergeValue
-                                                      operator: NOT_EQUALS
-                                                      sourceValue: ${app:uesio/studio.starter_template}
-                                                      value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
-                                                  scrollpanelVariant: uesio/appkit.selectcard
+                                                  tileVariant: uesio/appkit.selectcard
                                                   content:
                                                     - uesio/io.text:
                                                         uesio.styleTokens:
@@ -238,11 +222,11 @@ definition:
                                                       value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
                                         - uesio/io.card:
                                             title: Empty App
-                                            scrollpanelVariant: uesio/appkit.selectcard
-                                            uesio.display:
-                                              - type: hasValue
+                                            selectedConditions:
+                                              - type: hasNoValue
                                                 wire: app
                                                 value: ${uesio/studio.starter_template}
+                                            tileVariant: uesio/appkit.selectcard
                                             content:
                                               - uesio/io.text:
                                                   uesio.styleTokens:
@@ -256,21 +240,6 @@ definition:
                                                 wire: app
                                                 field: uesio/studio.starter_template
                                                 value: ""
-                                        - uesio/io.card:
-                                            title: Empty App
-                                            scrollpanelVariant: uesio/appkit.selectcard_selected
-                                            uesio.display:
-                                              - type: hasNoValue
-                                                wire: app
-                                                value: ${uesio/studio.starter_template}
-                                            content:
-                                              - uesio/io.text:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - font-light
-                                                      - text-sm
-                                                      - text-slate-600
-                                                  text: Start with a completely empty app. (Recommended for advanced users.)
                                   - uesio/io.box:
                                       components:
                                         - uesio/io.box:

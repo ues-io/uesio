@@ -610,6 +610,7 @@ export {
 	getSelectedComponentOrSlotPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
+	getSlotComponents,
 	getSlotsFromPath,
 	replaceSlotPath,
 	getSelectedSlotPath,
