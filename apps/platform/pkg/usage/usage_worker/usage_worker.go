@@ -118,9 +118,15 @@ func UsageWorker(ctx context.Context) error {
 
 		err = datasource.SaveWithOptions(requests, session, nil)
 		if err != nil {
+			fmt.Println("Original")
+			fmt.Println(err)
+			fmt.Println("KEYSET")
+			fmt.Println(usage_common.RedisKeysSetName)
+			fmt.Println("Keys")
+			originalError := err
 			// Restore the usage keys which we failed to process back to the set
 			_, err = conn.Do("SADD", redis.Args{}.Add(usage_common.RedisKeysSetName).AddFlat(keys))
-			return errors.New("Failed to update usage events: " + err.Error())
+			return fmt.Errorf("Failed to update usage events: %w : %w : %v", originalError, err, len(keys))
 		} else {
 			slog.Info(fmt.Sprintf("Successfully processed %d usage events", len(changes)))
 		}

@@ -611,6 +611,7 @@ export {
 	useSelectedViewPath,
 	getSelectedViewPath,
 	getSlotComponents,
+	getSlotsFromPath,
 	replaceSlotPath,
 	getSelectedSlotPath,
 	walkViewComponents,
