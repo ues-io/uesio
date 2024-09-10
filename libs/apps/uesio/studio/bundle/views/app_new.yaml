@@ -206,7 +206,7 @@ definition:
                                                       sourceValue: ${app:uesio/studio.starter_template}
                                                       operator: EQUALS
                                                       value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
-                                                  scrollpanelVariant: uesio/appkit.selectcard
+                                                  tileVariant: uesio/appkit.selectcard
                                                   content:
                                                     - uesio/io.text:
                                                         uesio.styleTokens:
@@ -226,7 +226,7 @@ definition:
                                               - type: hasNoValue
                                                 wire: app
                                                 value: ${uesio/studio.starter_template}
-                                            scrollpanelVariant: uesio/appkit.selectcard
+                                            tileVariant: uesio/appkit.selectcard
                                             content:
                                               - uesio/io.text:
                                                   uesio.styleTokens:

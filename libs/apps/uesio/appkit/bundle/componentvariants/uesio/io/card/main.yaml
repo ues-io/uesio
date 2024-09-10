@@ -1,0 +1,7 @@
+name: main
+label: Main
+definition:
+  tileVariant: uesio/appkit.card
+  scrollpanelVariant: uesio/appkit.card
+  titlebarVariant: uesio/appkit.item
+public: true

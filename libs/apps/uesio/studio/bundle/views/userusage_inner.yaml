@@ -97,6 +97,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.card:
+                    tileVariant: uesio/appkit.card
                     scrollpanelVariant: uesio/appkit.card
                     title: ${name}
                     subtitle: ${description}

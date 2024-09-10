@@ -266,7 +266,7 @@ declare global {
 function createWorkspaceInApp(workspaceName: string, appName: string) {
 	cy.clickButton("uesio/io.button:add-workspace")
 	cy.typeInInput("workspace-name", workspaceName)
-	cy.clickButton("uesio/io.button:save-workspace")
+	cy.clickButton("uesio/io.button:save-new-workspace")
 	// This is incredibly flaky, not sure why, but going to lighten the assertion
 	// cy.url().should(
 	// 	"eq",

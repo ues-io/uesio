@@ -122,6 +122,7 @@ definition:
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary
+                                            uesio.id: add-workspace
                                             text: New Workspace
                                             icon: add
                                             signals:
@@ -145,6 +146,7 @@ definition:
                                             uesio.variant: uesio/appkit.main
                                             components:
                                               - uesio/io.card:
+                                                  tileVariant: uesio/appkit.card
                                                   scrollpanelVariant: uesio/appkit.card
                                                   titlebarVariant: uesio/appkit.item
                                                   title: ${uesio/studio.name}
@@ -165,6 +167,7 @@ definition:
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary
+                                            uesio.id: add-site
                                             text: New Site
                                             icon: add
                                             signals:
@@ -190,6 +193,7 @@ definition:
                                                 - gap-6
                                             components:
                                               - uesio/io.card:
+                                                  tileVariant: uesio/appkit.card
                                                   scrollpanelVariant: uesio/appkit.card
                                                   titlebarVariant: uesio/appkit.item
                                                   title: ${uesio/studio.name}
