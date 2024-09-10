@@ -5,6 +5,7 @@ interface ScrollPanelProps extends definition.UtilityProps {
 	header?: ReactNode
 	footer?: ReactNode
 	onClick?: (e: MouseEvent) => void
+	isSelected?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -13,11 +14,12 @@ const StyleDefaults = Object.freeze({
 	footer: [],
 	inner: [],
 	actionable: [],
+	selected: [],
 })
 
 const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 	(props, ref) => {
-		const { onClick } = props
+		const { onClick, isSelected } = props
 		const classes = styles.useUtilityStyleTokens(
 			StyleDefaults,
 			props,
@@ -32,7 +34,8 @@ const ScrollPanel = forwardRef<HTMLDivElement, ScrollPanelProps>(
 				ref={ref}
 				className={styles.cx(
 					classes.root,
-					onClick && classes.actionable
+					isSelected && classes.selected,
+					onClick && !isSelected && classes.actionable
 				)}
 			>
 				<div className={classes.header}>{props.header}</div>

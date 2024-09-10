@@ -1,0 +1,7 @@
+name: deck
+label: Deck
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-4

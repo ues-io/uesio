@@ -42,6 +42,8 @@ sections:
 definition:
   - uesio/io.scrollpanel:
       uesio.variant: $Prop{scrollpanelVariant}
+      uesio.classes:
+        selected: $Prop{selectedConditions}
       signals: $Prop{signals}
       header:
         - uesio/io.titlebar:

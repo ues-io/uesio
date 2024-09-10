@@ -11,6 +11,12 @@ type Props = {
 const ScrollPanel: definition.UC<Props> = (props) => {
 	const { definition, context, path, componentType } = props
 
+	const isSelected = component.shouldHaveClass(
+		context,
+		"selected",
+		definition
+	)
+
 	const handler = api.signal.getHandler(definition.signals, context)
 	return (
 		<ScrollPanelUtility
@@ -19,6 +25,7 @@ const ScrollPanel: definition.UC<Props> = (props) => {
 			styleTokens={definition[component.STYLE_TOKENS]}
 			context={context}
 			onClick={handler}
+			isSelected={isSelected}
 			header={
 				<component.Slot
 					definition={definition}

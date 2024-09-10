@@ -13,7 +13,6 @@ definition:
       - border-r-2
       - border-fontcolor-900
       - rounded
-      - my-2
       - group
     actionable:
       - hover:bg-primary-50

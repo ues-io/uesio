@@ -89,7 +89,7 @@ definition:
                     components:
                       - uesio/io.button:
                           text: Manage Default Pricing
-                          uesio.variant: uesio/io.secondary
+                          uesio.variant: uesio/appkit.secondary
                           signals:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}/licensespricing"

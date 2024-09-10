@@ -1,0 +1,7 @@
+name: main
+label: Main
+public: true
+definition:
+  gridVariant: uesio/appkit.deck
+variants:
+  - uesio/io.grid:uesio/appkit.deck

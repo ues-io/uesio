@@ -610,7 +610,7 @@ export {
 	getSelectedComponentOrSlotPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
-	getSlotsFromPath,
+	getSlotComponents,
 	replaceSlotPath,
 	getSelectedSlotPath,
 	walkViewComponents,

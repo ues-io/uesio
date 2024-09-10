@@ -1,6 +1,7 @@
 name: starter
 dialect: JAVASCRIPT
-label: Starter
+label: Appkit Starter
+description: Creates home, settings, navigation, and user management views.
 type: GENERATOR
 params:
   - name: use_ai_for_data_model
@@ -29,4 +30,6 @@ params:
       - param: use_ai_for_sample_data
         value: true
 public: true
+tags:
+  - uesio/core.workspacehome
 timeout: 30

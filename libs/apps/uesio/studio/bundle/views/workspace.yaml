@@ -17,13 +17,6 @@ definition:
           value: $Param{app}:$Param{workspacename}
     recentmetadata:
       collection: uesio/studio.recentmetadata
-    genbots:
-      collection: uesio/studio.bot
-      conditions:
-        - field: uesio/studio.allmetadata
-          value: true
-        - field: uesio/studio.tag
-          value: uesio/core.workspacehome
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -97,22 +90,10 @@ definition:
                       - label: Generators
                         id: generators
                         components:
-                          - uesio/io.scrollpanel:
-                              uesio.variant: uesio/appkit.sidebar
-                              content:
-                                - uesio/io.deck:
-                                    wire: genbots
-                                    uesio.variant: uesio/appkit.tiles
-                                    components:
-                                      - uesio/appkit.item:
-                                          uesio.styleTokens:
-                                            badge:
-                                              - bg-[${appcolor}]
-                                              - text-white
-                                          title: ${label}
-                                          subtitle: ${description}
-                                          icon: smart_toy
-                                          badge: ${appname}
-                                          signals:
-                                            - signal: route/NAVIGATE
-                                              path: app/$Param{app}/workspace/$Param{workspacename}/generate/${namespace}/${name}
+                          - uesio/core.view:
+                              uesio.id: generatorstab
+                              view: uesio/studio.tab_generators
+                              params:
+                                tag: uesio/core.workspacehome
+                                app: $Param{app}
+                                workspacename: $Param{workspacename}

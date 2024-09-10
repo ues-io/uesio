@@ -74,7 +74,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: "New Team"
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newTeam"
@@ -83,6 +83,7 @@ definition:
                     components:
                       - uesio/io.deck:
                           uesio.id: teamslist
+                          uesio.variant: uesio/appkit.main
                           wire: teams
                           components:
                             - uesio/io.tile:
@@ -97,6 +98,11 @@ definition:
                                   - uesio/io.text:
                                       uesio.variant: uesio/appkit.avataricon
                                       text: groups
+                      - uesio/io.emptystate:
+                          uesio.variant: uesio/studio.main
+                          title: No Teams Created Yet
+                          subtitle: Click the New Team button to add one.
+                          icon: groups
   panels:
     newTeam:
       uesio.type: uesio/io.dialog

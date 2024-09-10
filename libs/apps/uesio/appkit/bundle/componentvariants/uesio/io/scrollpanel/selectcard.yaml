@@ -21,3 +21,8 @@ definition:
       - after:absolute
       - after:top-3
       - after:pointer-events-none
+    selected:
+      - border-slate-800
+      - cursor-default
+      - after:content-["radio\\_button\\_checked"]
+      - after:text-slate-800

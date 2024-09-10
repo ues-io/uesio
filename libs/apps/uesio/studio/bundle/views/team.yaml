@@ -109,13 +109,13 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newMember
                                 text: Add Member
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                             - uesio/io.button:
                                 text: $Label{uesio/io.delete}
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: deleteTeam
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/appkit.secondary
           - uesio/io.box:
               uesio.variant: uesio/appkit.primarysection
               components:
@@ -127,8 +127,11 @@ definition:
                     uesio.styleTokens:
                       root:
                         - mb-4
-                - uesio/io.titlebar:
-                    title: This team has no members - click 'Add Member' to build this team.
+                - uesio/io.emptystate:
+                    uesio.variant: uesio/studio.main
+                    title: This team has no members
+                    subtitle: Use the Add Member button to build this team.
+                    icon: public
                     uesio.display:
                       - type: wireHasNoRecords
                         wire: teammembers
