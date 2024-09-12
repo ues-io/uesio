@@ -16,6 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -45,7 +46,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 
 }
 
-func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r *http.Request) {
+func ServeFileContent(file *meta.File, version string, path string, w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
@@ -58,10 +59,15 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		ctlutil.HandleError(w, err)
 		return
 	}
+
+	if path == "" {
+		path = file.Path
+	}
+
 	buf := &bytes.Buffer{}
-	fileMetadata, err := bundle.GetItemAttachment(buf, file, file.Path, session, connection)
+	fileMetadata, err := bundle.GetItemAttachment(buf, file, path, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(w, exceptions.NewNotFoundException("file not found at path: "+path))
 		return
 	}
 
@@ -71,7 +77,7 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 		usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
 	}
 	respondFile(w, r, &FileRequest{
-		Path:         file.Path,
+		Path:         path,
 		LastModified: *fileMetadata.LastModified(),
 		Namespace:    file.Namespace,
 		Version:      version,
@@ -81,5 +87,7 @@ func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r 
 func ServeFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	file := meta.NewBaseFile(vars["namespace"], vars["name"])
-	ServeFileContent(file, vars["version"], w, r)
+	version := vars["version"]
+	path := vars["path"]
+	ServeFileContent(file, version, path, w, r)
 }

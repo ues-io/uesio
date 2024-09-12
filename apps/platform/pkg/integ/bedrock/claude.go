@@ -3,6 +3,8 @@ package bedrock
 import (
 	"encoding/json"
 	"errors"
+
+	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 )
 
 type MessagesModelUsage struct {
@@ -45,6 +47,8 @@ type ClaudeModelHandler struct {
 }
 
 var claudeModelHandler = &ClaudeModelHandler{}
+
+func (cmh *ClaudeModelHandler) GetClientOptions(o *bedrockruntime.Options) {}
 
 func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, error) {
 	messages := []AnthropicMessage{}

@@ -226,10 +226,19 @@ func serve(cmd *cobra.Command, args []string) {
 	filesPath := fmt.Sprintf("/files/%s", itemParam)
 	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+
 	// Versioned file serving routes
 	versionedFilesPath := fmt.Sprintf("/files/%s", versionedItemParam)
 	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
+
+	filesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", itemParam)
+	sr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+
+	versionedFilesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", versionedItemParam)
+	sr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)

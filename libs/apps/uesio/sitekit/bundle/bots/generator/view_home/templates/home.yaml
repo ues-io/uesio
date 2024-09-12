@@ -9,8 +9,14 @@ components:
         - uesio/io.box:
             uesio.variant: uesio/sitekit.section
             components:
-              - uesio/io.text:
-                  text: Hello World
+              - uesio/sitekit.section_hero:
+                  title: Hello World.
+                  subtitle: This is the first site generated exclusively with sitekit.
+              - uesio/sitekit.section_testimonial:
+                  quote: By far the best thing since sliced bread.
+                  name: Phillip Collington
+                  title: CEO of Acme Widgets
+                  avatar: uesio/sitekit.avatarpics
       footer:
         - uesio/core.view:
             view: ${namespace}.footer

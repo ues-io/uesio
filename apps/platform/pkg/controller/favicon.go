@@ -25,6 +25,6 @@ func Favicon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.ServeFileContent(fileItem, "", w, r)
+	file.ServeFileContent(fileItem, "", "", w, r)
 
 }

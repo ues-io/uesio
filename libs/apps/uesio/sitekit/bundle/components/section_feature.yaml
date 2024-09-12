@@ -1,0 +1,56 @@
+name: section_feature
+category: LAYOUT
+type: DECLARATIVE
+slots:
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Sub Title
+    type: TEXT
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - grid
+          - p-40
+          - items-center
+          - justify-center
+          - justify-items-center
+          - gap-2
+      components:
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - text-7xl
+                - font-bold
+                - text-black
+                - shadow-black
+                #- "[text-shadow:_4px_4px_0_var(--tw-shadow-color),_2px_2px_0_var(--tw-shadow-color),1px_1px_0_var(--tw-shadow-color),_3px_3px_0_var(--tw-shadow-color)]"
+            text: $Prop{title}
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - text-2xl
+                - text-black
+                - font-light
+            text: $Prop{subtitle}
+        - uesio/io.group:
+            uesio.styleTokens:
+              root:
+                - mt-8
+            components:
+              - uesio/io.button:
+                  uesio.variant: uesio/sitekit.primary_dark
+                  text: Get Started
+              - uesio/io.button:
+                  uesio.variant: uesio/sitekit.secondary_dark
+                  text: Learn more
+title: Feature Section
+discoverable: true
+description: A feature section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

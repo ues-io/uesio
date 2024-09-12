@@ -5,7 +5,4 @@ definition:
   uesio.styleTokens:
     left:
       - bg-primary-50/70
-    content:
-      - md:h-full
-      - md:overflow-auto
 public: true

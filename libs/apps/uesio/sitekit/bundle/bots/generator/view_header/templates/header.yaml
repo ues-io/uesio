@@ -3,15 +3,11 @@ components:
   - uesio/sitekit.header:
       uesio.styleTokens:
         root:
-          - from-indigo-700/95
-          - to-violet-600/95
-          - bg-gradient-to-br
-          - "[background-size:100%_500%]"
-          - backdrop-blur
+          - bg-white/90
       sticky: true
       logo:
         - uesio/io.image:
-            file: uesio/core.logowhite
+            file: uesio/sitekit.yourlogo
             height: 44
             signals:
               - signal: "route/NAVIGATE"
@@ -20,14 +16,14 @@ components:
         - uesio/io.group:
             components:
               - uesio/io.button:
-                  uesio.variant: uesio/sitekit.secondary
+                  uesio.variant: uesio/sitekit.secondary_dark
                   text: Page 1
               - uesio/io.button:
-                  uesio.variant: uesio/sitekit.secondary
+                  uesio.variant: uesio/sitekit.secondary_dark
                   text: Page 2
               - uesio/io.button:
-                  uesio.variant: uesio/sitekit.secondary
+                  uesio.variant: uesio/sitekit.secondary_dark
                   text: Page 3
         - uesio/io.button:
-            uesio.variant: uesio/sitekit.primary
+            uesio.variant: uesio/sitekit.primary_dark
             text: Call to Action

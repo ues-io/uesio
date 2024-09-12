@@ -32,7 +32,7 @@ func (c *connection) invokeModel(requestOptions map[string]interface{}) (interfa
 		Accept:      aws.String("application/json"),
 	}
 
-	output, err := c.client.InvokeModel(c.session.Context(), input)
+	output, err := c.client.InvokeModel(c.session.Context(), input, handler.GetClientOptions)
 	if err != nil {
 		return nil, handleBedrockError(err)
 	}

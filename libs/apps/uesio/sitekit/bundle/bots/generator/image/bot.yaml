@@ -1,0 +1,7 @@
+name: image
+dialect: JAVASCRIPT
+label: Generate Image
+type: GENERATOR
+params:
+public: true
+timeout: 30
