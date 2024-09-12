@@ -1,5 +1,6 @@
 uesio.styleTokens:
   root:
-    - from-rose-700/95
-    - to-pink-600/95
-    - bg-gradient-to-br
+    - bg-cover
+    - bg-[url($File{uesio/sitekit.backgrounds})]
+  content:
+    - bg-white/20

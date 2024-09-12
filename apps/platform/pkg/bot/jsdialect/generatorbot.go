@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"io"
 	"regexp"
@@ -293,6 +294,14 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 
 func (gba *GeneratorBotAPI) GenerateStringFile(filename string, content string) error {
 	return gba.AddFile(filename, strings.NewReader(content))
+}
+
+func (gba *GeneratorBotAPI) GenerateBase64File(filename string, content string) error {
+	decoded, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		return err
+	}
+	return gba.AddFile(filename, bytes.NewReader(decoded))
 }
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {

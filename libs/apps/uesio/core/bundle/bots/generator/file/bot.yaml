@@ -1,0 +1,9 @@
+name: file
+dialect: "JAVASCRIPT"
+label: File
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: File Name
+    type: METADATANAME
+public: true

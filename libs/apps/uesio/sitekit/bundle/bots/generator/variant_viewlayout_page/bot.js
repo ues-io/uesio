@@ -9,7 +9,7 @@ function variant_viewlayout_page(bot) {
 	bot.runGenerator("uesio/core", "componentvariant", {
 		name: "page",
 		component: "uesio/io.viewlayout",
-		extends: "uesio/io.default",
+		extends: "uesio/sitekit.default",
 		label: "Page",
 		definition,
 	})

@@ -24,8 +24,6 @@ definition:
       - md:row-start-2
       - md:grid-rows-[100%]
     content:
-      - md:h-full
-      - md:overflow-auto
       - md:col-start-2
       - md:col-end-2
       - "md:[container-type:size]"

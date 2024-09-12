@@ -6,7 +6,7 @@ definition:
     root:
       - -m-5
       - bg-white
-      - rounded-t
+      - rounded
     header:
       - rounded-t
       - p-6
@@ -18,4 +18,5 @@ definition:
     footer:
       - p-6
       - empty:hidden
+      - rounded-b
 public: true

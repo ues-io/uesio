@@ -28,6 +28,7 @@ type InvokeModelOptions struct {
 	TopP              float64            `json:"top_p"`
 	Tools             []Tool             `json:"tools,omitempty"`
 	ToolChoice        *ToolChoice        `json:"tool_choice,omitempty"`
+	AspectRatio       string             `json:"aspect_ratio"`
 }
 
 type ToolChoice struct {
@@ -78,12 +79,14 @@ type ModelHandler interface {
 	GetBody(options *InvokeModelOptions) ([]byte, error)
 	GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error)
 	HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error)
+	GetClientOptions(o *bedrockruntime.Options)
 }
 
 var modelHandlers = map[string]ModelHandler{
 	"anthropic.claude-3-haiku-20240307-v1:0":  claudeModelHandler,
 	"anthropic.claude-3-sonnet-20240229-v1:0": claudeModelHandler,
 	"anthropic.claude-3-opus-20240229-v1:0":   claudeModelHandler,
+	"stability.stable-image-ultra-v1:0":       stabilityModelHandler,
 }
 
 // RunAction implements the system bot interface
