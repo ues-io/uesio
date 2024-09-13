@@ -64,9 +64,9 @@ definition:
               - uesio/io.avatar:
                   uesio.variant: $Prop{avatarVariant}
                   image: $File{$Prop{avatar}}
-title: Testimonial Block
+title: Testimonial
 discoverable: true
-description: A testimonial block
+description: A testimonial
 sections:
   - type: HOME
     properties:
