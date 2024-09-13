@@ -10,34 +10,19 @@ properties:
     label: Sub Title
     type: TEXT
 definition:
-  - uesio/io.box:
-      uesio.styleTokens:
-        root:
-          - grid
-          - p-40
-          - items-center
-          - justify-center
-          - justify-items-center
-          - gap-2
-      components:
+  - uesio/sitekit.section:
+      innerVariant: uesio/sitekit.hero_wrapper
+      content:
         - uesio/io.text:
-            uesio.styleTokens:
-              root:
-                - text-7xl
-                - font-bold
-                - text-black
+            uesio.variant: uesio/sitekit.hero_title
             text: $Prop{title}
         - uesio/io.text:
-            uesio.styleTokens:
-              root:
-                - text-2xl
-                - text-black
-                - font-light
+            uesio.variant: uesio/sitekit.hero_subtitle
             text: $Prop{subtitle}
         - uesio/io.group:
             uesio.styleTokens:
               root:
-                - mt-8
+                - mt-10
             components:
               - uesio/io.button:
                   uesio.variant: uesio/sitekit.primary_dark

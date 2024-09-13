@@ -1,4 +1,4 @@
-name: reviewstar
+name: testimonial_star
 category: LAYOUT
 type: DECLARATIVE
 definition:
@@ -24,9 +24,9 @@ definition:
           - text-2xl
           - m-1
       text: star
-title: Review Star
+title: Testimonial Star
 discoverable: true
-description: Review Star
+description: Testimonial Star
 sections:
   - type: HOME
     properties:

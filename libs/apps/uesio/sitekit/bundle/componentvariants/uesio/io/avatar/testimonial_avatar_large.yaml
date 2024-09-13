@@ -1,0 +1,9 @@
+name: testimonial_avatar_large
+label: Testimonial Avatar Large
+extends: uesio/sitekit.testimonial_avatar
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - h-12
+      - w-12

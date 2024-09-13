@@ -1,0 +1,5 @@
+- uesio/sitekit.section_testimonial:
+    quote: ${quote}
+    name: ${name}
+    title: ${title}
+    avatar: uesio/sitekit.avatarpics

@@ -1,0 +1,21 @@
+name: hero_wrapper
+label: Hero Wrapper
+public: true
+extends: uesio/sitekit.section_inner
+definition:
+  uesio.styleTokens:
+    root:
+      - items-center
+      - justify-center
+      - justify-items-center
+      - text-center
+      - gap-6
+      - lg:px-60
+      - lg:pt-40
+      - lg:pb-20
+      - md:px-30
+      - md:pt-20
+      - md:pb-16
+      - px-6
+      - pt-20
+      - pb-10

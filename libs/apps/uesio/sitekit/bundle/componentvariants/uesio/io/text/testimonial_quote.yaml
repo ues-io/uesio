@@ -1,0 +1,9 @@
+name: testimonial_quote
+label: Testimonial Quote
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - text-lg
+      - font-medium
+      - text-black

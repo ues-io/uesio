@@ -3,6 +3,8 @@ label: Default
 extends: uesio/io.default
 definition:
   uesio.styleTokens:
+    root:
+      - md:h-full
     left:
       - bg-primary-50/70
     content:

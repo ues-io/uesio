@@ -6,17 +6,18 @@ components:
         - uesio/core.view:
             view: ${namespace}.header
       content:
+        - uesio/sitekit.section_hero:
+            title: ${tagline}
+            subtitle: ${tagline_sub}
         - uesio/io.box:
-            uesio.variant: uesio/sitekit.section
-            components:
-              - uesio/sitekit.section_hero:
-                  title: Hello World.
-                  subtitle: This is the first site generated exclusively with sitekit.
-              - uesio/sitekit.section_testimonial:
-                  quote: By far the best thing since sliced bread.
-                  name: Phillip Collington
-                  title: CEO of Acme Widgets
-                  avatar: uesio/sitekit.avatarpics
+            components: ${mainTestimonialYaml}
+        - uesio/sitekit.section:
+            innerVariant: uesio/sitekit.section_inner_content
+            uesio.styleTokens:
+              inner:
+                - grid-cols-3
+                - gap-6
+            content: ${testimonialsYaml}
       footer:
         - uesio/core.view:
             view: ${namespace}.footer

@@ -1,0 +1,12 @@
+name: section_inner_content_three_column
+label: Section Inner Content Three Column
+public: true
+extends: uesio/sitekit.section_inner_content
+definition:
+  uesio.styleTokens:
+    root:
+      - lg:grid-cols-3
+      - grid-cols-1
+      - lg:gap-x-10
+      - gap-x-6
+      - gap-y-10

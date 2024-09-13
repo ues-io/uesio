@@ -1,0 +1,7 @@
+name: testimonial_wrapper_large
+label: Testimonial Wrapper Large
+public: true
+extends: uesio/sitekit.testimonial_wrapper
+definition:
+  uesio.styleTokens:
+    root:

@@ -1,0 +1,9 @@
+- uesio/io.group:
+    uesio.variant: uesio/sitekit.footer_linkcategory
+    components:
+      - uesio/io.text:
+          uesio.variant: uesio/sitekit.footer_linkcategorytitle
+          text: ${title}
+      - uesio/io.group:
+          uesio.variant: uesio/sitekit.footer_linkcategory
+          components: ${buttonsYaml}

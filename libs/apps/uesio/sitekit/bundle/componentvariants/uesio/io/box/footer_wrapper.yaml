@@ -1,0 +1,11 @@
+name: footer_wrapper
+label: Footer Wrapper
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - flex
+      - md:gap-18
+      - sm:gap-12
+      - gap-6
+      - py-12

@@ -7,9 +7,9 @@ slots:
   - name: right
 definition:
   - uesio/io.box:
+      uesio.variant: uesio/sitekit.section
       uesio.styleTokens:
         root:
-          - md:py-8
           - py-6
           - $If{[$Prop{sticky}][sticky]}
           - $If{[$Prop{sticky}][top-0]}
@@ -17,7 +17,7 @@ definition:
           - $Region{root}
       components:
         - uesio/io.box:
-            uesio.variant: uesio/sitekit.section
+            uesio.variant: uesio/sitekit.section_inner
             components:
               - uesio/io.group:
                   uesio.styleTokens:

@@ -1,0 +1,8 @@
+name: footer_linkcategorytitle
+label: Footer Link Category Title
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - text-slate-100
+      - text-xs

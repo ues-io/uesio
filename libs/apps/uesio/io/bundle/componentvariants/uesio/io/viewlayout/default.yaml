@@ -8,7 +8,6 @@ definition:
       - lg:grid-rows-[auto_1fr_auto]
       - md:grid-cols-[auto_1fr]
       - md:grid-rows-[auto_1fr_auto_auto]
-      - md:h-full
       - grid-rows-[auto_auto_1fr_auto_auto]
       - min-h-full
     header:
