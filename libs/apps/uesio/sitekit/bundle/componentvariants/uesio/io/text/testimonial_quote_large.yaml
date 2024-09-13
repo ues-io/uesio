@@ -1,0 +1,12 @@
+name: testimonial_quote_large
+label: Testimonial Quote Large
+extends: uesio/sitekit.testimonial_quote
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - lg:text-4xl
+      - md:text-2xl
+      - text-xl
+      - font-medium
+      - text-black

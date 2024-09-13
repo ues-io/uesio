@@ -1,0 +1,9 @@
+name: testimonial_wrapper
+label: Testimonial Wrapper
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - gap-4
+      - auto-rows-max

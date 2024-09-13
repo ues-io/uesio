@@ -8,4 +8,4 @@ definition:
         note:
           - uesio/io.text:
               text: UESIO Inc. | All rights Reserved © | Open Source GPL3
-              uesio.variant: uesio/sitekit.footernote
+              uesio.variant: uesio/sitekit.footer_note

@@ -1,0 +1,33 @@
+name: section
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+properties:
+  - name: innerVariant
+    label: Inner Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.section_inner
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/sitekit.section
+      uesio.styleTokens:
+        root: $Region{root}
+      components:
+        - uesio/io.box:
+            uesio.variant: $Prop{innerVariant}
+            uesio.styleTokens:
+              root: $Region{inner}
+            components:
+              - uesio/core.slot:
+                  name: content
+title: Section
+discoverable: true
+description: A section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

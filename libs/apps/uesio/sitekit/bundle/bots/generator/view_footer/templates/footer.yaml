@@ -3,20 +3,10 @@ components:
   - uesio/sitekit.footer:
       content:
         - uesio/io.box:
-            uesio.styleTokens:
-              root:
-                - flex
-                - md:gap-24
-                - sm:gap-18
-                - gap-6
-                - py-12
+            uesio.variant: uesio/sitekit.footer_wrapper
             components:
               - uesio/io.image:
-                  uesio.styleTokens:
-                    root:
-                      - opacity-80
-                      - hover:opacity-100
-                  file: uesio/core.logowhite
+                  file: uesio/sitekit.yourlogodark
                   height: 44
                   signals:
                     - signal: route/REDIRECT
@@ -24,35 +14,9 @@ components:
                       path: https://ues.io
                       newtab: true
               - uesio/io.grid:
-                  uesio.styleTokens:
-                    root:
-                      - lg:grid-cols-6
-                      - md:grid-cols-3
-                      - sm:grid-cols-2
-                      - grid-cols-1
-                      - gap-x-8
-                      - gap-y-1.5
-                      - grow
-                  items:
-                    - uesio/io.button:
-                        text: Footer Link 1
-                        uesio.variant: uesio/sitekit.footerlink
-                    - uesio/io.button:
-                        text: Footer Link 2
-                        uesio.variant: uesio/sitekit.footerlink
-                    - uesio/io.button:
-                        text: Footer Link 3
-                        uesio.variant: uesio/sitekit.footerlink
-                    - uesio/io.button:
-                        text: About
-                        uesio.variant: uesio/sitekit.footerlink
-                    - uesio/io.button:
-                        text: Privacy Policy
-                        uesio.variant: uesio/sitekit.footerlink
-                    - uesio/io.button:
-                        text: Terms of Use
-                        uesio.variant: uesio/sitekit.footerlink
+                  uesio.variant: uesio/sitekit.footer_linkwrapper
+                  items: ${categoriesYaml}
       note:
         - uesio/io.text:
             text: My Company Inc. | All rights Reserved © | Generated with ues.io SiteKit
-            uesio.variant: uesio/sitekit.footernote
+            uesio.variant: uesio/sitekit.footer_note

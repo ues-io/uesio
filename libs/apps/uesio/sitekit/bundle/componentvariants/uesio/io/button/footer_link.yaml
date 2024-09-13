@@ -1,4 +1,4 @@
-name: footerlink
+name: footer_link
 label: Footer Link
 public: true
 extends: uesio/io.default

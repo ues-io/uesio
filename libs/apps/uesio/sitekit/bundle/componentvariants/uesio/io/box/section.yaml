@@ -4,8 +4,6 @@ public: true
 definition:
   uesio.styleTokens:
     root:
-      - "[max-width:1248px]"
-      - m-auto
-      - "[container-type:inline-size]"
-      - md:px-20
+      - lg:px-20
+      - md:px-10
       - px-6

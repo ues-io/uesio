@@ -1,0 +1,73 @@
+name: testimonial
+category: LAYOUT
+type: DECLARATIVE
+slots:
+properties:
+  - name: quote
+    label: Quote
+    type: TEXT
+  - name: avatar
+    label: Avatar
+    type: METADATA
+    metadataType: FILE
+  - name: name
+    label: Name
+    type: TEXT
+  - name: title
+    label: Title
+    type: TEXT
+  - name: logo
+    type: METADATA
+    metadataType: FILE
+    label: logo
+  - name: wrapperVariant
+    label: Wrapper Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.testimonial_wrapper
+  - name: quoteVariant
+    label: Quote Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.text
+    defaultValue: uesio/sitekit.testimonial_quote
+  - name: avatarVariant
+    label: Avatar Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.avatar
+    defaultValue: uesio/sitekit.testimonial_avatar
+definition:
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      components:
+        - uesio/io.box:
+            components:
+              - uesio/sitekit.testimonial_star:
+              - uesio/sitekit.testimonial_star:
+              - uesio/sitekit.testimonial_star:
+              - uesio/sitekit.testimonial_star:
+              - uesio/sitekit.testimonial_star:
+                  inactive: true
+        - uesio/io.text:
+            uesio.variant: $Prop{quoteVariant}
+            text: “$Prop{quote}”
+        - uesio/io.titlebar:
+            uesio.variant: uesio/io.item
+            title: $Prop{name}
+            subtitle: $Prop{title}
+            avatar:
+              - uesio/io.avatar:
+                  uesio.variant: $Prop{avatarVariant}
+                  image: $File{$Prop{avatar}}
+title: Testimonial Block
+discoverable: true
+description: A testimonial block
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

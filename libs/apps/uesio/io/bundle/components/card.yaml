@@ -22,14 +22,12 @@ properties:
     metadata:
       type: COMPONENTVARIANT
       grouping: uesio/io.tile
-    metadataType: COMPONENTVARIANT
   - name: scrollpanelVariant
     label: Scrollpanel Variant
     type: METADATA
     metadata:
       type: COMPONENTVARIANT
       grouping: uesio/io.scrollpanel
-    metadataType: COMPONENTVARIANT
   - name: titlebarVariant
     label: Title Bar Variant
     type: METADATA
@@ -37,7 +35,6 @@ properties:
       type: COMPONENTVARIANT
       grouping: uesio/io.titlebar
     defaultValue: uesio/io.default
-    metadataType: COMPONENTVARIANT
 sections:
   - type: HOME
     properties:

@@ -1,0 +1,9 @@
+name: testimonial_avatar
+label: Testimonial Avatar
+extends: uesio/io.default
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - h-10
+      - w-10

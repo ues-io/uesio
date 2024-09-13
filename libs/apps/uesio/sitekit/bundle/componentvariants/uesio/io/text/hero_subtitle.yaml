@@ -1,0 +1,12 @@
+name: hero_subtitle
+label: Hero Subtitle
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - lg:text-2xl
+      - md:text-xl
+      - text-lg
+      - text-black
+      - font-light
+      - "[text-wrap:balance]"

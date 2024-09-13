@@ -1,0 +1,9 @@
+name: section_inner
+label: Section Inner
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - "[max-width:1248px]"
+      - m-auto

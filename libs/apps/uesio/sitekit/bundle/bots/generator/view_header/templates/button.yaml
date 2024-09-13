@@ -1,0 +1,3 @@
+- uesio/io.button:
+    uesio.variant: ${variant}
+    text: ${name}
