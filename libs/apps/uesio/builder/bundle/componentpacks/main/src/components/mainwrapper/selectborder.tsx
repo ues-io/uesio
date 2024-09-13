@@ -35,17 +35,16 @@ const StyleDefaults = Object.freeze({
 		"after:absolute",
 		"after:inset-0",
 		"after:pointer-events-none",
-		"after:outline-dashed",
-		"after:outline-1",
-		"after:outline-accent",
-		"after:-outline-offset-[2px]",
+		"after:outline",
+		"after:outline-8",
+		"after:outline-accent-600/40",
+		"after:-outline-offset-[8px]",
 		"after:z-10",
 		"empty:block",
 	],
 	selectedAlways: ["relative"],
 	arrow: ["fill-accent"],
 	popper: ["bg-accent", "rounded"],
-	dragging: ["opacity-20"],
 })
 
 const nonComponentPaths = ["wires", "params"]
@@ -67,13 +66,18 @@ const getComponentInfoFromPath = (path: FullPath, context: context.Context) => {
 	return [componentIndex, parentPath, grandParentPath, componentDef] as const
 }
 
-const getTargetsFromSlotIndex = (slotPath: FullPath, index: number) => {
+const getTargetsFromSlotIndex = (
+	localPath: string,
+	index: number | undefined
+) => {
+	const targets: Element[] = []
+	if (!localPath || index === undefined) return targets
 	const targetWrappers = document.querySelectorAll(
 		`[data-path="${CSS.escape(
-			component.path.toDataAttrPath(slotPath.localPath)
+			component.path.toDataAttrPath(localPath)
 		)}"]>[data-index="${index}"]`
 	)
-	const targets: Element[] = []
+
 	targetWrappers.forEach((target) => {
 		const children = target.querySelectorAll(
 			":scope>:not([data-placeholder])"
@@ -104,13 +108,10 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
 	const selectedComponentPath = useSelectedComponentPath(context)
 
-	const selectedChildren = useRef<Element[]>()
-	const draggingChildren = useRef<Element[]>()
+	const prevSelectedChildren = useRef<Element[]>()
 
 	const dragPath = useDragPath(context)
 	const isDragging = dragPath.isSet()
-
-	const selectedClasses = classes.selected.split(" ")
 
 	const [
 		selectedChildIndex,
@@ -119,25 +120,21 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		selectedComponentDef,
 	] = getComponentInfoFromPath(selectedComponentPath, context)
 
+	const selectedLocalPath = selectedSlotPath?.localPath || ""
+
+	const selectedChildren = getTargetsFromSlotIndex(
+		selectedLocalPath,
+		selectedChildIndex
+	)
+
 	useEffect(() => {
-		// Selected component handling
-		if (selectedChildren?.current) {
-			selectedChildren.current.forEach((child) => {
-				child.classList.remove(...selectedClasses)
-			})
-		}
-
-		if (!selectedSlotPath || isDragging) {
-			selectedChildren.current = undefined
-			return
-		}
-
-		selectedChildren.current = getTargetsFromSlotIndex(
-			selectedSlotPath,
-			selectedChildIndex
-		)
-
-		selectedChildren.current.forEach((target) => {
+		const selectedClasses = classes.selected.split(" ")
+		prevSelectedChildren.current?.forEach((child) => {
+			child.classList.remove(...selectedClasses)
+		})
+		prevSelectedChildren.current = selectedChildren
+		if (!selectedChildren) return
+		selectedChildren.forEach((target) => {
 			target.classList.add(...selectedClasses)
 			if (!target.classList.contains("absolute")) {
 				target.classList.add(...StyleDefaults.selectedAlways)
@@ -145,31 +142,18 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 		})
 	})
 
+	/*
 	useEffect(() => {
-		// Dragging items handling
-		const [draggingChildIndex, , draggingSlotPath, ,] =
-			getComponentInfoFromPath(dragPath, context)
-
-		if (draggingChildren?.current) {
-			draggingChildren.current.forEach((child) => {
-				child.classList.remove(...StyleDefaults.dragging)
-			})
-		}
-
-		if (!draggingSlotPath) {
-			draggingChildren.current = undefined
+		// Selected component handling
+		if (!selectedLocalPath || isDragging) {
+			setSelectedChildren([])
 			return
 		}
-
-		draggingChildren.current = getTargetsFromSlotIndex(
-			draggingSlotPath,
-			draggingChildIndex
+		setSelectedChildren(
+			getTargetsFromSlotIndex(selectedLocalPath, selectedChildIndex)
 		)
-
-		draggingChildren.current.forEach((target) => {
-			target.classList.add(...StyleDefaults.dragging)
-		})
-	})
+	}, [isDragging, selectedLocalPath, selectedChildIndex, classes.selected])
+	*/
 
 	if (!selectedChildren || !selectedParentPath || !selectedComponentDef)
 		return null
@@ -178,9 +162,9 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	const componentTitle =
 		selectedComponentDef.title || selectedComponentDef.name
 
-	return !isDragging && selectedChildren?.current?.length ? (
+	return !isDragging && selectedChildren.length ? (
 		<Popper
-			referenceEl={selectedChildren.current[0]}
+			referenceEl={selectedChildren[0]}
 			context={context}
 			placement="top"
 			offset={8}

@@ -12,11 +12,10 @@ components:
         - uesio/io.box:
             components: ${mainTestimonialYaml}
         - uesio/sitekit.section:
-            innerVariant: uesio/sitekit.section_inner_content
+            innerVariant: uesio/sitekit.section_inner_content_three_column
             uesio.styleTokens:
-              inner:
-                - grid-cols-3
-                - gap-6
+              root:
+                - bg-white
             content: ${testimonialsYaml}
       footer:
         - uesio/core.view:
