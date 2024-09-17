@@ -1,9 +1,6 @@
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
-import {
-	ComponentProperty,
-	StructProperty,
-} from "../properties/componentproperty"
+import { SignalBandDefinition } from "../api/signalsapi"
 import { api, metadata, signal } from "@uesio/ui"
+import { getPropertyTypeFromParamDef } from "./route"
 
 interface RunActionSignal extends signal.SignalDefinition {
 	integrationType: metadata.MetadataKey
@@ -28,20 +25,28 @@ const signals: SignalBandDefinition = {
 				return [
 					{
 						type: "METADATA",
-						metadataType: "INTEGRATIONTYPE",
+						metadata: {
+							type: "INTEGRATIONTYPE",
+						},
 						name: "integrationType",
 						label: "Integration Type",
 						// Clear out everything else when the integration type changes
 						onChange: [
-							{ field: "integration" },
-							{ field: "action" },
-							{ field: "params" },
+							{
+								updates: [
+									{ field: "integration" },
+									{ field: "action" },
+									{ field: "params" },
+								],
+							},
 						],
 					},
 					{
 						type: "METADATA",
-						metadataType: "INTEGRATION",
-						groupingValue: "${integrationType}",
+						metadata: {
+							type: "INTEGRATION",
+							grouping: "${integrationType}",
+						},
 						name: "integration",
 						label: "Integration",
 						displayConditions: [
@@ -51,12 +56,21 @@ const signals: SignalBandDefinition = {
 							},
 						],
 						// Clear out action and params when the integration changes
-						onChange: [{ field: "action" }, { field: "params" }],
+						onChange: [
+							{
+								updates: [
+									{ field: "action" },
+									{ field: "params" },
+								],
+							},
+						],
 					},
 					{
 						type: "METADATA",
-						metadataType: "INTEGRATIONACTION",
-						groupingValue: "${integrationType}",
+						metadata: {
+							type: "INTEGRATIONACTION",
+							grouping: "${integrationType}",
+						},
 						name: "action",
 						label: "Action Name",
 						displayConditions: [
@@ -70,25 +84,26 @@ const signals: SignalBandDefinition = {
 							},
 						],
 						// Clear out params when the action changes
-						onChange: [{ field: "params" }],
+						onChange: [
+							{
+								updates: [{ field: "params" }],
+							},
+						],
 					},
 					{
 						type: "STRUCT",
 						name: "params",
 						label: "Parameters",
 						properties: (actionMetadata?.inputs ?? []).map(
-							({
-								name,
-								label = name,
-								type,
-								required,
-								conditions,
-							}) =>
-								({
-									type:
-										type === "LIST" || type === "MAP"
-											? "TEXT"
-											: type,
+							(paramDef) => {
+								const {
+									name,
+									label = name,
+									required,
+									conditions,
+								} = paramDef
+								return {
+									type: getPropertyTypeFromParamDef(paramDef),
 									name,
 									label,
 									required,
@@ -100,13 +115,15 @@ const signals: SignalBandDefinition = {
 											operator = "EQUALS",
 										}) => ({
 											type,
-											value,
+											value: value as string,
 											field: `params->${param}`,
 											operator,
 										})
 									),
-								}) as ComponentProperty
-						) as ComponentProperty[],
+								}
+							}
+						),
+
 						displayConditions: [
 							{
 								type: "hasValue",
@@ -117,13 +134,13 @@ const signals: SignalBandDefinition = {
 								value: "${action}",
 							},
 						],
-					} as StructProperty,
-				] as ComponentProperty[]
+					},
+				]
 			},
 			canError: true,
 			// TODO: Outputs could be a stream, don't require a named property in a map
 			outputs: [{ name: "params", type: "MAP" }],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 export default signals

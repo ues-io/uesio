@@ -20,10 +20,10 @@ type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "IN" | "NOT_IN" | undefined
 // If there is no record in context, test against all records in the wire.
 
 interface FieldValueConditionBase {
-	type: "fieldValue" | undefined
+	type?: "fieldValue" | undefined
 	wire?: string
 	field: string
-	operator: DisplayOperator
+	operator?: DisplayOperator
 	value?: string
 	values?: string[]
 }

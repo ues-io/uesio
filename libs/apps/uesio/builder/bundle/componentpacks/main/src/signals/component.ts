@@ -1,5 +1,5 @@
 import { context, wire, signal } from "@uesio/ui"
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition } from "../api/signalsapi"
 
 import {
 	getComponentDefs,
@@ -30,7 +30,7 @@ const getComponentSignalOptions = (
 				value: name,
 				label: def.label || name,
 				title: def.description,
-			})) as wire.SelectOption[]
+			}))
 		}
 	}
 	return [
@@ -83,7 +83,7 @@ const signals: SignalBandDefinition = {
 			description:
 				"Invokes a Component-defined Signal on one or more instances of that Component",
 			properties: (signal: ComponentSignalDefinition, context) => {
-				const baseProperties = [
+				const baseProperties: ComponentProperty[] = [
 					{
 						type: "SELECT",
 						name: "component",
@@ -152,24 +152,24 @@ const signals: SignalBandDefinition = {
 							},
 						],
 					},
-				] as ComponentProperty[]
+				]
 
 				// Append signal-specific properties, if there are any
-				const signalProperties = (
-					signal.component && signal.componentsignal
-						? getComponentDef(signal.component)?.signals?.[
-								signal.componentsignal
-							]?.properties
-						: []
-				) as ComponentProperty[]
+				if (signal.component && signal.componentsignal) {
+					const componentDef = getComponentDef(signal.component)
+						?.signals?.[signal.componentsignal]
+					if (componentDef && componentDef.properties) {
+						return baseProperties.concat(
+							componentDef.properties(signal, context)
+						)
+					}
+				}
 
-				return signalProperties
-					? baseProperties.concat(signalProperties)
-					: baseProperties
+				return baseProperties
 			},
 			// Signal-defined outputs
 			// outputs: [{ name: "result", type: "MAP" }],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 export default signals

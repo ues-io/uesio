@@ -71,18 +71,19 @@ type KeyProperty = {
 	type: "KEY"
 } & BaseProperty
 
+type MetadataMetadata = {
+	type: metadata.MetadataType
+	grouping?: string
+}
+
 type MetadataProperty = {
 	type: "METADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
+	metadata: MetadataMetadata
 } & BaseProperty
 
 type MultiMetadataProperty = {
 	type: "MULTIMETADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
+	metadata: MetadataMetadata
 } & BaseProperty
 
 type NamespaceProperty = {
@@ -290,9 +291,11 @@ type ComponentProperty =
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: component.STYLE_VARIANT,
 	type: "METADATA",
-	metadataType: "COMPONENTVARIANT",
+	metadata: {
+		type: "COMPONENTVARIANT",
+		grouping: componentType || "",
+	},
 	label: "Variant",
-	groupingValue: componentType || "",
 })
 
 export type {

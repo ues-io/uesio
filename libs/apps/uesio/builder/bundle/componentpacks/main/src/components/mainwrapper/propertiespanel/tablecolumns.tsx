@@ -25,7 +25,7 @@ export type ColumnDefinition = {
 	type?: "" | "custom"
 } & definition.BaseDefinition
 
-const columnTypeProperty = {
+const columnTypeProperty: ComponentProperty = {
 	name: "type",
 	type: "SELECT",
 	label: "Column Type",
@@ -42,7 +42,7 @@ const columnTypeProperty = {
 					value: "custom",
 					type: "fieldValue",
 				},
-			] as component.DisplayCondition[],
+			],
 			updates: [{ field: "components", value: [] }, { field: "field" }],
 		},
 		{
@@ -52,17 +52,17 @@ const columnTypeProperty = {
 					value: "",
 					type: "fieldValue",
 				},
-			] as component.DisplayCondition[],
+			],
 			updates: [{ field: "components" }],
 		},
 	],
-} as ComponentProperty
-const labelProperty = {
+}
+const labelProperty: ComponentProperty = {
 	name: "label",
 	type: "TEXT",
 	label: "Column Label",
 }
-const widthProperty = {
+const widthProperty: ComponentProperty = {
 	name: "width",
 	type: "TEXT",
 	label: "Column Width",
@@ -218,7 +218,7 @@ const TableColumns: definition.UC = (props) => {
 		} as FieldMetadataProperty
 		delete isMultiCollectionReference.wireProperty
 
-		const tableFieldProperties = [
+		const tableFieldProperties: ComponentProperty[] = [
 			columnTypeProperty,
 			fieldProperty,
 			fieldDisplayTypeProperty,
@@ -226,7 +226,7 @@ const TableColumns: definition.UC = (props) => {
 			isMultiCollectionReference,
 			widthProperty,
 			labelProperty,
-		] as ComponentProperty[]
+		]
 
 		return tableFieldProperties.concat(ioFieldProperties.slice(7))
 	}

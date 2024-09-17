@@ -1,9 +1,6 @@
-import { api, metadata, param, signal } from "@uesio/ui"
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
-import {
-	ComponentProperty,
-	StructProperty,
-} from "../properties/componentproperty"
+import { api, metadata, signal, param } from "@uesio/ui"
+import { SignalBandDefinition } from "../api/signalsapi"
+import { ComponentProperty } from "../properties/componentproperty"
 
 // The key for the entire band
 const BAND = "route"
@@ -15,6 +12,20 @@ type RouteSignal = signal.SignalDefinition & {
 interface RouteNavigateSignal extends RouteSignal {
 	route: metadata.MetadataKey
 	params?: Record<string, string>
+}
+
+const getPropertyTypeFromParamDef = (def: param.ParamDefinition) => {
+	const type = def.type
+	return type === "METADATA" ||
+		type === "MULTIMETADATA" ||
+		type === "MAP" ||
+		type === "LIST" ||
+		type === "LONGTEXT" ||
+		type === "RECORD" ||
+		type === "METADATANAME" ||
+		!type
+		? "TEXT"
+		: type
 }
 
 // Metadata for all of the signals in the band
@@ -38,23 +49,27 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
+
 		[`${BAND}/RELOAD`]: {
 			label: "Reload current route",
 			description: "Reloads the current route",
 			properties: () => [],
 		},
+
 		[`${BAND}/NAVIGATE_TO_ROUTE`]: {
 			label: "Navigate to route",
 			description: "Navigates to the requested route",
 			properties: (signal: RouteNavigateSignal, context) => {
-				const props = [
+				const props: ComponentProperty[] = [
 					{
 						type: "METADATA",
 						name: "route",
-						metadataType: "ROUTE",
+						metadata: {
+							type: "ROUTE",
+						},
 						label: "Route",
 					},
-				] as ComponentProperty[]
+				]
 				// Fetch params for the route
 				if (signal.route) {
 					const [params] = api.route.useParams(context, signal.route)
@@ -70,32 +85,23 @@ const signals: SignalBandDefinition = {
 										type: "SELECT",
 										name,
 										required,
-										selectList: {
-											name: (
-												paramDef as param.SelectParam
-											).selectList,
-										},
+										selectList: paramDef.selectList,
 									}
 								}
-								if (type === "METADATA") {
-									return {
-										type: "TEXT",
-										name,
-										required,
-									}
-								}
+
 								return {
-									type: type === "LIST" ? "TEXT" : type,
+									type: getPropertyTypeFromParamDef(paramDef),
 									name,
 									required,
 								}
 							}),
-						} as StructProperty)
+						})
 					}
 				}
 				return props
 			},
 		},
+
 		[`${BAND}/NAVIGATE`]: {
 			label: "Navigate to path",
 			description: "Navigates to a route by path",
@@ -112,6 +118,7 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
+
 		[`${BAND}/NAVIGATE_TO_ASSIGNMENT`]: {
 			label: "Navigate to route assignment",
 			description:
@@ -120,9 +127,12 @@ const signals: SignalBandDefinition = {
 				{
 					type: "METADATA",
 					name: "collection",
-					metadataType: "COLLECTION",
+					metadata: {
+						type: "COLLECTION",
+					},
 					label: "Collection",
 				},
+
 				{
 					type: "SELECT",
 					name: "viewtype",
@@ -151,7 +161,9 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
+
+export { getPropertyTypeFromParamDef }
 
 export default signals

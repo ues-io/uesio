@@ -1,9 +1,7 @@
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
-import {
-	ComponentProperty,
-	StructProperty,
-} from "../properties/componentproperty"
+import { SignalBandDefinition } from "../api/signalsapi"
+import { ComponentProperty } from "../properties/componentproperty"
 import { api, signal } from "@uesio/ui"
+import { getPropertyTypeFromParamDef } from "./route"
 
 interface CallBotSignal extends signal.SignalDefinition {
 	bot: string
@@ -19,15 +17,17 @@ const signals: SignalBandDefinition = {
 			label: "Call Bot",
 			description: "Call a Bot",
 			properties: (signal: CallBotSignal, context) => {
-				const props = [
+				const props: ComponentProperty[] = [
 					{
 						type: "METADATA",
-						metadataType: "BOT",
-						groupingValue: "LISTENER",
+						metadata: {
+							type: "BOT",
+							grouping: "LISTENER",
+						},
 						name: "bot",
 						label: "Bot",
 					},
-				] as ComponentProperty[]
+				]
 				// Fetch bot params
 				if (signal.bot) {
 					const parts = signal.bot.split("/")
@@ -42,15 +42,15 @@ const signals: SignalBandDefinition = {
 							type: "STRUCT",
 							name: "params",
 							label: "Parameters",
-							properties: params.map(
-								({ name, type, required }) =>
-									({
-										type: type === "LIST" ? "TEXT" : type,
-										name,
-										required,
-									}) as ComponentProperty
-							) as ComponentProperty[],
-						} as StructProperty)
+							properties: params.map((paramDef) => {
+								const { name, required } = paramDef
+								return {
+									type: getPropertyTypeFromParamDef(paramDef),
+									name,
+									required,
+								}
+							}),
+						})
 					}
 				}
 				return props
@@ -58,6 +58,6 @@ const signals: SignalBandDefinition = {
 			canError: true,
 			outputs: [{ name: "params", type: "MAP" }],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 export default signals

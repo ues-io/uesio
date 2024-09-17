@@ -7,7 +7,8 @@ properties:
   - name: view
     type: METADATA
     label: View
-    metadataType: VIEW
+    metadata:
+      type: VIEW
   - name: uesio.id
     type: COMPONENT_ID
     label: Component Id

@@ -430,7 +430,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		name: "configValue",
 		type: "METADATA",
 		label: "Config Value Name",
-		metadataType: "CONFIGVALUE",
+		metadata: {
+			type: "CONFIGVALUE",
+		},
 		displayConditions: [
 			{
 				field: "type",
@@ -581,7 +583,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		type: "METADATA",
 		name: "collection",
-		metadataType: "COLLECTION",
+		metadata: {
+			type: "COLLECTION",
+		},
 		label: "Collection",
 		displayConditions: [
 			{
@@ -596,7 +600,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		name: "name",
 		type: "METADATA",
 		label: "Feature Flag",
-		metadataType: "FEATUREFLAG",
+		metadata: {
+			type: "FEATUREFLAG",
+		},
 		displayConditions: [
 			{
 				field: "type",
@@ -636,7 +642,9 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		type: "METADATA",
 		name: "profile",
-		metadataType: "PROFILE",
+		metadata: {
+			type: "PROFILE",
+		},
 		label: "Profile",
 		displayConditions: [
 			{

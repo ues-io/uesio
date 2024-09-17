@@ -9,7 +9,8 @@ properties:
   - name: avatar
     label: Avatar
     type: METADATA
-    metadataType: FILE
+    metadata:
+      type: FILE
   - name: name
     label: Name
     type: TEXT
@@ -18,7 +19,8 @@ properties:
     type: TEXT
   - name: logo
     type: METADATA
-    metadataType: FILE
+    metadata:
+      type: FILE
     label: logo
 definition:
   - uesio/sitekit.section:
