@@ -48,7 +48,7 @@ type IndexSlotProps = {
 const SlotStyleDefaults = Object.freeze({
 	slot: ["border-slate-50", "bg-white"],
 	slotSelected: [
-		"border-[$Theme{color.primary}]",
+		"border-[$Theme{color:primary}]",
 		"border-1",
 		"mt-1",
 		"bg-white",

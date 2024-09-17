@@ -124,10 +124,13 @@ definition:
                             - label: Collection
                               components:
                                 - uesio/appkit.item:
+                                    uesio.styleTokens:
+                                      avatar:
+                                        - bg-[${uesio/studio.appcolor}]
                                     title: ${uesio/studio.label}
                                     subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
-                                    iconcolor: ${uesio/studio.appcolor}
+                                    iconcolor: white
                             - field: uesio/studio.type
                               label: Data Source Type
                             - field: uesio/core.updatedby

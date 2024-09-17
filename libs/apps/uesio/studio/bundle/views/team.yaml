@@ -137,6 +137,7 @@ definition:
                         wire: teammembers
                 - uesio/io.deck:
                     uesio.id: teammembersslist
+                    uesio.variant: uesio/appkit.main
                     uesio.display:
                       - type: wireHasRecords
                         wire: teammembers

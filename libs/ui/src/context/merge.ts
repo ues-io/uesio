@@ -261,9 +261,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return ""
 	},
 	Theme: (expression, context) => {
-		const [scope, value] = expression.split(".")
+		const [scope, value] = parseTwoPartExpression(expression)
 		if (scope === "color") {
-			return getThemeValue(context, "color." + value) as string
+			return getThemeValue(context, "colors." + value) as string
 		}
 		return ""
 	},

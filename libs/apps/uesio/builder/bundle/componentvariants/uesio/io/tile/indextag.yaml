@@ -8,6 +8,6 @@ definition:
       - bg-white
     selected:
       - border-1
-      - border-[$Theme{color.primary}]
+      - border-[$Theme{color:primary}]
       - rounded-sm
 public: true
