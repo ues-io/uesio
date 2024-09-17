@@ -75,9 +75,10 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.primarysection
                     components:
-                      - uesio/io.searchbox:
+                      - uesio/studio.listheader:
                           wire: allthemes
-                          focusOnRender: true
+                          searchFields:
+                            - uesio/studio.name
                       - uesio/io.table:
                           uesio.id: themesTable
                           wire: allthemes
