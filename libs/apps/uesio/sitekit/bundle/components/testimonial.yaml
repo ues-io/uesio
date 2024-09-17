@@ -9,17 +9,14 @@ properties:
   - name: avatar
     label: Avatar
     type: METADATA
-    metadataType: FILE
+    metadata:
+      type: FILE
   - name: name
     label: Name
     type: TEXT
   - name: title
     label: Title
     type: TEXT
-  - name: logo
-    type: METADATA
-    metadataType: FILE
-    label: logo
   - name: wrapperVariant
     label: Wrapper Variant
     type: METADATA
@@ -70,4 +67,15 @@ description: A testimonial
 sections:
   - type: HOME
     properties:
+      - quote
+      - name
+      - title
   - type: DISPLAY
+  - type: STYLES
+  - type: CUSTOM
+    id: variants
+    label: Variants
+    properties:
+      - wrapperVariant
+      - quoteVariant
+      - avatarVariant

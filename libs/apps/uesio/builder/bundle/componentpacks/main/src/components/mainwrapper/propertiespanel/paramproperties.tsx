@@ -3,7 +3,7 @@ import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath } from "../../../api/stateapi"
 import { ComponentProperty } from "../../../properties/componentproperty"
 
-const paramProperties = [
+const paramProperties: ComponentProperty[] = [
 	{
 		name: "name",
 		label: "Name",
@@ -38,17 +38,21 @@ const paramProperties = [
 		name: "collection",
 		label: "Collection",
 		type: "METADATA",
-		metadataType: "COLLECTION",
-		displayConditions: [{ field: "type", operator: "EQ", value: "RECORD" }],
+		metadata: {
+			type: "COLLECTION",
+		},
+		displayConditions: [{ field: "type", value: "RECORD" }],
 	},
 	{
 		name: "selectList",
 		label: "Select List",
 		type: "METADATA",
-		metadataType: "SELECTLIST",
-		displayConditions: [{ field: "type", operator: "EQ", value: "SELECT" }],
+		metadata: {
+			type: "SELECTLIST",
+		},
+		displayConditions: [{ field: "type", value: "SELECT" }],
 	},
-] as ComponentProperty[]
+]
 
 const ParamProperties: definition.UtilityComponent = (props) => {
 	const { context } = props

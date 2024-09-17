@@ -1,6 +1,6 @@
 import { wire, signal } from "@uesio/ui"
 
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition } from "../api/signalsapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
 // The key for the entire band
@@ -22,13 +22,12 @@ interface SetConditionValueSignal extends signal.SignalDefinition {
 	conditionId: string
 }
 
-const getWiresWith = (key: "conditions" | "order") =>
-	({
-		name: "wire",
-		type: "WIRE",
-		filter: (def: wire.RegularWireDefinition) => def && !!def[key]?.length,
-		label: "Wire",
-	}) as ComponentProperty
+const getWiresWith = (key: "conditions" | "order"): ComponentProperty => ({
+	name: "wire",
+	type: "WIRE",
+	filter: (def: wire.RegularWireDefinition) => def && !!def[key]?.length,
+	label: "Wire",
+})
 
 const getConditionIdsDescriptor = (wire: string): ComponentProperty => ({
 	name: "conditionId",
@@ -400,7 +399,7 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 
 export default signals

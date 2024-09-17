@@ -87,36 +87,4 @@ const MarkdownNavigation: definition.UC<Definition> = (props) => {
 	) : null
 }
 
-/*
-const MarkdownNavigationPropertyDefinition: builder.BuildPropertiesDefinition =
-	{
-		title: "MarkdownNavigation",
-		description: "Visible impression obtained by a camera",
-		link: "https://docs.ues.io/",
-		defaultDefinition: () => ({}),
-		properties: [
-			{
-				name: "levels",
-				type: "METADATA",
-				metadataType: "FIELD",
-				label: "Markdown source",
-			},
-			{
-				name: "title",
-				type: "TEXT",
-				label: "Title",
-			},
-			{
-				name: "levels",
-				type: "NUMBER",
-				label: "Levels",
-			},
-		],
-		sections: [],
-		//traits: ["uesio.standalone"],
-		classes: ["root"],
-		type: "component",
-	}
-*/
-
 export default MarkdownNavigation

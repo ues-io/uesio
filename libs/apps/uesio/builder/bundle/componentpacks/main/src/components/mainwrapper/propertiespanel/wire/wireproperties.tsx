@@ -49,7 +49,9 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			label: "Collection",
 			required: true,
 			type: "METADATA",
-			metadataType: "COLLECTION",
+			metadata: {
+				type: "COLLECTION",
+			},
 			displayConditions: IS_NOT_VIEW_ONLY,
 		},
 		{

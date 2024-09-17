@@ -12,7 +12,8 @@ properties:
   - name: file
     type: METADATA
     label: File
-    metadataType: FILE
+    metadata:
+      type: FILE
   - name: markdown
     type: TEXT_AREA
     label: Markdown

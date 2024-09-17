@@ -7,7 +7,7 @@ import { getSections } from "./componentinstanceproperties"
 export const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
 
-const panelProperties = [
+const panelProperties: ComponentProperty[] = [
 	{
 		name: panelComponentTypeProp,
 		label: "Panel Type",
@@ -18,7 +18,7 @@ const panelProperties = [
 			{ value: "uesio/io.sidepanel", label: "Side Panel" },
 		],
 	},
-] as ComponentProperty[]
+]
 
 const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props

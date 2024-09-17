@@ -59,7 +59,7 @@ type ComponentSignalDescriptor = {
 	outputs?: SignalOutput[]
 }
 
-const signalDescriptorsIndex = {} as Record<string, SignalDescriptor>
+const signalDescriptorsIndex: Record<string, SignalDescriptor> = {}
 
 const allSignalSelectOptions = signalBandDefinitions
 	.map(({ band, label, signals }) => {
@@ -86,23 +86,22 @@ const allSignalSelectOptions = signalBandDefinitions
 	})
 	.flat()
 
-const getDefaultSignalProperties = (): ComponentProperty[] =>
-	[
-		{
-			name: "signal",
-			label: "Signal",
-			type: "SELECT",
-			options: collection.addBlankSelectOption(allSignalSelectOptions),
-		},
-	] as ComponentProperty[]
+const getDefaultSignalProperties = (): ComponentProperty[] => [
+	{
+		name: "signal",
+		label: "Signal",
+		type: "SELECT",
+		options: collection.addBlankSelectOption(allSignalSelectOptions),
+	},
+]
 
-const stepIdProperty = {
+const stepIdProperty: ComponentProperty = {
 	name: "stepId",
 	label: "Step Id",
 	type: "TEXT",
-} as ComponentProperty
+}
 
-const onErrorProperty = {
+const onErrorProperty: ComponentProperty = {
 	name: "onerror",
 	label: "Error handling",
 	type: "STRUCT",
@@ -124,7 +123,7 @@ const onErrorProperty = {
 		// 	type: "SIGNALS",
 		// },
 	],
-} as ComponentProperty
+}
 
 const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
 

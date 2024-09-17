@@ -1,5 +1,5 @@
 import { context, signal } from "@uesio/ui"
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition } from "../api/signalsapi"
 import { getAvailablePanelIds } from "../api/panelapi"
 import { ComponentProperty } from "../properties/componentproperty"
 
@@ -15,16 +15,15 @@ const getPanelSelectOptions = (context: context.Context) =>
 const getPanelSelectProperties = (
 	signal: signal.SignalDefinition,
 	context: context.Context
-) =>
-	[
-		{
-			type: "SELECT",
-			name: "panel",
-			label: "Panel",
-			blankOptionLabel: "",
-			options: getPanelSelectOptions(context),
-		},
-	] as ComponentProperty[]
+): ComponentProperty[] => [
+	{
+		type: "SELECT",
+		name: "panel",
+		label: "Panel",
+		blankOptionLabel: "",
+		options: getPanelSelectOptions(context),
+	},
+]
 
 // Metadata for all of the signals in the band
 const signals: SignalBandDefinition = {
@@ -51,7 +50,7 @@ const signals: SignalBandDefinition = {
 			description: "Close all panels",
 			properties: () => [],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 
 export default signals

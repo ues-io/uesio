@@ -16,7 +16,8 @@ properties:
   - name: file
     type: METADATA
     label: File
-    metadataType: FILE
+    metadata:
+      type: FILE
   - name: src
     type: TEXT
     label: URL

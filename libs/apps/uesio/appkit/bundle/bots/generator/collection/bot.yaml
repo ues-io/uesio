@@ -11,3 +11,4 @@ params:
 public: true
 tags:
   - uesio/core.collections
+timeout: 30

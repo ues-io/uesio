@@ -1,4 +1,4 @@
-import { SignalBandDefinition, SignalDescriptor } from "../api/signalsapi"
+import { SignalBandDefinition } from "../api/signalsapi"
 
 // The key for the entire band
 const BAND = "user"
@@ -93,6 +93,6 @@ const signals: SignalBandDefinition = {
 				},
 			],
 		},
-	} as Record<string, SignalDescriptor>,
+	},
 }
 export default signals

@@ -73,14 +73,7 @@ export const getFormFieldFromProperty = (
 				"uesio/io.field": {
 					...baseFieldDef,
 					wrapperVariant: "uesio/builder.propfield",
-					metadata: {
-						grouping: getGrouping(
-							path,
-							context,
-							property.groupingPath,
-							property.groupingValue
-						),
-					},
+					metadata: property.metadata,
 				},
 			}
 		case "COLLECTION_FIELD":

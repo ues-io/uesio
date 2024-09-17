@@ -1,9 +1,6 @@
 import { definition, component, metadata } from "@uesio/ui"
 import { FullPath } from "../../api/path"
-import {
-	ComponentProperty,
-	StructProperty as SP,
-} from "../../properties/componentproperty"
+import { StructProperty as SP } from "../../properties/componentproperty"
 import { getFormFieldFromProperty } from "../property/property"
 
 type Definition = {
@@ -18,7 +15,7 @@ const StructProperty: definition.UC<Definition> = (props) => {
 
 	if (!component.shouldAll(property?.displayConditions, context)) return null
 
-	const structProperties = property.properties as ComponentProperty[]
+	const structProperties = property.properties
 	const path = definition.path.combine()
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 

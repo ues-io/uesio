@@ -111,7 +111,9 @@ const ViewOnlyFieldPropTag: definition.UtilityComponent<T> = (props) => {
 									name: "name",
 									label: "Select List name",
 									type: "METADATA",
-									metadataType: "SELECTLIST",
+									metadata: {
+										type: "SELECTLIST",
+									},
 									displayConditions: [
 										{
 											type: "fieldValue",
