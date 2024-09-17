@@ -36,6 +36,7 @@ definition:
                       - uesio/io.deck:
                           uesio.id: animalsDeck
                           wire: animals
+                          uesio.variant: uesio/appkit.main
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/appkit.card

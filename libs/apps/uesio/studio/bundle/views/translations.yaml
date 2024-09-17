@@ -80,6 +80,7 @@ definition:
                 - uesio/io.deck:
                     uesio.id: translationsDeck
                     wire: translations
+                    uesio.variant: uesio/appkit.main
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/appkit.card

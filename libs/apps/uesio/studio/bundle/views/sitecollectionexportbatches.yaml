@@ -88,6 +88,7 @@ definition:
                 - uesio/io.deck:
                     uesio.id: bulkbatchesDeck
                     wire: bulkbatches
+                    uesio.variant: uesio/appkit.main
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/appkit.card

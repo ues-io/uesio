@@ -20,7 +20,7 @@ type Props = {
 
 const StyleDefaults = Object.freeze({
 	titlebar: ["grid", "grid-cols-2", "grid-flow-col", "auto-cols-max"],
-	focusedRegion: ["border", "border-[$Theme{color.primary}]"],
+	focusedRegion: ["border", "border-[$Theme{color:primary}]"],
 })
 
 const StylesProperty: definition.UC<Props> = (props) => {

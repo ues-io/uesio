@@ -24,6 +24,7 @@ type GeneratorButtonDefinition = {
 
 interface DialogProps {
 	generator: metadata.MetadataKey
+	buttonVariant?: metadata.MetadataKey
 	setOpen: (value: boolean) => void
 }
 
@@ -90,7 +91,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 }
 
 const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
-	const { context, generator, setOpen } = props
+	const { context, generator, setOpen, buttonVariant } = props
 
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
@@ -145,7 +146,7 @@ const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
 					<Group justifyContent="end" context={context}>
 						<Button
 							context={context}
-							variant="uesio/io.primary"
+							variant={buttonVariant || "uesio/io.primary"}
 							label="Generate"
 							onClick={onClick}
 						/>
@@ -192,6 +193,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 			{open && (
 				<GeneratorDialog
 					setOpen={setOpen}
+					buttonVariant={buttonVariant}
 					generator={context.mergeString(generator)}
 					context={context}
 				/>

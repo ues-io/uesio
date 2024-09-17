@@ -14,5 +14,5 @@ definition:
       - select-none
       - m-2
     selected:
-      - border-[$Theme{color.primary}]
+      - border-[$Theme{color:primary}]
 public: true
