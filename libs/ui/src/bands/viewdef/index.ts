@@ -1,7 +1,7 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 
-import { ViewMetadata } from "../../definition/ViewMetadata"
+import { ViewMetadata } from "../../definition/definition"
 
 import { RootState, getCurrentState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"

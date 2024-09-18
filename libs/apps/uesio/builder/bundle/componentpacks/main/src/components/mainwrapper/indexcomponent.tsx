@@ -2,7 +2,7 @@ import { definition, component, styles } from "@uesio/ui"
 import {
 	getBuilderNamespaces,
 	getComponentDef,
-	getSlotComponents,
+	getSlotsFromPath,
 	replaceSlotPath,
 	setSelectedPath,
 } from "../../api/stateapi"
@@ -60,20 +60,30 @@ const IndexComponent: definition.UtilityComponent<IndexComponentProps> = (
 		componentId?.includes(searchTerm)
 
 	const slotsNode =
-		componentDef.slots?.map((slot) =>
-			getSlotComponents(slot, definition)?.map((innerdef, index) => (
+		componentDef.slots?.map((slot) => {
+			const slotsAtPath = getSlotsFromPath(slot.path, definition)
+			const slotFunc = (
+				innerdef: definition.DefinitionMap,
+				index: number
+			) => (
 				<IndexSlot
 					key={slot.name + index}
 					slot={slot}
 					indent={true}
 					parentSelected={isSelected}
 					selectedPath={selectedPath}
-					definition={innerdef as definition.DefinitionMap}
+					definition={innerdef}
 					path={path + replaceSlotPath(slot.path, index)}
 					context={context}
 				/>
-			))
-		) || null
+			)
+			// Sometimes slots at path is a mapping node, other times it's
+			// a yaml sequence. We need to handle both cases.
+			if (Array.isArray(slotsAtPath)) {
+				return slotsAtPath.map(slotFunc)
+			}
+			return slotFunc(slotsAtPath as definition.DefinitionMap, 0)
+		}) || null
 
 	return isVisible ? (
 		<PropNodeTag

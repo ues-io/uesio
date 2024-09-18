@@ -402,11 +402,6 @@ const getComponentDef = (componentType: string | undefined) =>
 		? (getComponentType(componentType) as ComponentDef)
 		: undefined
 
-type ViewDef = {
-	components: ComponentEntry[]
-	panels?: Record<string, object>
-}
-
 // For each component of the requested type in the context view definition
 // which has a "uesio.id" property, return the value of that property.
 const getComponentIdsOfType = (
@@ -415,7 +410,7 @@ const getComponentIdsOfType = (
 ) => {
 	// Traverse the view def tree to extract all Component Ids of the given type,
 	// using "uesio.id" as the unique key
-	const componentIds = [] as string[]
+	const componentIds: string[] = []
 	if (componentType) {
 		walkViewComponents(context, (type, definition) => {
 			if (!definition) return true
@@ -443,12 +438,6 @@ const getComponentById = (context: ctx.Context, componentId: string) => {
 	return targetComponentDef
 }
 
-type ComponentEntry = Record<string, definition.BaseDefinition>
-type PanelDef = {
-	components?: ComponentEntry[]
-	actions?: ComponentEntry[]
-} & definition.BaseDefinition
-
 // A generic tree walker for all components in the context view definition.
 // Visits each component in the components array and in each panel's components,
 // and uses each component's slot metadata to visit any components in each slot.
@@ -461,7 +450,10 @@ const walkViewComponents = (
 	) => boolean
 ) => {
 	const viewPath = new FullPath("viewdef", context.getViewDefId(), "")
-	const viewDef = get(context, viewPath) as ViewDef
+	const viewDef: definition.ViewDefinition | undefined = get(
+		context,
+		viewPath
+	)
 	// Start traversing!
 	if (viewDef?.components?.length) {
 		const keepWalking = walkComponentsArray(
@@ -475,7 +467,7 @@ const walkViewComponents = (
 	}
 	// Traverse panel components and actions, if there are any
 	if (viewDef?.panels) {
-		for (const panel of Object.values(viewDef.panels) as PanelDef[]) {
+		for (const panel of Object.values(viewDef.panels)) {
 			if (panel?.components?.length) {
 				const keepWalking = walkComponentsArray(
 					panel.components,
@@ -502,12 +494,9 @@ const walkViewComponents = (
 
 // Internal function that visits each in the given components array
 const walkComponentsArray = (
-	components: ComponentEntry[],
+	components: definition.DefinitionList,
 	context: ctx.Context,
-	visit: (
-		componentType: string,
-		definition: definition.BaseDefinition
-	) => boolean
+	visit: (componentType: string, definition: unknown) => boolean
 ): boolean => {
 	for (const component of components) {
 		// If this is truly a Uesio component, it will look like this:
@@ -526,6 +515,7 @@ const walkComponentsArray = (
 		// Okay we have slots, so we need to traverse and recurse
 		for (const slot of componentDef.slots) {
 			const slotComponents = getSlotComponents(slot, props)
+			if (!Array.isArray(slotComponents)) continue
 			if (!slotComponents?.length) continue
 			const keepWalking = walkComponentsArray(
 				slotComponents,
@@ -569,10 +559,7 @@ const replaceSlotPath = (path: string | undefined, index: number) =>
 const getSlotsFromPath = (
 	path: string | undefined,
 	def: definition.Definition
-) =>
-	(path
-		? traverseSlotPath(parseSlotPath(path), def)
-		: [def]) as ComponentEntry[]
+) => (path ? traverseSlotPath(parseSlotPath(path), def) : [def])
 
 const getSlotComponents = (slot: SlotDef, def: definition.Definition) =>
 	getSlotsFromPath(slot.path ? slot.path + "/" + slot.name : slot.name, def)

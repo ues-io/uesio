@@ -17,11 +17,6 @@ properties:
   - name: title
     label: Title
     type: TEXT
-  - name: logo
-    type: METADATA
-    metadata:
-      type: FILE
-    label: logo
 definition:
   - uesio/sitekit.section:
       innerVariant: uesio/sitekit.section_inner_content

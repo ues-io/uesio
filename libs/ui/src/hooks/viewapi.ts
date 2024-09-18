@@ -1,7 +1,7 @@
 import { useConfigValue as useCV } from "../bands/configvalue"
 import { getViewDef, upsertOne, useViewDef } from "../bands/viewdef"
 import { parseKey } from "../component/path"
-import { ViewDefinition } from "../definition/ViewDefinition"
+import { ViewDefinition } from "../definition/definition"
 import { Namespace } from "../metadata/types"
 import { dispatch } from "../store/store"
 

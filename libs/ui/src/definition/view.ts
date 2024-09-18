@@ -1,5 +1,4 @@
-import { ViewMetadata } from "./ViewMetadata"
-import type { ViewDefinition } from "./ViewDefinition"
+import type { ViewDefinition, ViewMetadata } from "./definition"
 import type { SignalDefinition } from "./signal"
 
 type PlainViewDefMap = {
