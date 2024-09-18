@@ -11,7 +11,7 @@ import { PlainCollection } from "../collection/types"
 import { SelectListMetadata } from "../../wireexports"
 import { ServerWire } from "../wire/types"
 import { ThemeState } from "../../definition/theme"
-import { ViewMetadata } from "../../definition/ViewMetadata"
+import { ViewMetadata } from "../../definition/definition"
 import { RouteAssignmentState } from "../../definition/routeassignment"
 
 type WorkspaceState = {

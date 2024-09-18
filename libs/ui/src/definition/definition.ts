@@ -1,8 +1,13 @@
 import type { FC, ReactNode } from "react"
-import type { MetadataKey } from "../metadata/types"
+import type { Keyable, MetadataKey } from "../metadata/types"
 import type { DisplayCondition } from "../component/display"
 import type { Context } from "../context/context"
 import type { ComponentSignalDescriptor } from "./signal"
+import { WireDefinitionMap } from "./wire"
+import { PanelDefinitionMap } from "./panel"
+import { ViewEventsDef } from "./view"
+import { ViewParamDefinition } from "./param"
+import { SlotDef } from "./component"
 
 export type BaseDefinition = {
 	// "id" here is TEMPORARY - for backwards compatibility on components like Table/List/Deck that initially had "id"
@@ -77,3 +82,17 @@ export type Definition =
 	| DefinitionMap
 	| DefinitionValue[]
 	| DefinitionMap[]
+
+export type ViewDefinition = {
+	components: DefinitionList | null
+	wires?: WireDefinitionMap | null
+	panels?: PanelDefinitionMap | null
+	events?: ViewEventsDef
+	params?: Record<string, ViewParamDefinition> | null
+	slots?: SlotDef[] | null
+}
+
+export type ViewMetadata = {
+	definition: ViewDefinition
+	public?: boolean
+} & Keyable

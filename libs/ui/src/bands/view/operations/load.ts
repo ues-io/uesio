@@ -8,7 +8,7 @@ import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { useEffect, useRef } from "react"
 import { ViewEventsDef } from "../../../definition/view"
-import { ViewDefinition } from "../../../definition/ViewDefinition"
+import { ViewDefinition } from "../../../definition/definition"
 import { RegularWireDefinition, WireDefinition } from "../../../definition/wire"
 import { WireConditionState } from "../../wire/conditions/conditions"
 

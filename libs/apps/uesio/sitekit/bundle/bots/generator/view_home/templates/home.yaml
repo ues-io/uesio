@@ -9,8 +9,7 @@ components:
         - uesio/sitekit.section_hero:
             title: ${tagline}
             subtitle: ${tagline_sub}
-        - uesio/io.box:
-            components: ${mainTestimonialYaml}
+        - ${mainTestimonialYaml}
         - uesio/sitekit.section:
             innerVariant: uesio/sitekit.section_inner_content_three_column
             uesio.styleTokens:
