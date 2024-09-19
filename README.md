@@ -30,7 +30,7 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 
 # <a id="redux-architecture"></a> Redux architecture
 
-See the [Uesio Specific Redux Docs](./docs/redux/README.md).
+Read more about Redux [here] (https://redux.js.org/).
 
 # <a id="monorepo-structure"></a> Monorepo structure
 
