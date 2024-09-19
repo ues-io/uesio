@@ -17,6 +17,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		listName = component.DefaultSlotName,
 		path,
 		componentType,
+		readonly,
 	} = props
 
 	const buildMode = getBuildMode(context)
@@ -92,6 +93,15 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 				if (props.componentType === component.ViewComponentId) {
 					childrenContext = context.setCustomSlotLoader(
 						InnerViewSlotLoaderId
+					)
+				}
+				if (readonly) {
+					return (
+						<component.Component
+							key={index}
+							{...props}
+							context={childrenContext}
+						/>
 					)
 				}
 				return (

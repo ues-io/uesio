@@ -167,7 +167,8 @@ describe("resolveDeclarativeComponentDefinition", () => {
 			const actual = resolveDeclarativeComponentDefinition(
 				tc.context || new Context(),
 				tc.inputDefinition,
-				tc.componentDef.definition
+				tc.componentDef.definition,
+				""
 			)
 			expect(actual).toEqual(tc.expected)
 		})

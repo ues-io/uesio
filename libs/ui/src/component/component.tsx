@@ -81,13 +81,6 @@ type DeclarativeProps = {
 	definition: BaseDefinition
 }
 
-type DeclarativeComponentSlotContext = {
-	componentType: MetadataKey
-	path: string
-	slotDefinitions: Record<string, DefinitionMap>
-	slotContext: Context
-}
-
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 
 const propMergeOptions = {
@@ -102,14 +95,11 @@ const propMergeOptions = {
 const resolveDeclarativeComponentDefinition = (
 	context: Context,
 	source: Record<string, FieldValue>,
-	destination: DefinitionList
+	destination: DefinitionList,
+	path: string
 ): DefinitionList =>
 	(context
-		.addPropsFrame(
-			//context.mergeDeep(
-			source
-			//) as Record<string, Mergeable>
-		)
+		.addPropsFrame(source, path)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
@@ -164,31 +154,6 @@ function addDefaultPropertyAndSlotValues(
 	}
 }
 
-function addSlotComponentContext(
-	context: Context,
-	componentType: string | undefined,
-	path: string,
-	slotDefs: SlotDef[] | null | undefined,
-	definition: DefinitionMap,
-	slotContext?: Context
-) {
-	return slotDefs && slotDefs.length
-		? context.addComponentFrame(DECLARATIVE_COMPONENT, {
-				componentType,
-				// TODO: Support non-top-level slots using the path property
-				slotDefinitions: slotDefs.reduce(
-					(acc, slot) => ({
-						...acc,
-						[slot.name]: definition[slot.name],
-					}),
-					{}
-				),
-				slotContext,
-				path,
-			} as DeclarativeComponentSlotContext)
-		: context
-}
-
 const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const { componentType, context, definition, path } = props
 	if (!componentType) return null
@@ -203,12 +168,16 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 	const actualDefinition = resolveDeclarativeComponentDefinition(
 		context,
 		definition as Record<string, FieldValue>,
-		componentTypeDef.definition
+		componentTypeDef.definition,
+		path
 	)
 
 	return (
 		<Slot
-			context={context}
+			context={context.addComponentFrame(DECLARATIVE_COMPONENT, {
+				componentType,
+				path,
+			})}
 			path={path}
 			listName={DefaultSlotName}
 			definition={{ [DefaultSlotName]: actualDefinition }}
@@ -289,7 +258,6 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 
 export {
 	addDefaultPropertyAndSlotValues,
-	addSlotComponentContext,
 	Component,
 	DECLARATIVE_COMPONENT,
 	getDefinitionFromVariant,
@@ -297,5 +265,3 @@ export {
 	parseVariantName,
 	resolveDeclarativeComponentDefinition,
 }
-
-export type { DeclarativeComponentSlotContext }

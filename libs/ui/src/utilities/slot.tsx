@@ -16,6 +16,7 @@ interface SlotUtilityProps extends UtilityProps {
 	// componentType will be populated if we're coming from a Declarative Component,
 	// where we need to be able to lookup the Slot metadata.
 	componentType?: MetadataKey
+	readonly?: boolean
 }
 
 const DefaultSlotName = "components"

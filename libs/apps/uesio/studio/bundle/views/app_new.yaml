@@ -73,7 +73,7 @@ definition:
                 - uesio/appkit.form_new:
                     wire: app
                     avataricon: web
-                    subtitle: $Text{${uesio/studio.user->uniquekey}/${uesio/studio.name}}
+                    subtitle: ${uesio/studio.user->uniquekey}/${uesio/studio.name}
                     hideNewButton: true
                     extra_actions:
                       - uesio/io.button:
