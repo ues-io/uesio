@@ -323,7 +323,7 @@ const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 
 class Context {
 	constructor(stack?: ContextFrame[]) {
-		this.stack = stack || ([] as ContextFrame[])
+		this.stack = stack || []
 	}
 	clone(stack?: ContextFrame[]) {
 		const ctx = new Context(stack ? stack : this.stack)

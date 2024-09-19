@@ -57,14 +57,10 @@ definition:
                   subtitle: $Prop{subtitle}
                   uesio.variant: $Prop{titlebarVariant}
                   actions:
-                    - uesio/core.slot:
-                        name: actions
+                    - $Slot{actions}
                   avatar:
-                    - uesio/core.slot:
-                        name: avatar
+                    - $Slot{avatar}
             content:
-              - uesio/core.slot:
-                  name: content
+              - $Slot{content}
             footer:
-              - uesio/core.slot:
-                  name: footer
+              - $Slot{footer}

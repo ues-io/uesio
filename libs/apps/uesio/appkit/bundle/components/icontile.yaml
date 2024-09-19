@@ -66,8 +66,7 @@ definition:
             components:
               - uesio/io.text:
                   text: $Prop{title}
-              - uesio/core.slot:
-                  name: actions
+              - $Slot{actions}
       avatar:
         - uesio/io.text:
             uesio.display:

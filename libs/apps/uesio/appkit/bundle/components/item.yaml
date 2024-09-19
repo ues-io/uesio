@@ -45,8 +45,7 @@ definition:
             title: $Prop{title}
             subtitle: $Prop{subtitle}
             actions:
-              - uesio/core.slot:
-                  name: actions
+              - $Slot{actions}
       signals: $Prop{signals}
       avatar:
         - uesio/io.text:

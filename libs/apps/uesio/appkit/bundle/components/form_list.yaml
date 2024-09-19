@@ -104,8 +104,7 @@ definition:
                   linkedComponentType: $Prop{linkedComponentType}
                   linkedComponentId: $Prop{linkedComponentId}
                   left:
-                    - uesio/core.slot:
-                        name: filters
+                    - $Slot{filters}
                   right:
                     - uesio/io.button:
                         text: Quick Create
@@ -134,8 +133,7 @@ definition:
                         uesio.display:
                           - type: hasValue
                             value: $ComponentState{[$Prop{linkedComponentType}][$Prop{linkedComponentId}][selected->count]}
-              - uesio/core.slot:
-                  name: content
+              - $Slot{content}
 title: List Form Component
 discoverable: true
 description: A component for an editable collection list.

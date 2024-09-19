@@ -2,6 +2,8 @@ name: section_hero
 category: LAYOUT
 type: DECLARATIVE
 slots:
+  - name: actions
+    label: Actions
 properties:
   - name: title
     label: Title
@@ -24,12 +26,7 @@ definition:
               root:
                 - mt-10
             components:
-              - uesio/io.button:
-                  uesio.variant: uesio/sitekit.primary_dark
-                  text: Get Started
-              - uesio/io.button:
-                  uesio.variant: uesio/sitekit.secondary_dark
-                  text: Learn more
+              - $Slot{actions}
 title: Hero Section
 discoverable: true
 description: A hero section

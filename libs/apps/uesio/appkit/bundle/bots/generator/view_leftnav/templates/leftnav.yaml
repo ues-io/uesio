@@ -20,8 +20,7 @@ components:
                   title: ${appname}
                   icon: ${icon}
                   iconcolor: ${iconcolor}
-              - uesio/core.slot:
-                  name: crumbs
+              - $Slot{crumbs}
       content:
         - uesio/io.box:
             uesio.styleTokens:
@@ -59,8 +58,7 @@ components:
                   title: Collections
                   excludeCollections:
                     - uesio/core.user
-              - uesio/core.slot:
-                  name: extra
+              - $Slot{extra}
       footer:
         - uesio/io.box:
             uesio.styleTokens:

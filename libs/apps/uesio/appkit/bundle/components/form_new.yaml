@@ -21,8 +21,7 @@ definition:
             actions:
               - uesio/io.group:
                   components:
-                    - uesio/core.slot:
-                        name: extra_actions
+                    - $Slot{extra_actions}
                     - uesio/io.button:
                         uesio.display:
                           - type: hasNoValue
@@ -44,8 +43,7 @@ definition:
                             wire: $Prop{wire}
                         text: Start Over
                         uesio.variant: uesio/appkit.secondary
-        - uesio/core.slot:
-            name: content
+        - $Slot{content}
 title: New Record Form
 discoverable: true
 description: A component for a record create form.

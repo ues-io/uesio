@@ -37,13 +37,7 @@ const componentTypeWithSlots = {
 	definition: [
 		{
 			"uesio/io.box": {
-				components: [
-					{
-						"uesio/core.slot": {
-							name: "header",
-						},
-					},
-				],
+				components: ["$Slot{header}"],
 			},
 		},
 		{
@@ -106,12 +100,12 @@ const resolveDeclarativeComponentDefinitionTests = [
 		expected: [
 			{
 				"uesio/io.text": {
-					text: "oof",
+					text: "$Param{foo}",
 				},
 			},
 			{
 				"uesio/io.text": {
-					text: "rab",
+					text: "$Param{bar}",
 				},
 			},
 		],
@@ -144,6 +138,15 @@ const resolveDeclarativeComponentDefinitionTests = [
 						{
 							"uesio/core.slot": {
 								name: "header",
+								definition: {
+									header: [
+										{
+											"uesio/io.text": {
+												text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+											},
+										},
+									],
+								},
 							},
 						},
 					],
@@ -151,7 +154,7 @@ const resolveDeclarativeComponentDefinitionTests = [
 			},
 			{
 				"uesio/io.text": {
-					text: "oof",
+					text: "$Param{foo}",
 				},
 			},
 		],
@@ -163,8 +166,8 @@ describe("resolveDeclarativeComponentDefinition", () => {
 		test(tc.name, () => {
 			const actual = resolveDeclarativeComponentDefinition(
 				tc.context || new Context(),
-				tc.inputDefinition as BaseDefinition,
-				tc.componentDef as DeclarativeComponent
+				tc.inputDefinition,
+				tc.componentDef.definition
 			)
 			expect(actual).toEqual(tc.expected)
 		})
@@ -178,13 +181,7 @@ const componentTypeWithSlotAndPropertyDefaults = {
 	definition: [
 		{
 			"uesio/io.box": {
-				components: [
-					{
-						"uesio/core.slot": {
-							name: "header",
-						},
-					},
-				],
+				components: ["$Slot{header}"],
 			},
 		},
 		{

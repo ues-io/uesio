@@ -21,8 +21,7 @@ sections:
       - color
   - type: DISPLAY
 definition:
-  - uesio/core.slot:
-      name: header
+  - $Slot{header}
   - uesio/io.box:
       uesio.styleTokens:
         root:

@@ -12,7 +12,9 @@ import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 import { getFullyQualifiedKey } from "../bands/collection/class"
 import { hash } from "@twind/core"
-import { addSlotComponentContext } from "../component/component"
+
+import { FieldValue } from "../bands/wirerecord/types"
+import { resolveDeclarativeComponentDefinition } from "../component/component"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -108,19 +110,22 @@ const View: UC<ViewComponentDefinition> = (props) => {
 		)
 	}
 
+	const mergedViewDef = Object.keys(slots).length
+		? {
+				[DefaultSlotName]: resolveDeclarativeComponentDefinition(
+					context,
+					slots as Record<string, FieldValue>,
+					viewDef.components || []
+				),
+			}
+		: viewDef
+
 	return (
 		<Slot
-			definition={viewDef}
+			definition={mergedViewDef}
 			listName={DefaultSlotName}
 			path=""
-			context={addSlotComponentContext(
-				viewContext,
-				componentType,
-				path,
-				viewDef.slots,
-				slots,
-				context
-			)}
+			context={viewContext}
 			componentType={componentType}
 		/>
 	)
