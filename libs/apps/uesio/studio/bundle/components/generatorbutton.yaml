@@ -13,8 +13,8 @@ utilities:
   - uesio/io.group
   - uesio/io.titlebar
 variants:
-  - uesio/io.button:uesio/io.secondary
-  - uesio/io.button:uesio/io.primary
+  - uesio/io.button:uesio/appkit.secondary
+  - uesio/io.button:uesio/appkit.primary
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.dialog:uesio/io.default
   - uesio/io.listmenu:uesio/io.default
