@@ -147,6 +147,8 @@ const resolveDeclarativeComponentDefinitionTests = [
 										},
 									],
 								},
+								path: "",
+								readonly: false,
 							},
 						},
 					],
