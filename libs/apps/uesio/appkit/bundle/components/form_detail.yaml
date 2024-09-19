@@ -24,8 +24,7 @@ definition:
             actions:
               - uesio/io.group:
                   components:
-                    - uesio/core.slot:
-                        name: extra_actions
+                    - $Slot{extra_actions}
                     - uesio/io.button:
                         signals:
                           - signal: wire/SAVE
@@ -126,8 +125,7 @@ definition:
                       value: $Prop{initials}
                   text: $If{[$Prop{avataricon}][$Prop{avataricon}][$Collection{icon}]}
                   uesio.variant: uesio/io.icon
-        - uesio/core.slot:
-            name: content
+        - $Slot{content}
         - uesio/appkit.section_audit_info:
         - uesio/appkit.section_delete:
 title: Detail Form Component

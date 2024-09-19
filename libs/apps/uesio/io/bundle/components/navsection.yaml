@@ -24,8 +24,7 @@ definition:
             uesio.variant: $Prop{titlebarVariant}
             title: $Prop{title}
             actions:
-              - uesio/core.slot:
-                  name: actions
+              - $Slot{actions}
             uesio.display:
               - type: hasValue
                 value: $Prop{title}
@@ -35,7 +34,6 @@ definition:
                 - grid
                 - gap-1
             components:
-              - uesio/core.slot:
-                  name: content
+              - $Slot{content}
 variants:
   - uesio/io.titlebar:uesio/io.nav

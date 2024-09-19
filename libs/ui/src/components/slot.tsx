@@ -1,7 +1,3 @@
-import {
-	DECLARATIVE_COMPONENT,
-	DeclarativeComponentSlotContext,
-} from "../component/component"
 import { DefinitionMap, UC } from "../definition/definition"
 
 import SlotUtility, { DefaultSlotName } from "../utilities/slot"
@@ -14,20 +10,16 @@ type SlotDefinition = {
 }
 
 const Slot: UC<SlotDefinition> = (props) => {
-	const { context, componentType } = props
-	const { name = DefaultSlotName } = props.definition
-	// There must be context component data corresponding to a declarative component definition
-	// for us to use as the definition for our slot to render from
-	const declarativeComponentSlotContext = context.getComponentData(
-		DECLARATIVE_COMPONENT
-	)?.data as DeclarativeComponentSlotContext
-	if (!declarativeComponentSlotContext) return null
+	const { context, componentType, path } = props
+	const { name = DefaultSlotName, definition } = props.definition
+
+	if (!definition) return null
 	return (
 		<SlotUtility
-			definition={declarativeComponentSlotContext.slotDefinitions}
+			definition={definition}
 			listName={name}
-			path={declarativeComponentSlotContext.path}
-			context={declarativeComponentSlotContext.slotContext || context}
+			path={path}
+			context={context}
 			componentType={componentType}
 		/>
 	)

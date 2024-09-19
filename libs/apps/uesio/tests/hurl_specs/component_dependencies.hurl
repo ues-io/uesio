@@ -110,16 +110,19 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.viewdef" count == 2
 # Verify that our expected dependencies are loaded
 jsonpath "$.dependencies.componenttype[?(@.type=='DECLARATIVE')]" count == 2
+jsonpath "$.dependencies.componenttype[6].name" == "declarative1"
+jsonpath "$.dependencies.componenttype[6].definition" count == 2
+jsonpath "$.dependencies.componenttype[6].definition" exists
+jsonpath "$.dependencies.componenttype[6].definition" count == 2
+jsonpath "$.dependencies.componenttype[6].title" not exists # no builder metadata should be loaded
+jsonpath "$.dependencies.componenttype[7].name" == "declarative2"
 jsonpath "$.dependencies.componenttype[7].definition" exists
-jsonpath "$.dependencies.componenttype[7].definition" count == 2
-jsonpath "$.dependencies.componenttype[7].title" not exists # no builder metadata should be loaded
-jsonpath "$.dependencies.componenttype[8].definition" exists
-jsonpath "$.dependencies.componenttype[8].definition" count == 3
-jsonpath "$.dependencies.componenttype[8].slots" count == 2
-jsonpath "$.dependencies.componenttype[8].slots[0].name" == "header"
-jsonpath "$.dependencies.componenttype[8].slots[0].defaultContent" count == 1
-jsonpath "$.dependencies.componenttype[8].slots[1].name" == "footer"
-jsonpath "$.dependencies.componenttype[8].slots[1].defaultContent" not exists
+jsonpath "$.dependencies.componenttype[7].definition" count == 3
+jsonpath "$.dependencies.componenttype[7].slots" count == 2
+jsonpath "$.dependencies.componenttype[7].slots[0].name" == "header"
+jsonpath "$.dependencies.componenttype[7].slots[0].defaultContent" count == 1
+jsonpath "$.dependencies.componenttype[7].slots[1].name" == "footer"
+jsonpath "$.dependencies.componenttype[7].slots[1].defaultContent" not exists
 
 # Test that components with variant properties, and variants with definitions containing variant properties,
 # are propertly parsed to load these variants

@@ -22,8 +22,7 @@ definition:
             uesio.styleTokens:
               root: $Region{inner}
             components:
-              - uesio/core.slot:
-                  name: content
+              - $Slot{content}
 title: Section
 discoverable: true
 description: A section

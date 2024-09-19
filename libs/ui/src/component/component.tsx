@@ -10,7 +10,6 @@ import {
 	injectDynamicContext,
 	Context,
 	ContextOptions,
-	Mergeable,
 } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../utilities/notfound"
@@ -31,7 +30,7 @@ import {
 } from "../definition/component"
 import { COMPONENT_CONTEXT, DISPLAY_CONDITIONS } from "../componentexports"
 import Slot, { DefaultSlotName } from "../utilities/slot"
-import { MergeType } from "../context/merge"
+import { FieldValue } from "../bands/wirerecord/types"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -91,24 +90,8 @@ type DeclarativeComponentSlotContext = {
 
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 
-// Remove all Slot properties from a Declarative Component definition,
-// using Slot definitions from Component metadata.
-const stripSlotsFromDefinition = (
-	definition: BaseDefinition,
-	slots?: SlotDef[]
-) => {
-	if (!slots || !slots.length) return definition
-	const props = {
-		...definition,
-	} as Record<string, unknown>
-	slots.forEach((slot) => {
-		delete props[slot.name]
-	})
-	return props as BaseDefinition
-}
-
 const propMergeOptions = {
-	types: ["Prop" as MergeType, "Region" as MergeType],
+	types: ["Prop" as const, "Region" as const, "Slot" as const],
 }
 
 /**
@@ -118,22 +101,19 @@ const propMergeOptions = {
  */
 const resolveDeclarativeComponentDefinition = (
 	context: Context,
-	definition: BaseDefinition,
-	componentTypeDef: DeclarativeComponentDef
+	source: Record<string, FieldValue>,
+	destination: DefinitionList
 ): DefinitionList =>
 	(context
 		.addPropsFrame(
-			context.mergeDeep(
-				stripSlotsFromDefinition(
-					definition,
-					componentTypeDef.slots
-				) as Record<string, Mergeable>
-			) as Record<string, Mergeable>
+			//context.mergeDeep(
+			source
+			//) as Record<string, Mergeable>
 		)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
-			componentTypeDef.definition as Record<string, string>[],
+			destination as Record<string, string>[],
 			propMergeOptions
 		) as DefinitionList) || []
 
@@ -216,27 +196,19 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 		componentType
 	) as DeclarativeComponentDef
 	if (!componentTypeDef) return null
-	const { slots } = componentTypeDef
+
 	// Merge YAML-defined properties into the Declarative Component definition
 	// by adding a props frame, to resolve all "$Prop{propName}" merges.
 	// These properties will NOT be accessible to child components.
 	const actualDefinition = resolveDeclarativeComponentDefinition(
 		context,
-		definition,
-		componentTypeDef
+		definition as Record<string, FieldValue>,
+		componentTypeDef.definition
 	)
-	// Add a Props frame containing any Slots, so that any Slot components
-	// which are children of this component can access the slot definitions.
-	const actualContext = addSlotComponentContext(
-		context,
-		componentType,
-		path,
-		slots,
-		definition
-	)
+
 	return (
 		<Slot
-			context={actualContext}
+			context={context}
 			path={path}
 			listName={DefaultSlotName}
 			definition={{ [DefaultSlotName]: actualDefinition }}

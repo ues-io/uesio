@@ -13,8 +13,7 @@ definition:
         - uesio/io.box:
             uesio.variant: uesio/appkit.dashboardpanel
             components:
-              - uesio/core.slot:
-                  name: content
+              - $Slot{content}
 title: Dashboard Section
 discoverable: true
 description: Dashboard Section

@@ -27,5 +27,4 @@ definition:
                       - m-8
                       - my-12
                   items:
-                    - uesio/core.slot:
-                        name: content
+                    - $Slot{content}

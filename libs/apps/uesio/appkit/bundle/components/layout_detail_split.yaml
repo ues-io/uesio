@@ -18,8 +18,7 @@ definition:
               root:
                 - col-span-2
             components:
-              - uesio/core.slot:
-                  name: main
+              - $Slot{main}
         - uesio/io.box:
             uesio.styleTokens:
               root:
@@ -35,8 +34,7 @@ definition:
                 - p-10
                 - pt-0
             components:
-              - uesio/core.slot:
-                  name: left
+              - $Slot{left}
 title: Detail Split Component
 discoverable: true
 description: A component for detail page layout

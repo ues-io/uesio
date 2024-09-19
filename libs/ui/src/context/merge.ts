@@ -29,6 +29,7 @@ type MergeType =
 	| "Param"
 	| "Prop"
 	| "Region"
+	| "Slot"
 	| "User"
 	| "Time"
 	| "Text"
@@ -320,6 +321,14 @@ const handlers: Record<MergeType, MergeHandler> = {
 		>
 		return styleTokens?.[expression] || []
 	},
+	Slot: (expression, context) => ({
+		["uesio/core.slot"]: {
+			name: expression,
+			definition: {
+				[expression]: context.getProp(expression),
+			},
+		},
+	}),
 	FieldMode: (expression, context) => context.getFieldMode(),
 }
 
