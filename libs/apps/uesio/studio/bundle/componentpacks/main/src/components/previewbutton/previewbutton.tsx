@@ -21,6 +21,7 @@ type PreviewButtonDefinition = {
 	route?: metadata.MetadataKey
 	label: string
 	buildMode: boolean
+	buttonVariant?: metadata.MetadataKey
 	hotkey: string
 }
 
@@ -175,6 +176,17 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 				height="500px"
 				onClose={() => setOpen(false)}
 				title="Set Preview Parameters"
+				actions={
+					<Group justifyContent="end" context={context}>
+						<Button
+							context={context}
+							variant={"uesio/appkit.primary"}
+							id={`launch-preview`}
+							label={label}
+							onClick={() => onSubmit(wireRef.current)}
+						/>
+					</Group>
+				}
 			>
 				<DynamicForm
 					id={id}
@@ -183,15 +195,6 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 					context={context}
 					wireRef={wireRef}
 				/>
-				<Group justifyContent="end" context={context}>
-					<Button
-						context={context}
-						variant="uesio/io.primary"
-						id={`launch-preview`}
-						label={label}
-						onClick={() => onSubmit(wireRef.current)}
-					/>
-				</Group>
 			</Dialog>
 		</FloatingPortal>
 	)
@@ -200,7 +203,14 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
-	const { label, view, route, hotkey, buildMode } = definition
+	const {
+		label,
+		view,
+		route,
+		hotkey,
+		buildMode,
+		buttonVariant = "uesio/appkit.secondary",
+	} = definition
 
 	const record = context.getRecord()
 	if (!record) throw new Error("No Record Context Provided")
@@ -277,7 +287,7 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 			<Button
 				id={api.component.getComponentIdFromProps(props)}
 				context={context}
-				variant="uesio/io.secondary"
+				variant={buttonVariant}
 				label={label}
 				onClick={togglePreview}
 			/>

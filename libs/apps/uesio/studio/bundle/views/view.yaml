@@ -88,7 +88,7 @@ definition:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
+                                      uesio.variant: uesio/appkit.primary
                                       text: $Label{uesio/io.save}
                                       hotkey: "meta+s"
                                       uesio.display:
@@ -102,7 +102,7 @@ definition:
                                         - signal: wire/SAVE
                                           wire: views
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.cancel}
                                       hotkey: "meta+shift+."
                                       uesio.display:
@@ -116,7 +116,7 @@ definition:
                                         - signal: wire/CANCEL
                                           wire: views
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
@@ -174,7 +174,7 @@ definition:
       actions:
         - uesio/io.button:
             text: $Label{uesio/io.delete}
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
@@ -184,7 +184,7 @@ definition:
                 path: app/$Param{app}/workspace/$Param{workspacename}/views
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             signals:
               - signal: panel/TOGGLE
                 panel: deleteView
