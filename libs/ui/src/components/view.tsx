@@ -115,7 +115,8 @@ const View: UC<ViewComponentDefinition> = (props) => {
 				[DefaultSlotName]: resolveDeclarativeComponentDefinition(
 					context,
 					slots as Record<string, FieldValue>,
-					viewDef.components || []
+					viewDef.components || [],
+					""
 				),
 			}
 		: viewDef

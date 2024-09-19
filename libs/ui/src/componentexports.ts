@@ -10,12 +10,7 @@ import {
 } from "./components/view"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
-import {
-	Component,
-	DECLARATIVE_COMPONENT,
-	DeclarativeComponentSlotContext,
-	getUtility,
-} from "./component/component"
+import { Component, getUtility } from "./component/component"
 import {
 	shouldHaveClass,
 	useShould,
@@ -44,7 +39,6 @@ export type {
 	ComponentDef,
 	ComponentVariant,
 	ComponentState,
-	DeclarativeComponentSlotContext,
 	DisplayCondition,
 	DisplayOperator,
 	ItemContext,
@@ -54,7 +48,6 @@ export type {
 }
 
 export {
-	DECLARATIVE_COMPONENT,
 	DISPLAY_CONDITIONS,
 	COMPONENT_CONTEXT,
 	SIGNAL_CONDITIONS,

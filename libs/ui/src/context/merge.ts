@@ -20,6 +20,7 @@ import {
 	parseWireExpression,
 } from "./partsparse"
 import { getThemeValue } from "../styles/styles"
+import { DECLARATIVE_COMPONENT } from "../component/component"
 
 type MergeType =
 	| "Error"
@@ -321,14 +322,20 @@ const handlers: Record<MergeType, MergeHandler> = {
 		>
 		return styleTokens?.[expression] || []
 	},
-	Slot: (expression, context) => ({
-		["uesio/core.slot"]: {
-			name: expression,
-			definition: {
-				[expression]: context.getProp(expression),
+	Slot: (expression, context) => {
+		const componentFrame = context.getComponentData(DECLARATIVE_COMPONENT)
+		const propsFrame = context.getPropsFrame()
+		return {
+			["uesio/core.slot"]: {
+				name: expression,
+				definition: {
+					[expression]: propsFrame?.data[expression],
+				},
+				path: propsFrame?.path || "",
+				readonly: !!componentFrame,
 			},
-		},
-	}),
+		}
+	},
 	FieldMode: (expression, context) => context.getFieldMode(),
 }
 

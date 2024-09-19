@@ -111,6 +111,7 @@ interface ComponentContext {
 
 interface PropsContext {
 	data: Record<string, FieldValue>
+	path: string
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -364,6 +365,17 @@ class Context {
 		)
 	}
 
+	removeAllComponentFrames = (type: string): Context =>
+		this.clone(
+			this.stack.filter(
+				(frame): frame is RecordContextFrame =>
+					!(
+						isComponentContextFrame(frame) &&
+						frame.componentType === type
+					)
+			)
+		)
+
 	getRecordDataIndex = (wireRecord?: WireRecord) =>
 		this.stack
 			.filter(isRecordDataContextFrame)
@@ -464,6 +476,7 @@ class Context {
 	getParam = (param: string) => this.getParams()?.[param]
 
 	getProp = (prop: string) => this.stack.find(isPropsContextFrame)?.data[prop]
+	getPropsFrame = () => this.stack.find(isPropsContextFrame)
 
 	getParentComponentDef = (path: string) =>
 		get(this.getViewDef(), getAncestorPath(path, 3))
@@ -683,10 +696,11 @@ class Context {
 			data,
 		})
 
-	addPropsFrame = (data: Record<string, FieldValue>) =>
+	addPropsFrame = (data: Record<string, FieldValue>, path: string) =>
 		this.#addFrame({
 			type: PROPS,
 			data,
+			path,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
