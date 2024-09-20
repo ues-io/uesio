@@ -231,9 +231,10 @@ definition:
                                     componentsignal: SET_READ_MODE
                                     targettype: specific
                                     target: botsItem
-                                typeDefinitionFileURIs:
-                                  - $StaticFile{/ui/types/server/bots.d.ts}
-                                  - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
+                                textOptions:
+                                  typeDefinitionFileURIs:
+                                    - $StaticFile{/ui/types/server/bots.d.ts}
+                                    - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.display:

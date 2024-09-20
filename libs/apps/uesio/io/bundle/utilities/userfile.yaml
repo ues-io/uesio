@@ -1,0 +1,3 @@
+name: userfile
+pack: main
+entrypoint: utilities/userfile/userfile

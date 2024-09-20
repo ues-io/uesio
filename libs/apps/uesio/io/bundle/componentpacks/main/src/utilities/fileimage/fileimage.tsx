@@ -1,13 +1,14 @@
-import { definition, styles, collection, context, api } from "@uesio/ui"
+import { definition, styles, context } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Icon from "../icon/icon"
-import { UserFileMetadata } from "../../components/field/field"
+
 import UploadArea from "../uploadarea/uploadarea"
+import { FileInfo } from "../file/file"
 
 interface FileImageProps {
 	id?: string
 	mode?: context.FieldMode
-	userFile?: UserFileMetadata
+	fileInfo?: FileInfo
 	onUpload: (files: FileList | null) => void
 	onDelete?: () => void
 	accept?: string
@@ -35,11 +36,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
-	const { context, mode, userFile, accept, onUpload, onDelete } = props
-
-	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
-	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
+	const { context, mode, fileInfo, accept, onUpload, onDelete } = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -67,7 +64,7 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
 					>
 						<Icon context={context} icon="edit" />
 					</label>
-					{userFileId && (
+					{fileInfo && (
 						<label
 							className={styles.cx(
 								classes.deleteicon,
@@ -80,8 +77,8 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
 					)}
 				</>
 			)}
-			{userFileId ? (
-				<img className={classes.image} src={fileUrl} />
+			{fileInfo ? (
+				<img className={classes.image} src={fileInfo.url} />
 			) : (
 				<div className={classes.nofile}>
 					<Icon

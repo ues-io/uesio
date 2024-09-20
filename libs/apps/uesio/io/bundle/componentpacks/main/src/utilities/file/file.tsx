@@ -1,15 +1,20 @@
-import { definition, styles, collection, context, api } from "@uesio/ui"
+import { definition, styles, context } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Tile from "../tile/tile"
 import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
-import { UserFileMetadata } from "../../components/field/field"
 import { useRef } from "react"
+
+type FileInfo = {
+	url: string
+	name: string
+	mimetype: string
+}
 
 interface FileUtilityProps {
 	id?: string
 	mode?: context.FieldMode
-	userFile?: UserFileMetadata
+	fileInfo?: FileInfo
 	onUpload: (files: FileList | null) => void
 	onDelete?: () => void
 	accept?: string
@@ -42,12 +47,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
-	const { context, userFile, onUpload, onDelete, accept, mode } = props
-
-	const userFileId = userFile?.[collection.ID_FIELD]
-	const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
-	const fileName = userFile?.["uesio/core.path"]
-	const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
+	const { context, fileInfo, onUpload, onDelete, accept, mode } = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -66,7 +66,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 					accept={accept}
 					className={styles.cx(
 						classes.uploadarea,
-						!userFileId && classes.emptystate
+						!fileInfo && classes.emptystate
 					)}
 					uploadLabelId={uploadLabelId}
 					deleteLabelId={deleteLabelId}
@@ -79,10 +79,10 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 				</UploadArea>
 			)}
 
-			{userFileId && (
+			{fileInfo && (
 				<Tile context={context} className={classes.filetag}>
-					<span className={classes.filename}>{fileName}</span>
-					<a href={fileUrl} className={classes.download}>
+					<span className={classes.filename}>{fileInfo.name}</span>
+					<a href={fileInfo.url} className={classes.download}>
 						<Icon
 							icon="file_download"
 							className={classes.actionbutton}
@@ -103,5 +103,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 		</>
 	)
 }
+
+export type { FileInfo }
 
 export default File
