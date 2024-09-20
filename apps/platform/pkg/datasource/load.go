@@ -540,6 +540,10 @@ func GetMetadataForLoad(
 		}
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
+			// Allow missing metadata for dynamic collections
+			if collectionMetadata.IsDynamic() {
+				continue
+			}
 			return err
 		}
 		specialRef, ok := specialRefs[fieldMetadata.Type]

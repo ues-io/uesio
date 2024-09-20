@@ -31,7 +31,7 @@ type FileBundleStoreConnection struct {
 	ReadOnly       bool
 }
 
-func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]string, error) {
+func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
 
 	if b.Cache != nil {
 		cachedKeys, ok := b.Cache.GetFileListFromCache(basePath, conditions)
@@ -45,10 +45,11 @@ func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.Fi
 		return nil, err
 	}
 
-	filteredPaths := []string{}
+	filteredPaths := []file.Metadata{}
 
 	for _, path := range paths {
-		if filter(path, conditions, true) {
+		pathString := path.Path()
+		if filter(pathString, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
 	}
@@ -143,14 +144,14 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(b.PathFunc(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
-	paths, err := b.getFilePaths(basePath, group.FilterPath, options.Conditions)
+	pathInfos, err := b.getFilePaths(basePath, group.FilterPath, options.Conditions)
 	if err != nil {
 		return err
 	}
 
-	for _, path := range paths {
+	for _, pathInfo := range pathInfos {
 
-		retrievedItem := group.GetItemFromPath(path, b.Namespace)
+		retrievedItem := group.GetItemFromPath(pathInfo.Path(), b.Namespace)
 		if retrievedItem == nil {
 			continue
 		}
@@ -180,7 +181,7 @@ func (b *FileBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.Att
 	return b.download(w, filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
-func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {
 	// Get all the file paths for this attachable item
 	basePath := filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
 
@@ -191,11 +192,19 @@ func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileC
 		// We want all files that *aren't* the definition file
 		return !originalFilter.FilterPath(filepath.Join(item.GetBasePath(), s), nil, true)
 	}
-	paths, err := b.getFilePaths(basePath, filter, filterConditions)
+	return b.getFilePaths(basePath, filter, filterConditions)
+}
+
+func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	// Get all the file paths for this attachable item
+	basePath := filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
+
+	pathInfos, err := b.GetAttachmentPaths(item)
 	if err != nil {
 		return err
 	}
-	for _, path := range paths {
+	for _, pathInfo := range pathInfos {
+		path := pathInfo.Path()
 		f, err := creator(path)
 		if err != nil {
 			return err

@@ -34,8 +34,8 @@ func (c *Connection) EmptyDir(path string) error {
 	}
 
 	s3Ids := make([]types.ObjectIdentifier, len(objKeys))
-	for i, key := range objKeys {
-		s3Ids[i] = types.ObjectIdentifier{Key: aws.String(path + key)}
+	for i, fileInfo := range objKeys {
+		s3Ids[i] = types.ObjectIdentifier{Key: aws.String(path + fileInfo.Path())}
 	}
 
 	_, err = c.client.DeleteObjects(c.ctx, &s3.DeleteObjectsInput{

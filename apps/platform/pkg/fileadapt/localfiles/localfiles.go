@@ -40,8 +40,8 @@ type Connection struct {
 	ctx    context.Context
 }
 
-func (c *Connection) List(dirPath string) ([]string, error) {
-	paths := []string{}
+func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
+	paths := []file.Metadata{}
 	basePath := filepath.Join(c.bucket, filepath.FromSlash(dirPath)) + string(os.PathSeparator)
 	err := filepath.WalkDir(basePath, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
@@ -54,7 +54,12 @@ func (c *Connection) List(dirPath string) ([]string, error) {
 		if path == basePath {
 			return nil
 		}
-		paths = append(paths, filepath.ToSlash(strings.TrimPrefix(path, basePath)))
+
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			return err
+		}
+		paths = append(paths, file.NewLocalFileMeta(fileInfo, filepath.ToSlash(strings.TrimPrefix(path, basePath))))
 
 		return nil
 	})
@@ -102,7 +107,7 @@ func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
 	if err != nil {
 		return nil, err
 	}
-	return file.NewLocalFileMeta(fileInfo), nil
+	return file.NewLocalFileMeta(fileInfo, path), nil
 }
 
 func (c *Connection) Delete(path string) error {

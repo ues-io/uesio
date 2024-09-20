@@ -1,4 +1,7 @@
 name: minimal
 label: Minimal
-definition: {}
+definition:
+  uesio.styleTokens:
+    root:
+      - contents
 public: true
