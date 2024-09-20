@@ -8,12 +8,13 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
 // BundleStoreCache provides a cache of items in a Bundle Store.
 // This can be used for various bundle store implementations, including system/platform/workspace.
 type BundleStoreCache struct {
-	fileListCache    cache.Cache[[]string]
+	fileListCache    cache.Cache[[]file.Metadata]
 	bundleEntryCache cache.Cache[meta.BundleableItem]
 }
 
@@ -26,12 +27,12 @@ const (
 // This can be used for various bundle store implementations, including system/platform/workspace.
 func NewBundleStoreCache(entryExpiration, cleanupFrequency time.Duration) *BundleStoreCache {
 	return &BundleStoreCache{
-		fileListCache:    cache.NewMemoryCache[[]string](entryExpiration, cleanupFrequency),
+		fileListCache:    cache.NewMemoryCache[[]file.Metadata](entryExpiration, cleanupFrequency),
 		bundleEntryCache: cache.NewMemoryCache[meta.BundleableItem](defaultExpiry, defaultCleanup),
 	}
 }
 
-func (bsc *BundleStoreCache) GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]string, bool) {
+func (bsc *BundleStoreCache) GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]file.Metadata, bool) {
 	files, err := bsc.fileListCache.Get(basePath + fmt.Sprint(conditions))
 	if err != nil || files == nil {
 		return nil, false
@@ -39,7 +40,7 @@ func (bsc *BundleStoreCache) GetFileListFromCache(basePath string, conditions me
 	return files, true
 }
 
-func (bsc *BundleStoreCache) AddFileListToCache(basePath string, conditions meta.BundleConditions, files []string) {
+func (bsc *BundleStoreCache) AddFileListToCache(basePath string, conditions meta.BundleConditions, files []file.Metadata) {
 	bsc.fileListCache.Set(basePath+fmt.Sprint(conditions), files)
 }
 

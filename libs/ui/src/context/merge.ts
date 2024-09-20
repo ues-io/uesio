@@ -33,6 +33,7 @@ type MergeType =
 	| "Slot"
 	| "User"
 	| "Time"
+	| "FileSize"
 	| "Text"
 	| "Date"
 	| "If"
@@ -193,6 +194,21 @@ const handlers: Record<MergeType, MergeHandler> = {
 			minimumFractionDigits: decimals,
 			maximumFractionDigits: decimals,
 		}).format(value)
+	},
+	FileSize: (expression, context) => {
+		const bytes = context.getRecord()?.getFieldValue(expression) as number
+		if (!bytes) {
+			return ""
+		}
+		const units = ["byte", "kilobyte", "megabyte", "terabyte", "petabyte"]
+		const divisor = 1024
+		const unit = Math.floor(Math.log(bytes) / Math.log(divisor))
+		return new Intl.NumberFormat("en", {
+			style: "unit",
+			unit: units[unit],
+			minimumFractionDigits: 1,
+			maximumFractionDigits: 1,
+		} as Intl.NumberFormatOptions).format(bytes / divisor ** unit)
 	},
 	Currency: (expression, context) => {
 		const value = context.getRecord()?.getFieldValue(expression) as number

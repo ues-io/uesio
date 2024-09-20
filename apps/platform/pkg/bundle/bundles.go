@@ -179,6 +179,14 @@ func GetItemAttachment(w io.Writer, item meta.AttachableItem, path string, sessi
 	return bs.GetItemAttachment(w, item, path)
 }
 
+func GetAttachmentPaths(item meta.AttachableItem, session *sess.Session, connection wire.Connection) ([]file.Metadata, error) {
+	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
+	if err != nil {
+		return nil, err
+	}
+	return bs.GetAttachmentPaths(item)
+}
+
 func IsValid(items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)

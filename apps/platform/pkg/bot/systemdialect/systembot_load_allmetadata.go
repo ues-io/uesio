@@ -14,6 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -92,8 +93,13 @@ const (
 	groupingField      = "uesio/studio.grouping"
 	namespaceField     = "uesio/studio.namespace"
 	tagField           = "uesio/studio.tag"
+	labelField         = "uesio/studio.label"
+	appIconField       = "uesio/studio.appicon"
+	appColorField      = "uesio/studio.appcolor"
+	appNameField       = "uesio/studio.appname"
 	allMetadataField   = "uesio/studio.allmetadata"
 	isCommonFieldField = "uesio/studio.iscommonfield"
+	attachmentsField   = "uesio/studio.attachments"
 )
 
 func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
@@ -142,6 +148,91 @@ func isDefaultOrder(order []wire.LoadRequestOrder) bool {
 	return order[0] == defaultOrder
 }
 
+var namespaceFieldMeta = &wire.FieldMetadata{
+	Name:       "namespace",
+	Namespace:  "uesio/studio",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "Namespace",
+}
+
+var appiconFieldMeta = &wire.FieldMetadata{
+	Name:       "appicon",
+	Namespace:  "uesio/studio",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "App Icon",
+}
+
+var appcolorFieldMeta = &wire.FieldMetadata{
+	Name:       "appcolor",
+	Namespace:  "uesio/studio",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "App Color",
+}
+
+var appnameFieldMeta = &wire.FieldMetadata{
+	Name:       "appname",
+	Namespace:  "uesio/studio",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "App Name",
+}
+
+var attachmentsFieldMeta = &wire.FieldMetadata{
+	Name:       "attachments",
+	Namespace:  "uesio/studio",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "LIST",
+	Label:      "Attachments",
+	SubType:    "STRUCT",
+	SubFields: map[string]*wire.FieldMetadata{
+		"path": {
+			Name:  "path",
+			Type:  "TEXT",
+			Label: "Path",
+		},
+		"mimetype": {
+			Name:  "mimetype",
+			Type:  "TEXT",
+			Label: "Mime Type",
+		},
+		"size": {
+			Name:  "filesize",
+			Type:  "NUMBER",
+			Label: "File Size",
+		},
+		"modified": {
+			Name:  "modified",
+			Type:  "TIMESTAMP",
+			Label: "Last Modified",
+		},
+	},
+}
+
+func setField(fieldName string, from, to meta.Item) error {
+	// Don't set the unique key field
+	if fieldName == "uesio/studio.uniquekey" {
+		return nil
+	}
+	value, err := from.GetField(fieldName)
+	if err != nil {
+		return err
+	}
+	return to.SetField(fieldName, value)
+}
+
 func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
@@ -183,45 +274,10 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		}
 	}
 
-	collectionMetadata.SetField(&wire.FieldMetadata{
-		Name:       "namespace",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "Namespace",
-	})
-
-	collectionMetadata.SetField(&wire.FieldMetadata{
-		Name:       "appicon",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Icon",
-	})
-
-	collectionMetadata.SetField(&wire.FieldMetadata{
-		Name:       "appcolor",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Color",
-	})
-
-	collectionMetadata.SetField(&wire.FieldMetadata{
-		Name:       "appname",
-		Namespace:  "uesio/studio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "App Name",
-	})
+	collectionMetadata.SetField(namespaceFieldMeta)
+	collectionMetadata.SetField(appiconFieldMeta)
+	collectionMetadata.SetField(appcolorFieldMeta)
+	collectionMetadata.SetField(appnameFieldMeta)
 
 	// Determine the namespaces to request using a namespace condition, if present and active,
 	// otherwise use all context namespaces
@@ -252,6 +308,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		if err != nil {
 			return err
 		}
+
 	} else {
 		conditions := meta.BundleConditions{}
 		for _, condition := range op.Conditions {
@@ -363,32 +420,81 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 		_, appName, _ := meta.ParseNamespace(namespace)
 
-		opItem.SetField("uesio/studio.namespace", namespace)
-		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
-		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
-		opItem.SetField("uesio/studio.appname", appName)
-		// TODO: Only iterate over the Load request fields, if provided.
+		// TODO: Remove this section in favor of the more performant.
+		// Version that only returns fields if they are requested.
 		// This will likely break a lot of Studio Views
 		// but we need to stop sending so much unused stuff to the client.
-		for _, fieldName := range group.GetFields() {
-			// Don't set the unique key field
-			if fieldName == "uesio/studio.uniquekey" {
+		useLegacyFieldsLoader := len(op.Fields) == 2
+		if useLegacyFieldsLoader {
+			opItem.SetField(namespaceField, namespace)
+			opItem.SetField(appIconField, appInfo.Icon)
+			opItem.SetField(appColorField, appInfo.Color)
+			opItem.SetField(appNameField, appName)
+			for _, fieldName := range group.GetFields() {
+				err := setField(fieldName, item, opItem)
+				if err != nil {
+					return err
+				}
+			}
+			// Set the label to the label or name, whichever is provided.
+			// Do this here, before the loop over the requested fields,
+			// to ensure it doesn't get overridden.
+			opItem.SetField(labelField, groupableItem.GetLabel())
+			opItem.SetField(commonfields.UniqueKey, key)
+			return nil
+		}
+		for _, field := range op.Fields {
+			fieldName := field.ID
+			if fieldName == attachmentsField {
+				// Also get attachments
+				attachableItem, isAttachableItem := item.(meta.AttachableItem)
+				if isAttachableItem {
+					pathInfo, err := bundle.GetAttachmentPaths(attachableItem, session, connection)
+					if err != nil {
+						return err
+					}
+					collectionMetadata.SetField(attachmentsFieldMeta)
+					pathInfoWrappers := make([]file.MetadataWrapper, len(pathInfo))
+					for i, path := range pathInfo {
+						pathInfoWrappers[i] = file.MetadataWrapper{Metadata: path}
+					}
+					opItem.SetField(fieldName, pathInfoWrappers)
+				}
 				continue
 			}
-			value, err := item.GetField(fieldName)
-			if err != nil {
-				return err
+			if fieldName == namespaceField {
+				opItem.SetField(fieldName, namespace)
+				continue
 			}
-			err = opItem.SetField(fieldName, value)
+			if fieldName == appIconField {
+				opItem.SetField(fieldName, appInfo.Icon)
+				continue
+			}
+			if fieldName == appColorField {
+				opItem.SetField(fieldName, appInfo.Color)
+				continue
+			}
+			if fieldName == appNameField {
+				opItem.SetField(fieldName, appName)
+				continue
+			}
+
+			if fieldName == labelField {
+				opItem.SetField(fieldName, groupableItem.GetLabel())
+				continue
+			}
+
+			if fieldName == commonfields.UniqueKey {
+				opItem.SetField(fieldName, key)
+				continue
+			}
+
+			err := setField(fieldName, item, opItem)
 			if err != nil {
 				return err
 			}
 		}
-		// Set the label to the label or name, whichever is provided.
-		// Do this here, before the loop over the requested fields,
-		// to ensure it doesn't get overridden.
-		opItem.SetField("uesio/studio.label", groupableItem.GetLabel())
-		opItem.SetField(commonfields.UniqueKey, key)
+
 		return nil
 	})
 	if err != nil {

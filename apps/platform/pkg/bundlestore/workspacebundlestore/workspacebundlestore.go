@@ -30,6 +30,10 @@ func (fm *wsFileMeta) ContentLength() int64 {
 	return fm.userFileMeta.ContentLength
 }
 
+func (fm *wsFileMeta) Path() string {
+	return fm.userFileMeta.Path
+}
+
 func (fm *wsFileMeta) LastModified() *time.Time {
 	t := time.Unix(fm.userFileMeta.UpdatedAt, 0)
 	return &t
@@ -319,10 +323,10 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	return newWorkspaceFileMeta(userFileMetadata), nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return errors.New("Invalid Record ID for attachment: " + err.Error())
+		return nil, errors.New("Invalid Record ID for attachment: " + err.Error())
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
@@ -340,6 +344,23 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 		},
 		b.getStudioAnonSession(),
 	)
+	return userFiles, nil
+}
+
+func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {
+	userFiles, err := b.GetAttachmentData(item)
+	if err != nil {
+		return nil, err
+	}
+	paths := make([]file.Metadata, userFiles.Len())
+	for i, ufm := range *userFiles {
+		paths[i] = newWorkspaceFileMeta(ufm)
+	}
+	return paths, nil
+}
+
+func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	userFiles, err := b.GetAttachmentData(item)
 	if err != nil {
 		return err
 	}

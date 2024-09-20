@@ -40,6 +40,12 @@ properties:
     type: FIELD
     label: Field Id
     wireField: wire
+  - name: wrapperVariant
+    label: Wrapper Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.fieldwrapper
   - name: fieldDisplayType
     type: FIELD_METADATA
     display: false
