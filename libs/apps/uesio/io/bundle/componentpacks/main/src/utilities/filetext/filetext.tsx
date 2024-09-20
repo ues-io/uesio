@@ -9,20 +9,23 @@ import MarkDownField, {
 	MarkdownFieldOptions,
 } from "../markdownfield/markdownfield"
 
+type TextOptions = {
+	// The language to use for syntax highlighting
+	language?: string
+	// The Monaco editor theme to use
+	theme?: string
+	// An array of URIs which contain ambient type definitions to load in this code field
+	typeDefinitionFileURIs?: string[]
+	// Markdown options
+	markdownOptions?: MarkdownFieldOptions
+}
+
 interface FileTextProps {
-	path: string
 	mode?: context.FieldMode
 	userFile?: UserFileMetadata
 	onUpload: (files: FileList | File | null) => void
 	displayAs?: string
-	// An array of URIs which contain ambient type definitions to load in this code field
-	typeDefinitionFileURIs?: string[]
-	// The Monaco Editor theme to use if rendering a code editor
-	theme?: string
-	// Markdown options
-	markdownOptions?: MarkdownFieldOptions
-	// The language to use for syntax highlighting
-	language?: string
+	textOptions?: TextOptions
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -35,18 +38,16 @@ const stringToFile = (value: string, fileName: string, mimeType: string) => {
 }
 
 const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
-	const {
-		context,
-		userFile,
-		onUpload,
-		markdownOptions,
-		mode,
-		displayAs,
-		language = displayAs === "MARKDOWN" ? "markdown" : undefined,
-		id,
-		typeDefinitionFileURIs,
-		theme,
-	} = props
+	const { context, userFile, onUpload, textOptions, mode, displayAs, id } =
+		props
+
+	const markdownOptions = textOptions?.markdownOptions
+	const language =
+		textOptions?.language || displayAs === "MARKDOWN"
+			? "markdown"
+			: undefined
+	const typeDefinitionFileURIs = textOptions?.typeDefinitionFileURIs
+	const theme = textOptions?.theme
 
 	const [content, original, setContent, reset, cancel] = api.file.useUserFile(
 		context,
@@ -108,5 +109,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 		/>
 	)
 }
+
+export type { TextOptions }
 
 export default FileText
