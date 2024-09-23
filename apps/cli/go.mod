@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
-	github.com/evanw/esbuild v0.21.5
+	github.com/evanw/esbuild v0.24.0
 	github.com/spf13/cobra v1.8.1
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/thecloudmasters/uesio v0.0.0-00010101000000-000000000000
