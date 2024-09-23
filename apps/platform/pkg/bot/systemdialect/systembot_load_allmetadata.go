@@ -424,7 +424,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		// Version that only returns fields if they are requested.
 		// This will likely break a lot of Studio Views
 		// but we need to stop sending so much unused stuff to the client.
-		useLegacyFieldsLoader := len(op.Fields) == 2
+		useLegacyFieldsLoader := len(op.Fields) <= 2
 		if useLegacyFieldsLoader {
 			opItem.SetField(namespaceField, namespace)
 			opItem.SetField(appIconField, appInfo.Icon)

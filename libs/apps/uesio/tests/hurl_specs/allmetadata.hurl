@@ -175,6 +175,9 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.namespace"
                 }
             ],
             "conditions": [
@@ -305,6 +308,9 @@ Accept: application/json
                 },
                 {
                     "id": "uesio/core.uniquekey"
+                },
+                {
+                    "id": "uesio/studio.label"
                 }
             ],
             "conditions": [
