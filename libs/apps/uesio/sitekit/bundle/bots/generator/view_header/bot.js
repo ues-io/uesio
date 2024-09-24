@@ -1,6 +1,8 @@
 function view_header(bot) {
 	const namespace = bot.getAppName()
 	const pages = bot.params.get("pages")
+	const logoFile = bot.params.get("logoFile")
+	const logoFilePath = bot.params.get("logoFilePath")
 
 	// Find the first "CALL_TO_ACTION" page and remove it.
 	const infoPages = pages.filter((page) => page.type !== "CALL_TO_ACTION")
@@ -35,6 +37,8 @@ function view_header(bot) {
 			namespace,
 			infoButtonYaml,
 			actionButtonYaml,
+			logoFile,
+			logoFilePath,
 		},
 		"templates/header.yaml"
 	)

@@ -56,54 +56,56 @@ definition:
                 app: $Param{app}
                 selected: teams
         content:
-          - uesio/io.box:
-              uesio.display:
-                - type: wireHasRecords
-                  wire: apps
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: Teams
-                    subtitle: There's no I in team, but there is M and E.
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: groups
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                text: "New Team"
-                                uesio.variant: uesio/appkit.primary
-                                signals:
-                                  - signal: "panel/TOGGLE"
-                                    panel: "newTeam"
+          - uesio/appkit.layout_detail_split:
+              main:
                 - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: apps
                     components:
-                      - uesio/io.deck:
-                          uesio.id: teamslist
+                      - uesio/io.titlebar:
                           uesio.variant: uesio/appkit.main
-                          wire: teams
+                          title: Teams
+                          subtitle: There's no I in team, but there is M and E.
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: groups
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      text: "New Team"
+                                      uesio.variant: uesio/appkit.primary
+                                      signals:
+                                        - signal: "panel/TOGGLE"
+                                          panel: "newTeam"
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
                           components:
-                            - uesio/io.card:
+                            - uesio/io.deck:
+                                uesio.id: teamslist
                                 uesio.variant: uesio/appkit.main
-                                title: ${uesio/studio.name}
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/teams/${uesio/studio.name}"
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/appkit.avataricon
-                                      text: groups
-                      - uesio/io.emptystate:
-                          uesio.variant: uesio/studio.main
-                          title: No Teams Created Yet
-                          subtitle: Click the New Team button to add one.
-                          icon: groups
-                          uesio.display:
-                            - type: wireHasNoRecords
-                              wire: teams
+                                wire: teams
+                                components:
+                                  - uesio/io.card:
+                                      uesio.variant: uesio/appkit.main
+                                      title: ${uesio/studio.name}
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{app}/teams/${uesio/studio.name}"
+                                      avatar:
+                                        - uesio/io.text:
+                                            uesio.variant: uesio/appkit.avataricon
+                                            text: groups
+                            - uesio/io.emptystate:
+                                uesio.variant: uesio/studio.main
+                                title: No Teams Created Yet
+                                subtitle: Click the New Team button to add one.
+                                icon: groups
+                                uesio.display:
+                                  - type: wireHasNoRecords
+                                    wire: teams
   panels:
     newTeam:
       uesio.type: uesio/io.dialog

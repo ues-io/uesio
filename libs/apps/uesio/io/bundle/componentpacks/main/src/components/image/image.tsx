@@ -3,6 +3,7 @@ import { default as IOImage } from "../../utilities/image/image"
 
 type ImageDefinition = {
 	file?: string
+	filepath?: string
 	// The image height in pixels
 	height?: number
 	// The image width in pixels
@@ -15,7 +16,7 @@ type ImageDefinition = {
 
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
-	const { loading, src, file, width, height, alt } = definition
+	const { loading, src, file, width, height, alt, filepath } = definition
 
 	const [link, handler] = api.signal.useLinkHandler(
 		definition.signals,
@@ -33,6 +34,7 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 			loading={loading}
 			src={src}
 			file={file}
+			filepath={filepath}
 			alt={alt}
 			height={height}
 			width={width}

@@ -146,9 +146,7 @@ definition:
                                             uesio.variant: uesio/appkit.main
                                             components:
                                               - uesio/io.card:
-                                                  tileVariant: uesio/appkit.card
-                                                  scrollpanelVariant: uesio/appkit.card
-                                                  titlebarVariant: uesio/appkit.item
+                                                  uesio.variant: uesio/appkit.main
                                                   title: ${uesio/studio.name}
                                                   avatar:
                                                     - uesio/io.text:
@@ -193,9 +191,7 @@ definition:
                                                 - gap-6
                                             components:
                                               - uesio/io.card:
-                                                  tileVariant: uesio/appkit.card
-                                                  scrollpanelVariant: uesio/appkit.card
-                                                  titlebarVariant: uesio/appkit.item
+                                                  uesio.variant: uesio/appkit.main
                                                   title: ${uesio/studio.name}
                                                   subtitle: v${bundle->version}
                                                   avatar:

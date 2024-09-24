@@ -54,6 +54,10 @@ func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
 		if path == basePath {
 			return nil
 		}
+		// Skip .DS_Store files
+		if info.Name() == ".DS_Store" {
+			return nil
+		}
 
 		fileInfo, err := os.Stat(path)
 		if err != nil {

@@ -88,81 +88,83 @@ definition:
                 app: $Param{app}
                 selected: teams
         content:
-          - uesio/io.list:
-              uesio.id: teamDeck
-              wire: teams
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: ${uesio/studio.name}
-                    subtitle: Team
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: groups
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newMember
-                                text: Add Member
-                                uesio.variant: uesio/appkit.primary
-                            - uesio/io.button:
-                                text: $Label{uesio/io.delete}
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: deleteTeam
-                                uesio.variant: uesio/appkit.secondary
-          - uesio/io.box:
-              uesio.variant: uesio/appkit.primarysection
-              components:
-                - uesio/io.titlebar:
-                    title: Team Members
-                    uesio.display:
-                      - type: wireHasRecords
-                        wire: teammembers
-                    uesio.styleTokens:
-                      root:
-                        - mb-4
-                - uesio/io.emptystate:
-                    uesio.variant: uesio/studio.main
-                    title: This team has no members
-                    subtitle: Use the Add Member button to build this team.
-                    icon: public
-                    uesio.display:
-                      - type: wireHasNoRecords
-                        wire: teammembers
-                - uesio/io.deck:
-                    uesio.id: teammembersslist
-                    uesio.variant: uesio/appkit.main
-                    uesio.display:
-                      - type: wireHasRecords
-                        wire: teammembers
-                    wire: teammembers
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.list:
+                    uesio.id: teamDeck
+                    wire: teams
+                    mode: READ
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/appkit.card
-                          content:
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - items-center
-                                    - grid-cols-[1fr_auto]
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.member
-                                      labelPosition: "none"
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: ${uesio/studio.name}
+                          subtitle: Team
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: groups
+                          actions:
+                            - uesio/io.group:
+                                components:
                                   - uesio/io.button:
                                       signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - teammembers
-                                      icon: delete
-                                      uesio.variant: uesio/appkit.itemaction
+                                        - signal: panel/TOGGLE
+                                          panel: newMember
+                                      text: Add Member
+                                      uesio.variant: uesio/appkit.primary
+                                  - uesio/io.button:
+                                      text: $Label{uesio/io.delete}
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: deleteTeam
+                                      uesio.variant: uesio/appkit.secondary
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.primarysection
+                    components:
+                      - uesio/io.titlebar:
+                          title: Team Members
+                          uesio.display:
+                            - type: wireHasRecords
+                              wire: teammembers
+                          uesio.styleTokens:
+                            root:
+                              - mb-4
+                      - uesio/io.emptystate:
+                          uesio.variant: uesio/studio.main
+                          title: This team has no members.
+                          subtitle: Use the Add Member button to build this team.
+                          icon: public
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: teammembers
+                      - uesio/io.deck:
+                          uesio.id: teammembersslist
+                          uesio.variant: uesio/appkit.main
+                          uesio.display:
+                            - type: wireHasRecords
+                              wire: teammembers
+                          wire: teammembers
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/appkit.card
+                                content:
+                                  - uesio/io.grid:
+                                      uesio.styleTokens:
+                                        root:
+                                          - items-center
+                                          - grid-cols-[1fr_auto]
+                                      items:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.member
+                                            labelPosition: "none"
+                                        - uesio/io.button:
+                                            signals:
+                                              - signal: wire/MARK_FOR_DELETE
+                                              - signal: wire/SAVE
+                                                wires:
+                                                  - teammembers
+                                            icon: delete
+                                            uesio.variant: uesio/appkit.itemaction
   panels:
     deleteTeam:
       uesio.type: uesio/io.dialog

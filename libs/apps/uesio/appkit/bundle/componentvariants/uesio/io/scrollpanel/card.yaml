@@ -4,7 +4,6 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - -m-5
       - bg-white
       - rounded
     header:

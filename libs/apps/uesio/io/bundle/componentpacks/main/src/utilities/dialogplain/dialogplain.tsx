@@ -25,6 +25,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				"backdrop-blur-sm",
 				"backdrop-brightness-50",
 				"flex",
+				"z-10",
 			],
 			wrapper: [
 				"inset-0",

@@ -11,6 +11,9 @@ properties:
     type: METADATA
     metadata:
       type: FILE
+  - name: avatarPath
+    label: Avatar Path
+    type: TEXT
   - name: name
     label: Name
     type: TEXT
@@ -60,7 +63,7 @@ definition:
             avatar:
               - uesio/io.avatar:
                   uesio.variant: $Prop{avatarVariant}
-                  image: $File{$Prop{avatar}}
+                  image: $File{$Prop{avatar}:$Prop{avatarPath}}
 title: Testimonial
 discoverable: true
 description: A testimonial

@@ -13,6 +13,7 @@ import {
 	isValueCondition,
 } from "../bands/wire/conditions/conditions"
 import {
+	parseFileExpression,
 	parseOneOrTwoPartExpression,
 	parseThreePartExpression,
 	parseTwoOrThreePartExpression,
@@ -37,6 +38,7 @@ type MergeType =
 	| "Text"
 	| "Date"
 	| "If"
+	| "StartsWith"
 	| "Number"
 	| "Currency"
 	| "RecordMeta"
@@ -232,6 +234,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 			? context.merge(parts[1])
 			: context.merge(parts[2])
 	},
+	StartsWith: (expression, context) => {
+		const [value, search] = parseTwoPartExpression(expression)
+		const mergedValue = context.mergeString(value)
+		return mergedValue.startsWith(search)
+	},
 	FeatureFlag: (expression, context) =>
 		context.getFeatureFlag(expression)?.value,
 	Route: (expression, context) => {
@@ -297,7 +304,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	ConfigValue: (expression, context) =>
 		context.getConfigValue(expression) || "",
-	File: (expression, context) => getURLFromFullName(context, expression),
+	File: (expression, context) => {
+		const [fileName, filePath] = parseFileExpression(expression)
+		return getURLFromFullName(context, fileName, filePath)
+	},
 	UserFile: (expression, context) => {
 		const [wireName, fieldName] = parseWireExpression(expression)
 		const file = context

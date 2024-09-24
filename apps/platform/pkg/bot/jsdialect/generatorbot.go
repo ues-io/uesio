@@ -366,53 +366,55 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 
 	if node.Kind == yaml.ScalarNode {
 		re := regexp.MustCompile("\\$\\{(.*?)\\}")
-		match := re.FindStringSubmatch(node.Value)
-		if len(match) == 2 {
-			matchExpression := match[0] //${mymerge}
-			merge := match[1]           // mymerge
-			mergeValue, hasValue := params[merge]
-			if !hasValue {
-				return nil
+		matches := re.FindAllStringSubmatch(node.Value, -1)
+		for _, match := range matches {
+			if len(match) == 2 {
+				matchExpression := match[0] //${mymerge}
+				merge := match[1]           // mymerge
+				mergeValue, hasValue := params[merge]
+				if !hasValue {
+					continue
+				}
+				mergeString, ok := mergeValue.(string)
+				if ok {
+
+					newNode, err := mergeYamlString(mergeString, nil)
+					if err != nil {
+						return err
+					}
+
+					if newNode.Content == nil || len(newNode.Content) == 0 {
+						node.SetString("")
+						continue
+					}
+
+					contentNode := newNode.Content[0]
+
+					// If newNode is a scalar we can just merge it in to the template
+					if contentNode.Kind == yaml.ScalarNode {
+						node.SetString(strings.Replace(node.Value, matchExpression, contentNode.Value, 1))
+						continue
+					}
+
+					// If newNode is not a scalar, then we have to be sure it was the
+					// entire merge.
+					if matchExpression != node.Value {
+						return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
+					}
+
+					// Replace that crap
+					*node = *contentNode
+				} else {
+					newNode := &yaml.Node{}
+					err := newNode.Encode(mergeValue)
+					if err != nil {
+						return err
+					}
+					*node = *newNode
+				}
 			}
-			mergeString, ok := mergeValue.(string)
-			if ok {
-
-				newNode, err := mergeYamlString(mergeString, nil)
-				if err != nil {
-					return err
-				}
-
-				if newNode.Content == nil || len(newNode.Content) == 0 {
-					node.SetString("")
-					return nil
-				}
-
-				contentNode := newNode.Content[0]
-
-				// If newNode is a scalar we can just merge it in to the template
-				if contentNode.Kind == yaml.ScalarNode {
-					node.SetString(strings.Replace(node.Value, matchExpression, contentNode.Value, 1))
-					return nil
-				}
-
-				// If newNode is not a scalar, then we have to be sure it was the
-				// entire merge.
-				if matchExpression != node.Value {
-					return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
-				}
-
-				// Replace that crap
-				*node = *contentNode
-			} else {
-				newNode := &yaml.Node{}
-				err := newNode.Encode(mergeValue)
-				if err != nil {
-					return err
-				}
-				*node = *newNode
-			}
-
 		}
+
 	}
 
 	return nil
