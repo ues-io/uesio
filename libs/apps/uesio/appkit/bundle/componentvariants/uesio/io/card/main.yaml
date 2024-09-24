@@ -1,6 +1,9 @@
 name: main
 label: Main
 definition:
+  uesio.styleTokens:
+    tile:
+      - p-0
   tileVariant: uesio/appkit.card
   scrollpanelVariant: uesio/appkit.card
   titlebarVariant: uesio/appkit.item

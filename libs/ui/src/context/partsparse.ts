@@ -140,6 +140,16 @@ const parseWireExpression = (
 	return [expressionParts[0], expressionParts[1]]
 }
 
+const parseFileExpression = (
+	fullExpression: string
+): [string, string | undefined] => {
+	const expressionParts = fullExpression.split(colonDelimiter)
+	if (expressionParts.length === 1) {
+		return [fullExpression, undefined]
+	}
+	return [expressionParts[0], expressionParts[1]]
+}
+
 export {
 	parseOnePartExpression,
 	parseOneOrTwoPartExpression,
@@ -147,4 +157,5 @@ export {
 	parseTwoOrThreePartExpression,
 	parseThreePartExpression,
 	parseWireExpression,
+	parseFileExpression,
 }

@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"maps"
 
 	"gopkg.in/yaml.v3"
 
@@ -126,4 +127,14 @@ func (r *Route) SetResponse(response *bots.RouteResponse) {
 // to the client, in the context of a particular request.
 func (r *Route) GetResponse() *bots.RouteResponse {
 	return r.response
+}
+
+func (r *Route) Copy() *Route {
+	newRoute := &*r
+	paramsCopy := map[string]interface{}{}
+	if r.Params != nil {
+		maps.Copy(paramsCopy, r.Params)
+	}
+	newRoute.Params = paramsCopy
+	return newRoute
 }

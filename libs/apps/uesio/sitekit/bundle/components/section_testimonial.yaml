@@ -26,6 +26,7 @@ definition:
             name: $Prop{name}
             title: $Prop{title}
             avatar: $Prop{avatar}
+            avatarPath: $Prop{avatarPath}
             wrapperVariant: uesio/sitekit.testimonial_wrapper_large
             quoteVariant: uesio/sitekit.testimonial_quote_large
             avatarVariant: uesio/sitekit.testimonial_avatar_large

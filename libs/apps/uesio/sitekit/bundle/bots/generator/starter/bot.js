@@ -5,6 +5,25 @@ function starter(bot) {
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 
+	let headerLogoFile = "uesio/sitekit.yourlogo"
+	let headerLogoFilePath = ""
+	let footerLogoFile = "uesio/sitekit.yourlogo"
+	let footerLogoFilePath = "yourlogo_dark.png"
+
+	let backgroundPaths = [
+		"files/orangesplash.jpg",
+		"files/paintsplash.jpg",
+		"files/pinksplash1.jpg",
+		"files/pinksplash2.jpg",
+	]
+
+	const min = 0
+	const max = backgroundPaths.length
+	const random = Math.floor(Math.random() * (max - min) + min)
+
+	let backgroundFile = "uesio/sitekit.backgrounds"
+	let backgroundFilePath = backgroundPaths[random]
+
 	let tagline = "Hello World."
 	let tagline_sub = "Generate websites quickly and easily with SiteKit."
 	let testimonials = [
@@ -303,13 +322,18 @@ function starter(bot) {
 			// Create a viewlayout variant
 			namespace: "uesio/sitekit",
 			name: "variant_viewlayout_page",
-			params: {},
+			params: {
+				backgroundFile,
+				backgroundFilePath,
+			},
 		},
 		{
 			// Create a header view
 			namespace: "uesio/sitekit",
 			name: "view_header",
 			params: {
+				logoFile: headerLogoFile,
+				logoFilePath: headerLogoFilePath,
 				pages,
 			},
 		},
@@ -318,6 +342,8 @@ function starter(bot) {
 			namespace: "uesio/sitekit",
 			name: "view_footer",
 			params: {
+				logoFile: footerLogoFile,
+				logoFilePath: footerLogoFilePath,
 				categories: footerCategories,
 			},
 		},

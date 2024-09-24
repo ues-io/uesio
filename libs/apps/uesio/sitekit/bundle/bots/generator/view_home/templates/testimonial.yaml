@@ -2,4 +2,5 @@
     quote: ${quote}
     name: ${name}
     title: ${title}
-    avatar: uesio/sitekit.avatarpics
+    avatar: ${avatar}
+    avatarPath: ${avatarPath}

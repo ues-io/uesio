@@ -3,6 +3,7 @@ import { api, definition, styles } from "@uesio/ui"
 
 type ImageProps = {
 	file?: string
+	filepath?: string
 	height?: number
 	width?: number
 	onClick?: (e: MouseEvent) => void
@@ -16,6 +17,7 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 	const {
 		id,
 		file,
+		filepath,
 		height,
 		width,
 		onClick,
@@ -46,7 +48,8 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 				file
 					? api.file.getURLFromFullName(
 							context,
-							context.mergeString(file)
+							context.mergeString(file),
+							filepath ? context.mergeString(filepath) : undefined
 						)
 					: context.mergeString(src)
 			}

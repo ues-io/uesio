@@ -40,7 +40,7 @@ func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 }
 
 func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
-	route := meta.NewBaseRoute("", "")
+
 	var routes meta.RouteCollection
 
 	if path == "" {
@@ -72,26 +72,22 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	pathTemplate = strings.Replace(pathTemplate, prefix, "", 1)
 
+	var route *meta.Route
 	for _, item := range routes {
 		if item.Path == pathTemplate {
 			// Clone the route to ensure we don't mutate in-memory metadata
-			err := meta.Copy(route, item)
-			if err != nil {
-				return nil, err
-			}
+			route = item.Copy()
 			break
 		}
 	}
-	if route != nil {
-		route.Path = path
-		if route.Params == nil {
-			route.Params = map[string]interface{}{}
-		}
-		// Inject all routeMatch vars, which are fully-resolved and can safely override anything in route params
-		if len(routeMatch.Vars) > 0 {
-			for k, v := range routeMatch.Vars {
-				route.Params[k] = v
-			}
+	if route == nil {
+		return nil, errors.New("Error matching route")
+	}
+	route.Path = path
+	// Inject all routeMatch vars, which are fully-resolved and can safely override anything in route params
+	if len(routeMatch.Vars) > 0 {
+		for k, v := range routeMatch.Vars {
+			route.Params[k] = v
 		}
 	}
 

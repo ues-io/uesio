@@ -454,7 +454,8 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		modstamp = context.getStaticFileModstamp(`${namespace}.${name}`)
+		modstamp = context.getStaticFileModstamp(`${namespace}.${name}`),
+		filepath?: string
 	) => {
 		const version = getSiteBundleAssetVersion(
 			context.getSite(),
@@ -462,7 +463,7 @@ const platform = {
 			modstamp ? `${modstamp}` : getDefaultModstamp(namespace)
 		)
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}${version}/${name}`
+		return `${prefix}/files/${namespace}${version}/${name}${filepath ? `/${filepath}` : ""}`
 	},
 	getUserFileURL: (
 		context: Context,

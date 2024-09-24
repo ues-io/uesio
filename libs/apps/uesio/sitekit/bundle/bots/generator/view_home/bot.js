@@ -6,11 +6,29 @@ function view_home(bot) {
 
 	const mainTestimonial = testimonials.pop()
 
+	let avatarPaths = [
+		"images/connie_forrester.jpg",
+		"images/gavin_foster.jpg",
+		"images/josie_malkovic.jpg",
+		"images/randy_billingston.jpg",
+		"images/sandy_burtrand.jpg",
+	]
+
+	const min = 0
+	const max = avatarPaths.length
+
+	const getRandomAvatarPath = () => {
+		const random = Math.floor(Math.random() * (max - min) + min)
+		return avatarPaths[random]
+	}
+
 	const mainTestimonialYaml = bot.mergeYamlTemplate(
 		{
 			quote: mainTestimonial.quote,
 			name: mainTestimonial.name,
 			title: mainTestimonial.title,
+			avatar: "uesio/sitekit.avatarpics",
+			avatarPath: getRandomAvatarPath(),
 		},
 		"templates/maintestimonial.yaml"
 	)
@@ -22,6 +40,8 @@ function view_home(bot) {
 					quote: testimonial.quote,
 					name: testimonial.name,
 					title: testimonial.title,
+					avatar: "uesio/sitekit.avatarpics",
+					avatarPath: getRandomAvatarPath(),
 				},
 				"templates/testimonial.yaml"
 			)

@@ -7,7 +7,8 @@ components:
       sticky: true
       logo:
         - uesio/io.image:
-            file: uesio/sitekit.yourlogo
+            file: ${logoFile}
+            filepath: ${logoFilePath}
             height: 44
             signals:
               - signal: "route/NAVIGATE"

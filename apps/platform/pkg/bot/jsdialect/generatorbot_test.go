@@ -12,8 +12,16 @@ var simple = meta.TrimYamlString(`
 mykey: myvalue
 `)
 
+var double = meta.TrimYamlString(`
+mykey: myvalue:myvalue2
+`)
+
 var simpleMerge = meta.TrimYamlString(`
 mykey: ${mymerge}
+`)
+
+var doubleMerge = meta.TrimYamlString(`
+mykey: ${mymerge}:${mymerge2}
 `)
 
 var keyMerge = meta.TrimYamlString(`
@@ -93,6 +101,15 @@ func Test_MergeYAMLString(t *testing.T) {
 			},
 			template: simpleMerge,
 			response: simple,
+		},
+		{
+			name: "DoubleMerge Value",
+			params: map[string]interface{}{
+				"mymerge":  "myvalue",
+				"mymerge2": "myvalue2",
+			},
+			template: doubleMerge,
+			response: double,
 		},
 		{
 			name:     "Merge Value Missing",

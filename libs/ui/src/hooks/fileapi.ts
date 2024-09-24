@@ -7,9 +7,13 @@ const { deleteFile, uploadFile } = platform
 
 const getURL = platform.getFileURL
 
-const getURLFromFullName = (context: Context, fullName: string) => {
+const getURLFromFullName = (
+	context: Context,
+	fullName: string,
+	filePath?: string
+) => {
 	const [namespace, name] = fullName.split(".")
-	return getURL(context, namespace, name)
+	return getURL(context, namespace, name, undefined, filePath)
 }
 
 const getUserFileURL = (
