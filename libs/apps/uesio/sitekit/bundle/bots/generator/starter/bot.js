@@ -300,7 +300,7 @@ function starter(bot) {
 				name: "image",
 				params: {
 					prompt: `A (minimal:0.5), (artistic:0.6), (wordmark:1) for the app named (${appName}:1). The background is white and the workmark is full frame, edge-to-edge, borderless, full bleed.`,
-					filename: "logo",
+					name: "logo",
 					aspect_ratio: "21:9",
 				},
 			},
@@ -309,7 +309,7 @@ function starter(bot) {
 				name: "image",
 				params: {
 					prompt: `Seamless tile, (minimal:0.9), (artistic:0.5) (wallpaper:1) background for the app named (${appName}:1). Simple, small, illustrations. The background is white. The primary color is (orange:0.4).`,
-					filename: "background",
+					name: "background",
 					aspect_ratio: "1:1",
 				},
 			},
