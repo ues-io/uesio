@@ -51,6 +51,7 @@ func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bun
 		create:     create,
 		bot:        bot,
 		connection: connection,
+		Results:    map[string]interface{}{},
 	}
 }
 
@@ -67,6 +68,15 @@ type GeneratorBotAPI struct {
 	create     bundlestore.FileCreator
 	session    *sess.Session
 	connection wire.Connection
+	Results    map[string]interface{}
+}
+
+func (gba *GeneratorBotAPI) AddResult(key string, value interface{}) {
+	gba.Results[key] = value
+}
+
+func (gba *GeneratorBotAPI) SetRedirect(redirect string) {
+	gba.Results["uesio.redirect"] = redirect
 }
 
 // GetAppName returns the key of the current workspace's app
@@ -188,7 +198,8 @@ func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
-	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	_, err := datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	return err
 }
 
 func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) error {
@@ -197,13 +208,14 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	mu := sync.Mutex{}
 	for _, generator := range generators {
 		eg.Go(func() error {
-			return datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
+			_, err := datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
 				buf := &bytes.Buffer{}
 				mu.Lock()
 				creates[s] = buf
 				mu.Unlock()
 				return retrieve.NopWriterCloser(buf), nil
 			}, generator.Namespace, generator.Name, generator.Params, gba.connection, gba.session)
+			return err
 		})
 	}
 	err := eg.Wait()

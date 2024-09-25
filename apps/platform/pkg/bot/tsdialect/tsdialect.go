@@ -50,21 +50,12 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 }
 
 func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
-	err := jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
-	if err != nil {
-		return nil, err
-	}
-	loadErrors := botAPI.GetErrors()
-	if len(loadErrors) > 0 {
-		return nil, exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
-	}
-	return botAPI.Results, nil
+	return jsdialect.CallBot(bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewGeneratorBotAPI(bot, params, create, session, connection)
-	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return jsdialect.CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
+
 }
 
 func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {

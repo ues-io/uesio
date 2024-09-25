@@ -270,10 +270,10 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 	return nil
 }
 
-func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
+func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
-		return err
+		return nil, err
 	}
 
 	robot := meta.NewGeneratorBot(namespace, name)
@@ -283,15 +283,15 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 	}
 
 	if err := bundleLoader(robot); err != nil {
-		return exceptions.NewNotFoundException("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+		return nil, exceptions.NewNotFoundException("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
 	}
 	if err := robot.ValidateParams(params, bundleLoader); err != nil {
-		return err
+		return nil, err
 	}
 
 	dialect, err := bot.GetBotDialect(robot.Dialect)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	return dialect.CallGeneratorBot(robot, create, params, connection, session)

@@ -2,6 +2,7 @@ function image(bot) {
 	const modelID = "stability.stable-image-ultra-v1:0"
 	const prompt = bot.params.get("prompt")
 	const name = bot.params.get("name")
+	const namespace = bot.getAppName()
 	let samples = bot.params.get("samples") || 1
 
 	if (typeof samples !== "number") {
@@ -29,4 +30,6 @@ function image(bot) {
 			},
 		],
 	})
+
+	bot.setRedirect(`/files/${namespace}/${name}`)
 }

@@ -61,7 +61,7 @@ type DeployOptions struct {
 	Prefix     string
 }
 
-func GenerateToWorkspace(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session, extraWriter io.Writer) error {
+func GenerateToWorkspace(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session, extraWriter io.Writer) (map[string]interface{}, error) {
 	buf := new(bytes.Buffer)
 	var zipWriter *zip.Writer
 	// If we were requested to return a ZIP file,
@@ -74,18 +74,19 @@ func GenerateToWorkspace(namespace, name string, params map[string]interface{}, 
 		// Otherwise we just want to generate to the workspace
 		zipWriter = zip.NewWriter(buf)
 	}
-	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session); err != nil {
+	results, err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session)
+	if err != nil {
 		zipWriter.Close()
-		return err
+		return nil, err
 	}
 	if err := zipWriter.Flush(); err != nil {
-		return err
+		return nil, err
 	}
 	if err := zipWriter.Close(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return DeployWithOptions(io.NopCloser(buf), session, &DeployOptions{Upsert: true, Connection: connection})
+	return results, DeployWithOptions(io.NopCloser(buf), session, &DeployOptions{Upsert: true, Connection: connection})
 
 }
 
