@@ -12,7 +12,8 @@ params:
     prompt: Prompt
     default: A cool wordmark and logo.
   - name: aspect_ratio
-    type: TEXT
+    type: SELECT
+    selectList: uesio/sitekit.aspect_ratios
     prompt: Aspect Ratio
     default: "1:1"
   - name: samples

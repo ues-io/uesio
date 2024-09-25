@@ -50,18 +50,21 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		wireRef.current = wire
 	}
 
+	const isLoaded = wire ? !wire.isLoading() : false
+	const batchId = wire ? wire.getBatchId() : ""
+
 	useDeepCompareEffect(() => {
 		const wire = context.getWire(wireId)
-		if (!initialValue || !wire) return
+		if (!initialValue || !wire || !isLoaded) return
 		const record = wire.getFirstRecord()
 		if (!record) return
 		record.setAll(initialValue)
-	}, [wireId, initialValue])
+	}, [wireId, initialValue, isLoaded, batchId])
 
 	api.event.useEvent(
 		"wire.record.updated",
 		(e) => {
-			if (!onUpdate || !e.detail || !wire) return
+			if (!onUpdate || !e.detail || !wire || !isLoaded) return
 			const { wireId, recordId, field, value, record } = e.detail
 			if (wireId !== wire?.getFullId()) return
 			if (!record || recordId !== record?.getId()) return

@@ -11,24 +11,28 @@ function image(bot) {
 	if (samples > 4) samples = 4
 
 	const aspect_ratio = bot.params.get("aspect_ratio")
-	const result = bot.runIntegrationAction(
-		"uesio/aikit.bedrock",
-		"invokemodel",
-		{
-			model: modelID,
-			input: prompt,
-			aspect_ratio,
-		}
-	)
+
+	const requests = []
+
+	for (let sample = 0; sample < samples; sample++) {
+		requests.push({
+			integration: "uesio/aikit.bedrock",
+			action: "invokemodel",
+			options: {
+				model: modelID,
+				input: prompt,
+				aspect_ratio,
+			},
+		})
+	}
+	const results = bot.runIntegrationActions(requests)
 
 	bot.runGenerator("uesio/core", "file", {
 		name: name,
-		files: [
-			{
-				path: name + ".png",
-				data: result,
-			},
-		],
+		files: results.map((result, i) => ({
+			path: `${name}${i ? `_${i}` : ""}.png`,
+			data: result,
+		})),
 	})
 
 	bot.setRedirect(`/files/${namespace}/${name}`)

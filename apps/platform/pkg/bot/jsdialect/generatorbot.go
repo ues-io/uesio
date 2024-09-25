@@ -55,6 +55,12 @@ func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bun
 	}
 }
 
+type IntegrationActionOptions struct {
+	IntegrationID string      `bot:"integration"`
+	Action        string      `bot:"action"`
+	Options       interface{} `bot:"options"`
+}
+
 type GeneratorBotOptions struct {
 	Namespace string                 `bot:"namespace"`
 	Name      string                 `bot:"name"`
@@ -235,6 +241,26 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	}
 
 	return nil
+}
+
+func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOptions) ([]interface{}, error) {
+	eg := new(errgroup.Group)
+	results := []any{}
+	for _, action := range actions {
+		eg.Go(func() error {
+			result, err := runIntegrationAction(action.IntegrationID, action.Action, action.Options, gba.session.RemoveWorkspaceContext(), gba.connection)
+			if err != nil {
+				return err
+			}
+			results = append(results, result)
+			return nil
+		})
+	}
+	err := eg.Wait()
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
 }
 
 func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
