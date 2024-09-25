@@ -16,4 +16,6 @@ options:
     value: "9:16"
   - label: "9:21"
     value: "9:21"
+  - label: "21:9"
+    value: "21:9"
 public: true

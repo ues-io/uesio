@@ -7,8 +7,8 @@ components:
             view: ${namespace}.header
       content:
         - uesio/sitekit.section_hero:
-            title: ${tagline}
-            subtitle: ${tagline_sub}
+            title: "${tagline}"
+            subtitle: "${tagline_sub}"
             actions:
               - uesio/io.button:
                   uesio.variant: uesio/sitekit.primary_dark

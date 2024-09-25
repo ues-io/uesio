@@ -2,6 +2,19 @@ function starter(bot) {
 	const appInfo = bot.getApp()
 	const appName = appInfo.getName()
 	const appDescription = appInfo.getDescription()
+	const appFullName = bot.getAppName()
+
+	const doContentAndCopyParam = bot.params.get("use_ai_for_content_and_copy")
+	const doContentAndCopy =
+		doContentAndCopyParam && doContentAndCopyParam !== "false"
+
+	const contentInstructions = bot.params.get("content_and_copy_instructions")
+
+	const doLogoAndBackgroundParam = bot.params.get(
+		"use_ai_for_logo_and_background"
+	)
+	const doLogoAndBackground =
+		doLogoAndBackgroundParam && doLogoAndBackgroundParam !== "false"
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
 
@@ -96,17 +109,25 @@ function starter(bot) {
 		},
 	]
 
-	const doContentAndCopy = bot.params.get("use_ai_for_content_and_copy")
-	if (doContentAndCopy && doContentAndCopy !== "false") {
+	if (doContentAndCopy) {
 		const systemPrompt = `
 			You are an assistant who specializes in creating professional marketing websites.
 			You deeply understand marketing best practices and are a creative copywriter. You
 			seek to complete the task in the simplest and most straightforward way possible.
 		`
 
+		const additionalInstructions = contentInstructions
+			? `
+
+			Additional Instructions:
+			${contentInstructions}
+		`
+			: ""
+
 		const prompt = `
 			Use the tool provided to create a website for a company called "${appName}". The
 			desciption of the website is "${appDescription}". Create at least 4 pages for the website.
+			${additionalInstructions}
 		`
 
 		const pageTypes = [
@@ -220,7 +241,12 @@ function starter(bot) {
 					logo_prompt: {
 						type: "string",
 						description:
-							"a prompt for a text-to-image ai model for generating a compelling and professional logo for this company.",
+							"a prompt for a text-to-image ai model for generating a compelling and professional logo for this company. Be sure to include a description of the logo as well as style and colors.",
+					},
+					background_prompt: {
+						type: "string",
+						description:
+							"a prompt for a text-to-image ai model for generating a compelling and professional website background image for this company. Be sure to include a description of the background as well as style and colors. It should be subtle and allow for easy contrast with dark text.",
 					},
 					tagline: {
 						type: "string",
@@ -293,28 +319,39 @@ function starter(bot) {
 		footerCategories = input.footer_links_category
 
 		bot.log.info("result", input)
-		/*
-		bot.runGenerators([
-			{
-				namespace: "uesio/sitekit",
-				name: "image",
-				params: {
-					prompt: `A (minimal:0.5), (artistic:0.6), (wordmark:1) for the app named (${appName}:1). The background is white and the workmark is full frame, edge-to-edge, borderless, full bleed.`,
-					name: "logo",
-					aspect_ratio: "21:9",
+
+		if (doLogoAndBackground) {
+			bot.runGenerators([
+				{
+					namespace: "uesio/sitekit",
+					name: "image_logo",
+					params: {
+						organization_name: appName,
+						description: input.logo_prompt,
+						name: "logo",
+						aspect_ratio: "21:9",
+					},
 				},
-			},
-			{
-				namespace: "uesio/sitekit",
-				name: "image",
-				params: {
-					prompt: `Seamless tile, (minimal:0.9), (artistic:0.5) (wallpaper:1) background for the app named (${appName}:1). Simple, small, illustrations. The background is white. The primary color is (orange:0.4).`,
-					name: "background",
-					aspect_ratio: "1:1",
+
+				{
+					namespace: "uesio/sitekit",
+					name: "image_background",
+					params: {
+						description: input.background_prompt,
+						name: "background",
+						aspect_ratio: "1:1",
+					},
 				},
-			},
-		])
-			*/
+			])
+
+			headerLogoFile = appFullName + ".logo"
+			headerLogoFilePath = ""
+			footerLogoFile = appFullName + ".logo"
+			footerLogoFilePath = ""
+
+			backgroundFile = appFullName + ".background"
+			backgroundFilePath = "background.png"
+		}
 	}
 
 	bot.runGenerators([

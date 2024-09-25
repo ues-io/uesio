@@ -28,7 +28,7 @@ type JSDialect struct {
 
 type HydrateFunc func(bot *meta.Bot, session *sess.Session, connection wire.Connection) error
 
-const MAX_TIMEOUT int = 30
+const MAX_TIMEOUT int = 45
 const DEFAULT_TIMEOUT int = 5
 
 func getTimeout(timeout int) int {

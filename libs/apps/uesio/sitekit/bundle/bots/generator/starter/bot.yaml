@@ -8,6 +8,14 @@ params:
     prompt: Use AI to generate content and copy for this site.
     default: false
     displayAs: TOGGLE
+  - name: use_ai_for_logo_and_background
+    type: CHECKBOX
+    prompt: Use AI to generate a logo and background image for this site.
+    default: false
+    displayAs: TOGGLE
+    conditions:
+      - param: use_ai_for_content_and_copy
+        value: true
   - name: content_and_copy_instructions
     type: LONGTEXT
     prompt: Additional instructions for generating the content and copy.
@@ -15,4 +23,4 @@ params:
       - param: use_ai_for_content_and_copy
         value: true
 public: true
-timeout: 30
+timeout: 45
