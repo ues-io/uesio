@@ -1,0 +1,28 @@
+name: image_logo
+dialect: JAVASCRIPT
+label: Generate Logo
+type: GENERATOR
+description: Use AI to generate a logo.
+params:
+  - name: name
+    prompt: File Name
+    type: METADATANAME
+  - name: organization_name
+    type: TEXT
+    prompt: Organization Name
+  - name: description
+    type: LONGTEXT
+    prompt: Logo Description
+  - name: aspect_ratio
+    type: SELECT
+    selectList: uesio/sitekit.aspect_ratios
+    prompt: Aspect Ratio
+    default: "21:9"
+  - name: samples
+    type: NUMBER
+    prompt: Number of Samples
+    default: 1
+public: true
+timeout: 30
+tags:
+  - uesio/core.files
