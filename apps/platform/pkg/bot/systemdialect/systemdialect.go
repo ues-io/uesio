@@ -165,8 +165,8 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	return nil
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, nil
 }
 
 func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {

@@ -36,8 +36,10 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	params["appName"] = wsParams["app"]
 	params["workspaceName"] = wsParams["workspacename"]
 
-	if err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s); err != nil {
+	_, err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s)
+	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
+
 }

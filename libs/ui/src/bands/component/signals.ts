@@ -17,7 +17,7 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 const getComponentSignalDefinition = () => ({
-	dispatcher: (signal: ComponentSignal, context: Context) => {
+	dispatcher: async (signal: ComponentSignal, context: Context) => {
 		const {
 			target: signalTarget,
 			signal: signalName,
@@ -86,8 +86,8 @@ const getComponentSignalDefinition = () => ({
 
 		// Loop over all ids that match the target and dispatch
 		// to them all
-
-		componentStates.forEach((componentState) => {
+		for (const componentState of componentStates) {
+			let returnValuePromise: Promise<Context> | undefined = undefined
 			dispatch(
 				setComponent({
 					id: componentState.id,
@@ -105,11 +105,20 @@ const getComponentSignalDefinition = () => ({
 							context = returnvalue
 							return
 						}
+						if (returnvalue instanceof Promise) {
+							returnValuePromise = returnvalue
+							return
+						}
 						return returnvalue
 					}),
 				})
 			)
-		})
+			// Usually returnValuePromise isn't a promise, but in case it is, we should
+			// wait for it to resolve here.
+			if (returnValuePromise) {
+				await Promise.resolve(returnValuePromise)
+			}
+		}
 
 		return context
 	},

@@ -154,7 +154,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	err = deploy.GenerateToWorkspace(starterBotNamespace, starterBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	_, err = deploy.GenerateToWorkspace(starterBotNamespace, starterBotName, starterTemplateParamsMap, connection, wsSession, nil)
 	if err != nil {
 		return err
 	}
@@ -171,7 +171,8 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	return deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	_, err = deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	return err
 
 }
 

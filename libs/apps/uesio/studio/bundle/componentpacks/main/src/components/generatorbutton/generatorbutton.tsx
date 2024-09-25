@@ -59,7 +59,7 @@ const getDisplayConditionsFromBotParamConditions = (
 				}
 			}
 		}
-	) as component.DisplayCondition[]
+	)
 }
 
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({

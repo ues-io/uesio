@@ -43,10 +43,12 @@ const run = async (
 		return
 	}
 
-	api.signal.run(
+	const redirectSuffix = botResp.params?.["uesio.redirect"] || ""
+
+	return api.signal.run(
 		{
 			signal: "route/NAVIGATE",
-			path: `app/${context.getApp()}/workspace/${context.getWorkspace()?.name}`,
+			path: `app/${context.getApp()}/workspace/${context.getWorkspace()?.name}${redirectSuffix}`,
 		},
 		context.deleteWorkspace()
 	)
@@ -59,7 +61,7 @@ const runGenerator: signal.ComponentSignalDescriptor<FormState> = {
 		const name = state.name
 		const namespace = state.namespace
 		if (!wire || !params || !namespace || !name) return
-		run(namespace, name, wire, params, context)
+		return run(namespace, name, wire, params, context)
 	},
 }
 

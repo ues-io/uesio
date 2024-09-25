@@ -65,6 +65,7 @@ definition:
                                           app: $Param{app}
                                       uesio.variant: uesio/appkit.primary
                                       text: Run Generator
+                                      pendingText: "Generating ..."
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/studio.generatorform
