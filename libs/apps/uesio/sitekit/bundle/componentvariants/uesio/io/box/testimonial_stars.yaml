@@ -1,0 +1,12 @@
+name: testimonial_stars
+label: Testimonial Stars
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - gap-2
+      - grid-flow-col
+      - auto-cols-min
+      - text-black
+      - text-lg

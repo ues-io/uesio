@@ -8,7 +8,6 @@ definition:
       - lg:text-6xl
       - md:text-5xl
       - text-4xl
-      - lg:font-bold
       - font-bold
       - text-black
       - "[text-wrap:balance]"

@@ -41,8 +41,8 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
-type TextAreaProperty = {
-	type: "TEXT_AREA"
+type LongTextProperty = {
+	type: "LONGTEXT"
 } & BaseProperty
 
 type ParamProperty = {
@@ -279,7 +279,7 @@ type ComponentProperty =
 	| ParamsProperty
 	| ListProperty
 	| SignalsProperty
-	| TextAreaProperty
+	| LongTextProperty
 	| IconProperty
 	| StructProperty
 	| DateProperty

@@ -3,6 +3,7 @@ function view_home(bot) {
 	const tagline = bot.params.get("tagline")
 	const tagline_sub = bot.params.get("tagline_sub")
 	const testimonials = bot.params.get("testimonials")
+	const features = bot.params.get("features")
 
 	const mainTestimonial = testimonials.pop()
 
@@ -21,6 +22,19 @@ function view_home(bot) {
 		const random = Math.floor(Math.random() * (max - min) + min)
 		return avatarPaths[random]
 	}
+
+	const featuresYaml = features
+		.map((feature) =>
+			bot.mergeYamlTemplate(
+				{
+					title: feature.title,
+					subtitle: feature.category,
+					description: feature.description,
+				},
+				"templates/feature.yaml"
+			)
+		)
+		.join("")
 
 	const mainTestimonialYaml = bot.mergeYamlTemplate(
 		{
@@ -53,6 +67,7 @@ function view_home(bot) {
 			namespace,
 			tagline,
 			tagline_sub,
+			featuresYaml,
 			mainTestimonialYaml,
 			testimonialsYaml,
 		},

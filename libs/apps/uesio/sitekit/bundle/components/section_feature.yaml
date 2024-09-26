@@ -9,44 +9,30 @@ properties:
   - name: subtitle
     label: Sub Title
     type: TEXT
+  - name: description
+    label: Description
+    type: LONGTEXT
+  - name: image
+    label: Image File
+    type: METADATA
+    metadata:
+      type: FILE
+  - name: imagePath
+    label: Image File Path
+    type: TEXT
 definition:
-  - uesio/io.box:
+  - uesio/sitekit.section:
+      innerVariant: uesio/sitekit.section_inner_content
       uesio.styleTokens:
         root:
-          - grid
-          - p-40
-          - items-center
-          - justify-center
-          - justify-items-center
-          - gap-2
-      components:
-        - uesio/io.text:
-            uesio.styleTokens:
-              root:
-                - text-7xl
-                - font-bold
-                - text-black
-                - shadow-black
-                #- "[text-shadow:_4px_4px_0_var(--tw-shadow-color),_2px_2px_0_var(--tw-shadow-color),1px_1px_0_var(--tw-shadow-color),_3px_3px_0_var(--tw-shadow-color)]"
-            text: $Prop{title}
-        - uesio/io.text:
-            uesio.styleTokens:
-              root:
-                - text-2xl
-                - text-black
-                - font-light
-            text: $Prop{subtitle}
-        - uesio/io.group:
-            uesio.styleTokens:
-              root:
-                - mt-8
-            components:
-              - uesio/io.button:
-                  uesio.variant: uesio/sitekit.primary_dark
-                  text: Get Started
-              - uesio/io.button:
-                  uesio.variant: uesio/sitekit.secondary_dark
-                  text: Learn more
+          - bg-white/80
+          - my-6
+      content:
+        - uesio/sitekit.feature:
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
+            description: $Prop{description}
+            wrapperVariant: uesio/sitekit.feature_wrapper_large
 title: Feature Section
 discoverable: true
 description: A feature section

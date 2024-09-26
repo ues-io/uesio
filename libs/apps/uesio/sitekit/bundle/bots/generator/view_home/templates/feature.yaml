@@ -1,0 +1,4 @@
+- uesio/sitekit.section_feature:
+    title: ${title}
+    subtitle: ${subtitle}
+    description: ${description}

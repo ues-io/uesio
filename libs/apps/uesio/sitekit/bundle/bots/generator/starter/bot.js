@@ -46,6 +46,14 @@ function starter(bot) {
 			title: "CTO Acme Widget Co.",
 		},
 	]
+	let features = [
+		{
+			title: "Make it exactly the way you want",
+			category: "Customization",
+			description:
+				"This is some text that will probably change later, but we want it to be a little bit long.",
+		},
+	]
 	let pages = [
 		{
 			name: "Product",
@@ -271,6 +279,12 @@ function starter(bot) {
 										The title or short description of the key feature.
 									`,
 								},
+								category: {
+									type: "string",
+									description: `
+										A short category or catchy subtitle for the feature.
+									`,
+								},
 								description: {
 									type: "string",
 									description: `
@@ -278,7 +292,7 @@ function starter(bot) {
 									`,
 								},
 							},
-							required: ["title", "description"],
+							required: ["title", "category", "description"],
 						},
 					},
 				},
@@ -315,6 +329,7 @@ function starter(bot) {
 		tagline = input.tagline
 		tagline_sub = input.tagline_secondary_text
 		testimonials = input.testimonials
+		features = input.key_features
 		pages = input.pages
 		footerCategories = input.footer_links_category
 
@@ -392,6 +407,7 @@ function starter(bot) {
 				tagline,
 				tagline_sub,
 				testimonials,
+				features,
 			},
 		},
 		{

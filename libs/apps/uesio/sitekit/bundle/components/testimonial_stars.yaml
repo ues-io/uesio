@@ -1,0 +1,94 @@
+name: testimonial_stars
+category: LAYOUT
+type: DECLARATIVE
+properties:
+  - name: wrapperVariant
+    label: Wrapper Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.testimonial_stars
+definition:
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.display:
+        - type: group
+          conjunction: OR
+          conditions:
+            - type: mergeValue
+              sourceValue: 5
+              value: $Prop{stars}
+            - type: hasNoValue
+              value: $Prop{stars}
+      components:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.display:
+        - type: mergeValue
+          sourceValue: 4
+          value: $Prop{stars}
+      components:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.display:
+        - type: mergeValue
+          sourceValue: 3
+          value: $Prop{stars}
+      components:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.display:
+        - type: mergeValue
+          sourceValue: 2
+          value: $Prop{stars}
+      components:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.display:
+        - type: mergeValue
+          sourceValue: 1
+          value: $Prop{stars}
+      components:
+        - uesio/sitekit.testimonial_star:
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+        - uesio/sitekit.testimonial_star:
+            inactive: true
+title: Testimonial Stars
+discoverable: false
+description: Testimonial Stars
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

@@ -1,0 +1,8 @@
+name: testimonial_stars_large
+label: Testimonial Stars Large
+extends: uesio/sitekit.testimonial_stars
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - text-2xl

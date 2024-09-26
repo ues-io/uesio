@@ -5,3 +5,4 @@ extends: uesio/sitekit.testimonial_wrapper
 definition:
   uesio.styleTokens:
     root:
+      - gap-8
