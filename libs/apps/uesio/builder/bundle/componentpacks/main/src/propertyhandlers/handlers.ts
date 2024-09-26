@@ -18,7 +18,7 @@ import { paramHandler } from "./handlers/param"
 import { selectHandler } from "./handlers/select"
 import { structHandler } from "./handlers/struct"
 import { textHandler } from "./handlers/text"
-import { textareaHandler } from "./handlers/textarea"
+import { longtextHandler } from "./handlers/longtext"
 import { wireHandler, wiresHandler } from "./handlers/wire"
 
 const propertyTypeHandlers: Record<string, PropertyTypeHandler> = {
@@ -38,7 +38,7 @@ const propertyTypeHandlers: Record<string, PropertyTypeHandler> = {
 	STRUCT: structHandler,
 	LIST: listHandler,
 	COMPONENT_ID: componentIdHandler,
-	TEXT_AREA: textareaHandler,
+	LONGTEXT: longtextHandler,
 	NUMBER: numberHandler,
 	CHECKBOX: checkboxHandler,
 	DATE: dateHandler,

@@ -1,0 +1,57 @@
+name: feature
+category: LAYOUT
+type: DECLARATIVE
+slots:
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Sub Title
+    type: TEXT
+  - name: description
+    label: Description
+    type: LONGTEXT
+  - name: wrapperVariant
+    label: Wrapper Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.feature_wrapper
+  - name: titlebarVariant
+    label: Title Bar Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.titlebar
+    defaultValue: uesio/sitekit.feature
+definition:
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      components:
+        - uesio/io.titlebar:
+            uesio.variant: $Prop{titlebarVariant}
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
+            actions:
+              - uesio/io.text:
+                  text: $Prop{description}
+                  element: div
+title: Feature
+discoverable: true
+description: A feature
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+      - description
+  - type: DISPLAY
+  - type: STYLES
+  - type: CUSTOM
+    id: variants
+    label: Variants
+    properties:
+      - wrapperVariant
+      - titlebarVariant

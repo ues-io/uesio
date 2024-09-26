@@ -7,11 +7,6 @@ definition:
       uesio.display:
         - type: hasNoValue
           value: $Prop{inactive}
-      uesio.styleTokens:
-        root:
-          - text-black
-          - text-2xl
-          - m-1
       text: star
   - uesio/io.text:
       uesio.variant: uesio/io.icon
@@ -20,9 +15,7 @@ definition:
           value: $Prop{inactive}
       uesio.styleTokens:
         root:
-          - text-black/20
-          - text-2xl
-          - m-1
+          - opacity-20
       text: star
 title: Testimonial Star
 discoverable: true

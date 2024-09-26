@@ -1,7 +1,7 @@
 import { PropertyTypeHandler, getBaseWireFieldDef } from "../handlerutils"
 
-const textareaHandler: PropertyTypeHandler = {
+const longtextHandler: PropertyTypeHandler = {
 	getField: (property) => getBaseWireFieldDef(property, "LONGTEXT"),
 }
 
-export { textareaHandler }
+export { longtextHandler }

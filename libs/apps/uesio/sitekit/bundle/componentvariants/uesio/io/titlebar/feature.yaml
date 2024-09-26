@@ -1,0 +1,37 @@
+name: feature
+label: Feature
+definition:
+  uesio.styleTokens:
+    root:
+      - grid
+      - justify-center
+      - justify-items-center
+      - gap-6
+    content:
+      - grid
+      - justify-center
+      - justify-items-center
+      - gap-2
+    title:
+      - lg:text-4xl
+      - text-3xl
+      - order-2
+      - font-medium
+      - "[text-wrap:balance]"
+      - text-center
+    subtitle:
+      - lg:text-base
+      - text-sm
+      - order-1
+      - text-primary-600
+      - font-medium
+      - "[text-wrap:balance]"
+      - text-center
+    actions:
+      - lg:text-lg
+      - text-base
+      - text-fontcolor-500
+      - "[text-wrap:balance]"
+      - text-center
+      - font-light
+public: true
