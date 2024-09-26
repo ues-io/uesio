@@ -197,7 +197,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/studio.plurallabel}
                     subtitle: Collection
                     avatar:
@@ -426,6 +426,7 @@ definition:
                       - uesio/studio.label
                 - uesio/io.table:
                     uesio.id: fields
+                    uesio.variant: uesio/appkit.main
                     wire: fields
                     mode: READ
                     rowactions:
@@ -532,6 +533,7 @@ definition:
                               value: true
                 - uesio/io.table:
                     uesio.id: commonFields
+                    uesio.variant: uesio/appkit.main
                     wire: commonfields
                     mode: READ
                     uesio.display:
@@ -598,6 +600,7 @@ definition:
                                     wire: routeassignments
                 - uesio/io.table:
                     wire: routeassignments
+                    uesio.variant: uesio/appkit.main
                     mode: READ
                     rowactions:
                       - text: $Label{uesio/io.delete}
@@ -739,6 +742,7 @@ definition:
                             - uesio/io.box:
                                 components:
                                   - uesio/io.table:
+                                      uesio.variant: uesio/appkit.main
                                       uesio.id: recordchallengetokensTable
                                       wire: recordchallengetokens
                                       mode: READ

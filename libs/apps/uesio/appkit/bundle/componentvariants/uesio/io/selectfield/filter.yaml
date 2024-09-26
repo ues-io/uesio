@@ -1,0 +1,14 @@
+name: filter
+label: Filter
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+    input:
+      - border-l-1
+      - border-t-1
+      - border-b-2
+      - border-r-2
+      - border-fontcolor-900/90
+      - bg-primary-50/70
+public: true

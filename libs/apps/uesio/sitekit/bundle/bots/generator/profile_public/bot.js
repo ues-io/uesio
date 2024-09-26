@@ -10,6 +10,7 @@ function profile_public(bot) {
 			[`${namespace}.header`]: true,
 			[`${namespace}.footer`]: true,
 		},
+		allowAllFiles: true,
 	})
 
 	bot.runGenerator("uesio/core", "profile", {
