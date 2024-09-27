@@ -274,7 +274,9 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 
 	var fields []wire.LoadRequestField
 
-	if !options.IncludeUserFields {
+	if options.Fields != nil {
+		fields = options.Fields
+	} else if !options.IncludeUserFields {
 		fields = getFilteredFields(group.GetFields())
 	}
 

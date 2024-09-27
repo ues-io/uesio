@@ -68,7 +68,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->'uesio/tests.number' = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null
@@ -109,7 +109,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->'uesio/tests.number' = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
 jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null

@@ -52,11 +52,11 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.user' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $3 AND
+(main.fields->>'uesio/tests.user')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $3 AND
 subquery.tenant = $4 AND
 subquery.fields->>'uesio/core.username' = $5)) AND
 main.fields->>'uesio/tests.text' is distinct from $6
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 2"
 
@@ -119,18 +119,18 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.owner::text IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $3 AND
+main.owner IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $3 AND
 subquery.tenant = $4 AND
 subquery.fields->>'uesio/core.username' = $5)) AND
-main.updatedby::text IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $6 AND
+main.updatedby IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $6 AND
 subquery.tenant = $7 AND
 subquery.fields->>'uesio/core.username' = $8)) AND
-main.createdby::text IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $9 AND
+main.createdby IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $9 AND
 subquery.tenant = $10 AND
 subquery.fields->>'uesio/core.username' = $11)) AND
 main.fields->>'uesio/tests.text' is distinct from $12 AND
 main.fields->>'uesio/tests.text' is distinct from $13
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" count == 5
 
@@ -182,13 +182,13 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.reference' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $3 AND
+(main.fields->>'uesio/tests.reference')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $3 AND
 subquery.tenant = $4 AND
-subquery.fields->>'uesio/tests.user' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $5 AND
+(subquery.fields->>'uesio/tests.user')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $5 AND
 subquery.tenant = $6 AND
 subquery.fields->>'uesio/core.username' = $7)))) AND
 main.fields->>'uesio/tests.text' is distinct from $8
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 4"
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 5"

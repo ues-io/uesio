@@ -206,7 +206,7 @@ jsonpath "$.wires[0].debugQueryString" == ```
 SELECT
 jsonb_build_object(
 'uesio/core.createdat_date_trunc_day',DATE_TRUNC('day',to_timestamp(date_part('epoch',main.createdat)))::date,
-'uesio/core.id_count',COUNT(main.id::text)
+'uesio/core.id_count',COUNT(main.id)
 ),DATE_TRUNC('day',to_timestamp(date_part('epoch',main.createdat)))::date
 FROM data as "main"
 WHERE

@@ -101,14 +101,6 @@ func getGroupByFieldNameWithAlias(aggregation *wire.AggregationField) string {
 	return getFunctionText(aggregation)
 }
 
-func castFieldToText(fieldAlias string) string {
-	return fmt.Sprintf("%s::text", fieldAlias)
-}
-
-func getIDFieldName(tableAlias string) string {
-	return castFieldToText(getAliasedName("id", tableAlias))
-}
-
 func getJSONBFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
 
@@ -163,17 +155,17 @@ func getFieldName(fieldMetadata *wire.FieldMetadata, tableAlias string) string {
 
 	switch fieldName {
 	case commonfields.Id:
-		return getIDFieldName(tableAlias)
+		return getAliasedName("id", tableAlias)
 	case commonfields.UniqueKey:
 		return getAliasedName("uniquekey", tableAlias)
 	case commonfields.Owner:
-		return castFieldToText(getAliasedName("owner", tableAlias))
+		return getAliasedName("owner", tableAlias)
 	case commonfields.CreatedBy:
-		return castFieldToText(getAliasedName("createdby", tableAlias))
+		return getAliasedName("createdby", tableAlias)
 	case commonfields.CreatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
 	case commonfields.UpdatedBy:
-		return castFieldToText(getAliasedName("updatedby", tableAlias))
+		return getAliasedName("updatedby", tableAlias)
 	case commonfields.UpdatedAt:
 		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
 	case commonfields.Collection:
@@ -274,12 +266,12 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 			newTable := currentTable + "sub"
 
 			accessFieldString := getFieldName(fieldMetadata, currentTable)
-			idFieldString := getIDFieldName(newTable)
+			idFieldString := getAliasedName("id", newTable)
 
 			subBuilder := builder.getSubBuilder("")
-			addTenantConditions(challengeMetadata, metadata, subBuilder, newTable, session)
+			addTenantConditions(challengeMetadata, subBuilder, newTable, session)
 
-			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN %s as \"%s\" ON %s = %s AND %s\n", targetTableName, newTable, accessFieldString, idFieldString, subBuilder.String()))
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN %s as \"%s\" ON (%s)::uuid = %s AND %s\n", targetTableName, newTable, accessFieldString, idFieldString, subBuilder.String()))
 
 			accessFieldID = getAliasedName("id", newTable)
 
@@ -422,7 +414,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return TranslatePGError(err)
 	}
 
-	//fmt.Printf("PG LOAD %v -> %s %s\n", op.CollectionName, op.WireName, time.Since(start))
+	//fmt.Printf("PG LOAD %v -> %s %s %s\n", op.CollectionName, op.WireName, time.Since(start))
 	if env.InDevMode() {
 		val, _ := queryCounts.LoadOrStore(op.CollectionName, new(int64))
 		ptr := val.(*int64)

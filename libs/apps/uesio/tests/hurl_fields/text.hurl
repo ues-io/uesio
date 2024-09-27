@@ -208,7 +208,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.text' ILIKE $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]" isEmpty
 

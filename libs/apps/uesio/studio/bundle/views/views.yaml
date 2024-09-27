@@ -15,6 +15,16 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allviews:
+      fields:
+        uesio/studio.name:
+        uesio/studio.namespace:
+        uesio/studio.label:
+        uesio/studio.appicon:
+        uesio/studio.appcolor:
+        uesio/core.createdat:
+        uesio/core.createdby:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
       collection: uesio/studio.view
       batchsize: 20
       conditions:
@@ -130,7 +140,7 @@ definition:
                   uesio.id: new-view-name
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             uesio.id: save-new-view
             text: $Label{uesio/io.save}
             signals:
@@ -140,7 +150,7 @@ definition:
               - signal: route/NAVIGATE
                 path: app/$Param{app}/workspace/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE
