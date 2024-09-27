@@ -50,10 +50,10 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 (main.fields->>'uesio/tests.species' = $3 OR
-main.fields->>'uesio/tests.ancestor' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $4 AND
+(main.fields->>'uesio/tests.ancestor')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $4 AND
 subquery.tenant = $5 AND
 subquery.fields->'uesio/tests.total_population' > $6)))
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 3
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
@@ -106,6 +106,6 @@ main.collection = $1 AND
 main.tenant = $2 AND
 (main.fields->>'uesio/tests.species' = $3 AND
 main.fields->>'uesio/tests.genus' = $4)
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "McCreary:Jerrine"

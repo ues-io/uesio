@@ -20,6 +20,9 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.collection"
                 }
             ],
             "conditions": [
@@ -69,6 +72,12 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/studio.collection"
                 }
             ],
             "conditions": [
@@ -246,6 +255,9 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.collection"
                 },
                 {
                     "id": "uesio/core.uniquekey"

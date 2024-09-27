@@ -38,7 +38,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 3```
 jsonpath "$.wires[0].data" count == 2
 

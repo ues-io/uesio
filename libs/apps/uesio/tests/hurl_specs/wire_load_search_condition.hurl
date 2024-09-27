@@ -43,7 +43,7 @@ main.collection = $1 AND
 main.tenant = $2 AND
 ((main.fields->>'uesio/tests.name')::text ILIKE $3 OR
 (main.fields->>'uesio/tests.select')::text ILIKE $3)
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 1
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-004"

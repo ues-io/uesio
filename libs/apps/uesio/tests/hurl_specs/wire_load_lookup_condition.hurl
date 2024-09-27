@@ -59,7 +59,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 array_position($3,main.uniquekey) IS NOT NULL
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[1].data[0]['uesio/tests.text']" == "text 1"
 jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
@@ -114,7 +114,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 array_position($3,main.fields->>'uesio/tests.text') IS NULL
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[1].data[*]['uesio/tests.text']" not includes "text 1"
 
@@ -168,7 +168,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 array_position($3,main.uniquekey) IS NOT NULL
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[1].data" isEmpty
 
@@ -222,6 +222,6 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 array_position($3,main.fields->>'uesio/tests.text') IS NULL
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[1].data[*]['uesio/tests.text']" includes "text 1"

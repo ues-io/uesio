@@ -22,8 +22,22 @@ func LoadLooper(
 	looper func(meta.Item, []wire.ReferenceLocator, string) error,
 ) error {
 	ids := idMap.GetIDs()
-	if len(ids) == 0 {
+	idLength := len(ids)
+	if idLength == 0 {
 		return errors.New("No ids provided for load looper")
+	}
+	var condition wire.LoadRequestCondition
+	if idLength == 1 {
+		condition = wire.LoadRequestCondition{
+			Field: matchField,
+			Value: ids[0],
+		}
+	} else {
+		condition = wire.LoadRequestCondition{
+			Field:    matchField,
+			Operator: "IN",
+			Values:   ids,
+		}
 	}
 	op := &wire.LoadOp{
 		Fields:         fields,
@@ -31,11 +45,7 @@ func LoadLooper(
 		Collection:     &wire.Collection{},
 		CollectionName: collectionName,
 		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    matchField,
-				Operator: "IN",
-				Values:   ids,
-			},
+			condition,
 		},
 		Query: true,
 	}

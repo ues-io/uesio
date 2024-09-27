@@ -35,7 +35,7 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 3```
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.collections" not exists
@@ -119,7 +119,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.species' = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
 jsonpath "$.wires[0].conditions[0].value" == "$Param{myparam}"
@@ -164,7 +164,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.uniquekey = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].fields" not exists # Fields should not be sent back to us
@@ -207,8 +207,8 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.id::text = $3
-ORDER BY main.id::text asc
+main.id = $3
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.collections[*]" count == 1
@@ -320,7 +320,7 @@ main.collection = $1 AND
 main.tenant = $2 AND
 array_position($3,main.fields->>'uesio/tests.genus') IS NULL AND
 array_position($4,main.fields->>'uesio/tests.species') IS NOT NULL
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Soitoux:Franklin"
 
