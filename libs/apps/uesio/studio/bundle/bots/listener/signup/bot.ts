@@ -25,7 +25,9 @@ export default function signup(bot: ListenerBotApi) {
 			To complete your account set up, please confirm using the link below:<br/>
 			${link}<br/>
 			<br/>
-			Cheers!<br/>
+			For some video assistance you can visit our <a href="https://www.youtube.com/channel/UCPanoza3zR9zCgn7Y4dg6sw">YouTube channel</a> or take a look at our <a href="https://docs.ues.io/">documents section.</a> <br/>
+			<br/>
+			Best Regards<br/>
 			<br/>
 			The team at ues.io
 		</body>
