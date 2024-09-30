@@ -109,17 +109,10 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, false, accessErr)
 }
 
-func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
-	site := session.GetSite()
-	perms := session.GetSitePermissions()
+func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
 
-	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppFullName() != "uesio/studio" {
-		return errors.New("this site does not allow working with workspaces")
-	}
-	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
-		return errors.New("your profile does not allow you to work with workspaces")
+	if session.GetWorkspace() == nil {
+		return errors.New("Must already have a workspace context to add impersonation.")
 	}
 
 	results := &wire.Collection{}
@@ -147,28 +140,12 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 				},
 			},
 		},
-	}, session, nil)
+	}, session.RemoveWorkspaceContext(), &LoadOptions{
+		Connection: connection,
+	})
 	if err != nil {
 		return err
 	}
-
-	workspaceSession := sess.NewWorkspaceSession(
-		workspace,
-		session.GetSiteUser(),
-		"uesio/system.admin",
-		meta.GetAdminPermissionSet(),
-	)
-	session.SetWorkspaceSession(workspaceSession)
-	bundleDef, err := bundle.GetWorkspaceBundleDef(session.Context(), workspace, connection)
-	if err != nil {
-		return err
-	}
-	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
-	if err != nil {
-		return err
-	}
-	bundleDef.Licenses = licenseMap
-	workspace.SetAppBundle(bundleDef)
 
 	if results.Len() > 0 {
 		profileKey, err := (*results)[0].GetFieldAsString("uesio/studio.profile")
@@ -190,9 +167,65 @@ func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, conne
 		}
 
 	}
+	return nil
+
+}
+
+func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
+	site := session.GetSite()
+	perms := session.GetSitePermissions()
+
+	// 1. Make sure we're in a site that can read/modify workspaces
+	if site.GetAppFullName() != "uesio/studio" {
+		return errors.New("this site does not allow working with workspaces")
+	}
+	// 2. we should have a profile that allows modifying workspaces
+	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
+		return errors.New("your profile does not allow you to work with workspaces")
+	}
+
+	workspaceSession := sess.NewWorkspaceSession(
+		workspace,
+		session.GetSiteUser(),
+		"uesio/system.admin",
+		meta.GetAdminPermissionSet(),
+	)
+	session.SetWorkspaceSession(workspaceSession)
+	bundleDef, err := bundle.GetWorkspaceBundleDef(session.Context(), workspace, connection)
+	if err != nil {
+		return err
+	}
+	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
+	if err != nil {
+		return err
+	}
+	bundleDef.Licenses = licenseMap
+	workspace.SetAppBundle(bundleDef)
 
 	return nil
 
+}
+
+func AddWorkspaceImpersonationContext(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
+	// just use the existing session
+	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
+		return session, nil
+	}
+	sessClone := session.RemoveWorkspaceContext()
+	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
+	if err != nil {
+		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
+	}
+	err = addWorkspaceContext(workspace, sessClone, connection)
+	if err != nil {
+		return nil, err
+	}
+	err = addWorkspaceImpersonationContext(workspace, sessClone, connection)
+	if err != nil {
+		return nil, err
+	}
+	return sessClone, nil
 }
 
 func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
@@ -250,9 +283,6 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 					ID: "uesio/studio.name",
 				},
 				{
-					ID: "uesio/studio.app",
-				},
-				{
 					ID: "uesio/studio.loginroute",
 				},
 				{
@@ -284,9 +314,14 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 	if err != nil {
 		return nil, errors.New("you do not have write access to this workspace")
 	}
+
 	// Shortcut to avoid having to do a join to fetch Apps every time we query workspaces
-	if workspace.GetAppFullName() == "" && workspace.UniqueKey != "" {
-		workspace.App.UniqueKey = strings.Split(workspace.UniqueKey, ":")[0]
+	appKey, _, _ := strings.Cut(workspace.UniqueKey, ":")
+	workspace.App = &meta.App{
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: appKey,
+		},
+		FullName: appKey,
 	}
 	// Attach the named permissions for workspace write access
 	siteUserPerms := session.GetSiteUser().Permissions
