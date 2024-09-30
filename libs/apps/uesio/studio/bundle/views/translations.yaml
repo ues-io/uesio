@@ -56,44 +56,47 @@ definition:
                 itemType: translations
                 itemIcon: translate
         content:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
-              title: Translations
-              subtitle: The Rosetta Stone of your app
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: translate
-              actions:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.button:
-                          text: Add Translations for new Language
-                          uesio.variant: uesio/io.primary
-                          hotkey: n
-                          signals:
-                            - signal: panel/TOGGLE
-                              panel: newtranslation
-          - uesio/io.box:
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.deck:
-                    uesio.id: translationsDeck
-                    wire: translations
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.titlebar:
                     uesio.variant: uesio/appkit.main
+                    title: Translations
+                    subtitle: The Rosetta Stone of your app.
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: translate
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: New Translation Language
+                                uesio.variant: uesio/appkit.secondary
+                                icon: add
+                                hotkey: n
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newtranslation
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.primarysection
                     components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/appkit.card
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
-                          content:
-                            - uesio/io.text:
-                                text: ${uesio/studio.language}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                text: translate
+                      - uesio/io.deck:
+                          uesio.id: translationsDeck
+                          wire: translations
+                          uesio.variant: uesio/appkit.main
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/appkit.card
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.language}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      text: translate
   panels:
     newtranslation:
       uesio.type: uesio/io.dialog

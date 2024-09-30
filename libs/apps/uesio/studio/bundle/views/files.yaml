@@ -71,9 +71,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New File
-                                uesio.variant: uesio/appkit.primary
+                                text: New File
+                                uesio.variant: uesio/appkit.secondary
                                 hotkey: "n"
+                                icon: add
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newFile

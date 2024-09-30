@@ -57,9 +57,10 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                buttonVariant: uesio/appkit.primary
+                                buttonVariant: uesio/appkit.secondary
                                 hotkey: "n"
-                                label: Create a new Component
+                                icon: add
+                                label: New Component
                                 generator: uesio/core.component
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.primarysection

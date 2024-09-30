@@ -127,9 +127,10 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      buttonVariant: uesio/appkit.primary
+                                      buttonVariant: uesio/appkit.secondary
                                       hotkey: "n"
-                                      label: Create a new Route
+                                      icon: add
+                                      label: New Route
                                       generator: uesio/core.route
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection

@@ -71,9 +71,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Select List
+                                text: New Select List
                                 hotkey: "n"
-                                uesio.variant: uesio/appkit.primary
+                                icon: add
+                                uesio.variant: uesio/appkit.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newSelectlist

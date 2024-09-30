@@ -105,9 +105,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Collection
+                                text: New Collection
                                 hotkey: "n"
-                                uesio.variant: uesio/appkit.primary
+                                uesio.variant: uesio/appkit.secondary
+                                icon: add
                                 uesio.id: new-collection
                                 signals:
                                   - signal: panel/TOGGLE

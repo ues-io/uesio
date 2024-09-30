@@ -115,7 +115,7 @@ definition:
                             - uesio/io.button:
                                 text: Package new version
                                 hotkey: "n"
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                                 uesio.id: package-new-version
                                 signals:
                                   - signal: wire/RESET
@@ -123,7 +123,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newBundle
                             - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/appkit.secondary
                                 text: View Bundles
                                 signals:
                                   - signal: route/NAVIGATE

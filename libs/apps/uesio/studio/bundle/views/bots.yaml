@@ -57,9 +57,10 @@ definition:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{app}
-                                buttonVariant: uesio/appkit.primary
+                                buttonVariant: uesio/appkit.secondary
+                                icon: add
                                 hotkey: "n"
-                                label: Create a new Bot
+                                label: New Bot
                                 generator: uesio/core.bot
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.primarysection

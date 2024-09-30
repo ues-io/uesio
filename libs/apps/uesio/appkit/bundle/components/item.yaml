@@ -42,6 +42,9 @@ definition:
                 value: $Prop{badge}
         - uesio/io.titlebar:
             uesio.variant: uesio/appkit.item
+            uesio.styleTokens:
+              subtitle:
+                - $Region{subtitle}
             title: $Prop{title}
             subtitle: $Prop{subtitle}
             actions:
