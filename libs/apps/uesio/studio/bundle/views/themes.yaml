@@ -67,8 +67,9 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Theme
-                                uesio.variant: uesio/appkit.primary
+                                text: New Theme
+                                icon: add
+                                uesio.variant: uesio/appkit.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
@@ -100,6 +101,8 @@ definition:
                                           uesio.styleTokens:
                                             avatar:
                                               - bg-emerald-50
+                                            subtitle:
+                                              - text-black/80
                                           subtitle: Default
                                           icon: check_circle
                                           iconcolor: $Theme{color:emerald.600}

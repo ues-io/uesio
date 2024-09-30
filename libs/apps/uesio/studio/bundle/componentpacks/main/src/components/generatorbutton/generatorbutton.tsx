@@ -20,6 +20,7 @@ type GeneratorButtonDefinition = {
 	label: string
 	buttonVariant?: metadata.MetadataKey
 	hotkey?: string
+	icon?: string
 }
 
 interface DialogProps {
@@ -172,6 +173,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 		hotkey,
 		label,
 		generator,
+		icon,
 	} = definition
 
 	const workspaceContext = context.getWorkspace()
@@ -188,6 +190,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 				variant={buttonVariant}
 				label={label}
 				onClick={onClick}
+				iconText={icon}
 			/>
 			{open && (
 				<GeneratorDialog

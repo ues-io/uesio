@@ -30,6 +30,11 @@ definition:
                     signals:
                       - signal: route/NAVIGATE
                         path: app/$Param{app}/workspace/$Param{workspacename}/generate/${namespace}/${name}
+              emptyState:
+                - uesio/io.emptystate:
+                    title: No Generators Available
+                    subtitle: Install some apps like AppKit or SiteKit from the appstore for more generators.
+                    icon: smart_toy
   params:
     tag:
       type: TEXT

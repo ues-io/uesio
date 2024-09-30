@@ -83,8 +83,9 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New View
-                                uesio.variant: uesio/appkit.primary
+                                text: New View
+                                uesio.variant: uesio/appkit.secondary
+                                icon: add
                                 hotkey: "n"
                                 uesio.id: new-view
                                 signals:

@@ -73,9 +73,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new Integration
-                                uesio.variant: uesio/appkit.primary
+                                text: New Integration
+                                uesio.variant: uesio/appkit.secondary
                                 hotkey: "n"
+                                icon: add
                                 signals:
                                   - signal: wire/RESET
                                     wire: newintegration
