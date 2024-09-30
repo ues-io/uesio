@@ -414,7 +414,7 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 		return TranslatePGError(err)
 	}
 
-	//fmt.Printf("PG LOAD %v -> %s %s %s\n", op.CollectionName, op.WireName, time.Since(start))
+	//fmt.Printf("PG LOAD %v -> %s %s\n", op.CollectionName, op.WireName, time.Since(start))
 	if env.InDevMode() {
 		val, _ := queryCounts.LoadOrStore(op.CollectionName, new(int64))
 		ptr := val.(*int64)

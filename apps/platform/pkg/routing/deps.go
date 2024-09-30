@@ -641,7 +641,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
 	// Query for all static files in the workspace
 	var files meta.FileCollection
-	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)
+	err := bundle.LoadAllFromNamespaces([]string{workspace.GetAppFullName()}, &files, nil, session, nil)
 	if err != nil {
 		return errors.New("failed to load static files: " + err.Error())
 	}

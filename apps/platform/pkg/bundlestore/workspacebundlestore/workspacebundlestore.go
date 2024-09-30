@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -399,18 +400,10 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 			Params:     getParamsFromWorkspace(b.Workspace),
 			Fields: []wire.LoadRequestField{
 				{
-					ID: "uesio/studio.app",
-				},
-				{
 					ID: "uesio/studio.bundle",
 					Fields: []wire.LoadRequestField{
 						{
-							ID: "uesio/studio.app",
-							Fields: []wire.LoadRequestField{
-								{
-									ID: commonfields.UniqueKey,
-								},
-							},
+							ID: commonfields.UniqueKey,
 						},
 						{
 							ID: "uesio/studio.major",
@@ -440,15 +433,14 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	if len(bdc) != 0 {
 		by.Dependencies = map[string]meta.BundleDefDep{}
 	}
-	for i := range bdc {
-		// TODO: Possibly recurse here to get sub dependencies
-		bundleName := bdc[i].GetBundleName()
-		if bundleName == "" {
-			appName := bdc[i].GetAppName()
-			return nil, errors.New("Error getting bundle dependency, you don't have " + appName + " app installed")
+	for _, bd := range bdc {
+		if bd.Bundle == nil {
+			return nil, errors.New("Error getting bundle dependency: " + bd.UniqueKey)
 		}
-		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
-			Version: bdc[i].GetVersionString(),
+		key := bd.Bundle.UniqueKey
+		bundleName, _, _ := strings.Cut(key, ":")
+		by.Dependencies[bundleName] = meta.BundleDefDep{
+			Version: bd.GetVersionString(),
 		}
 	}
 
