@@ -39,7 +39,7 @@ const getRelativeParent = (
 }
 
 const StyleDefaults = Object.freeze({
-	popper: [],
+	popper: ["z-20"],
 	arrow: [],
 })
 
