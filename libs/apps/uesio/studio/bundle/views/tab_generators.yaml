@@ -33,7 +33,7 @@ definition:
               emptyState:
                 - uesio/io.emptystate:
                     title: No Generators Available
-                    subtitle: Install some apps like AppKit or SiteKit from the appstore for more generators.
+                    subtitle: Install some apps like AppKit or SiteKit from the Bundle Store for more generators.
                     icon: smart_toy
   params:
     tag:

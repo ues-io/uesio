@@ -746,17 +746,25 @@ func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subVie
 func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 	if len(slotDefinitions) > 0 {
 		for _, slotDef := range slotDefinitions {
-			path := slotDef.GetFullPath()
-			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
-			if err != nil {
-				continue
+			if compDefinitionMap != nil {
+
 			}
-			for _, n := range matchingNodes {
-				err := getComponentAreaDeps(n, deps, subViews, session)
+			var matchingNodes []*yaml.Node
+			var err error
+			path := slotDef.GetFullPath()
+			if compDefinitionMap != nil {
+				matchingNodes, err = yptr.FindAll(compDefinitionMap, path)
 				if err != nil {
-					return err
+					continue
+				}
+				for _, n := range matchingNodes {
+					err := getComponentAreaDeps(n, deps, subViews, session)
+					if err != nil {
+						return err
+					}
 				}
 			}
+
 			// If there were no matching nodes, and our slot has a default content,
 			// also parse through the default content
 			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {

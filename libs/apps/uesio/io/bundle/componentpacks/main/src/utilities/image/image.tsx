@@ -34,6 +34,11 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 				height !== undefined && `h-[${height}px]`,
 				width !== undefined && `w-[${width}px]`,
 			],
+			link: [
+				"block",
+				height !== undefined && `h-[${height}px]`,
+				width !== undefined && `w-[${width}px]`,
+			],
 		},
 		props,
 		"uesio/io.image"
@@ -60,7 +65,13 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 		/>
 	)
 
-	return link ? <a href={link}>{imageNode}</a> : imageNode
+	return link ? (
+		<a className={classes.link} href={link}>
+			{imageNode}
+		</a>
+	) : (
+		imageNode
+	)
 }
 
 export default Image

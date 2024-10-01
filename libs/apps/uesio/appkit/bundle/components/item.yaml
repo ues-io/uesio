@@ -23,6 +23,8 @@ definition:
       uesio.styleTokens:
         root:
           - $Region{root}
+        content:
+          - $Region{content}
         actionable:
           - $Region{actionable}
       content:
