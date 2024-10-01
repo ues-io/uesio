@@ -5,11 +5,17 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.tile:
+        uesio.styleTokens:
+          root:
+            - "[min-width:0]"
+          content:
+            - "[min-width:0]"
         avatar:
           - uesio/io.image:
               uesio.variant: uesio/appkit.uesio_logo
               uesio.id: img-uesio-logo
               height: 32
+              width: 32
               file: uesio/core.logowhite
               signals:
                 - signal: "route/NAVIGATE"

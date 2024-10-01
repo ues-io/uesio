@@ -90,6 +90,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 		onUpload: onFileUpload,
 		onDelete: onFileDelete,
 		accept,
+		displayAs,
 	}
 
 	switch (displayAs) {

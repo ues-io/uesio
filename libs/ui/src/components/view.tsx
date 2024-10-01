@@ -110,7 +110,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 		)
 	}
 
-	const mergedViewDef = Object.keys(slots).length
+	const mergedViewDef = viewDef.slots
 		? {
 				[DefaultSlotName]: resolveDeclarativeComponentDefinition(
 					context,

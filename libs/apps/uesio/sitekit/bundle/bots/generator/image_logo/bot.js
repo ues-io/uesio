@@ -4,6 +4,7 @@ function image_logo(bot) {
 	const name = bot.params.get("name")
 	const samples = bot.params.get("samples")
 	const aspect_ratio = bot.params.get("aspect_ratio") || "21:9"
+	const namespace = bot.getAppName()
 
 	const prompt = `
 		A (minimal:0.5), (artistic:0.6), (wordmark:1) for the app
@@ -20,4 +21,6 @@ function image_logo(bot) {
 		samples,
 		aspect_ratio,
 	})
+
+	bot.setRedirect(`/files/${namespace}/${name}`)
 }

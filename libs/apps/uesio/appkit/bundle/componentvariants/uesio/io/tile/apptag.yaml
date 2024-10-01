@@ -34,6 +34,7 @@ definition:
       - text-ellipsis
       - text-slate-800
       - text-xs
+      - overflow-hidden
       - group-hover:text-slate-900
     avatar:
       - flex
