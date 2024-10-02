@@ -6,14 +6,13 @@ import IconButton from "../iconbutton/iconbutton"
 interface SidePanelUtilityProps {
 	onClose?: () => void
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
 
 const StyleDefaults = Object.freeze({
-	root: [],
 	content: [],
 	header: [],
 	icon: [],
-	blocker: [],
 })
 
 const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
@@ -29,13 +28,13 @@ const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
 		<SidePanelPlain
 			context={context}
 			onClose={onClose}
+			closed={closed}
 			initialFocus={1}
 			closeOnOutsideClick={closeOnOutsideClick}
-			classes={{
-				blocker: classes.blocker,
-			}}
+			variant={props.variant}
+			styleTokens={props.styleTokens}
 		>
-			<Grid className={classes.root} context={context}>
+			<Grid context={context}>
 				<div className={classes.header}>
 					<IconButton
 						className={classes.icon}

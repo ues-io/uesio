@@ -12,5 +12,9 @@ definition:
       - grid
       - gap-4
       - auto-rows-max
+      - hidden
+      - md:grid
     footer:
       - p-4
+      - hidden
+      - md:block

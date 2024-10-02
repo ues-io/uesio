@@ -13,6 +13,7 @@ interface DialogPlainUtilityProps {
 	height?: string
 	initialFocus?: number
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
 
 const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
@@ -20,33 +21,17 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 ) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
-			blocker: [
-				"absolute",
-				"backdrop-blur-sm",
-				"backdrop-brightness-50",
-				"flex",
-				"z-10",
-			],
+			blocker: [],
 			wrapper: [
-				"inset-0",
-				"m-auto",
-				"grid",
-				"pointer-events-none",
 				...(props.width ? [`w-[${props.width}]`] : ["w-1/2"]),
 				...(props.height ? [`h-[${props.height}]`] : ["h-1/2"]),
 			],
-			inner: [
-				"shadow-md",
-				"overflow-hidden",
-				"m-2",
-				"rounded",
-				"pointer-events-auto",
-				"bg-white",
-				"[container-type:size]",
-			],
+			inner: [],
+			blockerClosed: [],
+			wrapperClosed: [],
 		},
 		props,
-		"uesio/io.dialogplain"
+		"uesio/io.dialog"
 	)
 
 	const floating = useFloating({
@@ -70,7 +55,10 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 
 	return (
 		<FloatingOverlay
-			className={classes.blocker}
+			className={styles.cx(
+				classes.blocker,
+				props.closed && classes.blockerClosed
+			)}
 			lockScroll
 			ref={floating.refs.setReference}
 			{...getReferenceProps()}
@@ -81,7 +69,10 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				closeOnFocusOut={false}
 			>
 				<div
-					className={classes.wrapper}
+					className={styles.cx(
+						classes.wrapper,
+						props.closed && classes.wrapperClosed
+					)}
 					ref={floating.refs.setFloating}
 					{...getFloatingProps({
 						onPointerDown(e) {
