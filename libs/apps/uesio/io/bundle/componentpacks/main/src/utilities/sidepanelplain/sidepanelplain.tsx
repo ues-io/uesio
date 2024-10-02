@@ -11,25 +11,15 @@ interface SidePanelUtilityProps {
 	onClose?: () => void
 	initialFocus?: number
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
 
 const StyleDefaults = Object.freeze({
-	blocker: [
-		"backdrop-blur-sm",
-		"backdrop-grayscale-[50%]",
-		"backdrop-brightness-50",
-	],
-	root: ["absolute", "inset-0", "pointer-events-none"],
-	inner: [
-		"shadow-md",
-		"inset-y-0",
-		"right-0",
-		"pointer-events-auto",
-		"bg-white",
-		"w-10/12",
-		"max-w-xs",
-		"absolute",
-	],
+	blocker: [],
+	root: [],
+	inner: [],
+	rootClosed: [],
+	blockerClosed: [],
 })
 
 const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
@@ -38,7 +28,7 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
-		"uesio/io.dialogplain"
+		"uesio/io.sidepanel"
 	)
 
 	const floating = useFloating({
@@ -62,7 +52,10 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 
 	return (
 		<FloatingOverlay
-			className={classes.blocker}
+			className={styles.cx(
+				classes.blocker,
+				props.closed && classes.blockerClosed
+			)}
 			lockScroll
 			style={{ position: "absolute" }}
 			ref={floating.refs.setReference}
@@ -74,7 +67,10 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 				closeOnFocusOut={false}
 			>
 				<div
-					className={classes.root}
+					className={styles.cx(
+						classes.root,
+						props.closed && classes.rootClosed
+					)}
 					ref={floating.refs.setFloating}
 					{...getFloatingProps({
 						onPointerDown(e) {

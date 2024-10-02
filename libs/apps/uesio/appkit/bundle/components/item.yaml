@@ -33,8 +33,8 @@ definition:
             uesio.styleTokens:
               root:
                 - absolute
-                - -top-0.5
-                - -right-0.5
+                - top-0.5
+                - right-0.5
                 - border-2
                 - border-white
                 - $Region{badge}

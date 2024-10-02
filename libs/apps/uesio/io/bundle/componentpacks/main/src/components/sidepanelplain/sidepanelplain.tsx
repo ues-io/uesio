@@ -1,14 +1,8 @@
-import { definition, api, component } from "@uesio/ui"
+import { definition, component, api } from "@uesio/ui"
+import { default as IOSidePanelPlain } from "../../utilities/sidepanelplain/sidepanelplain"
+import { SidePanelDefinition } from "../sidepanel/sidepanel"
 
-import { default as IOSidePanel } from "../../utilities/sidepanel/sidepanel"
-
-type SidePanelDefinition = {
-	id?: string
-	closeOnOutsideClick?: boolean
-	closed?: boolean
-}
-
-const SidePanel: definition.UC<SidePanelDefinition> = (props) => {
+const PlainSidePanel: definition.UC<SidePanelDefinition> = (props) => {
 	const { context, definition, path, componentType } = props
 	if (!definition) return null
 	const panelId = definition?.id as string
@@ -22,13 +16,13 @@ const SidePanel: definition.UC<SidePanelDefinition> = (props) => {
 		context
 	)
 	return (
-		<IOSidePanel
+		<IOSidePanelPlain
 			onClose={onClose}
-			closed={definition.closed}
 			context={context}
 			styleTokens={definition[component.STYLE_TOKENS]}
 			variant={definition[component.STYLE_VARIANT]}
 			closeOnOutsideClick={definition.closeOnOutsideClick}
+			closed={definition.closed}
 		>
 			<component.Slot
 				definition={definition}
@@ -37,9 +31,8 @@ const SidePanel: definition.UC<SidePanelDefinition> = (props) => {
 				context={context}
 				componentType={componentType}
 			/>
-		</IOSidePanel>
+		</IOSidePanelPlain>
 	)
 }
 
-export type { SidePanelDefinition }
-export default SidePanel
+export default PlainSidePanel

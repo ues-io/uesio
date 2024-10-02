@@ -4,12 +4,14 @@ import { runMany } from "../../hooks/signalapi"
 import { open, close, closeAll } from "./operations"
 import { getCurrentState } from "../../store/store"
 import { selectors } from "./adapter"
+import { DefinitionMap } from "../../definition/definition"
 
 // The key for the entire band
 const PANEL_BAND = "panel"
 
 interface ToggleSignal extends SignalDefinition {
 	panel: string
+	definition?: DefinitionMap
 }
 
 const runPanelAfterCloseSignals = (panelId: string, context: Context) => {
@@ -28,7 +30,7 @@ const closeDispatcher = (signal: ToggleSignal, context: Context) => {
 }
 
 const openDispatcher = (signal: ToggleSignal, context: Context) =>
-	open(context, signal.panel)
+	open(context, signal.panel, signal.definition)
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {

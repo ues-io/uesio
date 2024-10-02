@@ -1,0 +1,4 @@
+name: sidepanelplain
+pack: main
+entrypoint: components/sidepanelplain/sidepanelplain
+variants:
