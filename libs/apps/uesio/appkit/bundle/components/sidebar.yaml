@@ -1,0 +1,69 @@
+name: sidebar
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: header
+  - name: content
+  - name: footer
+properties:
+  - name: scrollpanelVariant
+    label: Scroll Panel Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.scrollpanel
+definition:
+  - uesio/io.dynamicpanel:
+      uesio.id: menutoggle
+      uesio.type: uesio/io.sidepanelplain
+      uesio.variant: uesio/io.topleft
+      components:
+        - uesio/io.scrollpanel:
+            uesio.variant: $Prop{scrollpanelVariant}
+            header:
+              - $Slot{header}
+            content:
+              - $Slot{content}
+            footer:
+              - $Slot{footer}
+  - uesio/io.scrollpanel:
+      uesio.variant: $Prop{scrollpanelVariant}
+      uesio.styleTokens:
+        root:
+          - lg:flex
+          - md:hidden
+        inner:
+          - md:grid
+          - hidden
+          - $Region{inner}
+        footer:
+          - md:block
+          - hidden
+      header:
+        - $Slot{header}
+      content:
+        - $Slot{content}
+      footer:
+        - $Slot{footer}
+  - uesio/io.scrollpanel:
+      uesio.variant: $Prop{scrollpanelVariant}
+      uesio.styleTokens:
+        root:
+          - hidden
+          - md:flex
+          - lg:hidden
+          - w-auto
+          - md:w-auto
+        header:
+          - p-3
+      header:
+        - uesio/appkit.sidebar_toggle:
+            icon: left_panel_open
+title: Side Bar
+discoverable: true
+description: A responsive sidebar component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
+variants:

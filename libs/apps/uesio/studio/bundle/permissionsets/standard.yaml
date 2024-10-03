@@ -20,7 +20,6 @@ bots:
 views:
   uesio/studio.app: true
   uesio/studio.app_new: true
-  uesio/studio.appcrumb: true
   uesio/studio.appsettings: true
   uesio/studio.bot: true
   uesio/studio.bots: true

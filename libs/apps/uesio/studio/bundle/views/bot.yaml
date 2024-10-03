@@ -83,7 +83,7 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      buttonVariant: uesio/io.secondary
+                                      buttonVariant: uesio/appkit.secondary
                                       label: Run this generator
                                       generator: ${uesio/studio.namespace}.${uesio/studio.name}
                             - uesio/io.group:
@@ -94,7 +94,7 @@ definition:
                                     value: $Param{namespace}
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.edit}
                                       uesio.display:
                                         - type: fieldMode
@@ -111,7 +111,7 @@ definition:
                                           targettype: specific
                                           target: botsItem
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
+                                      uesio.variant: uesio/appkit.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: fieldMode
@@ -126,7 +126,7 @@ definition:
                                           targettype: specific
                                           componentid: botcontent
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
                                         - type: fieldMode
@@ -151,7 +151,7 @@ definition:
                                           targettype: specific
                                           componentid: botcontent
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.delete}
                                       uesio.display:
                                         - type: fieldMode
@@ -160,7 +160,7 @@ definition:
                                         - signal: panel/TOGGLE
                                           panel: deleteBot
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                          uesio.variant: uesio/appkit.primarysection
                           components:
                             - uesio/io.grid:
                                 uesio.variant: uesio/appkit.two_columns
@@ -190,7 +190,7 @@ definition:
                                             - BEFORESAVE
                                             - AFTERSAVE
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                          uesio.variant: uesio/appkit.section
                           uesio.display:
                             - field: uesio/studio.dialect
                               type: fieldValue
@@ -228,7 +228,7 @@ definition:
                                           - $StaticFile{/ui/types/server/bots.d.ts}
                                           - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                          uesio.variant: uesio/appkit.section
                           uesio.display:
                             - field: uesio/studio.dialect
                               type: fieldValue
@@ -256,7 +256,7 @@ definition:
                                     operator: EQUALS
                                     value: $Param{namespace}
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                          uesio.variant: uesio/appkit.section
                           components:
                             - uesio/io.box:
                                 uesio.display:

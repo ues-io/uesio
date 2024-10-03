@@ -1,10 +1,10 @@
-name: paneltrigger
-title: Panel Trigger
+name: dynamicpanel
+title: Dynamic Panel
 icon: check_box_outline_blank
 description:
 category: LAYOUT
 pack: main
-entrypoint: components/paneltrigger/paneltrigger
+entrypoint: components/dynamicpanel/dynamicpanel
 discoverable: false
 slots:
   - name: components
@@ -18,3 +18,4 @@ variants:
   - uesio/io.sidepanel:uesio/io.left
   - uesio/io.sidepanel:uesio/io.right
   - uesio/io.sidepanel:uesio/io.top
+  - uesio/io.sidepanel:uesio/io.topleft

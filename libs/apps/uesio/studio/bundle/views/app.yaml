@@ -118,7 +118,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Workspaces
-                                      subtitle: Make changes to your app in workspaces.
+                                      subtitle: Make changes to your app.
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary
@@ -161,7 +161,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Sites
-                                      subtitle: Publish your app to users with sites.
+                                      subtitle: Publish your app to users.
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary

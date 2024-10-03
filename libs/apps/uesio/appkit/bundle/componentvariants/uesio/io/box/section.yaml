@@ -5,3 +5,5 @@ extends: uesio/io.section
 definition:
   uesio.styleTokens:
     root:
+      - m-4
+      - md:m-10
