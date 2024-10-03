@@ -29,6 +29,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 			inner: [],
 			blockerClosed: [],
 			wrapperClosed: [],
+			innerClosed: [],
 		},
 		props,
 		"uesio/io.dialog"
@@ -80,7 +81,14 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 						},
 					})}
 				>
-					<div className={classes.inner}>{props.children}</div>
+					<div
+						className={styles.cx(
+							classes.inner,
+							props.closed && classes.innerClosed
+						)}
+					>
+						{props.children}
+					</div>
 				</div>
 			</FloatingFocusManager>
 		</FloatingOverlay>

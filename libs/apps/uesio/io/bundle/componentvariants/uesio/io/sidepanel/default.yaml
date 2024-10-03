@@ -1,47 +1,5 @@
 name: default
 label: Default
+extends: uesio/io.right
 definition:
-  uesio.styleTokens:
-    root:
-      - absolute
-      - inset-0
-      - pointer-events-none
-      - transition-all
-      - opacity-100
-      - transform
-      - translate-x-0
-      - duration-200
-      - ease-in-out
-    blocker:
-      - backdrop-blur-sm
-      - backdrop-brightness-50
-      - backdrop-greyscale-[50%]
-      - z-10
-      - ease-in-out
-      - transition-all
-      - duration-200
-    rootClosed:
-      - opacity-0
-      - translate-x-full
-    blockerClosed:
-      - backdrop-blur-none
-      - backdrop-grayscale-0
-      - backdrop-brightness-100
-    inner:
-      - shadow-md
-      - inset-y-0
-      - right-0
-      - pointer-events-auto
-      - bg-white
-      - w-10/12
-      - max-w-xs
-      - absolute
-    content:
-      - p-4
-    header:
-      - text-right
-    icon:
-      - text-2xl
-      - m-2
-      - p-1
 public: true

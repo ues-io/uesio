@@ -18,8 +18,9 @@ const StyleDefaults = Object.freeze({
 	blocker: [],
 	root: [],
 	inner: [],
-	rootClosed: [],
 	blockerClosed: [],
+	rootClosed: [],
+	innerClosed: [],
 })
 
 const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
@@ -78,7 +79,14 @@ const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
 						},
 					})}
 				>
-					<div className={classes.inner}>{props.children}</div>
+					<div
+						className={styles.cx(
+							classes.inner,
+							props.closed && classes.innerClosed
+						)}
+					>
+						{props.children}
+					</div>
 				</div>
 			</FloatingFocusManager>
 		</FloatingOverlay>

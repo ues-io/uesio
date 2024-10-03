@@ -1,0 +1,14 @@
+name: right
+label: Right
+extends: uesio/io.base
+definition:
+  uesio.styleTokens:
+    inner:
+      - inset-y-0
+      - right-0
+      - w-10/12
+      - max-w-xs
+      - translate-x-0
+    innerClosed:
+      - translate-x-full
+public: true
