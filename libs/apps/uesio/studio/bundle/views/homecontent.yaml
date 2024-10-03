@@ -26,7 +26,7 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.box:
-        uesio.variant: uesio/io.section
+        uesio.variant: uesio/appkit.section
         uesio.styleTokens:
           root:
             - overflow-hidden
@@ -89,7 +89,7 @@ definition:
                       - uesio/io.text:
                           text: "quickly."
     - uesio/io.box:
-        uesio.variant: uesio/io.section
+        uesio.variant: uesio/appkit.section
         components:
           - uesio/io.grid:
               uesio.variant: uesio/io.two_columns

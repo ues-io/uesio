@@ -1,4 +1,12 @@
-import { api, context, wire, definition, metadata, styles } from "@uesio/ui"
+import {
+	api,
+	context,
+	wire,
+	definition,
+	metadata,
+	styles,
+	signal,
+} from "@uesio/ui"
 import debounce from "lodash/debounce"
 import TextField from "../../utilities/field/text"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
@@ -11,6 +19,7 @@ type SearchBoxDefinition = {
 	placeholder?: string
 	fieldVariant?: metadata.MetadataKey
 	noValueBehavior?: wire.NoValueBehavior
+	onSearchSignals?: signal.SignalDefinition[]
 }
 
 const StyleDefaults = Object.freeze({
@@ -22,6 +31,7 @@ const search = (
 	wire: string,
 	searchFields: string[],
 	noValueBehavior: wire.NoValueBehavior,
+	onSearchSignals: signal.SignalDefinition[] | undefined,
 	context: context.Context
 ) => {
 	api.signal.run(
@@ -34,6 +44,9 @@ const search = (
 		},
 		context
 	)
+	if (onSearchSignals) {
+		api.signal.runMany(onSearchSignals, context)
+	}
 }
 
 const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
@@ -44,6 +57,7 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 		focusOnRender = false,
 		fieldVariant = "uesio/io.search",
 		noValueBehavior,
+		onSearchSignals,
 	} = definition
 
 	const [text, setText] = useState("")
@@ -59,12 +73,19 @@ const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 						definition.wire,
 						searchFields,
 						noValueBehavior,
+						onSearchSignals,
 						context
 					),
 
 				500
 			),
-		[definition.wire, searchFields, noValueBehavior, context]
+		[
+			definition.wire,
+			searchFields,
+			noValueBehavior,
+			onSearchSignals,
+			context,
+		]
 	)
 
 	useEffect(

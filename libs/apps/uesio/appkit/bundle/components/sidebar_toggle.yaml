@@ -1,0 +1,34 @@
+name: sidebar_toggle
+category: LAYOUT
+type: DECLARATIVE
+slots:
+properties:
+  - name: icon
+    type: TEXT
+    defaultValue: left_panel_close
+definition:
+  - uesio/io.button:
+      uesio.styleTokens:
+        root:
+          - px-2
+          - py-0.5
+          - text-base
+          - text-fontcolor-900
+          - rounded
+          - hover:bg-primary-100/80
+          - $Region{root}
+      icon: $Prop{icon}
+      signals:
+        - signal: component/CALL
+          component: uesio/io.dynamicpanel
+          componentsignal: TOGGLE
+          targettype: specific
+          componentid: menutoggle
+title: Side Bar Toggle
+discoverable: true
+description: A responsive sidebar component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
+variants:

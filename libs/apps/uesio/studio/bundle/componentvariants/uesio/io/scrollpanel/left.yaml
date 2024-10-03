@@ -3,18 +3,24 @@ label: Left Sidebar
 extends: uesio/io.default
 definition:
   uesio.styleTokens:
+    root:
+      - relative
+      - z-20
+      - md:z-auto
+      - bg-white
+      - md:w-80
+      - w-full
     header:
       - p-4
       - gap-4
       - grid
+      - bg-primary-50/70
     inner:
       - px-4
       - grid
       - gap-4
       - auto-rows-max
-      - hidden
-      - md:grid
+      - bg-primary-50/70
     footer:
       - p-4
-      - hidden
-      - md:block
+      - bg-primary-50/70

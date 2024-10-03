@@ -4,7 +4,6 @@ extends: uesio/appkit.default
 definition:
   uesio.styleTokens:
     left:
-      - md:w-80
       - gap-3
       - grid
       - auto-rows-min

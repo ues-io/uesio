@@ -19,7 +19,6 @@ definition:
       - md:overflow-auto
       - md:col-start-1
       - md:col-end-1
-      - md:w-72
       - md:row-start-2
       - md:grid-rows-[100%]
     content:
@@ -35,7 +34,6 @@ definition:
       - md:overflow-auto
       - lg:col-start-3
       - lg:col-end-3
-      - lg:w-72
       - lg:row-start-2
       - lg:grid-rows-[100%]
       - md:col-span-2
