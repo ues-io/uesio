@@ -1,0 +1,11 @@
+name: left
+label: Left
+extends: uesio/io.right
+definition:
+  uesio.styleTokens:
+    inner:
+      - right-auto
+      - left-0
+    innerClosed:
+      - -translate-x-full
+public: true

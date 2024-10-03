@@ -15,3 +15,6 @@ sections:
   - type: DISPLAY
 variants:
   - uesio/io.sidepanel:uesio/io.default
+  - uesio/io.sidepanel:uesio/io.left
+  - uesio/io.sidepanel:uesio/io.right
+  - uesio/io.sidepanel:uesio/io.top
