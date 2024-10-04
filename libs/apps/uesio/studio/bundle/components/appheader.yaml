@@ -9,80 +9,41 @@ sections:
   - type: HOME
   - type: DISPLAY
 definition:
-  - uesio/io.tile:
-      uesio.styleTokens:
-        root:
-          - "[min-width:0]"
-          - relative
-        content:
-          - "[min-width:0]"
-      avatar:
-        - uesio/io.image:
-            uesio.variant: uesio/appkit.uesio_logo
-            uesio.id: img-uesio-logo
-            height: 32
-            width: 32
-            file: uesio/core.logowhite
-            signals:
+  - uesio/io.box:
+      uesio.display:
+        - type: collectionContext
+          collection: uesio/studio.app
+      components:
+        - uesio/appkit.tile_app:
+            logoSignals:
               - signal: "route/NAVIGATE"
                 path: "home"
-      content:
-        - uesio/appkit.sidebar_toggle:
-            uesio.styleTokens:
-              root:
-                - absolute
-                - top-0.5
-                - right-0.5
-                - rounded-tl-none
-                - rounded-bl-none
-                - md:hidden
-            icon: top_panel_open
+            title: ${uesio/core.uniquekey}
+            icon: ${uesio/studio.icon}
+            iconcolor: ${uesio/studio.color}
+            tileVariant: uesio/appkit.apptag
+  - uesio/io.box:
+      uesio.display:
+        - type: group
+          conjunction: OR
+          conditions:
+            - type: collectionContext
+              collection: uesio/studio.site
+            - type: collectionContext
+              collection: uesio/studio.bundle
+            - type: collectionContext
+              collection: uesio/studio.team
+            - type: collectionContext
+              collection: uesio/studio.workspace
+      components:
+        - uesio/appkit.tile_app:
+            logoSignals:
+              - signal: "route/NAVIGATE"
+                path: "home"
+            title: ${uesio/studio.app->uesio/core.uniquekey}
+            icon: ${uesio/studio.app->uesio/studio.icon}
+            iconcolor: ${uesio/studio.app->uesio/studio.color}
             signals:
-              - signal: component/CALL
-                component: uesio/io.dynamicpanel
-                componentsignal: TOGGLE
-                targettype: specific
-                componentid: menutoggle
-        - uesio/appkit.sidebar_toggle:
-            uesio.styleTokens:
-              root:
-                - absolute
-                - top-0.5
-                - right-0.5
-                - rounded-tl-none
-                - rounded-bl-none
-                - hidden
-                - md:inline-grid
-                - lg:hidden
-        - uesio/io.box:
-            uesio.display:
-              - type: collectionContext
-                collection: uesio/studio.app
-            components:
-              - uesio/appkit.icontile:
-                  title: ${uesio/core.uniquekey}
-                  icon: ${uesio/studio.icon}
-                  iconcolor: ${uesio/studio.color}
-                  tileVariant: uesio/appkit.apptag
-        - uesio/io.box:
-            uesio.display:
-              - type: group
-                conjunction: OR
-                conditions:
-                  - type: collectionContext
-                    collection: uesio/studio.site
-                  - type: collectionContext
-                    collection: uesio/studio.bundle
-                  - type: collectionContext
-                    collection: uesio/studio.team
-                  - type: collectionContext
-                    collection: uesio/studio.workspace
-            components:
-              - uesio/appkit.icontile:
-                  title: ${uesio/studio.app->uesio/core.uniquekey}
-                  icon: ${uesio/studio.app->uesio/studio.icon}
-                  iconcolor: ${uesio/studio.app->uesio/studio.color}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/${uesio/studio.app->uesio/core.uniquekey}
-                  tileVariant: uesio/appkit.apptag
+              - signal: route/NAVIGATE
+                path: app/${uesio/studio.app->uesio/core.uniquekey}
+            tileVariant: uesio/appkit.apptag

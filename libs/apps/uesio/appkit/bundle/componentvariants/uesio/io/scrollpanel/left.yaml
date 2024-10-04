@@ -1,6 +1,7 @@
 name: left
 label: Left Sidebar
 extends: uesio/io.default
+public: true
 definition:
   uesio.styleTokens:
     root:
