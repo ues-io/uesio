@@ -12,6 +12,7 @@ properties:
     metadata:
       type: COMPONENTVARIANT
       grouping: uesio/io.scrollpanel
+    defaultValue: uesio/appkit.left
 definition:
   - uesio/io.dynamicpanel:
       uesio.id: menutoggle

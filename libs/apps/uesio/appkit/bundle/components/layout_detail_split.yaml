@@ -31,7 +31,8 @@ definition:
                 - lg:grid-rows-[100%]
                 - lg:pl-0
                 - lg:pt-10
-                - p-10
+                - p-4
+                - md:p-10
                 - pt-0
             components:
               - $Slot{left}

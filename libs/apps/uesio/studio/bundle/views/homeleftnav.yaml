@@ -44,7 +44,6 @@ definition:
           value: uesio/studio.standard
   components:
     - uesio/appkit.sidebar:
-        scrollpanelVariant: uesio/studio.left
         uesio.styleTokens:
           inner:
             - grid-rows-3

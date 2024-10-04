@@ -1,0 +1,44 @@
+name: sidebar_apptag_toggle
+category: LAYOUT
+type: DECLARATIVE
+slots:
+properties:
+  - name: icon
+    type: TEXT
+    defaultValue: left_panel_close
+definition:
+  - uesio/appkit.sidebar_toggle:
+      uesio.styleTokens:
+        root:
+          - absolute
+          - top-0.5
+          - right-0.5
+          - rounded-tl-none
+          - rounded-bl-none
+          - md:hidden
+      icon: top_panel_open
+      signals:
+        - signal: component/CALL
+          component: uesio/io.dynamicpanel
+          componentsignal: TOGGLE
+          targettype: specific
+          componentid: menutoggle
+  - uesio/appkit.sidebar_toggle:
+      uesio.styleTokens:
+        root:
+          - absolute
+          - top-0.5
+          - right-0.5
+          - rounded-tl-none
+          - rounded-bl-none
+          - hidden
+          - md:inline-grid
+          - lg:hidden
+title: Side Bar App Tag Toggle
+discoverable: false
+description: A responsive sidebar component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
+variants:

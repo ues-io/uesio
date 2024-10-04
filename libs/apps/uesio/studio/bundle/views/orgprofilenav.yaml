@@ -5,7 +5,6 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/appkit.sidebar:
-        scrollpanelVariant: uesio/studio.left
         header:
           - uesio/studio.appheader:
         content:
