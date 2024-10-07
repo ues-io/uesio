@@ -90,20 +90,16 @@ definition:
                           columns:
                             - label: Select List
                               components:
-                                - uesio/appkit.item:
-                                    uesio.styleTokens:
-                                      avatar:
-                                        - bg-[${uesio/studio.appcolor}]
-                                    title: ${uesio/studio.label}
-                                    subtitle: ${uesio/studio.namespace}
-                                    icon: ${uesio/studio.appicon}
-                                    iconcolor: white
+                                - uesio/studio.item_metadata:
+                              width: 260px
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT

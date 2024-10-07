@@ -272,10 +272,10 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: deleteCollection
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.grid:
-                          uesio.variant: uesio/io.three_columns
+                          uesio.variant: uesio/appkit.three_columns
                           items:
                             - uesio/io.field:
                                 fieldId: uesio/studio.name
@@ -348,7 +348,7 @@ definition:
                                     value: EXTERNAL
                 - uesio/appkit.section_audit_info:
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.section
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
@@ -491,7 +491,7 @@ definition:
                                 name: $Param{workspacename}
                                 app: $Param{app}
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.section
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
@@ -558,7 +558,7 @@ definition:
                       - field: uesio/studio.type
                       - field: uesio/studio.label
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.section
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.section
@@ -615,7 +615,7 @@ definition:
               mode: EDIT
               components:
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.section
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section

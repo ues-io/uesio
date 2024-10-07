@@ -17,6 +17,7 @@ definition:
             uesio.styleTokens:
               root:
                 - col-span-2
+                - "[container-type:inline-size]"
             components:
               - $Slot{main}
         - uesio/io.box:
@@ -32,7 +33,7 @@ definition:
                 - lg:pl-0
                 - lg:pt-10
                 - p-4
-                - md:p-10
+                - sm:p-10
                 - pt-0
             components:
               - $Slot{left}

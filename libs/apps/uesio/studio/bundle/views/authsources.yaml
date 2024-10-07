@@ -84,26 +84,23 @@ definition:
                           columns:
                             - label: Auth Source Name
                               components:
+                                - uesio/studio.item_metadata:
+                              width: 220px
+                            - label: Type & Credentials
+                              components:
                                 - uesio/appkit.item:
-                                    uesio.styleTokens:
-                                      avatar:
-                                        - bg-[${uesio/studio.appcolor}]
-                                    title: ${uesio/studio.label}
-                                    subtitle: ${uesio/studio.namespace}
-                                    icon: ${uesio/studio.appicon}
-                                    iconcolor: white
-                            - field: uesio/studio.type
-                            - field: uesio/studio.credentials
-                              uesio.context:
-                                workspace:
-                                  name: $Param{workspacename}
-                                  app: $Param{app}
+                                    title: "${uesio/studio.type}"
+                                    subtitle: ${uesio/studio.credentials}
+                                    icon: dynamic_feed
+                              width: 200px
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT

@@ -6,4 +6,4 @@ definition:
   uesio.styleTokens:
     root:
       - m-4
-      - md:m-10
+      - sm:m-10

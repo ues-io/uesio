@@ -57,7 +57,9 @@ const getHeaderCell = <C extends TableColumn>(
 	<th
 		key={index}
 		className={classes.headerCell}
-		style={{ width: column?.width }}
+		style={{
+			...(column.width && { minWidth: column.width }),
+		}}
 	>
 		<div className={classes.headerCellInner}>
 			{columnHeaderFunc(column)}
