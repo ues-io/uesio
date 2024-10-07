@@ -61,6 +61,7 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 				props.closed && classes.blockerClosed
 			)}
 			lockScroll
+			style={{ position: "absolute" }}
 			ref={floating.refs.setReference}
 			{...getReferenceProps()}
 		>

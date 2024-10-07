@@ -1,0 +1,19 @@
+name: item_metadata
+category: LAYOUT
+title: Metadata Item
+type: DECLARATIVE
+discoverable: false
+description:
+properties:
+sections:
+  - type: HOME
+  - type: DISPLAY
+definition:
+  - uesio/appkit.item:
+      uesio.styleTokens:
+        avatar:
+          - bg-[${uesio/studio.appcolor}]
+      title: ${uesio/studio.label}
+      subtitle: ${uesio/studio.namespace}
+      icon: ${uesio/studio.appicon}
+      iconcolor: white

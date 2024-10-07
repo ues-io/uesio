@@ -40,6 +40,22 @@ func (bi *BuiltIn) SetModified(mod time.Time) {
 	bi.UpdatedAt = mod.Unix()
 }
 
+func (bi *BuiltIn) SetModifiedBy(user *User) {
+	bi.UpdatedBy = user
+}
+
+func (bi *BuiltIn) SetCreated(mod time.Time) {
+	bi.CreatedAt = mod.Unix()
+}
+
+func (bi *BuiltIn) SetCreatedBy(user *User) {
+	bi.CreatedBy = user
+}
+
+func (bi *BuiltIn) SetOwner(user *User) {
+	bi.Owner = user
+}
+
 func (bi *BuiltIn) GetItemMeta() *ItemMeta {
 	return bi.itemMeta
 }
@@ -100,6 +116,10 @@ type BundleableItem interface {
 	SetLabel(string)
 	GetLabel() string
 	SetModified(time.Time)
+	SetModifiedBy(*User)
+	SetCreated(time.Time)
+	SetCreatedBy(*User)
+	SetOwner(*User)
 	IsPublic() bool
 }
 

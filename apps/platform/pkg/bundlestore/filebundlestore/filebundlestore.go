@@ -91,11 +91,24 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	if err != nil {
 		return exceptions.NewNotFoundException("Metadata item: " + key + " does not exist")
 	}
+	fakeNamespaceUser := &meta.User{
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: b.Namespace,
+		},
+	}
+
 	item.SetModified(*fileMetadata.LastModified())
+	item.SetCreated(*fileMetadata.LastModified())
+
+	item.SetModifiedBy(fakeNamespaceUser)
+	item.SetCreatedBy(fakeNamespaceUser)
+	item.SetOwner(fakeNamespaceUser)
+
 	err = bundlestore.DecodeYAML(item, buf)
 	if err != nil {
 		return err
 	}
+
 	if !b.AllowPrivate && !item.IsPublic() {
 		return exceptions.NewForbiddenException("Metadata item: " + key + " is not public")
 	}

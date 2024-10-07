@@ -6,7 +6,7 @@ definition:
   uesio.styleTokens:
     root:
       - p-4
-      - md:p-10
+      - sm:p-10
       - bg-white
       - border-0
     avatar:
