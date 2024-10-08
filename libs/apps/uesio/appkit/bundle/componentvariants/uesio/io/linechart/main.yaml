@@ -5,11 +5,9 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - lg:h-full
-      - h-72
       - relative
       - p-4
       - pt-2
     chart:
-      - lg:h-full
+      - h-72
       - relative
