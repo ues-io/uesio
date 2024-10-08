@@ -2,11 +2,4 @@ name: scrollsection
 label: Scroll Section
 public: true
 definition:
-  uesio.styleTokens:
-    root:
-      - overflow-auto
-      - p-10
-      - pt-0
-      - lg:grid
-      - lg:grid-rows-2
-      - lg:h-full
+depricated: true
