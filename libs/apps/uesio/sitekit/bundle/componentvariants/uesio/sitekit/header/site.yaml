@@ -1,0 +1,26 @@
+name: site
+label: Site
+definition:
+  uesio.styleTokens:
+    root:
+      - py-6
+    wrapper:
+      - grid
+      - justify-between
+    left:
+      - gap-4
+    right:
+      - gap-8
+      - hidden
+      - md:grid
+    menu:
+      - grid
+      - md:hidden
+      - justify-right
+    menubutton:
+      - text-3xl
+      - text-white
+      - px-2
+      - py-0
+      - leading-none
+public: true
