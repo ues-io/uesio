@@ -80,6 +80,7 @@ definition:
                       root:
                         - mr-12
                         - md:mr-auto
+                        - md:hidden
                     wire: apps
                     placeholder: Search Apps
                     focusOnRender: true
@@ -92,6 +93,18 @@ definition:
                         componentsignal: OPEN
                         targettype: specific
                         componentid: menutoggle
+                - uesio/io.searchbox:
+                    uesio.variant: uesio/studio.appsearch
+                    uesio.styleTokens:
+                      root:
+                        - hidden
+                        - md:block
+                    wire: apps
+                    placeholder: Search Apps
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.description
         content:
           - uesio/io.box:
               uesio.styleTokens:
