@@ -7,4 +7,3 @@ definition:
       - lg:px-20
       - md:px-10
       - px-6
-      - "[container-type:inline-size]"

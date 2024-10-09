@@ -6,6 +6,7 @@ category: CONTENT
 pack: main
 entrypoint: components/avatar/avatar
 discoverable: true
+defaultVariant: uesio/io.default
 defaultDefinition:
   text: $User{initials}
   image: $User{picture}

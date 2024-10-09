@@ -68,11 +68,7 @@ function mergeContextVariants(
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 	const variantName = definition[component.STYLE_VARIANT] as MetadataKey
-	const [namespace] = parseKey(componentType)
-	const variant = context.getComponentVariant(
-		componentType,
-		variantName || (`${namespace}.default` as MetadataKey)
-	)
+	const variant = context.getComponentVariant(componentType, variantName)
 	const variantDefinition = getDefinitionFromVariant(variant, context)
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
@@ -243,7 +239,14 @@ const parseVariantName = (
 		return [key, parts[0] as MetadataKey]
 	}
 	const [keyNamespace] = parseKey(key)
-	return [key, `${keyNamespace}.default` as MetadataKey]
+	const componentTypeDef = getComponentType(key)
+	if (!componentTypeDef || !componentTypeDef.defaultVariant) {
+		// This is bad and should go away at some point. I'm just not sure
+		// how many components are relying on this functionality.
+		return [key, `${keyNamespace}.default` as MetadataKey]
+	}
+
+	return [key, componentTypeDef.defaultVariant]
 }
 
 // This is bad and should eventually go away when we do proper typing

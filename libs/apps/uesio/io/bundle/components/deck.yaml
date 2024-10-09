@@ -13,6 +13,7 @@ slots:
       - type: FIELD_MODE
         modeProperty: mode
   - name: emptyState
+defaultVariant: uesio/io.four_column
 defaultDefinition:
   mode: READ
   uesio.variant: uesio/io.four_column

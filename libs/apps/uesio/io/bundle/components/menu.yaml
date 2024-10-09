@@ -11,6 +11,7 @@ slots:
     label: Trigger
   - name: content
     label: Contents
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
   trigger: []

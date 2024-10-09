@@ -13,6 +13,7 @@ slots:
     onSelectSignals:
       - componentsignal: SELECT_TAB
         id: ${id}
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:

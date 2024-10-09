@@ -38,9 +38,9 @@ jsonpath "$.dependencies.componentvariant[7].namespace" == "uesio/io"
 jsonpath "$.dependencies.componentvariant[7].name" == "default"
 
 # test defaulting of variant for tabs component when not set in YAML
-jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" == "uesio/io.default"
+jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" not exists
 # verify that the default variant is loaded for button without a variant
-jsonpath "$.dependencies.viewdef[0].definition.components[1]['uesio/io.button']['uesio.variant']" == "uesio/io.default"
+jsonpath "$.dependencies.viewdef[0].definition.components[1]['uesio/io.button']['uesio.variant']" not exists
 jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
 # verify that the requested variant is loaded for button with a variant specified
 jsonpath "$.dependencies.viewdef[0].definition.components[2]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
@@ -70,7 +70,7 @@ HTTP 200
 jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 # verify that the default variant is loaded for the panel dialog
-jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['uesio.variant']" == "uesio/io.default"
+jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['uesio.variant']" not exists
 jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['title']" == "My Panel"
 # Verify that a manually specified variant is maintained
 jsonpath "$.dependencies.viewdef[0].definition.panels.panel1.actions[0]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"

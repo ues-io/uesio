@@ -39,6 +39,7 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 		value,
 		record,
 		fieldId,
+		variant,
 	} = props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
@@ -70,6 +71,7 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 			textOptions={{
 				markdownOptions,
 			}}
+			variant={variant}
 			recordId={recordId}
 			collectionId={collectionId}
 			fieldId={fieldId}

@@ -19,6 +19,9 @@ properties:
       grouping: uesio/io.titlebar
 definition:
   - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       components:
         - uesio/io.titlebar:
             uesio.variant: $Prop{titlebarVariant}

@@ -1,3 +1,4 @@
 name: viewheader
 pack: main
 entrypoint: utilities/viewheader/viewheader
+depricated: true
