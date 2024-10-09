@@ -1,4 +1,4 @@
-import { Bundleable } from "../metadata/types"
+import { Bundleable, MetadataKey } from "../metadata/types"
 import { FieldValue } from "../wireexports"
 import type { DefinitionList } from "./definition"
 
@@ -11,6 +11,7 @@ interface BaseComponent extends Bundleable {
 	type: ComponentType
 	slots?: SlotDef[]
 	properties?: ComponentProperty[]
+	defaultVariant?: MetadataKey
 }
 
 export type ComponentProperty = {

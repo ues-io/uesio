@@ -31,6 +31,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 		accept,
 		displayAs,
 		textOptions,
+		variant,
 	} = props
 
 	const userFileId = userFile?.[collection.ID_FIELD]
@@ -91,6 +92,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 		onDelete: onFileDelete,
 		accept,
 		displayAs,
+		variant,
 	}
 
 	switch (displayAs) {

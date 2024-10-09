@@ -5,6 +5,10 @@ slots:
   - name: header
   - name: content
   - name: footer
+  - name: trigger
+    defaultContent:
+      - uesio/appkit.sidebar_toggle:
+          icon: left_panel_open
 properties:
   - name: scrollpanelVariant
     label: Scroll Panel Variant
@@ -13,6 +17,7 @@ properties:
       type: COMPONENTVARIANT
       grouping: uesio/io.scrollpanel
     defaultValue: uesio/appkit.left
+defaultVariant: uesio/appkit.app
 definition:
   - uesio/io.dynamicpanel:
       uesio.id: menutoggle
@@ -21,6 +26,13 @@ definition:
       components:
         - uesio/io.scrollpanel:
             uesio.variant: $Prop{scrollpanelVariant}
+            uesio.styleTokens:
+              root:
+                - $Region{root}
+                - $Region{menuRoot}
+              inner:
+                - $Region{inner}
+                - $Region{menuInner}
             header:
               - $Slot{header}
             content:
@@ -31,15 +43,13 @@ definition:
       uesio.variant: $Prop{scrollpanelVariant}
       uesio.styleTokens:
         root:
-          - lg:flex
-          - md:hidden
+          - $Region{root}
+          - $Region{expandedRoot}
         inner:
-          - md:grid
-          - hidden
           - $Region{inner}
+          - $Region{expandedInner}
         footer:
-          - md:block
-          - hidden
+          - $Region{expandedFooter}
       header:
         - $Slot{header}
       content:
@@ -50,16 +60,14 @@ definition:
       uesio.variant: $Prop{scrollpanelVariant}
       uesio.styleTokens:
         root:
-          - hidden
-          - md:flex
-          - lg:hidden
-          - w-auto
-          - md:w-auto
+          - $Region{root}
+          - $Region{triggerRoot}
         header:
-          - p-3
-      header:
-        - uesio/appkit.sidebar_toggle:
-            icon: left_panel_open
+          - $Region{triggerHeader}
+        inner:
+          - $Region{triggerInner}
+      content:
+        - $Slot{trigger}
 title: Side Bar
 discoverable: true
 description: A responsive sidebar component

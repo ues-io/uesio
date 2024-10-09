@@ -7,6 +7,7 @@ pack: chart
 entrypoint: components/linechart/linechart
 utilities:
   - uesio/io.chart
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
   title: New Line Chart

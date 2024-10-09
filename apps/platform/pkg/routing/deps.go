@@ -826,7 +826,8 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 							foundComponentVariant = true
 						}
 					}
-					if err = addComponentVariantDep(useVariantName, useComponentName, deps, subViews, session); err == nil {
+					err = addComponentVariantDep(useVariantName, useComponentName, deps, subViews, session)
+					if err != nil {
 						// Do nothing
 					}
 				}
@@ -843,24 +844,12 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 		}
 	}
 
-	// If we did not find a specific component variant,
-	// see if this component type has a default variant,
-	// and if so, request it, and populate it in the View YAML
-	// so that we know what variant to use client-side
 	if !foundComponentVariant {
 		defaultVariant := compDef.GetDefaultVariant()
 		if defaultVariant != "" {
-			if err := addComponentVariantDep(defaultVariant, compName, deps, subViews, session); err == nil {
-				compDefinitionMap.Content = append(compDefinitionMap.Content,
-					&yaml.Node{
-						Kind:  yaml.ScalarNode,
-						Value: "uesio.variant",
-					},
-					&yaml.Node{
-						Kind:  yaml.ScalarNode,
-						Value: defaultVariant,
-					},
-				)
+			err := addComponentVariantDep(defaultVariant, compName, deps, subViews, session)
+			if err != nil {
+				// Do nothing
 			}
 		}
 	}

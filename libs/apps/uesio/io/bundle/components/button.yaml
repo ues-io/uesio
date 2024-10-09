@@ -6,6 +6,7 @@ category: INTERACTION
 pack: main
 entrypoint: components/button/button
 discoverable: true
+defaultVariant: uesio/io.default
 defaultDefinition:
   text: New Button
   icon: bolt
