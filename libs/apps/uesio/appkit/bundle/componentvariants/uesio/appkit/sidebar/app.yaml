@@ -2,7 +2,7 @@ name: app
 label: App
 public: true
 definition:
-  scrollPanelVariant: uesio/appkit.left
+  scrollpanelVariant: uesio/appkit.left
   uesio.styleTokens:
     triggerInner:
       - p-3
