@@ -26,7 +26,6 @@ definition:
       - absolute
       - transition-all
       - opacity-100
-      - transform
       - duration-200
       - ease-in-out
     innerClosed:

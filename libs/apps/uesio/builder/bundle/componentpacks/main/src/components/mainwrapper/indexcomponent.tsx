@@ -67,7 +67,7 @@ const IndexComponent: definition.UtilityComponent<IndexComponentProps> = (
 				index: number
 			) => (
 				<IndexSlot
-					key={slot.name + index}
+					key={slot.name + (slot.path || "") + index}
 					slot={slot}
 					indent={true}
 					parentSelected={isSelected}

@@ -10,5 +10,5 @@ definition:
       - max-w-xs
       - translate-x-0
     innerClosed:
-      - translate-x-full
+      - translate-x-1/2
 public: true

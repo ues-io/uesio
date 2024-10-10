@@ -23,7 +23,7 @@ const SidePanel: definition.UtilityComponent<SidePanelUtilityProps> = (
 		props,
 		"uesio/io.sidepanel"
 	)
-	const { context, onClose, children, closeOnOutsideClick } = props
+	const { context, onClose, children, closeOnOutsideClick, closed } = props
 	return (
 		<SidePanelPlain
 			context={context}
