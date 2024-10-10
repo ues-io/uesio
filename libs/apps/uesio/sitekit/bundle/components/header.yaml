@@ -5,12 +5,32 @@ slots:
   - name: logo
   - name: left
   - name: right
+  - name: menu
 defaultVariant: uesio/sitekit.site
 properties:
   - name: menuicon
-    type: Text
+    type: TEXT
     defaultValue: menu
+  - name: menuSignals
+    type: SIGNALS
+    defaultValue:
+      - signal: component/CALL
+        component: uesio/io.dynamicpanel
+        componentsignal: TOGGLE
+        targettype: specific
+        componentid: headermenutoggle
 definition:
+  - uesio/io.dynamicpanel:
+      uesio.id: headermenutoggle
+      uesio.type: uesio/io.sidepanel
+      uesio.variant: uesio/io.right
+      uesio.styleTokens:
+        blocker:
+          - $Region{menupanelblocker}
+        icon:
+          - $Region{menupanelicon}
+      components:
+        - $Slot{menu}
   - uesio/io.box:
       uesio.variant: uesio/sitekit.section
       uesio.styleTokens:
