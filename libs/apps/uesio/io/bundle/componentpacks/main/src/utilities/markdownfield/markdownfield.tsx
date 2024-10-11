@@ -31,16 +31,15 @@ type HeaderProps = {
 }
 
 const generateSlug = (content: ReactNode) => {
-	if (typeof content !== "string") {
-		return ""
-	}
-	const str = content
+	if (!Array.isArray(content)) return
+	if (!content.length) return
+	const contentString = content[0] as string
+	return contentString
 		.replace(/^\s+|\s+$/g, "")
 		.toLowerCase()
 		.replace(/[^a-z0-9 -]/g, "")
 		.replace(/\s+/g, "-")
 		.replace(/-+/g, "-")
-	return str
 }
 
 const Heading: FC<HeaderProps> = ({ level, className, children }) => {
