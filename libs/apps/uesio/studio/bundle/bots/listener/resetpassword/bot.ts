@@ -7,6 +7,11 @@ export default function resetpassword(bot: ListenerBotApi) {
 		return
 	}
 	const email = bot.params.get("email")
+	if (!email) {
+		throw new Error(
+			"You must have an email address on file to reset your password."
+		)
+	}
 	const redirect = "/site/app/uesio/core/changepassword"
 	const username = bot.params.get("username")
 	const code = bot.params.get("code")

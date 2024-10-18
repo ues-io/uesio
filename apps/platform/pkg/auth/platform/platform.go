@@ -116,7 +116,15 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if loginmethod.ForceReset {
-		loginMethod, err := c.ResetPassword(loginRequest, true)
+		connection, err := datasource.GetPlatformConnection(c.session, c.connection)
+		if err != nil {
+			ctlutil.HandleError(w, err)
+			return
+		}
+		loginMethod, err := datasource.WithTransactionResult(connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+			c.connection = connection
+			return c.ResetPassword(loginRequest, true)
+		})
 		if err != nil {
 			ctlutil.HandleError(w, err)
 			return
@@ -152,7 +160,13 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 
 		cognitoConnection := authConnection.(*cognito.Connection)
 
-		return cognitoConnection.DoLogin(payload)
+		user, loginMethod, err := cognitoConnection.DoLogin(payload)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		loginMethod.ForceReset = true
+		return user, loginMethod, nil
 		// END TEMPORARY
 		//return nil, exceptions.NewBadRequestException()("No account found with this login method")
 	}
