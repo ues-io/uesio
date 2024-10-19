@@ -116,12 +116,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if loginmethod.ForceReset {
-		connection, err := datasource.GetPlatformConnection(c.session, c.connection)
-		if err != nil {
-			ctlutil.HandleError(w, err)
-			return
-		}
-		loginMethod, err := datasource.WithTransactionResult(connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+		loginMethod, err := datasource.WithTransactionResult(c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
 			c.connection = connection
 			return c.ResetPassword(loginRequest, true)
 		})

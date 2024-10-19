@@ -7,14 +7,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
-
-	connection, err := datasource.GetPlatformConnection(session, nil)
-	if err != nil {
-		return err
-	}
 
 	if tenantID == "" {
 		return exceptions.NewInvalidParamException("required parameter not provided in session", "tenant id")
@@ -27,18 +23,13 @@ func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 	if !session.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
 		return exceptions.NewForbiddenException("you must be a Studio workspace admin to truncate workspace data")
 	}
-	err = connection.BeginTransaction()
+
+	err := datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
+		return conn.TruncateTenantData(tenantID)
+	})
 	if err != nil {
-		return errors.New("unable to truncate workspace data: could not create a transaction")
-	}
-	err = connection.TruncateTenantData(tenantID)
-	if err != nil {
-		_ = connection.RollbackTransaction()
 		return errors.New("unable to truncate workspace data: " + err.Error())
 	}
-	err = connection.CommitTransaction()
-	if err != nil {
-		return errors.New("unable to truncate workspace data: could not commit transaction")
-	}
+
 	return nil
 }

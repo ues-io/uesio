@@ -13,11 +13,7 @@ func ResetPassword(ctx context.Context, authSourceID string, payload map[string]
 	if err != nil {
 		return nil, err
 	}
-	connection, err := datasource.GetPlatformConnection(session, nil)
-	if err != nil {
-		return nil, err
-	}
-	return datasource.WithTransactionResult(connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+	return datasource.WithTransactionResult(session, nil, func(connection wire.Connection) (*meta.LoginMethod, error) {
 		authconn, err := GetAuthConnection(authSourceID, connection, session)
 		if err != nil {
 			return nil, err
