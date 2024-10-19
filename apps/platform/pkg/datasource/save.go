@@ -98,36 +98,12 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 	hasExistingConnection := options.Connection != nil
 
-	// 3. Get metadata for each datasource and collection
-
 	if !hasExistingConnection {
-		err := connection.BeginTransaction()
-		if err != nil {
-			return err
-		}
+		return WithTransaction(session, connection, func(conn wire.Connection) error {
+			return SaveOps(allOps, metadataResponse, conn, session)
+		})
 	}
-
-	err = SaveOps(allOps, metadataResponse, connection, session)
-	if err != nil {
-		if !hasExistingConnection {
-			err := connection.RollbackTransaction()
-			if err != nil {
-				// We actually don't care about this error.
-				// The error here usually means that the save never went through
-				// in the first place, so we can't roll it back.
-			}
-		}
-		return err
-	}
-
-	if !hasExistingConnection {
-		err := connection.CommitTransaction()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return SaveOps(allOps, metadataResponse, connection, session)
 }
 
 func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *exceptions.SaveException {

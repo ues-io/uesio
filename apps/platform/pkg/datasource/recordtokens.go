@@ -8,44 +8,19 @@ import (
 )
 
 func ResetRecordTokens(collection string, session *sess.Session) error {
-
-	loadOp := &wire.LoadOp{
-		CollectionName: collection,
-		Collection:     &wire.Collection{},
-		Query:          true,
-		BatchSize:      adapt.MAX_SAVE_BATCH_SIZE,
-		Fields: []wire.LoadRequestField{
-			{
-				ID: commonfields.Id,
+	return WithTransaction(session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
+		return resetTokenBatches(&wire.LoadOp{
+			CollectionName: collection,
+			Collection:     &wire.Collection{},
+			Query:          true,
+			BatchSize:      adapt.MAX_SAVE_BATCH_SIZE,
+			Fields: []wire.LoadRequestField{
+				{
+					ID: commonfields.Id,
+				},
 			},
-		},
-	}
-
-	connection, err := GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
-	if err != nil {
-		return err
-	}
-
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = resetTokenBatches(loadOp, GetSiteAdminSession(session))
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	err = connection.CommitTransaction()
-	if err != nil {
-		return err
-	}
-
-	return nil
+		}, GetSiteAdminSession(session))
+	})
 }
 
 func resetTokenBatches(loadOp *wire.LoadOp, session *sess.Session) error {

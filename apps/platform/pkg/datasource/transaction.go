@@ -1,11 +1,16 @@
 package datasource
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func WithTransaction(conn wire.Connection, fn func(conn wire.Connection) error) error {
-	err := conn.BeginTransaction()
+func WithTransaction(session *sess.Session, existingConn wire.Connection, fn func(conn wire.Connection) error) error {
+	conn, err := GetPlatformConnection(session, existingConn)
+	if err != nil {
+		return err
+	}
+	err = conn.BeginTransaction()
 	if err != nil {
 		return err
 	}
@@ -20,9 +25,13 @@ func WithTransaction(conn wire.Connection, fn func(conn wire.Connection) error) 
 	return conn.CommitTransaction()
 }
 
-func WithTransactionResult[T any](conn wire.Connection, fn func(conn wire.Connection) (T, error)) (T, error) {
+func WithTransactionResult[T any](session *sess.Session, existingConn wire.Connection, fn func(conn wire.Connection) (T, error)) (T, error) {
 	var result T
-	err := conn.BeginTransaction()
+	conn, err := GetPlatformConnection(session, existingConn)
+	if err != nil {
+		return result, err
+	}
+	err = conn.BeginTransaction()
 	if err != nil {
 		return result, err
 	}

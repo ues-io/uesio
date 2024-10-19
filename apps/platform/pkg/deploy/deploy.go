@@ -91,30 +91,12 @@ func GenerateToWorkspace(namespace, name string, params map[string]interface{}, 
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {
-
-	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
-	if err != nil {
-		return err
-	}
-
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = DeployWithOptions(body, session, &DeployOptions{
-		Connection: connection,
-		Upsert:     true,
+	return datasource.WithTransaction(session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
+		return DeployWithOptions(body, session, &DeployOptions{
+			Connection: conn,
+			Upsert:     true,
+		})
 	})
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	return connection.CommitTransaction()
 }
 
 func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *DeployOptions) error {

@@ -386,5 +386,6 @@ describe("Uesio Builder Tests", () => {
 
 	after(() => {
 		deleteApp(appName)
+		cy.url().should("contain", `/home`)
 	})
 })

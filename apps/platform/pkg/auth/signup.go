@@ -36,31 +36,10 @@ func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, ses
 		return nil, exceptions.NewForbiddenException("this site does not support self-signup")
 	}
 
-	connection, err := datasource.GetPlatformConnection(session, nil)
-	if err != nil {
-		return nil, err
-	}
+	return datasource.WithTransactionResult(session, nil, func(conn wire.Connection) (*meta.User, error) {
+		return signupWithConnection(signupMethod, payload, conn, session)
+	})
 
-	err = connection.BeginTransaction()
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := signupWithConnection(signupMethod, payload, connection, session)
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return nil, rollbackError
-		}
-		return nil, err
-	}
-
-	err = connection.CommitTransaction()
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
 }
 
 func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) (*meta.User, error) {

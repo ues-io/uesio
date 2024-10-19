@@ -11,32 +11,9 @@ import (
 )
 
 func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
-
-	connection, err := datasource.GetPlatformConnection(session, nil)
-	if err != nil {
-		return err
-	}
-
-	err = connection.BeginTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = CreateLoginWithConnection(signupMethod, payload, connection, session)
-	if err != nil {
-		rollbackError := connection.RollbackTransaction()
-		if rollbackError != nil {
-			return rollbackError
-		}
-		return err
-	}
-
-	err = connection.CommitTransaction()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
+		return CreateLoginWithConnection(signupMethod, payload, conn, session)
+	})
 }
 
 func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) error {
