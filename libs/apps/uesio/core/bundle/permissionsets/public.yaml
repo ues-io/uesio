@@ -22,8 +22,3 @@ files:
   uesio/core.logosmall: true
   uesio/core.splash: true
 collections:
-  uesio/core.bulkjob: true
-  uesio/core.bulkbatch: true
-  uesio/core.featureflagassignment: true
-  uesio/core.user: true
-  uesio/core.organizationuser: true

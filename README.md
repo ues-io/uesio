@@ -4,42 +4,6 @@
 
 Uesio is a **low-code** application development platform.
 
-# Code style
-
-As much as possible, our code style and format is codified with [eslint](https://eslint.org/) and [Prettier](https://prettier.io/). We cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
-
-For Redux, we follow the [Redux Style Guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
-
-For Go **package naming**, we follow this [guideline](https://blog.golang.org/package-names).
-
-# Tech Stack
-
-## Backend
-
--   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
--   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
--   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
-
-## Frontend
-
--   [Node.js](https://www.nodejs.org/). For package management, building process, and development.
--   [TypeScript](https://www.typescriptlang.org/). For strong typing of JavaScript code.
--   [React](https://reactjs.org/). Framework for UI components.
--   [Redux](https://redux.js.org/). State store for the application's frontend data.
--   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
-
-# <a id="redux-architecture"></a> Redux architecture
-
-Read more about [Redux](https://redux.js.org/).
-
-# <a id="monorepo-structure"></a> Monorepo structure
-
-The present monorepo hosts several standalone **applications**, such as the `cli`.
-
-Standalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
-
-The monorepo is managed by a tool called [nx](https://nx.dev/). With `nx`, there is a single `package.json` for the whole monorepo.
-
 # Set up dev environment
 
 ## Required
@@ -463,3 +427,27 @@ Here are the steps to create a new release:
 4. Click **Publish release**
 
 That's it! This will kick off the "Release" Github Action, which will download the corresponding Docker image from AWS ECR and re-publish it to Github Container Registry with the corresponding version tag, as well as the `latest` tag. It will also generate CLI binaries for Linux, Windows, and Mac OS.
+
+# Code style
+
+As much as possible, our code style and format is codified with [eslint](https://eslint.org/) and [Prettier](https://prettier.io/). We cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
+
+For Redux, we follow the [Redux Style Guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
+
+For Go **package naming**, we follow this [guideline](https://blog.golang.org/package-names).
+
+# Tech Stack
+
+## Backend
+
+-   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
+-   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
+-   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
+
+## Frontend
+
+-   [Node.js](https://www.nodejs.org/). For package management, building process, and development.
+-   [TypeScript](https://www.typescriptlang.org/). For strong typing of JavaScript code.
+-   [React](https://reactjs.org/). Framework for UI components.
+-   [Redux](https://redux.js.org/). State store for the application's frontend data.
+-   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
