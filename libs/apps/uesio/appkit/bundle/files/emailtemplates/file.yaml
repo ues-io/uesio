@@ -1,0 +1,3 @@
+name: emailtemplates
+public: true
+path: templates/createlogin.txt

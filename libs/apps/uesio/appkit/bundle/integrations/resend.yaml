@@ -1,0 +1,6 @@
+name: resend
+label: Resend
+public: true
+type: resend
+credentials: resend
+authentication: API_KEY

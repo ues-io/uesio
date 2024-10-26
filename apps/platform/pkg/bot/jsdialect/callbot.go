@@ -1,9 +1,12 @@
 package jsdialect
 
 import (
+	"bytes"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -98,6 +101,58 @@ func (cba *CallBotAPI) CopyFile(sourceKey, sourcePath, destCollectionID, destRec
 
 func (cba *CallBotAPI) CopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string) error {
 	return botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID, cba.Session, cba.connection)
+}
+
+func (cba *CallBotAPI) GetFileContents(sourceKey, sourcePath string) (string, error) {
+	buf, _, err := botGetFileData(sourceKey, sourcePath, cba.Session, cba.connection)
+	if err != nil {
+		return "", err
+	}
+	return string(buf.Bytes()), nil
+}
+
+func (cba *CallBotAPI) GetFileUrl(sourceKey, sourcePath string) string {
+	namespace, name, err := meta.ParseKey(sourceKey)
+	if err != nil {
+		return ""
+	}
+	usePath := ""
+	if sourcePath != "" {
+		usePath = "/" + sourcePath
+	}
+	return "/site/files/" + namespace + "/" + name + usePath
+}
+
+func (cba *CallBotAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
+	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	if err != nil {
+		return "", err
+	}
+	// Create a buffer to store the output
+	var buf bytes.Buffer
+	err = template.Execute(&buf, params)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func (cba *CallBotAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
+	templateString, err := cba.GetFileContents(sourceKey, sourcePath)
+	if err != nil {
+		return "", err
+	}
+	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	if err != nil {
+		return "", err
+	}
+	// Create a buffer to store the output
+	var buf bytes.Buffer
+	err = template.Execute(&buf, params)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
 
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
