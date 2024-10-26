@@ -80,22 +80,7 @@ func getComponentPackStyleURLs(componentPackDeps *preload.MetadataMergeData, wor
 	return packUrls
 }
 
-func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
-	namespace, name, err := meta.ParseKey(key)
-	if err != nil {
-		return ""
-	}
-	user, namepart, err := meta.ParseNamespace(namespace)
-	if err != nil {
-		return ""
-	}
-
-	if workspace != nil {
-		// If we are in a workspace context, use component pack modstamps to load in their resources,
-		// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
-	}
-
+func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMergeData) string {
 	siteBundleVersion := ""
 
 	// Handle requests for system bundles specially,
@@ -104,10 +89,10 @@ func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMerg
 		if file.GetAssetsPath() != "" {
 			// We DO update the static assets version for the whole Docker image, so use that if we have it
 			siteBundleVersion = file.GetAssetsPath() // assets path SHOULD have a leading / already
-		} else if packModstamp != 0 {
+		} else if modstamp != 0 {
 			// If we don't have a Git sha, then we are in local development,
 			// in which case we want to use the system pack modstamp to avoid stale file loads
-			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+			siteBundleVersion = fmt.Sprintf("/%d", modstamp)
 		}
 	} else {
 		// NON-system bundles
@@ -125,14 +110,36 @@ func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMerg
 
 	// If we still don't have a bundle version, for some bizarre reason...
 	if siteBundleVersion == "" {
-		if packModstamp != 0 {
+		if modstamp != 0 {
 			// Prefer modstamp
-			siteBundleVersion = fmt.Sprintf("/%d", packModstamp)
+			siteBundleVersion = fmt.Sprintf("/%d", modstamp)
 		} else if site.Version != "" {
 			// Final fallback --- use site version
 			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
 		}
 	}
+
+	return siteBundleVersion
+
+}
+
+func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
+	namespace, name, err := meta.ParseKey(key)
+	if err != nil {
+		return ""
+	}
+	user, namepart, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return ""
+	}
+
+	if workspace != nil {
+		// If we are in a workspace context, use component pack modstamps to load in their resources,
+		// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
+	}
+
+	siteBundleVersion := getSiteBundleVersion(namespace, packModstamp, site)
 
 	return fmt.Sprintf("/site/componentpacks/%s%s/%s/%s", namespace, siteBundleVersion, name, filePath)
 

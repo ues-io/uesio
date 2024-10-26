@@ -83,14 +83,15 @@ func botCall(botKey string, params map[string]interface{}, session *sess.Session
 	return datasource.CallListenerBot(botNamespace, botName, params, connection, session)
 }
 
-func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (*bytes.Buffer, string, error) {
+
 	file, err := meta.NewFile(sourceKey)
 	if err != nil {
-		return err
+		return nil, "", err
 	}
 
 	if err := bundle.Load(file, nil, session, connection); err != nil {
-		return err
+		return nil, "", err
 	}
 
 	path := sourcePath
@@ -100,6 +101,15 @@ func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFiel
 
 	buf := &bytes.Buffer{}
 	_, err = bundle.GetItemAttachment(buf, file, path, session, connection)
+	if err != nil {
+		return nil, "", err
+	}
+	return buf, path, nil
+}
+
+func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+
+	buf, path, err := botGetFileData(sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return err
 	}

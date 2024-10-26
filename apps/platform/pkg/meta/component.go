@@ -40,7 +40,7 @@ type Component struct {
 	Properties     *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
 	// Definition defines the Component body, for Declarative components
 	Definition     *YAMLDef `yaml:"definition,omitempty" json:"uesio/studio.definition"`
-	DefaultVariant string   `yaml:"defaultVariant" json:"uesio/studio.defaultvariant"`
+	DefaultVariant string   `yaml:"defaultVariant,omitempty" json:"uesio/studio.defaultvariant"`
 
 	// Builder-only Properties
 	Title             string   `yaml:"title,omitempty" json:"uesio/studio.title"`
