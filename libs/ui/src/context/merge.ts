@@ -210,7 +210,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			unit: units[unit],
 			minimumFractionDigits: 1,
 			maximumFractionDigits: 1,
-		} as Intl.NumberFormatOptions).format(bytes / divisor ** unit)
+		}).format(bytes / divisor ** unit)
 	},
 	Currency: (expression, context) => {
 		const value = context.getRecord()?.getFieldValue(expression) as number
