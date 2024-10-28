@@ -148,6 +148,7 @@ const resolveDeclarativeComponentDefinitionTests = [
 									],
 								},
 								path: "",
+								componentType: "me/myapp.testcomponent",
 								readonly: false,
 							},
 						},
