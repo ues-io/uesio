@@ -3,6 +3,7 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: content
+    label: Section Content
 properties:
   - name: innerVariant
     label: Inner Variant

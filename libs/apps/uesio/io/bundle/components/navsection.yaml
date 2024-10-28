@@ -5,6 +5,7 @@ type: DECLARATIVE
 slots:
   - name: content
   - name: actions
+    label: Nav Actions
 description: A section of a navigation panel
 properties:
   - type: TEXT

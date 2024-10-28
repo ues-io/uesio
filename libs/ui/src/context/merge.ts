@@ -359,6 +359,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 				},
 				path: propsFrame?.path || "",
 				readonly: !!componentFrame,
+				componentType: propsFrame?.componentType,
 			},
 		}
 	},

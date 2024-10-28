@@ -471,10 +471,14 @@ const mergeOptionsTestCases = [
 	},
 	{
 		name: "only merge specific types",
-		context: new Context().addPropsFrame({
-			foo: "bar",
-			baz: "qux",
-		}),
+		context: new Context().addPropsFrame(
+			{
+				foo: "bar",
+				baz: "qux",
+			},
+			"",
+			"me/myapp.mycomponent"
+		),
 		input: "$Collection{$Prop{foo}:pluralLabel} $Prop{baz}",
 		expected: "$Collection{bar:pluralLabel} qux",
 		options: {
