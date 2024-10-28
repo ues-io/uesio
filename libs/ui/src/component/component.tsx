@@ -92,10 +92,11 @@ const resolveDeclarativeComponentDefinition = (
 	context: Context,
 	source: Record<string, FieldValue>,
 	destination: DefinitionList,
-	path: string
+	path: string,
+	componentType: string
 ): DefinitionList =>
 	(context
-		.addPropsFrame(source, path)
+		.addPropsFrame(source, path, componentType)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
@@ -165,7 +166,8 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 		context,
 		definition as Record<string, FieldValue>,
 		componentTypeDef.definition,
-		path
+		path,
+		componentType
 	)
 
 	return (

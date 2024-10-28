@@ -31,21 +31,22 @@ const StyleDefaults = Object.freeze({
 	titletext: ["grow"],
 	actionarea: ["text-white"],
 	closebutton: ["text-slate-700", "p-0", "m-0"],
-	selected: [
-		"after:absolute",
-		"after:inset-0",
-		"after:pointer-events-none",
-		"after:outline",
-		"after:outline-8",
-		"after:outline-accent-600/40",
-		"after:-outline-offset-[8px]",
-		"after:z-10",
-		"empty:block",
-	],
-	selectedAlways: ["relative"],
 	arrow: ["fill-accent"],
 	popper: ["bg-accent", "rounded"],
 })
+
+const selectedClasses = [
+	"after:absolute",
+	"after:inset-0",
+	"after:pointer-events-none",
+	"after:outline",
+	"after:outline-8",
+	"after:outline-accent-600/40",
+	"after:-outline-offset-[8px]",
+	"after:z-10",
+	"empty:block",
+	"relative",
+]
 
 const nonComponentPaths = ["wires", "params"]
 
@@ -106,6 +107,8 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
+	const selectedStyle = styles.shortcut("selected", selectedClasses)
+
 	const selectedComponentPath = useSelectedComponentPath(context)
 
 	const prevSelectedChildren = useRef<Element[]>()
@@ -128,17 +131,13 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 	)
 
 	useEffect(() => {
-		const selectedClasses = classes.selected.split(" ")
 		prevSelectedChildren.current?.forEach((child) => {
-			child.classList.remove(...selectedClasses)
+			child.classList.remove(selectedStyle)
 		})
 		prevSelectedChildren.current = selectedChildren
 		if (!selectedChildren) return
 		selectedChildren.forEach((target) => {
-			target.classList.add(...selectedClasses)
-			if (!target.classList.contains("absolute")) {
-				target.classList.add(...StyleDefaults.selectedAlways)
-			}
+			target.classList.add(selectedStyle)
 		})
 	})
 

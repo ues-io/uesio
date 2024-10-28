@@ -1,7 +1,12 @@
 import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { FullPath } from "../../api/path"
-import { getBuildMode, getComponentDef, useDropPath } from "../../api/stateapi"
+import {
+	getBuildMode,
+	getComponentDef,
+	useDragPath,
+	useDropPath,
+} from "../../api/stateapi"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 import { DeclarativeComponentSlotLoaderId } from "../declarativecomponentslotloader/declarativecomponentslotloader"
@@ -30,6 +35,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const viewDefId = context.getViewDefId()
 
 	const dropPath = useDropPath(context)
+	const dragPath = useDragPath(context)
+	const isDragging = dragPath.isSet()
 	const isHovering = dropPath.equals(
 		new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
 	)
@@ -43,15 +50,14 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
-		if (!parentElem) return
+		if (!parentElem || readonly) return
 		parentElem.setAttribute("data-accepts", standardAccepts.join(","))
 		parentElem.setAttribute("data-direction", direction)
 		parentElem.setAttribute(
 			"data-path",
 			component.path.toDataAttrPath(listPath)
 		)
-		parentElem.setAttribute("data-title", label)
-	}, [listPath, listName, label, direction])
+	}, [listPath, listName, label, direction, readonly])
 
 	if (!buildMode) {
 		return (
@@ -70,7 +76,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 				ref={ref}
 				style={{ display: "none" }}
 			/>
-			{size === 0 && (
+			{!readonly && size === 0 && isDragging && (
 				<PlaceHolder
 					label={label}
 					isHovering={isHovering}

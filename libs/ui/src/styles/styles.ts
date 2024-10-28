@@ -217,10 +217,15 @@ function cx(...input: Class[]): string {
 	return twMerge?.(interpolate(input)) || ""
 }
 
+function shortcut(name: string, ...input: Class[]): string {
+	return activeStyles(name + "~(" + interpolate(input) + ")")
+}
+
 export type { StyleProps, ThemeState }
 
 export {
 	cx,
+	shortcut,
 	process,
 	setupStyles,
 	useUtilityStyleTokens,

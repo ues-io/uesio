@@ -170,7 +170,8 @@ describe("resolveDeclarativeComponentDefinition", () => {
 				tc.context || new Context(),
 				tc.inputDefinition,
 				tc.componentDef.definition,
-				""
+				"",
+				"me/myapp.testcomponent"
 			)
 			expect(actual).toEqual(tc.expected)
 		})

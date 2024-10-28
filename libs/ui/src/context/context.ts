@@ -110,6 +110,7 @@ interface ComponentContext {
 }
 
 interface PropsContext {
+	componentType: string
 	data: Record<string, FieldValue>
 	path: string
 }
@@ -696,11 +697,16 @@ class Context {
 			data,
 		})
 
-	addPropsFrame = (data: Record<string, FieldValue>, path: string) =>
+	addPropsFrame = (
+		data: Record<string, FieldValue>,
+		path: string,
+		componentType: string
+	) =>
 		this.#addFrame({
 			type: PROPS,
 			data,
 			path,
+			componentType,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage

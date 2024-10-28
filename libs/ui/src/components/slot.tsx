@@ -10,6 +10,7 @@ type SlotDefinition = {
 	definition?: DefinitionMap
 	readonly?: boolean
 	path: string
+	componentType: string | undefined
 }
 
 const Slot: UC<SlotDefinition> = (props) => {
@@ -29,7 +30,7 @@ const Slot: UC<SlotDefinition> = (props) => {
 			readonly={readonly}
 			path={path}
 			context={context.removeAllComponentFrames(DECLARATIVE_COMPONENT)}
-			componentType={componentType}
+			componentType={props.definition.componentType || componentType}
 		/>
 	)
 }
