@@ -4,35 +4,23 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
-
-	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func registerInternal(key string, size int64) error {
-	conn := cache.GetRedisConn()
-	defer conn.Close()
+type UsageHandler interface {
+	Set(key string, size int64) error
+	ApplyBatch(session *sess.Session) error
+}
 
-	conn.Send("SADD", usage_common.RedisKeysSetName, key)
+var usageHandlerMap = map[string]UsageHandler{}
+var activeHandler = "redis"
 
-	if size != 0 {
-		conn.Send("INCRBY", key, size)
+func RegisterUsageHandler(name string, handler UsageHandler) {
+	usageHandlerMap[name] = handler
+}
 
-	} else {
-		conn.Send("INCR", key)
-	}
-
-	err := conn.Flush()
-	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
-	}
-	_, err = conn.Receive()
-	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
-	}
-
-	return nil
+func getActiveHandler() UsageHandler {
+	return usageHandlerMap[activeHandler]
 }
 
 func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
@@ -50,8 +38,10 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 	currentTime := time.Now()
 	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
-	go registerInternal(key, size)
+	return getActiveHandler().Set(key, size)
 
-	return nil
+}
 
+func ApplyBatch(session *sess.Session) error {
+	return getActiveHandler().ApplyBatch(session)
 }
