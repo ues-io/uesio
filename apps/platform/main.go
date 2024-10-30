@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	googleauth "github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/auth/platform"
@@ -53,7 +52,6 @@ func init() {
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})
 	}
-	auth.RegisterAuthType("cognito", &cognito.Auth{})
 	auth.RegisterAuthType("google", &googleauth.Auth{})
 	auth.RegisterAuthType("platform", &platform.Auth{})
 	auth.RegisterAuthType("saml", &samlauth.Auth{})

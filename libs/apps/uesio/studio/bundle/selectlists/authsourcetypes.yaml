@@ -1,7 +1,5 @@
 name: authsourcetypes
 options:
-  - label: "Cognito"
-    value: "cognito"
   - label: "Google"
     value: "google"
   - label: "SAML"

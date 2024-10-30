@@ -13,7 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -147,23 +146,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	}
 
 	if loginmethod == nil {
-		// TEMPORARY FOR MIGRATION FROM COGNITO
-		authConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		cognitoConnection := authConnection.(*cognito.Connection)
-
-		user, loginMethod, err := cognitoConnection.DoLogin(payload)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		loginMethod.ForceReset = true
-		return user, loginMethod, nil
-		// END TEMPORARY
-		//return nil, exceptions.NewBadRequestException()("No account found with this login method")
+		return nil, nil, exceptions.NewBadRequestException("No account found with this login method")
 	}
 
 	if loginmethod.VerificationCode != "" {
