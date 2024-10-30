@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_redis"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -34,6 +35,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 func init() {
@@ -81,6 +83,9 @@ func init() {
 	bot.RegisterBotDialect("system", &systemdialect.SystemDialect{})
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 	bot.RegisterBotDialect("declarative", &declarativedialect.DeclarativeDialect{})
+
+	// Usage Handlers
+	usage.RegisterUsageHandler("redis", &usage_redis.RedisUsageHandler{})
 
 }
 
