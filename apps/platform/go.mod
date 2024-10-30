@@ -10,7 +10,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.21
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.11.0
-	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.40.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.56.1
 	github.com/aws/smithy-go v1.20.2
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
@@ -22,7 +21,6 @@ require (
 	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/gomodule/redigo v1.9.2
 	github.com/gorilla/mux v1.8.1
