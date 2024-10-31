@@ -27,7 +27,7 @@ func setCacheImpl(cacheImpl cache.Cache[string]) {
 func resetCacheImpl() {
 	// This Redis cache can have a very short expiration, to prevent replay attacks,
 	// but should be long enough to allow for 2FA exchanges initiated by the auth server
-	oauthExchangeCache = cache.NewRedisCache[string]("oauthExchange").WithExpiration(time.Minute * 5)
+	oauthExchangeCache = cache.NewPlatformCache[string]("oauthExchange", time.Minute*5)
 }
 
 type RedirectMetadata struct {

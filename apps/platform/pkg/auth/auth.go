@@ -31,7 +31,7 @@ func init() {
 		store = NewFSSessionStore()
 	} else if storageType == "redis" {
 		store = NewRedisSessionStore()
-	} else if storageType == "" {
+	} else if storageType == "" || storageType == "memory" {
 		store = session.NewInMemStore()
 	} else {
 		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
