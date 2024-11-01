@@ -108,7 +108,6 @@ func init() {
 	needRedisForUsage := usageHandler == "redis"
 
 	if !needRedisForSessions && !needRedisForPlatformCache && !needRedisForUsage {
-		slog.Info("Skipping up Redis Connection: Not Needed")
 		return
 	}
 
@@ -129,8 +128,6 @@ func init() {
 	}
 
 	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
-
-	slog.Info("Setting up Redis Connection: " + redisAddr)
 
 	options := []redis.DialOption{}
 

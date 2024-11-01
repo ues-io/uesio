@@ -10,6 +10,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	bulktypes "github.com/thecloudmasters/uesio/pkg/types/bulk"
 )
 
 func BulkBatch(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +19,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 		return
 	}
-	filejson.RespondJSON(w, r, &bulk.BatchResponse{
+	filejson.RespondJSON(w, r, &bulktypes.BatchResponse{
 		ID: batch.ID,
 	})
 }
