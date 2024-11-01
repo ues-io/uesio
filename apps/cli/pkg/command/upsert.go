@@ -13,8 +13,8 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/siteadmin"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/zip"
-	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/bulk"
 )
 
 type UpsertOptions struct {

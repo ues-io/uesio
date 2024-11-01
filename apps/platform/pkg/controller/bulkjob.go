@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	bulktypes "github.com/thecloudmasters/uesio/pkg/types/bulk"
 )
 
 func BulkJob(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +31,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filejson.RespondJSON(w, r, &bulk.JobResponse{
+	filejson.RespondJSON(w, r, &bulktypes.JobResponse{
 		ID: jobID,
 	})
 

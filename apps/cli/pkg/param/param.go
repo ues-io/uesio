@@ -19,9 +19,9 @@ import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/types/ns"
 	w "github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -89,7 +89,7 @@ func getMetadataList(metadataType, sessid, grouping string) (labels []string, va
 		}
 		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", depNamespace, dep.Version, metadataType, depNamespace, groupingURL)
 
-		metadataList := map[string]datasource.MetadataResponse{}
+		metadataList := map[string]ns.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
 		if err != nil {
 			return nil, nil, err
