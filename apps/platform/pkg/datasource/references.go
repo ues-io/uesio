@@ -90,8 +90,9 @@ func LoadLooper(
 }
 
 type ReferenceOptions struct {
-	AllowMissingItems bool
-	MergeItems        bool
+	AllowMissingItems  bool
+	RemoveMissingItems bool
+	MergeItems         bool
 }
 
 func HandleReferences(
@@ -151,6 +152,17 @@ func HandleReferences(
 
 			// This means we tried to load some references, but they don't exist.
 			if refItem == nil {
+				if options.RemoveMissingItems {
+					// Loop over all matchIndexes and copy the data from the refItem
+					for _, locator := range matchIndexes {
+						concreteItem := locator.Item.(meta.Item)
+						err = concreteItem.SetField(locator.Field.GetFullName(), nil)
+						if err != nil {
+							return err
+						}
+					}
+					return nil
+				}
 				if options.AllowMissingItems {
 					return nil
 				}

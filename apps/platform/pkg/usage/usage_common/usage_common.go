@@ -22,7 +22,11 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 			Collection: "uesio/studio.usage",
 			Wire:       "CoolWireName",
 			Changes:    &usage,
-			Options:    &wire.SaveOptions{Upsert: true},
+			Options: &wire.SaveOptions{
+				Upsert:                  true,
+				IgnoreMissingReferences: true,
+				IgnoreValidationErrors:  true,
+			},
 		},
 	}
 

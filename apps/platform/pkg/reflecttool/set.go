@@ -148,6 +148,7 @@ func setPrimative(to reflect.Value, from reflect.Value) error {
 
 func setFieldReflect(to reflect.Value, from reflect.Value) error {
 	if !from.IsValid() {
+		to.Set(reflect.Zero(to.Type()))
 		return nil
 	}
 

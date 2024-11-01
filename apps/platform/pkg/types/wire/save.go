@@ -344,8 +344,15 @@ func (ci *ChangeItem) GetUpdatedByID() (string, error) {
 }
 
 type SaveOptions struct {
-	Upsert               bool `json:"upsert" bot:"upsert"`
+	// Convert inserts to upserts if the unique key matches an existing record
+	Upsert bool `json:"upsert" bot:"upsert"`
+	// Ignore issues where we can't find old data for an update or delete. This
+	// is usually used to prevent issues in cascade delete where records have already been deleted.
 	IgnoreMissingRecords bool `json:"ignoreMissingRecords"`
+	// Ignore issues where we can't find references, just remove them from the save.
+	IgnoreMissingReferences bool `json:"ignoreMissingReferences"`
+	// If we encounter a validation error, just remove that change and keep going with the other ones.
+	IgnoreValidationErrors bool `json:""`
 }
 
 func GetValueInt(value interface{}) (int64, error) {
