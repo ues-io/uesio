@@ -6,7 +6,11 @@ definition:
   components:
     - uesio/appkit.sidebar:
         header:
-          - uesio/studio.appheader:
+          - uesio/appkit.tile_app:
+              logoSignals:
+                - signal: "route/NAVIGATE"
+                  path: "home"
+              tileVariant: uesio/appkit.apptag
         content:
           - uesio/io.navsection:
               title: Organization Profile
