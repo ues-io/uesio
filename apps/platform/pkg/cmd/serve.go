@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/tls"
+	"github.com/thecloudmasters/uesio/pkg/worker"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -457,6 +458,13 @@ func serve(cmd *cobra.Command, args []string) {
 		}
 		done <- true
 	}()
+
+	if os.Getenv("UESIO_WORKER_MODE") == "combined" {
+		slog.Info("Running worker combined with web server")
+		go func() {
+			worker.ScheduleJobs()
+		}()
+	}
 
 	// wait for graceful shutdown to complete
 	server.WaitShutdown()

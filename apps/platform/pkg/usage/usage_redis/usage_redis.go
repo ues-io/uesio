@@ -3,6 +3,7 @@ package usage_redis
 import (
 	"fmt"
 	"log/slog"
+	"strconv"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/thecloudmasters/uesio/pkg/cache"
@@ -49,7 +50,8 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 	changes := meta.UsageCollection{}
 
 	for i, key := range keys {
-		usageItem := usage_common.GetUsageItem(key, values[i])
+		total, _ := strconv.ParseInt(values[i], 10, 64)
+		usageItem := usage_common.GetUsageItem(key, total)
 		if usageItem == nil {
 			continue
 		}

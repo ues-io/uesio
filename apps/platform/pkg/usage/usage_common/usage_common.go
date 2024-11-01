@@ -3,7 +3,6 @@ package usage_common
 import (
 	"fmt"
 	"log/slog"
-	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -23,7 +22,11 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 			Collection: "uesio/studio.usage",
 			Wire:       "CoolWireName",
 			Changes:    &usage,
-			Options:    &wire.SaveOptions{Upsert: true},
+			Options: &wire.SaveOptions{
+				Upsert:                  true,
+				IgnoreMissingReferences: true,
+				IgnoreValidationErrors:  true,
+			},
 		},
 	}
 
@@ -37,7 +40,7 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 
 }
 
-func GetUsageItem(key, value string) *meta.Usage {
+func GetUsageItem(key string, value int64) *meta.Usage {
 	// Make sure the value was actually there
 	if key == "nil" {
 		return nil
@@ -74,7 +77,6 @@ func GetUsageItem(key, value string) *meta.Usage {
 		},
 	}
 
-	total, _ := strconv.ParseInt(value, 10, 64)
-	usageItem.SetField("uesio/studio.total", total)
+	usageItem.SetField("uesio/studio.total", value)
 	return usageItem
 }

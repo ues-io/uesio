@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_memory"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_redis"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -84,6 +85,7 @@ func init() {
 
 	// Usage Handlers
 	usage.RegisterUsageHandler("redis", &usage_redis.RedisUsageHandler{})
+	usage.RegisterUsageHandler("memory", &usage_memory.MemoryUsageHandler{})
 
 }
 

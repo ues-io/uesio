@@ -2,6 +2,7 @@ package usage
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -13,7 +14,16 @@ type UsageHandler interface {
 }
 
 var usageHandlerMap = map[string]UsageHandler{}
-var activeHandler = "redis"
+var activeHandler string
+
+func init() {
+	usageHandler := os.Getenv("UESIO_USAGE_HANDLER")
+	if usageHandler == "memory" {
+		activeHandler = "memory"
+	} else {
+		activeHandler = "redis"
+	}
+}
 
 func RegisterUsageHandler(name string, handler UsageHandler) {
 	usageHandlerMap[name] = handler

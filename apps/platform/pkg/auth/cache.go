@@ -13,8 +13,8 @@ var userCache cache.Cache[*meta.User]
 var hostCache cache.Cache[*meta.Site]
 
 func init() {
-	userCache = cache.NewRedisCache[*meta.User]("user")
-	hostCache = cache.NewRedisCache[*meta.Site]("host")
+	userCache = cache.NewPlatformCache[*meta.User]("user", 0)
+	hostCache = cache.NewPlatformCache[*meta.Site]("host", 0)
 }
 
 func GetUserCacheKey(userid string, site *meta.Site) string {

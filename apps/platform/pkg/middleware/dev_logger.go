@@ -55,7 +55,7 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 		return true
 	})
 
-	timeStr := r.Time.Format("[15:05:05.000]")
+	timeStr := r.Time.Format("[15:04:05.000]")
 	var siteKey, user string
 	if fields["app"] != nil {
 		app := fields["app"].(string)

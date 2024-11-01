@@ -9,18 +9,18 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 )
 
-type memoryCache[T any] struct {
+type MemoryCache[T any] struct {
 	c *gocache.Cache
 }
 
-func NewMemoryCache[T any](expirationTime, purgeTime time.Duration) Cache[T] {
+func NewMemoryCache[T any](expirationTime, purgeTime time.Duration) *MemoryCache[T] {
 	c := gocache.New(expirationTime, purgeTime)
-	return &memoryCache[T]{
+	return &MemoryCache[T]{
 		c,
 	}
 }
 
-func (mc *memoryCache[T]) Get(key string) (T, error) {
+func (mc *MemoryCache[T]) Get(key string) (T, error) {
 	var result T
 	val, hasVal := mc.c.Get(key)
 	if hasVal {
@@ -29,14 +29,27 @@ func (mc *memoryCache[T]) Get(key string) (T, error) {
 	return result, errors.New("key " + key + " not found")
 }
 
-func (mc *memoryCache[T]) Set(key string, value T) error {
+func (mc *MemoryCache[T]) Set(key string, value T) error {
 	mc.c.Set(key, value, 0) // 0 duration = use default expiration
 	return nil
 }
 
-func (mc *memoryCache[T]) Del(key ...string) error {
+func (mc *MemoryCache[T]) Del(key ...string) error {
 	for _, k := range key {
 		mc.c.Delete(k)
 	}
 	return nil
+}
+
+func (mc *MemoryCache[T]) GetAll() map[string]T {
+	items := mc.c.Items()
+	result := map[string]T{}
+	for key, item := range items {
+		result[key] = item.Object.(T)
+	}
+	return result
+}
+
+func (mc *MemoryCache[T]) DeleteAll() {
+	mc.c.Flush()
 }

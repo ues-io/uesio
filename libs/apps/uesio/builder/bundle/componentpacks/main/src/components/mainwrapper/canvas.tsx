@@ -82,8 +82,19 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onClickCapture = (e: MouseEvent) => {
 		e.stopPropagation()
 		e.preventDefault()
-		// Step 1: Find the closest slot that is accepting the current dragpath.
-		let target = document.elementFromPoint(e.clientX, e.clientY)
+
+		// Check for invisible target -- this is so that cypress testing can
+		// trigger click events on zero width elements
+		const eventTarget = e.target as Element
+		let target: Element | null
+
+		if (eventTarget.clientWidth === 0 || eventTarget.clientHeight === 0) {
+			target = e.target as Element | null
+		} else {
+			// Step 1: Find the closest slot that is accepting the current dragpath.
+			target = document.elementFromPoint(e.clientX, e.clientY)
+		}
+
 		if (!target) return
 		let validPath = ""
 		while (target !== null && target !== e.currentTarget) {
