@@ -381,6 +381,8 @@ describe("Uesio Builder Tests", () => {
 			// Verify that the URL and title has changed
 			cy.url().should("contain", `/edit`)
 			cy.title().should("eq", `Edit: ${viewName}`)
+			// Wait for the schema definitions to load
+			cy.wait(1000)
 		})
 	})
 
