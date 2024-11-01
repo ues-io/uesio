@@ -33,6 +33,9 @@ definition:
             iconcolor: $Prop{iconcolor}
             tileVariant: $Prop{tileVariant}
             signals: $Prop{signals}
+            uesio.display:
+              - type: hasValue
+                value: $Prop{title}
 title: App Tile Component
 discoverable: true
 description: An app tile
