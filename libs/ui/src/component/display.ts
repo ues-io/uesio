@@ -146,11 +146,11 @@ type WireHasNoSearchCondition = {
 	type: "wireHasNoSearchCondition"
 	wire: string
 }
-type wireHasActiveConditions = {
+type WireHasActiveConditions = {
 	type: "wireHasActiveConditions"
 	wire: string
 }
-type wireHasNoActiveConditions = {
+type WireHasNoActiveConditions = {
 	type: "wireHasNoActiveConditions"
 	wire: string
 }
@@ -167,6 +167,12 @@ type HasProfile = {
 	type: "hasProfile"
 	profile: string
 }
+
+type HasNamedPermission = {
+	type: "hasNamedPermission"
+	permission: string
+}
+
 type Conjunction = "AND" | "OR"
 
 type GroupCondition = {
@@ -178,6 +184,7 @@ type GroupCondition = {
 type DisplayCondition =
 	| GroupCondition
 	| HasProfile
+	| HasNamedPermission
 	| WireHasChanges
 	| WireHasNoChanges
 	| HasNoValueCondition
@@ -197,8 +204,8 @@ type DisplayCondition =
 	| WireHasRecords
 	| WireHasSearchCondition
 	| WireHasNoSearchCondition
-	| wireHasActiveConditions
-	| wireHasNoActiveConditions
+	| WireHasActiveConditions
+	| WireHasNoActiveConditions
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
@@ -317,6 +324,13 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	if (type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
+
+	if (type === "hasNamedPermission")
+		return (
+			context
+				.getUser()
+				?.namedPermissions?.includes(condition.permission) || false
+		)
 
 	if (type === "wireHasChanges") {
 		return wireHasChanges(wire as Wire, condition.fields)
