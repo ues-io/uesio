@@ -145,6 +145,9 @@ definition:
                       - uesio/appkit.section_user_primary:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
+                          uesio.display:
+                            - type: hasNamedPermission
+                              permission: uesio/core.user_admin
                           components:
                             - uesio/io.titlebar:
                                 title: Signup Methods
@@ -184,7 +187,7 @@ definition:
                                                         continue: false
                                                         notify: true
                                                         signals:
-                                                          signal: notification/ADD_ERRORS
+                                                          - signal: notification/ADD_ERRORS
                                                     - signal: wire/LOAD
                                                       wires:
                                                         - loginmethods

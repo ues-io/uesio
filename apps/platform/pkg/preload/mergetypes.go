@@ -3,6 +3,8 @@ package preload
 import (
 	"encoding/json"
 	"log/slog"
+	"maps"
+	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -44,6 +46,7 @@ type UserMergeData struct {
 	Username     string                `json:"username"`
 	Picture      *UserPictureMergeData `json:"picture"`
 	Language     string                `json:"language"`
+	NamedPerms   []string              `json:"namedPermissions"`
 }
 
 type SiteMergeData struct {
@@ -113,6 +116,10 @@ func GetUserMergeData(session *sess.Session) *UserMergeData {
 	}
 	if userProfile != nil {
 		userMergeData.ProfileLabel = userProfile.Label
+	}
+	permissions := session.GetContextPermissions()
+	if permissions != nil {
+		userMergeData.NamedPerms = slices.Collect(maps.Keys(permissions.NamedRefs))
 	}
 	if userPicture != nil {
 		userMergeData.Picture = &UserPictureMergeData{
