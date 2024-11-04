@@ -15,6 +15,10 @@ definition:
                   fieldId: uesio/core.username
               - uesio/io.field:
                   fieldId: uesio/core.email
+              - uesio/io.field:
+                  fieldId: uesio/core.initials
+              - uesio/io.field:
+                  fieldId: uesio/core.language
       uesio.variant: uesio/appkit.primarysection
 title: User Primary Section
 discoverable: true

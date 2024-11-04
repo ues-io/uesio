@@ -10,3 +10,4 @@ createLoginBot: uesio/studio.createlogin
 signupBot: uesio/studio.signup
 resetPasswordBot: uesio/studio.resetpassword
 public: true
+label: Username/Password Signup
