@@ -9,3 +9,4 @@ signupBot: uesio/studio.signupgoogle
 autoLogin: true
 enableSelfSignup: true
 public: true
+label: Google Signup
