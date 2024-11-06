@@ -24,6 +24,7 @@ import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeOptions, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
+import { SlotDef } from "../definition/component"
 
 const ERROR = "ERROR",
 	COMPONENT = "COMPONENT",
@@ -113,6 +114,7 @@ interface PropsContext {
 	componentType: string
 	data: Record<string, FieldValue>
 	path: string
+	slots: SlotDef[] | undefined
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -700,13 +702,15 @@ class Context {
 	addPropsFrame = (
 		data: Record<string, FieldValue>,
 		path: string,
-		componentType: string
+		componentType: string,
+		slots: SlotDef[] | undefined
 	) =>
 		this.#addFrame({
 			type: PROPS,
 			data,
 			path,
 			componentType,
+			slots,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage

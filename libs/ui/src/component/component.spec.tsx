@@ -17,6 +17,7 @@ const componentTypeWithoutSlots = {
 	type: "DECLARATIVE",
 	namespace: "uesio/tests",
 	name: "noslots",
+	slots: [],
 	definition: [
 		{
 			"uesio/io.text": {
@@ -171,6 +172,7 @@ describe("resolveDeclarativeComponentDefinition", () => {
 				tc.context || new Context(),
 				tc.inputDefinition,
 				tc.componentDef.definition,
+				tc.componentDef.slots,
 				"",
 				"me/myapp.testcomponent"
 			)

@@ -22,7 +22,11 @@ import {
 	DisplayOperator,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
-import { Component as ComponentDef, Declarative } from "./definition/component"
+import {
+	Component as ComponentDef,
+	Declarative,
+	SlotDef,
+} from "./definition/component"
 import ErrorBoundary from "./utilities/errorboundary"
 import ErrorMessage from "./utilities/errormessage"
 import { SlotComponentId } from "./components/slot"
@@ -43,6 +47,7 @@ export type {
 	DisplayOperator,
 	ItemContext,
 	SlotUtilityProps,
+	SlotDef,
 	ViewComponentDefinition,
 	ViewDefinition,
 }

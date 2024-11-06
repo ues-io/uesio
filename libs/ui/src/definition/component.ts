@@ -1,6 +1,7 @@
 import { Bundleable, MetadataKey } from "../metadata/types"
 import { FieldValue } from "../wireexports"
 import type { DefinitionList } from "./definition"
+import { SignalDefinition } from "./signal"
 
 export const Declarative = "DECLARATIVE"
 export const React = "REACT"
@@ -19,9 +20,36 @@ export type ComponentProperty = {
 	defaultValue?: FieldValue
 }
 
+interface WireContextProvision {
+	type: "WIRE"
+	wireProperty: string
+}
+
+interface RecordContextProvision {
+	type: "RECORD"
+	wireProperty: string
+}
+
+interface FieldModeContextProvision {
+	type: "FIELD_MODE"
+	modeProperty: string
+}
+
+type SlotContextProvision =
+	| WireContextProvision
+	| RecordContextProvision
+	| FieldModeContextProvision
+
+type SlotDirection = "VERTICAL" | "HORIZONTAL"
+
 export type SlotDef = {
 	name: string
+	path?: string
+	providesContexts?: SlotContextProvision[]
 	defaultContent?: DefinitionList
+	label?: string
+	direction?: SlotDirection
+	onSelectSignals?: SignalDefinition[]
 }
 
 export interface DeclarativeComponent extends BaseComponent {

@@ -351,15 +351,30 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Slot: (expression, context) => {
 		const componentFrame = context.getComponentData(DECLARATIVE_COMPONENT)
 		const propsFrame = context.getPropsFrame()
+		if (!propsFrame) {
+			return {}
+		}
+		const allSlotContents = propsFrame.data
+		const slotContents = allSlotContents[expression]
+		const allSlotDefs = propsFrame.slots
+		const slotDef = allSlotDefs?.find((def) => def.name === expression)
+		if (!slotDef) {
+			return {}
+		}
+		let slotContext: Context | undefined = context
+		if (slotDef.providesContexts) {
+			slotContext = undefined
+		}
 		return {
 			["uesio/core.slot"]: {
 				name: expression,
 				definition: {
-					[expression]: propsFrame?.data[expression],
+					[expression]: slotContents,
 				},
-				path: propsFrame?.path || "",
+				path: propsFrame.path || "",
 				readonly: !!componentFrame,
-				componentType: propsFrame?.componentType,
+				componentType: propsFrame.componentType,
+				context: slotContext as unknown as wire.FieldValue,
 			},
 		}
 	},
