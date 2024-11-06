@@ -1,5 +1,5 @@
 import { definition, component, styles } from "@uesio/ui"
-import { SlotDef, setSelectedPath } from "../../api/stateapi"
+import { setSelectedPath } from "../../api/stateapi"
 import IndexComponent from "./indexcomponent"
 import { standardAccepts } from "../../helpers/dragdrop"
 import { usePlaceHolders } from "../../utilities/buildwrapper/buildwrapper"
@@ -39,7 +39,7 @@ const IndexBuildWrapper: definition.UC = (props) => {
 }
 
 type IndexSlotProps = {
-	slot: SlotDef
+	slot: component.SlotDef
 	selectedPath: FullPath
 	parentSelected?: boolean
 	indent?: boolean

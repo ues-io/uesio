@@ -116,6 +116,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
 					context,
 					slots as Record<string, FieldValue>,
 					viewDef.components || [],
+					viewDef.slots,
 					"",
 					"uesio/core.view"
 				),

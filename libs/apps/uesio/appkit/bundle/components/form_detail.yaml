@@ -3,7 +3,17 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: extra_actions
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
+      - type: RECORD
+        wireProperty: wire
   - name: content
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
+      - type: RECORD
+        wireProperty: wire
 properties:
   - name: titlebarVariant
     label: Title Bar Variant

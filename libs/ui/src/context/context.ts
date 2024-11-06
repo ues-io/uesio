@@ -24,6 +24,7 @@ import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeOptions, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
+import { SlotDef } from "../definition/component"
 
 const ERROR = "ERROR",
 	COMPONENT = "COMPONENT",
@@ -113,6 +114,7 @@ interface PropsContext {
 	componentType: string
 	data: Record<string, FieldValue>
 	path: string
+	slots: SlotDef[] | undefined
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -366,10 +368,18 @@ class Context {
 		)
 	}
 
+	removeAllPropsFrames = (): Context =>
+		this.clone(
+			this.stack.filter(
+				(frame): frame is PropsContextFrame =>
+					!isPropsContextFrame(frame)
+			)
+		)
+
 	removeAllComponentFrames = (type: string): Context =>
 		this.clone(
 			this.stack.filter(
-				(frame): frame is RecordContextFrame =>
+				(frame): frame is ComponentContextFrame =>
 					!(
 						isComponentContextFrame(frame) &&
 						frame.componentType === type
@@ -700,13 +710,15 @@ class Context {
 	addPropsFrame = (
 		data: Record<string, FieldValue>,
 		path: string,
-		componentType: string
+		componentType: string,
+		slots: SlotDef[] | undefined
 	) =>
 		this.#addFrame({
 			type: PROPS,
 			data,
 			path,
 			componentType,
+			slots,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
@@ -890,5 +902,4 @@ export type {
 	RecordDataContext,
 	RouteContext,
 	SignalOutputContext,
-	ViewContext,
 }

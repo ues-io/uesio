@@ -31,38 +31,6 @@ const {
 	useState,
 } = api.component
 
-interface WireContextProvision {
-	type: "WIRE"
-	wireProperty: string
-}
-
-interface RecordContextProvision {
-	type: "RECORD"
-	wireProperty: string
-}
-
-interface FieldModeContextProvision {
-	type: "FIELD_MODE"
-	modeProperty: string
-}
-
-type SlotContextProvision =
-	| WireContextProvision
-	| RecordContextProvision
-	| FieldModeContextProvision
-
-type SlotDirection = "VERTICAL" | "HORIZONTAL"
-
-type SlotDef = {
-	name: string
-	path?: string
-	providesContexts?: SlotContextProvision[]
-	defaultContent?: definition.DefinitionList
-	label?: string
-	direction?: SlotDirection
-	onSelectSignals?: signal.SignalDefinition[]
-}
-
 type StyleRegion = {
 	widgets?: string[]
 }
@@ -75,7 +43,7 @@ type ComponentDef = {
 	category: string
 	discoverable: boolean
 	icon?: string
-	slots?: SlotDef[]
+	slots?: component.SlotDef[]
 	properties?: ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
@@ -181,7 +149,7 @@ const useSelectedComponentOrSlotPath = (context: ctx.Context) => {
 const getSelectedSlotBasePath = (
 	selectedPath: FullPath,
 	selectedComponentPath: FullPath,
-	slotDef: SlotDef
+	slotDef: component.SlotDef
 ) => {
 	const parts = parseSlotPath(slotDef.path)
 	let slotPath = selectedComponentPath.clone()
@@ -203,7 +171,7 @@ const getSelectedSlotBasePath = (
 const getSelectedSlotPath = (
 	selectedPath: FullPath,
 	selectedComponentPath: FullPath,
-	slotDef: SlotDef
+	slotDef: component.SlotDef
 ) => {
 	let slotPath = getSelectedSlotBasePath(
 		selectedPath,
@@ -217,7 +185,7 @@ const getSelectedSlotPath = (
 const getSelectedSlotIndex = (
 	selectedPath: FullPath,
 	selectedComponentPath: FullPath,
-	slotDef: SlotDef
+	slotDef: component.SlotDef
 ) => {
 	const parts = parseSlotPath(slotDef.path)
 	let slotPath = selectedComponentPath.clone()
@@ -561,8 +529,10 @@ const getSlotsFromPath = (
 	def: definition.Definition
 ) => (path ? traverseSlotPath(parseSlotPath(path), def) : [def])
 
-const getSlotComponents = (slot: SlotDef, def: definition.Definition) =>
-	getSlotsFromPath(slot.path ? slot.path + "/" + slot.name : slot.name, def)
+const getSlotComponents = (
+	slot: component.SlotDef,
+	def: definition.Definition
+) => getSlotsFromPath(slot.path ? slot.path + "/" + slot.name : slot.name, def)
 
 export {
 	getBuildMode,
@@ -604,4 +574,4 @@ export {
 	walkViewComponents,
 }
 
-export type { ComponentDef, SlotDef }
+export type { ComponentDef }
