@@ -71,7 +71,7 @@ const componentTypeWithSlotsAndContext = {
 			name: "header",
 			providesContexts: [
 				{
-					type: "WIRE",
+					type: "WIRE" as const,
 					wireProperty: "wire",
 				},
 			],
