@@ -1,4 +1,4 @@
-import { Context, ViewContext } from "../context/context"
+import { Context } from "../context/context"
 import { DeclarativeComponent } from "../definition/component"
 import { BaseDefinition } from "../definition/definition"
 import {
@@ -50,6 +50,42 @@ const componentTypeWithSlots = {
 	slots: [{ name: "header" }],
 }
 
+const componentTypeWithSlotsAndContext = {
+	type: "DECLARATIVE",
+	namespace: "uesio/tests",
+	name: "hasslots",
+	definition: [
+		{
+			"uesio/io.box": {
+				components: ["$Slot{header}"],
+			},
+		},
+		{
+			"uesio/io.text": {
+				text: "$Prop{title}",
+			},
+		},
+	],
+	slots: [
+		{
+			name: "header",
+			providesContexts: [
+				{
+					type: "WIRE",
+					wireProperty: "wire",
+				},
+			],
+		},
+	],
+}
+
+const getViewContext = () =>
+	new Context().addViewFrame({
+		params: { foo: "oof", bar: "rab" },
+		view: viewName,
+		viewDef,
+	})
+
 const resolveDeclarativeComponentDefinitionTests = [
 	{
 		name: "no props provided - should not merge empty strings",
@@ -88,11 +124,7 @@ const resolveDeclarativeComponentDefinitionTests = [
 	},
 	{
 		name: "props provided that include merges",
-		context: new Context().addViewFrame({
-			params: { foo: "oof", bar: "rab" },
-			view: viewName,
-			viewDef,
-		} as ViewContext),
+		context: getViewContext(),
 		inputDefinition: {
 			title: "$Param{foo}",
 			subtitle: "$Param{bar}",
@@ -113,11 +145,7 @@ const resolveDeclarativeComponentDefinitionTests = [
 	},
 	{
 		name: "props provided that include merges and slots",
-		context: new Context().addViewFrame({
-			params: { foo: "oof", bar: "rab" },
-			view: viewName,
-			viewDef,
-		} as ViewContext),
+		context: getViewContext(),
 		inputDefinition: {
 			title: "$Param{foo}",
 			header: [
@@ -132,6 +160,57 @@ const resolveDeclarativeComponentDefinitionTests = [
 			],
 		},
 		componentDef: componentTypeWithSlots,
+		expected: [
+			{
+				"uesio/io.box": {
+					components: [
+						{
+							"uesio/core.slot": {
+								name: "header",
+								definition: {
+									header: [
+										{
+											"uesio/io.text": {
+												text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+											},
+										},
+									],
+								},
+								path: "",
+								componentType: "me/myapp.testcomponent",
+								readonly: false,
+								context: expect.objectContaining({
+									stack: getViewContext().stack,
+								}),
+							},
+						},
+					],
+				},
+			},
+			{
+				"uesio/io.text": {
+					text: "$Param{foo}",
+				},
+			},
+		],
+	},
+	{
+		name: "props provided that include merges and slots - with providing context",
+		context: getViewContext(),
+		inputDefinition: {
+			title: "$Param{foo}",
+			header: [
+				{
+					"uesio/io.text": {
+						// This should NOT get merged yet because it's in a slot,
+						// and we should strip slots out of the definition when merging Props,
+						// since these properties will be merged later as part of rendering the Slot contents.
+						text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+					},
+				},
+			],
+		},
+		componentDef: componentTypeWithSlotsAndContext,
 		expected: [
 			{
 				"uesio/io.box": {

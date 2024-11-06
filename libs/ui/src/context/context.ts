@@ -368,10 +368,18 @@ class Context {
 		)
 	}
 
+	removeAllPropsFrames = (): Context =>
+		this.clone(
+			this.stack.filter(
+				(frame): frame is PropsContextFrame =>
+					!isPropsContextFrame(frame)
+			)
+		)
+
 	removeAllComponentFrames = (type: string): Context =>
 		this.clone(
 			this.stack.filter(
-				(frame): frame is RecordContextFrame =>
+				(frame): frame is ComponentContextFrame =>
 					!(
 						isComponentContextFrame(frame) &&
 						frame.componentType === type
@@ -894,5 +902,4 @@ export type {
 	RecordDataContext,
 	RouteContext,
 	SignalOutputContext,
-	ViewContext,
 }

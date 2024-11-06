@@ -361,7 +361,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!slotDef) {
 			return {}
 		}
-		let slotContext: Context | undefined = context
+		let slotContext: Context | undefined = context.removeAllPropsFrames()
 		if (slotDef.providesContexts) {
 			slotContext = undefined
 		}
