@@ -354,7 +354,10 @@ describe("addDefaultPropertyAndSlotValues", () => {
 		test(tc.name, () => {
 			const actual = addDefaultPropertyAndSlotValues(
 				tc.inputDefinition as BaseDefinition,
-				tc.componentDef as DeclarativeComponent
+				tc.componentDef as DeclarativeComponent,
+				"",
+				"",
+				new Context()
 			)
 			expect(actual).toEqual(tc.expected)
 		})

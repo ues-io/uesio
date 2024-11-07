@@ -211,8 +211,8 @@ definition:
                                 components:
                                   - uesio/io.fileattachment:
                                       displayAs: TEXT
-                                      language: $Record{bots:uesio/studio.dialect}
                                       textOptions:
+                                        language: $Record{bots:uesio/studio.dialect}
                                         typeDefinitionFileURIs:
                                           - $StaticFile{/ui/types/server/bots.d.ts}
                                           - /workspace/$Param{app}/$Param{workspacename}/retrieve/types?version=$Record{bots:uesio/core.updatedat}
