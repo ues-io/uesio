@@ -42,6 +42,7 @@ func init() {
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 	mime.AddExtensionType(".md", "text/markdown")
+	mime.AddExtensionType(".txt", "text/plain")
 
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{
