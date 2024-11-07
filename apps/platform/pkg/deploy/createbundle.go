@@ -192,12 +192,11 @@ func CreateBundleFromData(data []byte, bundle *meta.Bundle, connection wire.Conn
 
 	if _, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
-			Data:          bytes.NewReader(data),
-			Path:          bundle.GetVersionString() + ".zip",
-			CollectionID:  "uesio/studio.bundle",
-			RecordID:      bundle.ID,
-			FieldID:       "uesio/studio.contents",
-			ContentLength: int64(len(data)),
+			Data:         bytes.NewReader(data),
+			Path:         bundle.GetVersionString() + ".zip",
+			CollectionID: "uesio/studio.bundle",
+			RecordID:     bundle.ID,
+			FieldID:      "uesio/studio.contents",
 		},
 	}, connection, session, nil); err != nil {
 		return err

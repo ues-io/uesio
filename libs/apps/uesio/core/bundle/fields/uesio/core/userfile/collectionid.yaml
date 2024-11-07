@@ -2,3 +2,4 @@ name: collectionid
 type: "TEXT"
 label: "Collection Id"
 createOnly: true
+required: true

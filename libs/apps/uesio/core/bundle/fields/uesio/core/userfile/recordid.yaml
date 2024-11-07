@@ -2,3 +2,4 @@ name: recordid
 type: "TEXT"
 label: "Record Id"
 createOnly: true
+required: true

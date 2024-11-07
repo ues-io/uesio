@@ -2,3 +2,4 @@ name: filesourceid
 type: "TEXT"
 label: "File Source Id"
 createOnly: true
+required: true

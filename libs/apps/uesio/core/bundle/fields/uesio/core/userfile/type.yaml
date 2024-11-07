@@ -2,3 +2,4 @@ name: type
 type: "TEXT"
 label: "Type"
 createOnly: true
+required: true

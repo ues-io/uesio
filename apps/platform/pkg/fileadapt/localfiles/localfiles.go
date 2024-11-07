@@ -73,7 +73,7 @@ func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
 	return paths, nil
 }
 
-func (c *Connection) Upload(fileData io.Reader, path string) error {
+func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
 
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 
@@ -81,20 +81,20 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 
 	err := os.MkdirAll(directory, 0744)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	outFile, err := os.Create(fullPath)
 	if err != nil {
-		return errors.New("Error Creating File: " + err.Error())
+		return 0, errors.New("Error Creating File: " + err.Error())
 	}
 	defer outFile.Close()
-	_, err = io.Copy(outFile, fileData)
+	size, err := io.Copy(outFile, fileData)
 	if err != nil {
-		return errors.New("Error Writing File: " + err.Error())
+		return 0, errors.New("Error Writing File: " + err.Error())
 	}
 
-	return nil
+	return size, nil
 }
 
 func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
