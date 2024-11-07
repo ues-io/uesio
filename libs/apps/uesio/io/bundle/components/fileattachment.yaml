@@ -75,9 +75,3 @@ sections:
     type: SIGNALS
   - type: DISPLAY
 signals:
-  UPLOAD_FILE:
-    label: Upload File
-    properties: []
-  CANCEL_FILE:
-    label: Cancel File
-    properties: []

@@ -200,6 +200,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
+	case "uesio/core.userfile":
+		botFunction = runUserfileLoadBot
 	case "uesio/core.myintegrationcredentials":
 		botFunction = runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
@@ -233,7 +235,8 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.
 	}
 
 	switch op.CollectionName {
-
+	case "uesio/core.userfile":
+		botFunction = runUserfileSaveBot
 	}
 
 	if meta.IsBundleableCollection(op.CollectionName) {
