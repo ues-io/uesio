@@ -251,7 +251,6 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				Path:            strings.TrimPrefix(filePath, attachableItem.GetBasePath()+"/"),
 				CollectionID:    collection.GetName(),
 				RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
-				ContentLength:   int64(zipFile.UncompressedSize64),
 			})
 		}
 	}

@@ -368,12 +368,6 @@ sections:
   - type: STYLES
   - type: DISPLAY
 signals:
-  UPLOAD_FILE:
-    label: Upload File
-    properties: []
-  CANCEL_FILE:
-    label: Cancel File
-    properties: []
 styleRegions:
   input:
   readonly:

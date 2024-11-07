@@ -236,7 +236,7 @@ func (b *FileBundleStoreConnection) StoreItem(path string, reader io.Reader) err
 
 	fullFilePath := filepath.Join(b.Namespace, b.Version, path)
 
-	err := b.FileConnection.Upload(reader, fullFilePath)
+	_, err := b.FileConnection.Upload(reader, fullFilePath)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}

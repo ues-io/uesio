@@ -4,7 +4,6 @@ import {
 	wire,
 	definition,
 	metadata,
-	signal,
 	collection,
 	styles,
 } from "@uesio/ui"
@@ -70,25 +69,8 @@ type UserFileMetadata = {
 	["uesio/core.recordid"]: string
 	["uesio/core.collectionid"]: string
 	["uesio/core.fieldid"]?: string
+	["uesio/core.data"]?: string
 	[collection.UPDATED_AT_FIELD]: string
-}
-
-const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
-const CANCEL_FILE_EVENT = "component:uesio/io.field:cancel"
-
-const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
-	UPLOAD_FILE: {
-		dispatcher: (state, signal, context, platform, id) => {
-			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
-			return state
-		},
-	},
-	CANCEL_FILE: {
-		dispatcher: (state, signal, context, platform, id) => {
-			api.event.publish(CANCEL_FILE_EVENT, { target: id })
-			return state
-		},
-	},
 }
 
 const StyleDefaults = Object.freeze({
@@ -207,10 +189,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		</FieldWrapper>
 	)
 }
-
-Field.signals = fileTextSignals
-
-export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
 
 export type {
 	ApplyChanges,

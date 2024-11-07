@@ -87,13 +87,13 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	)
 
 	const debouncedSetValue = useMemo(
-		() => debounce(setValue, debounceInterval),
+		() => setValue && debounce(setValue, debounceInterval),
 		[debounceInterval, setValue]
 	)
 
 	useEffect(
 		() => () => {
-			debouncedSetValue.cancel()
+			debouncedSetValue?.cancel()
 		},
 		[debouncedSetValue]
 	)

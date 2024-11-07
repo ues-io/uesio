@@ -16,6 +16,7 @@ interface UserFileUtilityProps {
 	fieldId?: string
 	onUpload?: (result: wire.PlainWireRecord) => Promise<void>
 	onDelete?: (result: platform.BotResponse) => Promise<void>
+	onChange?: (value: string) => void
 	accept?: string
 	textOptions?: TextOptions
 }
@@ -26,6 +27,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 		context,
 		onUpload,
 		onDelete,
+		onChange,
 		mode,
 		id,
 		accept,
@@ -103,6 +105,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 					{...common}
 					userFile={userFile}
 					textOptions={textOptions}
+					onChange={onChange}
 				/>
 			)
 		case "IMAGE":

@@ -28,6 +28,7 @@ definition:
         uesio/core.path:
         uesio/core.recordid:
         uesio/core.collectionid:
+        uesio/core.data:
         uesio/core.mimetype:
         uesio/core.updatedat:
       conditions:
@@ -99,12 +100,11 @@ definition:
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: wireHasNoChanges
+                                          wire: bots
+                                        - type: wireHasNoChanges
+                                          wire: attachments
                                       signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: multiple
-                                          target: bot
                                         - signal: component/CALL
                                           component: uesio/io.item
                                           componentsignal: TOGGLE_MODE
@@ -114,48 +114,53 @@ definition:
                                       uesio.variant: uesio/appkit.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: fieldMode
+                                              mode: EDIT
+                                            - type: wireHasChanges
+                                              wire: bots
+                                            - type: wireHasChanges
+                                              wire: attachments
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - bots
-                                        - signal: component/CALL
-                                          component: uesio/io.fileattachment
-                                          componentsignal: UPLOAD_FILE
-                                          targettype: specific
-                                          componentid: botcontent
+                                            - attachments
                                   - uesio/io.button:
                                       uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
+                                        - type: group
+                                          conjunction: OR
+                                          conditions:
+                                            - type: fieldMode
+                                              mode: EDIT
+                                            - type: wireHasChanges
+                                              wire: bots
+                                            - type: wireHasChanges
+                                              wire: attachments
                                       signals:
                                         - signal: wire/CANCEL
-                                          wires:
-                                            - bots
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: multiple
-                                          target: bot
+                                          wire: bots
+                                        - signal: wire/CANCEL
+                                          wire: attachments
                                         - signal: component/CALL
                                           component: uesio/io.item
                                           componentsignal: SET_READ_MODE
                                           targettype: specific
                                           target: botsItem
-                                        - signal: component/CALL
-                                          component: uesio/io.fileattachment
-                                          componentsignal: CANCEL_FILE
-                                          targettype: specific
-                                          componentid: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.delete}
                                       uesio.display:
                                         - type: fieldMode
                                           mode: READ
+                                        - type: wireHasNoChanges
+                                          wire: bots
+                                        - type: wireHasNoChanges
+                                          wire: attachments
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteBot
@@ -202,27 +207,11 @@ definition:
                             - uesio/io.list:
                                 uesio.id: botAttachmentsList
                                 wire: attachments
-                                mode: READ
+                                mode: EDIT
                                 components:
                                   - uesio/io.fileattachment:
-                                      uesio.id: botcontent
                                       displayAs: TEXT
                                       language: $Record{bots:uesio/studio.dialect}
-                                      onUploadSignals:
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - bots
-                                            - attachments
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: multiple
-                                          target: bot
-                                        - signal: component/CALL
-                                          component: uesio/io.item
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: botsItem
                                       textOptions:
                                         typeDefinitionFileURIs:
                                           - $StaticFile{/ui/types/server/bots.d.ts}
@@ -268,22 +257,17 @@ definition:
                                       - RUNACTION
                                       - ROUTE
                                 components:
-                                  - uesio/io.item:
-                                      uesio.id: botParams
-                                      wire: bots
-                                      mode: READ
-                                      components:
-                                        - uesio/io.titlebar:
-                                            uesio.variant: uesio/io.section
-                                            title: Bot Parameters
-                                        - uesio/io.field:
-                                            uesio.id: paramsField
-                                            uesio.context:
-                                              workspace:
-                                                name: $Param{workspacename}
-                                                app: $Param{app}
-                                            fieldId: uesio/studio.params
-                                            label: " "
+                                  - uesio/io.titlebar:
+                                      uesio.variant: uesio/io.section
+                                      title: Bot Parameters
+                                  - uesio/io.field:
+                                      uesio.id: paramsField
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                      fieldId: uesio/studio.params
+                                      label: " "
                       - uesio/appkit.section_audit_info:
   panels:
     deleteBot:

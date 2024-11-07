@@ -2,3 +2,4 @@ name: path
 type: "TEXT"
 label: "Path"
 createOnly: true
+required: true

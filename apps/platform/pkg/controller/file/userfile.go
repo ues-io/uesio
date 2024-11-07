@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -29,14 +28,6 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 	session := middleware.GetSession(r)
 
 	op := &filesource.FileUploadOp{}
-
-	//Attach file length to the details
-	contentLenHeader := r.Header.Get("Content-Length")
-	contentLen, err := strconv.ParseInt(contentLenHeader, 10, 64)
-	if err != nil {
-		return nil, errors.New("must attach header 'content-length' with file upload")
-	}
-	op.ContentLength = contentLen
 
 	var result *meta.UserFileMetadata
 
