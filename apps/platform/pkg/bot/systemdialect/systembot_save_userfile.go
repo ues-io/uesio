@@ -52,12 +52,17 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 		if err != nil {
 			return err
 		}
+		fieldID, err := change.GetFieldAsString("uesio/core.fieldid")
+		if err != nil {
+			return err
+		}
 		data := fileData[index]
 		uploadOps = append(uploadOps, &filesource.FileUploadOp{
 			Data:         strings.NewReader(data),
 			Path:         path,
 			CollectionID: collectionID,
 			RecordID:     recordID,
+			FieldID:      fieldID,
 		})
 		index = index + 1
 

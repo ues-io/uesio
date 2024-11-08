@@ -107,12 +107,18 @@ const resolveDeclarativeComponentDefinition = (
 
 function addDefaultPropertyAndSlotValues(
 	def: DefinitionMap,
-	componentTypeDef?: component.ComponentDef
+	componentTypeDef: component.ComponentDef,
+	componentType: string,
+	path: string,
+	context: Context
 ) {
-	const propsWithDefaults = componentTypeDef?.properties?.filter(
+	if (!componentTypeDef) {
+		return def
+	}
+	const propsWithDefaults = componentTypeDef.properties?.filter(
 		(prop) => prop.defaultValue !== undefined
 	)
-	const slotsWithDefaults = componentTypeDef?.slots?.filter(
+	const slotsWithDefaults = componentTypeDef.slots?.filter(
 		(prop) => prop.defaultContent !== undefined
 	)
 	const havePropsWithDefaults =
@@ -135,11 +141,23 @@ function addDefaultPropertyAndSlotValues(
 			}
 		})
 	}
+
 	if (haveSlotsWithDefaults) {
+		context = context.addPropsFrame(
+			def as Record<string, FieldValue>,
+			path,
+			componentType,
+			componentTypeDef.slots
+		)
 		slotsWithDefaults.forEach((slot: SlotDef) => {
 			const { defaultContent, name } = slot
 			if (typeof def[name] === "undefined" || def[name] === null) {
-				defaults[name] = defaultContent
+				defaults[name] = context
+					? context.mergeList(
+							defaultContent as Record<string, string>[],
+							propMergeOptions
+						)
+					: defaultContent
 			}
 		})
 	}
@@ -189,7 +207,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 DeclarativeComponent.displayName = "DeclarativeComponent"
 
 const Component: UC<DefinitionMap> = (props) => {
-	const { componentType, context, definition } = props
+	const { componentType, context, definition, path } = props
 	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) {
 		return null
 	}
@@ -212,7 +230,10 @@ const Component: UC<DefinitionMap> = (props) => {
 
 	const mergedDefinition = addDefaultPropertyAndSlotValues(
 		mergeContextVariants(definition, componentType, context) || {},
-		componentTypeDef
+		componentTypeDef,
+		componentType,
+		path,
+		context
 	)
 
 	return (

@@ -282,7 +282,7 @@ const componentTypeWithSlotAndPropertyDefaults = {
 			defaultContent: [
 				{
 					"uesio/io.titlebar": {
-						title: "This is a title: ${uesio/core.uniquekey}",
+						title: "Merge: $Prop{title} This is a title: ${uesio/core.uniquekey}",
 					},
 				},
 			],
@@ -316,7 +316,7 @@ const addDefaultPropertyAndSlotValuesTests = [
 			header: [
 				{
 					"uesio/io.titlebar": {
-						title: "This is a title: ${uesio/core.uniquekey}",
+						title: "Merge:  This is a title: ${uesio/core.uniquekey}",
 					},
 				},
 			],
@@ -347,6 +347,23 @@ const addDefaultPropertyAndSlotValuesTests = [
 			title: "We provided our own title",
 		},
 	},
+	{
+		name: "value provided for props but not slots, for component type with defaults defined and prop merge in slot default",
+		inputDefinition: {
+			title: "We provided our own title",
+		},
+		componentDef: componentTypeWithSlotAndPropertyDefaults,
+		expected: {
+			header: [
+				{
+					"uesio/io.titlebar": {
+						title: "Merge: We provided our own title This is a title: ${uesio/core.uniquekey}",
+					},
+				},
+			],
+			title: "We provided our own title",
+		},
+	},
 ]
 
 describe("addDefaultPropertyAndSlotValues", () => {
@@ -354,7 +371,10 @@ describe("addDefaultPropertyAndSlotValues", () => {
 		test(tc.name, () => {
 			const actual = addDefaultPropertyAndSlotValues(
 				tc.inputDefinition as BaseDefinition,
-				tc.componentDef as DeclarativeComponent
+				tc.componentDef as DeclarativeComponent,
+				"",
+				"",
+				new Context()
 			)
 			expect(actual).toEqual(tc.expected)
 		})
