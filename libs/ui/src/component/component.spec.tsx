@@ -282,7 +282,7 @@ const componentTypeWithSlotAndPropertyDefaults = {
 			defaultContent: [
 				{
 					"uesio/io.titlebar": {
-						title: "This is a title: ${uesio/core.uniquekey}",
+						title: "Merge: $Prop{title} This is a title: ${uesio/core.uniquekey}",
 					},
 				},
 			],
@@ -316,7 +316,7 @@ const addDefaultPropertyAndSlotValuesTests = [
 			header: [
 				{
 					"uesio/io.titlebar": {
-						title: "This is a title: ${uesio/core.uniquekey}",
+						title: "Merge:  This is a title: ${uesio/core.uniquekey}",
 					},
 				},
 			],
@@ -341,6 +341,23 @@ const addDefaultPropertyAndSlotValuesTests = [
 				{
 					"uesio/io.text": {
 						text: "We provided our own header",
+					},
+				},
+			],
+			title: "We provided our own title",
+		},
+	},
+	{
+		name: "value provided for props but not slots, for component type with defaults defined and prop merge in slot default",
+		inputDefinition: {
+			title: "We provided our own title",
+		},
+		componentDef: componentTypeWithSlotAndPropertyDefaults,
+		expected: {
+			header: [
+				{
+					"uesio/io.titlebar": {
+						title: "Merge: We provided our own title This is a title: ${uesio/core.uniquekey}",
 					},
 				},
 			],
