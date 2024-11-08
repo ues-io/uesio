@@ -1,0 +1,5 @@
+name: description_file
+type: FILE
+label: Description File
+file:
+  accept: ANY

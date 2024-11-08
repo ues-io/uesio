@@ -18,11 +18,11 @@ import (
 
 const PLATFORM_FILE_SOURCE = "uesio/core.platform"
 
-func GetFileType(op *FileUploadOp) string {
-	if op.FieldID == "" {
+func GetFileType(fieldID string) string {
+	if fieldID == "" {
 		return "attachment"
 	}
-	return "field:" + op.FieldID
+	return "field:" + fieldID
 }
 
 type FileUploadOp struct {
@@ -55,6 +55,9 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]interface{}) ([]*meta.UserFileMetadata, error) {
 
 	var userFileCollection meta.UserFileMetadataCollection
+	if len(ops) == 0 {
+		return userFileCollection, nil
+	}
 	idMaps := map[string]wire.LocatorMap{}
 	var fieldUpdates []datasource.SaveRequest
 	metadataResponse := &wire.MetadataCache{}
@@ -129,7 +132,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			MimeType:     mime.TypeByExtension(path.Ext(op.Path)),
 			FieldID:      op.FieldID,
 			Path:         op.Path,
-			Type:         GetFileType(op),
+			Type:         GetFileType(op.FieldID),
 			RecordID:     op.RecordID,
 			FileSourceID: PLATFORM_FILE_SOURCE,
 		}
