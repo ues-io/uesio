@@ -20,6 +20,9 @@ function bot(botapi) {
 	// Create the corresponding bot's TS and YAML files
 	let path = `bots/${type}`
 	if (type === "aftersave" || type === "beforesave") {
+		if (!collection) {
+			throw new Error(`collection is required for ${type} bots.`)
+		}
 		path += `/${collection.replace(".", "/")}`
 	}
 	path += `/${name}/bot`

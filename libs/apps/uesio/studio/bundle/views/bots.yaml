@@ -100,4 +100,20 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}
+                                  uesio.conditions:
+                                    - type: fieldValue
+                                      operator: NOT_IN
+                                      field: uesio/studio.type
+                                      values:
+                                        - AFTERSAVE
+                                        - BEFORESAVE
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/workspace/$Param{workspacename}/bots/${uesio/studio.type}/${uesio/studio.namespace}/${uesio/studio.name}?collection=${uesio/studio.collection}
+                                  uesio.conditions:
+                                    - type: fieldValue
+                                      operator: IN
+                                      field: uesio/studio.type
+                                      values:
+                                        - AFTERSAVE
+                                        - BEFORESAVE
                           pagesize: 10

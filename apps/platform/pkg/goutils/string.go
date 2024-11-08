@@ -25,6 +25,11 @@ func StringValue(v interface{}) string {
 	if stringValue, isString := v.(string); isString {
 		return stringValue
 	}
+	if stringSliceValue, isStringSlice := v.([]string); isStringSlice {
+		if len(stringSliceValue) > 0 {
+			return stringSliceValue[0]
+		}
+	}
 	return ""
 }
 

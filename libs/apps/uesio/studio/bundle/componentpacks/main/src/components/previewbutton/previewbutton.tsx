@@ -20,6 +20,7 @@ type PreviewButtonDefinition = {
 	view?: metadata.MetadataKey
 	route?: metadata.MetadataKey
 	label: string
+	icon?: string
 	buildMode: boolean
 	buttonVariant?: metadata.MetadataKey
 	hotkey: string
@@ -202,9 +203,11 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 
 const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { context, definition } = props
 	const {
 		label,
+		icon,
 		view,
 		route,
 		hotkey,
@@ -286,6 +289,7 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 		<>
 			<Button
 				id={api.component.getComponentIdFromProps(props)}
+				icon={icon ? <Icon context={context} icon={icon} /> : undefined}
 				context={context}
 				variant={buttonVariant}
 				label={label}

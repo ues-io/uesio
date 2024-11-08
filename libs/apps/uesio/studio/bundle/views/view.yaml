@@ -61,6 +61,7 @@ definition:
                                   - uesio/studio.previewbutton:
                                       view: $Param{namespace}.${uesio/studio.name}
                                       label: $Label{uesio/io.preview}
+                                      icon: visibility
                                       uesio.id: preview-view
                                       uesio.display:
                                         - type: wireHasNoChanges
@@ -73,6 +74,7 @@ definition:
                                   - uesio/studio.previewbutton:
                                       view: $Param{app}.${uesio/studio.name}
                                       label: $Label{uesio/io.build}
+                                      icon: handyman
                                       uesio.id: build-view
                                       uesio.display:
                                         - type: wireHasNoChanges
