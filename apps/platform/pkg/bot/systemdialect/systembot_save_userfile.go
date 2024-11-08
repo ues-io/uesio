@@ -13,6 +13,11 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 
 	fileData := []string{}
 	err := op.LoopChanges(func(change *wire.ChangeItem) error {
+		if change.IsNew {
+			// It's ok if we have an error here.
+			fieldID, _ := change.GetFieldAsString("uesio/core.fieldid")
+			change.SetField("uesio/core.type", filesource.GetFileType(fieldID))
+		}
 		value, err := change.GetFieldAsString(USER_FILE_DATA_FIELD)
 		if err != nil {
 			// Ignore missing data field
@@ -52,10 +57,8 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 		if err != nil {
 			return err
 		}
-		fieldID, err := change.GetFieldAsString("uesio/core.fieldid")
-		if err != nil {
-			return err
-		}
+		// It's ok if we have an error here.
+		fieldID, _ := change.GetFieldAsString("uesio/core.fieldid")
 		data := fileData[index]
 		uploadOps = append(uploadOps, &filesource.FileUploadOp{
 			Data:         strings.NewReader(data),
