@@ -120,6 +120,20 @@ definition:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
+              left:
+                - uesio/io.tabs:
+                    uesio.variant: uesio/appkit.main
+                    tabs:
+                      - label: Generators
+                        id: generators
+                        components:
+                          - uesio/core.view:
+                              uesio.id: generatorstab
+                              view: uesio/studio.tab_generators
+                              params:
+                                tag: uesio/core.views
+                                app: $Param{app}
+                                workspacename: $Param{workspacename}
   panels:
     newView:
       uesio.type: uesio/io.dialog

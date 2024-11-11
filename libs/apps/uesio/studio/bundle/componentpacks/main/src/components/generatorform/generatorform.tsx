@@ -9,8 +9,10 @@ import {
 	wire,
 } from "@uesio/ui"
 import { useEffect } from "react"
-import { GeneratorForm as GeneratorFormUtility } from "../generatorbutton/generatorbutton"
-import { getParamValues } from "../previewbutton/previewbutton"
+import {
+	GeneratorForm as GeneratorFormUtility,
+	getGenParamValues,
+} from "../generatorbutton/generatorbutton"
 
 type GeneratorFormDefinition = {
 	generator: metadata.MetadataKey
@@ -35,7 +37,7 @@ const run = async (
 		context,
 		namespace,
 		name,
-		getParamValues(params, context, result)
+		getGenParamValues(params, context, result)
 	)
 
 	if (!botResp.success && botResp.error) {

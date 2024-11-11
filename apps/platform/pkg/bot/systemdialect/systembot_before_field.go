@@ -22,7 +22,7 @@ func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 	}
 	workspaceID := wsAccessResult.GetWorkspaceID()
 
-	depMap := MetadataDependencyMap{}
+	depMap := wire.MetadataDependencyMap{}
 
 	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 

@@ -48,7 +48,7 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: ${uesio/studio.label}
                     subtitle: $Param{recordid}
                     actions:
@@ -85,7 +85,7 @@ definition:
                                   - signal: route/NAVIGATE
                                     path: app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     uesio.context:
                       workspace:
                         name: $Param{workspacename}
@@ -98,15 +98,15 @@ definition:
                                 wireId: recordData
                                 listId: recordDataList
                                 recordID: $Param{recordid}
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Record Access Tokens
-                    subtitle: the keys that open all chests.
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.section
                     components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.sub
+                          title: Record Access Tokens
                       - uesio/io.table:
                           uesio.id: recordtokenvalueTable
+                          uesio.variant: uesio/appkit.main
                           wire: recordtokenvalue
                           mode: READ
                           columns:

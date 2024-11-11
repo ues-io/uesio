@@ -1,8 +1,8 @@
-name: view_new
-dialect: JAVASCRIPT
-label: Generate "Create New" View
-description: Create a view for creating new records in a collection.
-type: GENERATOR
+name: views_collection
+dialect: "JAVASCRIPT"
+label: Generate Admin Views
+description: Create list, detail and create new pages for this collection.
+type: "GENERATOR"
 params:
   - name: collection
     prompt: Collection
@@ -18,9 +18,7 @@ params:
       - param: collection
         type: hasValue
     required: true
-  - name: name
-    prompt: View Name (optional)
-    type: METADATANAME
 public: true
+timeout: 30
 tags:
-  - uesio/core.views
+  - uesio/core.collection

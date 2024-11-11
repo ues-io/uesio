@@ -45,11 +45,13 @@ definition:
                 wire: sites
               params:
                 selected: sitecollections
+                itemType: collections
+                itemIcon: list
         content:
           - uesio/io.titlebar:
               uesio.variant: uesio/appkit.main
-              title: Collection
-              subtitle: $Param{collectionname}
+              title: $Param{collectionname}
+              subtitle: Collection
               actions:
                 - uesio/io.group:
                     components:
@@ -65,34 +67,6 @@ definition:
                               path: "app/$Param{app}/site/$Param{sitename}/import/$Param{namespace}/$Param{collectionname}"
                           text: Import Data
                           uesio.variant: uesio/io.secondary
-                      - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
-                          text: Reset Record Access Tokens
-                          signals:
-                            - signal: notification/ADD
-                              id: newversion
-                              text: We are regenerating this collection's access tokens
-                              details: it may take a while, please wait until this notification disappears.
-                              severity: info
-                            - signal: bot/CALL
-                              bot: uesio/studio.resetrecordaccesstokens
-                              params:
-                                collection: $Param{namespace}.$Param{collectionname}
-                                app: $Param{app}
-                                sitename: $Param{sitename}
-                            - signal: notification/REMOVE
-                              id: newversion
-                            - signal: notification/ADD
-                              text: Successfully regenerated this collection's access tokens
-                              duration: 3
-                              severity: success
-                            - signal: context/SET
-                              type: SITE_ADMIN
-                              name: $Param{sitename}
-                              app: $Param{app}
-                            - signal: wire/LOAD
-                              wires:
-                                - collectionData
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
@@ -147,6 +121,44 @@ definition:
                             siteadmin:
                               name: $Param{sitename}
                               app: $Param{app}
+          - uesio/io.box:
+              uesio.variant: uesio/appkit.section
+              components:
+                - uesio/io.titlebar:
+                    title: Access Tokens
+                    uesio.variant: uesio/appkit.sub
+                - uesio/io.titlebar:
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Reset Record Access Tokens
+                                signals:
+                                  - signal: notification/ADD
+                                    id: newversion
+                                    text: We are regenerating this collection's access tokens
+                                    details: it may take a while, please wait until this notification disappears.
+                                    severity: info
+                                  - signal: bot/CALL
+                                    bot: uesio/studio.resetrecordaccesstokens
+                                    params:
+                                      collection: $Param{namespace}.$Param{collectionname}
+                                      app: $Param{app}
+                                      sitename: $Param{sitename}
+                                  - signal: notification/REMOVE
+                                    id: newversion
+                                  - signal: notification/ADD
+                                    text: Successfully regenerated this collection's access tokens
+                                    duration: 3
+                                    severity: success
+                                  - signal: context/SET
+                                    type: SITE_ADMIN
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - collectionData
   panels:
     createRecordDialog:
       uesio.type: uesio/io.dialog
