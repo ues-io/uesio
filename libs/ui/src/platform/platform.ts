@@ -98,11 +98,11 @@ const getMonacoEditorVersion = () =>
 	(window as unknown as UesioWindow).monacoEditorVersion
 
 type BotParams = {
-	[key: string]: PlainFieldValue
+	[key: string]: PlainFieldValue | PlainFieldValue[]
 }
 
 type BotResponse = {
-	params?: BotParams
+	params?: Record<string, PlainFieldValue>
 	success: boolean
 	error?: string
 }

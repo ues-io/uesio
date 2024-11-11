@@ -218,17 +218,7 @@ function collection(bot) {
 		autonumber_leadingzeros: 5,
 	})
 
-	bot.runGenerator("uesio/appkit", "view_list", {
-		collection: fullCollectionName,
-		fields: fieldIds,
-	})
-
-	bot.runGenerator("uesio/appkit", "view_detail", {
-		collection: fullCollectionName,
-		fields: fieldIds,
-	})
-
-	bot.runGenerator("uesio/appkit", "view_new", {
+	bot.runGenerator("uesio/appkit", "views_collection", {
 		collection: fullCollectionName,
 		fields: fieldIds,
 	})

@@ -1,7 +1,9 @@
 import { definition, wire, api, param } from "@uesio/ui"
 import { useRef } from "react"
-import { GeneratorForm } from "../generatorbutton/generatorbutton"
-import { getParamValues } from "../previewbutton/previewbutton"
+import {
+	GeneratorForm,
+	getGenParamValues,
+} from "../generatorbutton/generatorbutton"
 
 type GeneratorStarterDefinition = {
 	starterTemplate: string
@@ -38,7 +40,7 @@ const GeneratorStarter: definition.UC<GeneratorStarterDefinition> = (props) => {
 			params={params}
 			context={context}
 			onUpdate={(field, value, record) => {
-				const paramValues = getParamValues(params, context, record)
+				const paramValues = getGenParamValues(params, context, record)
 				appWire
 					.getFirstRecord()
 					?.update(

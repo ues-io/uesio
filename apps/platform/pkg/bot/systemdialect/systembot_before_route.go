@@ -14,7 +14,7 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		return nil
 	}
 
-	depMap := MetadataDependencyMap{}
+	depMap := wire.MetadataDependencyMap{}
 
 	wsAccessResult := datasource.RequestWorkspaceWriteAccess(request.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {

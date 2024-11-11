@@ -242,6 +242,7 @@ collections:
     edit: false
     delete: true
   uesio/core.signupmethod: true
+  uesio/core.bulkjob: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true
