@@ -1,6 +1,7 @@
 name: view_list
 dialect: JAVASCRIPT
-label: List View
+label: Generate "List" View
+description: Create a view for viewing a list of records in a collection.
 type: GENERATOR
 params:
   - name: collection
@@ -21,3 +22,5 @@ params:
     prompt: View Name (optional)
     type: METADATANAME
 public: true
+tags:
+  - uesio/core.views

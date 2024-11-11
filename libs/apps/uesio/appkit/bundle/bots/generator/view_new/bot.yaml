@@ -1,6 +1,7 @@
 name: view_new
 dialect: JAVASCRIPT
-label: New Record View
+label: Generate "Create New" View
+description: Create a view for creating new records in a collection.
 type: GENERATOR
 params:
   - name: collection
@@ -21,3 +22,5 @@ params:
     prompt: View Name (optional)
     type: METADATANAME
 public: true
+tags:
+  - uesio/core.views
