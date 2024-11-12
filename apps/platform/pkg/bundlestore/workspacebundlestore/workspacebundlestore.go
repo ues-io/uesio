@@ -50,7 +50,7 @@ func getFilteredFields(fieldNames []string) []wire.LoadRequestField {
 	filtered := []string{}
 	// Filter out the user field
 	for _, v := range fieldNames {
-		if v == "uesio/core.owner" || v == "uesio/core.createdby" || v == "uesio/core.updatedby" || v == "uesio/studio.workspace" {
+		if v == commonfields.Owner || v == commonfields.CreatedBy || v == commonfields.UpdatedBy || v == "uesio/studio.workspace" {
 			continue
 		}
 		filtered = append(filtered, v)

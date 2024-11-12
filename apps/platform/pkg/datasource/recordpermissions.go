@@ -36,7 +36,7 @@ func getFieldsForTokens(tokens []*meta.RecordChallengeToken) *FieldsMap {
 			fieldsMap.add(condition.Field)
 		}
 	}
-	fieldsMap.add("uesio/core.owner")
+	fieldsMap.add(commonfields.Owner)
 	return fieldsMap
 }
 

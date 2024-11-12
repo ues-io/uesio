@@ -1,4 +1,4 @@
-import { definition, context } from "@uesio/ui"
+import { definition, context, api } from "@uesio/ui"
 import { UserFileMetadata } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
 import MarkDownField, {
@@ -35,7 +35,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 	const typeDefinitionFileURIs = textOptions?.typeDefinitionFileURIs
 	const theme = textOptions?.theme
 
-	const content = userFile?.["uesio/core.data"]
+	const content = api.file.useUserFile(context, userFile)
 
 	if (displayAs === "MARKDOWN" && mode !== "EDIT") {
 		return (

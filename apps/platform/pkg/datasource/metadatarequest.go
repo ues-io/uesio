@@ -175,6 +175,62 @@ func (mr *MetadataRequest) AddSelectList(selectListName string) {
 	}
 }
 
+func GetMetadataRequestForLoad(op *wire.LoadOp, ops []*wire.LoadOp, session *sess.Session) (*MetadataRequest, error) {
+
+	collectionKey := op.CollectionName
+
+	// Keep a running tally of all requested collections
+	metadataRequest := &MetadataRequest{}
+	if err := metadataRequest.AddCollection(collectionKey); err != nil {
+		return nil, err
+	}
+
+	for _, requestField := range op.Fields {
+
+		if requestField.ViewOnlyMetadata != nil {
+			getMetadataForViewOnlyField(requestField, metadataRequest)
+			continue
+		}
+
+		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
+			return nil, exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID))
+		}
+
+		subFields := getSubFields(requestField.Fields)
+		err := metadataRequest.AddField(collectionKey, requestField.ID, subFields)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if op.Aggregate {
+		for _, requestField := range op.GroupBy {
+			err := metadataRequest.AddField(collectionKey, requestField.ID, nil)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	for _, condition := range op.Conditions {
+		innerErr := getMetadataForConditionLoad(&condition, collectionKey, metadataRequest, op, ops)
+		if innerErr != nil {
+			return nil, innerErr
+		}
+	}
+
+	if len(op.Order) > 0 {
+		for _, orderField := range op.Order {
+			if err := getMetadataForOrderField(collectionKey, orderField.Field, metadataRequest, session); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return metadataRequest, nil
+
+}
+
 func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *wire.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
 
 	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
@@ -193,6 +249,14 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 		if ok {
 			fieldMetadata.ReferenceMetadata = specialRef.ReferenceMetadata
 			referenceMetadata := fieldMetadata.ReferenceMetadata
+
+			// If we only have one field, and it's the id field, skip getting metadata
+			if len(collection[fieldKey]) == 1 {
+				_, ok := collection[fieldKey][commonfields.Id]
+				if ok {
+					continue
+				}
+			}
 
 			// Only add to additional requests if we don't already have that metadata
 			refCollection, _ := metadataResponse.GetCollection(referenceMetadata.GetCollection())
@@ -341,6 +405,12 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 	for collectionKey, collection := range mr.Collections {
 		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
 		if err != nil {
+			switch err.(type) {
+			// Not having access to a collection is not the end of the world.
+			// Just don't get the metadata for it and continue.
+			case *exceptions.ForbiddenException:
+				continue
+			}
 			return err
 		}
 
@@ -370,6 +440,12 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 
 			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
+				switch err.(type) {
+				// Not having access to a field is not the end of the world.
+				// Just don't get the metadata for it and continue.
+				case *exceptions.ForbiddenException:
+					continue
+				}
 				return err
 			}
 		}

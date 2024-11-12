@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -127,7 +128,7 @@ func processSearchCondition(condition wire.LoadRequestCondition, collectionMetad
 
 func isCoreUUIDField(fieldName string) bool {
 	switch fieldName {
-	case "uesio/core.id", "uesio/core.updatedby", "uesio/core.createdby", "uesio/core.owner":
+	case commonfields.Id, commonfields.UpdatedBy, commonfields.CreatedBy, commonfields.Owner:
 		return true
 	}
 	return false

@@ -68,7 +68,7 @@ const MarkdownNavigation: definition.UC<Definition> = (props) => {
 		definition.fieldId || ""
 	) as UserFileMetadata
 	if (!userFile) return null
-	const [value] = api.file.useUserFile(context, userFile)
+	const value = api.file.useUserFile(context, userFile)
 
 	const headingOverview =
 		getHeadingOverview(value, definition.levels || 2) || []

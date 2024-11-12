@@ -7,10 +7,12 @@ const {
 	getMonacoEditorVersion,
 	getStaticAssetsPath,
 	getStaticAssetsHost,
+	getFileText,
 } = platform
 
 export {
 	loadData,
+	getFileText,
 	getMonacoEditorVersion,
 	getStaticAssetsPath,
 	getStaticAssetsHost,
