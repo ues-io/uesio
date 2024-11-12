@@ -23,7 +23,7 @@ import {
 	del,
 	interceptPlatformRedirects,
 } from "./async"
-import { memoizedGetJSON } from "./memoizedAsync"
+import { AsyncResult, memoizedAsync, memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
 import { PlainCollectionMap } from "../bands/collection/types"
@@ -478,6 +478,34 @@ const platform = {
 			userfileid
 		)}${fileVersionParam}`
 	},
+	getFileText: async (uri: string) =>
+		memoizedAsync(
+			async () => {
+				const result = await fetch(uri, {
+					headers: {
+						Accept: "text/plain",
+					},
+				})
+				if (result.status >= 400) {
+					throw new Error(
+						"Failed to load file from URL: " +
+							uri +
+							(result.statusText
+								? ", result: " + result.statusText
+								: "")
+					)
+				}
+				return await result.text()
+			},
+			{
+				cacheKey: `fetch-file-as-text-${uri}`,
+				timeout: 5000,
+				refetch: false,
+			}
+		).then((result: AsyncResult<string>) => {
+			const { data } = result
+			return data
+		}),
 	uploadFile: async (
 		context: Context,
 		request: UploadRequest,

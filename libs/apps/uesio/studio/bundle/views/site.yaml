@@ -5,7 +5,6 @@ definition:
     apps:
       collection: uesio/studio.app
       fields:
-        uesio/core.id:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
@@ -17,11 +16,9 @@ definition:
     sites:
       collection: uesio/studio.site
       fields:
-        uesio/core.id:
         uesio/studio.name:
         uesio/studio.bundle:
           fields:
-            uesio/core.id:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
@@ -32,7 +29,6 @@ definition:
         uesio/studio.app:
           fields:
             uesio/core.uniquekey:
-            uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
             uesio/studio.icon:
@@ -51,7 +47,6 @@ definition:
     users:
       collection: uesio/core.user
       fields:
-        uesio/core.id:
         uesio/core.type:
         uesio/core.firstname:
         uesio/core.lastname:

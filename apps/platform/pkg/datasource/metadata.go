@@ -1,11 +1,10 @@
 package datasource
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -257,6 +256,13 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *wire.Collec
 
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *wire.CollectionMetadata, session *sess.Session, connection wire.Connection) error {
 
+	// Always add metadata for id and unique key
+	idFieldMeta, _ := GetBuiltinField(commonfields.Id, collectionKey)
+	collectionMetadata.SetField(GetFieldMetadata(&idFieldMeta, session))
+
+	uniqueKeyFieldMeta, _ := GetBuiltinField(commonfields.UniqueKey, collectionKey)
+	collectionMetadata.SetField(GetFieldMetadata(&uniqueKeyFieldMeta, session))
+
 	fields := []meta.BundleableItem{}
 	for _, key := range keys {
 		_, err := collectionMetadata.GetField(key)
@@ -281,7 +287,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 		AllowMissingItems: true,
 	}, session, connection)
 	if err != nil {
-		return fmt.Errorf("collection: %s : %v", collectionKey, err)
+		return err
 	}
 
 	for _, item := range fields {
