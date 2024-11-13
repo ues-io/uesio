@@ -1,5 +1,4 @@
 import { Context } from "../context/context"
-import { DeclarativeComponent } from "../definition/component"
 import { BaseDefinition } from "../definition/definition"
 import {
 	addDefaultPropertyAndSlotValues,
@@ -30,6 +29,7 @@ const componentTypeWithoutSlots = {
 			},
 		},
 	],
+	properties: [],
 }
 const componentTypeWithSlots = {
 	type: "DECLARATIVE",
@@ -48,6 +48,7 @@ const componentTypeWithSlots = {
 		},
 	],
 	slots: [{ name: "header" }],
+	properties: [],
 }
 
 const componentTypeWithSlotsAndContext = {
@@ -371,7 +372,8 @@ describe("addDefaultPropertyAndSlotValues", () => {
 		test(tc.name, () => {
 			const actual = addDefaultPropertyAndSlotValues(
 				tc.inputDefinition as BaseDefinition,
-				tc.componentDef as DeclarativeComponent,
+				tc.componentDef.properties,
+				tc.componentDef.slots,
 				"",
 				"",
 				new Context()

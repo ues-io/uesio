@@ -107,18 +107,16 @@ const resolveDeclarativeComponentDefinition = (
 
 function addDefaultPropertyAndSlotValues(
 	def: DefinitionMap,
-	componentTypeDef: component.ComponentDef,
+	properties: ComponentProperty[] | undefined,
+	slots: SlotDef[] | undefined,
 	componentType: string,
 	path: string,
 	context: Context
 ) {
-	if (!componentTypeDef) {
-		return def
-	}
-	const propsWithDefaults = componentTypeDef.properties?.filter(
+	const propsWithDefaults = properties?.filter(
 		(prop) => prop.defaultValue !== undefined
 	)
-	const slotsWithDefaults = componentTypeDef.slots?.filter(
+	const slotsWithDefaults = slots?.filter(
 		(prop) => prop.defaultContent !== undefined
 	)
 	const havePropsWithDefaults =
@@ -147,7 +145,7 @@ function addDefaultPropertyAndSlotValues(
 			def as Record<string, FieldValue>,
 			path,
 			componentType,
-			componentTypeDef.slots
+			slots
 		)
 		slotsWithDefaults.forEach((slot: SlotDef) => {
 			const { defaultContent, name } = slot
@@ -230,7 +228,8 @@ const Component: UC<DefinitionMap> = (props) => {
 
 	const mergedDefinition = addDefaultPropertyAndSlotValues(
 		mergeContextVariants(definition, componentType, context) || {},
-		componentTypeDef,
+		componentTypeDef?.properties,
+		componentTypeDef?.slots,
 		componentType,
 		path,
 		context
