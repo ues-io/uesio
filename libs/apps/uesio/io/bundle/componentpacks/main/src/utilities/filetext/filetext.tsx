@@ -29,9 +29,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 
 	const markdownOptions = textOptions?.markdownOptions
 	const language =
-		textOptions?.language || displayAs === "MARKDOWN"
-			? "markdown"
-			: undefined
+		displayAs === "MARKDOWN" ? "markdown" : textOptions?.language
 	const typeDefinitionFileURIs = textOptions?.typeDefinitionFileURIs
 	const theme = textOptions?.theme
 
