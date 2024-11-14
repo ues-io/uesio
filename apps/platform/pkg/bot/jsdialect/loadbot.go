@@ -141,7 +141,7 @@ func (lb *LoadBotAPI) AddRecord(record interface{}) {
 	case map[string]interface{}:
 		item := lb.loadOp.Collection.NewItem()
 		for key, typedField := range typedRecord {
-			item.SetField(key, typedField)
+			item.SetField(meta.GetFullyQualifiedKey(key, lb.bot.Namespace), typedField)
 		}
 		// Make sure that the Item has a valid for its Id field. If not, generate a fake id.
 		if val, err := item.GetField(commonfields.Id); err == nil || val == nil || val == "" {

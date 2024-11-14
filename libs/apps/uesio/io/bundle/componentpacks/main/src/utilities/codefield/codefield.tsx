@@ -58,6 +58,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		props,
 		"uesio/io.codefield"
 	)
+	const mergedLanguage = context.mergeString(language).toLowerCase()
 
 	const [loadedModels, setLoadedModels] = useState(
 		{} as Record<string, string>
@@ -120,7 +121,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 				if (!model) {
 					monaco.editor.createModel(
 						modelContents,
-						language,
+						mergedLanguage,
 						monacoUri
 					)
 				} else {
@@ -149,7 +150,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 
 	const loadingNode = (
 		<div className={classes.loading}>
-			Loading language models for {language}...
+			Loading language models for {mergedLanguage}...
 		</div>
 	)
 
@@ -185,7 +186,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					...options,
 				}}
 				theme={theme}
-				language={language}
+				language={mergedLanguage}
 				onChange={debouncedSetValue}
 				beforeMount={handleEditorWillMount}
 				onMount={handleEditorDidMount}
