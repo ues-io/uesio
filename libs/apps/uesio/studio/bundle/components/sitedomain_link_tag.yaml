@@ -9,7 +9,7 @@ definition:
       uesio.styleTokens:
         root:
           - group/domain
-          - w-min
+          - w-max
       signals:
         - signal: "route/REDIRECT"
           path: "https://${uesio/studio.domain}"

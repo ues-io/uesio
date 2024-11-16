@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { definition } from "@uesio/ui"
+import { definition, metadata } from "@uesio/ui"
 
 import ListMenu from "../listmenu/listmenu"
 import IconButton from "../iconbutton/iconbutton"
@@ -8,6 +8,7 @@ interface MenuButtonUtilityProps<I> {
 	itemRenderer: (item: I) => ReactNode
 	onSelect: (item: I) => void
 	getItemKey: (item: I) => string
+	buttonVariant?: metadata.MetadataKey
 	icon?: string
 	fill?: boolean
 	items: I[]
@@ -16,8 +17,17 @@ interface MenuButtonUtilityProps<I> {
 const MenuButton: definition.UtilityComponent<
 	MenuButtonUtilityProps<unknown>
 > = (props) => {
-	const { context, icon, fill, items, itemRenderer, onSelect, getItemKey } =
-		props
+	const {
+		context,
+		icon,
+		fill,
+		items,
+		itemRenderer,
+		onSelect,
+		getItemKey,
+		className,
+		buttonVariant,
+	} = props
 
 	return (
 		<ListMenu
@@ -28,10 +38,11 @@ const MenuButton: definition.UtilityComponent<
 			getItemKey={getItemKey}
 		>
 			<IconButton
-				className={props.className}
+				className={className}
 				context={context}
 				icon={icon}
 				fill={fill}
+				variant={buttonVariant}
 			/>
 		</ListMenu>
 	)
