@@ -711,7 +711,7 @@ class Context {
 		data: Record<string, FieldValue>,
 		path: string,
 		componentType: string,
-		slots: SlotDef[] | undefined
+		slots?: SlotDef[]
 	) =>
 		this.#addFrame({
 			type: PROPS,
