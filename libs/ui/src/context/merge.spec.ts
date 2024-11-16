@@ -1,3 +1,4 @@
+import { FieldValue } from "../bands/wirerecord/types"
 import { Context } from "./context"
 import {
 	InvalidComponentOutputMsg,
@@ -8,9 +9,9 @@ import {
 type MergeWithContextTestCase = {
 	name: string
 	context: Context
-	expected: string | undefined
+	expected?: FieldValue
 	input: string
-	expectError: string | undefined
+	expectError?: string
 	options?: MergeOptions
 }
 
@@ -38,7 +39,7 @@ const signalOutputContextString = new Context().addSignalOutputFrame(
 	"myString"
 )
 
-const signalOutputMergeTestCases = [
+const signalOutputMergeTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "happy path - colon delimiter",
 		context: signalOutputContextHappyPath,
@@ -105,7 +106,7 @@ const signalOutputMergeTestCases = [
 		input: "$SignalOutput{myStep:zero}",
 		expected: 0,
 	},
-] as MergeWithContextTestCase[]
+]
 
 const componentOutputContextHappyPath = new Context().addComponentFrame(
 	"uesio/io.barchart",
@@ -114,7 +115,7 @@ const componentOutputContextHappyPath = new Context().addComponentFrame(
 	}
 )
 
-const componentOutputMergeTestCases = [
+const componentOutputMergeTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "happy path - colon delimiter",
 		context: componentOutputContextHappyPath,
@@ -139,9 +140,9 @@ const componentOutputMergeTestCases = [
 		input: "$ComponentOutput{[someComponent][foo]}",
 		expectError: `Could not find component output data for component: someComponent`,
 	},
-] as MergeWithContextTestCase[]
+]
 
-const mergeStringTestCases = [
+const mergeStringTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "happy path - value is a string",
 		context: new Context().addRecordDataFrame({
@@ -242,9 +243,9 @@ const mergeStringTestCases = [
 		input: "${foo}",
 		expected: JSON.stringify(["bar", "baz"]),
 	},
-] as MergeWithContextTestCase[]
+]
 
-const mergeBooleanTestCases = [
+const mergeBooleanTestCases: MergeBooleanTestCase[] = [
 	{
 		name: "happy path - merge result is a Boolean true",
 		context: new Context().addRecordDataFrame({
@@ -318,9 +319,9 @@ const mergeBooleanTestCases = [
 		defaultValue: true,
 		expected: true,
 	},
-] as MergeBooleanTestCase[]
+]
 
-const mergeTestCases = [
+const mergeTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "value is a string",
 		context: new Context().addRecordDataFrame({
@@ -455,9 +456,9 @@ const mergeTestCases = [
 		input: "${foo} || ${bar} => ${foo}",
 		expected: "true || false => true",
 	},
-] as MergeWithContextTestCase[]
+]
 
-const mergeOptionsTestCases = [
+const mergeOptionsTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "only merge specific types",
 		context: new Context().addSignalOutputFrame("step1", {
@@ -467,7 +468,7 @@ const mergeOptionsTestCases = [
 		expected: "$Collection{bar:pluralLabel}",
 		options: {
 			types: ["SignalOutput"],
-		} as MergeOptions,
+		},
 	},
 	{
 		name: "only merge specific types",
@@ -483,11 +484,11 @@ const mergeOptionsTestCases = [
 		expected: "$Collection{bar:pluralLabel} qux",
 		options: {
 			types: ["Prop"],
-		} as MergeOptions,
+		},
 	},
-] as MergeWithContextTestCase[]
+]
 
-const mergeTextTestCases = [
+const mergeTextTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "simple text merge",
 		context: new Context(),
@@ -500,7 +501,40 @@ const mergeTextTestCases = [
 		input: "$Text{$SignalOutput{[ask][data]}}",
 		expected: "$SignalOutput{[ask][data]}",
 	},
-] as MergeWithContextTestCase[]
+]
+
+const mergeFormulaTestCases: MergeWithContextTestCase[] = [
+	{
+		name: "simple sanity merge",
+		context: new Context(),
+		input: "$Formula{1 + 1}",
+		expected: 2,
+	},
+	{
+		name: "multiple formulas to string",
+		context: new Context(),
+		input: "$Formula{1 + 1} $Formula{2 * 2}",
+		expected: "2 4",
+	},
+	{
+		name: "get field value",
+		context: new Context().addRecordDataFrame({
+			foo: 4,
+			bar: 8,
+		}),
+		input: '$Formula{getField("foo") + 1}',
+		expected: 5,
+	},
+	{
+		name: "get field value multi",
+		context: new Context().addRecordDataFrame({
+			foo: 4,
+			bar: 8,
+		}),
+		input: '$Formula{getField("foo") + 1} $Formula{getField("bar") / 2} hello',
+		expected: "5 4 hello",
+	},
+]
 
 describe("merge", () => {
 	describe("$SignalOutput context", () => {
@@ -590,6 +624,16 @@ describe("merge", () => {
 
 	describe("merge options", () => {
 		mergeOptionsTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				expect(tc.context.merge(tc.input, tc.options)).toEqual(
+					tc.expected
+				)
+			})
+		})
+	})
+
+	describe("mergeFormula", () => {
+		mergeFormulaTestCases.forEach((tc) => {
 			test(tc.name, () => {
 				expect(tc.context.merge(tc.input, tc.options)).toEqual(
 					tc.expected
