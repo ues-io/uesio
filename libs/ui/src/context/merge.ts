@@ -22,6 +22,7 @@ import {
 } from "./partsparse"
 import { getThemeValue } from "../styles/styles"
 import { DECLARATIVE_COMPONENT } from "../component/component"
+import { Parser } from "expr-eval"
 
 type MergeType =
 	| "Error"
@@ -58,6 +59,7 @@ type MergeType =
 	| "ConditionValue"
 	| "FieldMode"
 	| "FeatureFlag"
+	| "Formula"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -97,6 +99,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 			total += (record.getFieldValue(expression) as number) || 0
 		})
 		return total
+	},
+	Formula: (fullExpression, context) => {
+		const parser = new Parser()
+		parser.functions.getField = (field: string) =>
+			context.getRecord()?.getFieldValue(field)
+		return parser.evaluate(fullExpression, {})
 	},
 	Param: (expression, context) => context.getParam(expression) ?? "",
 	ConditionValue: (fullExpression, context) => {
