@@ -1,8 +1,5 @@
 import { definition, context, wire, styles } from "@uesio/ui"
-import {
-	MarkdownFieldOptions,
-	UserFileMetadata,
-} from "../../components/field/field"
+import { UserFileMetadata } from "../../components/field/field"
 import UserFile from "../userfile/userfile"
 
 interface FileUtilityProps {
@@ -14,7 +11,6 @@ interface FileUtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	displayAs?: string
-	markdownOptions?: MarkdownFieldOptions
 }
 
 const StyleDefaults = Object.freeze({
@@ -30,17 +26,8 @@ const StyleDefaults = Object.freeze({
 })
 
 const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
-	const {
-		displayAs,
-		context,
-		markdownOptions,
-		mode,
-		id,
-		value,
-		record,
-		fieldId,
-		variant,
-	} = props
+	const { displayAs, context, mode, id, value, record, fieldId, variant } =
+		props
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -68,9 +55,6 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 				record.set(fieldId, "")
 			}}
 			mode={mode}
-			textOptions={{
-				markdownOptions,
-			}}
 			variant={variant}
 			recordId={recordId}
 			collectionId={collectionId}

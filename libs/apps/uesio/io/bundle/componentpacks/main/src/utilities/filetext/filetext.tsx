@@ -1,9 +1,7 @@
 import { definition, context, api } from "@uesio/ui"
 import { UserFileMetadata } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
-import MarkDownField, {
-	MarkdownFieldOptions,
-} from "../markdownfield/markdownfield"
+import MarkDownField from "../markdownfield/markdownfield"
 
 type TextOptions = {
 	// The language to use for syntax highlighting
@@ -12,8 +10,6 @@ type TextOptions = {
 	theme?: string
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
-	// Markdown options
-	markdownOptions?: MarkdownFieldOptions
 }
 
 interface FileTextProps {
@@ -27,7 +23,6 @@ interface FileTextProps {
 const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 	const { context, userFile, textOptions, mode, displayAs, onChange } = props
 
-	const markdownOptions = textOptions?.markdownOptions
 	const language =
 		displayAs === "MARKDOWN" ? "markdown" : textOptions?.language
 	const typeDefinitionFileURIs = textOptions?.typeDefinitionFileURIs
@@ -43,7 +38,6 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
 				mode={mode}
 				setValue={onChange}
 				variant={props.variant}
-				options={markdownOptions}
 			/>
 		)
 	}

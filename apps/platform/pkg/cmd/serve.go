@@ -184,6 +184,11 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 	sa.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 
+	attachmentDownloadPath := "attachment/{recordid}/{version}/{path.*}"
+	sr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+	wr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+	sa.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+
 	// Wire load and save routes for site and workspace context
 	wireLoadPath := "/wires/load"
 	sr.HandleFunc(wireLoadPath, controller.Load).Methods(http.MethodPost)

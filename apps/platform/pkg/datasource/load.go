@@ -215,6 +215,7 @@ func processConditions(
 			}
 
 			condition.Values = values
+
 			//default "IN"
 			if condition.Operator == "" {
 				condition.Operator = "IN"
@@ -239,6 +240,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 
 	originalOperator := condition.Operator
 	originalType := condition.Type
+	originalValueSource := condition.ValueSource
+	originalParam := condition.Param
 	// Move over RawValue/RawValues AND Value/Values because those store the original properties
 	// received from the original request. Value/Values will be populated as part of processing the condition,
 	// but in code (e.g. Bot code) it's very likely someone will populate condition.Value/Values instead,
@@ -269,6 +272,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			currentCondition.RawValues = originalRawValues
 			currentCondition.Value = originalValue
 			currentCondition.Values = originalValues
+			currentCondition.ValueSource = originalValueSource
+			currentCondition.Param = originalParam
 		} else {
 			// Convert the current condition to a subquery condition,
 			// with a nested condition, and lookup the related collection metadata
@@ -289,6 +294,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 
 			currentCondition.Type = "SUBQUERY"
 			currentCondition.Operator = "IN"
+			currentCondition.ValueSource = ""
+			currentCondition.Param = ""
 			currentCondition.Field = fieldPart
 			currentCondition.SubCollection = relatedCollectionName
 			currentCondition.SubField = "uesio/core.id"

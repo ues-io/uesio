@@ -194,3 +194,53 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 4"
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 5"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-004"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-005"
+
+# Test a wire load with a single reference-crossing condition with a param
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.wire_condition",
+            "query":true,
+            "params": {
+                "myparam": "uesio"
+            },
+            "fields":[
+                {
+                    "id": "uesio/tests.text"
+                },
+                {
+                    "id": "uesio/core.uniquekey"
+                }
+            ],
+            "conditions": [
+                {
+                    "field": "uesio/tests.user->uesio/core.username",
+                    "operator": "EQ",
+                    "valueSource": "PARAM",
+                    "param": "myparam"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].debugQueryString" == ```
+SELECT
+jsonb_build_object(
+'uesio/core.id',main.id,
+'uesio/core.uniquekey',main.uniquekey,
+'uesio/tests.text',main.fields->'uesio/tests.text'
+)
+FROM data as "main"
+WHERE
+main.collection = $1 AND
+main.tenant = $2 AND
+(main.fields->>'uesio/tests.user')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $3 AND
+subquery.tenant = $4 AND
+subquery.fields->>'uesio/core.username' = $5))
+ORDER BY main.id asc
+LIMIT 501```
+jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 2"

@@ -25,6 +25,16 @@ const getUserFileURL = (
 	return platform.getUserFileURL(context, userfileid, fileVersion)
 }
 
+const getAttachmentURL = (
+	context: Context,
+	recordid: string,
+	path: string,
+	fileVersion?: string
+) => {
+	if (!recordid || !path) return ""
+	return platform.getAttachmentURL(context, recordid, path, fileVersion)
+}
+
 const useUserFile = (
 	context: Context,
 	userFile: PlainWireRecord | undefined
@@ -71,6 +81,7 @@ const useFile = (context: Context, fileId?: string) => {
 export {
 	getURL,
 	getURLFromFullName,
+	getAttachmentURL,
 	uploadFile,
 	deleteFile,
 	getUserFileURL,
