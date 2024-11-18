@@ -15,10 +15,6 @@ import { ListFieldOptions } from "../../utilities/field/list"
 import { ListDeckOptions } from "../../utilities/field/listdeck"
 import { StructFieldOptions } from "../../utilities/structfield/structfield"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import {
-	MarkdownComponentOptions,
-	MarkdownFieldOptions,
-} from "../../utilities/markdownfield/markdownfield"
 import { NumberFieldOptions } from "../../utilities/field/number"
 import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
@@ -41,7 +37,6 @@ type FieldDefinition = {
 	checkbox?: CheckboxFieldOptions
 	list?: ListFieldOptions | ListDeckOptions
 	map?: MapFieldOptions | MapDeckOptions
-	markdown?: MarkdownComponentOptions
 	metadata?: MetadataFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
@@ -92,7 +87,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		user,
 		number,
 		longtext,
-		markdown: markdownComponentOptions,
 		readonly,
 		struct,
 		text,
@@ -149,24 +143,11 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		labelPosition,
 	}
 
-	let markdown: MarkdownFieldOptions | undefined
-	if (markdownComponentOptions?.attachmentsWire) {
-		const attachmentsWire = context.getWire(
-			markdownComponentOptions?.attachmentsWire
-		)
-		if (attachmentsWire) {
-			markdown = {
-				attachments: attachmentsWire.getData() || [],
-			}
-		}
-	}
-
 	const typeSpecific = {
 		reference,
 		checkbox,
 		list,
 		map,
-		markdown,
 		metadata: definition.metadata,
 		user,
 		number,
@@ -198,7 +179,6 @@ export type {
 	ListDeckOptions,
 	ListFieldOptions,
 	MapFieldOptions,
-	MarkdownFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,

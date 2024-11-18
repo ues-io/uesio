@@ -5,3 +5,5 @@ subfields:
   - name: uesio/studio.decimals
     label: Decimals
     type: NUMBER
+    number:
+      decimals: 0

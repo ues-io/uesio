@@ -108,3 +108,26 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		}, bytes.NewReader(buf.Bytes()))
 	}
 }
+
+func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
+	session := middleware.GetSession(r)
+	query := r.URL.Query()
+	recordID := query.Get("recordid")
+	path := query.Get("path")
+	version := query.Get("version")
+	if recordID == "" {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: recordid"))
+		return
+	}
+	buf := &bytes.Buffer{}
+	if userFile, err := filesource.DownloadAttachment(buf, recordID, path, session); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		respondFile(w, r, &FileRequest{
+			Path:         userFile.Path,
+			LastModified: time.Unix(userFile.UpdatedAt, 0),
+			Namespace:    "",
+			Version:      version,
+		}, bytes.NewReader(buf.Bytes()))
+	}
+}

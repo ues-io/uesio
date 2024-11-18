@@ -478,6 +478,18 @@ const platform = {
 			userfileid
 		)}${fileVersionParam}`
 	},
+	getAttachmentURL: (
+		context: Context,
+		recordid: string,
+		path: string,
+		fileVersion?: string
+	) => {
+		const prefix = getPrefix(context)
+		const version = fileVersion ? encodeURIComponent(fileVersion) : "0"
+		return `${prefix}/attachment/${encodeURIComponent(
+			recordid
+		)}/${version}/${path}`
+	},
 	getFileText: async (uri: string) =>
 		memoizedAsync(
 			async () => {

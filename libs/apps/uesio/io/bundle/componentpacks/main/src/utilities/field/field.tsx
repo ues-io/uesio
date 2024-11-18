@@ -3,9 +3,7 @@ import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField, { CheckboxFieldOptions } from "./checkbox"
 import DateField from "./date"
-import MarkDownField, {
-	MarkdownFieldOptions,
-} from "../../utilities/markdownfield/markdownfield"
+import MarkDownField from "../../utilities/markdownfield/markdownfield"
 import MultiCheckField from "./multicheck"
 import MultiSelectField from "./multiselect"
 import NumberField, { NumberFieldOptions } from "./number"
@@ -62,7 +60,6 @@ interface FieldProps {
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions | ListDeckOptions
 	map?: MapFieldOptions | MapDeckOptions
-	markdown?: MarkdownFieldOptions
 	metadata?: MetadataFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -88,7 +85,6 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		list,
 		longtext,
 		map,
-		markdown,
 		mode,
 		number,
 		path,
@@ -153,7 +149,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		case "LONGTEXT":
 			content =
 				displayAs === "MARKDOWN" ? (
-					<MarkDownField {...common} options={markdown} />
+					<MarkDownField {...common} />
 				) : (
 					<TextAreaField {...common} options={longtext} />
 				)
@@ -273,13 +269,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <TimestampField {...common} />
 			break
 		case "FILE":
-			content = (
-				<FileField
-					{...common}
-					displayAs={displayAs}
-					markdownOptions={markdown}
-				/>
-			)
+			content = <FileField {...common} displayAs={displayAs} />
 			break
 		case "USER":
 			content = (

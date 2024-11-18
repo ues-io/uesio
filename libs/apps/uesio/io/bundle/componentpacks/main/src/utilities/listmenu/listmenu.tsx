@@ -124,7 +124,12 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 				tabIndex={0}
 				id={id}
 				ref={refs.setReference}
-				{...getReferenceProps()}
+				{...getReferenceProps({
+					onClick: (e) => {
+						e.stopPropagation()
+						e.preventDefault()
+					},
+				})}
 			>
 				{children}
 			</div>
@@ -184,7 +189,9 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 											role="option"
 											{...getItemProps({
 												// Handle pointer select.
-												onClick() {
+												onClick(event) {
+													event.preventDefault()
+													event.stopPropagation()
 													onSelect(item)
 													closeOnSelect &&
 														setIsOpen(false)
@@ -193,6 +200,7 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
 												onKeyDown(event) {
 													if (event.key === "Enter") {
 														event.preventDefault()
+														event.stopPropagation()
 														onSelect(item)
 														closeOnSelect &&
 															setIsOpen(false)

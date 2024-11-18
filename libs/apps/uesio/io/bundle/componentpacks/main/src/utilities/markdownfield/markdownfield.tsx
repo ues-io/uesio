@@ -1,25 +1,16 @@
 import { FC, ReactNode } from "react"
-import { api, collection, definition, styles, context, wire } from "@uesio/ui"
+import { api, definition, styles, context, wire } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import CodeField from "../codefield/codefield"
 
-export interface MarkdownComponentOptions {
-	attachmentsWire?: string
-}
-
-export interface MarkdownFieldOptions {
-	attachments?: wire.WireRecord[]
-}
-
 interface MarkDownFieldProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
 	readonly?: boolean
-	options?: MarkdownFieldOptions
 }
 
 type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
@@ -69,27 +60,22 @@ const StyleDefaults = Object.freeze({
 })
 
 const isRelativeUrl = (url?: string) => (url ? url?.startsWith("./") : false)
-const findAttachmentMatch = (
-	attachments: wire.WireRecord[],
-	searchPath: string,
-	comparator: (attachmentPath: string, searchPath: string) => boolean
-): wire.WireRecord | undefined =>
-	attachments.find((a) =>
-		comparator(a.getFieldValue<string>("uesio/core.path") || "", searchPath)
-	)
 
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 	props
 ) => {
-	const { options = {}, context, mode, readonly, setValue } = props
-	const { attachments } = options
+	const { context, mode, readonly, setValue } = props
 
 	const classes = styles.useUtilityStyleTokens(
 		StyleDefaults,
 		props,
 		"uesio/io.markdownfield"
 	)
-	const value = context.merge((props.value || "") as string) as string
+	const value = context.mergeString(props.value as string)
+	const record = context.getRecord()
+	const recordid = record?.getIdFieldValue()
+	const recordmod =
+		(record?.getFieldValue<number>("uesio/core.updatedat") || 0) + ""
 
 	if (!readonly && mode === "EDIT") {
 		return (
@@ -122,44 +108,20 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 				li: (props) => <li className={classes.li}>{props.children}</li>,
 				img: (props) => {
 					let { src } = props
-					// If we encounter a relative image URL in Markdown,
-					// we assume that the image is an attachment to the context record.
-					// Attachment records must be passed in via a higher-order component,
-					// so if we don't have any, we just can't serve this record, we will
-					if (isRelativeUrl(src)) {
-						if (attachments?.length) {
-							src = src?.substring(2) || ""
-							// First check for a direct match
-							let match = findAttachmentMatch(
-								attachments,
-								src,
-								(a, b) => a === b
+
+					if (src && isRelativeUrl(src)) {
+						if (recordid) {
+							src = api.file.getAttachmentURL(
+								context,
+								recordid,
+								src.slice(2),
+								recordmod + ""
 							)
-							// If we did NOT find a direct match, check for a contains match,
-							// as we could be dealing with a file nested in a subfolder,
-							// e.g. src might be "./createnewapp.png" but attachment might have path "first-app/createnewapp.png"
-							if (!match) {
-								match = findAttachmentMatch(
-									attachments,
-									src,
-									(a, b) => a.includes(b)
-								)
-							}
-							if (match) {
-								src = api.file.getUserFileURL(
-									context,
-									match.getIdFieldValue(),
-									match.getFieldValue<string>(
-										collection.UPDATED_AT_FIELD
-									)
-								)
-							}
 						} else {
-							console.error(
-								"Markdown included a relative image path, but no attachments were provided to this component. Please check that you are specifying an attachmentsWire property on the Markdown field/component."
-							)
+							src = ""
 						}
 					}
+
 					return <img className={classes.img} {...props} src={src} />
 				},
 				a: (props) => (
