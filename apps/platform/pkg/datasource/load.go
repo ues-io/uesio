@@ -216,8 +216,6 @@ func processConditions(
 
 			condition.Values = values
 
-			fmt.Println("GETTING LOOKUP: " + condition.LookupField)
-			fmt.Println(condition.Values)
 			//default "IN"
 			if condition.Operator == "" {
 				condition.Operator = "IN"
