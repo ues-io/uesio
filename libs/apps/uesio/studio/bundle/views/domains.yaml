@@ -96,8 +96,8 @@ definition:
                           text: "Add a Domain"
                           uesio.variant: uesio/io.secondary
                           signals:
-                            - signal: "panel/TOGGLE "
-                              panel: "newDomain"
+                            - signal: panel/TOGGLE
+                              panel: newDomain
               avatar:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
