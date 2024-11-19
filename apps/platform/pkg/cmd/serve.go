@@ -184,7 +184,7 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 	sa.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 
-	attachmentDownloadPath := "attachment/{recordid}/{version}/{path.*}"
+	attachmentDownloadPath := "/attachment/{recordid}/{version}/{path:.*}"
 	sr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
 	wr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
 	sa.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
