@@ -1,0 +1,19 @@
+--------------------------------------------------------------------------------
+
+${titleText}
+
+${bodyText}
+
+Confirm Email ${resetLink}
+
+To easily log in later, save this URL.
+
+${laterLink}
+
+Your Username
+
+${username}
+
+--------------------------------------------------------------------------------
+
+${footerText}

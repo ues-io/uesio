@@ -3,12 +3,11 @@ import { ListenerBotApi } from "@uesio/bots"
 export default function signupgoogle(bot: ListenerBotApi) {
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
+	const host = bot.params.get("host")
 	const firstName = bot.params.get("firstname")
 	const lastName = bot.params.get("lastname")
 	const toName = firstName && lastName ? `${firstName} ${lastName}` : username
-	const contentType = "text/html"
-	const from = "info@ues.io"
-	const fromName = "the ues.io team"
+	const from = "info@updates.ues.io"
 
 	const site = bot.getSession().getSite()
 
@@ -17,31 +16,55 @@ export default function signupgoogle(bot: ListenerBotApi) {
 	)
 
 	if (signupNotifyEmail) {
-		const notifyBody = `
-		<!DOCTYPE html>
-		<html>
-			<body>
-				Hi ues.io Studio Administrator,<br/>
-				<br/>
-				A user signed up using Google for a studio account on site ${site.getName()} and domain ${site.getDomain()}.<br/>
-				<br/>
-				Name: ${toName}<br/>
-				Username: ${username}<br/>
-				Email: ${email}<br/><br/>
-				Cheers!<br/>
-				<br/>
-				The team at ues.io
-			</body>
-		</html>`
+		const templateParams = {
+			logoUrl: host + bot.getFileUrl("uesio/core.logo", ""),
+			logoAlt: "ues.io",
+			logoWidth: "40",
+			footerText: "ues.io - Your app platform",
+		}
+		const notifyText = bot.mergeTemplateFile(
+			"uesio/appkit.emailtemplates",
+			"templates/genericmessage.txt",
+			{
+				...templateParams,
+				titleText: "Someone just signed up.",
+				bodyText: `A user signed up using Google for a studio account on site ${site.getName()} and domain ${site.getDomain()}.
 
-		bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-			to: [signupNotifyEmail],
-			toNames: ["Studio Administrator"],
+Name: ${toName}
+Username: ${username}
+Email: ${email}
+
+Cheers!
+
+The team at ues.io`,
+			}
+		)
+
+		const notifyHtml = bot.mergeTemplateFile(
+			"uesio/appkit.emailtemplates",
+			"templates/genericmessage.html",
+			{
+				...templateParams,
+				titleText: "Someone just signed up.",
+				bodyText: `
+					A user signed up using Google for a studio account on site ${site.getName()} and domain ${site.getDomain()}.<br/>
+					<br/>
+					Name: ${toName}<br/>
+					Username: ${username}<br/>
+					Email: ${email}<br/><br/>
+					Cheers!<br/>
+					<br/>
+					The team at ues.io
+				`,
+			}
+		)
+
+		bot.runIntegrationAction("uesio/appkit.resend", "sendemail", {
+			to: signupNotifyEmail,
 			from,
-			fromName,
-			subject: `New signup in uesio studio: ${toName}`,
-			plainBody: notifyBody,
-			contentType,
+			subject: `New signup in uesio studio: ${username}`,
+			html: notifyHtml,
+			text: notifyText,
 		})
 	}
 }
