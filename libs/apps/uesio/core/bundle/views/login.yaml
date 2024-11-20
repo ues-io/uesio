@@ -24,7 +24,7 @@ definition:
                     text: "New to ues.io? "
                     uesio.styleTokens:
                       root:
-                        - text-xs
+                        - text-sm
                         - font-light
                 - uesio/io.link:
                     text: "Create an account"
@@ -32,7 +32,7 @@ definition:
                     uesio.styleTokens:
                       root:
                         - text-blue-600
-                        - text-xs
+                        - text-sm
                         - font-light
   params:
     expired:
