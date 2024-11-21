@@ -58,14 +58,19 @@ const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
 						const primaryAssignment =
 							listAssignment || assignments[0]
 
+						const selected =
+							primaryAssignment.path === context.getRoute()?.path
+
 						return {
 							"uesio/appkit.icontile": {
+								["uesio.id"]: primaryAssignment.path,
+								selectedid: selected
+									? primaryAssignment.path
+									: "",
 								tileVariant:
 									definition.tileVariant || "uesio/io.nav",
-								title: primaryAssignment.collectionPluralLabel,
-								icon:
-									primaryAssignment.collectionIcon ||
-									"view_list",
+								title: primaryAssignment.label,
+								icon: primaryAssignment.icon || "view_list",
 								signals: listAssignment
 									? [
 											{

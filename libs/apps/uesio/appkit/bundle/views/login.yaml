@@ -1,0 +1,40 @@
+name: login
+public: true
+definition:
+  components:
+    - uesio/appkit.splash:
+        content:
+          - uesio/io.image:
+              uesio.variant: uesio/appkit.fancy
+              file: uesio/core.logo
+              signals:
+                - signal: "route/REDIRECT"
+                  path: "https://$Site{domain}"
+          - uesio/core.view:
+              view: uesio/core.loginarea
+              params:
+                expired: $Param{expired}
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - text-center
+                  - leading-none
+              components:
+                - uesio/io.text:
+                    text: "New to ues.io? "
+                    uesio.styleTokens:
+                      root:
+                        - text-sm
+                        - font-light
+                - uesio/io.link:
+                    text: "Create an account"
+                    link: "/site/app/uesio/core/signup"
+                    uesio.styleTokens:
+                      root:
+                        - text-blue-600
+                        - text-sm
+                        - font-light
+  params:
+    expired:
+      type: CHECKBOX
+      required: false

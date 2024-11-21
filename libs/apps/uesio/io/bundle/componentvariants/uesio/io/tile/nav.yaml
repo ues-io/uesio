@@ -13,6 +13,10 @@ definition:
     selected:
       - bg-accent
       - text-white
+      - "[&_button]:text-white"
+      - "[&_button]:focus:bg-white"
+      - "[&_button]:focus:text-black/80"
+      - "[&_button]:hover:bg-white"
       - focus:bg-accent
       - hover:bg-accent
       - focus:text-white

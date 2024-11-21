@@ -1,6 +1,5 @@
 name: splash
 category: LAYOUT
-pack: app
 type: DECLARATIVE
 slots:
   - name: content
@@ -28,4 +27,3 @@ definition:
                       - my-12
                   items:
                     - $Slot{content}
-deprecated: true

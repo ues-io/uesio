@@ -595,11 +595,32 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		}
 		if route.Path != "" && collection.Label != "" {
 			assignment.Path = route.Path
-			assignment.CollectionLabel = collection.Label
-			assignment.CollectionPluralLabel = collection.PluralLabel
-			assignment.CollectionIcon = collection.Icon
+			if assignment.Type == "list" {
+				assignment.Label = collection.PluralLabel
+			} else {
+				assignment.Label = collection.Label
+			}
+			assignment.Icon = collection.Icon
 			deps.RouteAssignment.AddItem(assignment)
 		}
+	}
+
+	// Add route Assignemnts for login, signup, and home routes
+	signupRoute, err := GetSignupRoute(session)
+	if err != nil {
+		return nil, err
+	}
+	if signupRoute != nil {
+		deps.RouteAssignment.AddItem(&meta.RouteAssignment{
+			Type: "signup",
+			BundleableBase: meta.BundleableBase{
+				Label:     "Sign Up",
+				Name:      signupRoute.Name,
+				Namespace: signupRoute.Namespace,
+			},
+			Icon: "badge",
+			Path: signupRoute.Path,
+		})
 	}
 
 	for key, value := range labels {

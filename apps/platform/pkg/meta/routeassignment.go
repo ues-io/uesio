@@ -21,16 +21,14 @@ func NewBaseRouteAssignment(collectionKey, namespace, viewType string) *RouteAss
 }
 
 type RouteAssignment struct {
-	BuiltIn               `yaml:",inline"`
-	BundleableBase        `yaml:"-"` //This is intentional, don't show the name
-	Type                  string     `yaml:"type" json:"uesio/studio.type"`
-	RouteRef              string     `yaml:"route" json:"uesio/studio.route"`
-	Collection            string     `yaml:"-" json:"uesio/studio.collection"`
-	Path                  string     `yaml:"-" json:"-"`
-	CollectionLabel       string     `yaml:"-" json:"-"`
-	CollectionPluralLabel string     `yaml:"-" json:"-"`
-	CollectionIcon        string     `yaml:"-" json:"-"`
-	Public                bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:"-"` //This is intentional, don't show the name
+	Type           string     `yaml:"type" json:"uesio/studio.type"`
+	RouteRef       string     `yaml:"route" json:"uesio/studio.route"`
+	Collection     string     `yaml:"-" json:"uesio/studio.collection"`
+	Path           string     `yaml:"-" json:"-"`
+	Icon           string     `yaml:"-" json:"-"`
+	Public         bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type RouteAssignmentWrapper RouteAssignment
@@ -42,9 +40,8 @@ func (r *RouteAssignment) GetBytes() ([]byte, error) {
 func (r *RouteAssignment) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("type", r.Type)
 	enc.AddStringKey("collection", r.Collection)
-	enc.AddStringKey("collectionLabel", r.CollectionLabel)
-	enc.AddStringKey("collectionPluralLabel", r.CollectionPluralLabel)
-	enc.AddStringKey("collectionIcon", r.CollectionIcon)
+	enc.AddStringKey("label", r.Label)
+	enc.AddStringKey("icon", r.Icon)
 	enc.AddStringKey("namespace", r.Namespace)
 	enc.AddStringKey("name", r.Collection+"_"+r.Type)
 	enc.AddStringKey("path", r.Path)
