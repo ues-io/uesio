@@ -11,5 +11,6 @@ function profile_public(bot) {
 	bot.runGenerator("uesio/core", "profile", {
 		name: "public",
 		permissionSets: [namespace + ".public", "uesio/core.public"],
+		label: "Public Profile",
 	})
 }
