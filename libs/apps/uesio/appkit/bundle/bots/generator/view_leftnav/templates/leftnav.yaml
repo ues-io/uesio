@@ -3,93 +3,77 @@ slots:
   - name: crumbs
   - name: extra
 components:
-  - uesio/io.scrollpanel:
-      uesio.variant: uesio/io.default
-      uesio.styleTokens:
-        inner:
-          - p-4
+  - uesio/appkit.sidebar:
       header:
-        - uesio/io.box:
-            uesio.styleTokens:
-              root:
-                - p-4
-                - grid
-                - gap-4
-            components:
-              - uesio/appkit.tile_app:
-                  title: ${appname}
-                  icon: ${icon}
-                  iconcolor: ${iconcolor}
-              - $Slot{crumbs}
+        - uesio/appkit.tile_app:
+            title: ${appname}
+            icon: ${icon}
+            iconcolor: ${iconcolor}
+        - $Slot{crumbs}
       content:
-        - uesio/io.box:
-            uesio.styleTokens:
-              root:
-                - grid
-                - gap-8
-            components:
-              - uesio/io.navsection:
-                  title: Admin
-                  content:
-                    - uesio/appkit.icontile:
-                        tileVariant: uesio/io.nav
-                        title: Home
-                        icon: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                    - uesio/appkit.icontile:
-                        tileVariant: uesio/io.nav
-                        title: Settings
-                        icon: settings
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: settings
-                    - uesio/appkit.icontile:
-                        tileVariant: uesio/io.nav
-                        title: Users
-                        icon: badge
-                        iconVariant: uesio/io.iconoutline
-                        signals:
-                          - signal: route/NAVIGATE_TO_ASSIGNMENT
-                            collection: uesio/core.user
-                            viewtype: list
-              - uesio/appkit.sitenav:
-                  title: Collections
-                  excludeCollections:
-                    - uesio/core.user
-              - $Slot{extra}
+        - uesio/io.navsection:
+            title: Admin
+            content:
+              - uesio/appkit.icontile:
+                  uesio.id: home
+                  selectedid: $Param{selected}
+                  tileVariant: uesio/io.nav
+                  title: Home
+                  icon: home
+                  signals:
+                    - signal: route/NAVIGATE
+                      path: home
+              - uesio/appkit.icontile:
+                  uesio.id: settings
+                  selectedid: $Param{selected}
+                  tileVariant: uesio/io.nav
+                  title: Settings
+                  icon: settings
+                  signals:
+                    - signal: route/NAVIGATE
+                      path: settings
+              - uesio/appkit.icontile:
+                  uesio.id: users
+                  selectedid: $Param{selected}
+                  tileVariant: uesio/io.nav
+                  title: Users
+                  icon: badge
+                  iconVariant: uesio/io.iconoutline
+                  signals:
+                    - signal: route/NAVIGATE_TO_ASSIGNMENT
+                      collection: uesio/core.user
+                      viewtype: list
+        - uesio/appkit.sitenav:
+            title: Collections
+            excludeCollections:
+              - uesio/core.user
+        - $Slot{extra}
       footer:
-        - uesio/io.box:
-            uesio.styleTokens:
-              root:
-                - p-4
-            components:
-              - uesio/io.titlebar:
-                  uesio.variant: uesio/appkit.item_small
-                  title: $User{username}
-                  subtitle: $User{profileLabel}
-                  avatar:
-                    - uesio/io.avatar:
-                        uesio.styleTokens:
-                          root:
-                            - h-8
-                            - w-8
-                        text: $User{initials}
-                        image: $User{picture}
-                  actions:
-                    - uesio/io.group:
-                        components:
-                          - uesio/io.button:
-                              uesio.variant: uesio/appkit.navicon
-                              icon: logout
-                              uesio.id: logout
-                              signals:
-                                - signal: "user/LOGOUT"
-                          - uesio/io.button:
-                              uesio.variant: uesio/appkit.navicon
-                              uesio.id: user-profile
-                              icon: account_circle
-                              signals:
-                                - signal: "route/NAVIGATE"
-                                  path: myprofile
+        - uesio/io.titlebar:
+            uesio.variant: uesio/appkit.item_small
+            title: $User{username}
+            subtitle: $User{profileLabel}
+            avatar:
+              - uesio/io.avatar:
+                  uesio.styleTokens:
+                    root:
+                      - h-8
+                      - w-8
+                  text: $User{initials}
+                  image: $User{picture}
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/io.button:
+                        uesio.variant: uesio/appkit.navicon
+                        icon: logout
+                        uesio.id: logout
+                        signals:
+                          - signal: "user/LOGOUT"
+                    - uesio/io.button:
+                        uesio.variant: uesio/appkit.navicon
+                        uesio.id: user-profile
+                        icon: account_circle
+                        signals:
+                          - signal: "route/NAVIGATE"
+                            path: myprofile

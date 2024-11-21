@@ -4,6 +4,8 @@ components:
       left:
         - uesio/core.view:
             view: ${namespace}.leftnav
+            params:
+              selected: users
             slots:
               crumbs:
                 - uesio/io.group:

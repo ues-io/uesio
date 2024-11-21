@@ -19,6 +19,8 @@ definition:
                   fieldId: uesio/core.initials
               - uesio/io.field:
                   fieldId: uesio/core.language
+              - uesio/io.field:
+                  fieldId: uesio/core.profile
       uesio.variant: uesio/appkit.primarysection
 title: User Primary Section
 discoverable: true

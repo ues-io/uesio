@@ -26,9 +26,6 @@ definition:
         - field: uesio/core.type
           valueSource: VALUE
           value: PERSON
-        - field: uesio/core.profile
-          valueSource: VALUE
-          value: uesio/crm.admin
   # Components determine the layout and composition of your view
   components:
     - uesio/appkit.layout_detail_split:

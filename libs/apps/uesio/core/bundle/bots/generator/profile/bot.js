@@ -8,6 +8,7 @@ function profile(bot) {
 			name,
 			permissionSets,
 			homeRoute: bot.params.get("homeRoute"),
+			label: bot.params.get("label"),
 		},
 		"templates/profile.yaml"
 	)
