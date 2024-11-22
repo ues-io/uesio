@@ -50,7 +50,8 @@ definition:
                               - text-[9pt]
                               - hover:text-primary
                           signals:
-                            - signal: route/REDIRECT
+                            - signal: route/NAVIGATE
+                              namespace: uesio/appkit
                               path: requestpassword
                 - uesio/io.button:
                     uesio.styleTokens:

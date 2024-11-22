@@ -6,35 +6,44 @@ export default function create_login_admin(bot: ListenerBotApi) {
 	if (hasPassword) {
 		return
 	}
-	const redirect = "/site/app/uesio/core/changepassword"
+	const redirect = "/site/app/uesio/appkit/changepassword"
 	const username = bot.params.get("username")
 	const email = bot.params.get("email")
 	const code = bot.params.get("code")
 	const host = bot.params.get("host")
 	const link = host + redirect + "?code=" + code + "&username=" + username
-	const contentType = "text/html"
-	const from = "info@ues.io"
-	const fromName = "ues.io"
+	const from = "info@updates.ues.io"
 	const subject = "User created in an AppKit app"
-	const body = `
-	<!DOCTYPE html>
-	<html>
-		<body>
-			A user account has been created for you in an AppKit app.<br/>
-			Your username is: ${username}.<br/>
-			<br/>
-			You can set your password and log in using the link below:<br/>
-			${link}
-		</body>
-	</html>`
+	const templateParams = {
+		titleText: "Start building apps.",
+		bodyText:
+			"Welcome to an AppKit app. You can now set your password and log in.",
+		username,
+		resetLink: link,
+		laterLink: host,
+		logoUrl: host + bot.getFileUrl("uesio/core.logo", ""),
+		logoAlt: "ues.io",
+		logoWidth: "40",
+		footerText: "ues.io - Your app platform",
+	}
 
-	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-		to: [email],
-		toNames: [username],
+	const text = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/createlogin.txt",
+		templateParams
+	)
+
+	const html = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/createlogin.html",
+		templateParams
+	)
+
+	bot.runIntegrationAction("uesio/appkit.resend", "sendemail", {
+		to: email,
 		from,
-		fromName,
 		subject,
-		plainBody: body,
-		contentType,
+		html,
+		text,
 	})
 }
