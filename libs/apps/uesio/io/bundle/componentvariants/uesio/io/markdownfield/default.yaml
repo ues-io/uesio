@@ -22,6 +22,16 @@ definition:
       - list-disc
     img:
       - max-w-md
+    imgWrapper:
+    imgInner:
+      - grid
+      - justify-center
+    imgTitle:
+      - text-xs
+      - font-light
+      - text-center
+      - p-1
+      - italic
     li:
       - my-1
 public: true
