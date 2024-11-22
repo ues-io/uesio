@@ -1,39 +1,59 @@
 name: login
 public: true
 definition:
+  slots:
+    - name: logo
+      defaultContent:
+        - uesio/io.image:
+            uesio.variant: uesio/appkit.fancy
+            file: uesio/core.logo
+            signals:
+              - signal: "route/REDIRECT"
+                path: "https://$Site{domain}"
+    - name: splash
+      defaultContent:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - bg-[url($File{uesio/core.splash})]
+                - bg-cover
+                - bg-right
   components:
     - uesio/appkit.splash:
         content:
-          - uesio/io.image:
-              uesio.variant: uesio/appkit.fancy
-              file: uesio/core.logo
-              signals:
-                - signal: "route/REDIRECT"
-                  path: "https://$Site{domain}"
-          - uesio/core.view:
-              view: uesio/core.loginarea
-              params:
-                expired: $Param{expired}
+          - $Slot{logo}
           - uesio/io.box:
+              uesio.display:
+                - type: paramIsSet
+                  param: expired
+              uesio.variant: uesio/appkit.note
               uesio.styleTokens:
-                root:
-                  - text-center
-                  - leading-none
               components:
                 - uesio/io.text:
-                    text: "New to ues.io? "
-                    uesio.styleTokens:
-                      root:
-                        - text-sm
-                        - font-light
+                    text: $Label{uesio/core.session_expiration_msg}
+          - uesio/appkit.login_mock:
+          - uesio/appkit.login_platform:
+          - uesio/appkit.login_google:
+          - uesio/io.group:
+              uesio.styleTokens:
+                root:
+                  - justify-center
+                  - text-sm
+                  - font-light
+              uesio.display:
+                - type: hasValue
+                  value: $RouteAssignment{signup}
+              components:
+                - uesio/io.text:
+                    text: "New to ues.io?"
                 - uesio/io.link:
                     text: "Create an account"
-                    link: "/site/app/uesio/core/signup"
+                    link: $RouteAssignment{signup}
                     uesio.styleTokens:
                       root:
                         - text-blue-600
-                        - text-sm
-                        - font-light
+        splash:
+          - $Slot{splash}
   params:
     expired:
       type: CHECKBOX

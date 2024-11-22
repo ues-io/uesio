@@ -27,6 +27,17 @@ const redirect = (context: Context, path: string, newTab?: boolean) => {
 	return context
 }
 
+const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
+
+const getRouteUrl = (
+	context: Context,
+	namespace: string | undefined,
+	path: string | undefined
+) => {
+	const prefix = getRouteUrlPrefix(context, context.mergeString(namespace))
+	return urlJoin(prefix, context.mergeString(path))
+}
+
 const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	const workspace = context.getWorkspace()
 	if (workspace && workspace.app && workspace.name) {
@@ -187,6 +198,7 @@ const handleNavigateResponse = async (
 
 export {
 	getRouteUrlPrefix,
+	getRouteUrl,
 	redirect,
 	navigate,
 	navigateToAssignment,

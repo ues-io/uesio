@@ -3,27 +3,35 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: content
+  - name: splash
+    defaultContent:
+      - uesio/io.box:
+          uesio.styleTokens:
+            root:
+              - bg-[url($File{uesio/core.splash})]
+              - bg-cover
+              - bg-right
+defaultVariant: uesio/appkit.default
 definition:
   - uesio/io.grid:
       uesio.styleTokens:
         root:
-          - grid-cols-1
-          - md:grid-cols-2
-          - lg:grid-cols-[5fr_7fr]
-          - bg-cover
-          - min-h-screen
-          - bg-[url($File{uesio/core.splash})]
-          - "[&>*]:first:bg-slate-50"
+          - $Region{root}
       items:
         - uesio/io.grid:
-            uesio.variant: uesio/io.center
+            uesio.styleTokens:
+              root:
+                - $Region{content}
             items:
               - uesio/io.grid:
                   uesio.styleTokens:
                     root:
-                      - w-[240px]
-                      - gap-10
-                      - m-8
-                      - my-12
+                      - $Region{contentInner}
                   items:
                     - $Slot{content}
+        - uesio/io.grid:
+            uesio.styleTokens:
+              root:
+                - $Region{splash}
+            items:
+              - $Slot{splash}

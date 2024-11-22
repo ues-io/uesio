@@ -529,8 +529,11 @@ class Context {
 	getSelectList = (id: string) =>
 		selectListSelectors.selectById(getCurrentState(), id)
 
-	getRouteAssignment = (id: string) =>
-		routeAssignmentSelectors.selectById(getCurrentState(), id)
+	getRouteAssignment = (viewtype = "list", collection = "") =>
+		routeAssignmentSelectors.selectById(
+			getCurrentState(),
+			`${collection}_${viewtype}`
+		)
 
 	getRouteAssignments = () =>
 		routeAssignmentSelectors.selectAll(getCurrentState())

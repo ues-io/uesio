@@ -1,0 +1,23 @@
+name: default
+label: Default
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - grid-cols-1
+      - lg:grid-cols-2
+      - xl:grid-cols-[5fr_7fr]
+      - min-h-screen
+    content:
+      - justify-center
+      - content-center
+      - gap-4
+      - bg-slate-50
+    contentInner:
+      - w-[240px]
+      - gap-10
+      - m-8
+      - my-20
+    splash:
+      - w-full
+      - h-full

@@ -23,10 +23,12 @@ import {
 import { getThemeValue } from "../styles/styles"
 import { DECLARATIVE_COMPONENT } from "../component/component"
 import { Parser } from "expr-eval"
+import { getRouteUrl } from "../bands/route/operations"
 
 type MergeType =
 	| "Error"
 	| "Route"
+	| "RouteAssignment"
 	| "Record"
 	| "Records"
 	| "Param"
@@ -252,6 +254,14 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""
+	},
+	RouteAssignment: (fullExpression, context) => {
+		const [collection, viewtype] = parseWireExpression(fullExpression)
+		const assignment = context.getRouteAssignment(viewtype, collection)
+		if (!assignment) {
+			return ""
+		}
+		return getRouteUrl(context, assignment.namespace, assignment.path)
 	},
 	RecordMeta: (fullExpression, context) => {
 		const [wirename, expression] = parseWireExpression(fullExpression)

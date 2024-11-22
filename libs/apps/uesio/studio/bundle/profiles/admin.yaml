@@ -3,5 +3,6 @@ permissionSets:
   - uesio/studio.admin
   - uesio/studio.standard
   - uesio/studio.public
+  - uesio/appkit.public
   - uesio/core.public
 label: Studio Admin User
