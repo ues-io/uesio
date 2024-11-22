@@ -5,13 +5,9 @@ views:
   uesio/core.login: true
   uesio/core.loginarea: true
   uesio/core.notfound: true
-  uesio/core.changepassword: true
-  uesio/core.requestpassword: true
 routes:
   uesio/core.login: true
   uesio/core.signup: true
-  uesio/core.changepassword: true
-  uesio/core.requestpassword: true
 files:
   uesio/core.logo: true
   uesio/core.favicon: true

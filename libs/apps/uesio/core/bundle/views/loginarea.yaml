@@ -60,21 +60,6 @@ definition:
                           displayAs: PASSWORD
                           text:
                             autoComplete: "current-password"
-                      - uesio/io.button:
-                          text: Forgot password?
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - text-slate-400
-                              - absolute
-                              - top-3
-                              - right-0
-                              - text-[9pt]
-                              - hover:text-primary
-                          signals:
-                            - signal: route/REDIRECT
-                              path: requestpassword
                 - uesio/io.button:
                     uesio.styleTokens:
                       root:
