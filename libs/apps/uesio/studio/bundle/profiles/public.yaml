@@ -1,5 +1,6 @@
 name: public
 permissionSets:
   - uesio/studio.public
+  - uesio/appkit.public
   - uesio/core.public
 label: Studio Public User

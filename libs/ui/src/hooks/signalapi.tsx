@@ -12,10 +12,8 @@ import {
 	PathNavigateSignal,
 	RedirectSignal,
 } from "../bands/route/signals"
-import { getRouteUrlPrefix } from "../bands/route/operations"
+import { getRouteUrl } from "../bands/route/operations"
 import { MouseEvent } from "react"
-
-const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
 
 const getNavigateLink = (
 	signals: SignalDefinition[] | undefined,
@@ -31,24 +29,21 @@ const getNavigateLink = (
 
 	if (signal.signal === "route/NAVIGATE") {
 		if (!signal.path) return undefined
-		const prefix = getRouteUrlPrefix(context, signal.namespace)
-		return urlJoin(prefix, context.mergeString(signal.path))
+		return getRouteUrl(context, signal.namespace, signal.path)
 	}
 
 	if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
-		const prefix = getRouteUrlPrefix(context, undefined)
 		const assignment = context.getRouteAssignment(
-			`${signal.collection}_${signal.viewtype || "list"}`
+			signal.viewtype,
+			signal.collection
 		)
 		if (!assignment) return undefined
-
-		return urlJoin(
-			prefix,
-			context
-				.addRecordDataFrame({
-					recordid: context.mergeString(signal.recordid),
-				})
-				.mergeString(assignment.path.replace(/{/g, "${"))
+		return getRouteUrl(
+			context.addRecordDataFrame({
+				recordid: context.mergeString(signal.recordid),
+			}),
+			assignment.namespace,
+			assignment.path.replace(/{/g, "${")
 		)
 	}
 

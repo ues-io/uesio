@@ -1,0 +1,15 @@
+name: login_platform
+category: LAYOUT
+type: DECLARATIVE
+properties:
+definition:
+  - uesio/core.view:
+      uesio.id: platformlogin
+      view: uesio/appkit.login_platform
+title: Platform Login
+discoverable: false
+description: Platform Login Component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

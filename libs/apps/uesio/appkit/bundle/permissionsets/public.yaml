@@ -1,0 +1,10 @@
+name: public
+public: true
+named: {}
+views:
+  uesio/appkit.login: true
+  uesio/appkit.login_platform: true
+  uesio/appkit.loginarea: true
+routes:
+files:
+collections:

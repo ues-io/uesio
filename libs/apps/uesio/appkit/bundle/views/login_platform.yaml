@@ -1,0 +1,70 @@
+name: login_platform
+public: true
+definition:
+  wires:
+    credentials:
+      viewOnly: true
+      fields:
+        username:
+          label: Username
+          type: TEXT
+        password:
+          label: Password
+          type: TEXT
+      init:
+        create: true
+  components:
+    - uesio/io.list:
+        uesio.id: credslist
+        wire: credentials
+        mode: EDIT
+        components:
+          - uesio/io.grid:
+              items:
+                - uesio/io.field:
+                    fieldId: username
+                    uesio.id: username
+                    text:
+                      autoComplete: "username"
+                - uesio/io.box:
+                    uesio.styleTokens:
+                      root:
+                        - relative
+                    components:
+                      - uesio/io.field:
+                          fieldId: password
+                          uesio.id: password
+                          displayAs: PASSWORD
+                          text:
+                            autoComplete: "current-password"
+                      - uesio/io.button:
+                          text: Forgot password?
+                          uesio.styleTokens:
+                            root:
+                              - normal-case
+                              - font-light
+                              - text-slate-400
+                              - absolute
+                              - top-3
+                              - right-0
+                              - text-[9pt]
+                              - hover:text-primary
+                          signals:
+                            - signal: route/REDIRECT
+                              path: requestpassword
+                - uesio/io.button:
+                    uesio.styleTokens:
+                      root:
+                        - mt-2
+                    uesio.variant: uesio/appkit.primary
+                    uesio.id: sign-in
+                    text: Sign In
+                    signals:
+                      - signal: user/LOGIN
+                        onerror:
+                          signals:
+                            - signal: notification/ADD_ERRORS
+                        authSource: uesio/core.platform
+                        payload:
+                          username: ${username}
+                          password: ${password}
