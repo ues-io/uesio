@@ -1,15 +1,10 @@
 name: login_mock
-category: LAYOUT
-type: DECLARATIVE
-properties:
-definition:
-  - uesio/core.loginmock:
-      text: Sign in with Mock
-      align: center
-title: Mock Login
-discoverable: false
-description: Mock Login Component
-sections:
-  - type: HOME
-    properties:
-  - type: DISPLAY
+pack: login
+entrypoint: components/loginmock/loginmock
+configvalues:
+  - uesio/core.mock_auth
+  - uesio/core.mock_auth_usernames
+utilities:
+  - uesio/io.button
+variants:
+  - uesio/io.button:uesio/io.secondary

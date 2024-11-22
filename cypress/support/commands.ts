@@ -289,7 +289,7 @@ const login = () => {
 	cy.visitRoute("login")
 	cy.title().should("eq", "Uesio - Login")
 	if (useMockLogin) {
-		cy.clickButton("uesio/core.loginmock:mock-login-uesio")
+		cy.clickButton("uesio/appkit.login_mock:mock-login-uesio")
 	} else {
 		cy.typeInInput("username", automationUsername)
 		cy.typeInInput("password", automationPassword)

@@ -293,15 +293,13 @@ definition:
                                               - field: authsource
                                                 value: uesio/core.google
                                             components:
-                                              - uesio/core.logingoogle:
+                                              - uesio/appkit.login_google:
                                                   onLoginSignals:
                                                     - signal: "user/CREATE_LOGIN"
                                                       signupMethod: ${uesio/core.uniquekey}
                                                       payload:
                                                         username: $Param{userid}
                                                         email: ${users:uesio/core.email}
-                                                        credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-                                                        client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
                                                     - signal: wire/LOAD
                                                       wires:
                                                         - loginmethods
