@@ -1,0 +1,5 @@
+name: signup_landing
+definition:
+  components:
+    - uesio/io.text:
+        text: Signup Landing

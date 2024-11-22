@@ -7,7 +7,6 @@ views:
   uesio/core.notfound: true
   uesio/core.changepassword: true
   uesio/core.requestpassword: true
-  uesio/core.signuplanding: true
 routes:
   uesio/core.login: true
   uesio/core.signup: true

@@ -1,4 +1,4 @@
 name: signuplanding
 path: signuplanding
-view: uesio/core.signuplanding
+view: uesio/tests.signup_landing
 title: Welcome to tests!

@@ -8,6 +8,38 @@ export default function signupgoogle(bot: ListenerBotApi) {
 	const lastName = bot.params.get("lastname")
 	const toName = firstName && lastName ? `${firstName} ${lastName}` : username
 	const from = "info@updates.ues.io"
+	const subject = "Welcome to the ues.io studio!"
+
+	const templateParams = {
+		titleText: "Start building great apps.",
+		bodyText: "Welcome to ues.io studio. Your account has been created.",
+		username,
+		laterLink: host,
+		logoUrl: host + bot.getFileUrl("uesio/core.logo", ""),
+		logoAlt: "ues.io",
+		logoWidth: "40",
+		footerText: "ues.io - Your app platform",
+	}
+
+	const text = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/signupnotify.txt",
+		templateParams
+	)
+
+	const html = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/signupnotify.html",
+		templateParams
+	)
+
+	bot.runIntegrationAction("uesio/appkit.resend", "sendemail", {
+		to: email,
+		from,
+		subject,
+		html,
+		text,
+	})
 
 	const site = bot.getSession().getSite()
 
