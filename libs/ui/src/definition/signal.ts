@@ -38,8 +38,8 @@ type SignalDefinition = {
 	[SIGNAL_CONDITIONS]?: DisplayCondition[]
 	stepId?: string
 	onerror?: {
-		continue: boolean
-		notify: boolean
+		continue?: boolean
+		notify?: boolean
 		signals: SignalDefinition[]
 	}
 }

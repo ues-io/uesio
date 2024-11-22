@@ -155,19 +155,13 @@ definition:
                                           - font-bold
                       - uesio/io.box:
                           components:
-                            - uesio/core.logingoogle:
-                                minWidth: 240
+                            - uesio/appkit.login_google:
                                 text: continue_with
                                 onLoginSignals:
                                   - signal: "user/SIGNUP"
                                     signupMethod: uesio/studio.google
                                     payload:
                                       username: ${username}
-                                      credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-                                      client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-                                    onerror:
-                                      signals:
-                                        - signal: notification/ADD_ERRORS
                       - uesio/io.button:
                           uesio.variant: uesio/io.secondary
                           text: Sign up with email

@@ -1,23 +1,6 @@
 name: login_google
-category: LAYOUT
-type: DECLARATIVE
-properties:
-definition:
-  - uesio/core.logingoogle:
-      minWidth: 240
-      onLoginSignals:
-        - signal: "user/LOGIN"
-          authSource: uesio/core.google
-          payload:
-            credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-            client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-          onerror:
-            signals:
-              - signal: notification/ADD_ERRORS
-title: Google Login
-discoverable: false
-description: Google Login Component
-sections:
-  - type: HOME
-    properties:
-  - type: DISPLAY
+pack: login
+entrypoint: components/logingoogle/logingoogle
+configvalues:
+  - uesio/core.google_auth_client_id
+public: true

@@ -37,9 +37,6 @@ definition:
               root:
                 - p-5
                 - items-center
-    - uesio/core.loginmock:
-        text: Sign in with Mock
-        align: center
     - uesio/io.list:
         uesio.id: credslist
         wire: credentials
@@ -94,17 +91,6 @@ definition:
                         payload:
                           username: ${username}
                           password: ${password}
-    - uesio/core.logingoogle:
-        minWidth: 240
-        onLoginSignals:
-          - signal: "user/LOGIN"
-            authSource: uesio/core.google
-            payload:
-              credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-              client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-            onerror:
-              signals:
-                - signal: notification/ADD_ERRORS
   params:
     expired:
       type: CHECKBOX
