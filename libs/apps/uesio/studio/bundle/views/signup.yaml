@@ -38,10 +38,10 @@ definition:
 
   # Components are how we describe the layout of our view
   components:
-    - uesio/core.splash:
+    - uesio/appkit.splash:
         content:
           - uesio/io.image:
-              uesio.variant: uesio/core.fancy
+              uesio.variant: uesio/appkit.fancy
               file: uesio/core.logo
               signals:
                 - signal: "route/REDIRECT"
@@ -65,21 +65,13 @@ definition:
                       - uesio/io.field:
                           fieldId: username
                           label: Pick a username
-                      - uesio/io.text:
-                          text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
-                          element: div
-                          uesio.styleTokens:
-                            root:
-                              - font-light
-                              - p-3
-                              - mb-3
-                              - bg-slate-100
-                              - text-slate-600
-                              - leading-1
-                              - text-xs
-                              - rounded
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.note
+                          components:
+                            - uesio/io.text:
+                                text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
                       - uesio/io.button:
-                          uesio.variant: uesio/io.primary
+                          uesio.variant: uesio/appkit.primary
                           text: Check Availability
                           signals:
                             - signal: bot/CALL
@@ -163,7 +155,7 @@ definition:
                                     payload:
                                       username: ${username}
                       - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
+                          uesio.variant: uesio/appkit.secondary
                           text: Sign up with email
                           signals:
                             - signal: wire/UPDATE_RECORD
@@ -171,15 +163,8 @@ definition:
                               valueSource: VALUE
                               value: email
                       - uesio/io.button:
-                          text: Pick a different username
-                          uesio.variant: uesio/io.nav
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - border-1
-                              - border-slate-200
-                              - rounded
+                          text: Go Back
+                          uesio.variant: uesio/appkit.tertiary
                           signals:
                             - signal: wire/UPDATE_RECORD
                               field: step
