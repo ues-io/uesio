@@ -22,6 +22,9 @@ definition:
                       root:
                         - mb-4
                         - text-center
+                        - border-b-1
+                        - border-slate-200
+                        - pb-4
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.note
                     components:

@@ -57,11 +57,15 @@ definition:
                         value: username
                     items:
                       - uesio/io.text:
-                          text: Welcome to the ues.io studio!
+                          text: Create a studio account.
                           element: div
                           uesio.styleTokens:
                             root:
-                              - font-light
+                              - text-center
+                              - pb-4
+                              - mb-2
+                              - border-b-1
+                              - border-slate-200
                       - uesio/io.field:
                           fieldId: username
                           label: Pick a username
@@ -199,7 +203,7 @@ definition:
                                 text:
                                   autoComplete: "new-password"
                       - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
+                          uesio.variant: uesio/appkit.secondary
                           text: Sign up
                           signals:
                             - signal: user/SIGNUP
@@ -211,15 +215,8 @@ definition:
                                 lastname: ${lastname}
                                 email: ${email}
                       - uesio/io.button:
-                          text: Authenticate a different way
-                          uesio.variant: uesio/io.nav
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - border-1
-                              - border-slate-200
-                              - rounded
+                          text: Go Back
+                          uesio.variant: uesio/appkit.tertiary
                           signals:
                             - signal: wire/UPDATE_RECORD
                               field: step
