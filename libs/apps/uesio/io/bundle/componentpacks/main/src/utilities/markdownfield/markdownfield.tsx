@@ -57,6 +57,9 @@ const StyleDefaults = Object.freeze({
 	code: [],
 	a: [],
 	img: [],
+	imgWrapper: [],
+	imgTitle: [],
+	imgInner: [],
 })
 
 const isRelativeUrl = (url?: string) => (url ? url?.startsWith("./") : false)
@@ -107,7 +110,15 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 				ul: (props) => <ul className={classes.ul}>{props.children}</ul>,
 				li: (props) => <li className={classes.li}>{props.children}</li>,
 				img: (props) => {
-					let { src } = props
+					let { src, alt } = props
+					const { title } = props
+
+					const metastring = alt
+					alt = metastring?.replace(/ *\{[^)]*\} */g, "")
+					const metaWidth = metastring?.match(/{([^}]+)x/)
+					const metaHeight = metastring?.match(/x([^}]+)}/)
+					const width = metaWidth ? metaWidth[1] : undefined
+					const height = metaHeight ? metaHeight[1] : undefined
 
 					if (src && isRelativeUrl(src)) {
 						if (recordid) {
@@ -122,7 +133,21 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 						}
 					}
 
-					return <img className={classes.img} {...props} src={src} />
+					return (
+						<div className={classes.imgWrapper}>
+							<div className={classes.imgInner}>
+								<img
+									className={classes.img}
+									alt={alt}
+									title={title}
+									src={src}
+									width={width}
+									height={height}
+								/>
+							</div>
+							<div className={classes.imgTitle}>{title}</div>
+						</div>
+					)
 				},
 				a: (props) => (
 					<a className={classes.a} href={props.href}>
