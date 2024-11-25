@@ -10,4 +10,5 @@ routes:
   uesio/appkit.login_request_password: true
   uesio/appkit.login_change_password: true
 files:
+  uesio/appkit.splash: true
 collections:
