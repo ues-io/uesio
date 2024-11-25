@@ -42,7 +42,7 @@ definition:
                   - p-32
                   - bg-black
                   - bg-cover
-                  - bg-[url($File{uesio/core.splash})]
+                  - bg-[url($File{uesio/appkit.splash})]
           - uesio/io.box:
               uesio.styleTokens:
                 root:
