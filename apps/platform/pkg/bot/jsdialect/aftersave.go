@@ -68,3 +68,19 @@ func (as *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
 func (as *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
 	return botCall(botKey, params, as.session, as.connection)
 }
+
+func (as *AfterSaveAPI) GetHostUrl() (string, error) {
+	return getHostUrl(as.session, as.connection)
+}
+
+func (as *AfterSaveAPI) GetFileUrl(sourceKey, sourcePath string) string {
+	return getFileUrl(sourceKey, sourcePath)
+}
+
+func (as *AfterSaveAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
+	return mergeTemplateString(templateString, params)
+}
+
+func (as *AfterSaveAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
+	return mergeTemplateFile(sourceKey, sourcePath, params, as.session, as.connection)
+}

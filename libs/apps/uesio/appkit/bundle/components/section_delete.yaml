@@ -25,6 +25,8 @@ definition:
               root:
                 - mt-4
                 - items-center
+              subtitle:
+                - text-sm
             actions:
               - uesio/appkit.button_delete:
                   confirm: $Prop{confirm}

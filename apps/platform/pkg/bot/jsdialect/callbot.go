@@ -1,12 +1,9 @@
 package jsdialect
 
 import (
-	"bytes"
-
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -104,55 +101,23 @@ func (cba *CallBotAPI) CopyUserFile(sourceFileID, destCollectionID, destRecordID
 }
 
 func (cba *CallBotAPI) GetFileContents(sourceKey, sourcePath string) (string, error) {
-	buf, _, err := botGetFileData(sourceKey, sourcePath, cba.Session, cba.connection)
-	if err != nil {
-		return "", err
-	}
-	return string(buf.Bytes()), nil
+	return getFileContents(sourceKey, sourcePath, cba.Session, cba.connection)
+}
+
+func (cba *CallBotAPI) GetHostUrl() (string, error) {
+	return getHostUrl(cba.Session, cba.connection)
 }
 
 func (cba *CallBotAPI) GetFileUrl(sourceKey, sourcePath string) string {
-	namespace, name, err := meta.ParseKey(sourceKey)
-	if err != nil {
-		return ""
-	}
-	usePath := ""
-	if sourcePath != "" {
-		usePath = "/" + sourcePath
-	}
-	return "/site/files/" + namespace + "/" + name + usePath
+	return getFileUrl(sourceKey, sourcePath)
 }
 
 func (cba *CallBotAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
-	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
-	if err != nil {
-		return "", err
-	}
-	// Create a buffer to store the output
-	var buf bytes.Buffer
-	err = template.Execute(&buf, params)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	return mergeTemplateString(templateString, params)
 }
 
 func (cba *CallBotAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
-	templateString, err := cba.GetFileContents(sourceKey, sourcePath)
-	if err != nil {
-		return "", err
-	}
-	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
-	if err != nil {
-		return "", err
-	}
-	// Create a buffer to store the output
-	var buf bytes.Buffer
-	err = template.Execute(&buf, params)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	return mergeTemplateFile(sourceKey, sourcePath, params, cba.Session, cba.connection)
 }
 
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
