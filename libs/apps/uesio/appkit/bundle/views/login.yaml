@@ -27,7 +27,6 @@ definition:
                 - type: paramIsSet
                   param: expired
               uesio.variant: uesio/appkit.note
-              uesio.styleTokens:
               components:
                 - uesio/io.text:
                     text: $Label{uesio/core.session_expiration_msg}

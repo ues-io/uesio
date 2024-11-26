@@ -292,6 +292,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "id") {
 			return collection?.getFullName() || ""
 		}
+		if (expression === "name") {
+			return collection?.getId() || ""
+		}
 		if (expression === "label") {
 			return collection?.getLabel() || ""
 		}

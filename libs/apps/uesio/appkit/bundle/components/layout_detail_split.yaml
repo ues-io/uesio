@@ -18,6 +18,7 @@ definition:
               root:
                 - col-span-2
                 - "[container-type:inline-size]"
+                - pb-40
             components:
               - $Slot{main}
         - uesio/io.box:

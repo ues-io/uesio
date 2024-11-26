@@ -22,6 +22,9 @@ definition:
             icon: ${uesio/studio.icon}
             iconcolor: ${uesio/studio.color}
             tileVariant: uesio/appkit.apptag
+            signals:
+              - signal: route/NAVIGATE
+                path: app/${uesio/core.uniquekey}
   - uesio/io.box:
       uesio.display:
         - type: group

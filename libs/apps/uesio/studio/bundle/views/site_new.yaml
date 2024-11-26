@@ -98,65 +98,45 @@ definition:
                             - uesio/io.titlebar:
                                 title: Site Name and Description
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                      uesio.id: workspace-name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.description
+                                      uesio.id: workspace-description
+                                note:
                                   - uesio/io.box:
+                                      uesio.variant: uesio/appkit.note
                                       components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.name
-                                            uesio.id: workspace-name
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.description
-                                            uesio.id: workspace-description
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: "Note: Your site name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The site description is optional."
+                                        - uesio/io.text:
+                                            text: "Note: Your site name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The site description is optional."
                             - uesio/io.titlebar:
                                 title: Source Bundle
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.bundle
+                                      uesio.id: "site-bundle-version"
+                                      reference:
+                                        searchFields:
+                                          - uesio/core.uniquekey
+                                        returnFields:
+                                          - uesio/core.id
+                                          - uesio/core.uniquekey
+                                          - uesio/studio.major
+                                          - uesio/studio.minor
+                                          - uesio/studio.patch
+                                          - uesio/studio.version
+                                        template: "v${uesio/studio.version}"
+                                        conditions:
+                                          - field: uesio/studio.app
+                                            value: ${uesio/studio.app->uesio/core.id}
+                                note:
                                   - uesio/io.box:
+                                      uesio.variant: uesio/appkit.note
                                       components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.bundle
-                                            uesio.id: "site-bundle-version"
-                                            reference:
-                                              searchFields:
-                                                - uesio/core.uniquekey
-                                              returnFields:
-                                                - uesio/core.id
-                                                - uesio/core.uniquekey
-                                                - uesio/studio.major
-                                                - uesio/studio.minor
-                                                - uesio/studio.patch
-                                                - uesio/studio.version
-                                              template: "v${uesio/studio.version}"
-                                              conditions:
-                                                - field: uesio/studio.app
-                                                  value: ${uesio/studio.app->uesio/core.id}
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: "Pick the version of your app you want this site to use. You can change this later easily by upgrading or rolling back to a different version."
+                                        - uesio/io.text:
+                                            text: "Pick the version of your app you want this site to use. You can change this later easily by upgrading or rolling back to a different version."

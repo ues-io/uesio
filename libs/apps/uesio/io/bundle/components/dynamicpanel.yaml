@@ -9,6 +9,8 @@ discoverable: false
 slots:
   - name: components
     label: Trigger Contents
+  - name: actions
+    label: Trigger Actions
 sections:
   - type: SIGNALS
   - type: STYLES

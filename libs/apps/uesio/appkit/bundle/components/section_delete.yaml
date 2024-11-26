@@ -1,6 +1,8 @@
 name: section_delete
 category: LAYOUT
 type: DECLARATIVE
+properties:
+  - name: title
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.section
@@ -17,21 +19,18 @@ definition:
               title:
                 - text-red-600
         - uesio/io.titlebar:
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
+            uesio.styleTokens:
+              root:
+                - mt-4
+                - items-center
             actions:
-              - uesio/io.button:
-                  uesio.styleTokens:
-                    root:
-                      - mt-4
-                      - border-red-600
-                      - text-red-600
-                  uesio.variant: uesio/appkit.secondary
-                  text: Delete $Collection{label}
-                  signals:
-                    - signal: wire/MARK_FOR_DELETE
-                    - signal: wire/SAVE
-                    - signal: route/NAVIGATE_TO_ASSIGNMENT
-                      collection: $Collection{id}
-                      viewtype: list
+              - uesio/appkit.button_delete:
+                  confirm: $Prop{confirm}
+                  confirmTitle: $Prop{confirmTitle}
+                  confirmMessage: $Prop{confirmMessage}
+                  signals: $Prop{signals}
 title: Delete Section Component
 discoverable: true
 description: Delete Section

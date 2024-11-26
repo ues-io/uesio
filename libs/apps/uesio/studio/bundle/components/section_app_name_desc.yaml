@@ -1,0 +1,31 @@
+name: section_app_name_desc
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.primarysection
+      components:
+        - uesio/io.titlebar:
+            title: App Name & Description
+            uesio.variant: uesio/appkit.sub
+        - uesio/studio.layout_note_form:
+            content:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+                  uesio.id: new-app-name
+              - uesio/io.field:
+                  fieldId: uesio/studio.description
+                  uesio.id: new-app-description
+            note:
+              - uesio/io.box:
+                  uesio.variant: uesio/appkit.note
+                  components:
+                    - uesio/io.text:
+                        text: "Note: Your app name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The app description is optional."
+title: App Name and Description
+discoverable: false
+description: App Name and Description
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

@@ -1,0 +1,28 @@
+name: section_app_access
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.primarysection
+      components:
+        - uesio/io.titlebar:
+            title: App Access
+            uesio.variant: uesio/appkit.sub
+        - uesio/studio.layout_note_form:
+            content:
+              - uesio/io.field:
+                  fieldId: uesio/studio.public
+                  uesio.id: new-app-public
+            note:
+              - uesio/io.box:
+                  uesio.variant: uesio/appkit.note
+                  components:
+                    - uesio/io.text:
+                        text: "This determines whether other apps can see this app. (Only select this box if you plan on publishing your app on the bundle store.)"
+title: App Access Section
+discoverable: false
+description: App Access Section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
