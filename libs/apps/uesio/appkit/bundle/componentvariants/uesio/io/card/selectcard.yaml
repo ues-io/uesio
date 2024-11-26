@@ -1,0 +1,13 @@
+name: selectcard
+label: Select Card
+definition:
+  tileVariant: uesio/appkit.selectcard
+  uesio.styleTokens:
+    panel:
+      - gap-y-2
+    panelInner:
+      - font-light
+      - text-sm
+      - text-slate-600
+      - leading-normal
+public: true

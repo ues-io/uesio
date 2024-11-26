@@ -16,12 +16,14 @@ definition:
   - uesio/io.box:
       uesio.variant: uesio/sitekit.section
       uesio.styleTokens:
-        root: $Region{root}
+        root:
+          - $Region{root}
       components:
         - uesio/io.box:
             uesio.variant: $Prop{innerVariant}
             uesio.styleTokens:
-              root: $Region{inner}
+              root:
+                - $Region{inner}
             components:
               - $Slot{content}
 title: Section

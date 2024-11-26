@@ -53,6 +53,9 @@ definition:
                           logoSignals:
                             - signal: route/NAVIGATE
                               path: home
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: app/${uesio/core.uniquekey}
               content:
                 - uesio/io.box:
                     uesio.variant: uesio/appkit.note
@@ -94,39 +97,25 @@ definition:
                             - uesio/io.titlebar:
                                 title: Workspace Name and Description
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                      uesio.id: workspace-name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.description
+                                      uesio.id: workspace-description
+                                note:
                                   - uesio/io.box:
+                                      uesio.variant: uesio/appkit.note
                                       components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.name
-                                            uesio.id: workspace-name
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.description
-                                            uesio.id: workspace-description
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: "Note: Your workspace name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The workspace description is optional."
+                                        - uesio/io.text:
+                                            text: "Note: Your workspace name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The workspace description is optional."
                             - uesio/io.titlebar:
                                 title: Workspace Clone Settings
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
                                   - uesio/io.box:
                                       uesio.styleTokens:
                                         root:
@@ -136,18 +125,13 @@ definition:
                                       components:
                                         - uesio/io.card:
                                             title: Create an Empty Workspace
-                                            tileVariant: uesio/appkit.selectcard
+                                            uesio.variant: uesio/appkit.selectcard
                                             selectedConditions:
                                               - type: hasNoValue
                                                 wire: app
                                                 value: ${uesio/studio.clonefrombundle}
                                             content:
                                               - uesio/io.text:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - font-light
-                                                      - text-sm
-                                                      - text-slate-600
                                                   text: Start with a completely empty workspace.
                                             signals:
                                               - signal: wire/UPDATE_RECORD
@@ -156,34 +140,25 @@ definition:
                                                 value: false
                                         - uesio/io.card:
                                             title: Clone from an Existing Bundle
-                                            tileVariant: uesio/appkit.selectcard
+                                            uesio.variant: uesio/appkit.selectcard
                                             selectedConditions:
                                               - type: hasValue
                                                 wire: app
                                                 value: ${uesio/studio.clonefrombundle}
                                             content:
                                               - uesio/io.text:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - font-light
-                                                      - text-sm
-                                                      - text-slate-600
                                                   text: Use an existing bundle as a starting point.
                                             signals:
                                               - signal: wire/UPDATE_RECORD
                                                 wire: newworkspace
                                                 field: uesio/studio.clonefrombundle
                                                 value: true
+                                note:
                                   - uesio/io.box:
+                                      uesio.variant: uesio/appkit.note
                                       components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: If you've already created bundles for this app, you can use one of those a starting point.
+                                        - uesio/io.text:
+                                            text: If you've already created bundles for this app, you can use one of those a starting point.
                             - uesio/io.box:
                                 uesio.display:
                                   - type: hasValue
@@ -193,12 +168,8 @@ definition:
                                   - uesio/io.titlebar:
                                       title: Source Bundle
                                       uesio.variant: uesio/appkit.sub
-                                  - uesio/io.grid:
-                                      uesio.styleTokens:
-                                        root:
-                                          - grid-cols-2
-                                          - gap-6
-                                      items:
+                                  - uesio/studio.layout_note_form:
+                                      content:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.sourcebundle
                                             uesio.id: workspace-parent-bundle

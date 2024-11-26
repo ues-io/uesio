@@ -91,14 +91,9 @@ const StyleDefaults = Object.freeze({
 		"grid-cols-12",
 		"cursor-pointer",
 		"gap-y-1.5",
+		"justify-items-center",
 	],
-	iconwrapper: [
-		"grid",
-		"relative",
-		"transition-all",
-		"border-transparent",
-		"justify-center",
-	],
+	iconwrapper: ["grid", "relative", "transition-all", "border-transparent"],
 	iconwrapperSelected: [
 		"before:rounded-full",
 		"before:absolute",

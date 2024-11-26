@@ -1,0 +1,30 @@
+name: section_app_icon_color
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.section
+      components:
+        - uesio/io.titlebar:
+            title: App Color & Icon
+            uesio.variant: uesio/appkit.sub
+        - uesio/studio.layout_note_form:
+            content:
+              - uesio/studio.colorpicker:
+                  fieldId: uesio/studio.color
+              - uesio/studio.appiconpicker:
+                  fieldId: uesio/studio.icon
+                  colorFieldId: uesio/studio.color
+            note:
+              - uesio/io.box:
+                  uesio.variant: uesio/appkit.note
+                  components:
+                    - uesio/io.text:
+                        text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
+title: App Icon and Color
+discoverable: false
+description: App Icon and Color
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

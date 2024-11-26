@@ -1,0 +1,30 @@
+name: section_app_owner
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.section
+      components:
+        - uesio/io.titlebar:
+            title: App Owner
+            uesio.variant: uesio/appkit.sub
+        - uesio/studio.layout_note_form:
+            content:
+              - uesio/io.field:
+                  fieldId: uesio/studio.user
+                  uesio.id: new-app-user
+                  reference:
+                    requirewriteaccess: true
+            note:
+              - uesio/io.box:
+                  uesio.variant: uesio/appkit.note
+                  components:
+                    - uesio/io.text:
+                        text: Choose who will own this app. If this is a personal app you can leave yourself as the owner. If you are a member of an organization, you can also make that organization the owner of the app.
+title: App Owner Section
+discoverable: false
+description: App Owner Section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

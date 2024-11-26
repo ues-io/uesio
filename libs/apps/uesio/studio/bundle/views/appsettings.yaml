@@ -56,7 +56,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
+                                      uesio.variant: uesio/appkit.primary
                                       text: $Label{uesio/io.save}
                                       hotkey: "meta+s"
                                       uesio.display:
@@ -67,82 +67,27 @@ definition:
                                           wires:
                                             - apps
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
                                         - type: wireHasChanges
                                           wire: apps
                                       signals:
                                         - signal: wire/CANCEL
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.primarysection
-                          components:
-                            - uesio/io.grid:
-                                uesio.variant: uesio/appkit.two_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.user
-                            - uesio/io.grid:
-                                uesio.variant: uesio/appkit.two_columns
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.description
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.public
-                            - uesio/studio.colorpicker:
-                                fieldId: uesio/studio.color
-                            - uesio/studio.appiconpicker:
-                                fieldId: uesio/studio.icon
-                                colorFieldId: uesio/studio.color
+                      - uesio/studio.section_app_name_desc:
+                      - uesio/studio.section_app_icon_color:
+                      - uesio/studio.section_app_access:
                       - uesio/appkit.section_audit_info:
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.danger
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title: Danger Zone
-                            - uesio/io.box:
-                                components:
-                                  - uesio/io.titlebar:
-                                      title: Delete app
-                                      subtitle: Once you delete an app, all associated sites and workspaces will also be deleted. Please be sure this what you want to do!
-                                      actions:
-                                        - uesio/io.group:
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.id: delete-app
-                                                  text: Delete this app
-                                                  uesio.variant: uesio/io.destructive
-                                                  signals:
-                                                    - signal: panel/TOGGLE
-                                                      panel: deleteApp
-  panels:
-    deleteApp:
-      uesio.type: uesio/io.dialog
-      title: You are about to delete app ${uesio/studio.name}.
-      width: 400px
-      height: 300px
-      components:
-        - uesio/io.text:
-            text: All your data for ${uesio/studio.name} will be permanently removed and you won't be able to see it again, including all associated views, fields and collections.
-            element: p
-      actions:
-        - uesio/io.button:
-            text: $Label{uesio/io.delete}
-            uesio.id: confirm-delete-app
-            uesio.variant: uesio/io.primary
-            signals:
-              - signal: wire/MARK_FOR_DELETE
-              - signal: wire/SAVE
-                wires:
-                  - apps
-              - signal: "route/NAVIGATE"
-                path: "home"
-        - uesio/io.button:
-            text: $Label{uesio/io.cancel}
-            uesio.variant: uesio/io.secondary
-            signals:
-              - signal: panel/TOGGLE
-                panel: deleteApp
+                      - uesio/appkit.section_delete:
+                          confirm: true
+                          confirmTitle: You are about to delete app ${uesio/studio.name}
+                          confirmMessage: All your data for ${uesio/studio.name} will be permanently removed and you won't be able to see it again, including all associated views, fields and collections.
+                          signals:
+                            - signal: wire/MARK_FOR_DELETE
+                            - signal: wire/SAVE
+                              wires:
+                                - apps
+                            - signal: "route/NAVIGATE"
+                              path: "home"
+                          title: Delete this app
+                          subtitle: Once you delete an app, all associated sites and workspaces will also be deleted. Please be sure this what you want to do!
