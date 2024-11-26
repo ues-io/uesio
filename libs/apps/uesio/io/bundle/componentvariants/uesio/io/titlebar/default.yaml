@@ -5,19 +5,17 @@ definition:
     root:
       - flex
       - gap-5
-      - flex-wrap
     content:
       - flex
       - flex-col
       - grow
       - justify-center
-      - basis-[min-content]
     title:
       - text-black/80
       - text-base
     subtitle:
       - text-black/60
-      - text-sm
+      - text-xs
       - font-light
     actions:
       - relative

@@ -3,12 +3,14 @@ package jsdialect
 import (
 	"bytes"
 	"errors"
+	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -145,4 +147,71 @@ func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID s
 	}, connection, session, nil)
 
 	return err
+}
+
+func getFileContents(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (string, error) {
+	buf, _, err := botGetFileData(sourceKey, sourcePath, session, connection)
+	if err != nil {
+		return "", err
+	}
+	return string(buf.Bytes()), nil
+}
+
+func getHostUrl(session *sess.Session, connection wire.Connection) (string, error) {
+	site := session.GetSite()
+
+	domain, err := datasource.QueryDomainFromSite(site.ID, connection)
+	if err != nil {
+		return "", err
+	}
+
+	return datasource.GetHostFromDomain(domain, site), nil
+}
+
+func getFileUrl(sourceKey, sourcePath string) string {
+	namespace, name, err := meta.ParseKey(sourceKey)
+	if err != nil {
+		return ""
+	}
+	usePath := ""
+	if sourcePath != "" {
+		usePath = "/" + sourcePath
+	}
+	return "/site/files/" + namespace + "/" + name + usePath
+}
+
+func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
+	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	if err != nil {
+		return err
+	}
+	return template.Execute(file, params)
+}
+
+func mergeTemplateString(templateString string, params map[string]interface{}) (string, error) {
+	// Create a buffer to store the output
+	var buf bytes.Buffer
+	err := mergeTemplate(&buf, params, templateString)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func mergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}, session *sess.Session, connection wire.Connection) (string, error) {
+	templateString, err := getFileContents(sourceKey, sourcePath, session, connection)
+	if err != nil {
+		return "", err
+	}
+	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	if err != nil {
+		return "", err
+	}
+	// Create a buffer to store the output
+	var buf bytes.Buffer
+	err = template.Execute(&buf, params)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }

@@ -21,7 +21,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -31,14 +30,6 @@ func init() {
 	passwordGenerator, _ = password.NewGenerator(&password.GeneratorInput{
 		Symbols: "!@#$%^&*(){}[]",
 	})
-}
-
-func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
-	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
-	if err != nil {
-		return err
-	}
-	return template.Execute(file, params)
 }
 
 func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
