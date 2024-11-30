@@ -71,7 +71,10 @@ func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		case "REFERENCE":
 			isMultiCollection, err := change.GetField("uesio/studio.reference->uesio/studio.multicollection")
 			if err != nil {
-				return err
+				// GetField throws an error if the field it's trying to find is undefined.
+				// In this case, it's fine if uesio/studio.multicollection is undefined. We still check
+				// to make sure that the uesio/studio.collection field exists and is valid.
+				isMultiCollection = false
 			}
 			if isMultiCollection == nil || isMultiCollection.(bool) == false {
 				err = depMap.AddRequired(change, "collection", "uesio/studio.reference->uesio/studio.collection")

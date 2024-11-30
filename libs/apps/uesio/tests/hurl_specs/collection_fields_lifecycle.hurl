@@ -115,7 +115,46 @@ Accept: application/json
                     "uesio/studio.name":"estimated_value",
                     "uesio/studio.label":"Estimated Value",
                     "uesio/studio.type":"NUMBER",
-                    "uesio/studio.number->uesio/studio.decimals":2
+                    "uesio/studio.number": {
+                        "uesio/studio.decimals":2
+                    }
+                },
+                "temp3":{
+                    "uesio/studio.collection":"{{app_fullname}}.rare_and_unusual_object",
+                    "uesio/studio.name":"reference_field",
+                    "uesio/studio.label":"Reference Field",
+                    "uesio/studio.type":"REFERENCE",
+                    "uesio/studio.reference": {
+                        "uesio/studio.collection":"uesio/tests.animal"
+                    }
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}"
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
+jsonpath "$.wires[0].changes['temp2']['uesio/studio.number']['uesio/studio.decimals']" == 2
+[Captures]
+field_id: jsonpath "$.wires[0].changes['temp3']['uesio/core.id']"
+
+# Make an update to the reference field
+POST https://{{host}}:{{port}}/site/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/studio.field",
+            "deletes":{},
+            "changes":{
+                "temp3":{
+                    "uesio/core.id":"{{field_id}}",
+                    "uesio/studio.label":"Super Cool Reference Field"
                 }
             },
             "params": {
@@ -233,6 +272,12 @@ Accept: application/json
                 },
                 {
                     "id": "uesio/studio.collection"
+                },
+                {
+                    "id": "uesio/studio.number"
+                },
+                {
+                    "id": "uesio/studio.reference"
                 }
             ],
             "conditions": [
@@ -314,11 +359,21 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "rare_and_unusual_object"
 jsonpath "$.wires[0].data[0]['uesio/studio.label']" == "Rare and unusual object"
 jsonpath "$.wires[0].data[0]['uesio/studio.plurallabel']" == "Rare and unusual objects"
-jsonpath "$.wires[1].data" count == 2
-jsonpath "$.wires[1].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
-jsonpath "$.wires[1].data[*]['uesio/studio.name']" includes "estimated_value"
-jsonpath "$.wires[1].data[*]['uesio/studio.label']" includes "Object Name"
-jsonpath "$.wires[1].data[*]['uesio/studio.type']" includes "NUMBER"
+jsonpath "$.wires[1].data" count == 3
+jsonpath "$.wires[1].data[0]['uesio/studio.collection']" == "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[1].data[0]['uesio/studio.name']" == "estimated_value"
+jsonpath "$.wires[1].data[0]['uesio/studio.label']" == "Estimated Value"
+jsonpath "$.wires[1].data[0]['uesio/studio.type']" == "NUMBER"
+jsonpath "$.wires[1].data[0]['uesio/studio.number']['uesio/studio.decimals']" == 2
+jsonpath "$.wires[1].data[1]['uesio/studio.collection']" == "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[1].data[1]['uesio/studio.name']" == "object_name"
+jsonpath "$.wires[1].data[1]['uesio/studio.label']" == "Object Name"
+jsonpath "$.wires[1].data[1]['uesio/studio.type']" == "TEXT"
+jsonpath "$.wires[1].data[2]['uesio/studio.collection']" == "{{app_fullname}}.rare_and_unusual_object"
+jsonpath "$.wires[1].data[2]['uesio/studio.name']" == "reference_field"
+jsonpath "$.wires[1].data[2]['uesio/studio.label']" == "Super Cool Reference Field"
+jsonpath "$.wires[1].data[2]['uesio/studio.type']" == "REFERENCE"
+jsonpath "$.wires[1].data[2]['uesio/studio.reference']['uesio/studio.collection']" == "uesio/tests.animal"
 jsonpath "$.wires[2].data" count == 2
 jsonpath "$.wires[2].data[*]['uesio/studio.collection']" includes "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[2].data[*]['uesio/studio.type']" includes "list"
