@@ -371,7 +371,7 @@ jsonpath "$.wires[1].data[1]['uesio/studio.label']" == "Object Name"
 jsonpath "$.wires[1].data[1]['uesio/studio.type']" == "TEXT"
 jsonpath "$.wires[1].data[2]['uesio/studio.collection']" == "{{app_fullname}}.rare_and_unusual_object"
 jsonpath "$.wires[1].data[2]['uesio/studio.name']" == "reference_field"
-jsonpath "$.wires[1].data[2]['uesio/studio.label']" == "Reference Field"
+jsonpath "$.wires[1].data[2]['uesio/studio.label']" == "Super Cool Reference Field"
 jsonpath "$.wires[1].data[2]['uesio/studio.type']" == "REFERENCE"
 jsonpath "$.wires[1].data[2]['uesio/studio.reference']['uesio/studio.collection']" == "uesio/tests.animal"
 jsonpath "$.wires[2].data" count == 2
