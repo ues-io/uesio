@@ -4,6 +4,7 @@ function collection(bot) {
 	var collectionPluralLabel = bot.params.get("pluralLabel")
 	var collectionIcon = bot.params.get("icon")
 	var additionalCollections = bot.params.get("additionalCollections")
+	const instructions = bot.params.get("instructions")
 
 	const namespace = bot.getAppName()
 
@@ -34,12 +35,21 @@ function collection(bot) {
 		the simplest and most straightforward way possible.
 	`
 
+	const additional = instructions
+		? `
+		The following additional instructions were given:
+		${instructions}
+	`
+		: ""
+
 	const prompt = `
 		Use the tool provided to create between 5 and 10 fields for
 		a database table called: ${collectionName}. The primary key for this table as well
 		as audit fields such as created date, updated date, created by and updated by already
 		exist and should not be created again. The other tables that already exist are.
 		${existingCollectionsShort.join("\n")}
+
+		${additional}
 	`
 
 	const nameParam = {
