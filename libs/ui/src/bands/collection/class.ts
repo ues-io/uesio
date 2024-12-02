@@ -161,6 +161,10 @@ class Collection {
 			.filter((f) => searchableFieldTypes.includes(f.type))
 			.map((v) => new Field(v, this.context))
 	hasAllFields = () => this.source.hasAllFields
+	isAccessible = () => this.source.accessible
+	isUpdateable = () => this.source.updateable
+	isCreateable = () => this.source.createable
+	isDeleteable = () => this.source.deleteable
 }
 
 const searchableFieldTypes = ["TEXT", "LONGTEXT", "SELECT"]

@@ -46,7 +46,8 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
@@ -60,6 +61,11 @@ jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
 jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
 jsonpath "$.wires[0].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.collections['uesio/studio.field'].name" == "field"
+jsonpath "$.collections['uesio/studio.field'].accessible" == true
+jsonpath "$.collections['uesio/studio.field'].createable" == true
+jsonpath "$.collections['uesio/studio.field'].updateable" == false
+jsonpath "$.collections['uesio/studio.field'].deleteable" == false
 
 # Test a multi-value condition on the grouping field
 POST https://{{host}}:{{port}}/site/wires/load
@@ -287,7 +293,8 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
@@ -303,6 +310,11 @@ jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
 jsonpath "$.wires[1].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
 jsonpath "$.wires[1].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.collections['uesio/studio.collection'].name" == "collection"
+jsonpath "$.collections['uesio/studio.collection'].accessible" == true
+jsonpath "$.collections['uesio/studio.collection'].createable" == true
+jsonpath "$.collections['uesio/studio.collection'].updateable" == true
+jsonpath "$.collections['uesio/studio.collection'].deleteable" == true
 
 # Test conditions on Credential by type, to verify that we can do per-item Bundleable Item filtering
 POST https://{{host}}:{{port}}/site/wires/load

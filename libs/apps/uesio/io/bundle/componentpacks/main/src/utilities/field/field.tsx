@@ -147,20 +147,36 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <DateField {...common} />
 			break
 		case "LONGTEXT":
-			content =
-				displayAs === "MARKDOWN" ? (
-					<MarkDownField {...common} />
-				) : (
-					<TextAreaField {...common} options={longtext} />
-				)
+			switch (displayAs) {
+				case "MARKDOWN":
+					content = <MarkDownField {...common} />
+					break
+				case "CODE":
+					content = (
+						<CodeField
+							{...common}
+							value={common.value as string}
+							setValue={(value: string) => {
+								common.setValue(value)
+							}}
+							language={longtext?.language}
+						/>
+					)
+					break
+				default:
+					content = <TextAreaField {...common} options={longtext} />
+			}
 			break
 		case "TEXT":
-			content =
-				displayAs === "PASSWORD" ? (
-					<TextField {...common} options={text} type="password" />
-				) : (
-					<TextField {...common} options={text} />
-				)
+			switch (displayAs) {
+				case "PASSWORD":
+					content = (
+						<TextField {...common} options={text} type="password" />
+					)
+					break
+				default:
+					content = <TextField {...common} options={text} />
+			}
 			break
 		case "AUTONUMBER":
 			content = <TextField {...common} />

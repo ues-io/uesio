@@ -115,8 +115,8 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	const label = definition.label || fieldMetadata.getLabel()
 
 	const canEdit = record.isNew()
-		? fieldMetadata.getCreateable()
-		: fieldMetadata.getUpdateable()
+		? collection.isCreateable() && fieldMetadata.getCreateable()
+		: collection.isUpdateable() && fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const classes = styles.useStyleTokens(StyleDefaults, props)

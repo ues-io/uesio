@@ -9,15 +9,11 @@ definition:
       uesio.display:
         - type: fieldMode
           mode: EDIT
+        - type: recordIsDeleteable
       components:
         - uesio/io.titlebar:
             title: Danger Zone
             uesio.variant: uesio/appkit.sub
-            uesio.styleTokens:
-              root:
-                - border-red-600
-              title:
-                - text-red-600
         - uesio/io.titlebar:
             title: $Prop{title}
             subtitle: $Prop{subtitle}

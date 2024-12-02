@@ -330,7 +330,18 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 
+		// If we're using an item condition and our item is in our app's
+		// namespace then we're editable. Otherwise, we're not.
+		if item.GetNamespace() != session.GetContextAppName() {
+			collectionMetadata.Deleteable = false
+			collectionMetadata.Updateable = false
+		}
+
 	} else {
+		// If we're not using an item condition, we're never editable.
+		collectionMetadata.Deleteable = false
+		collectionMetadata.Updateable = false
+
 		conditions := meta.BundleConditions{}
 		for _, condition := range op.Conditions {
 			// Ignore the special conditions

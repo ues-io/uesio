@@ -84,6 +84,22 @@ type RecordIsNotNewCondition = {
 	type: "recordIsNotNew"
 }
 
+type RecordIsEditableCondition = {
+	type: "recordIsEditable"
+}
+
+type RecordIsNotEditableCondition = {
+	type: "recordIsNotEditable"
+}
+
+type RecordIsDeleteableCondition = {
+	type: "recordIsDeleteable"
+}
+
+type RecordIsNotDeleteableCondition = {
+	type: "recordIsNotDeleteable"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -198,6 +214,10 @@ type DisplayCondition =
 	| FieldModeCondition
 	| RecordIsNewCondition
 	| RecordIsNotNewCondition
+	| RecordIsEditableCondition
+	| RecordIsNotEditableCondition
+	| RecordIsDeleteableCondition
+	| RecordIsNotDeleteableCondition
 	| WireIsLoading
 	| WireIsNotLoading
 	| WireHasNoRecords
@@ -321,6 +341,18 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	if (type === "recordIsNew") return !!context.getRecord(wireName)?.isNew()
 
 	if (type === "recordIsNotNew") return !context.getRecord(wireName)?.isNew()
+
+	if (type === "recordIsEditable")
+		return !!context.getRecord(wireName)?.isEditable()
+
+	if (type === "recordIsNotEditable")
+		return !context.getRecord(wireName)?.isEditable()
+
+	if (type === "recordIsDeleteable")
+		return !!context.getRecord(wireName)?.isDeleteable()
+
+	if (type === "recordIsNotDeleteable")
+		return !context.getRecord(wireName)?.isDeleteable()
 
 	if (type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
