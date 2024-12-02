@@ -225,25 +225,13 @@ definition:
                               values:
                                 - DECLARATIVE
                           components:
-                            - uesio/studio.codefield:
+                            - uesio/io.field:
+                                wrapperVariant: uesio/io.minimal
                                 fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
-                                mode: READ
-                                uesio.display:
-                                  - type: paramValue
-                                    param: app
-                                    operator: NOT_EQUALS
-                                    value: $Param{namespace}
-                            - uesio/studio.codefield:
-                                fieldId: uesio/studio.definition
-                                height: 350px
-                                language: yaml
-                                uesio.display:
-                                  - type: paramValue
-                                    param: app
-                                    operator: EQUALS
-                                    value: $Param{namespace}
+                                labelPosition: none
+                                displayAs: CODE
+                                longtext:
+                                  language: yaml
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           components:

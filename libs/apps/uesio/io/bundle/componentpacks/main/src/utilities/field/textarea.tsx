@@ -5,6 +5,7 @@ import ReadOnlyField from "./readonly"
 export type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
+	language?: string
 }
 
 interface TextAreaFieldProps {
