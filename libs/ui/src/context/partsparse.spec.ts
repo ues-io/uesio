@@ -4,14 +4,14 @@ import {
 	parseTwoPartExpression,
 } from "./partsparse"
 
-type parseExpressionTestCase = {
+type ParseExpressionTestCase = {
 	name: string
 	input: string
-	expected: string[] | undefined
-	expectError: string | undefined
+	expected?: string[]
+	expectError?: string
 }
 
-const parseOnePartExpressionTests = [
+const parseOnePartExpressionTests: ParseExpressionTestCase[] = [
 	{
 		name: "no delimiters",
 		input: "foo",
@@ -47,7 +47,7 @@ const parseOnePartExpressionTests = [
 		input: "bar",
 		expected: ["bar"],
 	},
-] as parseExpressionTestCase[]
+]
 
 describe("parseOnePartExpression", () => {
 	parseOnePartExpressionTests.forEach((tc) => {
@@ -65,7 +65,7 @@ describe("parseOnePartExpression", () => {
 	})
 })
 
-const parseTwoPartExpressionTests = [
+const parseTwoPartExpressionTests: ParseExpressionTestCase[] = [
 	{
 		name: "no delimiters",
 		input: "foo",
@@ -96,7 +96,7 @@ const parseTwoPartExpressionTests = [
 		input: "foo:bar",
 		expected: ["foo", "bar"],
 	},
-] as parseExpressionTestCase[]
+]
 
 describe("parseTwoPartExpression", () => {
 	parseTwoPartExpressionTests.forEach((tc) => {
@@ -114,7 +114,7 @@ describe("parseTwoPartExpression", () => {
 	})
 })
 
-const parseOneOrTwoPartExpressionTests = [
+const parseOneOrTwoPartExpressionTests: ParseExpressionTestCase[] = [
 	{
 		name: "no delimiters",
 		input: "foo",
@@ -160,7 +160,7 @@ const parseOneOrTwoPartExpressionTests = [
 		input: "data:value",
 		expected: ["data", "value"],
 	},
-] as parseExpressionTestCase[]
+]
 
 describe("parseOneOrTwoPartExpression", () => {
 	parseOneOrTwoPartExpressionTests.forEach((tc) => {

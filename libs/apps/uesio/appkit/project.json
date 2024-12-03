@@ -29,7 +29,7 @@
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/apps/uesio/appkit/jest.config.ts",
+				"jestConfig": "libs/apps/uesio/appkit/jest.config.js",
 				"passWithNoTests": true
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/appkit"]

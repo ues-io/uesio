@@ -1,8 +1,6 @@
 import { definition, styles } from "@uesio/ui"
 import { forwardRef } from "react"
 
-type AlignValues = "start" | "end" | "left" | "right" | "center" | "justify"
-
 type AcceptedElements =
 	| "p"
 	| "span"
@@ -19,7 +17,7 @@ interface TextProps extends definition.UtilityProps {
 	text?: string
 	element?: AcceptedElements
 	color?: string
-	align?: AlignValues
+	align?: AlignSetting
 }
 
 const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
