@@ -9,8 +9,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{workspaceRoot}/dist/vendor"],
 			"options": {
-				"commands": ["gulp -f libs/vendor/gulpfile.js"],
-				"parallel": false
+				"commands": ["gulp -f libs/vendor/gulpfile.js"]
 			},
 			"watch": {
 				"builder": "nx:run-commands",

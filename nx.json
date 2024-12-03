@@ -53,7 +53,7 @@
 		]
 	},
 	"useDaemonProcess": false,
-	"parallel": 1,
+	"parallel": 5,
 	"useInferencePlugins": false,
 	"defaultBase": "master"
 }

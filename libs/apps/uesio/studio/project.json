@@ -13,7 +13,6 @@
 					"uesio pack",
 					"npx tsc --noEmit --project ./tsconfig.lib.json"
 				],
-				"parallel": false,
 				"cwd": "libs/apps/uesio/studio"
 			}
 		},

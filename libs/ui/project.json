@@ -10,7 +10,6 @@
 			"outputs": ["{workspaceRoot}/dist/ui"],
 			"options": {
 				"commands": ["bash build.sh"],
-				"parallel": false,
 				"cwd": "libs/ui"
 			}
 		},
