@@ -2,6 +2,8 @@ name: button_delete
 category: LAYOUT
 type: DECLARATIVE
 properties:
+  - name: label
+    defaultValue: Delete $Collection{label}
   - name: confirmTitle
     defaultValue: Are you sure?
   - name: confirmMessage
@@ -13,6 +15,8 @@ properties:
       - signal: route/NAVIGATE_TO_ASSIGNMENT
         collection: $Collection{id}
         viewtype: list
+  - name: id
+    defaultValue: delete_confirm
 components:
   - uesio/io.dialog
 definition:
@@ -20,7 +24,7 @@ definition:
       uesio.display:
         - type: hasValue
           value: $Prop{confirm}
-      uesio.id: delete_confirm
+      uesio.id: $Prop{id}
       uesio.type: uesio/io.dialog
       width: 400px
       height: 300px
@@ -45,7 +49,7 @@ definition:
                 component: uesio/io.dynamicpanel
                 componentsignal: TOGGLE
                 targettype: specific
-                componentid: delete_confirm
+                componentid: $Prop{id}
   - uesio/io.button:
       uesio.styleTokens:
         root:
@@ -56,13 +60,13 @@ definition:
       uesio.display:
         - type: hasValue
           value: $Prop{confirm}
-      text: Delete $Collection{label}
+      text: $Prop{label}
       signals:
         - signal: component/CALL
           component: uesio/io.dynamicpanel
           componentsignal: TOGGLE
           targettype: specific
-          componentid: delete_confirm
+          componentid: $Prop{id}
           uesio.conditions:
             - type: hasValue
               value: $Prop{confirm}
@@ -76,7 +80,7 @@ definition:
       uesio.display:
         - type: hasNoValue
           value: $Prop{confirm}
-      text: Delete $Collection{label}
+      text: $Prop{label}
       signals: $Prop{signals}
 title: Delete Button Component
 discoverable: true
