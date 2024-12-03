@@ -23,7 +23,7 @@ import {
 	del,
 	interceptPlatformRedirects,
 } from "./async"
-import { memoizedGetJSON } from "./memoizedAsync"
+import { AsyncResult, memoizedAsync, memoizedGetJSON } from "./memoizedAsync"
 import { SiteState } from "../bands/site"
 import { UploadRequest } from "../load/uploadrequest"
 import { PlainCollectionMap } from "../bands/collection/types"
@@ -98,11 +98,11 @@ const getMonacoEditorVersion = () =>
 	(window as unknown as UesioWindow).monacoEditorVersion
 
 type BotParams = {
-	[key: string]: PlainFieldValue
+	[key: string]: PlainFieldValue | PlainFieldValue[]
 }
 
 type BotResponse = {
-	params?: BotParams
+	params?: Record<string, PlainFieldValue>
 	success: boolean
 	error?: string
 }
@@ -454,7 +454,8 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		modstamp = context.getStaticFileModstamp(`${namespace}.${name}`)
+		modstamp = context.getStaticFileModstamp(`${namespace}.${name}`),
+		filepath?: string
 	) => {
 		const version = getSiteBundleAssetVersion(
 			context.getSite(),
@@ -462,7 +463,7 @@ const platform = {
 			modstamp ? `${modstamp}` : getDefaultModstamp(namespace)
 		)
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}${version}/${name}`
+		return `${prefix}/files/${namespace}${version}/${name}${filepath ? `/${filepath}` : ""}`
 	},
 	getUserFileURL: (
 		context: Context,
@@ -477,6 +478,46 @@ const platform = {
 			userfileid
 		)}${fileVersionParam}`
 	},
+	getAttachmentURL: (
+		context: Context,
+		recordid: string,
+		path: string,
+		fileVersion?: string
+	) => {
+		const prefix = getPrefix(context)
+		const version = fileVersion ? encodeURIComponent(fileVersion) : "0"
+		return `${prefix}/attachment/${encodeURIComponent(
+			recordid
+		)}/${version}/${path}`
+	},
+	getFileText: async (uri: string) =>
+		memoizedAsync(
+			async () => {
+				const result = await fetch(uri, {
+					headers: {
+						Accept: "text/plain",
+					},
+				})
+				if (result.status >= 400) {
+					throw new Error(
+						"Failed to load file from URL: " +
+							uri +
+							(result.statusText
+								? ", result: " + result.statusText
+								: "")
+					)
+				}
+				return await result.text()
+			},
+			{
+				cacheKey: `fetch-file-as-text-${uri}`,
+				timeout: 5000,
+				refetch: false,
+			}
+		).then((result: AsyncResult<string>) => {
+			const { data } = result
+			return data
+		}),
 	uploadFile: async (
 		context: Context,
 		request: UploadRequest,

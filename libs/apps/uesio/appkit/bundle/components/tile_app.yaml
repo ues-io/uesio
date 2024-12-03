@@ -11,19 +11,31 @@ properties:
       grouping: uesio/io.tile
 definition:
   - uesio/io.tile:
+      uesio.styleTokens:
+        root:
+          - "[min-width:0]"
+          - relative
+        content:
+          - "[min-width:0]"
       avatar:
         - uesio/io.image:
             uesio.variant: uesio/appkit.uesio_logo
             uesio.id: img-uesio-logo
             height: 32
+            width: 32
             file: uesio/core.logowhite
             signals: $Prop{logoSignals}
       content:
+        - uesio/appkit.sidebar_apptag_toggle:
         - uesio/appkit.icontile:
             title: $Prop{title}
             icon: $Prop{icon}
             iconcolor: $Prop{iconcolor}
             tileVariant: $Prop{tileVariant}
+            signals: $Prop{signals}
+            uesio.display:
+              - type: hasValue
+                value: $Prop{title}
 title: App Tile Component
 discoverable: true
 description: An app tile

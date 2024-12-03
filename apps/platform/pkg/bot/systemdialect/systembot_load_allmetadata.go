@@ -221,6 +221,14 @@ var attachmentsFieldMeta = &wire.FieldMetadata{
 	},
 }
 
+var fakeFields = []string{
+	"uesio/studio.namespace",
+	"uesio/studio.appicon",
+	"uesio/studio.appcolor",
+	"uesio/studio.appname",
+	"uesio/studio.attachments",
+}
+
 func setField(fieldName string, from, to meta.Item) error {
 	// Don't set the unique key field
 	if fieldName == "uesio/studio.uniquekey" {
@@ -257,6 +265,19 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
+	}
+
+	useLegacyFieldsLoader := len(op.Fields) <= 2
+
+	var requestFields []wire.LoadRequestField
+
+	if !useLegacyFieldsLoader {
+		for _, field := range op.Fields {
+			if slices.Contains(fakeFields, field.ID) {
+				continue
+			}
+			requestFields = append(requestFields, field)
+		}
 	}
 
 	// If we weren't provided with an order, or the current order is the same as the default,
@@ -309,7 +330,18 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 
+		// If we're using an item condition and our item is in our app's
+		// namespace then we're editable. Otherwise, we're not.
+		if item.GetNamespace() != session.GetContextAppName() {
+			collectionMetadata.Deleteable = false
+			collectionMetadata.Updateable = false
+		}
+
 	} else {
+		// If we're not using an item condition, we're never editable.
+		collectionMetadata.Deleteable = false
+		collectionMetadata.Updateable = false
+
 		conditions := meta.BundleConditions{}
 		for _, condition := range op.Conditions {
 			// Ignore the special conditions
@@ -360,6 +392,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			err = bundle.LoadAllFromNamespaces(namespaces, group, &bundlestore.GetAllItemsOptions{
 				Conditions:        conditions,
 				IncludeUserFields: true,
+				Fields:            requestFields,
 			}, session, connection)
 			if err != nil {
 				return err
@@ -424,7 +457,6 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		// Version that only returns fields if they are requested.
 		// This will likely break a lot of Studio Views
 		// but we need to stop sending so much unused stuff to the client.
-		useLegacyFieldsLoader := len(op.Fields) == 2
 		if useLegacyFieldsLoader {
 			opItem.SetField(namespaceField, namespace)
 			opItem.SetField(appIconField, appInfo.Icon)

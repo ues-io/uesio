@@ -6,5 +6,5 @@ definition:
       - grid-flow-col
       - gap-2
       - items-center
-      - auto-cols-max
+      - auto-cols-auto
 public: true

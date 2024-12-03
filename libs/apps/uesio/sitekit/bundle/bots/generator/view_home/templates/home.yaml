@@ -7,8 +7,8 @@ components:
             view: ${namespace}.header
       content:
         - uesio/sitekit.section_hero:
-            title: ${tagline}
-            subtitle: ${tagline_sub}
+            title: "${tagline}"
+            subtitle: "${tagline_sub}"
             actions:
               - uesio/io.button:
                   uesio.variant: uesio/sitekit.primary_dark
@@ -16,12 +16,14 @@ components:
               - uesio/io.button:
                   uesio.variant: uesio/sitekit.secondary_dark
                   text: Learn more
+        - uesio/io.box:
+            components: ${featuresYaml}
         - ${mainTestimonialYaml}
         - uesio/sitekit.section:
             innerVariant: uesio/sitekit.section_inner_content_three_column
             uesio.styleTokens:
               root:
-                - bg-white
+                - bg-white/80
             content: ${testimonialsYaml}
       footer:
         - uesio/core.view:

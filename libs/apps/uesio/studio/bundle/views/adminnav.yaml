@@ -4,11 +4,13 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.scrollpanel:
-        uesio.variant: uesio/studio.left
+    - uesio/appkit.sidebar:
         header:
-          - uesio/core.view:
-              view: appcrumb
+          - uesio/appkit.tile_app:
+              logoSignals:
+                - signal: "route/NAVIGATE"
+                  path: "home"
+              tileVariant: uesio/appkit.apptag
           - uesio/core.view:
               view: crumbsbar
               params:

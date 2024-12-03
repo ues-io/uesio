@@ -1,3 +1,0 @@
-name: cognito_pool_id
-managedBy: app
-store: environment

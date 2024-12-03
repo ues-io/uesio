@@ -1,37 +1,37 @@
 name: section_delete
 category: LAYOUT
 type: DECLARATIVE
+properties:
+  - name: title
+    defaultValue: Delete this $Collection{label}
+  - name: subtitle
+    defaultValue: You will not be able to access the information associated with this $Collection{label} again.
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.section
       uesio.display:
         - type: fieldMode
           mode: EDIT
+        - type: recordIsDeleteable
       components:
         - uesio/io.titlebar:
             title: Danger Zone
             uesio.variant: uesio/appkit.sub
+        - uesio/io.titlebar:
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
             uesio.styleTokens:
               root:
-                - border-red-600
-              title:
-                - text-red-600
-        - uesio/io.titlebar:
+                - mt-4
+                - items-center
+              subtitle:
+                - text-sm
             actions:
-              - uesio/io.button:
-                  uesio.styleTokens:
-                    root:
-                      - mt-4
-                      - border-red-600
-                      - text-red-600
-                  uesio.variant: uesio/appkit.secondary
-                  text: Delete $Collection{label}
-                  signals:
-                    - signal: wire/MARK_FOR_DELETE
-                    - signal: wire/SAVE
-                    - signal: route/NAVIGATE_TO_ASSIGNMENT
-                      collection: $Collection{id}
-                      viewtype: list
+              - uesio/appkit.button_delete:
+                  confirm: $Prop{confirm}
+                  confirmTitle: $Prop{confirmTitle}
+                  confirmMessage: $Prop{confirmMessage}
+                  signals: $Prop{signals}
 title: Delete Section Component
 discoverable: true
 description: Delete Section

@@ -10,6 +10,7 @@ definition:
       - shadow-lg
       - min-w-[200px]
       - relative
+      - z-20
     arrow:
       - fill-white
       - stroke-slate-800

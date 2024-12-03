@@ -20,6 +20,9 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.collection"
                 }
             ],
             "conditions": [
@@ -43,19 +46,26 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 8
+jsonpath "$.wires[0].data" count == 9
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
-jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
-jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.description_file"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[0].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.collections['uesio/studio.field'].name" == "field"
+jsonpath "$.collections['uesio/studio.field'].accessible" == true
+jsonpath "$.collections['uesio/studio.field'].createable" == true
+jsonpath "$.collections['uesio/studio.field'].updateable" == false
+jsonpath "$.collections['uesio/studio.field'].deleteable" == false
 
 # Test a multi-value condition on the grouping field
 POST https://{{host}}:{{port}}/site/wires/load
@@ -69,6 +79,12 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.type"
+                },
+                {
+                    "id": "uesio/studio.collection"
                 }
             ],
             "conditions": [
@@ -175,6 +191,9 @@ Accept: application/json
             "fields": [
                 {
                     "id": "uesio/studio.name"
+                },
+                {
+                    "id": "uesio/studio.namespace"
                 }
             ],
             "conditions": [
@@ -245,6 +264,9 @@ Accept: application/json
                     "id": "uesio/studio.name"
                 },
                 {
+                    "id": "uesio/studio.collection"
+                },
+                {
                     "id": "uesio/core.uniquekey"
                 }
             ],
@@ -271,21 +293,28 @@ Accept: application/json
                 }
             ]
         }
-    ]
+    ],
+    "includeMetadata": true
 }
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal"
-jsonpath "$.wires[1].data" count == 8
+jsonpath "$.wires[1].data" count == 9
 jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.ancestor"
 jsonpath "$.wires[1].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.autonumber"
-jsonpath "$.wires[1].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
-jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
-jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
-jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
-jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
-jsonpath "$.wires[1].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.wires[1].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.description_file"
+jsonpath "$.wires[1].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.genus"
+jsonpath "$.wires[1].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.keeper"
+jsonpath "$.wires[1].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.lookalike"
+jsonpath "$.wires[1].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.species"
+jsonpath "$.wires[1].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.status"
+jsonpath "$.wires[1].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/tests.total_population"
+jsonpath "$.collections['uesio/studio.collection'].name" == "collection"
+jsonpath "$.collections['uesio/studio.collection'].accessible" == true
+jsonpath "$.collections['uesio/studio.collection'].createable" == true
+jsonpath "$.collections['uesio/studio.collection'].updateable" == true
+jsonpath "$.collections['uesio/studio.collection'].deleteable" == true
 
 # Test conditions on Credential by type, to verify that we can do per-item Bundleable Item filtering
 POST https://{{host}}:{{port}}/site/wires/load
@@ -305,6 +334,9 @@ Accept: application/json
                 },
                 {
                     "id": "uesio/core.uniquekey"
+                },
+                {
+                    "id": "uesio/studio.label"
                 }
             ],
             "conditions": [

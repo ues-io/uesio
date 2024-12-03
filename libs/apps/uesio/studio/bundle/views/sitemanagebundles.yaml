@@ -96,6 +96,7 @@ definition:
                           searchFields:
                             - uesio/core.uniquekey
                       - uesio/io.filter:
+                          uesio.variant: uesio/io.selectfield:uesio/appkit.filter
                           uesio.context:
                             siteadmin:
                               name: $Param{sitename}
@@ -111,10 +112,13 @@ definition:
                       - label: App
                         components:
                           - uesio/appkit.item:
+                              uesio.styleTokens:
+                                avatar:
+                                  - bg-[${uesio/studio.app->uesio/studio.color}]
                               title: ${title}
                               subtitle: ${uesio/studio.app->uesio/studio.fullname}
                               icon: ${uesio/studio.app->uesio/studio.icon}
-                              iconcolor: ${uesio/studio.app->uesio/studio.color}
+                              iconcolor: white
                       - field: uesio/studio.status
                       - field: uesio/core.createdby
                         user:

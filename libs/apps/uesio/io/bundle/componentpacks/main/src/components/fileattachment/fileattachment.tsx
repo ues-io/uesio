@@ -2,7 +2,7 @@ import { definition, context, api, signal } from "@uesio/ui"
 import { TextOptions } from "../../utilities/filetext/filetext"
 
 import UserFile from "../../utilities/userfile/userfile"
-import { fileTextSignals, UserFileMetadata } from "../field/field"
+import { UserFileMetadata } from "../field/field"
 
 type FileDefinition = {
 	id?: string
@@ -78,13 +78,14 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 					)?.()
 				}
 			}}
+			onChange={(value) => {
+				record.update("uesio/core.data", value, context)
+			}}
 			context={context}
 			mode={mode}
 			textOptions={textOptions}
 		/>
 	)
 }
-
-FileAttachment.signals = fileTextSignals
 
 export default FileAttachment

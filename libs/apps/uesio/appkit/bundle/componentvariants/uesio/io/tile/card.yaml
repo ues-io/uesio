@@ -13,6 +13,8 @@ definition:
       - border-r-2
       - border-fontcolor-900
       - rounded
+    content:
+      - h-full
     actionable:
       - hover:bg-primary-50
       - group/card

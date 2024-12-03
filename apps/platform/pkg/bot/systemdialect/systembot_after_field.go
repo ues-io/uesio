@@ -50,7 +50,7 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		return nil
 	}
 
-	depMap := MetadataDependencyMap{}
+	depMap := wire.MetadataDependencyMap{}
 
 	metadataResponse := &wire.MetadataCache{}
 	collections := datasource.MetadataRequest{

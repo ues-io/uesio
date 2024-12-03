@@ -38,10 +38,10 @@ definition:
 
   # Components are how we describe the layout of our view
   components:
-    - uesio/core.splash:
+    - uesio/appkit.splash:
         content:
           - uesio/io.image:
-              uesio.variant: uesio/core.fancy
+              uesio.variant: uesio/appkit.fancy
               file: uesio/core.logo
               signals:
                 - signal: "route/REDIRECT"
@@ -57,29 +57,28 @@ definition:
                         value: username
                     items:
                       - uesio/io.text:
-                          text: Welcome to the ues.io studio!
+                          text: Create a studio account.
                           element: div
                           uesio.styleTokens:
                             root:
-                              - font-light
+                              - text-center
+                              - pb-4
+                              - mb-2
+                              - border-b-1
+                              - border-slate-200
                       - uesio/io.field:
                           fieldId: username
                           label: Pick a username
-                      - uesio/io.text:
-                          text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
-                          element: div
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.note
                           uesio.styleTokens:
                             root:
-                              - font-light
-                              - p-3
-                              - mb-3
-                              - bg-slate-100
-                              - text-slate-600
-                              - leading-1
-                              - text-xs
-                              - rounded
+                              - mb-4
+                          components:
+                            - uesio/io.text:
+                                text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
                       - uesio/io.button:
-                          uesio.variant: uesio/io.primary
+                          uesio.variant: uesio/appkit.primary
                           text: Check Availability
                           signals:
                             - signal: bot/CALL
@@ -155,21 +154,15 @@ definition:
                                           - font-bold
                       - uesio/io.box:
                           components:
-                            - uesio/core.logingoogle:
-                                minWidth: 240
+                            - uesio/appkit.login_google:
                                 text: continue_with
                                 onLoginSignals:
                                   - signal: "user/SIGNUP"
                                     signupMethod: uesio/studio.google
                                     payload:
                                       username: ${username}
-                                      credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-                                      client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-                                    onerror:
-                                      signals:
-                                        - signal: notification/ADD_ERRORS
                       - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
+                          uesio.variant: uesio/appkit.secondary
                           text: Sign up with email
                           signals:
                             - signal: wire/UPDATE_RECORD
@@ -177,15 +170,8 @@ definition:
                               valueSource: VALUE
                               value: email
                       - uesio/io.button:
-                          text: Pick a different username
-                          uesio.variant: uesio/io.nav
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - border-1
-                              - border-slate-200
-                              - rounded
+                          text: Go Back
+                          uesio.variant: uesio/appkit.tertiary
                           signals:
                             - signal: wire/UPDATE_RECORD
                               field: step
@@ -220,7 +206,7 @@ definition:
                                 text:
                                   autoComplete: "new-password"
                       - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
+                          uesio.variant: uesio/appkit.secondary
                           text: Sign up
                           signals:
                             - signal: user/SIGNUP
@@ -232,15 +218,8 @@ definition:
                                 lastname: ${lastname}
                                 email: ${email}
                       - uesio/io.button:
-                          text: Authenticate a different way
-                          uesio.variant: uesio/io.nav
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - border-1
-                              - border-slate-200
-                              - rounded
+                          text: Go Back
+                          uesio.variant: uesio/appkit.tertiary
                           signals:
                             - signal: wire/UPDATE_RECORD
                               field: step

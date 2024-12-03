@@ -1,0 +1,24 @@
+name: views_collection
+dialect: "JAVASCRIPT"
+label: Generate Admin Views
+description: Create list, detail and create new pages for this collection.
+type: "GENERATOR"
+params:
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+  - name: fields
+    prompt: Fields
+    type: MULTIMETADATA
+    metadataType: FIELD
+    grouping: ${collection}
+    conditions:
+      - param: collection
+        type: hasValue
+    required: true
+public: true
+timeout: 30
+tags:
+  - uesio/core.collection

@@ -13,19 +13,20 @@ interface DialogUtilityProps {
 	title?: string
 	actions?: ReactNode
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
 
 const StyleDefaults = Object.freeze({
-	blocker: [],
-	wrapper: [],
-	inner: [],
 	content: [],
 	footer: [],
 })
 
 const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
-	const { blocker, wrapper, inner, content, footer } =
-		styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.dialog")
+	const { content, footer } = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.dialog"
+	)
 	const {
 		context,
 		title,
@@ -35,20 +36,19 @@ const Dialog: definition.UtilityComponent<DialogUtilityProps> = (props) => {
 		children,
 		actions,
 		closeOnOutsideClick,
+		closed,
 	} = props
 	return (
 		<DialogPlain
 			context={props.context}
+			variant={props.variant}
+			styleTokens={props.styleTokens}
 			height={height}
 			width={width}
+			closed={closed}
 			onClose={onClose}
 			initialFocus={1}
 			closeOnOutsideClick={closeOnOutsideClick}
-			classes={{
-				blocker,
-				wrapper,
-				inner,
-			}}
 		>
 			<ScrollPanel
 				header={

@@ -1,4 +1,4 @@
-import { component, definition, styles, api, context } from "@uesio/ui"
+import { component, definition, styles, api, context, util } from "@uesio/ui"
 import Editor, { loader, Monaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { CodeFieldUtilityProps } from "./types"
@@ -9,7 +9,7 @@ const { ErrorMessage } = component
 
 const monacoEditorVersion = api.platform.getMonacoEditorVersion()
 const staticAssetsHost = api.platform.getStaticAssetsHost()
-const { memoizedAsync } = api.platform
+const { getFileText } = api.platform
 
 loader.config({
 	paths: {
@@ -23,29 +23,6 @@ const preprocessTypeFileURIs = (
 ) => {
 	if (uris === undefined) return []
 	return uris.map((uri) => context.mergeString(uri))
-}
-
-const fetchFile = async (uri: string) => {
-	const result = await fetch(uri, {
-		headers: {
-			Accept: "text/plain",
-		},
-	})
-	if (result.status >= 400) {
-		throw new Error(
-			"Failed to load file from URL: " +
-				uri +
-				(result.statusText ? ", result: " + result.statusText : "")
-		)
-	}
-	return await result.text()
-}
-
-// Not able to export this from platform for some reason, so redefining here
-type AsyncResult = {
-	data?: string
-	error?: string
-	loading: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -81,19 +58,20 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		props,
 		"uesio/io.codefield"
 	)
+	const mergedLanguage = context.mergeString(language).toLowerCase()
 
 	const [loadedModels, setLoadedModels] = useState(
 		{} as Record<string, string>
 	)
 
 	const debouncedSetValue = useMemo(
-		() => debounce(setValue, debounceInterval),
+		() => setValue && debounce(setValue, debounceInterval),
 		[debounceInterval, setValue]
 	)
 
 	useEffect(
 		() => () => {
-			debouncedSetValue.cancel()
+			debouncedSetValue?.cancel()
 		},
 		[debouncedSetValue]
 	)
@@ -106,21 +84,15 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					typeDefinitionFileURIs
 						.filter((uri) => !!uri)
 						.map((uri) =>
-							memoizedAsync(() => fetchFile(uri), {
-								cacheKey: `fetch-file-as-text-${uri}`,
-								timeout: 5000,
-								refetch: false,
-							}).then((result: AsyncResult) => {
-								const { data } = result
-								newModels[uri] = data as string
-								return result
+							getFileText(uri).then((data) => {
+								newModels[uri] = data
+								return data
 							})
 						)
 				)
 				setLoadedModels(newModels)
-			} catch (result) {
-				const { error } = result as AsyncResult
-				setLoadingError(error || "")
+			} catch (error) {
+				setLoadingError(util.getErrorString(error))
 			} finally {
 				setLoading(false)
 			}
@@ -149,7 +121,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 				if (!model) {
 					monaco.editor.createModel(
 						modelContents,
-						language,
+						mergedLanguage,
 						monacoUri
 					)
 				} else {
@@ -178,7 +150,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 
 	const loadingNode = (
 		<div className={classes.loading}>
-			Loading language models for {language}...
+			Loading language models for {mergedLanguage}...
 		</div>
 	)
 
@@ -214,7 +186,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 					...options,
 				}}
 				theme={theme}
-				language={language}
+				language={mergedLanguage}
 				onChange={debouncedSetValue}
 				beforeMount={handleEditorWillMount}
 				onMount={handleEditorDidMount}

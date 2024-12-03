@@ -13,6 +13,7 @@ import {
 	isValueCondition,
 } from "../bands/wire/conditions/conditions"
 import {
+	parseFileExpression,
 	parseOneOrTwoPartExpression,
 	parseThreePartExpression,
 	parseTwoOrThreePartExpression,
@@ -21,10 +22,13 @@ import {
 } from "./partsparse"
 import { getThemeValue } from "../styles/styles"
 import { DECLARATIVE_COMPONENT } from "../component/component"
+import { Parser } from "expr-eval"
+import { getRouteUrl } from "../bands/route/operations"
 
 type MergeType =
 	| "Error"
 	| "Route"
+	| "RouteAssignment"
 	| "Record"
 	| "Records"
 	| "Param"
@@ -37,6 +41,7 @@ type MergeType =
 	| "Text"
 	| "Date"
 	| "If"
+	| "StartsWith"
 	| "Number"
 	| "Currency"
 	| "RecordMeta"
@@ -56,6 +61,7 @@ type MergeType =
 	| "ConditionValue"
 	| "FieldMode"
 	| "FeatureFlag"
+	| "Formula"
 
 type MergeHandler = (expression: string, context: Context) => wire.FieldValue
 interface MergeOptions {
@@ -95,6 +101,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 			total += (record.getFieldValue(expression) as number) || 0
 		})
 		return total
+	},
+	Formula: (fullExpression, context) => {
+		const parser = new Parser()
+		parser.functions.getField = (field: string) =>
+			context.getRecord()?.getFieldValue(field)
+		return parser.evaluate(fullExpression, {})
 	},
 	Param: (expression, context) => context.getParam(expression) ?? "",
 	ConditionValue: (fullExpression, context) => {
@@ -208,7 +220,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			unit: units[unit],
 			minimumFractionDigits: 1,
 			maximumFractionDigits: 1,
-		} as Intl.NumberFormatOptions).format(bytes / divisor ** unit)
+		}).format(bytes / divisor ** unit)
 	},
 	Currency: (expression, context) => {
 		const value = context.getRecord()?.getFieldValue(expression) as number
@@ -232,11 +244,24 @@ const handlers: Record<MergeType, MergeHandler> = {
 			? context.merge(parts[1])
 			: context.merge(parts[2])
 	},
+	StartsWith: (expression, context) => {
+		const [value, search] = parseTwoPartExpression(expression)
+		const mergedValue = context.mergeString(value)
+		return mergedValue.startsWith(search)
+	},
 	FeatureFlag: (expression, context) =>
 		context.getFeatureFlag(expression)?.value,
 	Route: (expression, context) => {
 		if (expression !== "path" && expression !== "title") return ""
 		return context.getRoute()?.[expression] ?? ""
+	},
+	RouteAssignment: (fullExpression, context) => {
+		const [collection, viewtype] = parseWireExpression(fullExpression)
+		const assignment = context.getRouteAssignment(viewtype, collection)
+		if (!assignment) {
+			return ""
+		}
+		return getRouteUrl(context, assignment.namespace, assignment.path)
 	},
 	RecordMeta: (fullExpression, context) => {
 		const [wirename, expression] = parseWireExpression(fullExpression)
@@ -266,6 +291,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const collection = context.getWireCollection(wirename)
 		if (expression === "id") {
 			return collection?.getFullName() || ""
+		}
+		if (expression === "name") {
+			return collection?.getId() || ""
 		}
 		if (expression === "label") {
 			return collection?.getLabel() || ""
@@ -297,7 +325,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	ConfigValue: (expression, context) =>
 		context.getConfigValue(expression) || "",
-	File: (expression, context) => getURLFromFullName(context, expression),
+	File: (expression, context) => {
+		const [fileName, filePath] = parseFileExpression(expression)
+		return getURLFromFullName(context, fileName, filePath)
+	},
 	UserFile: (expression, context) => {
 		const [wireName, fieldName] = parseWireExpression(expression)
 		const file = context
@@ -341,14 +372,30 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Slot: (expression, context) => {
 		const componentFrame = context.getComponentData(DECLARATIVE_COMPONENT)
 		const propsFrame = context.getPropsFrame()
+		if (!propsFrame) {
+			return {}
+		}
+		const allSlotContents = propsFrame.data
+		const slotContents = allSlotContents[expression]
+		const allSlotDefs = propsFrame.slots
+		const slotDef = allSlotDefs?.find((def) => def.name === expression)
+		if (!slotDef) {
+			return {}
+		}
+		let slotContext: Context | undefined = context.removeAllPropsFrames()
+		if (slotDef.providesContexts) {
+			slotContext = undefined
+		}
 		return {
 			["uesio/core.slot"]: {
 				name: expression,
 				definition: {
-					[expression]: propsFrame?.data[expression],
+					[expression]: slotContents,
 				},
-				path: propsFrame?.path || "",
+				path: propsFrame.path || "",
 				readonly: !!componentFrame,
+				componentType: propsFrame.componentType,
+				context: slotContext as unknown as wire.FieldValue,
 			},
 		}
 	},

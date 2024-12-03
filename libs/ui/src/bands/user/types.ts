@@ -6,6 +6,7 @@ type UserState = {
 	lastname: string
 	profile: string
 	picture: UserPictureState | null
+	namedPermissions: string[] | null
 } | null
 
 type UserPictureState = {

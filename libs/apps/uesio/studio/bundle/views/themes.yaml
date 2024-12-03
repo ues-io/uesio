@@ -67,8 +67,9 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New Theme
-                                uesio.variant: uesio/appkit.primary
+                                text: New Theme
+                                icon: add
+                                uesio.variant: uesio/appkit.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newTheme
@@ -88,18 +89,13 @@ definition:
                               components:
                                 - uesio/io.group:
                                     components:
-                                      - uesio/appkit.item:
-                                          uesio.styleTokens:
-                                            avatar:
-                                              - bg-[${uesio/studio.appcolor}]
-                                          title: ${uesio/studio.label}
-                                          subtitle: ${uesio/studio.namespace}
-                                          icon: ${uesio/studio.appicon}
-                                          iconcolor: white
+                                      - uesio/studio.item_metadata:
                                       - uesio/appkit.item:
                                           uesio.styleTokens:
                                             avatar:
                                               - bg-emerald-50
+                                            subtitle:
+                                              - text-black/80
                                           subtitle: Default
                                           icon: check_circle
                                           iconcolor: $Theme{color:emerald.600}
@@ -109,12 +105,15 @@ definition:
                                               value: ${uesio/studio.namespace}.${uesio/studio.name}
                                               wire: workspaces
                                               field: uesio/studio.defaulttheme
+                              width: 300px
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT

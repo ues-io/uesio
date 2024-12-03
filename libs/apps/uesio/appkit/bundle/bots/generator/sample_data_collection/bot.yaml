@@ -1,14 +1,17 @@
 name: sample_data_collection
 dialect: JAVASCRIPT
-label: Sample Data For Collection
+label: Generate Sample Data
+description: Use an AI model to generate some sample data records.
 type: GENERATOR
 params:
   - name: collection
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
-  - name: description
+  - name: instructions
     type: LONGTEXT
     prompt: Describe the type of sample data you'd like created.
 public: true
+tags:
+  - uesio/core.collection
 timeout: 30

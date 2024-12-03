@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -29,14 +28,6 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 	session := middleware.GetSession(r)
 
 	op := &filesource.FileUploadOp{}
-
-	//Attach file length to the details
-	contentLenHeader := r.Header.Get("Content-Length")
-	contentLen, err := strconv.ParseInt(contentLenHeader, 10, 64)
-	if err != nil {
-		return nil, errors.New("must attach header 'content-length' with file upload")
-	}
-	op.ContentLength = contentLen
 
 	var result *meta.UserFileMetadata
 
@@ -107,6 +98,34 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	buf := &bytes.Buffer{}
 	if userFile, err := filesource.Download(buf, userFileID, session); err != nil {
+		ctlutil.HandleError(w, err)
+	} else {
+		respondFile(w, r, &FileRequest{
+			Path:         userFile.Path,
+			LastModified: time.Unix(userFile.UpdatedAt, 0),
+			Namespace:    "",
+			Version:      version,
+		}, bytes.NewReader(buf.Bytes()))
+	}
+}
+
+func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
+	session := middleware.GetSession(r)
+	vars := mux.Vars(r)
+	recordID := vars["recordid"]
+	path := vars["path"]
+	version := vars["version"]
+	if recordID == "" {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment recordid"))
+		return
+	}
+	if path == "" {
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment path"))
+		return
+	}
+
+	buf := &bytes.Buffer{}
+	if userFile, err := filesource.DownloadAttachment(buf, recordID, path, session); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
 		respondFile(w, r, &FileRequest{

@@ -2,6 +2,7 @@ name: public
 named:
 views:
   uesio/studio.signup: true
+  uesio/studio.signuplanding: true
   uesio/studio.publicbundlelisting: true
   uesio/studio.publicbundleheader: true
   uesio/studio.publicbundlefooter: true
@@ -9,9 +10,7 @@ routes:
   uesio/studio.login: true
   uesio/studio.signup: true
   uesio/studio.signuplanding: true
-  uesio/studio.changepassword: true
   uesio/studio.publicbundlelisting: true
-  uesio/studio.requestpassword: true
 files:
 bots:
   uesio/studio.checkavailability: true

@@ -1,5 +1,5 @@
-import { Context, ViewContext } from "../context/context"
-import { PlainWire, PlainWireRecord } from "../wireexports"
+import { Context } from "../context/context"
+import { PlainWire } from "../wireexports"
 import Wire from "../bands/wire/class"
 import {
 	DisplayCondition,
@@ -45,7 +45,7 @@ const shouldTestCases = [
 					params: { foo: "bar" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: { type: "paramIsSet", param: "foo" },
 				expected: true,
 			},
@@ -55,7 +55,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: { type: "paramIsSet", param: "foo" },
 				expected: false,
 			},
@@ -70,7 +70,7 @@ const shouldTestCases = [
 					params: { foo: "bar" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: { type: "paramIsNotSet", param: "foo" },
 				expected: false,
 			},
@@ -80,7 +80,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: { type: "paramIsNotSet", param: "foo" },
 				expected: true,
 			},
@@ -94,7 +94,7 @@ const shouldTestCases = [
 				name: "{foo: bar}, (field: foo, value: bar)",
 				context: new Context().addRecordDataFrame({
 					foo: "bar",
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "foo", value: "bar" },
 				expected: true,
 			},
@@ -102,7 +102,7 @@ const shouldTestCases = [
 				name: "{foo: oof}, (field: foo, value: bar)",
 				context: new Context().addRecordDataFrame({
 					foo: "oof",
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "foo", value: "bar" },
 				expected: false,
 			},
@@ -110,7 +110,7 @@ const shouldTestCases = [
 				name: "{foo: oof}, (field: foo, value: bar, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					foo: "oof",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -123,7 +123,7 @@ const shouldTestCases = [
 				name: "{foo: bar}, (field: foo, value: oof, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					foo: "bar",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -136,7 +136,7 @@ const shouldTestCases = [
 				name: "{foo: bar}, (field: foo, values: [bar,baz], operator: IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "bar",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -149,7 +149,7 @@ const shouldTestCases = [
 				name: "{foo: oof}, (field: foo, values: [bar,baz], operator: IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "oof",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -162,7 +162,7 @@ const shouldTestCases = [
 				name: "{foo: oof}, (field: foo, values: [bar,baz], operator: NOT_IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "oof",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -173,9 +173,7 @@ const shouldTestCases = [
 			},
 			{
 				name: "{}, (field: foo, values: [bar,baz], operator: NOT_IN)",
-				context: new Context().addRecordDataFrame(
-					{} as PlainWireRecord
-				),
+				context: new Context().addRecordDataFrame({}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -188,7 +186,7 @@ const shouldTestCases = [
 				name: "{foo: }, (field: foo, values: [bar], operator: NOT_IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -201,7 +199,7 @@ const shouldTestCases = [
 				name: "{foo: }, (field: foo, values: [bar,baz], operator: NOT_IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -214,7 +212,7 @@ const shouldTestCases = [
 				name: "{foo: bar}, (field: foo, values: [bar,baz], operator: NOT_IN)",
 				context: new Context().addRecordDataFrame({
 					foo: "bar",
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "foo",
@@ -228,7 +226,7 @@ const shouldTestCases = [
 				name: "{awake: true}, (field: awake, value: true)",
 				context: new Context().addRecordDataFrame({
 					awake: true,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "awake", value: true },
 				expected: true,
 			},
@@ -236,7 +234,7 @@ const shouldTestCases = [
 				name: "{awake: false}, (field: awake, value: true)",
 				context: new Context().addRecordDataFrame({
 					awake: false,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "awake", value: true },
 				expected: false,
 			},
@@ -244,7 +242,7 @@ const shouldTestCases = [
 				name: "{awake: false}, (field: awake, value: false)",
 				context: new Context().addRecordDataFrame({
 					awake: false,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "awake", value: false },
 				expected: true,
 			},
@@ -252,7 +250,7 @@ const shouldTestCases = [
 				name: "{awake: true}, (field: awake, value: false)",
 				context: new Context().addRecordDataFrame({
 					awake: true,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "awake", value: false },
 				expected: false,
 			},
@@ -260,7 +258,7 @@ const shouldTestCases = [
 				name: "{awake: true}, (field: awake, value: true, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					awake: true,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "awake",
@@ -273,7 +271,7 @@ const shouldTestCases = [
 				name: "{awake: false}, (field: awake, value: true, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					awake: false,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "awake",
@@ -286,7 +284,7 @@ const shouldTestCases = [
 				name: "{awake: false}, (field: awake, value: false, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					awake: false,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "awake",
@@ -299,7 +297,7 @@ const shouldTestCases = [
 				name: "{awake: true}, (field: awake, value: false, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					awake: true,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "awake",
@@ -313,7 +311,7 @@ const shouldTestCases = [
 				name: "{age: 1}, (field: age, value: 1)",
 				context: new Context().addRecordDataFrame({
 					age: 1,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "age", value: 1 },
 				expected: true,
 			},
@@ -321,7 +319,7 @@ const shouldTestCases = [
 				name: "{age: 1}, (field: age, value: 0)",
 				context: new Context().addRecordDataFrame({
 					age: 1,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "age", value: 0 },
 				expected: false,
 			},
@@ -329,7 +327,7 @@ const shouldTestCases = [
 				name: "{age: 0}, (field: age, value: 1)",
 				context: new Context().addRecordDataFrame({
 					age: 0,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "age", value: 1 },
 				expected: false,
 			},
@@ -337,7 +335,7 @@ const shouldTestCases = [
 				name: "{age: 0}, (field: age, value: 0)",
 				context: new Context().addRecordDataFrame({
 					age: 0,
-				} as PlainWireRecord),
+				}),
 				condition: { type: "fieldValue", field: "age", value: 0 },
 				expected: true,
 			},
@@ -345,7 +343,7 @@ const shouldTestCases = [
 				name: "{age: 1}, (field: age, value: 0, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					age: 1,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "age",
@@ -358,7 +356,7 @@ const shouldTestCases = [
 				name: "{age: 1}, (field: age, value: 1, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					age: 1,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "age",
@@ -371,7 +369,7 @@ const shouldTestCases = [
 				name: "{age: 0}, (field: age, value: 1, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					age: 0,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "age",
@@ -384,7 +382,7 @@ const shouldTestCases = [
 				name: "{age: 0}, (field: age, value: 0, operator: NOT_EQUALS)",
 				context: new Context().addRecordDataFrame({
 					age: 0,
-				} as PlainWireRecord),
+				}),
 				condition: {
 					type: "fieldValue",
 					field: "age",
@@ -421,7 +419,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						foo: "bar",
 					}),
@@ -437,7 +435,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						foo: "",
 					}),
@@ -453,7 +451,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {}),
 				condition: {
 					type: "hasValue",
@@ -472,7 +470,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						foo: "bar",
 					}),
@@ -488,7 +486,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						foo: "",
 					}),
@@ -504,7 +502,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {}),
 				condition: {
 					type: "hasNoValue",
@@ -523,7 +521,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: "apples",
 						bob: "apples",
@@ -542,7 +540,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: "apples",
 						bob: "apples",
@@ -560,7 +558,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: "apples",
 						bob: "apples",
@@ -579,7 +577,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: "peaches",
 						bob: "apples",
@@ -597,7 +595,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: 2,
 						bob: 2,
@@ -616,7 +614,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: 2,
 						bob: 1,
@@ -635,7 +633,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: true,
 						bob: true,
@@ -654,7 +652,7 @@ const shouldTestCases = [
 					.addViewFrame({
 						view: viewName,
 						viewDef,
-					} as ViewContext)
+					})
 					.addSignalOutputFrame("step1", {
 						alice: false,
 						bob: true,
@@ -678,7 +676,7 @@ const shouldTestCases = [
 					params: { foo: "bar", baz: "qux" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "OR",
@@ -686,11 +684,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "nonexistent",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: true,
@@ -701,7 +699,7 @@ const shouldTestCases = [
 					params: { foo: "bar", baz: "qux" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "OR",
@@ -709,11 +707,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "foo",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: true,
@@ -724,7 +722,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "OR",
@@ -732,11 +730,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "foo",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: false,
@@ -747,7 +745,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "OR",
@@ -761,7 +759,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "OR",
@@ -774,7 +772,7 @@ const shouldTestCases = [
 					params: { foo: "bar", baz: "qux" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "AND",
@@ -782,11 +780,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "nonexistent",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: false,
@@ -797,7 +795,7 @@ const shouldTestCases = [
 					params: { foo: "bar", baz: "qux" },
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "AND",
@@ -805,11 +803,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "foo",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: true,
@@ -820,7 +818,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "AND",
@@ -828,11 +826,11 @@ const shouldTestCases = [
 						{
 							type: "paramIsSet",
 							param: "foo",
-						} as DisplayCondition,
+						},
 						{
 							type: "paramIsSet",
 							param: "baz",
-						} as DisplayCondition,
+						},
 					],
 				},
 				expected: false,
@@ -843,7 +841,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "AND",
@@ -857,7 +855,7 @@ const shouldTestCases = [
 					params: {},
 					view: viewName,
 					viewDef,
-				} as ViewContext),
+				}),
 				condition: {
 					type: "group",
 					conjunction: "AND",
@@ -881,13 +879,6 @@ describe("should", () => {
 		})
 	})
 })
-
-type GetWireForConditionsTestCase = {
-	name: string
-	conditions: DisplayCondition[]
-	context?: Context
-	expected: string[]
-}
 
 const contextWithWireFrame = new Context().addWireFrame({
 	wire: "piña",
@@ -1028,13 +1019,13 @@ const getWiresForConditionsTests = [
 			"piña",
 		],
 	},
-] as GetWireForConditionsTestCase[]
+]
 
 describe("getWiresForConditions", () => {
 	getWiresForConditionsTests.forEach((tc) => {
 		test(tc.name, () => {
 			const actual = getWiresForConditions(
-				tc.conditions,
+				tc.conditions as DisplayCondition[],
 				tc.context || new Context()
 			)
 			actual.sort()

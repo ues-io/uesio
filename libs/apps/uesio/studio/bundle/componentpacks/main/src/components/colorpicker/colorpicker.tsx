@@ -10,9 +10,9 @@ const StyleDefaults = Object.freeze({
 		"leading-none",
 		"grid",
 		"grid-cols-[repeat(16,_minmax(0,_1fr))]",
-		"gap-1",
 		"cursor-pointer",
-		"justify-center",
+		"gap-y-1.5",
+		"justify-items-center",
 	],
 	color: [
 		"h-[13px]",

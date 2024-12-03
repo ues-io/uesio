@@ -42,7 +42,7 @@ Accept: application/json
 }
 HTTP 403
 [Asserts]
-body == "Metadata item: uesio/core.secretstorevalue is not public\n"
+body == "Your profile has no access to the uesio/core.secretstorevalue collection\n"
 
 # Invoke a bot that runs an integration action that fetches a secret which we SHOULD have access to
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/secret_access_tester

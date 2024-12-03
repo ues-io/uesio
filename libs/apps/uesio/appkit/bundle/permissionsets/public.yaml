@@ -1,0 +1,14 @@
+name: public
+public: true
+named: {}
+views:
+  uesio/appkit.login: true
+  uesio/appkit.login_platform: true
+  uesio/appkit.login_request_password: true
+  uesio/appkit.login_change_password: true
+routes:
+  uesio/appkit.login_request_password: true
+  uesio/appkit.login_change_password: true
+files:
+  uesio/appkit.splash: true
+collections:

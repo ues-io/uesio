@@ -37,9 +37,6 @@ definition:
               root:
                 - p-5
                 - items-center
-    - uesio/core.loginmock:
-        text: Sign in with Mock
-        align: center
     - uesio/io.list:
         uesio.id: credslist
         wire: credentials
@@ -63,21 +60,6 @@ definition:
                           displayAs: PASSWORD
                           text:
                             autoComplete: "current-password"
-                      - uesio/io.button:
-                          text: Forgot password?
-                          uesio.styleTokens:
-                            root:
-                              - normal-case
-                              - font-light
-                              - text-slate-400
-                              - absolute
-                              - top-3
-                              - right-0
-                              - text-[9pt]
-                              - hover:text-primary
-                          signals:
-                            - signal: route/REDIRECT
-                              path: requestpassword
                 - uesio/io.button:
                     uesio.styleTokens:
                       root:
@@ -94,17 +76,6 @@ definition:
                         payload:
                           username: ${username}
                           password: ${password}
-    - uesio/core.logingoogle:
-        minWidth: 240
-        onLoginSignals:
-          - signal: "user/LOGIN"
-            authSource: uesio/core.google
-            payload:
-              credential: $ComponentOutput{[uesio/core.logingoogle][credential]}
-              client_id: $ComponentOutput{[uesio/core.logingoogle][client_id]}
-            onerror:
-              signals:
-                - signal: notification/ADD_ERRORS
   params:
     expired:
       type: CHECKBOX

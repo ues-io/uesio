@@ -3,9 +3,7 @@ import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField, { CheckboxFieldOptions } from "./checkbox"
 import DateField from "./date"
-import MarkDownField, {
-	MarkdownFieldOptions,
-} from "../../utilities/markdownfield/markdownfield"
+import MarkDownField from "../../utilities/markdownfield/markdownfield"
 import MultiCheckField from "./multicheck"
 import MultiSelectField from "./multiselect"
 import NumberField, { NumberFieldOptions } from "./number"
@@ -62,7 +60,6 @@ interface FieldProps {
 	reference?: ReferenceFieldOptions | ReferenceGroupFieldOptions
 	list?: ListFieldOptions | ListDeckOptions
 	map?: MapFieldOptions | MapDeckOptions
-	markdown?: MarkdownFieldOptions
 	metadata?: MetadataFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -88,7 +85,6 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		list,
 		longtext,
 		map,
-		markdown,
 		mode,
 		number,
 		path,
@@ -151,20 +147,36 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <DateField {...common} />
 			break
 		case "LONGTEXT":
-			content =
-				displayAs === "MARKDOWN" ? (
-					<MarkDownField {...common} options={markdown} />
-				) : (
-					<TextAreaField {...common} options={longtext} />
-				)
+			switch (displayAs) {
+				case "MARKDOWN":
+					content = <MarkDownField {...common} />
+					break
+				case "CODE":
+					content = (
+						<CodeField
+							{...common}
+							value={common.value as string}
+							setValue={(value: string) => {
+								common.setValue(value)
+							}}
+							language={longtext?.language}
+						/>
+					)
+					break
+				default:
+					content = <TextAreaField {...common} options={longtext} />
+			}
 			break
 		case "TEXT":
-			content =
-				displayAs === "PASSWORD" ? (
-					<TextField {...common} options={text} type="password" />
-				) : (
-					<TextField {...common} options={text} />
-				)
+			switch (displayAs) {
+				case "PASSWORD":
+					content = (
+						<TextField {...common} options={text} type="password" />
+					)
+					break
+				default:
+					content = <TextField {...common} options={text} />
+			}
 			break
 		case "AUTONUMBER":
 			content = <TextField {...common} />
@@ -273,13 +285,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 			content = <TimestampField {...common} />
 			break
 		case "FILE":
-			content = (
-				<FileField
-					{...common}
-					displayAs={displayAs}
-					markdownOptions={markdown}
-				/>
-			)
+			content = <FileField {...common} displayAs={displayAs} />
 			break
 		case "USER":
 			content = (

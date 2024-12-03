@@ -3,7 +3,13 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: content
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
   - name: filters
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
 definition:
   - uesio/io.list:
       wire: $Prop{wire}

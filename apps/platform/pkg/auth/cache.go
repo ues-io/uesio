@@ -13,8 +13,8 @@ var userCache cache.Cache[*meta.User]
 var hostCache cache.Cache[*meta.Site]
 
 func init() {
-	userCache = cache.NewRedisCache[*meta.User]("user")
-	hostCache = cache.NewRedisCache[*meta.Site]("host")
+	userCache = cache.NewPlatformCache[*meta.User]("user", 0)
+	hostCache = cache.NewPlatformCache[*meta.Site]("host", 0)
 }
 
 func GetUserCacheKey(userid string, site *meta.Site) string {
@@ -30,7 +30,10 @@ func DeleteUserCacheEntries(userKeys ...string) error {
 }
 
 func setUserCache(userUniqueKey string, site *meta.Site, user *meta.User) error {
-	return userCache.Set(GetUserCacheKey(userUniqueKey, site), user)
+	// Shallow clone the user, so the caller doesn't have
+	// a reference to the one in the cache.
+	clonedUser := *user
+	return userCache.Set(GetUserCacheKey(userUniqueKey, site), &clonedUser)
 }
 
 func getUserCache(userUniqueKey string, site *meta.Site) (*meta.User, bool) {
@@ -38,7 +41,10 @@ func getUserCache(userUniqueKey string, site *meta.Site) (*meta.User, bool) {
 	if err != nil || user == nil {
 		return nil, false
 	}
-	return user, true
+	// Shallow clone the user, so the caller doesn't have
+	// a reference to the one in the cache.
+	clonedUser := *user
+	return &clonedUser, true
 }
 
 func setHostCache(domainType, domainValue string, site *meta.Site) error {

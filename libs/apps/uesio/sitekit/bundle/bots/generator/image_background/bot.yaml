@@ -1,0 +1,25 @@
+name: image_background
+dialect: JAVASCRIPT
+label: Generate Background Image
+type: GENERATOR
+description: Use AI to generate a background image.
+params:
+  - name: name
+    prompt: File Name
+    type: METADATANAME
+  - name: description
+    type: LONGTEXT
+    prompt: Description
+  - name: aspect_ratio
+    type: SELECT
+    selectList: uesio/sitekit.aspect_ratios
+    prompt: Aspect Ratio
+    default: "1:1"
+  - name: samples
+    type: NUMBER
+    prompt: Number of Samples
+    default: 1
+public: true
+timeout: 30
+tags:
+  - uesio/core.files

@@ -1,0 +1,35 @@
+name: layout_note_form
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+  - name: note
+definition:
+  - uesio/io.grid:
+      uesio.styleTokens:
+        root:
+          - md:grid-cols-2
+          - grid-cols-1
+          - gap-6
+      items:
+        - uesio/io.box:
+            components:
+              - $Slot{content}
+        - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{note}
+            uesio.styleTokens:
+              root:
+                - mt-4
+                - md:order-none
+                - order-first
+            components:
+              - $Slot{note}
+title: Note Form Layout
+discoverable: false
+description: Note Form Layout
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

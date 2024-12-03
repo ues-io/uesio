@@ -165,8 +165,8 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	return nil
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, nil
 }
 
 func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
@@ -200,6 +200,8 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.
 	switch op.CollectionName {
 	case "uesio/core.usage":
 		botFunction = runUsageLoadBot
+	case "uesio/core.userfile":
+		botFunction = runUserfileLoadBot
 	case "uesio/core.myintegrationcredentials":
 		botFunction = runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
@@ -233,7 +235,8 @@ func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.
 	}
 
 	switch op.CollectionName {
-
+	case "uesio/core.userfile":
+		botFunction = runUserfileSaveBot
 	}
 
 	if meta.IsBundleableCollection(op.CollectionName) {

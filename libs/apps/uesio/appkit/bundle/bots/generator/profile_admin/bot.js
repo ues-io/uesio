@@ -17,6 +17,12 @@ function profile_admin(bot) {
 
 	bot.runGenerator("uesio/core", "profile", {
 		name: "admin",
-		permissionSets: [namespace + ".admin"],
+		permissionSets: [
+			namespace + ".admin",
+			namespace + ".public",
+			"uesio/appkit.public",
+			"uesio/core.public",
+		],
+		label: "Admin Profile",
 	})
 }

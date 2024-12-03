@@ -118,7 +118,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Workspaces
-                                      subtitle: Make changes to your app in workspaces.
+                                      subtitle: Make changes to your app.
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary
@@ -146,9 +146,7 @@ definition:
                                             uesio.variant: uesio/appkit.main
                                             components:
                                               - uesio/io.card:
-                                                  tileVariant: uesio/appkit.card
-                                                  scrollpanelVariant: uesio/appkit.card
-                                                  titlebarVariant: uesio/appkit.item
+                                                  uesio.variant: uesio/appkit.main
                                                   title: ${uesio/studio.name}
                                                   avatar:
                                                     - uesio/io.text:
@@ -163,7 +161,7 @@ definition:
                                   - uesio/io.titlebar:
                                       uesio.variant: uesio/io.section
                                       title: Sites
-                                      subtitle: Publish your app to users with sites.
+                                      subtitle: Publish your app to users.
                                       actions:
                                         - uesio/io.button:
                                             uesio.variant: uesio/appkit.secondary
@@ -193,9 +191,7 @@ definition:
                                                 - gap-6
                                             components:
                                               - uesio/io.card:
-                                                  tileVariant: uesio/appkit.card
-                                                  scrollpanelVariant: uesio/appkit.card
-                                                  titlebarVariant: uesio/appkit.item
+                                                  uesio.variant: uesio/appkit.main
                                                   title: ${uesio/studio.name}
                                                   subtitle: v${bundle->version}
                                                   avatar:

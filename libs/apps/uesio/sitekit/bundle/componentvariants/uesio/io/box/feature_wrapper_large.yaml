@@ -1,0 +1,9 @@
+name: feature_wrapper_large
+label: Feature Wrapper
+public: true
+extends: uesio/sitekit.feature_wrapper
+definition:
+  uesio.styleTokens:
+    root:
+      - mx-auto
+      - "[max-width:896px]"

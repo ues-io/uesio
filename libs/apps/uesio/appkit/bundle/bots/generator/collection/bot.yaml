@@ -8,6 +8,20 @@ params:
     prompt: Collection Name
     type: METADATANAME
     required: true
+  - name: label
+    prompt: Label
+    type: TEXT
+    required: true
+  - name: pluralLabel
+    prompt: Plural Label
+    type: TEXT
+    required: true
+  - name: icon
+    prompt: Icon
+    type: TEXT
+  - name: instructions
+    prompt: Additional Instructions
+    type: LONGTEXT
 public: true
 tags:
   - uesio/core.collections

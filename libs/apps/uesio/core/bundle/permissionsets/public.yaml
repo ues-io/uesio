@@ -5,16 +5,9 @@ views:
   uesio/core.login: true
   uesio/core.loginarea: true
   uesio/core.notfound: true
-  uesio/core.signup: true
-  uesio/core.changepassword: true
-  uesio/core.requestpassword: true
-  uesio/core.signuplanding: true
 routes:
   uesio/core.login: true
   uesio/core.signup: true
-  uesio/core.changepassword: true
-  uesio/core.requestpassword: true
-  uesio/core.signuplanding: true
 files:
   uesio/core.logo: true
   uesio/core.favicon: true
@@ -22,8 +15,3 @@ files:
   uesio/core.logosmall: true
   uesio/core.splash: true
 collections:
-  uesio/core.bulkjob: true
-  uesio/core.bulkbatch: true
-  uesio/core.featureflagassignment: true
-  uesio/core.user: true
-  uesio/core.organizationuser: true

@@ -68,7 +68,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.longtext' = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/tests.longtext']" == "test text1"
 
@@ -222,7 +222,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 main.fields->>'uesio/tests.longtext' ILIKE $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]" isEmpty
 

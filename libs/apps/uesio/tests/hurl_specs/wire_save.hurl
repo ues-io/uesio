@@ -181,3 +181,29 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/tests.genus']" == "Kupker"
 jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Alain"
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Kupker:Alain"
+
+# Test a simple insert with missing required field
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "deletes":{},
+            "changes":{
+                "temp1":{
+                    "uesio/tests.species": "Flavious"
+                }
+            },
+            "wire":"mywire"
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.species']" == "Flavious"
+jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" not exists
+jsonpath "$.wires[0].errors[0]['recordid']" == "temp1"
+jsonpath "$.wires[0].errors[0]['fieldid']" == "uesio/tests.genus"
+jsonpath "$.wires[0].errors[0]['message']" == "Field: Genus is required"
+

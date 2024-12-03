@@ -1,37 +1,32 @@
-import { definition, api, component, signal, styles } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 
 import { default as IOSidePanel } from "../../utilities/sidepanel/sidepanel"
 
 type SidePanelDefinition = {
 	id?: string
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
 
-const StyleDefaults = Object.freeze({
-	root: [],
-	blocker: [],
-	icon: [],
-})
-
-const Dialog: definition.UC<SidePanelDefinition> = (props) => {
+const SidePanel: definition.UC<SidePanelDefinition> = (props) => {
 	const { context, definition, path, componentType } = props
 	if (!definition) return null
-	const classes = styles.useStyleTokens(StyleDefaults, props)
 	const panelId = definition?.id as string
 	const onClose = api.signal.getHandler(
 		[
 			{
 				signal: "panel/TOGGLE",
 				panel: panelId,
-			} as signal.SignalDefinition,
+			},
 		],
 		context
 	)
 	return (
 		<IOSidePanel
 			onClose={onClose}
+			closed={definition.closed}
 			context={context}
-			classes={classes}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			variant={definition[component.STYLE_VARIANT]}
 			closeOnOutsideClick={definition.closeOnOutsideClick}
 		>
@@ -45,4 +40,6 @@ const Dialog: definition.UC<SidePanelDefinition> = (props) => {
 		</IOSidePanel>
 	)
 }
-export default Dialog
+
+export type { SidePanelDefinition }
+export default SidePanel

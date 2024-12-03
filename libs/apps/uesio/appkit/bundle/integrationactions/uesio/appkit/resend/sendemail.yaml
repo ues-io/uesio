@@ -1,0 +1,24 @@
+name: sendemail
+label: Send Email
+bot: resend_sendemail
+public: true
+params:
+  - name: subject
+    label: Subject
+    type: TEXT
+    required: true
+  - name: to
+    label: To Address
+    type: TEXT
+    subtype: TEXT
+    required: true
+  - name: from
+    label: From Address
+    type: TEXT
+    required: true
+  - name: html
+    label: HTML
+    type: TEXTAREA
+  - name: text
+    label: Text
+    type: TEXTAREA

@@ -73,9 +73,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a new Integration
-                                uesio.variant: uesio/appkit.primary
+                                text: New Integration
+                                uesio.variant: uesio/appkit.secondary
                                 hotkey: "n"
+                                icon: add
                                 signals:
                                   - signal: wire/RESET
                                     wire: newintegration
@@ -96,25 +97,17 @@ definition:
                           columns:
                             - label: Integration
                               components:
-                                - uesio/appkit.item:
-                                    uesio.styleTokens:
-                                      avatar:
-                                        - bg-[${uesio/studio.appcolor}]
-                                    title: ${uesio/studio.label}
-                                    subtitle: ${uesio/studio.namespace}
-                                    icon: ${uesio/studio.appicon}
-                                    iconcolor: white
+                                - uesio/studio.item_metadata:
+                              width: 220px
                             - field: uesio/studio.type
-                              uesio.context:
-                                workspace:
-                                  name: $Param{workspacename}
-                                  app: $Param{app}
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT

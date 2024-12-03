@@ -6,7 +6,8 @@ components:
             uesio.variant: uesio/sitekit.footer_wrapper
             components:
               - uesio/io.image:
-                  file: uesio/sitekit.yourlogodark
+                  file: ${logoFile}
+                  filepath: ${logoFilePath}
                   height: 44
                   signals:
                     - signal: route/REDIRECT

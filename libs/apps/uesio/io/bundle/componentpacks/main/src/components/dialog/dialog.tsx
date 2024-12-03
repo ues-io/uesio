@@ -1,4 +1,4 @@
-import { definition, api, component, signal, styles } from "@uesio/ui"
+import { definition, api, component, signal } from "@uesio/ui"
 
 import { default as IODialog } from "../../utilities/dialog/dialog"
 
@@ -11,32 +11,30 @@ type DialogDefinition = {
 	actions?: definition.DefinitionList[]
 	components?: definition.DefinitionList[]
 	closeOnOutsideClick?: boolean
+	closed?: boolean
 }
-
-const StyleDefaults = Object.freeze({
-	root: [],
-})
 
 const Dialog: definition.UC<DialogDefinition> = (props) => {
 	const { context, definition, path, componentType } = props
 	if (!definition) return null
-	const classes = styles.useStyleTokens(StyleDefaults, props)
+
 	const panelId = definition?.id as string
 	const onClose = api.signal.getHandler(
 		[
 			{
 				signal: "panel/TOGGLE",
 				panel: panelId,
-			} as signal.SignalDefinition,
+			},
 		],
 		context
 	)
 	return (
 		<IODialog
-			classes={classes}
+			styleTokens={definition[component.STYLE_TOKENS]}
 			variant={definition[component.STYLE_VARIANT]}
 			onClose={onClose}
 			context={context}
+			closed={definition.closed}
 			width={definition.width as string}
 			height={definition.height as string}
 			title={definition.title as string}
@@ -63,4 +61,6 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 		</IODialog>
 	)
 }
+
+export type { DialogDefinition }
 export default Dialog

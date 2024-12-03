@@ -1,0 +1,23 @@
+name: default
+label: Default
+extends: uesio/io.customselectfield:uesio/io.default
+definition:
+  uesio.styleTokens:
+    root:
+      - after:hidden
+      - min-h-[38px]
+    uploadarea:
+      - border(& dashed slate-200 4)
+      - hover:border(& dashed blue-200 4)
+      - rounded-lg
+      - p-10
+      - text-sm
+      - text-slate-400
+      - font-light
+      - hover:text-blue-300
+      - grid
+      - align-center
+      - items-center
+      - justify-center
+      - cursor-pointer
+public: true

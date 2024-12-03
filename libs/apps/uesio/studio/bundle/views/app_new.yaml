@@ -42,8 +42,7 @@ definition:
     - uesio/io.viewlayout:
         uesio.variant: uesio/studio.main
         left:
-          - uesio/io.scrollpanel:
-              uesio.variant: uesio/studio.left
+          - uesio/appkit.sidebar:
               header:
                 - uesio/io.item:
                     wire: app
@@ -89,106 +88,17 @@ definition:
                             - signal: "route/NAVIGATE"
                               path: app/${uesio/core.uniquekey}
                     content:
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.primarysection
-                          components:
-                            - uesio/io.titlebar:
-                                title: App Name & Description
-                                uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.name
-                                            uesio.id: new-app-name
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.description
-                                            uesio.id: new-app-description
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: "Note: Your app name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The app description is optional."
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: App Owner
-                                uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.field:
-                                            fieldId: uesio/studio.user
-                                            uesio.id: new-app-user
-                                            reference:
-                                              requirewriteaccess: true
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: Choose who will own this app. If this is a personal app you can leave yourself as the owner. If you are a member of an organization, you can also make that organization the owner of the app.
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: App Color & Icon
-                                uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/studio.colorpicker:
-                                            fieldId: uesio/studio.color
-                                        - uesio/studio.appiconpicker:
-                                            fieldId: uesio/studio.icon
-                                            colorFieldId: uesio/studio.color
-                                  - uesio/io.box:
-                                      components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
+                      - uesio/studio.section_app_name_desc:
+                      - uesio/studio.section_app_owner:
+                      - uesio/studio.section_app_icon_color:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           components:
                             - uesio/io.titlebar:
                                 title: Starter Template
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
                                   - uesio/io.box:
                                       uesio.styleTokens:
                                         root:
@@ -206,14 +116,9 @@ definition:
                                                       sourceValue: ${app:uesio/studio.starter_template}
                                                       operator: EQUALS
                                                       value: ${uesio/studio.app->uesio/studio.fullname}:${uesio/studio.starter_template_version}
-                                                  tileVariant: uesio/appkit.selectcard
+                                                  uesio.variant: uesio/appkit.selectcard
                                                   content:
                                                     - uesio/io.text:
-                                                        uesio.styleTokens:
-                                                          root:
-                                                            - font-light
-                                                            - text-sm
-                                                            - text-slate-600
                                                         text: ${uesio/studio.starter_template_description}
                                                   signals:
                                                     - signal: wire/UPDATE_RECORD
@@ -226,30 +131,21 @@ definition:
                                               - type: hasNoValue
                                                 wire: app
                                                 value: ${uesio/studio.starter_template}
-                                            tileVariant: uesio/appkit.selectcard
+                                            uesio.variant: uesio/appkit.selectcard
                                             content:
                                               - uesio/io.text:
-                                                  uesio.styleTokens:
-                                                    root:
-                                                      - font-light
-                                                      - text-sm
-                                                      - text-slate-600
                                                   text: Start with a completely empty app. (Recommended for advanced users.)
                                             signals:
                                               - signal: wire/UPDATE_RECORD
                                                 wire: app
                                                 field: uesio/studio.starter_template
                                                 value: ""
+                                note:
                                   - uesio/io.box:
+                                      uesio.variant: uesio/appkit.note
                                       components:
-                                        - uesio/io.box:
-                                            uesio.variant: uesio/appkit.note
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            components:
-                                              - uesio/io.text:
-                                                  text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)
+                                        - uesio/io.text:
+                                            text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           uesio.display:
@@ -259,12 +155,8 @@ definition:
                             - uesio/io.titlebar:
                                 title: Starter Template Options
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.styleTokens:
-                                  root:
-                                    - grid-cols-2
-                                    - gap-6
-                                items:
+                            - uesio/studio.layout_note_form:
+                                content:
                                   - uesio/io.box:
                                       components:
                                         - uesio/studio.generatorstarter:

@@ -165,14 +165,13 @@ export const getFormFieldFromProperty = (
 				},
 			}
 		}
-		case "TEXT_AREA": {
+		case "LONGTEXT": {
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
 					wrapperVariant: "uesio/builder.propfield",
-					labelPosition: "top",
 					longtext: {
-						rows: 10,
+						rows: 4,
 					},
 				},
 			}

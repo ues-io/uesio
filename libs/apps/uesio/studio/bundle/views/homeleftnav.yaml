@@ -43,14 +43,15 @@ definition:
           valueSource: VALUE
           value: uesio/studio.standard
   components:
-    - uesio/io.scrollpanel:
-        uesio.variant: uesio/studio.left
+    - uesio/appkit.sidebar:
         uesio.styleTokens:
           inner:
-            - grid
             - grid-rows-3
         header:
           - uesio/io.tile:
+              uesio.styleTokens:
+                root:
+                  - relative
               avatar:
                 - uesio/io.image:
                     uesio.variant: uesio/appkit.uesio_logo
@@ -58,8 +59,46 @@ definition:
                     height: 32
                     file: uesio/core.logowhite
               content:
+                - uesio/appkit.sidebar_toggle:
+                    uesio.styleTokens:
+                      root:
+                        - absolute
+                        - top-0.5
+                        - right-0.5
+                        - md:hidden
+                        - z-10
+                    icon: top_panel_open
+                    signals:
+                      - signal: component/CALL
+                        component: uesio/io.dynamicpanel
+                        componentsignal: TOGGLE
+                        targettype: specific
+                        componentid: menutoggle
                 - uesio/io.searchbox:
                     uesio.variant: uesio/studio.appsearch
+                    uesio.styleTokens:
+                      root:
+                        - mr-12
+                        - md:mr-auto
+                        - md:hidden
+                    wire: apps
+                    placeholder: Search Apps
+                    focusOnRender: true
+                    searchFields:
+                      - uesio/studio.name
+                      - uesio/studio.description
+                    onSearchSignals:
+                      - signal: component/CALL
+                        component: uesio/io.dynamicpanel
+                        componentsignal: OPEN
+                        targettype: specific
+                        componentid: menutoggle
+                - uesio/io.searchbox:
+                    uesio.variant: uesio/studio.appsearch
+                    uesio.styleTokens:
+                      root:
+                        - hidden
+                        - md:block
                     wire: apps
                     placeholder: Search Apps
                     focusOnRender: true
@@ -126,6 +165,9 @@ definition:
                                     - border-b-2
                                     - border-t-1
                                     - border-transparent
+                                  content:
+                                    - overflow-hidden
+                                    - w-0
                                   actionable:
                                     - hover:bg-white
                                     - hover:border-fontcolor-900
@@ -171,6 +213,9 @@ definition:
                                     - border-b-2
                                     - border-t-1
                                     - border-transparent
+                                  content:
+                                    - overflow-hidden
+                                    - w-0
                                   actionable:
                                     - hover:bg-white
                                     - hover:border-fontcolor-900

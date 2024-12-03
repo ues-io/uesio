@@ -18,17 +18,16 @@ import (
 
 const PLATFORM_FILE_SOURCE = "uesio/core.platform"
 
-func GetFileType(op *FileUploadOp) string {
-	if op.FieldID == "" {
+func GetFileType(fieldID string) string {
+	if fieldID == "" {
 		return "attachment"
 	}
-	return "field:" + op.FieldID
+	return "field:" + fieldID
 }
 
 type FileUploadOp struct {
 	Data            io.Reader
 	RecordUniqueKey string
-	ContentLength   int64
 	Path            string                 `json:"name"`
 	CollectionID    string                 `json:"collectionID"`
 	RecordID        string                 `json:"recordID"`
@@ -56,6 +55,9 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]interface{}) ([]*meta.UserFileMetadata, error) {
 
 	var userFileCollection meta.UserFileMetadataCollection
+	if len(ops) == 0 {
+		return userFileCollection, nil
+	}
 	idMaps := map[string]wire.LocatorMap{}
 	var fieldUpdates []datasource.SaveRequest
 	metadataResponse := &wire.MetadataCache{}
@@ -126,14 +128,13 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	for _, op := range ops {
 
 		ufm := &meta.UserFileMetadata{
-			CollectionID:  op.CollectionID,
-			MimeType:      mime.TypeByExtension(path.Ext(op.Path)),
-			FieldID:       op.FieldID,
-			Path:          op.Path,
-			Type:          GetFileType(op),
-			RecordID:      op.RecordID,
-			ContentLength: op.ContentLength,
-			FileSourceID:  PLATFORM_FILE_SOURCE,
+			CollectionID: op.CollectionID,
+			MimeType:     mime.TypeByExtension(path.Ext(op.Path)),
+			FieldID:      op.FieldID,
+			Path:         op.Path,
+			Type:         GetFileType(op.FieldID),
+			RecordID:     op.RecordID,
+			FileSourceID: PLATFORM_FILE_SOURCE,
 		}
 		userFileCollection = append(userFileCollection, ufm)
 
@@ -146,13 +147,15 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			conn = newConn
 			fileSourceConnections[ufm.FileSourceID] = newConn
 		}
-		err := conn.Upload(op.Data, ufm.GetFullPath(tenantID))
+		written, err := conn.Upload(op.Data, ufm.GetFullPath(tenantID))
 		if err != nil {
 			return nil, err
 		}
 
+		ufm.ContentLength = written
+
 		usage.RegisterEvent("UPLOAD", "FILESOURCE", ufm.FileSourceID, 0, session)
-		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, ufm.ContentLength, session)
+		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, written, session)
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{

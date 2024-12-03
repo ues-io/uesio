@@ -4,6 +4,7 @@ pack: main
 entrypoint: components/emptystate/emptystate
 description: A placeholder for missing content
 discoverable: true
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
 properties:

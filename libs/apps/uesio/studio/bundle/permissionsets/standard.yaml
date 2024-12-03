@@ -18,9 +18,9 @@ bots:
   uesio/studio.resetrecordaccesstokens: true
   uesio/studio.select_plan: true
 views:
+  uesio/appkit.user_detail_content: true
   uesio/studio.app: true
   uesio/studio.app_new: true
-  uesio/studio.appcrumb: true
   uesio/studio.appsettings: true
   uesio/studio.bot: true
   uesio/studio.bots: true
@@ -242,6 +242,7 @@ collections:
     edit: false
     delete: true
   uesio/core.signupmethod: true
+  uesio/core.bulkjob: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true

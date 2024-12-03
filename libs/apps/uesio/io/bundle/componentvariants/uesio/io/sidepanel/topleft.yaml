@@ -1,0 +1,17 @@
+name: topleft
+label: Top Left
+extends: uesio/io.base
+definition:
+  uesio.styleTokens:
+    inner:
+      - md:right-auto
+      - md:left-0
+      - md:inset-x-auto
+      - inset-x-0
+      - h-full
+      - translate-y-0
+    innerClosed:
+      - -translate-y-full
+      - md:-translate-x-full
+      - md:translate-y-0
+public: true

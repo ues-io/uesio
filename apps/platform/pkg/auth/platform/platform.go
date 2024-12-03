@@ -13,7 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -116,7 +115,10 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if loginmethod.ForceReset {
-		loginMethod, err := c.ResetPassword(loginRequest, true)
+		loginMethod, err := datasource.WithTransactionResult(c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+			c.connection = connection
+			return c.ResetPassword(loginRequest, true)
+		})
 		if err != nil {
 			ctlutil.HandleError(w, err)
 			return
@@ -144,17 +146,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	}
 
 	if loginmethod == nil {
-		// TEMPORARY FOR MIGRATION FROM COGNITO
-		authConnection, err := auth.GetAuthConnection("uesio/core.cognito", c.connection, c.session)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		cognitoConnection := authConnection.(*cognito.Connection)
-
-		return cognitoConnection.DoLogin(payload)
-		// END TEMPORARY
-		//return nil, exceptions.NewBadRequestException()("No account found with this login method")
+		return nil, nil, exceptions.NewBadRequestException("No account found with this login method")
 	}
 
 	if loginmethod.VerificationCode != "" {

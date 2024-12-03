@@ -1,0 +1,78 @@
+name: sidebar
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: header
+  - name: content
+  - name: footer
+  - name: trigger
+    defaultContent:
+      - uesio/appkit.sidebar_toggle:
+          icon: left_panel_open
+properties:
+  - name: scrollpanelVariant
+    label: Scroll Panel Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.scrollpanel
+    defaultValue: uesio/appkit.left
+defaultVariant: uesio/appkit.app
+definition:
+  - uesio/io.dynamicpanel:
+      uesio.id: menutoggle
+      uesio.type: uesio/io.sidepanelplain
+      uesio.variant: uesio/io.topleft
+      components:
+        - uesio/io.scrollpanel:
+            uesio.variant: $Prop{scrollpanelVariant}
+            uesio.styleTokens:
+              root:
+                - $Region{root}
+                - $Region{menuRoot}
+              inner:
+                - $Region{inner}
+                - $Region{menuInner}
+            header:
+              - $Slot{header}
+            content:
+              - $Slot{content}
+            footer:
+              - $Slot{footer}
+  - uesio/io.scrollpanel:
+      uesio.variant: $Prop{scrollpanelVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+          - $Region{expandedRoot}
+        inner:
+          - $Region{inner}
+          - $Region{expandedInner}
+        footer:
+          - $Region{expandedFooter}
+      header:
+        - $Slot{header}
+      content:
+        - $Slot{content}
+      footer:
+        - $Slot{footer}
+  - uesio/io.scrollpanel:
+      uesio.variant: $Prop{scrollpanelVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+          - $Region{triggerRoot}
+        header:
+          - $Region{triggerHeader}
+        inner:
+          - $Region{triggerInner}
+      content:
+        - $Slot{trigger}
+title: Side Bar
+discoverable: true
+description: A responsive sidebar component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
+variants:

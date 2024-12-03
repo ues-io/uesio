@@ -9,27 +9,42 @@ export default function signup(bot: ListenerBotApi) {
 	const firstName = bot.params.get("firstname")
 	const lastName = bot.params.get("lastname")
 	const toName = firstName && lastName ? `${firstName} ${lastName}` : username
-	const link = `${host}${redirect}?code=${code}&username=${username}`
-	const contentType = "text/html"
-	const from = "info@ues.io"
-	const fromName = "the ues.io team"
+	const link = host + redirect + "?code=" + code + "&username=" + username
+	const from = "info@updates.ues.io"
 	const subject = "Welcome to the ues.io studio!"
-	const body = `
-	<!DOCTYPE html>
-	<html>
-		<body>
-			Hi ${toName},<br/>
-			<br/>
-			Thank you for registering for an account with the ues.io studio!<br/>
-			<br/>
-			To complete your account set up, please confirm using the link below:<br/>
-			${link}<br/>
-			<br/>
-			Cheers!<br/>
-			<br/>
-			The team at ues.io
-		</body>
-	</html>`
+
+	const templateParams = {
+		titleText: "Start building great apps.",
+		bodyText:
+			"Welcome to ues.io studio. Confirm your email to complete the signup process.",
+		username,
+		resetLink: link,
+		laterLink: host,
+		logoUrl: host + bot.getFileUrl("uesio/core.logo", ""),
+		logoAlt: "ues.io",
+		logoWidth: "40",
+		footerText: "ues.io - Your app platform",
+	}
+
+	const text = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/confirmemail.txt",
+		templateParams
+	)
+
+	const html = bot.mergeTemplateFile(
+		"uesio/appkit.emailtemplates",
+		"templates/confirmemail.html",
+		templateParams
+	)
+
+	bot.runIntegrationAction("uesio/appkit.resend", "sendemail", {
+		to: email,
+		from,
+		subject,
+		html,
+		text,
+	})
 
 	const site = bot.getSession().getSite()
 
@@ -37,64 +52,49 @@ export default function signup(bot: ListenerBotApi) {
 		"uesio/studio.signup_notify_email"
 	)
 
-	if (signupNotifyEmail) {
-		const notifyBody = `
-		<!DOCTYPE html>
-		<html>
-			<body>
-				Hi ues.io Studio Administrator,<br/>
-				<br/>
-				A user signed up for a studio account on site ${site.getName()} and domain ${site.getDomain()}.<br/>
-				<br/>
-				Name: ${toName}<br/>
-				Username: ${username}<br/>
-				Email: ${email}<br/><br/>
-				Cheers!<br/>
-				<br/>
-				The team at ues.io
-			</body>
-		</html>`
+	const nl2br = (str: string) => {
+		var breakTag = "<br>"
+		var replaceStr = "$1" + breakTag
+		return (str + "").replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, replaceStr)
+	}
 
-		bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-			to: [signupNotifyEmail],
-			toNames: ["Studio Administrator"],
+	if (signupNotifyEmail) {
+		const bodyText = `A user signed up for a studio account on site ${site.getName()} and domain ${site.getDomain()}.
+
+Name: ${toName}
+Username: ${username}
+Email: ${email}
+
+Cheers!
+
+The team at ues.io`
+
+		const notifyText = bot.mergeTemplateFile(
+			"uesio/appkit.emailtemplates",
+			"templates/genericmessage.txt",
+			{
+				...templateParams,
+				titleText: "Someone just signed up.",
+				bodyText,
+			}
+		)
+
+		const notifyHtml = bot.mergeTemplateFile(
+			"uesio/appkit.emailtemplates",
+			"templates/genericmessage.html",
+			{
+				...templateParams,
+				titleText: "Someone just signed up.",
+				bodyText: nl2br(bodyText),
+			}
+		)
+
+		bot.runIntegrationAction("uesio/appkit.resend", "sendemail", {
+			to: signupNotifyEmail,
 			from,
-			fromName,
-			subject: `New signup in uesio studio: ${toName}`,
-			plainBody: notifyBody,
-			contentType,
+			subject: `New signup in uesio studio: ${username}`,
+			html: notifyHtml,
+			text: notifyText,
 		})
 	}
-
-	bot.runIntegrationAction("uesio/core.sendgrid", "sendemail", {
-		to: [email],
-		toNames: [toName],
-		from,
-		fromName,
-		subject,
-		plainBody: body,
-		contentType,
-	})
-
-	/*
-	// FOR LOCAL TESTING WITH RESEND
-	const response = bot.http.request({
-		headers: {
-			Authorization: "Bearer [your-bearer-token]",
-			"Content-Type": "application/json",
-		},
-		method: "POST",
-		url: "https://api.resend.com/emails",
-		body: {
-			from: "onboarding@resend.dev",
-			to: [email],
-			subject,
-			html: body,
-		},
-	})
-
-	if (response.code != 200) {
-		throw new Error(response.body + "")
-	}
-	*/
 }

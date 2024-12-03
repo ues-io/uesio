@@ -1,0 +1,87 @@
+name: button_delete
+category: LAYOUT
+type: DECLARATIVE
+properties:
+  - name: confirmTitle
+    defaultValue: Are you sure?
+  - name: confirmMessage
+    defaultValue: The $Collection{label} $RecordMeta{name} will be deleted. This action cannot be undone.
+  - name: signals
+    defaultValue:
+      - signal: wire/MARK_FOR_DELETE
+      - signal: wire/SAVE
+      - signal: route/NAVIGATE_TO_ASSIGNMENT
+        collection: $Collection{id}
+        viewtype: list
+components:
+  - uesio/io.dialog
+definition:
+  - uesio/io.dynamicpanel:
+      uesio.display:
+        - type: hasValue
+          value: $Prop{confirm}
+      uesio.id: delete_confirm
+      uesio.type: uesio/io.dialog
+      width: 400px
+      height: 300px
+      title: $Prop{confirmTitle}
+      components:
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - font-light
+            text: $Prop{confirmMessage}
+      actions:
+        - uesio/io.button:
+            text: $Label{uesio/io.delete}
+            uesio.id: confirm-delete-$Collection{name}
+            uesio.variant: uesio/appkit.primary
+            signals: $Prop{signals}
+        - uesio/io.button:
+            text: $Label{uesio/io.cancel}
+            uesio.variant: uesio/appkit.secondary
+            signals:
+              - signal: component/CALL
+                component: uesio/io.dynamicpanel
+                componentsignal: TOGGLE
+                targettype: specific
+                componentid: delete_confirm
+  - uesio/io.button:
+      uesio.styleTokens:
+        root:
+          - border-red-600
+          - text-red-600
+      uesio.variant: uesio/appkit.secondary
+      uesio.id: delete-$Collection{name}
+      uesio.display:
+        - type: hasValue
+          value: $Prop{confirm}
+      text: Delete $Collection{label}
+      signals:
+        - signal: component/CALL
+          component: uesio/io.dynamicpanel
+          componentsignal: TOGGLE
+          targettype: specific
+          componentid: delete_confirm
+          uesio.conditions:
+            - type: hasValue
+              value: $Prop{confirm}
+  - uesio/io.button:
+      uesio.styleTokens:
+        root:
+          - border-red-600
+          - text-red-600
+      uesio.variant: uesio/appkit.secondary
+      uesio.id: delete-$Collection{name}
+      uesio.display:
+        - type: hasNoValue
+          value: $Prop{confirm}
+      text: Delete $Collection{label}
+      signals: $Prop{signals}
+title: Delete Button Component
+discoverable: true
+description: Delete Button
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

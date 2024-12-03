@@ -93,8 +93,8 @@ func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]interface{
 	return botAPI.Results, nil
 }
 
-func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	return errors.New("Declarative Dialect not implemented yet.")
+func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return nil, errors.New("Declarative Dialect not implemented yet.")
 }
 
 func (b *DeclarativeDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {

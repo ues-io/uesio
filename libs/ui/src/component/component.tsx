@@ -68,11 +68,7 @@ function mergeContextVariants(
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 	const variantName = definition[component.STYLE_VARIANT] as MetadataKey
-	const [namespace] = parseKey(componentType)
-	const variant = context.getComponentVariant(
-		componentType,
-		variantName || (`${namespace}.default` as MetadataKey)
-	)
+	const variant = context.getComponentVariant(componentType, variantName)
 	const variantDefinition = getDefinitionFromVariant(variant, context)
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
@@ -96,10 +92,12 @@ const resolveDeclarativeComponentDefinition = (
 	context: Context,
 	source: Record<string, FieldValue>,
 	destination: DefinitionList,
-	path: string
+	slots: SlotDef[] | undefined,
+	path: string,
+	componentType: string
 ): DefinitionList =>
 	(context
-		.addPropsFrame(source, path)
+		.addPropsFrame(source, path, componentType, slots)
 		// definition may not be Record<string, string>, but we just need to be able to merge it,
 		// so we need to cast it.
 		.mergeList(
@@ -109,12 +107,16 @@ const resolveDeclarativeComponentDefinition = (
 
 function addDefaultPropertyAndSlotValues(
 	def: DefinitionMap,
-	componentTypeDef?: component.ComponentDef
+	properties: ComponentProperty[] | undefined,
+	slots: SlotDef[] | undefined,
+	componentType: string,
+	path: string,
+	context: Context
 ) {
-	const propsWithDefaults = componentTypeDef?.properties?.filter(
+	const propsWithDefaults = properties?.filter(
 		(prop) => prop.defaultValue !== undefined
 	)
-	const slotsWithDefaults = componentTypeDef?.slots?.filter(
+	const slotsWithDefaults = slots?.filter(
 		(prop) => prop.defaultContent !== undefined
 	)
 	const havePropsWithDefaults =
@@ -137,11 +139,23 @@ function addDefaultPropertyAndSlotValues(
 			}
 		})
 	}
+
 	if (haveSlotsWithDefaults) {
+		context = context.addPropsFrame(
+			def as Record<string, FieldValue>,
+			path,
+			componentType,
+			slots
+		)
 		slotsWithDefaults.forEach((slot: SlotDef) => {
 			const { defaultContent, name } = slot
 			if (typeof def[name] === "undefined" || def[name] === null) {
-				defaults[name] = defaultContent
+				defaults[name] = context
+					? context.mergeList(
+							defaultContent as Record<string, string>[],
+							propMergeOptions
+						)
+					: defaultContent
 			}
 		})
 	}
@@ -169,7 +183,9 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 		context,
 		definition as Record<string, FieldValue>,
 		componentTypeDef.definition,
-		path
+		componentTypeDef.slots,
+		path,
+		componentType
 	)
 
 	return (
@@ -189,7 +205,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 DeclarativeComponent.displayName = "DeclarativeComponent"
 
 const Component: UC<DefinitionMap> = (props) => {
-	const { componentType, context, definition } = props
+	const { componentType, context, definition, path } = props
 	if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) {
 		return null
 	}
@@ -212,7 +228,11 @@ const Component: UC<DefinitionMap> = (props) => {
 
 	const mergedDefinition = addDefaultPropertyAndSlotValues(
 		mergeContextVariants(definition, componentType, context) || {},
-		componentTypeDef
+		componentTypeDef?.properties,
+		componentTypeDef?.slots,
+		componentType,
+		path,
+		context
 	)
 
 	return (
@@ -243,7 +263,14 @@ const parseVariantName = (
 		return [key, parts[0] as MetadataKey]
 	}
 	const [keyNamespace] = parseKey(key)
-	return [key, `${keyNamespace}.default` as MetadataKey]
+	const componentTypeDef = getComponentType(key)
+	if (!componentTypeDef || !componentTypeDef.defaultVariant) {
+		// This is bad and should go away at some point. I'm just not sure
+		// how many components are relying on this functionality.
+		return [key, `${keyNamespace}.default` as MetadataKey]
+	}
+
+	return [key, componentTypeDef.defaultVariant]
 }
 
 // This is bad and should eventually go away when we do proper typing

@@ -284,7 +284,9 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		: undefined
 
 	const columnHeaderFunc = (column: ColumnDefinition) =>
-		column.label || collection.getField(column.field)?.getLabel() || ""
+		context.mergeString(column.label) ||
+		collection.getField(column.field)?.getLabel() ||
+		""
 
 	const columnMenuFunc = definition.order
 		? (column: ColumnDefinition) =>
@@ -409,10 +411,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				id={api.component.getComponentIdFromProps(props)}
 				variant={definition[component.STYLE_VARIANT]}
 				rows={paginated}
-				columns={columnsToDisplay?.map((column) => ({
-					...column,
-					label: context.mergeString(column.label),
-				}))}
+				columns={columnsToDisplay}
 				context={context}
 				classes={classes}
 				rowNumberFunc={

@@ -47,10 +47,18 @@ definition:
       uesio.variant: $Prop{tileVariant}
       uesio.classes:
         selected: $Prop{selectedConditions}
+      uesio.styleTokens:
+        root:
+          - $Region{tile}
       signals: $Prop{signals}
       content:
         - uesio/io.scrollpanel:
             uesio.variant: $Prop{scrollpanelVariant}
+            uesio.styleTokens:
+              root:
+                - $Region{panel}
+              inner:
+                - $Region{panelInner}
             header:
               - uesio/io.titlebar:
                   title: $Prop{title}

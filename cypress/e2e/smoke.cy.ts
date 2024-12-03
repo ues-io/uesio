@@ -159,5 +159,6 @@ describe("Uesio Sanity Smoke Tests", () => {
 
 	after(() => {
 		deleteApp(appName)
+		cy.url().should("contain", `/home`)
 	})
 })

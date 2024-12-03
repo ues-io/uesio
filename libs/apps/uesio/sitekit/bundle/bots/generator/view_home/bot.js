@@ -3,14 +3,46 @@ function view_home(bot) {
 	const tagline = bot.params.get("tagline")
 	const tagline_sub = bot.params.get("tagline_sub")
 	const testimonials = bot.params.get("testimonials")
+	const features = bot.params.get("features")
 
 	const mainTestimonial = testimonials.pop()
+
+	let avatarPaths = [
+		"images/connie_forrester.jpg",
+		"images/gavin_foster.jpg",
+		"images/josie_malkovic.jpg",
+		"images/randy_billingston.jpg",
+		"images/sandy_burtrand.jpg",
+	]
+
+	const min = 0
+	const max = avatarPaths.length
+
+	const getRandomAvatarPath = () => {
+		const random = Math.floor(Math.random() * (max - min) + min)
+		return avatarPaths[random]
+	}
+
+	const featuresYaml = features
+		.map((feature) =>
+			bot.mergeYamlTemplate(
+				{
+					title: feature.title,
+					subtitle: feature.category,
+					description: feature.description,
+				},
+				"templates/feature.yaml"
+			)
+		)
+		.join("")
 
 	const mainTestimonialYaml = bot.mergeYamlTemplate(
 		{
 			quote: mainTestimonial.quote,
 			name: mainTestimonial.name,
 			title: mainTestimonial.title,
+			avatar: "uesio/sitekit.avatarpics",
+			avatarPath: getRandomAvatarPath(),
 		},
 		"templates/maintestimonial.yaml"
 	)
@@ -22,6 +54,8 @@ function view_home(bot) {
 					quote: testimonial.quote,
 					name: testimonial.name,
 					title: testimonial.title,
+					avatar: "uesio/sitekit.avatarpics",
+					avatarPath: getRandomAvatarPath(),
 				},
 				"templates/testimonial.yaml"
 			)
@@ -33,6 +67,7 @@ function view_home(bot) {
 			namespace,
 			tagline,
 			tagline_sub,
+			featuresYaml,
 			mainTestimonialYaml,
 			testimonialsYaml,
 		},

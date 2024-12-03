@@ -14,7 +14,10 @@ import { getFullyQualifiedKey } from "../bands/collection/class"
 import { hash } from "@twind/core"
 
 import { FieldValue } from "../bands/wirerecord/types"
-import { resolveDeclarativeComponentDefinition } from "../component/component"
+import {
+	addDefaultPropertyAndSlotValues,
+	resolveDeclarativeComponentDefinition,
+} from "../component/component"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -110,13 +113,22 @@ const View: UC<ViewComponentDefinition> = (props) => {
 		)
 	}
 
-	const mergedViewDef = Object.keys(slots).length
+	const mergedViewDef = viewDef.slots
 		? {
 				[DefaultSlotName]: resolveDeclarativeComponentDefinition(
 					context,
-					slots as Record<string, FieldValue>,
+					addDefaultPropertyAndSlotValues(
+						slots,
+						undefined,
+						viewDef.slots,
+						"uesio/core.view",
+						"",
+						context
+					) as Record<string, FieldValue>,
 					viewDef.components || [],
-					""
+					viewDef.slots,
+					"",
+					"uesio/core.view"
 				),
 			}
 		: viewDef

@@ -215,6 +215,7 @@ func processConditions(
 			}
 
 			condition.Values = values
+
 			//default "IN"
 			if condition.Operator == "" {
 				condition.Operator = "IN"
@@ -239,6 +240,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 
 	originalOperator := condition.Operator
 	originalType := condition.Type
+	originalValueSource := condition.ValueSource
+	originalParam := condition.Param
 	// Move over RawValue/RawValues AND Value/Values because those store the original properties
 	// received from the original request. Value/Values will be populated as part of processing the condition,
 	// but in code (e.g. Bot code) it's very likely someone will populate condition.Value/Values instead,
@@ -269,6 +272,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			currentCondition.RawValues = originalRawValues
 			currentCondition.Value = originalValue
 			currentCondition.Values = originalValues
+			currentCondition.ValueSource = originalValueSource
+			currentCondition.Param = originalParam
 		} else {
 			// Convert the current condition to a subquery condition,
 			// with a nested condition, and lookup the related collection metadata
@@ -289,6 +294,8 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 
 			currentCondition.Type = "SUBQUERY"
 			currentCondition.Operator = "IN"
+			currentCondition.ValueSource = ""
+			currentCondition.Param = ""
 			currentCondition.Field = fieldPart
 			currentCondition.SubCollection = relatedCollectionName
 			currentCondition.SubField = "uesio/core.id"
@@ -476,61 +483,20 @@ func GetMetadataForLoad(
 
 	op.AttachMetadataCache(metadataResponse)
 
-	// Keep a running tally of all requested collections
-	metadataRequest := &MetadataRequest{}
-	if err := metadataRequest.AddCollection(collectionKey); err != nil {
+	metadataRequest, err := GetMetadataRequestForLoad(op, ops, session)
+	if err != nil {
 		return err
 	}
 
-	for _, requestField := range op.Fields {
+	err = metadataRequest.Load(metadataResponse, session, connection)
+	if err != nil {
 
-		if requestField.ViewOnlyMetadata != nil {
-			getMetadataForViewOnlyField(requestField, metadataRequest)
-			continue
-		}
-
-		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
-			return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s field.", session.GetContextProfile(), requestField.ID))
-		}
-
-		subFields := getSubFields(requestField.Fields)
-		err := metadataRequest.AddField(collectionKey, requestField.ID, subFields)
-		if err != nil {
-			return err
-		}
-	}
-
-	if op.Aggregate {
-		for _, requestField := range op.GroupBy {
-			err := metadataRequest.AddField(collectionKey, requestField.ID, nil)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	for _, condition := range op.Conditions {
-		innerErr := getMetadataForConditionLoad(&condition, collectionKey, metadataRequest, op, ops)
-		if innerErr != nil {
-			return innerErr
-		}
-	}
-
-	if len(op.Order) > 0 {
-		for _, orderField := range op.Order {
-			if err := getMetadataForOrderField(collectionKey, orderField.Field, metadataRequest, session); err != nil {
-				return err
-			}
-		}
-	}
-
-	if err := metadataRequest.Load(metadataResponse, session, connection); err != nil {
 		return err
 	}
 
 	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 	if err != nil {
-		return err
+		return exceptions.NewForbiddenException("Your profile has no access to the " + collectionKey + " collection")
 	}
 
 	// Now loop over fields and do some additional processing for reference & formula fields
@@ -540,7 +506,8 @@ func GetMetadataForLoad(
 		}
 		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
 		if err != nil {
-			// Allow missing metadata for dynamic collections
+			// Allow missing metadata for dynamic collections because it could be added
+			// by the custom handler.
 			if collectionMetadata.IsDynamic() {
 				continue
 			}
@@ -765,6 +732,11 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
 			return nil, exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
 		}
+
+		if err = GetMetadataForLoad(op, metadataResponse, ops, session, connection); err != nil {
+			return nil, err
+		}
+
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
@@ -789,10 +761,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			op.Fields = append(op.Fields, wire.LoadRequestField{
 				ID: commonfields.UniqueKey,
 			})
-		}
-
-		if err = GetMetadataForLoad(op, metadataResponse, ops, session, connection); err != nil {
-			return nil, err
 		}
 
 		//Set default order by: id - asc

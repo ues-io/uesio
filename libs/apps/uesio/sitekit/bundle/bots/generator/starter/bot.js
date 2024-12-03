@@ -2,8 +2,40 @@ function starter(bot) {
 	const appInfo = bot.getApp()
 	const appName = appInfo.getName()
 	const appDescription = appInfo.getDescription()
+	const appFullName = bot.getAppName()
+
+	const doContentAndCopyParam = bot.params.get("use_ai_for_content_and_copy")
+	const doContentAndCopy =
+		doContentAndCopyParam && doContentAndCopyParam !== "false"
+
+	const contentInstructions = bot.params.get("content_and_copy_instructions")
+
+	const doLogoAndBackgroundParam = bot.params.get(
+		"use_ai_for_logo_and_background"
+	)
+	const doLogoAndBackground =
+		doLogoAndBackgroundParam && doLogoAndBackgroundParam !== "false"
 
 	const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
+
+	let headerLogoFile = "uesio/sitekit.yourlogo"
+	let headerLogoFilePath = ""
+	let footerLogoFile = "uesio/sitekit.yourlogo"
+	let footerLogoFilePath = "yourlogo_dark.png"
+
+	let backgroundPaths = [
+		"files/orangesplash.jpg",
+		"files/paintsplash.jpg",
+		"files/pinksplash1.jpg",
+		"files/pinksplash2.jpg",
+	]
+
+	const min = 0
+	const max = backgroundPaths.length
+	const random = Math.floor(Math.random() * (max - min) + min)
+
+	let backgroundFile = "uesio/sitekit.backgrounds"
+	let backgroundFilePath = backgroundPaths[random]
 
 	let tagline = "Hello World."
 	let tagline_sub = "Generate websites quickly and easily with SiteKit."
@@ -12,6 +44,14 @@ function starter(bot) {
 			quote: "By far the best thing since sliced bagels.",
 			name: "Barbara Mills",
 			title: "CTO Acme Widget Co.",
+		},
+	]
+	let features = [
+		{
+			title: "Make it exactly the way you want",
+			category: "Customization",
+			description:
+				"This is some text that will probably change later, but we want it to be a little bit long.",
 		},
 	]
 	let pages = [
@@ -77,17 +117,25 @@ function starter(bot) {
 		},
 	]
 
-	const doContentAndCopy = bot.params.get("use_ai_for_content_and_copy")
-	if (doContentAndCopy && doContentAndCopy !== "false") {
+	if (doContentAndCopy) {
 		const systemPrompt = `
 			You are an assistant who specializes in creating professional marketing websites.
 			You deeply understand marketing best practices and are a creative copywriter. You
 			seek to complete the task in the simplest and most straightforward way possible.
 		`
 
+		const additionalInstructions = contentInstructions
+			? `
+
+			Additional Instructions:
+			${contentInstructions}
+		`
+			: ""
+
 		const prompt = `
 			Use the tool provided to create a website for a company called "${appName}". The
 			desciption of the website is "${appDescription}". Create at least 4 pages for the website.
+			${additionalInstructions}
 		`
 
 		const pageTypes = [
@@ -201,7 +249,12 @@ function starter(bot) {
 					logo_prompt: {
 						type: "string",
 						description:
-							"a prompt for a text-to-image ai model for generating a compelling and professional logo for this company.",
+							"a prompt for a text-to-image ai model for generating a compelling and professional logo for this company. Be sure to include a description of the logo as well as style and colors.",
+					},
+					background_prompt: {
+						type: "string",
+						description:
+							"a prompt for a text-to-image ai model for generating a compelling and professional website background image for this company. Be sure to include a description of the background as well as style and colors. It should be subtle and allow for easy contrast with dark text.",
 					},
 					tagline: {
 						type: "string",
@@ -226,6 +279,12 @@ function starter(bot) {
 										The title or short description of the key feature.
 									`,
 								},
+								category: {
+									type: "string",
+									description: `
+										A short category or catchy subtitle for the feature.
+									`,
+								},
 								description: {
 									type: "string",
 									description: `
@@ -233,7 +292,7 @@ function starter(bot) {
 									`,
 								},
 							},
-							required: ["title", "description"],
+							required: ["title", "category", "description"],
 						},
 					},
 				},
@@ -270,32 +329,44 @@ function starter(bot) {
 		tagline = input.tagline
 		tagline_sub = input.tagline_secondary_text
 		testimonials = input.testimonials
+		features = input.key_features
 		pages = input.pages
 		footerCategories = input.footer_links_category
 
 		bot.log.info("result", input)
-		/*
-		bot.runGenerators([
-			{
-				namespace: "uesio/sitekit",
-				name: "image",
-				params: {
-					prompt: `A (minimal:0.5), (artistic:0.6), (wordmark:1) for the app named (${appName}:1). The background is white and the workmark is full frame, edge-to-edge, borderless, full bleed.`,
-					filename: "logo",
-					aspect_ratio: "21:9",
+
+		if (doLogoAndBackground) {
+			bot.runGenerators([
+				{
+					namespace: "uesio/sitekit",
+					name: "image_logo",
+					params: {
+						organization_name: appName,
+						description: input.logo_prompt,
+						name: "logo",
+						aspect_ratio: "21:9",
+					},
 				},
-			},
-			{
-				namespace: "uesio/sitekit",
-				name: "image",
-				params: {
-					prompt: `Seamless tile, (minimal:0.9), (artistic:0.5) (wallpaper:1) background for the app named (${appName}:1). Simple, small, illustrations. The background is white. The primary color is (orange:0.4).`,
-					filename: "background",
-					aspect_ratio: "1:1",
+
+				{
+					namespace: "uesio/sitekit",
+					name: "image_background",
+					params: {
+						description: input.background_prompt,
+						name: "background",
+						aspect_ratio: "1:1",
+					},
 				},
-			},
-		])
-			*/
+			])
+
+			headerLogoFile = appFullName + ".logo"
+			headerLogoFilePath = ""
+			footerLogoFile = appFullName + ".logo"
+			footerLogoFilePath = ""
+
+			backgroundFile = appFullName + ".background"
+			backgroundFilePath = "background.png"
+		}
 	}
 
 	bot.runGenerators([
@@ -303,13 +374,18 @@ function starter(bot) {
 			// Create a viewlayout variant
 			namespace: "uesio/sitekit",
 			name: "variant_viewlayout_page",
-			params: {},
+			params: {
+				backgroundFile,
+				backgroundFilePath,
+			},
 		},
 		{
 			// Create a header view
 			namespace: "uesio/sitekit",
 			name: "view_header",
 			params: {
+				logoFile: headerLogoFile,
+				logoFilePath: headerLogoFilePath,
 				pages,
 			},
 		},
@@ -318,6 +394,8 @@ function starter(bot) {
 			namespace: "uesio/sitekit",
 			name: "view_footer",
 			params: {
+				logoFile: footerLogoFile,
+				logoFilePath: footerLogoFilePath,
 				categories: footerCategories,
 			},
 		},
@@ -329,6 +407,7 @@ function starter(bot) {
 				tagline,
 				tagline_sub,
 				testimonials,
+				features,
 			},
 		},
 		{

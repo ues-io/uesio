@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/francoispqt/gojay"
-	yptr "github.com/zachelrath/yaml-jsonpointer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -40,7 +39,8 @@ type Component struct {
 	Slots          *YAMLDef `yaml:"slots,omitempty" json:"uesio/studio.slots"`
 	Properties     *YAMLDef `yaml:"properties,omitempty" json:"uesio/studio.properties"`
 	// Definition defines the Component body, for Declarative components
-	Definition *YAMLDef `yaml:"definition,omitempty" json:"uesio/studio.definition"`
+	Definition     *YAMLDef `yaml:"definition,omitempty" json:"uesio/studio.definition"`
+	DefaultVariant string   `yaml:"defaultVariant,omitempty" json:"uesio/studio.defaultvariant"`
 
 	// Builder-only Properties
 	Title             string   `yaml:"title,omitempty" json:"uesio/studio.title"`
@@ -55,10 +55,7 @@ type Component struct {
 	// Internal only
 	slotDefs             []*SlotDefinition
 	variantPropertyNames map[string]*PropertyDefinition
-	defaultVariant       string
 }
-
-var no_default_variant = "--no-default--"
 
 type SlotDefinition struct {
 	Name            string   `yaml:"name"`
@@ -130,27 +127,8 @@ func (c *Component) GetVariantPropertyNames() map[string]*PropertyDefinition {
 	return c.variantPropertyNames
 }
 
-// GetDefaultVariant returns the default variant for a Component by inspecting the default definition
-// and looking for the "uesio.variant" key
 func (c *Component) GetDefaultVariant() string {
-
-	// If we've already looked for a default variant, but there isn't one defined, return empty
-	if c.defaultVariant == no_default_variant {
-		return ""
-	}
-	if c.defaultVariant == "" {
-		if c.DefaultDefinition != nil && c.DefaultDefinition.Content != nil && len(c.DefaultDefinition.Content) >= 2 {
-			val, err := yptr.Find((*yaml.Node)(c.DefaultDefinition), "/uesio.variant")
-			if val != nil && err == nil && val.Value != "" {
-				// Check if it is a string
-				c.defaultVariant = val.Value
-				return c.defaultVariant
-			}
-		}
-		c.defaultVariant = no_default_variant
-		return ""
-	}
-	return c.defaultVariant
+	return c.DefaultVariant
 }
 
 func (c *Component) GetBytes() ([]byte, error) {
@@ -250,6 +228,7 @@ func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cdw.Namespace)
 	enc.AddStringKey("name", cdw.Name)
 	enc.AddStringKey("type", cdw.GetType())
+	enc.AddStringKeyOmitEmpty("defaultVariant", cdw.DefaultVariant)
 	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(cdw.Definition))
 	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(cdw.Slots))
 	// This is a hassle, but to avoid sending down a LOT of property metadata which the runtime doesn't need,

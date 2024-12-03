@@ -26,7 +26,9 @@ func Logger() {
 type JSDialect struct {
 }
 
-const MAX_TIMEOUT int = 30
+type HydrateFunc func(bot *meta.Bot, session *sess.Session, connection wire.Connection) error
+
+const MAX_TIMEOUT int = 45
 const DEFAULT_TIMEOUT int = 5
 
 func getTimeout(timeout int) int {
@@ -71,7 +73,28 @@ func getBotProgramCacheKey(bot *meta.Bot, session *sess.Session) string {
 	}
 }
 
-func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot func(*meta.Bot, *sess.Session, wire.Connection) error, errorFunc func(string)) error {
+func CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]interface{}, error) {
+	botAPI := NewGeneratorBotAPI(bot, params, create, session, connection)
+	err := RunBot(bot, botAPI, session, connection, hydrate, nil)
+	if err != nil {
+		return nil, err
+	}
+	return botAPI.Results, nil
+}
+
+func CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]interface{}, error) {
+	botAPI := NewCallBotAPI(bot, session, connection, params)
+	if err := RunBot(bot, botAPI, session, connection, hydrate, botAPI.AddError); err != nil {
+		return nil, err
+	}
+	loadErrors := botAPI.GetErrors()
+	if len(loadErrors) > 0 {
+		return nil, exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
+	}
+	return botAPI.Results, nil
+}
+
+func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot HydrateFunc, errorFunc func(string)) error {
 
 	cacheKey := getBotProgramCacheKey(bot, session)
 
@@ -152,20 +175,11 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
-	botAPI := NewCallBotAPI(bot, session, connection, params)
-	if err := RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError); err != nil {
-		return nil, err
-	}
-	loadErrors := botAPI.GetErrors()
-	if len(loadErrors) > 0 {
-		return nil, exceptions.NewExecutionException(strings.Join(loadErrors, ", "))
-	}
-	return botAPI.Results, nil
+	return CallBot(bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) error {
-	botAPI := NewGeneratorBotAPI(bot, params, create, session, connection)
-	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+	return CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
 }
 
 func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {

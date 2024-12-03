@@ -155,97 +155,49 @@ definition:
                               components:
                                 - uesio/io.titlebar:
                                     title: Component Properties
-                                - uesio/studio.codefield:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.minimal
                                     fieldId: uesio/studio.properties
-                                    height: 100px
-                                    language: yaml
-                                    mode: READ
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: NOT_EQUALS
-                                        value: $Param{namespace}
-                                - uesio/studio.codefield:
-                                    fieldId: uesio/studio.properties
-                                    height: 100px
-                                    language: yaml
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: EQUALS
-                                        value: $Param{namespace}
+                                    labelPosition: none
+                                    displayAs: CODE
+                                    longtext:
+                                      language: yaml
                             - id: slots
                               label: Slots
                               components:
                                 - uesio/io.titlebar:
                                     title: Component Slots
-                                - uesio/studio.codefield:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.minimal
                                     fieldId: uesio/studio.slots
-                                    height: 100px
-                                    language: yaml
-                                    mode: READ
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: NOT_EQUALS
-                                        value: $Param{namespace}
-                                - uesio/studio.codefield:
-                                    fieldId: uesio/studio.slots
-                                    height: 100px
-                                    language: yaml
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: EQUALS
-                                        value: $Param{namespace}
+                                    labelPosition: none
+                                    displayAs: CODE
+                                    longtext:
+                                      language: yaml
                             - id: sections
                               label: Sections
                               components:
                                 - uesio/io.titlebar:
                                     title: View Builder Properties Panel Sections
-                                - uesio/studio.codefield:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.minimal
                                     fieldId: uesio/studio.sections
-                                    height: 100px
-                                    language: yaml
-                                    mode: READ
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: NOT_EQUALS
-                                        value: $Param{namespace}
-                                - uesio/studio.codefield:
-                                    fieldId: uesio/studio.sections
-                                    height: 150px
-                                    language: yaml
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: EQUALS
-                                        value: $Param{namespace}
+                                    labelPosition: none
+                                    displayAs: CODE
+                                    longtext:
+                                      language: yaml
                             - id: defaultDefinition
                               label: Default Component YAML
                               components:
                                 - uesio/io.titlebar:
                                     title: View Builder New Component Default YAML
-                                - uesio/studio.codefield:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.minimal
                                     fieldId: uesio/studio.defaultdefinition
-                                    height: 150px
-                                    language: yaml
-                                    mode: READ
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: NOT_EQUALS
-                                        value: $Param{namespace}
-                                - uesio/studio.codefield:
-                                    fieldId: uesio/studio.defaultdefinition
-                                    height: 150px
-                                    language: yaml
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: EQUALS
-                                        value: $Param{namespace}
+                                    labelPosition: none
+                                    displayAs: CODE
+                                    longtext:
+                                      language: yaml
                             - id: declarativeDefinition
                               label: Declarative Component Definition
                               uesio.display:
@@ -254,25 +206,13 @@ definition:
                               components:
                                 - uesio/io.titlebar:
                                     title: Declarative Component Definition
-                                - uesio/studio.codefield:
+                                - uesio/io.field:
+                                    wrapperVariant: uesio/io.minimal
                                     fieldId: uesio/studio.definition
-                                    height: 100px
-                                    language: yaml
-                                    mode: READ
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: NOT_EQUALS
-                                        value: $Param{namespace}
-                                - uesio/studio.codefield:
-                                    fieldId: uesio/studio.definition
-                                    height: 100px
-                                    language: yaml
-                                    uesio.display:
-                                      - type: paramValue
-                                        param: app
-                                        operator: EQUALS
-                                        value: $Param{namespace}
+                                    labelPosition: none
+                                    displayAs: CODE
+                                    longtext:
+                                      language: yaml
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

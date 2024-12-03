@@ -17,6 +17,7 @@ definition:
       collection: uesio/studio.file
       fields:
         uesio/studio.name:
+        uesio/studio.namespace:
         uesio/studio.path:
         uesio/studio.attachments:
         uesio/studio.appicon:
@@ -95,7 +96,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: panel/TOGGLE
@@ -151,22 +152,38 @@ definition:
                                                           uesio.variant: uesio/appkit.badge
                                                           text: $FileSize{filesize}
                                                           element: div
-
+                                              content:
+                                                - uesio/io.image:
+                                                    uesio.context:
+                                                      workspace:
+                                                        name: $Param{workspacename}
+                                                        app: $Param{app}
+                                                    file: $Parent.Record{uesio/studio.namespace}.$Parent.Record{uesio/studio.name}
+                                                    filepath: ${path}
+                                                    uesio.display:
+                                                      - type: hasValue
+                                                        value: $StartsWith{${mimetype}:image}
+                                                - uesio/io.emptystate:
+                                                    subtitle: No Preview Available
+                                                    icon: mist
+                                                    uesio.display:
+                                                      - type: hasNoValue
+                                                        value: $StartsWith{${mimetype}:image}
                             - uesio/io.grid:
                                 uesio.variant: uesio/appkit.two_columns
                                 uesio.styleTokens:
                                   root:
                                     - mt-6
                                     - lg:gap-y-6
+                                uesio.display:
+                                  - type: paramValue
+                                    param: app
+                                    operator: EQUALS
+                                    value: $Param{namespace}
                                 items:
                                   - uesio/io.list:
                                       id: Attachments
                                       wire: attachments
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          operator: EQUALS
-                                          value: $Param{namespace}
                                       components:
                                         - uesio/io.card:
                                             uesio.variant: uesio/appkit.main
@@ -217,7 +234,7 @@ definition:
       actions:
         - uesio/io.button:
             text: $Label{uesio/io.delete}
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
@@ -227,7 +244,7 @@ definition:
                 path: app/$Param{app}/workspace/$Param{workspacename}/files
         - uesio/io.button:
             text: $Label{uesio/io.cancel}
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             signals:
               - signal: panel/TOGGLE
                 panel: deleteFile

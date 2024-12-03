@@ -5,11 +5,12 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_memory"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_redis"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	googleauth "github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/auth/platform"
@@ -34,12 +35,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 func init() {
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 	mime.AddExtensionType(".md", "text/markdown")
+	mime.AddExtensionType(".txt", "text/plain")
 
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{
@@ -51,7 +54,6 @@ func init() {
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})
 	}
-	auth.RegisterAuthType("cognito", &cognito.Auth{})
 	auth.RegisterAuthType("google", &googleauth.Auth{})
 	auth.RegisterAuthType("platform", &platform.Auth{})
 	auth.RegisterAuthType("saml", &samlauth.Auth{})
@@ -81,6 +83,10 @@ func init() {
 	bot.RegisterBotDialect("system", &systemdialect.SystemDialect{})
 	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 	bot.RegisterBotDialect("declarative", &declarativedialect.DeclarativeDialect{})
+
+	// Usage Handlers
+	usage.RegisterUsageHandler("redis", &usage_redis.RedisUsageHandler{})
+	usage.RegisterUsageHandler("memory", &usage_memory.MemoryUsageHandler{})
 
 }
 

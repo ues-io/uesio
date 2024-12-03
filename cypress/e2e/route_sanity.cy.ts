@@ -75,5 +75,6 @@ describe("Uesio Route Sanity Tests", () => {
 
 	after(() => {
 		deleteApp(appName)
+		cy.url().should("contain", `/home`)
 	})
 })

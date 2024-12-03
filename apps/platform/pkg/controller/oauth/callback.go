@@ -90,11 +90,7 @@ func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn 
 		return nil, errors.New("unable to load oauth callback route: " + err.Error())
 	}
 	// Make sure to do a copy to avoid mutating in-memory/cached metadata
-	cloned := &meta.Route{}
-	err := meta.Copy(cloned, route)
-	if err != nil {
-		return nil, err
-	}
+	cloned := route.Copy()
 	params, err := routing.ResolveRouteParams(route.Params, coreSession, r.URL.Query())
 	if err != nil {
 		return nil, err

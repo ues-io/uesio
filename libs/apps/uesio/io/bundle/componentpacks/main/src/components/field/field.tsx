@@ -4,7 +4,6 @@ import {
 	wire,
 	definition,
 	metadata,
-	signal,
 	collection,
 	styles,
 } from "@uesio/ui"
@@ -16,10 +15,6 @@ import { ListFieldOptions } from "../../utilities/field/list"
 import { ListDeckOptions } from "../../utilities/field/listdeck"
 import { StructFieldOptions } from "../../utilities/structfield/structfield"
 import { LongTextFieldOptions } from "../../utilities/field/textarea"
-import {
-	MarkdownComponentOptions,
-	MarkdownFieldOptions,
-} from "../../utilities/markdownfield/markdownfield"
 import { NumberFieldOptions } from "../../utilities/field/number"
 import { ReferenceFieldOptions } from "../../utilities/field/reference"
 import { ReferenceGroupFieldOptions } from "../../utilities/field/referencegroup"
@@ -42,7 +37,6 @@ type FieldDefinition = {
 	checkbox?: CheckboxFieldOptions
 	list?: ListFieldOptions | ListDeckOptions
 	map?: MapFieldOptions | MapDeckOptions
-	markdown?: MarkdownComponentOptions
 	metadata?: MetadataFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
@@ -70,25 +64,8 @@ type UserFileMetadata = {
 	["uesio/core.recordid"]: string
 	["uesio/core.collectionid"]: string
 	["uesio/core.fieldid"]?: string
+	["uesio/core.data"]?: string
 	[collection.UPDATED_AT_FIELD]: string
-}
-
-const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
-const CANCEL_FILE_EVENT = "component:uesio/io.field:cancel"
-
-const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
-	UPLOAD_FILE: {
-		dispatcher: (state, signal, context, platform, id) => {
-			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
-			return state
-		},
-	},
-	CANCEL_FILE: {
-		dispatcher: (state, signal, context, platform, id) => {
-			api.event.publish(CANCEL_FILE_EVENT, { target: id })
-			return state
-		},
-	},
 }
 
 const StyleDefaults = Object.freeze({
@@ -110,7 +87,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		user,
 		number,
 		longtext,
-		markdown: markdownComponentOptions,
 		readonly,
 		struct,
 		text,
@@ -139,8 +115,8 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	const label = definition.label || fieldMetadata.getLabel()
 
 	const canEdit = record.isNew()
-		? fieldMetadata.getCreateable()
-		: fieldMetadata.getUpdateable()
+		? collection.isCreateable() && fieldMetadata.getCreateable()
+		: collection.isUpdateable() && fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -167,24 +143,11 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		labelPosition,
 	}
 
-	let markdown: MarkdownFieldOptions | undefined
-	if (markdownComponentOptions?.attachmentsWire) {
-		const attachmentsWire = context.getWire(
-			markdownComponentOptions?.attachmentsWire
-		)
-		if (attachmentsWire) {
-			markdown = {
-				attachments: attachmentsWire.getData() || [],
-			}
-		}
-	}
-
 	const typeSpecific = {
 		reference,
 		checkbox,
 		list,
 		map,
-		markdown,
 		metadata: definition.metadata,
 		user,
 		number,
@@ -208,10 +171,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	)
 }
 
-Field.signals = fileTextSignals
-
-export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
-
 export type {
 	ApplyChanges,
 	FieldValueSetter,
@@ -220,7 +179,6 @@ export type {
 	ListDeckOptions,
 	ListFieldOptions,
 	MapFieldOptions,
-	MarkdownFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,

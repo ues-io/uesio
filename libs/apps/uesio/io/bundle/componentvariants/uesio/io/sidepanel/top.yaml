@@ -1,0 +1,12 @@
+name: top
+label: Top
+extends: uesio/io.base
+definition:
+  uesio.styleTokens:
+    inner:
+      - inset-x-0
+      - h-full
+      - translate-y-0
+    innerClosed:
+      - -translate-y-full
+public: true

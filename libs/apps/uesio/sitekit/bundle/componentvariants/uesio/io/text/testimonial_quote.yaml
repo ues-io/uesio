@@ -5,5 +5,5 @@ definition:
   uesio.styleTokens:
     root:
       - text-lg
-      - font-medium
-      - text-black
+      - font-normal
+      - text-black/80

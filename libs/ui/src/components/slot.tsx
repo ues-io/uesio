@@ -1,4 +1,5 @@
 import { DECLARATIVE_COMPONENT } from "../component/component"
+import { Context } from "../context/context"
 import { DefinitionMap, UC } from "../definition/definition"
 
 import SlotUtility, { DefaultSlotName } from "../utilities/slot"
@@ -10,6 +11,8 @@ type SlotDefinition = {
 	definition?: DefinitionMap
 	readonly?: boolean
 	path: string
+	componentType: string | undefined
+	context: Context
 }
 
 const Slot: UC<SlotDefinition> = (props) => {
@@ -22,14 +25,17 @@ const Slot: UC<SlotDefinition> = (props) => {
 	} = props.definition
 
 	if (!definition) return null
+	const slotContext = props.definition.context || context
 	return (
 		<SlotUtility
 			definition={definition}
 			listName={name}
 			readonly={readonly}
 			path={path}
-			context={context.removeAllComponentFrames(DECLARATIVE_COMPONENT)}
-			componentType={componentType}
+			context={slotContext.removeAllComponentFrames(
+				DECLARATIVE_COMPONENT
+			)}
+			componentType={props.definition.componentType || componentType}
 		/>
 	)
 }

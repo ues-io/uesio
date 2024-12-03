@@ -15,7 +15,7 @@ properties:
     metadata:
       type: FILE
   - name: markdown
-    type: TEXT_AREA
+    type: LONGTEXT
     label: Markdown
 sections:
   - type: HOME

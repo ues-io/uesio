@@ -5,12 +5,15 @@ slots:
 properties:
   - name: quote
     label: Quote
-    type: TEXT
+    type: LONGTEXT
   - name: avatar
-    label: Avatar
+    label: Avatar File
     type: METADATA
     metadata:
       type: FILE
+  - name: avatarPath
+    label: Avatar File Path
+    type: TEXT
   - name: name
     label: Name
     type: TEXT
@@ -38,18 +41,26 @@ properties:
       type: COMPONENTVARIANT
       grouping: uesio/io.avatar
     defaultValue: uesio/sitekit.testimonial_avatar
+  - name: starsVariant
+    label: Stars Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.testimonial_stars
+  - name: stars
+    label: Stars
+    type: NUMBER
+    defaultValue: 5
 definition:
   - uesio/io.box:
       uesio.variant: $Prop{wrapperVariant}
       components:
         - uesio/io.box:
             components:
-              - uesio/sitekit.testimonial_star:
-              - uesio/sitekit.testimonial_star:
-              - uesio/sitekit.testimonial_star:
-              - uesio/sitekit.testimonial_star:
-              - uesio/sitekit.testimonial_star:
-                  inactive: true
+              - uesio/sitekit.testimonial_stars:
+                  wrapperVariant: $Prop{starsVariant}
+                  stars: $Prop{stars}
         - uesio/io.text:
             uesio.variant: $Prop{quoteVariant}
             text: “$Prop{quote}”
@@ -60,7 +71,7 @@ definition:
             avatar:
               - uesio/io.avatar:
                   uesio.variant: $Prop{avatarVariant}
-                  image: $File{$Prop{avatar}}
+                  image: $File{$Prop{avatar}:$Prop{avatarPath}}
 title: Testimonial
 discoverable: true
 description: A testimonial
@@ -70,6 +81,7 @@ sections:
       - quote
       - name
       - title
+      - stars
   - type: DISPLAY
   - type: STYLES
   - type: CUSTOM

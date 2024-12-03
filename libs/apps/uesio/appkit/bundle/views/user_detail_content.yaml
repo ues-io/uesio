@@ -30,6 +30,7 @@ definition:
         uesio/core.user:
         uesio/core.auth_source:
         uesio/core.federation_id:
+        uesio/core.signup_method:
       conditions:
         - field: uesio/core.user
           valueSource: PARAM
@@ -144,22 +145,77 @@ definition:
                       - uesio/appkit.section_user_primary:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
+                          uesio.display:
+                            - type: hasNamedPermission
+                              permission: uesio/core.user_admin
                           components:
                             - uesio/io.titlebar:
-                                title: User Administration
+                                title: Signup Methods
                                 uesio.variant: uesio/appkit.sub
-                            - uesio/io.list:
+                            - uesio/io.deck:
                                 wire: signupmethods
+                                uesio.variant: uesio/appkit.main
+                                uesio.styleTokens:
+                                  root:
+                                    - mt-4
                                 components:
                                   - uesio/io.titlebar:
+                                      title: ${uesio/core.label}
+                                      subtitle: Signup Method
+                                      actions:
+                                        - uesio/io.list:
+                                            wire: loginmethods
+                                            recordDisplay:
+                                              - type: fieldValue
+                                                field: signup_method
+                                                value: ${signupmethods:uesio/core.uniquekey}
+                                            components:
+                                            emptyState:
+                                              - uesio/io.button:
+                                                  uesio.display:
+                                                    - field: authsource
+                                                      value: uesio/core.platform
+                                                  uesio.variant: uesio/appkit.secondary
+                                                  text: Send Login Email
+                                                  signals:
+                                                    - signal: user/CREATE_LOGIN
+                                                      signupMethod: ${uesio/core.uniquekey}
+                                                      payload:
+                                                        username: ${user:uesio/core.username}
+                                                        email: ${user:uesio/core.email}
+                                                      onerror:
+                                                        continue: false
+                                                        notify: true
+                                                        signals:
+                                                          - signal: notification/ADD_ERRORS
+                                                    - signal: wire/LOAD
+                                                      wires:
+                                                        - loginmethods
+                                                    - signal: notification/ADD
+                                                      text: "An email has been sent to the user!"
+                                                      details: A new password can be created.
+                                                      severity: success
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          components:
+                            - uesio/io.titlebar:
+                                title: Login Methods
+                                uesio.variant: uesio/appkit.sub
+                            - uesio/io.deck:
+                                wire: loginmethods
+                                uesio.variant: uesio/appkit.main
+                                uesio.styleTokens:
+                                  root:
+                                    - mt-4
+                                components:
+                                  - uesio/io.titlebar:
+                                      uesio.display:
+                                        - field: uesio/core.auth_source
+                                          value: uesio/core.platform
+                                      title: ${uesio/core.federation_id}
+                                      subtitle: Username/Password
                                       actions:
                                         - uesio/io.button:
-                                            uesio.display:
-                                              - type: wireHasRecords
-                                                wire: loginmethods
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
                                             uesio.variant: uesio/appkit.secondary
                                             text: Reset Password
                                             signals:
@@ -167,40 +223,25 @@ definition:
                                                 onerror:
                                                   signals:
                                                     - signal: notification/ADD_ERRORS
-                                                authSource: uesio/core.platform
+                                                authSource: ${uesio/core.auth_source}
                                                 payload:
                                                   username: ${user:uesio/core.username}
                                               - signal: notification/ADD
                                                 text: An email has been sent!
                                                 details: Please check your inbox.
                                                 severity: success
-                                        - uesio/io.button:
-                                            uesio.display:
-                                              - type: wireHasNoRecords
-                                                wire: loginmethods
-                                            uesio.styleTokens:
-                                              root:
-                                                - mt-4
-                                            uesio.variant: uesio/appkit.secondary
-                                            text: Send Login Email
-                                            signals:
-                                              - signal: user/CREATE_LOGIN
-                                                signupMethod: ${uesio/core.uniquekey}
-                                                payload:
-                                                  username: ${user:uesio/core.username}
-                                                  email: ${user:uesio/core.email}
-                                                onerror:
-                                                  continue: false
-                                                  notify: true
-                                                  signals:
-                                                    signal: notification/ADD_ERRORS
-                                              - signal: wire/LOAD
-                                                wires:
-                                                  - loginmethods
-                                              - signal: notification/ADD
-                                                text: "An email has been sent to the user!"
-                                                details: A new password can be created.
-                                                severity: success
+                                  - uesio/io.titlebar:
+                                      uesio.display:
+                                        - field: uesio/core.auth_source
+                                          value: uesio/core.google
+                                      title: ${uesio/core.federation_id}
+                                      subtitle: Google
+                                  - uesio/io.titlebar:
+                                      uesio.display:
+                                        - field: uesio/core.auth_source
+                                          value: uesio/core.mock
+                                      title: ${uesio/core.federation_id}
+                                      subtitle: Mock Login
                       - uesio/appkit.section_audit_info:
               left:
   params:

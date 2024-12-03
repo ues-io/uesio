@@ -98,36 +98,12 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 	hasExistingConnection := options.Connection != nil
 
-	// 3. Get metadata for each datasource and collection
-
 	if !hasExistingConnection {
-		err := connection.BeginTransaction()
-		if err != nil {
-			return err
-		}
+		return WithTransaction(session, connection, func(conn wire.Connection) error {
+			return SaveOps(allOps, metadataResponse, conn, session)
+		})
 	}
-
-	err = SaveOps(allOps, metadataResponse, connection, session)
-	if err != nil {
-		if !hasExistingConnection {
-			err := connection.RollbackTransaction()
-			if err != nil {
-				// We actually don't care about this error.
-				// The error here usually means that the save never went through
-				// in the first place, so we can't roll it back.
-			}
-		}
-		return err
-	}
-
-	if !hasExistingConnection {
-		err := connection.CommitTransaction()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return SaveOps(allOps, metadataResponse, connection, session)
 }
 
 func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *exceptions.SaveException {
@@ -232,7 +208,33 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Check for validate errors here
 	if op.HasErrors() {
-		return &(*op.Errors)[0]
+		// if we're ignoring validation errors, and all the errors are validation errors,
+		if op.Options != nil && op.Options.IgnoreValidationErrors {
+			unSkippedErrors := []exceptions.SaveException{}
+			for _, err := range *op.Errors {
+
+				recordID := err.RecordID
+				foundRecord := false
+				for _, insert := range op.Inserts {
+					if insert.RecordKey == recordID {
+						insert.IsNew = false
+						op.InsertCount = op.InsertCount - 1
+						foundRecord = true
+						continue
+					}
+				}
+				if !foundRecord {
+					unSkippedErrors = append(unSkippedErrors, err)
+				}
+			}
+			if len(unSkippedErrors) > 0 {
+				return &unSkippedErrors[0]
+			} else {
+				op.Errors = &unSkippedErrors
+			}
+		} else {
+			return &(*op.Errors)[0]
+		}
 	}
 
 	usage.RegisterEvent("SAVE", "COLLECTION", collectionKey, 0, session)

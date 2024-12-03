@@ -18,6 +18,7 @@ export default defineConfig({
 		},
 		supportFile: "cypress/support/e2e.ts",
 		baseUrl: studio_base_url,
+		viewportWidth: 1024,
 	},
 	video: false,
 	env: {

@@ -17,12 +17,21 @@ properties:
   - type: SIGNALS
     name: signals
     label: Signals
+  - name: avatarVariant
+    label: Avatar Variant
+    type: METADATA
+    defaultValue: uesio/appkit.main
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.avatar
 definition:
   - uesio/io.tile:
       uesio.variant: uesio/appkit.item
       uesio.styleTokens:
         root:
           - $Region{root}
+        content:
+          - $Region{content}
         actionable:
           - $Region{actionable}
       content:
@@ -31,8 +40,8 @@ definition:
             uesio.styleTokens:
               root:
                 - absolute
-                - -top-0.5
-                - -right-0.5
+                - top-0.5
+                - right-0.5
                 - border-2
                 - border-white
                 - $Region{badge}
@@ -42,6 +51,9 @@ definition:
                 value: $Prop{badge}
         - uesio/io.titlebar:
             uesio.variant: uesio/appkit.item
+            uesio.styleTokens:
+              subtitle:
+                - $Region{subtitle}
             title: $Prop{title}
             subtitle: $Prop{subtitle}
             actions:
@@ -68,7 +80,7 @@ definition:
                 value: $Prop{initials}
             text: $Prop{initials}
             image: $UserFile{$Prop{imagefield}}
-            uesio.variant: uesio/appkit.main
+            uesio.variant: $Prop{avatarVariant}
 title: Item Tile Component
 discoverable: true
 description: An item tile

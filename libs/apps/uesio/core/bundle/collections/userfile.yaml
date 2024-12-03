@@ -7,4 +7,5 @@ uniqueKey:
 nameField: uesio/core.path
 public: true
 label: User File
+type: DYNAMIC
 pluralLabel: User Files

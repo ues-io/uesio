@@ -3,7 +3,83 @@ category: LAYOUT
 type: DECLARATIVE
 slots:
   - name: extra_actions
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
+      - type: RECORD
+        wireProperty: wire
   - name: content
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
+      - type: RECORD
+        wireProperty: wire
+  - name: actions
+    providesContexts:
+      - type: WIRE
+        wireProperty: wire
+      - type: RECORD
+        wireProperty: wire
+    defaultContent:
+      - uesio/io.button:
+          signals:
+            - signal: wire/SAVE
+              wires:
+                - $Prop{wire}
+          text: Save
+          hotkey: "meta+s"
+          uesio.variant: uesio/appkit.primary
+          uesio.display:
+            - type: wireHasChanges
+              operator: EQUALS
+              wire: $Prop{wire}
+      - uesio/io.button:
+          signals:
+            - signal: wire/CANCEL
+              wire: $Prop{wire}
+          text: Cancel
+          uesio.variant: uesio/appkit.secondary
+          uesio.display:
+            - type: wireHasChanges
+              operator: EQUALS
+              wire: $Prop{wire}
+      - uesio/io.button:
+          signals:
+            - signal: component/CALL
+              component: uesio/io.item
+              componentsignal: TOGGLE_MODE
+              targettype: specific
+              componentid: $Prop{wire}_item
+          text: Read
+          uesio.variant: uesio/appkit.secondary
+          icon: task_alt
+          uesio.display:
+            - type: mergeValue
+              operator: EQUALS
+              sourceValue: $FieldMode{}
+              value: EDIT
+            - type: wireHasNoChanges
+              operator: EQUALS
+              wire: $Prop{wire}
+      - uesio/io.button:
+          signals:
+            - signal: component/CALL
+              component: uesio/io.item
+              componentsignal: TOGGLE_MODE
+              targettype: specific
+              componentid: $Prop{wire}_item
+          text: EDIT
+          uesio.variant: uesio/appkit.secondary
+          icon: edit_square
+          iconFill: false
+          uesio.display:
+            - type: mergeValue
+              operator: NOT_EQUALS
+              sourceValue: $FieldMode{}
+              value: EDIT
+            - type: wireHasNoChanges
+              operator: EQUALS
+              wire: $Prop{wire}
 properties:
   - name: titlebarVariant
     label: Title Bar Variant
@@ -25,65 +101,7 @@ definition:
               - uesio/io.group:
                   components:
                     - $Slot{extra_actions}
-                    - uesio/io.button:
-                        signals:
-                          - signal: wire/SAVE
-                            wires:
-                              - $Prop{wire}
-                        text: Save
-                        hotkey: "meta+s"
-                        uesio.variant: uesio/appkit.primary
-                        uesio.display:
-                          - type: wireHasChanges
-                            operator: EQUALS
-                            wire: $Prop{wire}
-                    - uesio/io.button:
-                        signals:
-                          - signal: wire/CANCEL
-                            wire: $Prop{wire}
-                        text: Cancel
-                        uesio.variant: uesio/appkit.secondary
-                        uesio.display:
-                          - type: wireHasChanges
-                            operator: EQUALS
-                            wire: $Prop{wire}
-                    - uesio/io.button:
-                        signals:
-                          - signal: component/CALL
-                            component: uesio/io.item
-                            componentsignal: TOGGLE_MODE
-                            targettype: specific
-                            componentid: $Prop{wire}_item
-                        text: Read
-                        uesio.variant: uesio/appkit.secondary
-                        icon: task_alt
-                        uesio.display:
-                          - type: mergeValue
-                            operator: EQUALS
-                            sourceValue: $FieldMode{}
-                            value: EDIT
-                          - type: wireHasNoChanges
-                            operator: EQUALS
-                            wire: $Prop{wire}
-                    - uesio/io.button:
-                        signals:
-                          - signal: component/CALL
-                            component: uesio/io.item
-                            componentsignal: TOGGLE_MODE
-                            targettype: specific
-                            componentid: $Prop{wire}_item
-                        text: EDIT
-                        uesio.variant: uesio/appkit.secondary
-                        icon: edit_square
-                        iconFill: false
-                        uesio.display:
-                          - type: mergeValue
-                            operator: NOT_EQUALS
-                            sourceValue: $FieldMode{}
-                            value: EDIT
-                          - type: wireHasNoChanges
-                            operator: EQUALS
-                            wire: $Prop{wire}
+                    - $Slot{actions}
             avatar:
               - uesio/io.menu:
                   uesio.display:

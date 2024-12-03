@@ -5,6 +5,7 @@ type: DECLARATIVE
 slots:
   - name: content
   - name: actions
+    label: Nav Actions
 description: A section of a navigation panel
 properties:
   - type: TEXT
@@ -19,6 +20,9 @@ properties:
       grouping: uesio/io.titlebar
 definition:
   - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       components:
         - uesio/io.titlebar:
             uesio.variant: $Prop{titlebarVariant}

@@ -47,7 +47,7 @@ definition:
                 selected: sitecollections
         content:
           - uesio/io.titlebar:
-              uesio.variant: uesio/io.main
+              uesio.variant: uesio/appkit.main
               title: $Param{collectionname}
               subtitle: $Param{recordid}
               actions:
@@ -84,7 +84,7 @@ definition:
                             - signal: route/NAVIGATE
                               path: app/$Param{app}/site/$Param{sitename}/data/$Param{namespace}/$Param{collectionname}
           - uesio/io.box:
-              uesio.variant: uesio/io.section
+              uesio.variant: uesio/appkit.primarysection
               uesio.context:
                 siteadmin:
                   name: $Param{sitename}

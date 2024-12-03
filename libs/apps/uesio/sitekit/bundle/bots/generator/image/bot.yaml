@@ -2,6 +2,25 @@ name: image
 dialect: JAVASCRIPT
 label: Generate Image
 type: GENERATOR
+description: Use AI to generate an image.
 params:
+  - name: name
+    prompt: File Name
+    type: METADATANAME
+  - name: prompt
+    type: LONGTEXT
+    prompt: Prompt
+    default: A cool wordmark and logo.
+  - name: aspect_ratio
+    type: SELECT
+    selectList: uesio/sitekit.aspect_ratios
+    prompt: Aspect Ratio
+    default: "1:1"
+  - name: samples
+    type: NUMBER
+    prompt: Number of Samples
+    default: 1
 public: true
 timeout: 30
+tags:
+  - uesio/core.files

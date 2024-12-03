@@ -3,13 +3,17 @@ import { useEffect, useState } from "react"
 import { PlainWireRecord } from "../wireexports"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { platform } from "../platform/platform"
-const { deleteFile, uploadFile } = platform
+const { deleteFile, uploadFile, getFileText } = platform
 
 const getURL = platform.getFileURL
 
-const getURLFromFullName = (context: Context, fullName: string) => {
+const getURLFromFullName = (
+	context: Context,
+	fullName: string,
+	filePath?: string
+) => {
 	const [namespace, name] = fullName.split(".")
-	return getURL(context, namespace, name)
+	return getURL(context, namespace, name, undefined, filePath)
 }
 
 const getUserFileURL = (
@@ -21,32 +25,37 @@ const getUserFileURL = (
 	return platform.getUserFileURL(context, userfileid, fileVersion)
 }
 
+const getAttachmentURL = (
+	context: Context,
+	recordid: string,
+	path: string,
+	fileVersion?: string
+) => {
+	if (!recordid || !path) return ""
+	return platform.getAttachmentURL(context, recordid, path, fileVersion)
+}
+
 const useUserFile = (
 	context: Context,
 	userFile: PlainWireRecord | undefined
-): [string, string, (value: string) => void, () => void, () => void] => {
-	const [content, setContent] = useState<string>("")
-	const [original, setOriginal] = useState<string>("")
-	const cancel = () => setContent(original)
-	const reset = () => setOriginal(content)
+) => {
+	const data = userFile?.["uesio/core.data"] as string
+	const [content, setContent] = useState<string>(data || "")
+
 	const userFileId = userFile?.[ID_FIELD] as string
 	const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
 	const fileUrl = getUserFileURL(context, userFileId, updatedAt)
 	useEffect(() => {
-		if (!fileUrl) {
-			setContent("")
-			setOriginal("")
+		if (data || !fileUrl) {
 			return
 		}
 		const fetchData = async () => {
-			const res = await fetch(fileUrl)
-			const text = await res.text()
-			setContent(text)
-			setOriginal(text)
+			const fileText = await getFileText(fileUrl)
+			setContent(fileText)
 		}
 		fetchData()
-	}, [fileUrl])
-	return [content, original, setContent, reset, cancel]
+	}, [fileUrl, data])
+	return content
 }
 
 const useFile = (context: Context, fileId?: string) => {
@@ -72,6 +81,7 @@ const useFile = (context: Context, fileId?: string) => {
 export {
 	getURL,
 	getURLFromFullName,
+	getAttachmentURL,
 	uploadFile,
 	deleteFile,
 	getUserFileURL,

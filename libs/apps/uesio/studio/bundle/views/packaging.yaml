@@ -100,32 +100,34 @@ definition:
                 itemType: packaging
                 itemIcon: package
         content:
-          - uesio/io.titlebar:
-              uesio.variant: uesio/appkit.main
-              title: Packaging
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: package
-              actions:
-                - uesio/io.group:
-                    components:
-                      - uesio/io.button:
-                          text: Package new version
-                          hotkey: "n"
-                          uesio.variant: uesio/io.primary
-                          uesio.id: package-new-version
-                          signals:
-                            - signal: wire/RESET
-                              wire: newbundle
-                            - signal: panel/TOGGLE
-                              panel: newBundle
-                      - uesio/io.button:
-                          uesio.variant: uesio/io.secondary
-                          text: View Bundles
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: app/$Param{app}/bundles
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/appkit.main
+                    title: Packaging
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          text: package
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: Package new version
+                                hotkey: "n"
+                                uesio.variant: uesio/appkit.primary
+                                uesio.id: package-new-version
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: newbundle
+                                  - signal: panel/TOGGLE
+                                    panel: newBundle
+                            - uesio/io.button:
+                                uesio.variant: uesio/appkit.secondary
+                                text: View Bundles
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: app/$Param{app}/bundles
   panels:
     newBundle:
       uesio.type: uesio/io.dialog

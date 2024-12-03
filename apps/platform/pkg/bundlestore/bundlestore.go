@@ -72,6 +72,7 @@ type GetManyItemsOptions struct {
 }
 
 type GetAllItemsOptions struct {
+	Fields            []wire.LoadRequestField
 	Conditions        meta.BundleConditions
 	IncludeUserFields bool
 }

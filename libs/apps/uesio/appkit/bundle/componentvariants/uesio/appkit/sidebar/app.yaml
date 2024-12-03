@@ -1,0 +1,27 @@
+name: app
+label: App
+public: true
+definition:
+  scrollpanelVariant: uesio/appkit.left
+  uesio.styleTokens:
+    triggerInner:
+      - p-3
+    triggerHeader:
+      - hidden
+    triggerRoot:
+      - hidden
+      - md:flex
+      - lg:hidden
+      - w-auto
+      - md:w-auto
+    expandedRoot:
+      - lg:flex
+      - md:hidden
+    expandedInner:
+      - md:grid
+      - hidden
+    expandedFooter:
+      - md:block
+      - hidden
+variants:
+  - uesio/io.scrollpanel:uesio/appkit.left

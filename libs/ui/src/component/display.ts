@@ -84,6 +84,22 @@ type RecordIsNotNewCondition = {
 	type: "recordIsNotNew"
 }
 
+type RecordIsEditableCondition = {
+	type: "recordIsEditable"
+}
+
+type RecordIsNotEditableCondition = {
+	type: "recordIsNotEditable"
+}
+
+type RecordIsDeleteableCondition = {
+	type: "recordIsDeleteable"
+}
+
+type RecordIsNotDeleteableCondition = {
+	type: "recordIsNotDeleteable"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -146,11 +162,11 @@ type WireHasNoSearchCondition = {
 	type: "wireHasNoSearchCondition"
 	wire: string
 }
-type wireHasActiveConditions = {
+type WireHasActiveConditions = {
 	type: "wireHasActiveConditions"
 	wire: string
 }
-type wireHasNoActiveConditions = {
+type WireHasNoActiveConditions = {
 	type: "wireHasNoActiveConditions"
 	wire: string
 }
@@ -167,6 +183,12 @@ type HasProfile = {
 	type: "hasProfile"
 	profile: string
 }
+
+type HasNamedPermission = {
+	type: "hasNamedPermission"
+	permission: string
+}
+
 type Conjunction = "AND" | "OR"
 
 type GroupCondition = {
@@ -178,6 +200,7 @@ type GroupCondition = {
 type DisplayCondition =
 	| GroupCondition
 	| HasProfile
+	| HasNamedPermission
 	| WireHasChanges
 	| WireHasNoChanges
 	| HasNoValueCondition
@@ -191,14 +214,18 @@ type DisplayCondition =
 	| FieldModeCondition
 	| RecordIsNewCondition
 	| RecordIsNotNewCondition
+	| RecordIsEditableCondition
+	| RecordIsNotEditableCondition
+	| RecordIsDeleteableCondition
+	| RecordIsNotDeleteableCondition
 	| WireIsLoading
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
 	| WireHasSearchCondition
 	| WireHasNoSearchCondition
-	| wireHasActiveConditions
-	| wireHasNoActiveConditions
+	| WireHasActiveConditions
+	| WireHasNoActiveConditions
 	| WireHasLoadedAllRecords
 	| WireHasMoreRecordsToLoad
 	| MergeValue
@@ -315,8 +342,27 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
 	if (type === "recordIsNotNew") return !context.getRecord(wireName)?.isNew()
 
+	if (type === "recordIsEditable")
+		return !!context.getRecord(wireName)?.isEditable()
+
+	if (type === "recordIsNotEditable")
+		return !context.getRecord(wireName)?.isEditable()
+
+	if (type === "recordIsDeleteable")
+		return !!context.getRecord(wireName)?.isDeleteable()
+
+	if (type === "recordIsNotDeleteable")
+		return !context.getRecord(wireName)?.isDeleteable()
+
 	if (type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
+
+	if (type === "hasNamedPermission")
+		return (
+			context
+				.getUser()
+				?.namedPermissions?.includes(condition.permission) || false
+		)
 
 	if (type === "wireHasChanges") {
 		return wireHasChanges(wire as Wire, condition.fields)

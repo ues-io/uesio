@@ -9,8 +9,10 @@ import {
 	wire,
 } from "@uesio/ui"
 import { useEffect } from "react"
-import { GeneratorForm as GeneratorFormUtility } from "../generatorbutton/generatorbutton"
-import { getParamValues } from "../previewbutton/previewbutton"
+import {
+	GeneratorForm as GeneratorFormUtility,
+	getGenParamValues,
+} from "../generatorbutton/generatorbutton"
 
 type GeneratorFormDefinition = {
 	generator: metadata.MetadataKey
@@ -35,7 +37,7 @@ const run = async (
 		context,
 		namespace,
 		name,
-		getParamValues(params, context, result)
+		getGenParamValues(params, context, result)
 	)
 
 	if (!botResp.success && botResp.error) {
@@ -43,10 +45,12 @@ const run = async (
 		return
 	}
 
-	api.signal.run(
+	const redirectSuffix = botResp.params?.["uesio.redirect"] || ""
+
+	return api.signal.run(
 		{
 			signal: "route/NAVIGATE",
-			path: `app/${context.getApp()}/workspace/${context.getWorkspace()?.name}`,
+			path: `app/${context.getApp()}/workspace/${context.getWorkspace()?.name}${redirectSuffix}`,
 		},
 		context.deleteWorkspace()
 	)
@@ -59,7 +63,7 @@ const runGenerator: signal.ComponentSignalDescriptor<FormState> = {
 		const name = state.name
 		const namespace = state.namespace
 		if (!wire || !params || !namespace || !name) return
-		run(namespace, name, wire, params, context)
+		return run(namespace, name, wire, params, context)
 	},
 }
 

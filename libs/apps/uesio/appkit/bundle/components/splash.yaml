@@ -1,0 +1,37 @@
+name: splash
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+  - name: splash
+    defaultContent:
+      - uesio/io.box:
+          uesio.styleTokens:
+            root:
+              - bg-[url($File{uesio/appkit.splash})]
+              - bg-cover
+              - bg-right
+defaultVariant: uesio/appkit.default
+definition:
+  - uesio/io.grid:
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+      items:
+        - uesio/io.grid:
+            uesio.styleTokens:
+              root:
+                - $Region{content}
+            items:
+              - uesio/io.grid:
+                  uesio.styleTokens:
+                    root:
+                      - $Region{contentInner}
+                  items:
+                    - $Slot{content}
+        - uesio/io.grid:
+            uesio.styleTokens:
+              root:
+                - $Region{splash}
+            items:
+              - $Slot{splash}

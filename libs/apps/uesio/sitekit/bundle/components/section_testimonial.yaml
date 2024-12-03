@@ -5,18 +5,25 @@ slots:
 properties:
   - name: quote
     label: Quote
-    type: TEXT
+    type: LONGTEXT
   - name: avatar
-    label: Avatar
+    label: Avatar File
     type: METADATA
     metadata:
       type: FILE
+  - name: avatarPath
+    label: Avatar File Path
+    type: TEXT
   - name: name
     label: Name
     type: TEXT
   - name: title
     label: Title
     type: TEXT
+  - name: stars
+    label: Stars
+    type: NUMBER
+    defaultValue: 5
 definition:
   - uesio/sitekit.section:
       innerVariant: uesio/sitekit.section_inner_content
@@ -26,9 +33,12 @@ definition:
             name: $Prop{name}
             title: $Prop{title}
             avatar: $Prop{avatar}
+            avatarPath: $Prop{avatarPath}
+            stars: $Prop{stars}
             wrapperVariant: uesio/sitekit.testimonial_wrapper_large
             quoteVariant: uesio/sitekit.testimonial_quote_large
             avatarVariant: uesio/sitekit.testimonial_avatar_large
+            starsVariant: uesio/sitekit.testimonial_stars_large
 title: Testimonial Section
 discoverable: true
 description: A testimonial section

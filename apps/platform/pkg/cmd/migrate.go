@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/migrations"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func init() {
@@ -53,22 +54,14 @@ func migrate(cmd *cobra.Command, args []string) {
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 
-	connection, err := datasource.GetPlatformConnection(anonSession, nil)
-	cobra.CheckErr(err)
-
-	err = connection.BeginTransaction()
-	cobra.CheckErr(err)
-
-	if err = connection.Migrate(opts); err != nil {
+	err = datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
+		return conn.Migrate(opts)
+	})
+	if err != nil {
 		slog.Error("Migrations failed: " + err.Error())
-		rollbackErr := connection.RollbackTransaction()
-		cobra.CheckErr(rollbackErr)
 		cobra.CheckErr(err)
 		return
 	}
-
-	err = connection.CommitTransaction()
-	cobra.CheckErr(err)
 
 	slog.Info("Successfully ran migrations")
 

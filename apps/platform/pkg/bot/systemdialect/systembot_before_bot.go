@@ -19,7 +19,7 @@ func runBotBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 	}
 	workspaceID := wsAccessResult.GetWorkspaceID()
 
-	depMap := MetadataDependencyMap{}
+	depMap := wire.MetadataDependencyMap{}
 
 	err := request.LoopChanges(func(change *wire.ChangeItem) error {
 
@@ -36,7 +36,7 @@ func runBotBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		case "LISTENER", "LOAD", "SAVE":
 
 		case "AFTERSAVE", "BEFORESAVE":
-			depMap.AddRequired(change, "collection", "uesio/studio.collection")
+			err := depMap.AddRequired(change, "collection", "uesio/studio.collection")
 			if err != nil {
 				return err
 			}

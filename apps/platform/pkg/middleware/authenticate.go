@@ -133,7 +133,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 		s := GetSession(r)
-		workspaceSession, err := datasource.AddWorkspaceContextByKey(appName+":"+workspaceName, s, nil)
+		workspaceSession, err := datasource.AddWorkspaceImpersonationContext(appName+":"+workspaceName, s, nil)
 		if err != nil {
 			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
 			return

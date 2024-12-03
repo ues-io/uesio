@@ -595,11 +595,32 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		}
 		if route.Path != "" && collection.Label != "" {
 			assignment.Path = route.Path
-			assignment.CollectionLabel = collection.Label
-			assignment.CollectionPluralLabel = collection.PluralLabel
-			assignment.CollectionIcon = collection.Icon
+			if assignment.Type == "list" {
+				assignment.Label = collection.PluralLabel
+			} else {
+				assignment.Label = collection.Label
+			}
+			assignment.Icon = collection.Icon
 			deps.RouteAssignment.AddItem(assignment)
 		}
+	}
+
+	// Add route Assignemnts for login, signup, and home routes
+	signupRoute, err := GetSignupRoute(session)
+	if err != nil {
+		return nil, err
+	}
+	if signupRoute != nil {
+		deps.RouteAssignment.AddItem(&meta.RouteAssignment{
+			Type: "signup",
+			BundleableBase: meta.BundleableBase{
+				Label:     "Sign Up",
+				Name:      signupRoute.Name,
+				Namespace: signupRoute.Namespace,
+			},
+			Icon: "badge",
+			Path: signupRoute.Path,
+		})
 	}
 
 	for key, value := range labels {
@@ -641,7 +662,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
 	// Query for all static files in the workspace
 	var files meta.FileCollection
-	err := bundle.LoadAllFromNamespaces([]string{workspace.App.FullName}, &files, nil, session, nil)
+	err := bundle.LoadAllFromNamespaces([]string{workspace.GetAppFullName()}, &files, nil, session, nil)
 	if err != nil {
 		return errors.New("failed to load static files: " + err.Error())
 	}
@@ -746,17 +767,25 @@ func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subVie
 func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 	if len(slotDefinitions) > 0 {
 		for _, slotDef := range slotDefinitions {
-			path := slotDef.GetFullPath()
-			matchingNodes, err := yptr.FindAll(compDefinitionMap, path)
-			if err != nil {
-				continue
+			if compDefinitionMap != nil {
+
 			}
-			for _, n := range matchingNodes {
-				err := getComponentAreaDeps(n, deps, subViews, session)
+			var matchingNodes []*yaml.Node
+			var err error
+			path := slotDef.GetFullPath()
+			if compDefinitionMap != nil {
+				matchingNodes, err = yptr.FindAll(compDefinitionMap, path)
 				if err != nil {
-					return err
+					continue
+				}
+				for _, n := range matchingNodes {
+					err := getComponentAreaDeps(n, deps, subViews, session)
+					if err != nil {
+						return err
+					}
 				}
 			}
+
 			// If there were no matching nodes, and our slot has a default content,
 			// also parse through the default content
 			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {
@@ -818,7 +847,8 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 							foundComponentVariant = true
 						}
 					}
-					if err = addComponentVariantDep(useVariantName, useComponentName, deps, subViews, session); err == nil {
+					err = addComponentVariantDep(useVariantName, useComponentName, deps, subViews, session)
+					if err != nil {
 						// Do nothing
 					}
 				}
@@ -835,24 +865,12 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 		}
 	}
 
-	// If we did not find a specific component variant,
-	// see if this component type has a default variant,
-	// and if so, request it, and populate it in the View YAML
-	// so that we know what variant to use client-side
 	if !foundComponentVariant {
 		defaultVariant := compDef.GetDefaultVariant()
 		if defaultVariant != "" {
-			if err := addComponentVariantDep(defaultVariant, compName, deps, subViews, session); err == nil {
-				compDefinitionMap.Content = append(compDefinitionMap.Content,
-					&yaml.Node{
-						Kind:  yaml.ScalarNode,
-						Value: "uesio.variant",
-					},
-					&yaml.Node{
-						Kind:  yaml.ScalarNode,
-						Value: defaultVariant,
-					},
-				)
+			err := addComponentVariantDep(defaultVariant, compName, deps, subViews, session)
+			if err != nil {
+				// Do nothing
 			}
 		}
 	}

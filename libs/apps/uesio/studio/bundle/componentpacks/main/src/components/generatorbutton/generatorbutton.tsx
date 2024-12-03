@@ -4,14 +4,15 @@ import {
 	param,
 	definition,
 	component,
+	collection,
 	hooks,
 	wire,
 	metadata,
+	context,
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
 	getInitialValueFromParams,
-	getParamValues,
 	getWireFieldsFromParams,
 } from "../previewbutton/previewbutton"
 
@@ -20,6 +21,7 @@ type GeneratorButtonDefinition = {
 	label: string
 	buttonVariant?: metadata.MetadataKey
 	hotkey?: string
+	icon?: string
 }
 
 interface DialogProps {
@@ -36,6 +38,49 @@ interface FormProps {
 		value: wire.FieldValue,
 		record: wire.WireRecord
 	) => void
+}
+
+const getGenValueForParam = (
+	def: param.ParamDefinition,
+	context: context.Context,
+	record?: wire.WireRecord
+) => {
+	const fieldKey = def.name
+	const fieldKeyMerge = "${" + fieldKey + "}"
+	switch (def.type) {
+		case "RECORD":
+			return (
+				record?.getFieldValue<string>(
+					`${fieldKey}->${collection.ID_FIELD}`
+				) ??
+				context.mergeString(fieldKeyMerge) ??
+				""
+			)
+		case "MULTIMETADATA": {
+			const values = record?.getFieldValue<string[]>(fieldKey) || []
+			return values
+		}
+		default:
+			return (
+				record?.getFieldValue<string>(fieldKey) ??
+				context.mergeString(fieldKeyMerge) ??
+				""
+			)
+	}
+}
+
+const getGenParamValues = (
+	params: param.ParamDefinition[] | undefined,
+	context: context.Context,
+	record?: wire.WireRecord
+) => {
+	if (!params) return {}
+	return Object.fromEntries(
+		params.map((def) => [
+			def.name,
+			getGenValueForParam(def, context, record),
+		])
+	)
 }
 
 const getDisplayConditionsFromBotParamConditions = (
@@ -59,7 +104,7 @@ const getDisplayConditionsFromBotParamConditions = (
 				}
 			}
 		}
-	) as component.DisplayCondition[]
+	)
 }
 
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => ({
@@ -116,7 +161,7 @@ const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
 			context,
 			genNamespace,
 			genName,
-			getParamValues(params, context, result)
+			getGenParamValues(params, context, result)
 		)
 
 		if (!botResp.success && botResp.error) {
@@ -172,6 +217,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 		hotkey,
 		label,
 		generator,
+		icon,
 	} = definition
 
 	const workspaceContext = context.getWorkspace()
@@ -188,6 +234,7 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 				variant={buttonVariant}
 				label={label}
 				onClick={onClick}
+				iconText={icon}
 			/>
 			{open && (
 				<GeneratorDialog
@@ -200,5 +247,5 @@ const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 	)
 }
 
-export { GeneratorDialog, GeneratorForm }
+export { GeneratorDialog, GeneratorForm, getGenParamValues }
 export default GeneratorButton

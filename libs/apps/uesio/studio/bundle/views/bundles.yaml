@@ -57,58 +57,60 @@ definition:
                 app: $Param{app}
                 selected: bundles
         content:
-          - uesio/io.box:
-              uesio.display:
-                - type: wireHasRecords
-                  wire: apps
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: Bundles
-                    subtitle: Pack it up. Pack it in. Let me begin.
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: inventory_2
+          - uesio/appkit.layout_detail_split:
+              main:
                 - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
                     uesio.display:
                       - type: wireHasRecords
-                        wire: bundles
+                        wire: apps
                     components:
-                      - uesio/io.searchbox:
+                      - uesio/io.titlebar:
                           uesio.variant: uesio/appkit.main
-                          wire: bundles
-                          searchFields:
-                            - uesio/studio.version
-                            - uesio/studio.description
-                      - uesio/io.table:
-                          uesio.id: bundlesTable
-                          uesio.variant: uesio/appkit.main
-                          wire: bundles
-                          mode: READ
-                          pagesize: 5
-                          columns:
-                            - field: uesio/studio.version
-                            - field: uesio/studio.description
-                            - field: uesio/studio.published
-                            - field: uesio/core.createdby
-                              user:
-                                subtitle: $Time{uesio/core.createdat}
-                          rowactions:
-                            - text: Details
-                              type: DEFAULT
-                              signals:
-                                - signal: "route/NAVIGATE"
-                                  path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
-                    uesio.display:
-                      - type: wireHasNoRecords
-                        wire: bundles
-                    components:
-                      - uesio/io.emptystate:
-                          uesio.variant: uesio/studio.main
-                          title: No Bundles Created Yet
-                          subtitle: Bundles are created in workspaces.
-                          icon: inventory_2
+                          title: Bundles
+                          subtitle: Pack it up. Pack it in. Let me begin.
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: inventory_2
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          uesio.display:
+                            - type: wireHasRecords
+                              wire: bundles
+                          components:
+                            - uesio/io.searchbox:
+                                uesio.variant: uesio/appkit.main
+                                wire: bundles
+                                searchFields:
+                                  - uesio/studio.version
+                                  - uesio/studio.description
+                            - uesio/io.table:
+                                uesio.id: bundlesTable
+                                uesio.variant: uesio/appkit.main
+                                wire: bundles
+                                mode: READ
+                                pagesize: 5
+                                columns:
+                                  - field: uesio/studio.version
+                                  - field: uesio/studio.description
+                                  - field: uesio/studio.published
+                                  - field: uesio/core.createdby
+                                    user:
+                                      subtitle: $Time{uesio/core.createdat}
+                                rowactions:
+                                  - text: Details
+                                    type: DEFAULT
+                                    signals:
+                                      - signal: "route/NAVIGATE"
+                                        path: "app/$Param{app}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}"
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          uesio.display:
+                            - type: wireHasNoRecords
+                              wire: bundles
+                          components:
+                            - uesio/io.emptystate:
+                                uesio.variant: uesio/studio.main
+                                title: No Bundles Created Yet
+                                subtitle: Bundles are created in workspaces.
+                                icon: inventory_2

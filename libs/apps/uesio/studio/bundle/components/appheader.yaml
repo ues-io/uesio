@@ -1,0 +1,52 @@
+name: appheader
+category: LAYOUT
+title: App Header
+type: DECLARATIVE
+discoverable: true
+description:
+properties:
+sections:
+  - type: HOME
+  - type: DISPLAY
+definition:
+  - uesio/io.box:
+      uesio.display:
+        - type: collectionContext
+          collection: uesio/studio.app
+      components:
+        - uesio/appkit.tile_app:
+            logoSignals:
+              - signal: "route/NAVIGATE"
+                path: "home"
+            title: ${uesio/core.uniquekey}
+            icon: ${uesio/studio.icon}
+            iconcolor: ${uesio/studio.color}
+            tileVariant: uesio/appkit.apptag
+            signals:
+              - signal: route/NAVIGATE
+                path: app/${uesio/core.uniquekey}
+  - uesio/io.box:
+      uesio.display:
+        - type: group
+          conjunction: OR
+          conditions:
+            - type: collectionContext
+              collection: uesio/studio.site
+            - type: collectionContext
+              collection: uesio/studio.bundle
+            - type: collectionContext
+              collection: uesio/studio.team
+            - type: collectionContext
+              collection: uesio/studio.workspace
+      components:
+        - uesio/appkit.tile_app:
+            logoSignals:
+              - signal: "route/NAVIGATE"
+                path: "home"
+            title: ${uesio/studio.app->uesio/core.uniquekey}
+            icon: ${uesio/studio.app->uesio/studio.icon}
+            iconcolor: ${uesio/studio.app->uesio/studio.color}
+            signals:
+              - signal: route/NAVIGATE
+                path: app/${uesio/studio.app->uesio/core.uniquekey}
+            tileVariant: uesio/appkit.apptag

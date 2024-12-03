@@ -55,6 +55,9 @@ properties:
     min: 5
     max: 500
     step: 5
+  - name: rownumbers
+    label: Show Row Numbers
+    type: CHECKBOX
   - name: rowactions
     type: LIST
     items:
@@ -92,6 +95,7 @@ sections:
       - uesio.id
       - mode
       - pagesize
+      - rownumbers
   - type: CUSTOM
     label: Columns
     id: columns

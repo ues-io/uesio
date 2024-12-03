@@ -153,27 +153,18 @@ func seed(cmd *cobra.Command, args []string) {
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 
-	connection, err := datasource.GetPlatformConnection(anonSession, nil)
-	cobra.CheckErr(err)
-
-	err = connection.BeginTransaction()
-	cobra.CheckErr(err)
-
-	err = runSeeds(ctx, connection)
+	err := datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
+		return runSeeds(ctx, conn)
+	})
 	if err != nil {
-		rollbackErr := connection.RollbackTransaction()
 		if ignoreSeedFailures {
 			slog.Info("Ignoring seed failures.")
 			return
 		}
 		slog.Error("Seeds failed: " + err.Error())
-		cobra.CheckErr(rollbackErr)
 		cobra.CheckErr(err)
 		return
 	}
-
-	err = connection.CommitTransaction()
-	cobra.CheckErr(err)
 
 	slog.Info("Successfully ran seeds")
 

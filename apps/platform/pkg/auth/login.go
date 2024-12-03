@@ -21,7 +21,7 @@ import (
 
 func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*preload.LoginResponse, error) {
 
-	redirect := "/site/app/uesio/core/changepassword"
+	redirect := "/site/app/uesio/appkit/changepassword"
 	username := user.Username
 
 	code := loginMethod.VerificationCode

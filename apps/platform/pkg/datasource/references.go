@@ -22,8 +22,22 @@ func LoadLooper(
 	looper func(meta.Item, []wire.ReferenceLocator, string) error,
 ) error {
 	ids := idMap.GetIDs()
-	if len(ids) == 0 {
+	idLength := len(ids)
+	if idLength == 0 {
 		return errors.New("No ids provided for load looper")
+	}
+	var condition wire.LoadRequestCondition
+	if idLength == 1 {
+		condition = wire.LoadRequestCondition{
+			Field: matchField,
+			Value: ids[0],
+		}
+	} else {
+		condition = wire.LoadRequestCondition{
+			Field:    matchField,
+			Operator: "IN",
+			Values:   ids,
+		}
 	}
 	op := &wire.LoadOp{
 		Fields:         fields,
@@ -31,11 +45,7 @@ func LoadLooper(
 		Collection:     &wire.Collection{},
 		CollectionName: collectionName,
 		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    matchField,
-				Operator: "IN",
-				Values:   ids,
-			},
+			condition,
 		},
 		Query: true,
 	}
@@ -80,8 +90,9 @@ func LoadLooper(
 }
 
 type ReferenceOptions struct {
-	AllowMissingItems bool
-	MergeItems        bool
+	AllowMissingItems  bool
+	RemoveMissingItems bool
+	MergeItems         bool
 }
 
 func HandleReferences(
@@ -141,6 +152,17 @@ func HandleReferences(
 
 			// This means we tried to load some references, but they don't exist.
 			if refItem == nil {
+				if options.RemoveMissingItems {
+					// Loop over all matchIndexes and copy the data from the refItem
+					for _, locator := range matchIndexes {
+						concreteItem := locator.Item.(meta.Item)
+						err = concreteItem.SetField(locator.Field.GetFullName(), nil)
+						if err != nil {
+							return err
+						}
+					}
+					return nil
+				}
 				if options.AllowMissingItems {
 					return nil
 				}

@@ -1,0 +1,20 @@
+name: menubutton
+pack: main
+entrypoint: components/menubutton/menubutton
+title: Menu Button
+description: Adds a popup menu list
+category: INTERACTION
+discoverable: true
+icon: dashboard
+properties:
+  - name: buttonVariant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.button
+sections:
+  - type: HOME
+    properties:
+  - type: STYLES
+  - type: DISPLAY
+styleRegions:

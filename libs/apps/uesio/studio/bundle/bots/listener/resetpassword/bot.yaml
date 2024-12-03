@@ -7,7 +7,6 @@ params:
     required: true
   - name: email
     type: TEXT
-    required: true
   - name: code
     type: TEXT
     required: true

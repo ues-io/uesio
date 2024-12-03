@@ -15,7 +15,7 @@ type LicenseMap map[string]*meta.License
 var licenseCache cache.Cache[LicenseMap]
 
 func init() {
-	licenseCache = cache.NewRedisCache[LicenseMap]("license")
+	licenseCache = cache.NewPlatformCache[LicenseMap]("license", 0)
 }
 
 func InvalidateLicenseCaches(namespaces []string) error {

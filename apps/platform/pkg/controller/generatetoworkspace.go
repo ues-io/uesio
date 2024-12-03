@@ -37,14 +37,14 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	respondWithZIP := strings.Contains(r.Header.Get("Accept"), "/zip")
 
 	if respondWithZIP {
-		err := deploy.GenerateToWorkspace(namespace, name, params, connection, session, w)
+		_, err := deploy.GenerateToWorkspace(namespace, name, params, connection, session, w)
 		if err != nil {
 			ctlutil.HandleError(w, err)
 		}
 		return
 	}
 
-	err = deploy.GenerateToWorkspace(namespace, name, params, connection, session, nil)
+	response, err := deploy.GenerateToWorkspace(namespace, name, params, connection, session, nil)
 	if err != nil {
 		filejson.RespondJSON(w, r, &bot.BotResponse{
 			Success: false,
@@ -54,6 +54,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 	filejson.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
+		Params:  response,
 	})
 
 }

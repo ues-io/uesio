@@ -18,10 +18,10 @@ func runDomainAfterSaveSiteBot(request *wire.SaveOp, connection wire.Connection,
 	if err != nil {
 		return err
 	}
-	return clearHostCacheForDomain(request, connection, session)
+	return clearHostCacheForDomain(request)
 }
 
-func clearHostCacheForDomain(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func clearHostCacheForDomain(request *wire.SaveOp) error {
 	return auth.ClearHostCacheForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
 }
 

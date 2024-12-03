@@ -68,7 +68,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 (main.fields->>'uesio/tests.checkbox')::boolean = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
@@ -110,7 +110,7 @@ WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
 (main.fields->>'uesio/tests.checkbox')::boolean = $3
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
 jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null

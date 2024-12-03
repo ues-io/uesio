@@ -21,35 +21,24 @@ interface FileUtilityProps {
 }
 
 const StyleDefaults = Object.freeze({
-	uploadarea: [
-		"border(& dashed slate-300 4)",
-		"rounded-lg",
-		"p-10",
-		"text-xs",
-		"align-center",
-	],
-	filetag: [
-		"p-1",
-		"border",
-		"border-slate-200",
-		"inline-block",
-		"rounded",
-		"bg-slate-100",
-	],
-	emptystate: [
-		"hover:border(& dashed blue-500 4)",
-		"text-md",
-		"cursor-pointer",
-	],
-	filename: ["text-xs", "text-slate-700", "px-2", "py1"],
-	download: [],
-	actionbutton: ["p-1", "cursor-pointer", "m-1", "text-slate-700"],
+	root: [],
+	input: [],
+	readonly: [],
+	selecteditemwrapper: [],
+	selectediteminner: [],
+	editbutton: [],
+	uploadarea: [],
+	emptystate: [],
 })
 
 const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const { context, fileInfo, onUpload, onDelete, accept, mode } = props
 
-	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+	const classes = styles.useUtilityStyleTokens(
+		StyleDefaults,
+		props,
+		"uesio/io.filefield"
+	)
 
 	const uploadLabelId = nanoid()
 	const deleteLabelId = nanoid()
@@ -79,27 +68,45 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 				</UploadArea>
 			)}
 
-			{fileInfo && (
-				<Tile context={context} className={classes.filetag}>
-					<span className={classes.filename}>{fileInfo.name}</span>
-					<a href={fileInfo.url} className={classes.download}>
-						<Icon
-							icon="file_download"
-							className={classes.actionbutton}
-							context={context}
-						/>
-					</a>
-					{mode === "EDIT" && (
-						<label htmlFor={deleteLabelId}>
-							<Icon
-								icon="delete"
-								className={classes.actionbutton}
-								context={context}
-							/>
-						</label>
+			{
+				<Tile
+					context={context}
+					className={styles.cx(
+						classes.root,
+						classes.input,
+						classes.readonly
+					)}
+				>
+					{fileInfo && (
+						<div className={classes.selecteditemwrapper}>
+							<div className={classes.selectediteminner}>
+								{fileInfo.name}
+							</div>
+							<a href={fileInfo.url}>
+								<button
+									tabIndex={-1}
+									className={classes.editbutton}
+									type="button"
+								>
+									<Icon
+										icon="file_download"
+										context={context}
+									/>
+								</button>
+							</a>
+							{mode === "EDIT" && (
+								<label htmlFor={deleteLabelId}>
+									<Icon
+										icon="delete"
+										className={classes.editbutton}
+										context={context}
+									/>
+								</label>
+							)}
+						</div>
 					)}
 				</Tile>
-			)}
+			}
 		</>
 	)
 }

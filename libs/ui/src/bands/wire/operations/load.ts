@@ -17,6 +17,7 @@ import { addError } from "../../../hooks/notificationapi"
 import { WireConditionState } from "../conditions/conditions"
 import { getKey } from "../../../metadata/metadata"
 import { hash } from "@twind/core"
+import { nanoid } from "@reduxjs/toolkit"
 
 const getParamsHash = (context: Context) => {
 	const params = context.getParams()
@@ -211,6 +212,7 @@ export default async (
 			),
 			original: { ...wire.data },
 			isLoading: false,
+			batchid: nanoid(),
 			paramsHash,
 			// TODO: If we implement a concept of custom GET_COLLECTION_METADATA for Dynamic collections,
 			// then we can remove the `|| wire.query` branch, because "query" will only indicate whether data was queried,

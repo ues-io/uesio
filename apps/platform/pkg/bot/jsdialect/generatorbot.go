@@ -21,7 +21,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -31,14 +30,6 @@ func init() {
 	passwordGenerator, _ = password.NewGenerator(&password.GeneratorInput{
 		Symbols: "!@#$%^&*(){}[]",
 	})
-}
-
-func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
-	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
-	if err != nil {
-		return err
-	}
-	return template.Execute(file, params)
 }
 
 func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
@@ -51,7 +42,14 @@ func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bun
 		create:     create,
 		bot:        bot,
 		connection: connection,
+		Results:    map[string]interface{}{},
 	}
+}
+
+type IntegrationActionOptions struct {
+	IntegrationID string      `bot:"integration"`
+	Action        string      `bot:"action"`
+	Options       interface{} `bot:"options"`
 }
 
 type GeneratorBotOptions struct {
@@ -67,6 +65,15 @@ type GeneratorBotAPI struct {
 	create     bundlestore.FileCreator
 	session    *sess.Session
 	connection wire.Connection
+	Results    map[string]interface{}
+}
+
+func (gba *GeneratorBotAPI) AddResult(key string, value interface{}) {
+	gba.Results[key] = value
+}
+
+func (gba *GeneratorBotAPI) SetRedirect(redirect string) {
+	gba.Results["uesio.redirect"] = redirect
 }
 
 // GetAppName returns the key of the current workspace's app
@@ -188,7 +195,8 @@ func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
-	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	_, err := datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	return err
 }
 
 func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) error {
@@ -197,13 +205,14 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	mu := sync.Mutex{}
 	for _, generator := range generators {
 		eg.Go(func() error {
-			return datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
+			_, err := datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
 				buf := &bytes.Buffer{}
 				mu.Lock()
 				creates[s] = buf
 				mu.Unlock()
 				return retrieve.NopWriterCloser(buf), nil
 			}, generator.Namespace, generator.Name, generator.Params, gba.connection, gba.session)
+			return err
 		})
 	}
 	err := eg.Wait()
@@ -223,6 +232,26 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	}
 
 	return nil
+}
+
+func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOptions) ([]interface{}, error) {
+	eg := new(errgroup.Group)
+	results := []any{}
+	for _, action := range actions {
+		eg.Go(func() error {
+			result, err := runIntegrationAction(action.IntegrationID, action.Action, action.Options, gba.session.RemoveWorkspaceContext(), gba.connection)
+			if err != nil {
+				return err
+			}
+			results = append(results, result)
+			return nil
+		})
+	}
+	err := eg.Wait()
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
 }
 
 func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
@@ -366,53 +395,55 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 
 	if node.Kind == yaml.ScalarNode {
 		re := regexp.MustCompile("\\$\\{(.*?)\\}")
-		match := re.FindStringSubmatch(node.Value)
-		if len(match) == 2 {
-			matchExpression := match[0] //${mymerge}
-			merge := match[1]           // mymerge
-			mergeValue, hasValue := params[merge]
-			if !hasValue {
-				return nil
+		matches := re.FindAllStringSubmatch(node.Value, -1)
+		for _, match := range matches {
+			if len(match) == 2 {
+				matchExpression := match[0] //${mymerge}
+				merge := match[1]           // mymerge
+				mergeValue, hasValue := params[merge]
+				if !hasValue {
+					continue
+				}
+				mergeString, ok := mergeValue.(string)
+				if ok {
+
+					newNode, err := mergeYamlString(mergeString, nil)
+					if err != nil {
+						return err
+					}
+
+					if newNode.Content == nil || len(newNode.Content) == 0 {
+						node.SetString("")
+						continue
+					}
+
+					contentNode := newNode.Content[0]
+
+					// If newNode is a scalar we can just merge it in to the template
+					if contentNode.Kind == yaml.ScalarNode {
+						node.SetString(strings.Replace(node.Value, matchExpression, contentNode.Value, 1))
+						continue
+					}
+
+					// If newNode is not a scalar, then we have to be sure it was the
+					// entire merge.
+					if matchExpression != node.Value {
+						return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
+					}
+
+					// Replace that crap
+					*node = *contentNode
+				} else {
+					newNode := &yaml.Node{}
+					err := newNode.Encode(mergeValue)
+					if err != nil {
+						return err
+					}
+					*node = *newNode
+				}
 			}
-			mergeString, ok := mergeValue.(string)
-			if ok {
-
-				newNode, err := mergeYamlString(mergeString, nil)
-				if err != nil {
-					return err
-				}
-
-				if newNode.Content == nil || len(newNode.Content) == 0 {
-					node.SetString("")
-					return nil
-				}
-
-				contentNode := newNode.Content[0]
-
-				// If newNode is a scalar we can just merge it in to the template
-				if contentNode.Kind == yaml.ScalarNode {
-					node.SetString(strings.Replace(node.Value, matchExpression, contentNode.Value, 1))
-					return nil
-				}
-
-				// If newNode is not a scalar, then we have to be sure it was the
-				// entire merge.
-				if matchExpression != node.Value {
-					return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
-				}
-
-				// Replace that crap
-				*node = *contentNode
-			} else {
-				newNode := &yaml.Node{}
-				err := newNode.Encode(mergeValue)
-				if err != nil {
-					return err
-				}
-				*node = *newNode
-			}
-
 		}
+
 	}
 
 	return nil

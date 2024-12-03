@@ -100,6 +100,26 @@ func (cba *CallBotAPI) CopyUserFile(sourceFileID, destCollectionID, destRecordID
 	return botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID, cba.Session, cba.connection)
 }
 
+func (cba *CallBotAPI) GetFileContents(sourceKey, sourcePath string) (string, error) {
+	return getFileContents(sourceKey, sourcePath, cba.Session, cba.connection)
+}
+
+func (cba *CallBotAPI) GetHostUrl() (string, error) {
+	return getHostUrl(cba.Session, cba.connection)
+}
+
+func (cba *CallBotAPI) GetFileUrl(sourceKey, sourcePath string) string {
+	return getFileUrl(sourceKey, sourcePath)
+}
+
+func (cba *CallBotAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
+	return mergeTemplateString(templateString, params)
+}
+
+func (cba *CallBotAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
+	return mergeTemplateFile(sourceKey, sourcePath, params, cba.Session, cba.connection)
+}
+
 func (cba *CallBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
 
 	collectionMetadata, err := cba.metadata.GetCollection(collectionKey)

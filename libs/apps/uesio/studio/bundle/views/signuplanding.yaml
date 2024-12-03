@@ -1,0 +1,72 @@
+name: signuplanding
+public: true
+definition:
+  components:
+    - uesio/appkit.splash:
+        uesio.styleTokens:
+          contentInner:
+            - w-[280px]
+        content:
+          - uesio/io.image:
+              uesio.variant: uesio/appkit.fancy
+              file: uesio/core.logo
+              signals:
+                - signal: "route/REDIRECT"
+                  path: "https://$Site{domain}"
+          - uesio/io.box:
+              components:
+                - uesio/io.text:
+                    text: You're almost done.
+                    element: div
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                        - text-center
+                        - border-b-1
+                        - border-slate-200
+                        - pb-4
+                - uesio/io.box:
+                    uesio.variant: uesio/appkit.note
+                    components:
+                      - uesio/io.text:
+                          text: "Check your email for a confirmation link. Once you've confirmed your email, you'll be logged in automatically."
+                - uesio/io.grid:
+                    uesio.styleTokens:
+                      root:
+                        - gap-4
+                        - border-t-1
+                        - border-b-1
+                        - border-slate-200
+                        - mb-2
+                        - mt-2
+                        - py-4
+                    items:
+                      - uesio/io.text:
+                          text: "To easily log in later, save this URL."
+                          element: div
+                          uesio.styleTokens:
+                            root:
+                              - font-light
+                              - text-slate-700
+                              - leading-1
+                              - text-center
+                              - text-sm
+                      - uesio/io.grid:
+                          uesio.styleTokens:
+                            root:
+                              - justify-center
+                          items:
+                            - uesio/io.text:
+                                text: "https://$Site{subdomain}.$Site{domain}"
+                                element: div
+                                uesio.styleTokens:
+                                  root:
+                                    - bg-blue-100
+                                    - border-1
+                                    - border-blue-200
+                                    - px-3
+                                    - py-1
+                                    - rounded-full
+                                    - text-blue-800
+                                    - text-sm
+                                    - font-bold

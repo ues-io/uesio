@@ -1,6 +1,8 @@
 function view_footer(bot) {
 	const namespace = bot.getAppName()
 	const categories = bot.params.get("categories")
+	const logoFile = bot.params.get("logoFile")
+	const logoFilePath = bot.params.get("logoFilePath")
 
 	const categoriesYaml = categories
 		.map((category) => {
@@ -30,6 +32,8 @@ function view_footer(bot) {
 		{
 			namespace,
 			categoriesYaml,
+			logoFile,
+			logoFilePath,
 		},
 		"templates/footer.yaml"
 	)

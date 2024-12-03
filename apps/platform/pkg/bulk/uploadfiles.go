@@ -58,6 +58,27 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		columnIndexes[columnName] = index
 	}
 
+	recordIDIndex, ok := columnIndexes["uesio/core.recordid"]
+	if !ok {
+		return nil, errors.New("No record id column provided in upload.csv")
+	}
+
+	fieldIDIndex, ok := columnIndexes["uesio/core.fieldid"]
+	if !ok {
+		return nil, errors.New("No field id column provided in upload.csv")
+	}
+
+	pathIndex, ok := columnIndexes["uesio/core.path"]
+	if !ok {
+		return nil, errors.New("No path column provided in upload.csv")
+	}
+
+	sourcePathIndex, ok := columnIndexes["uesio/core.sourcepath"]
+	if !ok {
+		// If we didn't get a source path, just use the path as the source path
+		sourcePathIndex = pathIndex
+	}
+
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -65,21 +86,6 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		}
 		if err != nil {
 			return nil, err
-		}
-
-		recordIDIndex, ok := columnIndexes["uesio/core.recordid"]
-		if !ok {
-			return nil, errors.New("No record id column provided in upload.csv")
-		}
-
-		fieldIDIndex, ok := columnIndexes["uesio/core.fieldid"]
-		if !ok {
-			return nil, errors.New("No field id column provided in upload.csv")
-		}
-
-		pathIndex, ok := columnIndexes["uesio/core.path"]
-		if !ok {
-			return nil, errors.New("No path column provided in upload.csv")
 		}
 
 		recordid := record[recordIDIndex]
@@ -92,11 +98,16 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 			return nil, errors.New("No path provided for upload")
 		}
 
+		sourcePath := record[sourcePathIndex]
+		if sourcePath == "" {
+			return nil, errors.New("No source path provided for upload")
+		}
+
 		// It's ok for fieldid to be an empty string.
 		// That means it's an attachment
 		fieldid := record[fieldIDIndex]
 
-		f, err := zipReader.Open("files/" + path)
+		f, err := zipReader.Open("files/" + sourcePath)
 		if err != nil {
 			return nil, errors.New("No file found at path: " + path)
 		}

@@ -3,6 +3,7 @@ import { api, definition, styles } from "@uesio/ui"
 
 type ImageProps = {
 	file?: string
+	filepath?: string
 	height?: number
 	width?: number
 	onClick?: (e: MouseEvent) => void
@@ -16,6 +17,7 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 	const {
 		id,
 		file,
+		filepath,
 		height,
 		width,
 		onClick,
@@ -29,6 +31,11 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 	const classes = styles.useUtilityStyleTokens(
 		{
 			root: [
+				height !== undefined && `h-[${height}px]`,
+				width !== undefined && `w-[${width}px]`,
+			],
+			link: [
+				"block",
 				height !== undefined && `h-[${height}px]`,
 				width !== undefined && `w-[${width}px]`,
 			],
@@ -46,7 +53,8 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 				file
 					? api.file.getURLFromFullName(
 							context,
-							context.mergeString(file)
+							context.mergeString(file),
+							filepath ? context.mergeString(filepath) : undefined
 						)
 					: context.mergeString(src)
 			}
@@ -57,7 +65,13 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 		/>
 	)
 
-	return link ? <a href={link}>{imageNode}</a> : imageNode
+	return link ? (
+		<a className={classes.link} href={link}>
+			{imageNode}
+		</a>
+	) : (
+		imageNode
+	)
 }
 
 export default Image

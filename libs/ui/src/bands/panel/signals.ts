@@ -4,12 +4,15 @@ import { runMany } from "../../hooks/signalapi"
 import { open, close, closeAll } from "./operations"
 import { getCurrentState } from "../../store/store"
 import { selectors } from "./adapter"
+import { DefinitionMap } from "../../definition/definition"
+import { PanelState } from "./types"
 
 // The key for the entire band
 const PANEL_BAND = "panel"
 
 interface ToggleSignal extends SignalDefinition {
 	panel: string
+	definition?: DefinitionMap
 }
 
 const runPanelAfterCloseSignals = (panelId: string, context: Context) => {
@@ -22,13 +25,20 @@ const runPanelAfterCloseSignals = (panelId: string, context: Context) => {
 	return context
 }
 
-const closeDispatcher = (signal: ToggleSignal, context: Context) => {
-	close(context, signal.panel)
+const closeDispatcher = (
+	signal: ToggleSignal,
+	panelState: PanelState | undefined,
+	context: Context
+) => {
+	close(context, signal.panel, panelState)
 	return runPanelAfterCloseSignals(signal.panel, context)
 }
 
-const openDispatcher = (signal: ToggleSignal, context: Context) =>
-	open(context, signal.panel)
+const openDispatcher = (
+	signal: ToggleSignal,
+	panelState: PanelState | undefined,
+	context: Context
+) => open(context, signal.panel, panelState, signal.definition)
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -38,15 +48,24 @@ const signals: Record<string, SignalDescriptor> = {
 			const panelState = selectors.selectById(getCurrentState(), panel)
 			return (panelState ? closeDispatcher : openDispatcher)(
 				signal,
+				panelState,
 				context
 			)
 		},
 	},
 	[`${PANEL_BAND}/OPEN`]: {
-		dispatcher: openDispatcher,
+		dispatcher: (signal: ToggleSignal, context: Context) => {
+			const { panel } = signal
+			const panelState = selectors.selectById(getCurrentState(), panel)
+			return openDispatcher(signal, panelState, context)
+		},
 	},
 	[`${PANEL_BAND}/CLOSE`]: {
-		dispatcher: closeDispatcher,
+		dispatcher: (signal: ToggleSignal, context: Context) => {
+			const { panel } = signal
+			const panelState = selectors.selectById(getCurrentState(), panel)
+			return closeDispatcher(signal, panelState, context)
+		},
 	},
 	[`${PANEL_BAND}/CLOSE_ALL`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) => {

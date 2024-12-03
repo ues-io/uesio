@@ -63,10 +63,10 @@ FROM data as "main"
 WHERE
 main.collection = $1 AND
 main.tenant = $2 AND
-main.fields->>'uesio/tests.user' IN (SELECT subquery.id::text FROM data as "subquery" WHERE (subquery.collection = $3 AND
+(main.fields->>'uesio/tests.user')::uuid IN (SELECT subquery.id FROM data as "subquery" WHERE (subquery.collection = $3 AND
 subquery.tenant = $4 AND
 array_position($5,subquery.fields->>'uesio/core.username') IS NOT NULL)) AND
 main.fields->>'uesio/tests.text' is distinct from $6
-ORDER BY main.id::text asc
+ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 2"

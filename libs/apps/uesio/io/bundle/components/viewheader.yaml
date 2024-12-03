@@ -17,6 +17,7 @@ slots:
     label: Right Aligned Content
   - name: avatar
     label: Avatar Area
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
 properties:
@@ -33,3 +34,4 @@ styleRegions:
   center:
   right:
   avatar:
+depricated: true

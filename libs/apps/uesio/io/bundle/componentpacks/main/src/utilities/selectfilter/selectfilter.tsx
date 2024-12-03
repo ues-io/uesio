@@ -13,7 +13,7 @@ interface SelectFilterProps {
 const SelectFilter: definition.UtilityComponent<SelectFilterProps> = (
 	props
 ) => {
-	const { wire, fieldMetadata, context, condition } = props
+	const { wire, fieldMetadata, context, condition, variant } = props
 	const wireId = wire.getId()
 
 	return (
@@ -26,7 +26,7 @@ const SelectFilter: definition.UtilityComponent<SelectFilterProps> = (
 				}),
 				"Any " + fieldMetadata.getLabel()
 			)}
-			variant={"uesio/io.filter"}
+			variant={variant}
 			value={condition.value || ""}
 			setValue={(value: string) => {
 				api.signal.runMany(

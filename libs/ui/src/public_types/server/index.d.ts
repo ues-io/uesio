@@ -20,7 +20,7 @@ type ConditionOperator =
 	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
-type FieldValue = string | number | boolean | object | null
+type FieldValue = string | number | boolean | object | null | undefined
 type ConditionType = "SEARCH" | "GROUP" | "SUBQUERY"
 interface ConditionRequest {
 	id?: string
@@ -236,6 +236,17 @@ interface ListenerBotApi {
 		destRecord: string,
 		destField: string
 	) => void
+	getFileUrl: (fileKey: string, filePath: string) => string
+	getFileContents: (fileKey: string, filePath: string) => string
+	mergeTemplate: (
+		template: string,
+		params: Record<string, FieldValue>
+	) => string
+	mergeTemplateFile: (
+		fileKey: string,
+		filePath: string,
+		params: Record<string, FieldValue>
+	) => string
 	log: LogApi
 	http: HttpApi
 }

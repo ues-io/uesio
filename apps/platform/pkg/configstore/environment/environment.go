@@ -30,8 +30,6 @@ func GetEnvWithDefault(key, defaultValue string) string {
 }
 
 var configValues = map[string]string{
-	"uesio/core.cognito_client_id":                os.Getenv("COGNITO_CLIENT_ID"),
-	"uesio/core.cognito_pool_id":                  os.Getenv("COGNITO_POOL_ID"),
 	"uesio/core.mock_auth":                        os.Getenv("UESIO_MOCK_AUTH"),
 	"uesio/core.mock_auth_usernames":              GetEnvWithDefault("UESIO_MOCK_AUTH_USERNAMES", "ben,abel,wessel,baxter,zach,uesio"),
 	"uesio/core.platform_filesource_type":         GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_TYPE", "uesio.s3"),

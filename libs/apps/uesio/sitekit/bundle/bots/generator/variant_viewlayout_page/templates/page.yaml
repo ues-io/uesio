@@ -1,6 +1,6 @@
 uesio.styleTokens:
   root:
     - bg-cover
-    - bg-[url($File{uesio/sitekit.backgrounds})]
+    - bg-[url($File{${backgroundFile}:${backgroundFilePath}})]
   content:
     - bg-white/20

@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/tls"
+	"github.com/thecloudmasters/uesio/pkg/worker"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -183,6 +184,11 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 	sa.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 
+	attachmentDownloadPath := "/attachment/{recordid}/{version}/{path:.*}"
+	sr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+	wr.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+	sa.HandleFunc(attachmentDownloadPath, file.DownloadAttachment).Methods(http.MethodGet)
+
 	// Wire load and save routes for site and workspace context
 	wireLoadPath := "/wires/load"
 	sr.HandleFunc(wireLoadPath, controller.Load).Methods(http.MethodPost)
@@ -222,23 +228,23 @@ func serve(cmd *cobra.Command, args []string) {
 	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
 
-	// Un-versioned file serving routes - for backwards compatibility, and for local development
-	filesPath := fmt.Sprintf("/files/%s", itemParam)
-	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
-
 	// Versioned file serving routes
 	versionedFilesPath := fmt.Sprintf("/files/%s", versionedItemParam)
 	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 
-	filesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", itemParam)
-	sr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+	// Un-versioned file serving routes - for backwards compatibility, and for local development
+	filesPath := fmt.Sprintf("/files/%s", itemParam)
+	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 
 	versionedFilesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", versionedItemParam)
 	sr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+
+	filesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", itemParam)
+	sr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
@@ -457,6 +463,13 @@ func serve(cmd *cobra.Command, args []string) {
 		}
 		done <- true
 	}()
+
+	if os.Getenv("UESIO_WORKER_MODE") == "combined" {
+		slog.Info("Running worker combined with web server")
+		go func() {
+			worker.ScheduleJobs()
+		}()
+	}
 
 	// wait for graceful shutdown to complete
 	server.WaitShutdown()

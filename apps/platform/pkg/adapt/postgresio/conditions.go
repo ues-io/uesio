@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -78,7 +79,7 @@ func isTextAlike(fieldType string) bool {
 	return false
 }
 
-func processSearchCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func processSearchCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, builder *QueryBuilder, tableAlias string) error {
 
 	nameFieldMetadata, err := collectionMetadata.GetNameField()
 	if err != nil {
@@ -125,7 +126,15 @@ func processSearchCondition(condition wire.LoadRequestCondition, collectionMetad
 	return nil
 }
 
-func processValueCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+func isCoreUUIDField(fieldName string) bool {
+	switch fieldName {
+	case commonfields.Id, commonfields.UpdatedBy, commonfields.CreatedBy, commonfields.Owner:
+		return true
+	}
+	return false
+}
+
+func processValueCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, builder *QueryBuilder, tableAlias string) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
 		return err
@@ -148,6 +157,37 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		}
 	}
 
+	useValue := condition.Value
+	useValues := condition.Values
+
+	isCoreUUIDField := isCoreUUIDField(fieldName)
+
+	// Special handling for our uuid fields (we have to cast them to uuid)
+	if useValue != nil && isCoreUUIDField {
+		useValueString, ok := useValue.(string)
+		if !ok {
+			return fmt.Errorf("Value must be string for field: %s : %s", fieldName, useValue)
+		}
+		useValue = useValueString
+	}
+
+	if useValues != nil && isCoreUUIDField {
+		// Cast the value to a slice of strings
+		uuidStrings := []string{}
+		useValueSlice, ok := useValue.([]any)
+		if !ok {
+			return fmt.Errorf("Value must be slice of strings for field: %s : %s", fieldMetadata.GetFullName(), useValue)
+		}
+		for _, val := range useValueSlice {
+			useValueString, ok := val.(string)
+			if !ok {
+				return fmt.Errorf("Value must be string for field: %s : %s", fieldName, val)
+			}
+			uuidStrings = append(uuidStrings, useValueString)
+		}
+		useValues = uuidStrings
+	}
+
 	switch condition.Operator {
 	case "IN", "NOT_IN":
 		//IF we got values use normal flow
@@ -159,9 +199,8 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		if condition.Operator == "NOT_IN" {
 			useOperator = "IS NULL"
 		}
-		useValue := condition.Value
-		if condition.Values != nil {
-			useValue = condition.Values
+		if useValues != nil {
+			useValue = useValues
 		}
 		builder.addQueryPart(fmt.Sprintf("array_position(%s,%s) %s", builder.addValue(useValue), fieldName, useOperator))
 
@@ -169,20 +208,19 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
+		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(useValues)))
 
 	case "HAS_ALL":
 		if fieldType != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Values)))
+		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(useValues)))
 
 	case "NOT_EQ":
-		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
+		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(useValue)))
 
 	case "GT", "LT", "GTE", "LTE":
 		opString := operatorMap[condition.Operator]
-		useValue := condition.Value
 		if fieldType == "TIMESTAMP" {
 			useValue = getTimestampValue(condition)
 		}
@@ -227,20 +265,20 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		if !isTextType {
 			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldType)
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", useValue))))
 
 	case "STARTS_WITH":
 		if !isTextType {
 			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldType)
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", useValue))))
 
 	default:
 		if fieldType == "MULTISELECT" {
 			// Same as HAS_ANY
-			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Values)))
+			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(useValues)))
 		}
-		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
+		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(useValue)))
 	}
 	return nil
 }
@@ -278,6 +316,16 @@ func processSubQueryCondition(condition wire.LoadRequestCondition, collectionMet
 
 	subFieldName := getFieldName(subFieldMetadata, subTableAlias)
 
+	fieldIsCoreUUID := isCoreUUIDField(fieldMetadata.GetFullName())
+	subFieldIsCoreUUID := isCoreUUIDField(subFieldMetadata.GetFullName())
+
+	if fieldIsCoreUUID && !subFieldIsCoreUUID {
+		subFieldName = "(" + subFieldName + ")::uuid"
+	}
+	if subFieldIsCoreUUID && !fieldIsCoreUUID {
+		fieldName = "(" + fieldName + ")::uuid"
+	}
+
 	subConditionsBuilder := builder.getSubBuilder("")
 	if err = processConditionListForTenant(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session); err != nil {
 		return err
@@ -290,7 +338,7 @@ func processSubQueryCondition(condition wire.LoadRequestCondition, collectionMet
 	return nil
 }
 
-func addTenantConditions(collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) {
+func addTenantConditions(collectionMetadata *wire.CollectionMetadata, builder *QueryBuilder, tableAlias string, session *sess.Session) {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName := collectionMetadata.GetFullName()
@@ -304,7 +352,7 @@ func addTenantConditions(collectionMetadata *wire.CollectionMetadata, metadata *
 }
 
 func processConditionListForTenant(conditions []wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
-	addTenantConditions(collectionMetadata, metadata, builder, tableAlias, session)
+	addTenantConditions(collectionMetadata, builder, tableAlias, session)
 	return processConditionList(conditions, collectionMetadata, metadata, builder, tableAlias, session)
 }
 
@@ -320,7 +368,7 @@ func processConditionList(conditions []wire.LoadRequestCondition, collectionMeta
 func processCondition(condition wire.LoadRequestCondition, collectionMetadata *wire.CollectionMetadata, metadata *wire.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	if condition.Type == "SEARCH" {
-		return processSearchCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+		return processSearchCondition(condition, collectionMetadata, builder, tableAlias)
 	}
 
 	if condition.Type == "GROUP" {
@@ -331,5 +379,5 @@ func processCondition(condition wire.LoadRequestCondition, collectionMetadata *w
 		return processSubQueryCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 	}
 
-	return processValueCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+	return processValueCondition(condition, collectionMetadata, builder, tableAlias)
 }

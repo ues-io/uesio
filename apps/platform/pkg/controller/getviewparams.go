@@ -15,7 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-func getViewParamResponse(viewDef *yaml.Node, loader meta.BundleLoader) *meta.BotParamsResponse {
+func getViewParamResponse(viewDef *yaml.Node) *meta.BotParamsResponse {
 	response := meta.BotParamsResponse{}
 
 	params, err := meta.GetMapNode(viewDef, "params")
@@ -52,7 +52,7 @@ func getParamsForView(viewNamespace, viewName string, loader meta.BundleLoader) 
 	if err := loader(view); err != nil {
 		return nil, err
 	} else {
-		return getViewParamResponse((*yaml.Node)(view.Definition), loader), nil
+		return getViewParamResponse((*yaml.Node)(view.Definition)), nil
 	}
 }
 

@@ -71,9 +71,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New File
-                                uesio.variant: uesio/appkit.primary
+                                text: New File
+                                uesio.variant: uesio/appkit.secondary
                                 hotkey: "n"
+                                icon: add
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newFile
@@ -89,20 +90,16 @@ definition:
                           columns:
                             - label: File
                               components:
-                                - uesio/appkit.item:
-                                    uesio.styleTokens:
-                                      avatar:
-                                        - bg-[${uesio/studio.appcolor}]
-                                    title: ${uesio/studio.label}
-                                    subtitle: ${uesio/studio.namespace}
-                                    icon: ${uesio/studio.appicon}
-                                    iconcolor: white
+                                - uesio/studio.item_metadata:
+                              width: 260px
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT
@@ -110,6 +107,20 @@ definition:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/files/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
+              left:
+                - uesio/io.tabs:
+                    uesio.variant: uesio/appkit.main
+                    tabs:
+                      - label: Generators
+                        id: generators
+                        components:
+                          - uesio/core.view:
+                              uesio.id: generatorstab
+                              view: uesio/studio.tab_generators
+                              params:
+                                tag: uesio/core.files
+                                app: $Param{app}
+                                workspacename: $Param{workspacename}
   panels:
     newFile:
       uesio.type: uesio/io.dialog

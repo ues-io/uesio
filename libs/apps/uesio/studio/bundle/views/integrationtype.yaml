@@ -60,209 +60,205 @@ definition:
                 itemNameSpaceIcon: ${integrationType:uesio/studio.appicon}
                 itemNameSpaceColor: ${integrationType:uesio/studio.appcolor}
         content:
-          - uesio/io.item:
-              uesio.id: integrationTypeItem
-              wire: integrationType
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: ${uesio/studio.name}
-                    subtitle: Integration Type
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: ${uesio/studio.appicon}
-                          color: ${uesio/studio.appcolor}
-                    actions:
-                      - uesio/io.group:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.edit}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                  - type: paramValue
-                                    param: app
-                                    operator: EQUALS
-                                    value: $Param{namespace}
-                                signals:
-                                  - signal: component/CALL
-                                    component: uesio/io.item
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: integrationTypeItem
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: $Label{uesio/io.save}
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: integrationType
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - integrationType
-                                  - signal: component/CALL
-                                    component: uesio/io.item
-                                    componentsignal: SET_READ_MODE
-                                    targettype: specific
-                                    componentid: integrationTypeItem
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.cancel}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: EDIT
-                                signals:
-                                  - signal: wire/CANCEL
-                                    wire: integrationType
-                                  - signal: component/CALL
-                                    component: uesio/io.item
-                                    componentsignal: SET_READ_MODE
-                                    targettype: specific
-                                    target: integrationTypeItem
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.destructive
-                                text: $Label{uesio/io.delete}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                  - type: paramValue
-                                    param: app
-                                    operator: EQUALS
-                                    value: $Param{namespace}
-                                signals:
-                                  - signal: wire/MARK_FOR_DELETE
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - integrationType
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/integrationtypes
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.name
-                            - uesio/io.field:
-                                fieldId: uesio/studio.label
-                            - uesio/io.field:
-                                fieldId: uesio/core.updatedby
-                                user:
-                                  subtitle: $Time{uesio/core.updatedat}
-                            - uesio/io.field:
-                                fieldId: uesio/core.createdby
-                                user:
-                                  subtitle: $Time{uesio/core.createdat}
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.loadbot
-                                label: Default Collection Load Bot
-                            - uesio/io.field:
-                                fieldId: uesio/studio.savebot
-                                label: Default Collection Save Bot
-                            - uesio/io.field:
-                                fieldId: uesio/studio.runactionbot
-                                label: Default Run Action Bot
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.item:
+                    uesio.id: integrationTypeItem
+                    wire: integrationType
+                    mode: READ
                     components:
                       - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Integration Actions
+                          uesio.variant: uesio/appkit.main
+                          title: ${uesio/studio.name}
+                          subtitle: Integration Type
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: ${uesio/studio.appicon}
+                                color: ${uesio/studio.appcolor}
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.create}
+                                      text: $Label{uesio/io.edit}
                                       uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                         - type: paramValue
                                           param: app
                                           operator: EQUALS
                                           value: $Param{namespace}
                                       signals:
-                                        - signal: wire/CREATE_RECORD
-                                          wire: integrationActions
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: integrationActions
-                                          field: uesio/studio.workspace
-                                          value: $Record{workspaces:uesio/core.id}
-                                        - signal: wire/UPDATE_RECORD
-                                          wire: integrationActions
-                                          field: uesio/studio.integrationtype
-                                          value: $Param{namespace}.$Param{integrationtypename}
-                                        - signal: panel/TOGGLE
-                                          panel: editIntegrationAction
+                                        - signal: component/CALL
+                                          component: uesio/io.item
+                                          componentsignal: TOGGLE_MODE
+                                          targettype: specific
+                                          componentid: integrationTypeItem
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: wireHasChanges
-                                          wire: integrationActions
+                                          wire: integrationType
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - integrationActions
+                                            - integrationType
+                                        - signal: component/CALL
+                                          component: uesio/io.item
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: integrationTypeItem
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
-                                        - type: wireHasChanges
-                                          wire: integrationActions
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: integrationActions
-                      - uesio/io.table:
-                          uesio.id: integrationActionsTable
-                          wire: integrationActions
-                          mode: READ
-                          rowactions:
-                            - text: $Label{uesio/io.edit}
-                              signals:
-                                - signal: panel/TOGGLE
-                                  panel: editIntegrationAction
-                              uesio.display:
-                                - type: fieldValue
-                                  field: uesio/studio.namespace
-                                  value: $Param{app}
-                            - text: $Label{uesio/io.delete}
-                              signals:
-                                - signal: wire/TOGGLE_DELETE_STATUS
-                                  wire: integrationActions
-                              uesio.display:
-                                - type: fieldValue
-                                  field: uesio/studio.namespace
-                                  value: $Param{app}
-                          columns:
-                            - field: uesio/studio.name
-                            - field: uesio/studio.label
-                            - label: Bot to run
-                              components:
-                                - uesio/io.field:
-                                    wrapperVariant: uesio/io.table
-                                    labelPosition: none
+                                          wire: integrationType
+                                        - signal: component/CALL
+                                          component: uesio/io.item
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          target: integrationTypeItem
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.destructive
+                                      text: $Label{uesio/io.delete}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                        - type: paramValue
+                                          param: app
+                                          operator: EQUALS
+                                          value: $Param{namespace}
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - integrationType
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/integrationtypes
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.label
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.three_columns
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.loadbot
+                                      label: Default Collection Load Bot
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.savebot
+                                      label: Default Collection Save Bot
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.runactionbot
+                                      label: Default Run Action Bot
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Integration Actions
+                                actions:
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: $Label{uesio/io.create}
+                                            uesio.display:
+                                              - type: paramValue
+                                                param: app
+                                                operator: EQUALS
+                                                value: $Param{namespace}
+                                            signals:
+                                              - signal: wire/CREATE_RECORD
+                                                wire: integrationActions
+                                              - signal: wire/UPDATE_RECORD
+                                                wire: integrationActions
+                                                field: uesio/studio.workspace
+                                                value: $Record{workspaces:uesio/core.id}
+                                              - signal: wire/UPDATE_RECORD
+                                                wire: integrationActions
+                                                field: uesio/studio.integrationtype
+                                                value: $Param{namespace}.$Param{integrationtypename}
+                                              - signal: panel/TOGGLE
+                                                panel: editIntegrationAction
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.primary
+                                            text: $Label{uesio/io.save}
+                                            uesio.display:
+                                              - type: wireHasChanges
+                                                wire: integrationActions
+                                            signals:
+                                              - signal: wire/SAVE
+                                                wires:
+                                                  - integrationActions
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: $Label{uesio/io.cancel}
+                                            uesio.display:
+                                              - type: wireHasChanges
+                                                wire: integrationActions
+                                            signals:
+                                              - signal: wire/CANCEL
+                                                wire: integrationActions
+                            - uesio/io.table:
+                                uesio.id: integrationActionsTable
+                                uesio.variant: uesio/appkit.main
+                                wire: integrationActions
+                                mode: READ
+                                rowactions:
+                                  - text: $Label{uesio/io.edit}
+                                    signals:
+                                      - signal: panel/TOGGLE
+                                        panel: editIntegrationAction
                                     uesio.display:
-                                      - type: hasNoValue
-                                        value: ${uesio/studio.bot}
-                                    wire: integration
-                                    fieldId: uesio/studio.runactionbot
-                                - uesio/io.field:
-                                    wrapperVariant: uesio/io.table
-                                    labelPosition: none
-                                    fieldId: uesio/studio.bot
+                                      - type: fieldValue
+                                        field: uesio/studio.namespace
+                                        value: $Param{app}
+                                  - text: $Label{uesio/io.delete}
+                                    signals:
+                                      - signal: wire/TOGGLE_DELETE_STATUS
+                                        wire: integrationActions
                                     uesio.display:
-                                      - type: hasValue
-                                        value: ${uesio/studio.bot}
+                                      - type: fieldValue
+                                        field: uesio/studio.namespace
+                                        value: $Param{app}
+                                columns:
+                                  - field: uesio/studio.name
+                                  - field: uesio/studio.label
+                                  - label: Bot to run
+                                    components:
+                                      - uesio/io.field:
+                                          wrapperVariant: uesio/io.table
+                                          labelPosition: none
+                                          uesio.display:
+                                            - type: hasNoValue
+                                              value: ${uesio/studio.bot}
+                                          wire: integration
+                                          fieldId: uesio/studio.runactionbot
+                                      - uesio/io.field:
+                                          wrapperVariant: uesio/io.table
+                                          labelPosition: none
+                                          fieldId: uesio/studio.bot
+                                          uesio.display:
+                                            - type: hasValue
+                                              value: ${uesio/studio.bot}
+                      - uesio/appkit.section_audit_info:
   panels:
     editIntegrationAction:
       uesio.type: uesio/io.dialog

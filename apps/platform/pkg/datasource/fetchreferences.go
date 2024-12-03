@@ -159,14 +159,16 @@ func FetchReferences(
 	}
 
 	err = HandleReferences(connection, referencedIDCollections, metadata, session, &ReferenceOptions{
-		MergeItems: true,
+		MergeItems:         true,
+		RemoveMissingItems: op.Options != nil && op.Options.IgnoreMissingReferences,
 	})
 	if err != nil {
 		return err
 	}
 
 	return HandleReferences(connection, referencedUniqueKeyCollections, metadata, session, &ReferenceOptions{
-		MergeItems: true,
+		MergeItems:         true,
+		RemoveMissingItems: op.Options != nil && op.Options.IgnoreMissingReferences,
 	})
 
 }

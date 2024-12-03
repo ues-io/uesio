@@ -9,4 +9,36 @@ definition:
     footer:
       - p-5
       - justify-end
+    inner:
+      - shadow-md
+      - overflow-hidden
+      - m-2
+      - rounded
+      - pointer-events-auto
+      - bg-white
+      - "[container-type:size]"
+      - opacity-100
+      - transition-all
+      - duration-100
+      - ease-in-out
+    innerClosed:
+      - opacity-0
+    wrapper:
+      - inset-0,
+      - m-auto
+      - grid
+      - pointer-events-none
+    wrapperClosed:
+    blocker:
+      - absolute
+      - backdrop-blur-sm
+      - backdrop-brightness-50
+      - transition-all
+      - flex
+      - z-10
+      - duration-100
+      - ease-in-out
+    blockerClosed:
+      - backdrop-blur-none
+      - backdrop-brightness-100
 public: true

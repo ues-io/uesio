@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/types/ns"
 
 	"github.com/gorilla/mux"
 
@@ -19,8 +20,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]datasource.MetadataResponse, error) {
-	collectionKeyMap := map[string]datasource.MetadataResponse{}
+func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]ns.MetadataResponse, error) {
+	collectionKeyMap := map[string]ns.MetadataResponse{}
 
 	conditions, err := meta.GetGroupingConditions(metadatatype, grouping)
 	if err != nil {
@@ -73,18 +74,18 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	if err = collection.Loop(func(item meta.Item, _ string) error {
 		bundleable := item.(meta.BundleableItem)
 		key := bundleable.GetKey()
-		ns := bundleable.GetNamespace()
+		bns := bundleable.GetNamespace()
 		label := bundleable.GetLabel()
 		// Strip off the grouping part of the key
 		if grouping != "" {
 			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
 		}
 
-		appInfo, ok := appData[ns]
+		appInfo, ok := appData[bns]
 		if !ok {
-			return exceptions.NewNotFoundException("Could not find app info for " + ns)
+			return exceptions.NewNotFoundException("Could not find app info for " + bns)
 		}
-		collectionKeyMap[key] = datasource.MetadataResponse{
+		collectionKeyMap[key] = ns.MetadataResponse{
 			NamespaceInfo: appInfo,
 			Key:           key,
 			Label:         label,

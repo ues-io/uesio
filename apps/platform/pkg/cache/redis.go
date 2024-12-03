@@ -98,6 +98,19 @@ func NewRedisCache[T any](namespace string) *RedisCache[T] {
 // TODO: Switch to using go-redis instead of Redigo to get a cleaner, type-safe API
 // where we don't have to do manual connection management
 func init() {
+
+	sessionStorageMethod := os.Getenv("UESIO_SESSION_STORE")
+	platformCache := os.Getenv("UESIO_PLATFORM_CACHE")
+	usageHandler := os.Getenv("UESIO_USAGE_HANDLER")
+
+	needRedisForSessions := sessionStorageMethod == "redis"
+	needRedisForPlatformCache := platformCache != "memory"
+	needRedisForUsage := usageHandler == "redis"
+
+	if !needRedisForSessions && !needRedisForPlatformCache && !needRedisForUsage {
+		return
+	}
+
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
 	redisUser := os.Getenv("REDIS_USER")

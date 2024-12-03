@@ -1,0 +1,23 @@
+name: dynamicpanel
+title: Dynamic Panel
+icon: check_box_outline_blank
+description:
+category: LAYOUT
+pack: main
+entrypoint: components/dynamicpanel/dynamicpanel
+discoverable: false
+slots:
+  - name: components
+    label: Trigger Contents
+  - name: actions
+    label: Trigger Actions
+sections:
+  - type: SIGNALS
+  - type: STYLES
+  - type: DISPLAY
+variants:
+  - uesio/io.sidepanel:uesio/io.default
+  - uesio/io.sidepanel:uesio/io.left
+  - uesio/io.sidepanel:uesio/io.right
+  - uesio/io.sidepanel:uesio/io.top
+  - uesio/io.sidepanel:uesio/io.topleft

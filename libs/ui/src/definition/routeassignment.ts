@@ -5,7 +5,6 @@ export type RouteAssignmentState = {
 	namespace: string
 	collection: string
 	path: string
-	collectionLabel: string
-	collectionPluralLabel: string
-	collectionIcon?: string
+	label: string
+	icon?: string
 } & BundleableBase

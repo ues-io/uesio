@@ -9,6 +9,7 @@ icon: expand_more
 slots:
   - name: components
     label: Accordion Contents
+defaultVariant: uesio/io.default
 defaultDefinition:
   uesio.variant: uesio/io.default
   title: Title

@@ -9,7 +9,7 @@ definition:
       - py-3
     footer:
       - p-4
-      - bg-slate-100
+      - bg-primary-50/70
       - border-t
       - border-slate-200
       - empty:hidden

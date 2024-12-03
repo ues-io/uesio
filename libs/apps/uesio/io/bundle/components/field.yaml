@@ -21,6 +21,7 @@ variants:
   - uesio/io.markdownfield:uesio/io.default
   - uesio/io.listmenu:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
+  - uesio/io.filefield:uesio/io.default
   - uesio/io.tile:uesio/io.default
   - uesio/io.tile:uesio/io.item
   - uesio/io.titlebar:uesio/io.item
@@ -368,12 +369,6 @@ sections:
   - type: STYLES
   - type: DISPLAY
 signals:
-  UPLOAD_FILE:
-    label: Upload File
-    properties: []
-  CANCEL_FILE:
-    label: Cancel File
-    properties: []
 styleRegions:
   input:
   readonly:

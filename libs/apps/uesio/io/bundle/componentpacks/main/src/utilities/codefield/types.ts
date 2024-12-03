@@ -6,7 +6,7 @@ export interface CodeFieldUtilityProps {
 	/** time to delay, in ms, before invoking setValue. defaults to 100 ms */
 	debounce?: number
 	/** function to invoke whenever the code field is changed */
-	setValue: OnChange
+	setValue?: OnChange
 	/** initial value for the code field */
 	value: string
 	/** the code language, e.g. js, yaml, json */

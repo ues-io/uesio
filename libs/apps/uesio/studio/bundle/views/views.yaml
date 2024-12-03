@@ -15,6 +15,16 @@ definition:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
     allviews:
+      fields:
+        uesio/studio.name:
+        uesio/studio.namespace:
+        uesio/studio.label:
+        uesio/studio.appicon:
+        uesio/studio.appcolor:
+        uesio/core.createdat:
+        uesio/core.createdby:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
       collection: uesio/studio.view
       batchsize: 20
       conditions:
@@ -73,8 +83,9 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: Create a New View
-                                uesio.variant: uesio/appkit.primary
+                                text: New View
+                                uesio.variant: uesio/appkit.secondary
+                                icon: add
                                 hotkey: "n"
                                 uesio.id: new-view
                                 signals:
@@ -92,20 +103,16 @@ definition:
                           columns:
                             - label: View
                               components:
-                                - uesio/appkit.item:
-                                    uesio.styleTokens:
-                                      avatar:
-                                        - bg-[${uesio/studio.appcolor}]
-                                    title: ${uesio/studio.label}
-                                    subtitle: ${uesio/studio.namespace}
-                                    icon: ${uesio/studio.appicon}
-                                    iconcolor: white
+                                - uesio/studio.item_metadata:
+                              width: 260px
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}
+                              width: 200px
                             - field: uesio/core.createdby
                               user:
                                 subtitle: $Time{uesio/core.createdat}
+                              width: 200px
                           rowactions:
                             - text: Details
                               type: DEFAULT
@@ -113,6 +120,20 @@ definition:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.namespace}/${uesio/studio.name}
                           pagesize: 10
+              left:
+                - uesio/io.tabs:
+                    uesio.variant: uesio/appkit.main
+                    tabs:
+                      - label: Generators
+                        id: generators
+                        components:
+                          - uesio/core.view:
+                              uesio.id: generatorstab
+                              view: uesio/studio.tab_generators
+                              params:
+                                tag: uesio/core.views
+                                app: $Param{app}
+                                workspacename: $Param{workspacename}
   panels:
     newView:
       uesio.type: uesio/io.dialog
@@ -130,7 +151,7 @@ definition:
                   uesio.id: new-view-name
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             uesio.id: save-new-view
             text: $Label{uesio/io.save}
             signals:
@@ -140,7 +161,7 @@ definition:
               - signal: route/NAVIGATE
                 path: app/$Param{app}/workspace/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE
