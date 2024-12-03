@@ -132,8 +132,6 @@ definition:
                       - uesio/appkit.section_audit_info:
                       - uesio/appkit.section_delete:
                           confirm: true
-                          confirmTitle: You are about to delete view ${uesio/studio.name}
-                          confirmMessage: All your data for ${uesio/studio.name} will be permanently removed and you won't be able to see it again.
                           signals:
                             - signal: wire/MARK_FOR_DELETE
                             - signal: wire/SAVE
@@ -141,5 +139,3 @@ definition:
                                 - views
                             - signal: route/NAVIGATE
                               path: app/$Param{app}/workspace/$Param{workspacename}/views
-                          title: Delete this view
-                          subtitle: You will never be able to access the information associated with this view again.

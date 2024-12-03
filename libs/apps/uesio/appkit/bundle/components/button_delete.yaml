@@ -4,6 +4,8 @@ type: DECLARATIVE
 properties:
   - name: confirmTitle
     defaultValue: Are you sure?
+  - name: confirmMessage
+    defaultValue: The $Collection{label} $RecordMeta{name} will be deleted. This action cannot be undone.
   - name: signals
     defaultValue:
       - signal: wire/MARK_FOR_DELETE
