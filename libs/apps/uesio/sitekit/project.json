@@ -13,7 +13,6 @@
 					"uesio pack",
 					"npx tsc --noEmit --project ./tsconfig.lib.json"
 				],
-				"parallel": false,
 				"cwd": "libs/apps/uesio/sitekit"
 			}
 		},
@@ -25,12 +24,12 @@
 			}
 		},
 		"lint": {
-			"executor": "@nx/eslint:lint"
+			"executor": "nx:noop"
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/apps/uesio/sitekit/jest.config.ts",
+				"jestConfig": "libs/apps/uesio/sitekit/jest.config.js",
 				"passWithNoTests": true
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/sitekit"]

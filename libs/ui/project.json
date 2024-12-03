@@ -10,7 +10,6 @@
 			"outputs": ["{workspaceRoot}/dist/ui"],
 			"options": {
 				"commands": ["bash build.sh"],
-				"parallel": false,
 				"cwd": "libs/ui"
 			}
 		},
@@ -28,7 +27,7 @@
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/ui/jest.config.ts"
+				"jestConfig": "libs/ui/jest.config.js"
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/ui"]
 		}

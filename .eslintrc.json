@@ -1,6 +1,10 @@
 {
 	"root": true,
-	"ignorePatterns": ["**/*"],
+	"ignorePatterns": [
+		"jest.config.js",
+		"**/bundle/bots/*",
+		"**/bundle/componentpacks/*/*/*.js*"
+	],
 	"plugins": ["@nx", "react-hooks"],
 	"overrides": [
 		{

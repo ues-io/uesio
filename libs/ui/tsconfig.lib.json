@@ -4,6 +4,6 @@
 		"outDir": "../../dist/ui/types",
 		"declaration": true
 	},
-	"exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+	"exclude": ["**/*.spec.ts", "**/*.test.ts"],
 	"include": ["**/*.ts*"]
 }

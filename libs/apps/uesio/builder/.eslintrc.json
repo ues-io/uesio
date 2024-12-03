@@ -1,26 +1,12 @@
 {
 	"extends": "../../../../.eslintrc.json",
-	"ignorePatterns": [
-		"!**/*",
-		"bundle/bots/*",
-		"bundle/componentpacks/*/*.js*",
-		"build/*"
-	],
-	"rules": {},
+	"ignorePatterns": ["build/*"],
 	"overrides": [
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"parserOptions": {
 				"project": ["libs/apps/uesio/builder/tsconfig.*?.json"]
 			},
-			"rules": {}
-		},
-		{
-			"files": ["*.ts", "*.tsx"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
 			"rules": {}
 		}
 	]

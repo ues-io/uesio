@@ -14,7 +14,6 @@
 					"npx tsc --noEmit --project ./tsconfig.lib.json",
 					"node ./build/generate-tailwind-classes-index.js"
 				],
-				"parallel": true,
 				"cwd": "libs/apps/uesio/builder"
 			}
 		},
@@ -31,7 +30,7 @@
 		"test": {
 			"executor": "@nx/jest:jest",
 			"options": {
-				"jestConfig": "libs/apps/uesio/builder/jest.config.ts",
+				"jestConfig": "libs/apps/uesio/builder/jest.config.js",
 				"passWithNoTests": false
 			},
 			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/builder"]
