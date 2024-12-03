@@ -3,6 +3,9 @@ category: LAYOUT
 type: DECLARATIVE
 properties:
   - name: title
+    defaultValue: Delete this $Collection{label}
+  - name: subtitle
+    defaultValue: You will not be able to access the information associated with this $Collection{label} again.
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.section

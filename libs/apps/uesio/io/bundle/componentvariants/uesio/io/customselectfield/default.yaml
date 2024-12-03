@@ -22,6 +22,7 @@ definition:
     editbutton:
       - text-slate-700
       - leading-none
+      - cursor-pointer
     selecteditemwrapper:
       - inline-grid
       - grid-flow-col
@@ -31,12 +32,14 @@ definition:
       - text-black/80
       - rounded-full
       - pl-2.5
-      - pr-1.5
-      - py-0.5
+      - pr-2
+      - leading-none
+      - items-center
     selectediteminner:
       - overflow-hidden
       - text-ellipsis
       - whitespace-nowrap
+      - py-1
     checkbox:
       - p-0
       - pt-0.5
