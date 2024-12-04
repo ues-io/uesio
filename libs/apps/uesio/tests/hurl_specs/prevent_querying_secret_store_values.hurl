@@ -8,8 +8,8 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
     "token": "uesio"
 }
 
-# Set the value of the SendGrid key so that we can test it
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/core/sendgridkey
+# Set the value of the Resend key so that we can test it
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/appkit/resend_key
 {
     "value": "this-is-my-key"
 }
@@ -34,7 +34,7 @@ Accept: application/json
             "conditions": [
                 {
                     "field": "uesio/core.key",
-                    "value": "uesio/core.sendgridkey"
+                    "value": "uesio/appkit.resend_key"
                 }
             ]
         }

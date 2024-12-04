@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
 	"github.com/thecloudmasters/uesio/pkg/integ/openai"
-	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -153,8 +152,6 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 		botFunction = bedrock.RunAction
 	case "uesio/core.openai":
 		botFunction = openai.RunAction
-	case "uesio/core.sendgrid":
-		botFunction = sendgrid.RunAction
 	}
 
 	if botFunction == nil {

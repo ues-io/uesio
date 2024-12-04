@@ -407,7 +407,7 @@ The following environment variables can optionally be configured in your Shell (
 
 In addition, all Uesio Secrets can have their default value set by setting a corresponding `UESIO_SECRET_<namespace>_<name>` environment variable. Any value set for these secrets in a Site/Workspace will override the environment variable default, but it can often be useful, especially for local development, to configure a default value, so that you don't have to populate these secrets in every site. (Note: there is no corresponding feature for Config Values, because you can define a Config Value's default directly in the metadata definition).
 
-For example, the `uesio/core.sendgridkey` secret's default value can be configured with `export UESIO_SECRET_UESIO_CORE_SENDGRIDKEY=your-send-grid-key`
+For example, the `uesio/appkit.resend_key` secret's default value can be configured with `export UESIO_SECRET_UESIO_APPKIT_RESEND_KEY=your-resend-key`
 
 # npm dependencies
 

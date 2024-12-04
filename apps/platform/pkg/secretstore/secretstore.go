@@ -32,7 +32,7 @@ func RegisterSecretStore(name string, store SecretStore) {
 
 // Generates the default environment variable name for a secret using a naming convention
 // "SECRET_<NAMESPACE>_<NAME>", e.g.
-// - "uesio/core.sendgridkey" --> "UESIO_SECRET_UESIO_CORE_SENDGRIDKEY"
+// - "uesio/appkit.resend_key" --> "UESIO_SECRET_UESIO_APPKIT_RESEND_KEY"
 // - "luigi/foo.stripe_key" --> "UESIO_SECRET_LUIGI_FOO_STRIPE_KEY"
 func getEnvironmentVariableName(secret *meta.Secret) string {
 	return strings.ToUpper(fmt.Sprintf("UESIO_SECRET_%s_%s", strings.ReplaceAll(secret.Namespace, "/", "_"), secret.Name))
