@@ -30,8 +30,6 @@ require (
 	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.26.0
-	github.com/sendgrid/rest v2.6.9+incompatible
-	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	github.com/stripe/stripe-go v70.15.0+incompatible

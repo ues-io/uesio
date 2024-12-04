@@ -1,6 +1,0 @@
-name: sendgrid
-label: SendGrid
-public: true
-type: sendgrid
-credentials: sendgrid
-authentication: API_KEY

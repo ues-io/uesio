@@ -62,8 +62,8 @@
 					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:openai_api_key::"
 				},
 				{
-					"name": "UESIO_SECRET_UESIO_CORE_SENDGRIDKEY",
-					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:sendgrid_api_key::"
+					"name": "UESIO_SECRET_UESIO_APPKIT_RESEND_KEY",
+					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:resend_api_key::"
 				}
 			],
 			"mountPoints": [],

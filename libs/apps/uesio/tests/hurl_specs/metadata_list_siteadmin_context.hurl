@@ -13,11 +13,12 @@ GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/namespaces
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$" count == 4
+jsonpath "$" count == 5
 jsonpath "$[0]" == "uesio/tests"
 jsonpath "$[1]" == "uesio/aikit"
-jsonpath "$[2]" == "uesio/core"
-jsonpath "$[3]" == "uesio/io"
+jsonpath "$[2]" == "uesio/appkit"
+jsonpath "$[3]" == "uesio/core"
+jsonpath "$[4]" == "uesio/io"
 
 # Get a list of all collections available from a siteadmin context
 GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/metadata/types/collections/list
@@ -83,9 +84,9 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$[*]" count == 5
-jsonpath "$['uesio/core.sendgridkey'].key" == "uesio/core.sendgridkey"
-jsonpath "$['uesio/core.sendgridkey'].namespace" == "uesio/core"
-jsonpath "$['uesio/core.sendgridkey'].icon" == "hub"
+jsonpath "$['uesio/appkit.resend_key'].key" == "uesio/appkit.resend_key"
+jsonpath "$['uesio/appkit.resend_key'].namespace" == "uesio/appkit"
+jsonpath "$['uesio/appkit.resend_key'].icon" == "apps"
 jsonpath "$['uesio/tests.test_oauth_client_id'].key" == "uesio/tests.test_oauth_client_id"
 jsonpath "$['uesio/tests.test_oauth_client_id'].namespace" == "uesio/tests"
 jsonpath "$['uesio/tests.test_oauth_client_secret'].key" == "uesio/tests.test_oauth_client_secret"

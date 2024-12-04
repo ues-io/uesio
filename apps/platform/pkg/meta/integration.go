@@ -1,8 +1,6 @@
 package meta
 
 import (
-	"fmt"
-
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -32,12 +30,7 @@ type Integration struct {
 type IntegrationWrapper Integration
 
 func (i *Integration) GetType() string {
-	// backwards compatibility: map the old "sendgrid" integrations to fully-qualified core integrations
-	integrationTypeName := i.Type
-	if integrationTypeName == "sendgrid" {
-		integrationTypeName = fmt.Sprintf("uesio/core.%s", integrationTypeName)
-	}
-	return integrationTypeName
+	return i.Type
 }
 
 func (i *Integration) GetCollection() CollectionableGroup {
