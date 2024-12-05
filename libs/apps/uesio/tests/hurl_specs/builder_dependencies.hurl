@@ -29,6 +29,4 @@ jsonpath "$.featureflag[8].user" == {{user_id}}
 jsonpath "$.featureflag[9].name" == "max_domains_per_user"
 jsonpath "$.featureflag[9].type" == "NUMBER"
 jsonpath "$.featureflag[9].value" >= 0
-jsonpath "$.featureflag[9].max" == 1000
-jsonpath "$.featureflag[9].min" == 0
 jsonpath "$.featureflag[9].user" == {{user_id}}

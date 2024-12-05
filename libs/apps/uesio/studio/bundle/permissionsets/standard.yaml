@@ -231,6 +231,7 @@ routes:
   uesio/studio.paymentsuccess: true
 files: {}
 collections:
+  uesio/core.featureflag: true
   uesio/studio.recentmetadata: true
   uesio/studio.blogentry: true
   uesio/studio.recentdoc: true

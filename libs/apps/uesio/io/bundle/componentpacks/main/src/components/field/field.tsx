@@ -135,6 +135,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 			record.update(fieldId, value, context),
 		record,
 		variant: definition[component.STYLE_VARIANT],
+		styleTokens: definition[component.STYLE_TOKENS],
 		placeholder,
 		displayAs,
 		applyChanges,

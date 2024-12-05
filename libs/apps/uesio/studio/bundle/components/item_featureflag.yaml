@@ -1,0 +1,82 @@
+name: item_featureflag
+category: LAYOUT
+title: Feature Flag Item
+type: DECLARATIVE
+discoverable: false
+description:
+properties:
+sections:
+  - type: HOME
+  - type: DISPLAY
+definition:
+  - uesio/io.card:
+      uesio.variant: uesio/appkit.main
+      title: $If{[${label}][${label}][${name}]}
+      subtitle: ${type}
+      avatar:
+        - uesio/io.text:
+            uesio.variant: uesio/appkit.avataricon
+            text: new_releases
+      content:
+      actions:
+        - uesio/io.group:
+            uesio.styleTokens:
+              root:
+                - gap-4
+            components:
+              - uesio/io.text:
+                  uesio.variant: uesio/appkit.badge
+                  text: Default
+                  uesio.styleTokens:
+                    root:
+                      - bg-primary-100
+                      - text-primary-500
+                      - font-medium
+                  uesio.display:
+                    - type: fieldValue
+                      value: false
+                      field: has_value
+                    - type: recordIsNotChanged
+              - uesio/io.button:
+                  uesio.variant: uesio/appkit.itemaction
+                  icon: delete
+                  tooltip: Remove Value
+                  signals:
+                    - signal: wire/MARK_FOR_DELETE
+                  uesio.display:
+                    - type: fieldValue
+                      value: true
+                      field: has_value
+                    - type: recordIsNotDeleted
+              - uesio/io.box:
+                  uesio.styleTokens:
+                    root:
+                      - w-20
+                      - text-center
+                  uesio.display:
+                    - type: recordIsNotDeleted
+                  components:
+                    - uesio/io.field:
+                        uesio.display:
+                          - type: fieldValue
+                            field: type
+                            value: NUMBER
+                        wrapperVariant: uesio/io.minimal
+                        displayAs: NUMBER
+                        labelPosition: none
+                        fieldId: value
+                    - uesio/io.field:
+                        uesio.styleTokens:
+                          root:
+                            - border
+                            - border-slate-300
+                            - rounded
+                            - bg-white
+                        uesio.display:
+                          - type: fieldValue
+                            field: type
+                            value: CHECKBOX
+                        wrapperVariant: uesio/io.minimal
+                        displayAs: TOGGLE
+                        labelPosition: none
+                        fieldId: value

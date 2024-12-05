@@ -186,64 +186,68 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http
 
 }
 
-func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	var botFunction LoadBotFunc
-
-	switch bot.GetKey() {
+func getLoadBotFunc(botKey, collectionName string) LoadBotFunc {
+	switch botKey {
 	case "load:uesio/core.uesio_load":
-		botFunction = runUesioExternalLoadBot
+		return runUesioExternalLoadBot
 	}
 
-	switch op.CollectionName {
+	switch collectionName {
 	case "uesio/core.usage":
-		botFunction = runUsageLoadBot
+		return runUsageLoadBot
 	case "uesio/core.userfile":
-		botFunction = runUserfileLoadBot
+		return runUserfileLoadBot
+	case "uesio/core.featureflag":
+		return runFeatureFlagLoadBot
 	case "uesio/core.myintegrationcredentials":
-		botFunction = runMyIntegrationCredentialsLoadBot
+		return runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
-		botFunction = runRecentMetadataLoadBot
+		return runRecentMetadataLoadBot
 	case "uesio/studio.usertokenvalue":
-		botFunction = runUserTokenValueLoadBot
+		return runUserTokenValueLoadBot
 	case "uesio/studio.recordtokenvalue":
-		botFunction = runRecordTokenValueLoadBot
+		return runRecordTokenValueLoadBot
 	}
 
-	if meta.IsBundleableCollection(op.CollectionName) {
-		botFunction = runStudioMetadataLoadBot
-	} else if meta.IsCoreBundleableCollection(op.CollectionName) {
-		botFunction = runCoreMetadataLoadBot
+	if meta.IsBundleableCollection(collectionName) {
+		return runStudioMetadataLoadBot
+	} else if meta.IsCoreBundleableCollection(collectionName) {
+		return runCoreMetadataLoadBot
 	}
+	return nil
+}
 
+func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+	botFunction := getLoadBotFunc(bot.GetKey(), op.CollectionName)
 	if botFunction == nil {
 		return exceptions.NewSystemBotNotFoundException()
 	}
-
 	return botFunction(op, connection, session)
+}
 
+func getSaveBotFunc(botKey, collectionName string) SaveBotFunc {
+	switch botKey {
+	case "save:uesio/core.uesio_save":
+		return runUesioExternalSaveBot
+	}
+
+	switch collectionName {
+	case "uesio/core.userfile":
+		return runUserfileSaveBot
+	case "uesio/core.featureflag":
+		return runFeatureFlagSaveBot
+	}
+
+	if meta.IsBundleableCollection(collectionName) {
+		return runStudioMetadataSaveBot
+	}
+	return nil
 }
 
 func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	var botFunction SaveBotFunc
-
-	switch bot.GetKey() {
-	case "save:uesio/core.uesio_save":
-		botFunction = runUesioExternalSaveBot
-	}
-
-	switch op.CollectionName {
-	case "uesio/core.userfile":
-		botFunction = runUserfileSaveBot
-	}
-
-	if meta.IsBundleableCollection(op.CollectionName) {
-		botFunction = runStudioMetadataSaveBot
-	}
-
+	botFunction := getSaveBotFunc(bot.GetKey(), op.CollectionName)
 	if botFunction == nil {
 		return exceptions.NewSystemBotNotFoundException()
 	}
-
 	return botFunction(op, connection, session)
-
 }

@@ -293,6 +293,7 @@ type FieldType =
 	| "TEXT"
 	| "TIMESTAMP"
 	| "USER"
+	| "ANY"
 
 interface ReferenceMetadata {
 	/**

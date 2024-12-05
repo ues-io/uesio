@@ -17,14 +17,14 @@ type CollectionMap struct {
 func (c *CollectionMap) SetMetadata(metadata *CollectionMetadata) error {
 	c.metadata = metadata
 	// If we already have data defined here, we can quit now
-	if c.Data != nil {
+	if c.Data != nil || len(c.raw) == 0 {
 		return nil
 	}
 	c.IDs = []string{}
 	c.Data = map[string]*ItemWithMetadata{}
 	err := gojay.UnmarshalJSONObject(c.raw, c)
 	if err != nil {
-		return nil
+		return err
 	}
 	// Clean up te raw data
 	c.raw = nil

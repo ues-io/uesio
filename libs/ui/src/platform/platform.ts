@@ -129,15 +129,11 @@ interface BaseFeatureFlag extends Bundleable {
 interface NumberFeatureFlag extends BaseFeatureFlag {
 	type: "NUMBER"
 	value: number
-	defaultValue?: number
-	min?: number
-	max?: number
 }
 
 interface CheckboxFeatureFlag extends BaseFeatureFlag {
 	type: "CHECKBOX"
 	value: boolean
-	defaultValue?: boolean
 }
 
 type FeatureFlagResponse = NumberFeatureFlag | CheckboxFeatureFlag
@@ -652,32 +648,6 @@ const platform = {
 			context,
 			`${getPrefix(context)}/oauth2/authorize/${integrationName}`
 		),
-	getFeatureFlags: async (
-		context: Context,
-		user?: string
-	): Promise<FeatureFlagResponse[]> =>
-		getJSON(
-			context,
-			`${getPrefix(context)}/featureflags${user ? `/${user}` : ""}`
-		),
-	setFeatureFlag: async (
-		context: Context,
-		key: string,
-		value: boolean | number,
-		user?: string
-	): Promise<BotResponse> => {
-		const prefix = getPrefix(context)
-		const [namespace, name] = parseKey(key)
-		const response = await postJSON(
-			context,
-			`${prefix}/featureflags/${namespace}/${name}`,
-			{
-				value,
-				user,
-			}
-		)
-		return respondJSON(response)
-	},
 	signup: async (
 		context: Context,
 		signupMethod: string,

@@ -14,6 +14,14 @@ definition:
     code:
       - rounded-lg
       - text-sm
+      - w-full
+      - overflow-auto
+    codeInline:
+      - bg-primary-50
+      - rounded
+      - text-sm
+      - px-1.5
+      - py-0.5
     ol:
       - pl-8
       - list-decimal

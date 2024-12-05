@@ -39,6 +39,7 @@ class Wire {
 	getCollection = () => this.collection
 	isMarkedForDeletion = (recordId: string) =>
 		!!this.source.deletes?.[recordId]
+	isChanged = (recordId: string) => !!this.source.changes?.[recordId]
 	isViewOnly = () => this.source?.viewOnly || false
 	getBatchId = () => this.source.batchid
 

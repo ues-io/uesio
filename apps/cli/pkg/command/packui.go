@@ -27,7 +27,7 @@ func PackUI(options *PackOptions) error {
 		// "react/jsx-runtime". I'm not sure exactly what the global
 		// value for "react/jsx-runtime" should be, but setting it
 		// to React seems to fix the issue.
-		"react/jsx-runtime": "React",
+		"react/jsx-runtime": "jsxRuntime",
 	}
 	globalsList := pack.GetGlobalsList(globalsMap)
 
