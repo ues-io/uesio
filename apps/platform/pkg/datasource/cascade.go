@@ -91,11 +91,25 @@ func getCascadeDeletes(
 					Params: op.Params,
 				}
 
+				versionSession, err := EnterVersionContext(field.Namespace, session, nil)
+				if err != nil {
+					return nil, err
+				}
+
+				// Check for metadata, if it does not exist, go get it.
+				_, err = metadata.GetCollection(referenceGroupMetadata.Collection)
+				if err != nil {
+					err := GetMetadataForLoad(op, metadata, nil, versionSession, connection)
+					if err != nil {
+						return nil, err
+					}
+				}
+
 				op.AttachMetadataCache(metadata)
 
-				err := connection.Load(op, session)
+				err = connection.Load(op, versionSession)
 				if err != nil {
-					return nil, errors.New("Cascade delete error")
+					return nil, errors.New("Cascade delete error: " + err.Error())
 				}
 
 				currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]

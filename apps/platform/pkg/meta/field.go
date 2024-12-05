@@ -51,6 +51,7 @@ type FieldWrapper Field
 
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
+		"ANY":            true,
 		"AUTONUMBER":     true,
 		"CHECKBOX":       true,
 		"DATE":           true,

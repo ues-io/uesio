@@ -122,10 +122,3 @@ definition:
                           title: Feature Flags
                       - uesio/io.box:
                           components:
-                            - uesio/studio.configfeatureflags:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                user: ${uesio/core.id}
-                                type: ORG

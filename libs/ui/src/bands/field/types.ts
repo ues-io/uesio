@@ -24,6 +24,7 @@ type FieldType =
 	| "TEXT"
 	| "TIMESTAMP"
 	| "USER"
+	| "ANY"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 

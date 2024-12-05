@@ -43,6 +43,7 @@ class WireRecord {
 	isEditable = () => this.getCollection()?.isUpdateable()
 	isDeleteable = () => this.getCollection()?.isDeleteable()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
+	isChanged = () => this.wire.isChanged(this.id)
 
 	getIdFieldValue = () => this.getFieldValue<string>(ID_FIELD)
 	getUniqueKey = () => this.getFieldValue<string>(UNIQUE_KEY_FIELD)

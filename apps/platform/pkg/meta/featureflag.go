@@ -17,6 +17,7 @@ type FeatureFlag struct {
 	Type           string      `yaml:"type" json:"uesio/studio.type"`
 	ValidForOrgs   bool        `yaml:"validForOrgs" json:"uesio/studio.validfororgs"`
 	User           string
+	HasValue       bool
 }
 
 type FeatureFlagWrapper FeatureFlag
@@ -28,37 +29,10 @@ func (ff *FeatureFlag) GetBytes() ([]byte, error) {
 func (ff *FeatureFlag) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", ff.Namespace)
 	enc.AddStringKey("name", ff.Name)
-	enc.AddStringKey("user", ff.User)
+	enc.AddStringKeyOmitEmpty("user", ff.User)
 	enc.AddStringKey("type", ff.Type)
-	if ff.ValidForOrgs {
-		enc.AddBoolKey("validForOrgs", true)
-	}
-	if ff.Type == "NUMBER" {
-		useIntValue := int64(0)
-		intDefaultValue, hasDefault := ff.DefaultValue.(int)
-		if intValue, hasValue := ff.Value.(float64); hasValue {
-			useIntValue = int64(intValue)
-		} else if intValue, hasValue := ff.Value.(int); hasValue {
-			useIntValue = int64(intValue)
-		} else if hasDefault {
-			useIntValue = int64(intDefaultValue)
-		}
-		enc.AddInt64Key("value", useIntValue)
-		// Ignore min / max if both 0, that means they weren't set
-		if ff.Min != 0 || ff.Max != 0 {
-			enc.AddInt64Key("min", ff.Min)
-			enc.AddInt64Key("max", ff.Max)
-		}
-	} else {
-		useBoolValue := false
-		boolDefaultValue, hasDefault := ff.DefaultValue.(bool)
-		if boolValue, hasValue := ff.Value.(bool); hasValue {
-			useBoolValue = boolValue
-		} else if hasDefault {
-			useBoolValue = boolDefaultValue
-		}
-		enc.AddBoolKey("value", useBoolValue)
-	}
+	enc.AddInterfaceKeyOmitEmpty("value", ff.Value)
+	enc.AddBoolKeyOmitEmpty("validForOrgs", ff.ValidForOrgs)
 }
 
 func (ff *FeatureFlag) IsNil() bool {

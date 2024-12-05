@@ -128,34 +128,27 @@ definition:
                                             signals:
                                               - signal: route/NAVIGATE
                                                 path: "app/$Param{app}/workspaces/new"
-                                  - uesio/io.emptystate:
-                                      uesio.variant: uesio/studio.main
-                                      title: No Workspaces
-                                      subtitle: You haven't created any yet.
-                                      icon: handyman
-                                      uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: workspaces
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - type: wireHasRecords
-                                          wire: workspaces
+                                  - uesio/io.deck:
+                                      wire: workspaces
+                                      uesio.variant: uesio/appkit.main
                                       components:
-                                        - uesio/io.deck:
-                                            wire: workspaces
+                                        - uesio/io.card:
                                             uesio.variant: uesio/appkit.main
-                                            components:
-                                              - uesio/io.card:
-                                                  uesio.variant: uesio/appkit.main
-                                                  title: ${uesio/studio.name}
-                                                  avatar:
-                                                    - uesio/io.text:
-                                                        uesio.variant: uesio/appkit.avataricon
-                                                        text: handyman
-                                                  content:
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{app}/workspace/${uesio/studio.name}"
+                                            title: ${uesio/studio.name}
+                                            avatar:
+                                              - uesio/io.text:
+                                                  uesio.variant: uesio/appkit.avataricon
+                                                  text: handyman
+                                            content:
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{app}/workspace/${uesio/studio.name}"
+                                      emptyState:
+                                        - uesio/io.emptystate:
+                                            uesio.variant: uesio/studio.main
+                                            title: No Workspaces
+                                            subtitle: You haven't created any yet.
+                                            icon: handyman
                             - uesio/io.griditem:
                                 components:
                                   - uesio/io.titlebar:
@@ -171,54 +164,47 @@ definition:
                                             signals:
                                               - signal: route/NAVIGATE
                                                 path: "app/$Param{app}/sites/new"
-                                  - uesio/io.emptystate:
-                                      uesio.variant: uesio/studio.main
-                                      title: No Sites
-                                      subtitle: You haven't created any yet.
-                                      icon: public
-                                      uesio.display:
-                                        - type: wireHasNoRecords
-                                          wire: sites
-                                  - uesio/io.box:
-                                      uesio.display:
-                                        - type: wireHasRecords
-                                          wire: sites
+                                  - uesio/io.deck:
+                                      wire: sites
+                                      uesio.styleTokens:
+                                        root:
+                                          - gap-6
                                       components:
-                                        - uesio/io.deck:
-                                            wire: sites
-                                            uesio.styleTokens:
-                                              root:
-                                                - gap-6
-                                            components:
-                                              - uesio/io.card:
-                                                  uesio.variant: uesio/appkit.main
-                                                  title: ${uesio/studio.name}
-                                                  subtitle: v${bundle->version}
-                                                  avatar:
+                                        - uesio/io.card:
+                                            uesio.variant: uesio/appkit.main
+                                            title: ${uesio/studio.name}
+                                            subtitle: v${bundle->version}
+                                            avatar:
+                                              - uesio/io.text:
+                                                  uesio.variant: uesio/appkit.avataricon
+                                                  text: public
+                                            actions:
+                                              - uesio/io.group:
+                                                  components:
                                                     - uesio/io.text:
-                                                        uesio.variant: uesio/appkit.avataricon
-                                                        text: public
-                                                  actions:
-                                                    - uesio/io.group:
-                                                        components:
-                                                          - uesio/io.text:
-                                                              uesio.styleTokens:
-                                                                root:
-                                                                  - bg-emerald-600
-                                                                  - text-white
-                                                              uesio.variant: uesio/appkit.badge
-                                                              text: Active
-                                                  content:
-                                                    - uesio/io.titlebar:
-                                                        uesio.variant: uesio/appkit.item_sub
-                                                        title: Domains
-                                                    - uesio/io.field:
-                                                        fieldId: uesio/studio.sitedomains
-                                                        labelPosition: none
-                                                        reference:
-                                                          components:
-                                                            - uesio/studio.sitedomain_link_tag:
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{app}/site/${uesio/studio.name}"
-                                                      preventLinkTag: true
+                                                        uesio.styleTokens:
+                                                          root:
+                                                            - bg-emerald-600
+                                                            - text-white
+                                                        uesio.variant: uesio/appkit.badge
+                                                        text: Active
+                                            content:
+                                              - uesio/io.titlebar:
+                                                  uesio.variant: uesio/appkit.item_sub
+                                                  title: Domains
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.sitedomains
+                                                  labelPosition: none
+                                                  reference:
+                                                    components:
+                                                      - uesio/studio.sitedomain_link_tag:
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{app}/site/${uesio/studio.name}"
+                                                preventLinkTag: true
+                                      emptyState:
+                                        - uesio/io.emptystate:
+                                            uesio.variant: uesio/studio.main
+                                            title: No Sites
+                                            subtitle: You haven't created any yet.
+                                            icon: public

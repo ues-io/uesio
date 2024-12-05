@@ -84,6 +84,22 @@ type RecordIsNotNewCondition = {
 	type: "recordIsNotNew"
 }
 
+type RecordIsDeletedCondition = {
+	type: "recordIsDeleted"
+}
+
+type RecordIsNotDeletedCondition = {
+	type: "recordIsNotDeleted"
+}
+
+type RecordIsChangedCondition = {
+	type: "recordIsChanged"
+}
+
+type RecordIsNotChangedCondition = {
+	type: "recordIsNotChanged"
+}
+
 type RecordIsEditableCondition = {
 	type: "recordIsEditable"
 }
@@ -214,6 +230,10 @@ type DisplayCondition =
 	| FieldModeCondition
 	| RecordIsNewCondition
 	| RecordIsNotNewCondition
+	| RecordIsChangedCondition
+	| RecordIsNotChangedCondition
+	| RecordIsDeletedCondition
+	| RecordIsNotDeletedCondition
 	| RecordIsEditableCondition
 	| RecordIsNotEditableCondition
 	| RecordIsDeleteableCondition
@@ -341,6 +361,18 @@ function should(condition: DisplayCondition, context: Context): boolean {
 	if (type === "recordIsNew") return !!context.getRecord(wireName)?.isNew()
 
 	if (type === "recordIsNotNew") return !context.getRecord(wireName)?.isNew()
+
+	if (type === "recordIsChanged")
+		return !!context.getRecord(wireName)?.isChanged()
+
+	if (type === "recordIsNotChanged")
+		return !context.getRecord(wireName)?.isChanged()
+
+	if (type === "recordIsDeleted")
+		return !!context.getRecord(wireName)?.isDeleted()
+
+	if (type === "recordIsNotDeleted")
+		return !context.getRecord(wireName)?.isDeleted()
 
 	if (type === "recordIsEditable")
 		return !!context.getRecord(wireName)?.isEditable()

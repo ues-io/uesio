@@ -1,0 +1,5 @@
+name: featureflag
+type: DYNAMIC
+label: Feature Flag
+pluralLabel: Feature Flags
+public: true

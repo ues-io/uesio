@@ -232,13 +232,6 @@ definition:
                           title: Feature Flags
                       - uesio/io.box:
                           components:
-                            - uesio/studio.configfeatureflags:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                user: ${uesio/core.id}
-                                type: USER
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -343,10 +336,10 @@ definition:
                                             uesio.variant: uesio/appkit.avataricon
                                             text: fingerprint
                                       actions:
-                                        - uesio/io.box:
+                                        - uesio/io.group:
                                             components:
                                               - uesio/io.button:
-                                                  uesio.variant: uesio/io.nav
+                                                  uesio.variant: uesio/appkit.itemaction
                                                   icon: lock_reset
                                                   tooltip: Reset Password
                                                   uesio.context:
@@ -378,7 +371,7 @@ definition:
                                                       wires:
                                                         - loginmethods
                                                   icon: delete
-                                                  uesio.variant: uesio/io.nav
+                                                  uesio.variant: uesio/appkit.itemaction
                                   - uesio/io.box:
                                       uesio.styleTokens:
                                         root:

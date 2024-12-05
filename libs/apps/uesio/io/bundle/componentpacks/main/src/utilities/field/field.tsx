@@ -93,6 +93,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		reference,
 		setValue,
 		struct,
+		styleTokens,
 		text,
 		user,
 		value,
@@ -129,6 +130,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 		readonly,
 		record,
 		setValue,
+		styleTokens,
 		value,
 		variant,
 	}
@@ -143,6 +145,27 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
 	const referenceMetadata = fieldMetadata.getReferenceMetadata()
 
 	switch (displayType) {
+		case "ANY":
+			switch (displayAs) {
+				case "TEXT":
+					content = <TextField {...common} />
+					break
+				case "NUMBER":
+					content = (
+						<NumberField
+							{...common}
+							options={number}
+							type={"number"}
+						/>
+					)
+					break
+				case "TOGGLE":
+					content = <ToggleField {...common} />
+					break
+				default:
+					content = <TextField {...common} />
+			}
+			break
 		case "DATE":
 			content = <DateField {...common} />
 			break

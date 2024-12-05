@@ -1,9 +1,10 @@
 package limits
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"errors"
+	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -14,32 +15,16 @@ func GetLimitDomainsPerUser(user string, session *sess.Session) (int, error) {
 }
 
 func GetNumericLimit(numericLimitName, user string, session *sess.Session) (int, error) {
-	assignments := &meta.FeatureFlagAssignmentCollection{}
-	err := featureflagstore.GetValues(user, assignments, session)
+	flag, err := featureflagstore.GetFeatureFlag(numericLimitName, session, user)
 	if err != nil {
 		return 0, err
 	}
-	for _, assignment := range *assignments {
-		if assignment.Flag == numericLimitName {
-			if assignment.Value != nil {
-				if floatVal, ok := assignment.Value.(float64); ok {
-					return int(floatVal), nil
-				}
-			}
+	if flag.Value != nil {
+		fmt.Println("Found flag")
+		fmt.Println(flag.Value)
+		if floatVal, ok := flag.Value.(float64); ok {
+			return int(floatVal), nil
 		}
 	}
-	// If we didn't find an assignment, then we need to use the default value
-	featureFlag, err := meta.NewFeatureFlag(numericLimitName)
-	if err != nil {
-		return 0, err
-	}
-	err = bundle.Load(featureFlag, nil, session, nil)
-	if err != nil {
-		return 0, err
-	}
-	if featureFlag == nil || featureFlag.DefaultValue == nil {
-		return 0, nil
-	}
-
-	return featureFlag.DefaultValue.(int), nil
+	return 0, errors.New("No value found for feature flag: " + numericLimitName)
 }

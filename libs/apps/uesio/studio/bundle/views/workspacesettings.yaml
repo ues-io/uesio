@@ -18,6 +18,19 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
+    featureflags:
+      collection: uesio/core.featureflag
+      init:
+        query: false
+  events:
+    onload:
+      - signal: context/SET
+        type: WORKSPACE
+        name: $Param{workspacename}
+        app: $Param{app}
+      - signal: wire/LOAD
+        wires:
+          - featureflags
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -46,6 +59,36 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 text: settings
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/appkit.primary
+                                      text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: featureflags
+                                      signals:
+                                        - signal: context/SET
+                                          type: WORKSPACE
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - featureflags
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - featureflags
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/appkit.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: featureflags
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: featureflags
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection
                           components:
@@ -83,18 +126,26 @@ definition:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
+                          uesio.variant: uesio/appkit.section
                           components:
                             - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
+                                uesio.variant: uesio/appkit.sub
                                 title: Feature Flags
-                            - uesio/io.box:
+                            - uesio/io.deck:
+                                wire: featureflags
+                                uesio.variant: uesio/appkit.main
+                                mode: EDIT
+                                uesio.styleTokens:
+                                  root:
+                                    - pt-2
                                 components:
-                                  - uesio/studio.configfeatureflags:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
+                                  - uesio/studio.item_featureflag:
+                                emptyState:
+                                  - uesio/io.emptystate:
+                                      uesio.variant: uesio/studio.main
+                                      title: No Feature Flags
+                                      subtitle: This workspace has no feature flags to manage.
+                                      icon: new_releases
                       - uesio/appkit.section_audit_info:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section

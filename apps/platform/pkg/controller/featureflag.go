@@ -53,7 +53,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request format: "+err.Error()))
 		return
 	}
-	err = featureflagstore.SetValueFromKey(namespace+"."+name, setRequest.Value, setRequest.User, session)
+	err = featureflagstore.SetValue(namespace+"."+name, setRequest.Value, setRequest.User, session)
 	if err != nil {
 		// See if this is a flag validation error, and if so return a 400
 		if _, ok := err.(*featureflagstore.ValidationError); ok {
