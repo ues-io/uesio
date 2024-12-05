@@ -20,10 +20,8 @@ interface MarkDownFieldProps {
 type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
 
 const generateSlug = (content: ReactNode) => {
-	if (!Array.isArray(content)) return
-	if (!content.length) return
-	const contentString = content[0] as string
-	return contentString
+	if (!(typeof content === "string")) return
+	return content
 		.replace(/^\s+|\s+$/g, "")
 		.toLowerCase()
 		.replace(/[^a-z0-9 -]/g, "")

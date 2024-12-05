@@ -9,12 +9,58 @@ import (
 )
 
 func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	featureFlags, err := featureflagstore.GetFeatureFlags(session, session.GetContextUser().ID)
+
+	var userID string
+	// Currently, this doesn't work for regular contexts
+	if session.GetWorkspace() != nil {
+		userID = session.GetContextUser().ID
+	}
+	if session.GetSiteAdmin() != nil {
+		userCondition := extractConditionByField(op.Conditions, "userid")
+		if userCondition == nil {
+			return errors.New("You must provide a user condition in the site admin context.")
+		}
+		if userCondition.Value != nil {
+			var ok bool
+			userID, ok = userCondition.Value.(string)
+			if !ok {
+				return errors.New("invalid user condition value")
+			}
+		}
+		if userCondition.Values != nil {
+			values, ok := userCondition.Values.([]interface{})
+			if !ok {
+				return errors.New("invalid user condition value")
+			}
+			userID, ok = values[0].(string)
+			if !ok {
+				return errors.New("invalid user condition value")
+			}
+		}
+	}
+
+	if userID == "" {
+		return errors.New("No User Id provided to feature flag load.")
+	}
+
+	featureFlags, err := featureflagstore.GetFeatureFlags(session, userID)
 	if err != nil {
 		return errors.New("Failed to get feature flags: " + err.Error())
 	}
 
+	var orgOnly bool
+
+	orgCondition := extractConditionByField(op.Conditions, "org")
+
+	if orgCondition != nil && orgCondition.Value == true {
+		orgOnly = true
+	}
+
 	for _, flag := range *featureFlags {
+
+		if orgOnly && !flag.ValidForOrgs {
+			continue
+		}
 		opItem := op.Collection.NewItem()
 		err := opItem.SetField("uesio/core.name", flag.Name)
 		if err != nil {
@@ -40,7 +86,11 @@ func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		if err != nil {
 			return err
 		}
-		err = opItem.SetField("uesio/core.id", flag.Namespace+"."+flag.Name)
+		err = opItem.SetField("uesio/core.userid", flag.User)
+		if err != nil {
+			return err
+		}
+		err = opItem.SetField("uesio/core.id", flag.Namespace+"."+flag.Name+":"+flag.User)
 		if err != nil {
 			return err
 		}

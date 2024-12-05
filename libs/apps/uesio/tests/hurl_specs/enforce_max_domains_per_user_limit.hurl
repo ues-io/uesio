@@ -20,14 +20,24 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Set a limit of 1 domain per user
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/studio/max_domains_per_user
+POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+Accept: application/json
 {
-    "user": "{{user_id}}",
-    "value": 1
+    "wires": [
+        {
+            "collection":"uesio/core.featureflag",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/studio.max_domains_per_user:{{user_id}}",
+                    "uesio/core.value":1
+                }
+            }
+        }
+    ]
 }
 HTTP 200
 [Asserts]
-jsonpath "$.success" == true
+jsonpath "$.wires[0].errors" == null
 
 # Log back in as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
@@ -101,14 +111,24 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Bump up the limit
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/featureflags/uesio/studio/max_domains_per_user
+POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+Accept: application/json
 {
-    "user": "{{user_id}}",
-    "value": 100
+    "wires": [
+        {
+            "collection":"uesio/core.featureflag",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/studio.max_domains_per_user:{{user_id}}",
+                    "uesio/core.value":100
+                }
+            }
+        }
+    ]
 }
 HTTP 200
 [Asserts]
-jsonpath "$.success" == true
+jsonpath "$.wires[0].errors" == null
 
 # Log back in as uesio
 POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login

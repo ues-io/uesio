@@ -362,12 +362,6 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
 
-	// Feature Flag Routes
-	wr.HandleFunc("/featureflags", controller.FeatureFlag).Methods("GET")
-	sa.HandleFunc("/featureflags/{user}", controller.FeatureFlag).Methods("GET")
-	wr.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
-	sa.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
-
 	// Version context specific routes
 	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
 	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")
