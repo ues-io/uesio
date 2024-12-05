@@ -29,6 +29,13 @@ func Pack(options *PackOptions) error {
 		"@uesio/ui":        "uesio",
 		"react-dom/server": "ReactDOM",
 		"react-dom/client": "ReactDOM",
+		// We're adding "react/jsx-runtime" here as a global
+		// because we were running into issues with the
+		// react-hotkeys-hook library adding a module import for
+		// "react/jsx-runtime". I'm not sure exactly what the global
+		// value for "react/jsx-runtime" should be, but setting it
+		// to React seems to fix the issue.
+		"react/jsx-runtime": "jsxRuntime",
 	}
 
 	entryPoints, err := pack.CreateEntryFiles()

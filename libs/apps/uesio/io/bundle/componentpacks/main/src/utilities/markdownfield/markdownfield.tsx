@@ -1,10 +1,14 @@
-import { FC, ReactNode } from "react"
+import { ClassAttributes, FC, HTMLAttributes, ReactNode } from "react"
 import { api, definition, styles, context, wire } from "@uesio/ui"
-import ReactMarkdown from "react-markdown"
+import ReactMarkdown, { ExtraProps } from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import CodeField from "../codefield/codefield"
+
+import languageTypescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript"
+
+SyntaxHighlighter.registerLanguage("typescript", languageTypescript)
 
 interface MarkDownFieldProps {
 	setValue?: (value: wire.FieldValue) => void
@@ -14,12 +18,6 @@ interface MarkDownFieldProps {
 }
 
 type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
-
-type HeaderProps = {
-	level: number
-	className: string
-	children: ReactNode
-}
 
 const generateSlug = (content: ReactNode) => {
 	if (!Array.isArray(content)) return
@@ -33,8 +31,12 @@ const generateSlug = (content: ReactNode) => {
 		.replace(/-+/g, "-")
 }
 
-const Heading: FC<HeaderProps> = ({ level, className, children }) => {
-	const Element = ("h" + level) as HeadingElement
+const Heading: FC<
+	ClassAttributes<HTMLHeadingElement> &
+		HTMLAttributes<HTMLHeadingElement> &
+		ExtraProps
+> = ({ node, className, children }) => {
+	const Element = (node?.tagName || "h1") as HeadingElement
 	return (
 		<Element id={generateSlug(children)} className={className}>
 			{children}
@@ -55,6 +57,7 @@ const StyleDefaults = Object.freeze({
 	ul: [],
 	li: [],
 	code: [],
+	codeInline: [],
 	a: [],
 	img: [],
 	imgWrapper: [],
@@ -154,21 +157,18 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
 						{props.children}
 					</a>
 				),
-				code: ({ node, inline, className, children, ...props }) => {
+				pre: ({ children }) => <>{children}</>,
+				code: ({ node, className, children, ...props }) => {
 					const match = /language-(\w+)/.exec(className || "")
-					return !inline && match ? (
-						<div className={classes.code}>
-							<SyntaxHighlighter
-								{...props}
-								className={classes.code}
-								children={String(children).replace(/\n$/, "")}
-								style={materialDark}
-								language={match[1]}
-								PreTag="div"
-							/>
-						</div>
+					return match ? (
+						<SyntaxHighlighter
+							className={classes.code}
+							children={String(children).replace(/\n$/, "")}
+							style={materialDark}
+							language={match[1]}
+						/>
 					) : (
-						<span className={classes.code}>
+						<span className={classes.codeInline}>
 							<code {...props} className={className}>
 								{children}
 							</code>

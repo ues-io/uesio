@@ -10,7 +10,6 @@ import * as collection from "../hooks/collectionapi"
 import * as configvalue from "../hooks/configvalueapi"
 import * as secret from "../hooks/secretapi"
 import * as notification from "../hooks/notificationapi"
-import * as featureflag from "../hooks/featureflagapi"
 import * as bot from "../hooks/botapi"
 import * as integration from "../hooks/integrationapi"
 import * as event from "../hooks/eventapi"
@@ -27,7 +26,6 @@ export {
 	collection,
 	configvalue,
 	secret,
-	featureflag,
 	notification,
 	bot,
 	integration,
