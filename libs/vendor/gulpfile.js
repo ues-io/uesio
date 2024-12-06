@@ -3,7 +3,6 @@ const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
 const fontsSrc = "fonts/**"
-const nodeModules = "../../node_modules"
 const devMode = process.env.UESIO_DEV === "true"
 
 ////////////////////////////
@@ -18,6 +17,7 @@ const MONACO = "monaco-editor"
 const modules = [
 	{
 		name: REACT,
+		module: REACT,
 		path: `umd/react.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
 		preload: true,
@@ -25,13 +25,24 @@ const modules = [
 	},
 	{
 		name: REACT_DOM,
+		module: REACT_DOM,
 		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
 		dest: "umd",
 		preload: true,
 		order: 2,
 	},
 	{
+		name: "react/jsx-runtime",
+		module: REACT,
+		base: "files",
+		path: "umd/react-jsx-runtime.production.min.js",
+		dest: "umd",
+		preload: true,
+		order: 3,
+	},
+	{
 		name: MONACO,
+		module: MONACO,
 		src: "min/vs/**",
 		dest: "min/vs",
 	},
@@ -50,10 +61,10 @@ function clean(cb) {
 
 function generateVendorManifest(cb) {
 	const vendorManifest = modules.reduce(
-		(manifestObj, { name: module, path, preload = false, order }) => {
+		(manifestObj, { name, module, path, preload = false, order }) => {
 			const { version } = packageLock.packages[`node_modules/${module}`]
 			console.log(`Using ${module}@${version}`)
-			manifestObj[module] = {
+			manifestObj[name] = {
 				version,
 				path,
 				preload,
@@ -70,18 +81,20 @@ function generateVendorManifest(cb) {
 	)
 }
 
-const scriptTasks = modules.map(({ src, dest, path, name: module }) => {
-	const { version } = packageLock.packages[`node_modules/${module}`]
-	const gulpSrc = [nodeModules, module, src, path]
-		.filter((x) => !!x)
-		.join("/")
-	const gulpDest = [distVendor, module, version, dest]
-		.filter((x) => !!x)
-		.join("/")
-	return function () {
-		return gulp.src(gulpSrc, { encoding: false }).pipe(gulp.dest(gulpDest))
+const scriptTasks = modules.map(
+	({ src, dest, path, base = "../../node_modules", module, name }) => {
+		const { version } = packageLock.packages[`node_modules/${module}`]
+		const gulpSrc = [base, module, src, path].filter((x) => !!x).join("/")
+		const gulpDest = [distVendor, name, version, dest]
+			.filter((x) => !!x)
+			.join("/")
+		return function () {
+			return gulp
+				.src(gulpSrc, { encoding: false })
+				.pipe(gulp.dest(gulpDest))
+		}
 	}
-})
+)
 
 const moveFonts = () =>
 	gulp
