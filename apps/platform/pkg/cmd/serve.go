@@ -348,20 +348,6 @@ func serve(cmd *cobra.Command, args []string) {
 	wr.HandleFunc(viewPath+"/preview", controller.ViewPreview(false)).Methods(http.MethodGet)
 	wr.HandleFunc(viewPath+"/edit", controller.ViewPreview(true)).Methods(http.MethodGet)
 
-	// Config Value Routes
-	wr.HandleFunc("/configvalues", controller.ConfigValues).Methods("GET")
-	sa.HandleFunc("/configvalues", controller.ConfigValues).Methods("GET")
-	wr.HandleFunc("/configvalues/"+itemParam, controller.SetConfigValue).Methods("POST")
-	sa.HandleFunc("/configvalues/"+itemParam, controller.SetConfigValue).Methods("POST")
-
-	sr.HandleFunc("/configvalues/{key}", controller.ConfigValue).Methods("GET")
-
-	// Secrets Routes
-	wr.HandleFunc("/secrets", controller.Secrets).Methods("GET")
-	sa.HandleFunc("/secrets", controller.Secrets).Methods("GET")
-	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
-	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
-
 	// Version context specific routes
 	vr.HandleFunc("/metadata/generate/"+itemParam, controller.Generate).Methods("POST")
 	vr.HandleFunc("/bots/params/{type}/"+itemParam, controller.GetBotParams).Methods("GET")

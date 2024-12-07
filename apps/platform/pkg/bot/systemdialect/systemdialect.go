@@ -199,6 +199,10 @@ func getLoadBotFunc(botKey, collectionName string) LoadBotFunc {
 		return runUserfileLoadBot
 	case "uesio/core.featureflag":
 		return runFeatureFlagLoadBot
+	case "uesio/core.configvalue":
+		return runConfigValueLoadBot
+	case "uesio/core.secret":
+		return runSecretLoadBot
 	case "uesio/core.myintegrationcredentials":
 		return runMyIntegrationCredentialsLoadBot
 	case "uesio/studio.recentmetadata":
@@ -236,6 +240,10 @@ func getSaveBotFunc(botKey, collectionName string) SaveBotFunc {
 		return runUserfileSaveBot
 	case "uesio/core.featureflag":
 		return runFeatureFlagSaveBot
+	case "uesio/core.configvalue":
+		return runConfigValueSaveBot
+	case "uesio/core.secret":
+		return runSecretSaveBot
 	}
 
 	if meta.IsBundleableCollection(collectionName) {

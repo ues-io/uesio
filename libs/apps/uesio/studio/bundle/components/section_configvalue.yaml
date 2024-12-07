@@ -1,0 +1,116 @@
+name: section_configvalue
+category: LAYOUT
+title: Config Value Section
+type: DECLARATIVE
+discoverable: false
+description:
+properties:
+sections:
+  - type: HOME
+  - type: DISPLAY
+definition:
+  - uesio/io.dynamicpanel:
+      uesio.id: editConfigValue
+      uesio.type: uesio/io.dialog
+      width: 400px
+      height: 300px
+      title: Update Config Value
+      components:
+        - uesio/io.field:
+            fieldId: value
+      actions:
+        - uesio/io.button:
+            text: Done
+            uesio.variant: uesio/appkit.primary
+            signals:
+              - signal: component/CALL
+                component: uesio/io.dynamicpanel
+                componentsignal: TOGGLE
+                targettype: specific
+                componentid: editConfigValue
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.primarysection
+      components:
+        - uesio/io.titlebar:
+            uesio.variant: uesio/appkit.sub
+            title: Config Values
+        - uesio/io.deck:
+            wire: configvalues
+            uesio.variant: uesio/appkit.main
+            mode: EDIT
+            uesio.styleTokens:
+              root:
+                - pt-2
+            components:
+              - uesio/io.card:
+                  uesio.variant: uesio/appkit.main
+                  title: $If{[${label}][${label}][${name}]}
+                  subtitle: ${value}
+                  avatar:
+                    - uesio/io.text:
+                        uesio.variant: uesio/appkit.avataricon
+                        text: tune
+                  content:
+                  actions:
+                    - uesio/io.group:
+                        uesio.styleTokens:
+                          root:
+                            - gap-4
+                        components:
+                          - uesio/io.button:
+                              uesio.variant: uesio/appkit.itemaction
+                              icon: edit
+                              tooltip: Edit
+                              signals:
+                                - signal: component/CALL
+                                  component: uesio/io.dynamicpanel
+                                  componentsignal: TOGGLE
+                                  targettype: specific
+                                  componentid: editConfigValue
+                          - uesio/io.button:
+                              uesio.variant: uesio/appkit.itemaction
+                              icon: delete
+                              tooltip: Remove Value
+                              signals:
+                                - signal: wire/MARK_FOR_DELETE
+                              uesio.display:
+                                - type: fieldValue
+                                  value: true
+                                  field: has_value
+                                - type: recordIsNotDeleted
+                          - uesio/io.text:
+                              uesio.variant: uesio/appkit.badge
+                              text: Default
+                              uesio.styleTokens:
+                                root:
+                                  - bg-primary-100
+                                  - text-primary-500
+                                  - font-medium
+                              uesio.display:
+                                - type: fieldValue
+                                  value: false
+                                  field: has_value
+                                - type: hasValue
+                                  value: ${value}
+                                - type: recordIsNotChanged
+                          - uesio/io.text:
+                              uesio.variant: uesio/appkit.badge
+                              text: Not Set
+                              uesio.styleTokens:
+                                root:
+                                  - bg-cyan-100
+                                  - text-cyan-500
+                                  - font-medium
+                              uesio.display:
+                                - type: fieldValue
+                                  value: false
+                                  field: has_value
+                                - type: hasNoValue
+                                  value: ${value}
+                                - type: recordIsNotChanged
+            emptyState:
+              - uesio/io.emptystate:
+                  uesio.variant: uesio/studio.main
+                  title: No Config Values
+                  subtitle: This workspace has no config values to manage.
+                  icon: tune

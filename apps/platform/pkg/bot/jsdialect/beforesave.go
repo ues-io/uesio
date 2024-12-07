@@ -51,7 +51,7 @@ func (bs *BeforeSaveAPI) RunIntegrationAction(integrationID string, action strin
 }
 
 func (bs *BeforeSaveAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, bs.session)
+	return configstore.GetValue(configValueKey, bs.session)
 }
 
 func (bs *BeforeSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

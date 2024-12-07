@@ -73,7 +73,7 @@ func (cba *CallBotAPI) CallBot(botKey string, params map[string]interface{}) (in
 }
 
 func (cba *CallBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, cba.Session)
+	return configstore.GetValue(configValueKey, cba.Session)
 }
 
 func (cba *CallBotAPI) GetSession() *SessionAPI {

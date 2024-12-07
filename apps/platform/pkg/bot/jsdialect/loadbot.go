@@ -117,7 +117,7 @@ func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
 }
 
 func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, lb.getSession())
+	return configstore.GetValue(configValueKey, lb.getSession())
 }
 
 func (lb *LoadBotAPI) GetSession() *SessionAPI {

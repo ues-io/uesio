@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/credentials"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -53,9 +54,9 @@ func GetCredentials(key string, session *sess.Session) (*wire.Credentials, error
 func getEntryValue(entry *credentials.CredentialEntry, session *sess.Session) (string, error) {
 	switch entry.Type {
 	case "secret":
-		return GetSecretFromKey(entry.Value, session)
+		return secretstore.GetSecret(entry.Value, session)
 	case "configvalue":
-		return configstore.GetValueFromKey(entry.Value, session)
+		return configstore.GetValue(entry.Value, session)
 	case "merge":
 		return configstore.Merge(entry.Value, session)
 	}

@@ -6,14 +6,16 @@ import (
 	"os"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type SecretStore interface {
-	Get(key string, session *sess.Session) (string, error)
+	Get(key string, session *sess.Session) (*meta.SecretStoreValue, error)
 	Set(key, value string, session *sess.Session) error
+	Remove(key string, session *sess.Session) error
 }
 
 var secretStoreMap = map[string]SecretStore{}
@@ -38,15 +40,37 @@ func getEnvironmentVariableName(secret *meta.Secret) string {
 	return strings.ToUpper(fmt.Sprintf("UESIO_SECRET_%s_%s", strings.ReplaceAll(secret.Namespace, "/", "_"), secret.Name))
 }
 
-func GetSecret(secret *meta.Secret, session *sess.Session) (string, error) {
+func GetSecrets(session *sess.Session) (*meta.SecretCollection, error) {
+
+	allSecrets := meta.SecretCollection{}
+	err := bundle.LoadAllFromAny(&allSecrets, nil, session, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	secrets := meta.SecretCollection{}
+	for i := range allSecrets {
+		sec := allSecrets[i]
+		if sec.ManagedBy == "app" || sec.Store == "environment" {
+			continue
+		}
+		secrets = append(secrets, sec)
+	}
+
+	return &secrets, nil
+}
+
+func getSecretInternal(secret *meta.Secret, session *sess.Session) (string, error) {
 	store, err := GetSecretStore(secret.Store)
 	if err != nil {
 		return "", err
 	}
-	value, err := store.Get(secret.GetKey(), session)
-	// Happy path - found the value in the secret store
-	if err == nil {
-		return value, nil
+	secretValue, err := store.Get(secret.GetKey(), session)
+	if err != nil {
+		return "", err
+	}
+	if secretValue != nil && secretValue.Value != "" {
+		return secretValue.Value, nil
 	}
 	// If the secret was not found, and we were NOT looking in the environment store,
 	// check for an environment variable default using the UESIO_SECRET_ naming convention
@@ -59,10 +83,52 @@ func GetSecret(secret *meta.Secret, session *sess.Session) (string, error) {
 	return "", err
 }
 
-func SetSecret(secret *meta.Secret, value string, session *sess.Session) error {
+func setSecretInternal(secret *meta.Secret, value string, session *sess.Session) error {
 	store, err := GetSecretStore(secret.Store)
 	if err != nil {
 		return err
 	}
 	return store.Set(secret.GetKey(), value, session)
+}
+
+func GetSecret(key string, session *sess.Session) (string, error) {
+	if key == "" {
+		return "", nil
+	}
+	secret, err := meta.NewSecret(key)
+	if err != nil {
+		return "", err
+	}
+	if err = bundle.Load(secret, nil, session, nil); err != nil {
+		return "", err
+	}
+	return getSecretInternal(secret, session)
+
+}
+
+func SetSecret(key, value string, session *sess.Session) error {
+	secret, err := meta.NewSecret(key)
+	if err != nil {
+		return err
+	}
+	if err = bundle.Load(secret, nil, session, nil); err != nil {
+		return err
+	}
+	return setSecretInternal(secret, value, session)
+}
+
+func Remove(key string, session *sess.Session) error {
+	secret, err := meta.NewSecret(key)
+	if err != nil {
+		return err
+	}
+	err = bundle.Load(secret, nil, session, nil)
+	if err != nil {
+		return err
+	}
+	store, err := GetSecretStore(secret.Store)
+	if err != nil {
+		return err
+	}
+	return store.Remove(key, session)
 }

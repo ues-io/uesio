@@ -135,7 +135,5 @@ definition:
                           signals:
                             - signal: wire/MARK_FOR_DELETE
                             - signal: wire/SAVE
-                              wires:
-                                - views
                             - signal: route/NAVIGATE
                               path: app/$Param{app}/workspace/$Param{workspacename}/views

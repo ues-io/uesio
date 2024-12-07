@@ -62,7 +62,7 @@ func (as *AfterSaveAPI) RunIntegrationAction(integrationID string, action string
 }
 
 func (as *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, as.session)
+	return configstore.GetValue(configValueKey, as.session)
 }
 
 func (as *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

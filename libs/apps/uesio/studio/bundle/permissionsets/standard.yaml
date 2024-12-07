@@ -243,6 +243,8 @@ collections:
     edit: false
     delete: true
   uesio/core.signupmethod: true
+  uesio/core.configvalue: true
+  uesio/core.secret: true
   uesio/core.bulkjob: true
   uesio/studio.app: true
   uesio/studio.bot: true

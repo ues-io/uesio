@@ -1,6 +1,6 @@
 name: name
 type: TEXT
-label: Feature flag name
+label: Name
 required: true
 createOnly: true
 validate:

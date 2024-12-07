@@ -31,7 +31,6 @@ import { ServerWire } from "../bands/wire/types"
 import { transformServerWire } from "../bands/wire/transform"
 import {
 	Bundleable,
-	BundleableBase,
 	METADATA,
 	MetadataKey,
 	MetadataType,
@@ -110,16 +109,6 @@ type BotResponse = {
 type IntegrationActionMetadata = {
 	inputs?: ParamDefinition[]
 }
-
-type ConfigValueResponse = {
-	value: string
-	managedby: string
-} & BundleableBase
-
-type SecretResponse = {
-	managedby: string
-	value: string
-} & BundleableBase
 
 interface BaseFeatureFlag extends Bundleable {
 	user: string
@@ -596,42 +585,6 @@ const platform = {
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
 		return getJSON(context, `${prefix}/metadata/namespaces${mdTypeUrl}`)
 	},
-	getConfigValues: async (context: Context): Promise<ConfigValueResponse[]> =>
-		getJSON(context, `${getPrefix(context)}/configvalues`),
-	setConfigValue: async (
-		context: Context,
-		key: string,
-		value: string
-	): Promise<BotResponse> => {
-		const prefix = getPrefix(context)
-		const [namespace, name] = parseKey(key)
-		const response = await postJSON(
-			context,
-			`${prefix}/configvalues/${namespace}/${name}`,
-			{
-				value,
-			}
-		)
-		return respondJSON(response)
-	},
-	getSecrets: async (context: Context): Promise<SecretResponse[]> =>
-		getJSON(context, `${getPrefix(context)}/secrets`),
-	setSecret: async (
-		context: Context,
-		key: string,
-		value: string
-	): Promise<BotResponse> => {
-		const prefix = getPrefix(context)
-		const [namespace, name] = parseKey(key)
-		const response = await postJSON(
-			context,
-			`${prefix}/secrets/${namespace}/${name}`,
-			{
-				value,
-			}
-		)
-		return respondJSON(response)
-	},
 	deleteAuthCredentials: async (
 		context: Context,
 		integrationName: MetadataKey
@@ -827,8 +780,6 @@ export type {
 	AutocompleteResponse,
 	BotResponse,
 	BotParams,
-	ConfigValueResponse,
-	SecretResponse,
 	CheckboxFeatureFlag,
 	NumberFeatureFlag,
 	FeatureFlagResponse,

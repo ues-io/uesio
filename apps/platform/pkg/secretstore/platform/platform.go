@@ -12,15 +12,15 @@ import (
 type SecretStore struct {
 }
 
-func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
-	var s meta.SecretStoreValue
+func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
+	s := &meta.SecretStoreValue{}
 	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if err = datasource.PlatformLoadOne(
-		&s,
+		s,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
@@ -36,9 +36,9 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
 		},
 		versionSession,
 	); err != nil {
-		return "", exceptions.NewNotFoundException("Secret Value not found: " + key)
+		return nil, exceptions.NewNotFoundException("Secret Value not found: " + key)
 	}
-	return s.Value, nil
+	return s, nil
 }
 
 func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
@@ -54,4 +54,25 @@ func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
 	return datasource.PlatformSaveOne(&s, &wire.SaveOptions{
 		Upsert: true,
 	}, nil, versionSession)
+}
+
+func (ss *SecretStore) Remove(key string, session *sess.Session) error {
+	// Enter into a version context to be able to interact with the uesio/core.configstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
+
+	secretStoreValue, err := ss.Get(key, session)
+	if err != nil {
+		if exceptions.IsNotFoundException(err) {
+			return nil
+		}
+	}
+
+	if secretStoreValue == nil {
+		return nil
+	}
+
+	return datasource.PlatformDeleteOne(secretStoreValue, nil, versionSession)
 }
