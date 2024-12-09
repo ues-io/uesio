@@ -9,13 +9,24 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 }
 
 # Set the value of the Resend key so that we can test it
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/appkit/resend_key
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": "this-is-my-key"
+    "wires": [
+        {
+            "collection":"uesio/core.secret",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/appkit.resend_key",
+                    "uesio/core.value":"this-is-my-key"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
 [Asserts]
-jsonpath "$.success" == true
+jsonpath "$.wires[0].errors" == null
 
 # Test a direct wire load on the collection --- should not be accessible because it is not public
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

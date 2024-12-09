@@ -1,5 +1,5 @@
 ######################################################
-# Tests loading a wire whose source collection 
+# Tests loading a wire whose source collection
 # is an external integration with API_KEY auth
 ######################################################
 
@@ -16,13 +16,26 @@ session_id: cookie "sessid"
 # we need to populate the session id secret with our current session id,
 # since we don't have Uesio API Keys, the only way to access Uesio is with a sessid cookie,
 # so we have to recreate that.
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/secrets/uesio/tests/test_session_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": "{{session_id}}"
+    "wires": [
+        {
+            "collection":"uesio/core.secret",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/tests.test_session_id",
+                    "uesio/core.value":"{{session_id}}"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
-# Test a wire load on the weather forecast with API KEY auth 
+# Test a wire load on the weather forecast with API KEY auth
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
