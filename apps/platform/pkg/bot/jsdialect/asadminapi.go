@@ -29,7 +29,7 @@ func (aaa *AsAdminApi) CallBot(botKey string, params map[string]interface{}) (in
 }
 
 func (aaa *AsAdminApi) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(aaa.session))
+	return configstore.GetValue(configValueKey, datasource.GetSiteAdminSession(aaa.session))
 }
 
 func (aaa *AsAdminApi) Load(request BotLoadOp) (*wire.Collection, error) {

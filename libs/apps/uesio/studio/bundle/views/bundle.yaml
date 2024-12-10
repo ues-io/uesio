@@ -220,7 +220,5 @@ definition:
                           signals:
                             - signal: wire/MARK_FOR_DELETE
                             - signal: wire/SAVE
-                              wires:
-                                - "bundles"
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{app}"

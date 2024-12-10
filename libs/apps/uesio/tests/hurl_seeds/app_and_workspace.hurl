@@ -214,11 +214,24 @@ workspace_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 jsonpath "$.wires[0].errors" == null
 
 # Set the google auth source config client id value for the workspace
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": "A client id"
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/core.google_auth_client_id",
+                    "uesio/core.value":"A client id"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Create a sample metadata item within the workspace,
 # to verify that when we do a deploy, the value is overridden and the workspace bundle cache is invalidated

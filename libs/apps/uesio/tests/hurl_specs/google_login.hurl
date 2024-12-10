@@ -6,17 +6,43 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 HTTP 200
 
 # Unset the google auth source config client id value
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+Accept: application/json
 {
-    "value": ""
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/core.google_auth_client_id",
+                    "uesio/core.value":""
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Verify that the google auth source config client id value was unset
-GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$[1].value" == ""
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[4]['uesio/core.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
+jsonpath "$.wires[0].data[4]['uesio/core.value']" == ""
 
 # Log in to google with the wrong client id
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
@@ -29,17 +55,43 @@ HTTP 400
 body == "google login: no client id associated with auth source\n"
 
 # Set the google auth source config client id value
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+Accept: application/json
 {
-    "value": "A Totally Valid Token"
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/core.google_auth_client_id",
+                    "uesio/core.value":"A Totally Valid Token"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Verify that the google auth source config client id value was set
-GET https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$[4].value" == "A Totally Valid Token"
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[4]['uesio/core.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
+jsonpath "$.wires[0].data[4]['uesio/core.value']" == "A Totally Valid Token"
 
 # Log in to google with missing credentials
 POST https://tests.{{domain}}:{{port}}/site/auth/uesio/core/google/login
@@ -63,17 +115,43 @@ body == "idtoken: audience provided does not match aud claim in the JWT\n"
 # Now try to set the token in a workspace and then try to login
 
 # Unset the google auth source config client id value
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": ""
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/core.google_auth_client_id",
+                    "uesio/core.value":""
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Verify that the google auth source config client id value was unset
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$[4].value" == ""
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[4]['uesio/core.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
+jsonpath "$.wires[0].data[4]['uesio/core.value']" == ""
 
 # Log in to google in the workspace context (it should not have a client id set
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/google/login
@@ -86,17 +164,43 @@ HTTP 400
 body == "google login: no client id associated with auth source\n"
 
 # Set the google auth source config client id value
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/core/google_auth_client_id
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": "A Valid Token for Workspace"
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/core.google_auth_client_id",
+                    "uesio/core.value":"A Valid Token for Workspace"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Verify that the google auth source config client id value was set
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$[4].value" == "A Valid Token for Workspace"
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[4]['uesio/core.namespace']" == "uesio/core"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
+jsonpath "$.wires[0].data[4]['uesio/core.value']" == "A Valid Token for Workspace"
 
 # Log in to google with the wrong client id
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/auth/uesio/core/google/login

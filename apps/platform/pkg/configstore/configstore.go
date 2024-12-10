@@ -10,9 +10,10 @@ import (
 )
 
 type ConfigStore interface {
-	Get(key string, session *sess.Session) (string, error)
-	GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error)
+	Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error)
+	GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error)
 	Set(key, value string, session *sess.Session) error
+	Remove(key string, session *sess.Session) error
 }
 
 var configStoreMap = map[string]ConfigStore{}
@@ -69,7 +70,7 @@ func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.C
 
 		// Now make a map of our results
 		valuesMap := map[string]string{}
-		for _, value := range values {
+		for _, value := range *values {
 			valuesMap[value.Key] = value.Value
 		}
 
@@ -77,8 +78,10 @@ func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.C
 			value, ok := valuesMap[cv.GetKey()]
 			if !ok || value == "" {
 				cv.Value = cv.DefaultValue
+				cv.HasValue = false
 				continue
 			}
+			cv.HasValue = true
 			cv.Value = value
 		}
 
@@ -99,7 +102,7 @@ func RegisterConfigStore(name string, store ConfigStore) {
 	configStoreMap[name] = store
 }
 
-func GetValueFromKey(key string, session *sess.Session) (string, error) {
+func GetValue(key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
 	}
@@ -113,10 +116,10 @@ func GetValueFromKey(key string, session *sess.Session) (string, error) {
 		return "", err
 	}
 
-	return GetValue(configValue, session)
+	return getValueInternal(configValue, session)
 }
 
-func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
+func getValueInternal(cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	store, err := GetConfigStore(cv.Store)
 	if err != nil {
 		return "", err
@@ -125,8 +128,8 @@ func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if storeValue != "" {
-		return storeValue, nil
+	if storeValue != nil && storeValue.Value != "" {
+		return storeValue.Value, nil
 	}
 	if cv.DefaultValue != "" {
 		return cv.DefaultValue, nil
@@ -134,7 +137,7 @@ func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	return "", nil
 }
 
-func SetValueFromKey(key, value string, session *sess.Session) error {
+func SetValue(key, value string, session *sess.Session) error {
 	configValue, err := meta.NewConfigValue(key)
 	if err != nil {
 		return err
@@ -143,20 +146,16 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return SetValue(configValue, value, session)
-}
-
-func SetValue(cv *meta.ConfigValue, value string, session *sess.Session) error {
-	store, err := GetConfigStore(cv.Store)
+	store, err := GetConfigStore(configValue.Store)
 	if err != nil {
 		return err
 	}
-	return store.Set(cv.GetKey(), value, session)
+	return store.Set(configValue.GetKey(), value, session)
 }
 
 func Merge(template string, session *sess.Session) (string, error) {
 	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
-		return GetValueFromKey(key, session)
+		return GetValue(key, session)
 	})
 	if err != nil {
 		return "", err
@@ -167,4 +166,20 @@ func Merge(template string, session *sess.Session) (string, error) {
 		return "", err
 	}
 	return value, nil
+}
+
+func Remove(key string, session *sess.Session) error {
+	configValue, err := meta.NewConfigValue(key)
+	if err != nil {
+		return err
+	}
+	err = bundle.Load(configValue, nil, session, nil)
+	if err != nil {
+		return err
+	}
+	store, err := GetConfigStore(configValue.Store)
+	if err != nil {
+		return err
+	}
+	return store.Remove(key, session)
 }

@@ -15,6 +15,7 @@ type ConfigValue struct {
 	ManagedBy      string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
 	DefaultValue   string `yaml:"defaultValue,omitempty" json:"uesio/studio.defaultvalue"`
 	Value          string `yaml:"-" json:"-"`
+	HasValue       bool   `yaml:"-" json:"-"`
 }
 
 type ConfigValueWrapper ConfigValue

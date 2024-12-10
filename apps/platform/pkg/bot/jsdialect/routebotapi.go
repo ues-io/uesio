@@ -186,7 +186,7 @@ func (rba *RouteBotAPI) CallBot(botKey string, params map[string]interface{}) (i
 }
 
 func (rba *RouteBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, rba.session)
+	return configstore.GetValue(configValueKey, rba.session)
 }
 
 func (rba *RouteBotAPI) GetSession() *SessionAPI {

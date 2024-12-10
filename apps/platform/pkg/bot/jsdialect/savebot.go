@@ -89,7 +89,7 @@ func (sb *SaveBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectio
 	return NewBotCollectionMetadata(collectionMetadata), nil
 }
 func (sba *SaveBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, sba.getSession())
+	return configstore.GetValue(configValueKey, sba.getSession())
 }
 
 func (sba *SaveBotAPI) GetSession() *SessionAPI {

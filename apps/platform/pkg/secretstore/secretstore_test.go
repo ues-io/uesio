@@ -21,15 +21,21 @@ type mockStore struct {
 	vals map[string]string
 }
 
-func (ms *mockStore) Get(key string, session *sess.Session) (string, error) {
+func (ms *mockStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
 	if val, isPresent := ms.vals[key]; isPresent {
-		return val, nil
+		return &meta.SecretStoreValue{
+			Value: val,
+			Key:   key,
+		}, nil
 	} else {
-		return "", exceptions.NewNotFoundException("secret not found: " + key)
+		return nil, exceptions.NewNotFoundException("secret not found: " + key)
 	}
 }
 func (ms *mockStore) Set(key, value string, session *sess.Session) error {
 	ms.vals[key] = value
+	return nil
+}
+func (ms *mockStore) Remove(key string, session *sess.Session) error {
 	return nil
 }
 
@@ -66,14 +72,13 @@ func TestGetSecret(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			secret := &meta.Secret{
+			got, err := getSecretInternal(&meta.Secret{
 				BundleableBase: meta.BundleableBase{
 					Name:      tt.secretName,
 					Namespace: tt.secretNamespace,
 				},
 				Store: "mock",
-			}
-			got, err := GetSecret(secret, nil)
+			}, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSecret() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -12,15 +12,15 @@ import (
 type ConfigStore struct {
 }
 
-func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
-	var cv meta.ConfigStoreValue
+func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
+	cv := &meta.ConfigStoreValue{}
 	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	err = datasource.PlatformLoadOne(
-		&cv,
+		cv,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
@@ -37,17 +37,17 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 		versionSession)
 	if err != nil {
 		if exceptions.IsNotFoundException(err) {
-			return "", nil
+			return nil, nil
 		}
-		return "", err
+		return nil, err
 
 	}
-	return cv.Value, nil
+	return cv, nil
 }
 
-func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
+func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
-	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	// Enter into a version context to be able to interact with the uesio/core.configstorevalue collection
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.Confi
 	if err != nil {
 		return nil, err
 	}
-	return results, nil
+	return &results, nil
 }
 
 func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
@@ -83,7 +83,7 @@ func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
 		Key:   key,
 		Value: value,
 	}
-	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	// Enter into a version context to be able to interact with the uesio/core.configstorevalue collection
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 	if err != nil {
 		return err
@@ -91,4 +91,23 @@ func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
 	return datasource.PlatformSaveOne(&cv, &wire.SaveOptions{
 		Upsert: true,
 	}, nil, versionSession)
+}
+
+func (cs *ConfigStore) Remove(key string, session *sess.Session) error {
+	// Enter into a version context to be able to interact with the uesio/core.configstorevalue collection
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		return err
+	}
+
+	configStoreValue, err := cs.Get(key, session)
+	if err != nil {
+		return err
+	}
+
+	if configStoreValue == nil {
+		return nil
+	}
+
+	return datasource.PlatformDeleteOne(configStoreValue, nil, versionSession)
 }

@@ -132,25 +132,5 @@ definition:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection
                           components:
+                      - uesio/studio.section_featureflag:
                       - uesio/appkit.section_audit_info:
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/appkit.sub
-                                title: Feature Flags
-                            - uesio/io.deck:
-                                wire: featureflags
-                                uesio.variant: uesio/appkit.main
-                                mode: EDIT
-                                uesio.styleTokens:
-                                  root:
-                                    - pt-2
-                                components:
-                                  - uesio/studio.item_featureflag:
-                                emptyState:
-                                  - uesio/io.emptystate:
-                                      uesio.variant: uesio/studio.main
-                                      title: No Feature Flags
-                                      subtitle: This workspace has no feature flags to manage.
-                                      icon: new_releases

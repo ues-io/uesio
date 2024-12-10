@@ -8,7 +8,7 @@ export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 # this enables {{unix_epoch_seconds}} variable to be used within tests to add some uniqueness to seed values
 export HURL_unix_epoch_seconds=$(date +%s)
 export HURL_num_common_fields=8
-export HURL_num_public_core_collections=13
+export HURL_num_public_core_collections=14
 export HURL_num_tests_collections=11
 export HURL_num_aikit_collections=2
 # this number should be the sum of the above two variables

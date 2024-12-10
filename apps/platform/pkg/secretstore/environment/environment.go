@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -23,14 +24,21 @@ var secretValues = map[string]string{
 	"uesio/core.db_database":            os.Getenv("UESIO_DB_DATABASE"),
 }
 
-func (ss *SecretStore) Get(key string, session *sess.Session) (string, error) {
+func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
 	value, ok := secretValues[key]
 	if !ok {
-		return "", exceptions.NewNotFoundException("Secret Value not found: " + key)
+		return nil, exceptions.NewNotFoundException("Secret Value not found: " + key)
 	}
-	return value, nil
+	return &meta.SecretStoreValue{
+		Value: value,
+		Key:   key,
+	}, nil
 }
 
 func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
 	return errors.New("You cannot set secret values in the environment store")
+}
+
+func (ss *SecretStore) Remove(key string, session *sess.Session) error {
+	return errors.New("You cannot remove secret values in the environment store")
 }

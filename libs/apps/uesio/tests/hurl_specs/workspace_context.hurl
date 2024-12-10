@@ -14,16 +14,25 @@ jsonpath "$.params.app" == "uesio/tests"
 jsonpath "$.params.workspacename" == "dev"
 
 # Try get config values for the dev workspace
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$" count == 5
-jsonpath "$[*].name" includes "google_auth_client_id"
-jsonpath "$[*].name" includes "studio_apis_url"
-jsonpath "$[*].name" includes "test_oauth_token_url"
-jsonpath "$[*].name" includes "test_oauth_authorize_url"
-jsonpath "$[*].name" includes "test_oauth_scopes"
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[0]['uesio/core.name']" == "studio_apis_url"
+jsonpath "$.wires[0].data[1]['uesio/core.name']" == "test_oauth_authorize_url"
+jsonpath "$.wires[0].data[2]['uesio/core.name']" == "test_oauth_scopes"
+jsonpath "$.wires[0].data[3]['uesio/core.name']" == "test_oauth_token_url"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
@@ -45,16 +54,25 @@ jsonpath "$.params.app" == "uesio/tests"
 jsonpath "$.params.workspacename" == "dev"
 
 # Try get config values for the dev workspace
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "fields": [],
+            "query":true
+        }
+    ]
+}
 HTTP 200
 [Asserts]
-jsonpath "$" count == 5
-jsonpath "$[*].name" includes "google_auth_client_id"
-jsonpath "$[*].name" includes "studio_apis_url"
-jsonpath "$[*].name" includes "test_oauth_authorize_url"
-jsonpath "$[*].name" includes "test_oauth_token_url"
-jsonpath "$[*].name" includes "test_oauth_scopes"
+jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data[0]['uesio/core.name']" == "studio_apis_url"
+jsonpath "$.wires[0].data[1]['uesio/core.name']" == "test_oauth_authorize_url"
+jsonpath "$.wires[0].data[2]['uesio/core.name']" == "test_oauth_scopes"
+jsonpath "$.wires[0].data[3]['uesio/core.name']" == "test_oauth_token_url"
+jsonpath "$.wires[0].data[4]['uesio/core.name']" == "google_auth_client_id"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout

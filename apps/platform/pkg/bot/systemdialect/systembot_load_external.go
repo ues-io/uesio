@@ -23,7 +23,7 @@ type SimpleResponseBatch struct {
 	Wires []*SimpleResponse
 }
 
-func differentHostLoad(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func differentHostLoad(op *wire.LoadOp, session *sess.Session) error {
 
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
@@ -247,7 +247,7 @@ func runUesioExternalLoadBot(op *wire.LoadOp, connection wire.Connection, sessio
 		if op.CollectionName == "uesio/studio.blogentry" || op.CollectionName == "uesio/studio.recentdoc" {
 			return nil
 		}
-		return differentHostLoad(op, connection, session)
+		return differentHostLoad(op, session)
 	}
 
 	return sameHostLoad(op, connection, site, session)

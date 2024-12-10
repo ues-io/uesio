@@ -39,7 +39,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to install bundles")
 	}
 
-	bundleStoreDomain, err := configstore.GetValueFromKey("uesio/core.bundle_store_domain", session)
+	bundleStoreDomain, err := configstore.GetValue("uesio/core.bundle_store_domain", session)
 	if err != nil {
 		return nil, err
 	}

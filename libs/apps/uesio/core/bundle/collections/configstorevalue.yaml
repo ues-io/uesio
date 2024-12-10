@@ -2,6 +2,5 @@ name: configstorevalue
 uniqueKey:
   - uesio/core.key
 nameField: uesio/core.key
-public: true
-label: config store value
-pluralLabel: config store values
+label: Config Store Value
+pluralLabel: Config Store Values

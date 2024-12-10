@@ -11,33 +11,40 @@ import (
 type TestConfigStore struct {
 }
 
-func (store *TestConfigStore) Get(key string, session *sess.Session) (string, error) {
+func (store *TestConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
 	switch key {
 	case "uesio/core.has_value":
-		return "abcd", nil
+		return &meta.ConfigStoreValue{
+			Value: "abcd",
+		}, nil
 	case "uesio/core.has_empty_value":
-		return "", nil
+		return &meta.ConfigStoreValue{
+			Value: "",
+		}, nil
 	case "uesio/core.throw_error":
-		return "", errors.New("some error")
+		return nil, errors.New("some error")
 	default:
-		return "", nil
+		return &meta.ConfigStoreValue{
+			Value: "",
+		}, nil
 	}
 }
-func (store *TestConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
+func (store *TestConfigStore) GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
 	for _, key := range keys {
 		value, err := store.Get(key, session)
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, &meta.ConfigStoreValue{
-			Key:   key,
-			Value: value,
-		})
+		results = append(results, value)
 	}
-	return results, nil
+	return &results, nil
 }
 func (store *TestConfigStore) Set(key, value string, session *sess.Session) error {
+	return nil
+}
+
+func (store *TestConfigStore) Remove(key string, session *sess.Session) error {
 	return nil
 }
 
@@ -106,7 +113,7 @@ func TestGetValue(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetValue(tt.cv, nil)
+			got, err := getValueInternal(tt.cv, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetValue() error = %v, wantErr %v", err, tt.wantErr)
 				return

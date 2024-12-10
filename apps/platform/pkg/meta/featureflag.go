@@ -10,14 +10,14 @@ import (
 type FeatureFlag struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Value          interface{}
+	Value          interface{} `yaml:"-" json:"-"`
 	DefaultValue   interface{} `yaml:"defaultValue" json:"uesio/studio.defaultvalue"`
 	Min            int64       `yaml:"min" json:"uesio/studio.min"`
 	Max            int64       `yaml:"max" json:"uesio/studio.max"`
 	Type           string      `yaml:"type" json:"uesio/studio.type"`
 	ValidForOrgs   bool        `yaml:"validForOrgs" json:"uesio/studio.validfororgs"`
-	User           string
-	HasValue       bool
+	User           string      `yaml:"-" json:"-"`
+	HasValue       bool        `yaml:"-" json:"-"`
 }
 
 type FeatureFlagWrapper FeatureFlag

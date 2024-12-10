@@ -109,7 +109,7 @@ func (ffs *FeatureFlagStore) Set(key, user string, value any, session *sess.Sess
 }
 
 func (ffs *FeatureFlagStore) Remove(key, user string, session *sess.Session) error {
-	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
+	// Enter into a version context to be able to interact with the uesio/core.featureflagvalue collection
 	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 	if err != nil {
 		return err

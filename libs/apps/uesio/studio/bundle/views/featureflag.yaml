@@ -81,7 +81,7 @@ definition:
                 - uesio/io.list:
                     uesio.id: featureflagsList
                     wire: featureflags
-                    mode: READ
+                    mode: EDIT
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/appkit.main
@@ -96,23 +96,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: featureflagsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
+                                      uesio.variant: uesio/appkit.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
                                         - type: wireHasChanges
@@ -122,42 +106,15 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - featureflags
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          componentid: featureflagsList
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
                                       text: $Label{uesio/io.cancel}
                                       uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
+                                        - type: wireHasChanges
+                                          wire: featureflags
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: featureflags
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: SET_READ_MODE
-                                          targettype: specific
-                                          target: featureflagsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - featureflags
-                                        - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/featureflags
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection
                           components:
@@ -194,3 +151,11 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.type
                                           value: NUMBER
+                      - uesio/appkit.section_audit_info:
+                      - uesio/appkit.section_delete:
+                          confirm: true
+                          signals:
+                            - signal: wire/MARK_FOR_DELETE
+                            - signal: wire/SAVE
+                            - signal: route/NAVIGATE
+                              path: app/$Param{app}/workspace/$Param{workspacename}/featureflags

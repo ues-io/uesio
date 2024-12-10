@@ -1,0 +1,5 @@
+name: configvalue
+type: DYNAMIC
+label: Config Value
+pluralLabel: Config Values
+public: true

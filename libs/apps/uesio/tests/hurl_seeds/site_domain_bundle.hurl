@@ -120,22 +120,61 @@ jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "tests:subdomain"
 jsonpath "$.wires[0].errors" == null
 
 # Set the studio APIs config value for the workspace
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues/uesio/tests/studio_apis_url
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+Accept: application/json
 {
-    "value": "https://{{host}}:{{port}}/workspace/uesio/tests/dev"
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/tests.studio_apis_url",
+                    "uesio/core.value":"https://{{host}}:{{port}}/workspace/uesio/tests/dev"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Set the studio APIs config value for the site
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/configvalues/uesio/tests/studio_apis_url
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+Accept: application/json
 {
-    "value": "https://tests.{{domain}}:{{port}}/site"
+    "wires": [
+        {
+            "collection":"uesio/core.configvalue",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/tests.studio_apis_url",
+                    "uesio/core.value":"https://tests.{{domain}}:{{port}}/site"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null
 
 # Set the Resend API key secret for the site
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/secrets/uesio/appkit/resend_key
+POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+Accept: application/json
 {
-    "value": "a-fake-send-grid-key"
+    "wires": [
+        {
+            "collection":"uesio/core.secret",
+            "changes":{
+                "temp1":{
+                    "uesio/core.id":"uesio/appkit.resend_key",
+                    "uesio/core.value":"a-fake-send-grid-key"
+                }
+            }
+        }
+    ]
 }
 HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" == null

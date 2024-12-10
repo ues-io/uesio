@@ -50,7 +50,7 @@ func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]interface{} {
 }
 
 func (b *RunIntegrationActionBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValueFromKey(configValueKey, datasource.GetSiteAdminSession(b.integrationConnection.GetSession()))
+	return configstore.GetValue(configValueKey, datasource.GetSiteAdminSession(b.integrationConnection.GetSession()))
 }
 
 func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {

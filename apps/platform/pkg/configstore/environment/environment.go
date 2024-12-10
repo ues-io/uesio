@@ -48,30 +48,34 @@ var configValues = map[string]string{
 	"uesio/core.primary_domain":                   GetEnvWithDefault("UESIO_PRIMARY_DOMAIN", "localhost"),
 }
 
-func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
+func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
 	value, ok := configValues[key]
 	if !ok {
 		slog.Debug("Config Value not found: " + key)
-		return "", nil
+		return nil, nil
 	}
-	return value, nil
+	return &meta.ConfigStoreValue{
+		Key:   key,
+		Value: value,
+	}, nil
 }
 
-func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (meta.ConfigStoreValueCollection, error) {
+func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
 	for _, key := range keys {
 		value, err := cs.Get(key, session)
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, &meta.ConfigStoreValue{
-			Key:   key,
-			Value: value,
-		})
+		results = append(results, value)
 	}
-	return results, nil
+	return &results, nil
 }
 
 func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
 	return errors.New("you cannot set config values in the environment store")
+}
+
+func (cs *ConfigStore) Remove(key string, session *sess.Session) error {
+	return errors.New("you cannot remove config values from the environment store")
 }

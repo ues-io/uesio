@@ -85,8 +85,6 @@ definition:
                           signals:
                             - signal: wire/MARK_FOR_DELETE
                             - signal: wire/SAVE
-                              wires:
-                                - apps
                             - signal: "route/NAVIGATE"
                               path: "home"
                           subtitle: Once you delete an app, all associated sites and workspaces will also be deleted. Please be sure this what you want to do!
