@@ -67,20 +67,22 @@ func getSecretInternal(secret *meta.Secret, session *sess.Session) (string, erro
 	}
 	secretValue, err := store.Get(secret.GetKey(), session)
 	if err != nil {
+		// If the secret was not found, and we were NOT looking in the environment store,
+		// check for an environment variable default using the UESIO_SECRET_ naming convention
+		if exceptions.IsNotFoundException(err) && secret.Store != "environment" {
+			defaultValueFromEnv := os.Getenv(getEnvironmentVariableName(secret))
+			if defaultValueFromEnv != "" {
+				return defaultValueFromEnv, nil
+			}
+		}
 		return "", err
 	}
-	if secretValue != nil && secretValue.Value != "" {
+	if secretValue != nil {
 		return secretValue.Value, nil
 	}
-	// If the secret was not found, and we were NOT looking in the environment store,
-	// check for an environment variable default using the UESIO_SECRET_ naming convention
-	if exceptions.IsNotFoundException(err) && secret.Store != "environment" {
-		defaultValueFromEnv := os.Getenv(getEnvironmentVariableName(secret))
-		if defaultValueFromEnv != "" {
-			return defaultValueFromEnv, nil
-		}
-	}
-	return "", err
+
+	return "", nil
+
 }
 
 func setSecretInternal(secret *meta.Secret, value string, session *sess.Session) error {

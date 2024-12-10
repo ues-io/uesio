@@ -72,7 +72,13 @@ func TestGetSecret(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetSecret(tt.secretNamespace+"."+tt.secretName, nil)
+			got, err := getSecretInternal(&meta.Secret{
+				BundleableBase: meta.BundleableBase{
+					Name:      tt.secretName,
+					Namespace: tt.secretNamespace,
+				},
+				Store: "mock",
+			}, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSecret() error = %v, wantErr %v", err, tt.wantErr)
 				return
