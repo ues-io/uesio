@@ -24,21 +24,25 @@ properties:
     label: Stars
     type: NUMBER
     defaultValue: 5
+  - name: testimonialVariant
+    label: Testimonial Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/sitekit.testimonial
+    defaultValue: uesio/sitekit.default
 definition:
   - uesio/sitekit.section:
       innerVariant: uesio/sitekit.section_inner_content
       content:
         - uesio/sitekit.testimonial:
+            uesio.variant: $Prop{testimonialVariant}
             quote: $Prop{quote}
             name: $Prop{name}
             title: $Prop{title}
             avatar: $Prop{avatar}
             avatarPath: $Prop{avatarPath}
             stars: $Prop{stars}
-            wrapperVariant: uesio/sitekit.testimonial_wrapper_large
-            quoteVariant: uesio/sitekit.testimonial_quote_large
-            avatarVariant: uesio/sitekit.testimonial_avatar_large
-            starsVariant: uesio/sitekit.testimonial_stars_large
 title: Testimonial Section
 discoverable: true
 description: A testimonial section

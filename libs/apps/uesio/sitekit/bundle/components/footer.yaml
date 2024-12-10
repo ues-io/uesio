@@ -4,13 +4,13 @@ type: DECLARATIVE
 slots:
   - name: note
   - name: content
+defaultVariant: uesio/sitekit.site
 definition:
   - uesio/io.box:
       uesio.variant: uesio/sitekit.section
       uesio.styleTokens:
         root:
-          - bg-slate-900
-          - "[min-height:300px]"
+          - $Region{root}
       components:
         - uesio/io.box:
             uesio.variant: uesio/sitekit.section_inner

@@ -5,5 +5,5 @@ definition:
   uesio.styleTokens:
     root:
       - grid
-      - "[max-width:1248px]"
+      - "[max-width:1155px]"
       - m-auto

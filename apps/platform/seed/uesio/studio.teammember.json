@@ -207,5 +207,16 @@
 		"uesio/studio.member": {
 			"uesio/core.uniquekey": "abel"
 		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/web:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	}
 ]

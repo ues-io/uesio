@@ -1,0 +1,8 @@
+name: site
+label: Site
+definition:
+  uesio.styleTokens:
+    root:
+      - bg-slate-900
+      - "[min-height:300px]"
+public: true

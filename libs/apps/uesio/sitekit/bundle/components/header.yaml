@@ -50,8 +50,18 @@ definition:
                           root:
                             - $Region{left}
                         components:
-                          - $Slot{logo}
-                          - $Slot{left}
+                          - uesio/io.box:
+                              uesio.styleTokens:
+                                root:
+                                  - $Region{logo}
+                              components:
+                                - $Slot{logo}
+                          - uesio/io.box:
+                              uesio.styleTokens:
+                                root:
+                                  - $Region{leftinner}
+                              components:
+                                - $Slot{left}
                     - uesio/io.group:
                         uesio.styleTokens:
                           root:

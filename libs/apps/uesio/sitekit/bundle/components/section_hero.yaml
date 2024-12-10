@@ -4,6 +4,8 @@ type: DECLARATIVE
 slots:
   - name: actions
     label: Actions
+  - name: image
+    label: Image
 properties:
   - name: title
     label: Title
@@ -11,22 +13,41 @@ properties:
   - name: subtitle
     label: Sub Title
     type: TEXT
+  - name: category
+    label: Category
+    type: TEXT
+  - name: heroVariant
+    label: Hero Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/sitekit.hero
+    defaultValue: uesio/sitekit.default
 definition:
   - uesio/sitekit.section:
-      innerVariant: uesio/sitekit.hero_wrapper
+      innerVariant: uesio/sitekit.section_inner_content
+      uesio.styleTokens:
+        root:
+          - overflow-hidden
       content:
-        - uesio/io.text:
-            uesio.variant: uesio/sitekit.hero_title
-            text: $Prop{title}
-        - uesio/io.text:
-            uesio.variant: uesio/sitekit.hero_subtitle
-            text: $Prop{subtitle}
-        - uesio/io.group:
+        - uesio/sitekit.hero:
+            uesio.variant: $Prop{heroVariant}
             uesio.styleTokens:
               root:
-                - mt-10
-            components:
-              - $Slot{actions}
+                - $Region{root}
+              category:
+                - $Region{category}
+              title:
+                - $Region{title}
+              subtitle:
+                - $Region{subtitle}
+              actions:
+                - $Region{actions}
+            category: $Prop{category}
+            title: $Prop{title}
+            subtitle: $Prop{subtitle}
+            actions: $Prop{actions}
+            image: $Prop{image}
 title: Hero Section
 discoverable: true
 description: A hero section

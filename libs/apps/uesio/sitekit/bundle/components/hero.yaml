@@ -1,0 +1,67 @@
+name: hero
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: actions
+    label: Actions
+  - name: image
+    label: Image
+properties:
+  - name: title
+    label: Title
+    type: TEXT
+  - name: subtitle
+    label: Sub Title
+    type: TEXT
+  - name: category
+    label: Category
+    type: TEXT
+  - name: wrapperVariant
+    label: Wrapper Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.box
+    defaultValue: uesio/sitekit.testimonial_wrapper
+defaultVariant: uesio/sitekit.default
+definition:
+  - uesio/io.box:
+      uesio.variant: $Prop{wrapperVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+      components:
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{category}
+            text: $Prop{category}
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{title}
+            text: $Prop{title}
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{subtitle}
+            text: $Prop{subtitle}
+        - uesio/io.group:
+            uesio.styleTokens:
+              root:
+                - $Region{actions}
+            components:
+              - $Slot{actions}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{image}
+            components:
+              - $Slot{image}
+title: Hero Section
+discoverable: true
+description: A hero section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
