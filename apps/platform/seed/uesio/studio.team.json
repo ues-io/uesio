@@ -40,5 +40,11 @@
 			"uesio/core.uniquekey": "uesio/core"
 		},
 		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.name": "maintainers"
 	}
 ]

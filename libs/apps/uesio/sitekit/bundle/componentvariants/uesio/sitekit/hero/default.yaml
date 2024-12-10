@@ -1,0 +1,29 @@
+name: default
+label: Default
+definition:
+  uesio.styleTokens:
+    root:
+    category:
+      - lg:text-lg
+      - text-base
+      - text-black
+      - font-normal
+      - "[text-wrap:balance]"
+    title:
+      - xl:text-7xl
+      - lg:text-6xl
+      - md:text-5xl
+      - text-4xl
+      - font-bold
+      - text-black
+      - "[text-wrap:balance]"
+    subtitle:
+      - lg:text-2xl
+      - md:text-xl
+      - text-lg
+      - text-black
+      - font-light
+      - "[text-wrap:balance]"
+    actions:
+      - auto-cols-max
+public: true
