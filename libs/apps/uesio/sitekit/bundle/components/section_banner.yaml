@@ -1,0 +1,21 @@
+name: section_banner
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+    label: Content
+properties:
+definition:
+  - uesio/io.box:
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+      components:
+        - $Slot{content}
+title: Banner Section
+discoverable: true
+description: A banner section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
