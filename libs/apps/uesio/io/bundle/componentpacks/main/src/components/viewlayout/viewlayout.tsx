@@ -1,4 +1,5 @@
 import { component, styles, definition } from "@uesio/ui"
+import { useEffect, useRef, useState } from "react"
 
 const StyleDefaults = Object.freeze({
 	root: [],
@@ -15,17 +16,47 @@ type ViewLayoutDefinition = {
 	content?: definition.DefinitionList
 	right?: definition.DefinitionList
 	footer?: definition.DefinitionList
+	trackScrolling?: boolean
 }
 
 const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
 	const { definition, context, componentType } = props
-	const { header, left, content, right, footer } = definition
+	const {
+		header,
+		left,
+		content,
+		right,
+		footer,
+		trackScrolling = false,
+	} = definition
+
+	const [direction, setDirection] = useState("scroll-down")
+
+	const lastScrollY = useRef(0)
+
+	useEffect(() => {
+		if (!trackScrolling) return
+		const container = document.querySelector("div#root")
+		if (!container) return
+		const handleScroll = () => {
+			const currentScrollY = container.scrollTop
+			setDirection(
+				currentScrollY < lastScrollY.current
+					? "scroll-up"
+					: "scroll-down"
+			)
+			lastScrollY.current = currentScrollY
+		}
+
+		container.addEventListener("scroll", handleScroll)
+		return () => container.removeEventListener("scroll", handleScroll)
+	}, [trackScrolling])
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<div className={classes.root}>
 			{header && (
-				<div className={classes.header}>
+				<div className={styles.cx(classes.header, direction)}>
 					<component.Slot
 						definition={definition}
 						listName="header"

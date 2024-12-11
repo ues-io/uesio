@@ -29,6 +29,7 @@ definition:
       uesio.styleTokens:
         root:
           - overflow-hidden
+          - $Region{sectionRoot}
       content:
         - uesio/sitekit.hero:
             uesio.variant: $Prop{heroVariant}
