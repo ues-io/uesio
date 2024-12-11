@@ -6,6 +6,8 @@ type ImageProps = {
 	filepath?: string
 	height?: number
 	width?: number
+	intrinsicHeight?: number
+	intrinsicWidth?: number
 	onClick?: (e: MouseEvent) => void
 	loading: "lazy" | "eager"
 	alt: string
@@ -20,6 +22,8 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 		filepath,
 		height,
 		width,
+		intrinsicHeight,
+		intrinsicWidth,
 		onClick,
 		loading,
 		alt,
@@ -60,8 +64,8 @@ const Image: definition.UtilityComponent<ImageProps> = (props) => {
 			}
 			loading={loading}
 			alt={alt}
-			height={height}
-			width={width}
+			height={intrinsicHeight}
+			width={intrinsicWidth}
 		/>
 	)
 

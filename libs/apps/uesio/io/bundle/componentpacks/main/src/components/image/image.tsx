@@ -7,6 +7,8 @@ type ImageDefinition = {
 	// The image height in pixels
 	height?: number
 	// The image width in pixels
+	intrinsicHeight?: number
+	intrinsicWidth?: number
 	width?: number
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"
@@ -16,7 +18,17 @@ type ImageDefinition = {
 
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
-	const { loading, src, file, width, height, alt, filepath } = definition
+	const {
+		loading,
+		src,
+		file,
+		width,
+		height,
+		alt,
+		filepath,
+		intrinsicHeight,
+		intrinsicWidth,
+	} = definition
 
 	const [link, handler] = api.signal.useLinkHandler(
 		definition.signals,
@@ -38,6 +50,8 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 			alt={alt}
 			height={height}
 			width={width}
+			intrinsicHeight={intrinsicHeight}
+			intrinsicWidth={intrinsicWidth}
 		/>
 	)
 }
