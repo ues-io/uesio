@@ -5,4 +5,7 @@ definition:
     root:
       - bg-slate-900
       - "[min-height:300px]"
+    note:
+      - p-4
+      - text-center
 public: true

@@ -11,10 +11,10 @@ interface ExpandPanelProps {
 const StyleDefaults = Object.freeze({
 	root: [],
 	enter: ["opacity-0"],
-	enterActive: ["opacity-100", "transition-all"],
+	enterActive: ["opacity-100", "transition-[opacity,max-height]"],
 	enterDone: ["opacity-100"],
 	exit: ["opacity-100"],
-	exitActive: ["opacity-0", "transition-all"],
+	exitActive: ["opacity-0", "transition-[opacity,max-height]"],
 	exitDone: ["opacity-0"],
 })
 

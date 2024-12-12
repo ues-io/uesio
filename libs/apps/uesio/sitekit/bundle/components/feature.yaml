@@ -2,6 +2,8 @@ name: feature
 category: LAYOUT
 type: DECLARATIVE
 slots:
+  - name: actions
+    label: Actions
 properties:
   - name: title
     label: Title
@@ -12,32 +14,40 @@ properties:
   - name: description
     label: Description
     type: LONGTEXT
-  - name: wrapperVariant
-    label: Wrapper Variant
-    type: METADATA
-    metadata:
-      type: COMPONENTVARIANT
-      grouping: uesio/io.box
-    defaultValue: uesio/sitekit.feature_wrapper
-  - name: titlebarVariant
-    label: Title Bar Variant
-    type: METADATA
-    metadata:
-      type: COMPONENTVARIANT
-      grouping: uesio/io.titlebar
-    defaultValue: uesio/sitekit.feature
+defaultVariant: uesio/sitekit.default
 definition:
   - uesio/io.box:
-      uesio.variant: $Prop{wrapperVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       components:
-        - uesio/io.titlebar:
-            uesio.variant: $Prop{titlebarVariant}
-            title: $Prop{title}
-            subtitle: $Prop{subtitle}
-            actions:
-              - uesio/io.text:
-                  text: $Prop{description}
-                  element: div
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{subtitle}
+            text: $Prop{subtitle}
+            element: div
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{title}
+            text: $Prop{title}
+            element: div
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{description}
+            text: $Prop{description}
+            element: div
+        - uesio/io.group:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{actions}
+            uesio.styleTokens:
+              root:
+                - $Region{actions}
+            components:
+              - $Slot{actions}
 title: Feature
 discoverable: true
 description: A feature

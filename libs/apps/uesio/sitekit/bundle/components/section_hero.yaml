@@ -28,7 +28,6 @@ definition:
       innerVariant: uesio/sitekit.section_inner_content
       uesio.styleTokens:
         root:
-          - overflow-hidden
           - $Region{sectionRoot}
       content:
         - uesio/sitekit.hero:

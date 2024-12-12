@@ -11,7 +11,21 @@ definition:
         root:
           - $Region{root}
       components:
-        - $Slot{content}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{content}
+            components:
+              - uesio/io.group:
+                  uesio.styleTokens:
+                    root:
+                      - $Region{contentinner}
+                  components:
+                    - $Slot{content}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{mask}
 title: Banner Section
 discoverable: true
 description: A banner section

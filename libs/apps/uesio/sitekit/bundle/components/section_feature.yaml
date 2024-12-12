@@ -20,19 +20,36 @@ properties:
   - name: imagePath
     label: Image File Path
     type: TEXT
+  - name: featureVariant
+    label: Feature Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/sitekit.feature
+    defaultValue: uesio/sitekit.default
 definition:
   - uesio/sitekit.section:
       innerVariant: uesio/sitekit.section_inner_content
       uesio.styleTokens:
         root:
-          - bg-white/80
-          - my-6
+          - $Region{sectionRoot}
       content:
         - uesio/sitekit.feature:
+            uesio.variant: $Prop{featureVariant}
+            uesio.styleTokens:
+              root:
+                - $Region{root}
+              description:
+                - $Region{description}
+              title:
+                - $Region{title}
+              subtitle:
+                - $Region{subtitle}
+              actions:
+                - $Region{actions}
             title: $Prop{title}
             subtitle: $Prop{subtitle}
             description: $Prop{description}
-            wrapperVariant: uesio/sitekit.feature_wrapper_large
 title: Feature Section
 discoverable: true
 description: A feature section

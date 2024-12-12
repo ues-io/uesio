@@ -19,8 +19,7 @@ definition:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - p-4
-                - text-center
+                - $Region{note}
             components:
               - $Slot{note}
 title: Footer Component
