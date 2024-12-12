@@ -1,0 +1,45 @@
+name: section_split
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: content
+    label: Content
+  - name: image
+    label: Image
+properties:
+  - name: image
+    label: Image File
+    type: METADATA
+    metadata:
+      type: FILE
+  - name: imagePath
+    label: Image File Path
+    type: TEXT
+definition:
+  - uesio/sitekit.section:
+      innerVariant: uesio/sitekit.section_inner_content
+      uesio.styleTokens:
+        root:
+          - $Region{sectionRoot}
+        inner:
+          - $Region{root}
+      content:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{content}
+            components:
+              - $Slot{content}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{image}
+            components:
+              - $Slot{image}
+title: Split Section
+discoverable: true
+description: A split section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

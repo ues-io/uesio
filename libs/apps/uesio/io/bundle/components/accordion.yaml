@@ -8,15 +8,12 @@ discoverable: true
 icon: expand_more
 slots:
   - name: components
-    label: Accordion Contents
+    path: /items/~{}
+    label: Item Contents
+    onSelectSignals:
+      - componentsignal: SELECT_ITEM
+        id: ${id}
 defaultVariant: uesio/io.default
-defaultDefinition:
-  uesio.variant: uesio/io.default
-  title: Title
-  subtitle:
-  expandicon: expand_more
-  collapseicon: expand_less
-  expanded: true
 properties:
   - name: title
     type: TEXT

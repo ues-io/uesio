@@ -56,7 +56,7 @@ definition:
                                   - $Region{logo}
                               components:
                                 - $Slot{logo}
-                          - uesio/io.box:
+                          - uesio/io.group:
                               uesio.styleTokens:
                                 root:
                                   - $Region{leftinner}

@@ -1,17 +1,15 @@
-name: feature
-label: Feature
+name: default
+label: Default
 definition:
   uesio.styleTokens:
     root:
+      - mx-auto
+      - "[max-width:896px]"
       - grid
+      - auto-rows-max
       - justify-center
       - justify-items-center
       - gap-6
-    content:
-      - grid
-      - justify-center
-      - justify-items-center
-      - gap-2
     title:
       - lg:text-4xl
       - text-3xl
