@@ -7,5 +7,5 @@ definition:
     - uesio/sitekit.footer:
         note:
           - uesio/io.text:
-              text: UESIO Inc. | All rights Reserved © | Open Source GPL3
+              text: UESIO Inc. | All rights Reserved © | Open Source MIT License
               uesio.variant: uesio/sitekit.footer_note

@@ -167,6 +167,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const state = getExternalState(
 			makeComponentId(context, componentType, componentId, true)
 		)
+		if (!propertyPath) {
+			return state as string
+		}
 		return get(state, propertyPath.split("->")) as string
 	},
 	User: (expression, context) => {

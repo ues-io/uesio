@@ -8,8 +8,10 @@ type ItemDefinition = {
 	mode?: context.FieldMode
 	components?: definition.DefinitionList
 	external?: {
-		collection: string
-		record: string
+		collection?: string
+		record?: string
+		componenttype?: string
+		componentid?: string
 	}
 }
 
@@ -35,12 +37,24 @@ const Item: definition.UC<ItemDefinition> = (props) => {
 	// available in the entire context
 	if (!definition.wire && definition.external) {
 		const external = definition.external
-		const record = api.wire.useExternalRecord(
-			context.mergeString(external.collection),
-			context.mergeString(external.record)
-		)
-		if (!record) return null
-		context = context.addRecordDataFrame(record)
+		if (external.collection && external.record) {
+			const external = definition.external
+			const record = api.wire.useExternalRecord(
+				context.mergeString(external.collection),
+				context.mergeString(external.record)
+			)
+			if (!record) return null
+			context = context.addRecordDataFrame(record)
+		}
+		if (external.componenttype && external.componentid) {
+			api.component.useExternalState(
+				api.component.makeComponentId(
+					context,
+					external.componenttype,
+					external.componentid
+				)
+			)
+		}
 	} else {
 		const wire = api.wire.useWire(definition.wire, context)
 		if (!wire) return null
