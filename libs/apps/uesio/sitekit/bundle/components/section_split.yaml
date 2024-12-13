@@ -31,11 +31,19 @@ definition:
             components:
               - $Slot{content}
         - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{image}
             uesio.styleTokens:
               root:
-                - $Region{image}
+                - $Region{imagewrapper}
             components:
-              - $Slot{image}
+              - uesio/io.box:
+                  uesio.styleTokens:
+                    root:
+                      - $Region{image}
+                  components:
+                    - $Slot{image}
 title: Split Section
 discoverable: true
 description: A split section

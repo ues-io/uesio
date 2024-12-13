@@ -78,7 +78,7 @@ const DeviceSizer: definition.UtilityComponent = (props) => {
 			<SizerButton
 				icon="smartphone"
 				height={667}
-				width={375}
+				width={412}
 				context={context}
 				tooltip="Phone Size"
 			/>

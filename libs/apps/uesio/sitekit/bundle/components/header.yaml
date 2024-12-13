@@ -24,6 +24,9 @@ definition:
       uesio.id: headermenutoggle
       uesio.type: uesio/io.sidepanel
       uesio.variant: uesio/io.right
+      uesio.display:
+        - type: hasValue
+          value: $Prop{menu}
       uesio.styleTokens:
         blocker:
           - $Region{menupanelblocker}
