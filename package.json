@@ -60,7 +60,7 @@
 		"@nx/jest": "20.1.4",
 		"@orangeopensource/hurl": "^4.2.0",
 		"@react-hook/resize-observer": "^1.2.6",
-		"@reduxjs/toolkit": "^2.2.7",
+		"@reduxjs/toolkit": "^2.5.0",
 		"@swc/core": "^1.7.26",
 		"@swc/jest": "0.2.36",
 		"@tanem/react-nprogress": "^5.0.51",
