@@ -63,7 +63,7 @@ definition:
                   stars: $Prop{stars}
         - uesio/io.text:
             uesio.variant: $Prop{quoteVariant}
-            text: “$Prop{quote}”
+            text: $Prop{quote}
         - uesio/io.titlebar:
             uesio.variant: uesio/io.item
             title: $Prop{name}
