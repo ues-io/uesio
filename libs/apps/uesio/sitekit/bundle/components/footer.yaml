@@ -14,6 +14,9 @@ definition:
       components:
         - uesio/io.box:
             uesio.variant: uesio/sitekit.section_inner
+            uesio.styleTokens:
+              root:
+                - $Region{content}
             components:
               - $Slot{content}
         - uesio/io.box:

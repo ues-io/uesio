@@ -2,6 +2,7 @@ name: section_feature
 category: LAYOUT
 type: DECLARATIVE
 slots:
+defaultVariant: uesio/sitekit.default
 properties:
   - name: title
     label: Title

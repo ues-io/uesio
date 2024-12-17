@@ -3,24 +3,19 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
-      - mx-auto
-      - "[max-width:896px]"
       - grid
-      - auto-rows-max
       - justify-center
       - justify-items-center
-      - gap-6
+      - gap-2
     title:
       - lg:text-4xl
       - text-3xl
-      - order-2
       - font-medium
       - "[text-wrap:balance]"
       - text-center
     subtitle:
       - lg:text-base
       - text-sm
-      - order-1
       - text-primary-600
       - font-medium
       - "[text-wrap:balance]"
