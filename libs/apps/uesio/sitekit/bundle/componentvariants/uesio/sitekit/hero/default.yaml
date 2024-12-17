@@ -3,6 +3,7 @@ label: Default
 definition:
   uesio.styleTokens:
     root:
+      - justify-items-center
     category:
       - lg:text-lg
       - text-base

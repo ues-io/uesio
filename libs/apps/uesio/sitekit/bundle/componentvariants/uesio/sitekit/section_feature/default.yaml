@@ -1,0 +1,6 @@
+name: default
+public: true
+definition:
+  uesio.styleTokens:
+    sectionRoot:
+      - bg-white/80
