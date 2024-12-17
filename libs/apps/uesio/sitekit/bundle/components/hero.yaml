@@ -4,6 +4,8 @@ type: DECLARATIVE
 slots:
   - name: actions
     label: Actions
+  - name: extra
+    label: Extra
   - name: image
     label: Image
 properties:
@@ -46,7 +48,19 @@ definition:
               root:
                 - $Region{subtitle}
             text: $Prop{subtitle}
+        - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{extra}
+            uesio.styleTokens:
+              root:
+                - $Region{extra}
+            components:
+              - $Slot{extra}
         - uesio/io.group:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{actions}
             uesio.styleTokens:
               root:
                 - $Region{actions}

@@ -2,6 +2,8 @@ name: testimonial
 category: LAYOUT
 type: DECLARATIVE
 slots:
+  - name: extra
+    label: Extra
 properties:
   - name: quote
     label: Quote
@@ -55,6 +57,9 @@ properties:
 definition:
   - uesio/io.box:
       uesio.variant: $Prop{wrapperVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       components:
         - uesio/io.box:
             components:
@@ -63,6 +68,9 @@ definition:
                   stars: $Prop{stars}
         - uesio/io.text:
             uesio.variant: $Prop{quoteVariant}
+            uesio.styleTokens:
+              root:
+                - $Region{quote}
             text: $Prop{quote}
         - uesio/io.titlebar:
             uesio.variant: uesio/io.item
@@ -72,6 +80,12 @@ definition:
               - uesio/io.avatar:
                   uesio.variant: $Prop{avatarVariant}
                   image: $File{$Prop{avatar}:$Prop{avatarPath}}
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - $Region{extra}
+            components:
+              - $Slot{extra}
 title: Testimonial
 discoverable: true
 description: A testimonial
