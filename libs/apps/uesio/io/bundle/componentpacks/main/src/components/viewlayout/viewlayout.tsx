@@ -1,5 +1,5 @@
 import { component, styles, definition } from "@uesio/ui"
-import { useEffect, useRef, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 
 const StyleDefaults = Object.freeze({
 	root: [],
@@ -19,17 +19,12 @@ type ViewLayoutDefinition = {
 	trackScrolling?: boolean
 }
 
-const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
-	const { definition, context, componentType } = props
-	const {
-		header,
-		left,
-		content,
-		right,
-		footer,
-		trackScrolling = false,
-	} = definition
-
+const HeaderArea = (props: {
+	trackScrolling: boolean
+	className: string
+	children: ReactNode
+}) => {
+	const { trackScrolling, className, children } = props
 	const [direction, setDirection] = useState("scroll-down")
 
 	const lastScrollY = useRef(0)
@@ -52,11 +47,28 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
 		return () => container.removeEventListener("scroll", handleScroll)
 	}, [trackScrolling])
 
+	return <div className={styles.cx(className, direction)}>{children}</div>
+}
+
+const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
+	const { definition, context, componentType } = props
+	const {
+		header,
+		left,
+		content,
+		right,
+		footer,
+		trackScrolling = false,
+	} = definition
+
 	const classes = styles.useStyleTokens(StyleDefaults, props)
 	return (
 		<div className={classes.root}>
 			{header && (
-				<div className={styles.cx(classes.header, direction)}>
+				<HeaderArea
+					trackScrolling={trackScrolling}
+					className={classes.header}
+				>
 					<component.Slot
 						definition={definition}
 						listName="header"
@@ -64,7 +76,7 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
 						context={context}
 						componentType={componentType}
 					/>
-				</div>
+				</HeaderArea>
 			)}
 			{left && (
 				<div className={classes.left}>
