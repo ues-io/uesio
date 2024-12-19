@@ -4,8 +4,14 @@
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="140.000000pt" height="179.000000pt" viewBox="0 0 140.000000 179.000000"
  preserveAspectRatio="xMidYMid meet">
+   <style>
+    .fav { fill: #000000; stroke: none; }
+	  @media (prefers-color-scheme: dark) {
+      .fav { fill: #ffffff }
+    }
+  </style>
 <g transform="translate(0.000000,179.000000) scale(0.050000,-0.050000)"
-fill="#000000" stroke="none">
+class="fav">
 <path d="M660 2690 l0 -530 -260 0 -260 0 0 -730 0 -730 269 0 268 0 -3 -265
 -4 -265 735 -5 735 -5 0 270 0 270 260 0 260 0 0 1260 0 1260 -341 0 -342 0 7
 -1190 6 -1190 -590 0 -590 0 -4 590 -4 590 269 0 269 0 0 600 0 600 -340 0

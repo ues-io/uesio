@@ -1,6 +1,6 @@
 # About Uesio
 
-![Uesio Logo](./libs/apps/uesio/core/bundle/files/logo/file/uesioblack.png)
+![Uesio Logo](./libs/apps/uesio/core/bundle/files/favicon/uesiofav.svg)
 
 Uesio is a **low-code** application development platform.
 
