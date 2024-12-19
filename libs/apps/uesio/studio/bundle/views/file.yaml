@@ -150,7 +150,7 @@ definition:
                                                             root:
                                                               - bg-white
                                                           uesio.variant: uesio/appkit.badge
-                                                          text: $FileSize{filesize}
+                                                          text: $FileSize{${filesize}}
                                                           element: div
                                               content:
                                                 - uesio/io.image:
@@ -197,7 +197,7 @@ definition:
                                                           root:
                                                             - bg-white
                                                         uesio.variant: uesio/appkit.badge
-                                                        text: $FileSize{uesio/core.contentlength}
+                                                        text: $FileSize{${uesio/core.contentlength}}
                                                         element: div
                                             content:
                                               - uesio/io.fileattachment:
