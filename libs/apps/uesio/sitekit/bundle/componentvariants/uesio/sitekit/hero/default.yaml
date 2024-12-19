@@ -4,6 +4,7 @@ definition:
   uesio.styleTokens:
     root:
       - justify-items-center
+      - text-center
     category:
       - lg:text-lg
       - text-base
