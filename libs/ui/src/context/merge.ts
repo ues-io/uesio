@@ -77,6 +77,8 @@ export const InvalidIfMergeMsg =
 	"Invalid If merge - a condition and iftrue must be provided, e.g. $If{[condition][iftrue][iffalse]}. iffalse is optional"
 export const InvalidComponentOutputMsg =
 	"Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
+export const InvalidCurrencyMsg =
+	"Invalid Currency merge - invalid currency merge - $Currency{[value][decimals]} or $Currency{value}"
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context) => {
@@ -203,7 +205,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
 	},
 	Number: (expression, context) => {
-		const value = context.getRecord()?.getFieldValue(expression) as number
+		const value = context.merge(expression) as number
 		const decimals = 2
 		return Intl.NumberFormat(undefined, {
 			minimumFractionDigits: decimals,
@@ -211,7 +213,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}).format(value)
 	},
 	FileSize: (expression, context) => {
-		const bytes = context.getRecord()?.getFieldValue(expression) as number
+		const bytes = context.merge(expression) as number
 		if (!bytes) {
 			return ""
 		}
@@ -225,9 +227,16 @@ const handlers: Record<MergeType, MergeHandler> = {
 			maximumFractionDigits: 1,
 		}).format(bytes / divisor ** unit)
 	},
-	Currency: (expression, context) => {
-		const value = context.getRecord()?.getFieldValue(expression) as number
-		const decimals = 2
+	Currency: (fullExpression, context) => {
+		let parts
+		try {
+			parts = parseOneOrTwoPartExpression(fullExpression)
+		} catch (e) {
+			throw InvalidCurrencyMsg
+		}
+		const [expression, decimalOption] = parts
+		const decimals = parseInt(decimalOption, 10) ?? 2
+		const value = context.merge(expression) as number
 		return Intl.NumberFormat(undefined, {
 			minimumFractionDigits: decimals,
 			maximumFractionDigits: decimals,
