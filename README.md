@@ -96,9 +96,8 @@ npm run watch-all
 
 If you'd like to use the Uesio CLI that you have built elsewhere on your machine without having to explicitly reference the binary in `dist/cli`:
 
-- Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
-- Windows: add `<absolute project root path>/dist/cli` to your PATH
-
+-   Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
+-   Windows: add `<absolute project root path>/dist/cli` to your PATH
 
 # <a id="dependencies"></a>Start dependencies
 
