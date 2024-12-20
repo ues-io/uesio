@@ -10,7 +10,7 @@
 			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
 			"options": {
 				"commands": [
-					"uesio pack",
+					"../../../../dist/cli/uesio pack",
 					"npx tsc --noEmit --project ./tsconfig.lib.json"
 				],
 				"cwd": "libs/apps/uesio/sitekit"
@@ -19,7 +19,7 @@
 		"watch": {
 			"executor": "nx:run-commands",
 			"options": {
-				"command": "uesio pack -w",
+				"command": "../../../../dist/cli/uesio pack -w",
 				"cwd": "libs/apps/uesio/sitekit"
 			}
 		},

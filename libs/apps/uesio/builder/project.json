@@ -10,7 +10,7 @@
 			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
 			"options": {
 				"commands": [
-					"uesio pack",
+					"../../../../dist/cli/uesio pack",
 					"npx tsc --noEmit --project ./tsconfig.lib.json",
 					"node ./build/generate-tailwind-classes-index.js"
 				],
@@ -20,7 +20,7 @@
 		"watch": {
 			"executor": "nx:run-commands",
 			"options": {
-				"command": "uesio pack -w",
+				"command": "../../../../dist/cli/uesio pack -w",
 				"cwd": "libs/apps/uesio/builder"
 			}
 		},

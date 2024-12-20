@@ -2,7 +2,7 @@
 
 set -e
 
-uesio packui
+../../dist/cli/uesio packui
 mkdir -p ../../dist/ui/types/client
 mkdir -p ../../dist/ui/types/server
 # For editing TypeScript bots in Studio output a file which JUST contains Bot types
