@@ -6,6 +6,9 @@ export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 
+#Use the uesio CLI that was built in a previous step
+alias uesio="$PWD/dist/cli/uesio"
+
 #Navigate
 cd libs/apps/uesio/tests
 
@@ -14,7 +17,7 @@ uesio logout
 uesio sethost
 uesio login
 
-# Truncate dev workspace 
+# Truncate dev workspace
 echo "Truncate dev workspace."
 uesio work -n dev
 uesio workspace truncate
