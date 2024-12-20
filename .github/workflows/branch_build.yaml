@@ -29,12 +29,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Setup Uesio CLI Symlink
-        shell: bash
-        run: |
-          # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
-          mkdir -p dist/cli
-          sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Setup node
         uses: actions/setup-node@v4
         with:

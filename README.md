@@ -18,10 +18,8 @@ Uesio is a **low-code** application development platform.
     -   `jq` (for JSON manipulation in Shell): `brew install jq`
     -   `wget` (for fetching URLs): `brew install wget`
 -   Start dependencies [here](#dependencies).
--   Create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`):
-    -   Mac OS: `sudo ln -s ~/git/uesio/dist/cli/uesio /usr/local/bin`
-    -   Windows: `mklink C:\bin\uesio C:\Users\<USERNAME>\git\uesio\dist\cli\uesio`, and ensure `bin` is on path: `setx PATH "C:\bin;%PATH%`
--   Build and run [here](#run).
+-   [Build](#build)
+-   [Run](#run).
 
 ## Optional
 
@@ -93,6 +91,13 @@ While developing you may want the entire monorepo to rebuild changed files. You 
 ```
 npm run watch-all
 ```
+
+## (Optional) Using Uesio CLI globally
+
+If you'd like to use the Uesio CLI that you have built elsewhere on your machine without having to explicitly reference the binary in `dist/cli`:
+
+-   Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
+-   Windows: add `<absolute project root path>/dist/cli` to your PATH
 
 # <a id="dependencies"></a>Start dependencies
 

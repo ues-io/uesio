@@ -42,12 +42,6 @@ jobs:
         with:
           node-version: 20.14.0
           cache: "npm"
-      - name: Setup Uesio CLI Symlink
-        shell: bash
-        run: |
-          # Symlink for Uesio CLI, which is created in build and then used in subsequent builds and tests
-          mkdir -p dist/cli
-          sudo ln -s $PWD/dist/cli/uesio /usr/local/bin/uesio
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

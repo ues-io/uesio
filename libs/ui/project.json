@@ -17,7 +17,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{workspaceRoot}/dist/ui"],
 			"options": {
-				"command": "uesio packui --watch",
+				"command": "../../dist/cli/uesio packui --watch",
 				"cwd": "libs/ui"
 			}
 		},
