@@ -1,16 +1,19 @@
 import { FunctionComponent } from "react"
-import { useLoadWires } from "../bands/view/operations/load"
+import { useLoadWiresAndEvents } from "../bands/view/operations/load"
 import { Context } from "../context/context"
 import { ViewDefinition } from "../definition/definition"
 
-type WiresProps = { context: Context; viewDef: ViewDefinition }
+type WiresAndEventsProps = { context: Context; viewDef: ViewDefinition }
 
-const Wires: FunctionComponent<WiresProps> = ({ context, viewDef }) => {
-	useLoadWires(context, viewDef)
+const WiresAndEvents: FunctionComponent<WiresAndEventsProps> = ({
+	context,
+	viewDef,
+}) => {
+	useLoadWiresAndEvents(context, viewDef)
 	return null
 }
 
-Wires.displayName = "Wires"
+WiresAndEvents.displayName = "WiresAndEvents"
 
-export { type WiresProps }
-export default Wires
+export { type WiresAndEventsProps }
+export default WiresAndEvents
