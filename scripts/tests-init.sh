@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
 set -e
+shopt -s expand_aliases
 
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 
-export PATH="$PATH:$(pwd)/dist/cli"
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+alias uesio="$SCRIPT_DIR/../dist/cli/uesio"
 
 # Deploy the sample app using Uesio
 cd libs/apps/uesio/tests
