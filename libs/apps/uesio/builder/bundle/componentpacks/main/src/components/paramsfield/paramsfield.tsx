@@ -51,14 +51,12 @@ const ParamsField: definition.UC<ParamsFieldDefinition> = (props) => {
 		}
 	}
 
-	if (!view) return null
-
 	const paramsDef = api.view.useViewDef(view)?.params as Record<
 		string,
 		Record<"type", string>
 	>
 
-	if (!paramsDef) return null
+	if (!view || !paramsDef) return null
 
 	const params = record.getFieldValue(fieldId)
 

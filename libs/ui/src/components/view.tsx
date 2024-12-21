@@ -2,7 +2,6 @@ import Slot, { DefaultSlotName } from "../utilities/slot"
 import { useViewDef } from "../bands/viewdef"
 import { makeViewId } from "../bands/view"
 import { component as componentApi } from "../api/api"
-import { useLoadWires } from "../bands/view/operations/load"
 import {
 	ComponentSignalDescriptor,
 	SignalDefinition,
@@ -18,6 +17,10 @@ import {
 	addDefaultPropertyAndSlotValues,
 	resolveDeclarativeComponentDefinition,
 } from "../component/component"
+import { useEffect } from "react"
+import { getBuilderDeps } from "../hooks/builderapi"
+import Wires from "./wires"
+import { memoizedAsync } from "../platform/memoizedAsync"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -103,7 +106,24 @@ const View: UC<ViewComponentDefinition> = (props) => {
 		params: paramState,
 	})
 
-	useLoadWires(viewContext, viewDef)
+	useEffect(() => {
+		if (viewDefId && !viewDef) {
+			memoizedAsync(
+				async () => {
+					await getBuilderDeps(viewContext)
+					// must return something to ensure memoizedAsync properly handles subsequent success outcomes
+					return viewDefId
+				},
+				{
+					cacheKey: `retrieve-missing-viewdef-${viewDefId}`,
+					timeout: 5000,
+					refetch: false,
+				}
+			)
+		}
+		// viewDef & viewContext are rebuilt on every render so we intentionally ignore them as deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [viewDefId])
 
 	if (!viewDef) return null
 
@@ -134,13 +154,16 @@ const View: UC<ViewComponentDefinition> = (props) => {
 		: viewDef
 
 	return (
-		<Slot
-			definition={mergedViewDef}
-			listName={DefaultSlotName}
-			path=""
-			context={viewContext}
-			componentType={componentType}
-		/>
+		<>
+			{viewDef && <Wires context={viewContext} viewDef={viewDef} />}
+			<Slot
+				definition={mergedViewDef}
+				listName={DefaultSlotName}
+				path=""
+				context={viewContext}
+				componentType={componentType}
+			/>
+		</>
 	)
 }
 
