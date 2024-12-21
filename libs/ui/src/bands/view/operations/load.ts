@@ -23,7 +23,7 @@ const runEvents = async (
 	}
 }
 
-const useLoadWires = (
+const useLoadWiresAndEvents = (
 	context: Context,
 	viewDef: ViewDefinition | undefined
 ) => {
@@ -137,4 +137,4 @@ const doesConditionHaveParamDependency = (
 	return false
 }
 
-export { useLoadWires }
+export { useLoadWiresAndEvents }
