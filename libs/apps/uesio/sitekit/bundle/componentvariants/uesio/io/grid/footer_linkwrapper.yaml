@@ -8,11 +8,5 @@ definition:
       - lg:grid-cols-none
       - sm:grid-cols-2
       - grid-cols-1
-      - gap-x-8
-      - gap-y-4
+      - gap-8
       - grow
-      - border-l
-      - border-slate-500
-      - md:pl-18
-      - sm:pl-12
-      - pl-6

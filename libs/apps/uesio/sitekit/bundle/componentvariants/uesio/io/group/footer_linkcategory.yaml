@@ -5,3 +5,4 @@ definition:
   uesio.styleTokens:
     root:
       - gap-1
+      - content-start
