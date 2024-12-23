@@ -503,6 +503,29 @@ const mergeTextTestCases: MergeWithContextTestCase[] = [
 	},
 ]
 
+const mergeCurrencyTestCases: MergeWithContextTestCase[] = [
+	{
+		name: "simple currency merge",
+		context: new Context(),
+		input: "$Currency{500}",
+		expected: "$500.00",
+	},
+	{
+		name: "currency merge decimal option",
+		context: new Context(),
+		input: "$Currency{[500][0]}",
+		expected: "$500",
+	},
+	{
+		name: "currency merge double merge",
+		context: new Context().addRecordDataFrame({
+			myValue: 400,
+		}),
+		input: "$Currency{${myValue}}",
+		expected: "$400.00",
+	},
+]
+
 const mergeFormulaTestCases: MergeWithContextTestCase[] = [
 	{
 		name: "simple sanity merge",
@@ -597,8 +620,23 @@ describe("merge", () => {
 			})
 		})
 	})
-	describe("merge", () => {
+	describe("mergeText", () => {
 		mergeTextTestCases.forEach((tc) => {
+			test(tc.name, () => {
+				let errCaught
+				let actual
+				try {
+					actual = tc.context.merge(tc.input)
+				} catch (e) {
+					errCaught = (e as Error).message
+				}
+				expect(errCaught).toEqual(tc.expectError)
+				expect(actual).toEqual(tc.expected)
+			})
+		})
+	})
+	describe("mergeCurrency", () => {
+		mergeCurrencyTestCases.forEach((tc) => {
 			test(tc.name, () => {
 				let errCaught
 				let actual

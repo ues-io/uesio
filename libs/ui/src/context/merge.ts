@@ -235,7 +235,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			throw InvalidCurrencyMsg
 		}
 		const [expression, decimalOption] = parts
-		const decimals = parseInt(decimalOption, 10) ?? 2
+		const decimals = parseInt(decimalOption || "2", 10)
 		const value = context.merge(expression) as number
 		return Intl.NumberFormat(undefined, {
 			minimumFractionDigits: decimals,
