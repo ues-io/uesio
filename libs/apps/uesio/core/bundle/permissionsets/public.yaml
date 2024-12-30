@@ -2,16 +2,9 @@ name: public
 public: true
 named: {}
 views:
-  uesio/core.login: true
-  uesio/core.loginarea: true
-  uesio/core.notfound: true
 routes:
-  uesio/core.login: true
-  uesio/core.signup: true
 files:
   uesio/core.logo: true
   uesio/core.favicon: true
   uesio/core.logowhite: true
-  uesio/core.logosmall: true
-  uesio/core.splash: true
 collections:
