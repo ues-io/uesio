@@ -12,9 +12,8 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/wire"
 )
-
-var MockUserNames = []string{"ben", "abel", "wessel", "baxter", "zach", "uesio"}
 
 type LoginHandler func() (map[string]string, error)
 
@@ -32,24 +31,50 @@ func parseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
-var mockHandler = &LoginMethodHandler{
-	Key:   "uesio/core.mock",
-	Label: "Mock login",
-	Handler: func() (map[string]string, error) {
-		username := os.Getenv("UESIO_CLI_USERNAME")
-		if username == "" {
-			err := survey.AskOne(&survey.Select{
-				Message: "Select a user.",
-				Options: MockUserNames,
-			}, &username)
-			if err != nil {
-				return nil, err
-			}
+func getMockHandler() (*LoginMethodHandler, error) {
+
+	// Check to see if any mock logins exist.
+	users, err := wire.GetMockUsers()
+	if err != nil {
+		// For backwards compatibility just ignore the error here
+		// and continue witout allowing mock login
+		return nil, nil
+	}
+
+	if users.Len() == 0 {
+		return nil, nil
+	}
+
+	mockUserNames := []string{}
+
+	for _, user := range users {
+		username, err := user.GetFieldAsString("uesio/appkit.username")
+		if err != nil {
+			return nil, err
 		}
-		return map[string]string{
-			"token": username,
-		}, nil
-	},
+		mockUserNames = append(mockUserNames, username)
+	}
+
+	return &LoginMethodHandler{
+		Key:   "uesio/core.mock",
+		Label: "Mock login",
+		Handler: func() (map[string]string, error) {
+			username := os.Getenv("UESIO_CLI_USERNAME")
+			if username == "" {
+				err := survey.AskOne(&survey.Select{
+					Message: "Select a user.",
+					Options: mockUserNames,
+				}, &username)
+				if err != nil {
+					return nil, err
+				}
+			}
+			return map[string]string{
+				"token": username,
+			}, nil
+		},
+	}, nil
+
 }
 
 var platformHandler = &LoginMethodHandler{
@@ -83,9 +108,7 @@ var platformHandler = &LoginMethodHandler{
 	},
 }
 
-var loginHandlers = []*LoginMethodHandler{mockHandler, platformHandler}
-
-func getHandlerOptions() []string {
+func getHandlerOptions(loginHandlers []*LoginMethodHandler) []string {
 	options := make([]string, len(loginHandlers))
 	for i, handler := range loginHandlers {
 		options[i] = handler.Label
@@ -93,7 +116,7 @@ func getHandlerOptions() []string {
 	return options
 }
 
-func getHandlerByKey(key string) *LoginMethodHandler {
+func getHandlerByKey(key string, loginHandlers []*LoginMethodHandler) *LoginMethodHandler {
 	for _, handler := range loginHandlers {
 		if handler.Key == key {
 			return handler
@@ -101,7 +124,7 @@ func getHandlerByKey(key string) *LoginMethodHandler {
 	}
 	return nil
 }
-func getHandlerByLabel(label string) *LoginMethodHandler {
+func getHandlerByLabel(label string, loginHandlers []*LoginMethodHandler) *LoginMethodHandler {
 	for _, handler := range loginHandlers {
 		if handler.Label == label {
 			return handler
@@ -111,26 +134,41 @@ func getHandlerByLabel(label string) *LoginMethodHandler {
 }
 
 func getLoginPayload() (string, map[string]string, error) {
-	loginMethodOptions := getHandlerOptions()
+
+	var loginHandlers = []*LoginMethodHandler{platformHandler}
+
 	var handler *LoginMethodHandler
+
+	// Add in mock handler if relevant
+	mockHandler, err := getMockHandler()
+	if err != nil {
+		return "", nil, err
+	}
+	if mockHandler != nil {
+		// Prepend the mock handler so it's first.
+		loginHandlers = append([]*LoginMethodHandler{mockHandler}, loginHandlers...)
+	}
+
+	loginMethodOptions := getHandlerOptions(loginHandlers)
+
 	// If login method is specified via env vars, use that
 	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
 	if loginMethod != "" {
-		handler = getHandlerByKey(loginMethod)
+		handler = getHandlerByKey(loginMethod, loginHandlers)
 	}
 	// If only have one possible login method, just use that
 	if handler == nil && len(loginMethodOptions) == 1 {
-		handler = getHandlerByLabel(loginMethodOptions[0])
+		handler = getHandlerByLabel(loginMethodOptions[0], loginHandlers)
 	}
 	// If we still don't have a login method, then we need to prompt
 	if handler == nil {
 		if err := survey.AskOne(&survey.Select{
 			Message: "Select a login method.",
-			Options: getHandlerOptions(),
+			Options: loginMethodOptions,
 		}, &loginMethod); err != nil {
 			return "", nil, err
 		}
-		handler = getHandlerByLabel(loginMethod)
+		handler = getHandlerByLabel(loginMethod, loginHandlers)
 	}
 	// If we still don't have a handler --- fail
 	if handler == nil {

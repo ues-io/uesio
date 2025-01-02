@@ -193,6 +193,8 @@ func getLoadBotFunc(botKey, collectionName string) LoadBotFunc {
 	}
 
 	switch collectionName {
+	case "uesio/appkit.mock_user":
+		return runMockUserBot
 	case "uesio/core.usage":
 		return runUsageLoadBot
 	case "uesio/core.userfile":

@@ -1,10 +1,15 @@
 name: login_mock
-pack: login
-entrypoint: components/loginmock/loginmock
-configvalues:
-  - uesio/core.mock_auth
-  - uesio/core.mock_auth_usernames
-utilities:
-  - uesio/io.button
-variants:
-  - uesio/io.button:uesio/io.secondary
+category: LAYOUT
+type: DECLARATIVE
+properties:
+definition:
+  - uesio/core.view:
+      uesio.id: mocklogin
+      view: uesio/appkit.login_mock
+title: Mock Login
+discoverable: false
+description: Mock Login Component
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

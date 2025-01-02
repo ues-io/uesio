@@ -1,0 +1,28 @@
+name: login_mock
+public: true
+definition:
+  wires:
+    mockusers:
+      collection: uesio/appkit.mock_user
+      fields:
+        name:
+        username:
+  components:
+    - uesio/io.deck:
+        wire: mockusers
+        uesio.styleTokens:
+          root:
+            - grid-cols-2
+            - gap-2
+        components:
+          - uesio/io.button:
+              uesio.variant: uesio/appkit.secondary
+              uesio.styleTokens:
+                root:
+                  - capitalize
+              text: ${uesio/appkit.name}
+              signals:
+                - signal: user/LOGIN
+                  authSource: uesio/core.mock
+                  payload:
+                    token: ${uesio/appkit.username}

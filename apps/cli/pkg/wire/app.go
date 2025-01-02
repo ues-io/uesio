@@ -150,3 +150,22 @@ func GetApps() (map[string]*App, error) {
 	return apps, nil
 
 }
+
+// GetMockUsers returns a list of the available mock users
+func GetMockUsers() (wire.Collection, error) {
+
+	return Load(
+		"uesio/appkit.mock_user",
+		&LoadOptions{
+			Fields: []wire.LoadRequestField{
+				{
+					ID: "name",
+				},
+				{
+					ID: "username",
+				},
+			},
+		},
+	)
+
+}
