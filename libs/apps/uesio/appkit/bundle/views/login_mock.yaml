@@ -16,6 +16,7 @@ definition:
             - gap-2
         components:
           - uesio/io.button:
+              uesio.id: mock-login-${uesio/appkit.username}
               uesio.variant: uesio/appkit.secondary
               uesio.styleTokens:
                 root:

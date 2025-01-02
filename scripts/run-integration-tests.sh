@@ -11,8 +11,9 @@ export HURL_num_common_fields=8
 export HURL_num_public_core_collections=14
 export HURL_num_tests_collections=11
 export HURL_num_aikit_collections=2
+export HURL_num_appkit_collections=1
 # this number should be the sum of the above two variables
-export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections + $HURL_num_aikit_collections))
+export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections + $HURL_num_aikit_collections + $HURL_num_appkit_collections))
 
 # Initialize and the sample app and seed test data
 bash "scripts/tests-init.sh"
