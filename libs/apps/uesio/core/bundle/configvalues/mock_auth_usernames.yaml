@@ -1,4 +1,0 @@
-name: mock_auth_usernames
-managedBy: app
-store: environment
-public: true

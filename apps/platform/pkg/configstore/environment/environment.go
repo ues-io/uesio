@@ -31,7 +31,6 @@ func GetEnvWithDefault(key, defaultValue string) string {
 
 var configValues = map[string]string{
 	"uesio/core.mock_auth":                        os.Getenv("UESIO_MOCK_AUTH"),
-	"uesio/core.mock_auth_usernames":              GetEnvWithDefault("UESIO_MOCK_AUTH_USERNAMES", "ben,abel,wessel,baxter,zach,uesio"),
 	"uesio/core.platform_filesource_type":         GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_TYPE", "uesio.s3"),
 	"uesio/core.platform_bundlestore_type":        GetEnvWithDefault("UESIO_PLATFORM_BUNDLESTORE_TYPE", "uesio.s3"),
 	"uesio/core.platform_filesource_credentials":  GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_CREDENTIALS", "uesio/core.aws"),

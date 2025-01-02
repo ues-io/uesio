@@ -3,6 +3,7 @@ public: true
 named: {}
 views:
   uesio/appkit.login: true
+  uesio/appkit.login_mock: true
   uesio/appkit.login_platform: true
   uesio/appkit.login_request_password: true
   uesio/appkit.login_change_password: true
@@ -12,3 +13,4 @@ routes:
 files:
   uesio/appkit.splash: true
 collections:
+  uesio/appkit.mock_user: true

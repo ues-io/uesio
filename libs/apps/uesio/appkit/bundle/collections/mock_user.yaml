@@ -1,0 +1,8 @@
+name: mock_user
+type: DYNAMIC
+uniqueKey:
+  - uesio/appkit.username
+nameField: username
+label: Mock User
+pluralLabel: Mock Users
+public: true
