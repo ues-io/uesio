@@ -22,6 +22,8 @@ func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Sit
 		// https://github.com/TheCloudMasters/uesio/issues/2643
 		Timeout: time.Hour * 12,
 	})
+	// Remove any previous set-cookie headers
+	w.Header().Del("Set-Cookie")
 	session.Add(sess, w)
 	return sess
 }

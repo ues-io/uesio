@@ -11,10 +11,17 @@ HTTP 200
 
 [Captures]
 session_id: cookie "sessid"
+[Asserts]
+cookie "sessid" exists
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
 HTTP 200
+
+[Captures]
+session_id_public: cookie "sessid"
+[Asserts]
+cookie "sessid" exists
 
 # Access a workspace route with an invalid session, requesting HTML
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group
@@ -43,3 +50,34 @@ HTTP 200
 
 [Asserts]
 header "Location" == "/login?r=https://{{host}}:{{port}}/workspace/uesio/tests/dev/views/uesio/tests/dependencies_group/edit&expired=true"
+
+# Attempt to navigate to a public route with no session id
+# @cookie_storage_clear
+GET https://{{host}}:{{port}}/site/routes/path/uesio/appkit/requestpassword
+Accept: application/json
+HTTP 200
+
+[Asserts]
+cookie "sessid" exists
+cookie "sessid" not contains "{{session_id}}"
+
+# Attempt to navigate to a public route with a bad session id
+# @cookie_storage_clear
+GET https://{{host}}:{{port}}/site/routes/path/uesio/appkit/requestpassword
+Accept: application/json
+Cookie: sessid={{session_id}}
+HTTP 200
+
+[Asserts]
+cookie "sessid" exists
+cookie "sessid" not contains "{{session_id}}"
+
+# Attempt to navigate to a public route with a good session id
+# @cookie_storage_clear
+GET https://{{host}}:{{port}}/site/routes/path/uesio/appkit/requestpassword
+Accept: application/json
+Cookie: sessid={{session_id_public}}
+HTTP 200
+
+[Asserts]
+cookie "sessid" not exists
