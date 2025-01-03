@@ -619,7 +619,6 @@ class Context {
 		this.stack.find(isFieldModeContextFrame)?.fieldMode || "READ"
 
 	getUser = () => getCurrentState().user
-	getSession = () => getCurrentState().session
 
 	addWireFrame = (wireContext: WireContext) =>
 		this.#addFrame({

@@ -14,28 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 )
 
-// Checks if the session returned with the user's original HTML route load
-// is different from the session being sent in the current request,
-// by comparing the Uesio session id hash in the original HTML request
-// to the hash of the session id sent in an XHR request.
-func userSessionHasChangedSinceOriginalRouteLoad(r *http.Request, s *sess.Session) bool {
-	originalSessionHash := r.Header.Get("x-uesio-osh")
-	currentSessionHash := s.GetSessionIdHash()
-	// If the original session hash is different from the current hash,
-	// then the user's session cookie has changed since the page was originally loaded
-	return originalSessionHash != "" && currentSessionHash != "" && originalSessionHash != currentSessionHash
-}
-
-// If the current session is a "guest" user session,
-// and if the user's session has changed since the original HTML route load,
-// then we assume that the user was logged out, so we need to redirect them to the login page
-func userHasBeenLoggedOut(r *http.Request, s *sess.Session) bool {
-	if !s.IsPublicProfile() {
-		return false
-	}
-	return userSessionHasChangedSinceOriginalRouteLoad(r, s)
-}
-
 // Authenticate checks to see if the current user is logged in
 func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -101,9 +79,6 @@ func Authenticate(next http.Handler) http.Handler {
 		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicProfile() {
 			session.Remove(browserSession, w)
 			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
-			return
-		}
-		if userHasBeenLoggedOut(r, s) && auth.RedirectToLoginRoute(w, r, s, auth.LoggedOut) {
 			return
 		}
 

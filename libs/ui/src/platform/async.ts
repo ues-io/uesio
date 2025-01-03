@@ -33,40 +33,23 @@ export function interceptPlatformRedirects(response: Response) {
 	return false
 }
 
-function addOriginalSessionHashHeader(
-	context: Context,
-	headers: Record<string, string> = {}
-) {
-	let session
-	try {
-		session = context.getSession()
-		// eslint-disable-next-line no-empty
-	} catch (e) {}
-	if (session && headers) {
-		headers["x-uesio-osh"] = session.hash
-	}
-	return headers
-}
-
 export const getJSON = (context: Context, url: string) =>
 	fetch(url, {
 		method: "GET",
-		headers: addOriginalSessionHashHeader(context, {
+		headers: {
 			"Content-Type": "application/json",
 			"Accept-Encoding": "gzip, deflate",
-		}),
+		},
 	}).then(respondJSON)
 
 export const del = (context: Context, url: string) =>
 	fetch(url, {
 		method: "DELETE",
-		headers: addOriginalSessionHashHeader(context),
 	})
 
 export const post = (context: Context, url: string) =>
 	fetch(url, {
 		method: "POST",
-		headers: addOriginalSessionHashHeader(context),
 	})
 
 export const postJSON = (
@@ -76,9 +59,9 @@ export const postJSON = (
 ) =>
 	fetch(url, {
 		method: "POST",
-		headers: addOriginalSessionHashHeader(context, {
+		headers: {
 			"Content-Type": "application/json",
-		}),
+		},
 		body: JSON.stringify(body),
 	})
 
@@ -89,9 +72,9 @@ export const postBinary = (
 ) =>
 	fetch(url, {
 		method: "POST",
-		headers: addOriginalSessionHashHeader(context, {
+		headers: {
 			"Content-Type": "application/octet-stream",
-		}),
+		},
 		body,
 	})
 
@@ -103,6 +86,5 @@ export const postMultipartForm = (
 	fetch(url, {
 		method: "POST",
 		// Do not set the content-type header. The browser does this for us.
-		headers: addOriginalSessionHashHeader(context),
 		body,
 	})

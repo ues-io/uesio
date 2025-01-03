@@ -13,7 +13,6 @@ import panel from "../bands/panel"
 import route from "../bands/route"
 import routeassignment from "../bands/routeassignment"
 import selectlist from "../bands/selectlist"
-import session from "../bands/session"
 import site, { SiteState } from "../bands/site"
 import theme from "../bands/theme"
 import user from "../bands/user"
@@ -21,14 +20,12 @@ import viewdef from "../bands/viewdef"
 import wire from "../bands/wire"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
-import { SessionState } from "../bands/session/types"
 import { newContext } from "../context/context"
 import { handleNavigateResponse } from "../bands/route/operations"
 
 type InitialState = {
 	route?: RouteState
 	user?: UserState
-	session?: SessionState
 	site?: SiteState
 }
 
@@ -50,7 +47,6 @@ const create = (initialState: InitialState) => {
 			route,
 			routeassignment,
 			selectlist,
-			session,
 			site,
 			theme,
 			user,
@@ -60,7 +56,6 @@ const create = (initialState: InitialState) => {
 		devTools: true,
 		preloadedState: {
 			user: initialState.user,
-			session: initialState.session,
 			site: initialState.site,
 		},
 	})

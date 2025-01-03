@@ -34,7 +34,6 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
-	github.com/twmb/murmur3 v1.1.8
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
 	golang.org/x/crypto v0.31.0

@@ -7,8 +7,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/twmb/murmur3"
-
 	"github.com/icza/session"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -24,6 +22,8 @@ func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Sit
 		// https://github.com/TheCloudMasters/uesio/issues/2643
 		Timeout: time.Hour * 12,
 	})
+	// Remove any previous set-cookie headers
+	w.Header().Del("Set-Cookie")
 	session.Add(sess, w)
 	return sess
 }
@@ -506,17 +506,4 @@ func (s *Session) GetContextSite() *meta.Site {
 
 func (s *Session) GetSessionId() string {
 	return s.ID
-}
-
-func (s *Session) GetSessionIdHash() string {
-	sessionId := s.GetSessionId()
-	if sessionId == "" {
-		return ""
-	}
-	hasher := murmur3.New64()
-	_, err := hasher.Write([]byte(sessionId))
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("%d", hasher.Sum64())
 }
