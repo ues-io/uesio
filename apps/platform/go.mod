@@ -16,7 +16,7 @@ require (
 	github.com/crewjam/saml v0.4.14
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd
-	github.com/evanw/esbuild v0.24.1
+	github.com/evanw/esbuild v0.24.2
 	github.com/fatih/color v1.18.0
 	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
