@@ -82,7 +82,7 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 		parentSelected,
 	} = props
 	const listName = slot.name
-	const label = slot.label || "Slot"
+	const label = slot.label || listName || "Slot"
 
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const classes = styles.useUtilityStyleTokens(SlotStyleDefaults, props)
