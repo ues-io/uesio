@@ -28,9 +28,6 @@ func ZipDir(localPath string) io.Reader {
 				return nil
 			}
 			file, err := os.Open(path)
-			if strings.HasPrefix(file.Name(), ".") || strings.Contains(file.Name(), "/.") {
-				return nil
-			}
 			if err != nil {
 				return err
 			}
