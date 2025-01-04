@@ -16,7 +16,7 @@ import (
 func Deploy(sourceDir string) error {
 
 	sourceDirDescription := sourceDir
-	if sourceDir == "." {
+	if sourceDir == "." || sourceDir == "" {
 		sourceDirDescription = "current directory"
 	}
 
