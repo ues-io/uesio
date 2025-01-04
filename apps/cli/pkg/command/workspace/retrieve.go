@@ -19,7 +19,7 @@ import (
 func Retrieve(targetDir string) error {
 
 	targetDirDescription := targetDir
-	if targetDir == "." {
+	if targetDir == "." || targetDir == "" {
 		targetDirDescription = "current directory"
 	}
 
