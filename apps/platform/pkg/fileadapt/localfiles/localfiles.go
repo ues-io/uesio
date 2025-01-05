@@ -7,11 +7,22 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
+
+// Skip .DS_Store files
+var LocalFileIgnore = []string{".DS_Store"}
+
+// For local files, returns true if the file should be ignored during processing, false otherwise
+func ShouldIgnoreFile(fileName string) bool {
+	return slices.ContainsFunc(LocalFileIgnore, func(name string) bool {
+		return strings.EqualFold(name, fileName)
+	})
+}
 
 type FileAdapter struct {
 }
@@ -54,8 +65,7 @@ func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
 		if path == basePath {
 			return nil
 		}
-		// Skip .DS_Store files
-		if info.Name() == ".DS_Store" {
+		if ShouldIgnoreFile(info.Name()) {
 			return nil
 		}
 

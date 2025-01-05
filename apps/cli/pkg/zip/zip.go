@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 )
 
 func ZipDir(localPath string) io.Reader {
@@ -25,6 +27,9 @@ func ZipDir(localPath string) io.Reader {
 				return err
 			}
 			if info.IsDir() {
+				return nil
+			}
+			if localfiles.ShouldIgnoreFile(info.Name()) {
 				return nil
 			}
 			file, err := os.Open(path)
