@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,7 +23,7 @@ func ZipDir(localPath string) io.Reader {
 		// Zip the current directory
 		w := zip.NewWriter(pw)
 
-		walker := func(path string, info os.FileInfo, err error) error {
+		walker := func(path string, info fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -50,7 +51,7 @@ func ZipDir(localPath string) io.Reader {
 
 			return nil
 		}
-		err := filepath.Walk(localPath, walker)
+		err := filepath.WalkDir(localPath, walker)
 		if err != nil {
 			fmt.Println("Error Zipping Bundle Dir: " + err.Error())
 		}
