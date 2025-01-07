@@ -81,7 +81,6 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			content: SimpleTagContent,
 			defaultDefinition: {
 				"uesio.type": defaultPanelComponentType,
-				components: [],
 				...getComponentDef(defaultPanelComponentType)
 					?.defaultDefinition,
 			},

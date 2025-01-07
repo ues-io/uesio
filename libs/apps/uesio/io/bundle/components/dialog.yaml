@@ -13,6 +13,8 @@ defaultDefinition:
   height: "60%"
   title: "New Panel"
   uesio.variant: uesio/io.default
+  components: []
+  actions: []
 properties:
   - name: panelid
     label: Panel Id
