@@ -226,11 +226,11 @@ v	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in 
 type ComponentSignalDescriptor = {
 	dispatcher: (state: unknown, signal: object, context: Context) => void
 }
-export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
+type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
 	signals?: Record<string, ComponentSignalDescriptor>
 }
-export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
-export interface UtilityProps {
+type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
+interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
 	styleTokens?: Record<string, string[]>
@@ -239,21 +239,21 @@ export interface UtilityProps {
 	context: Context
 	children?: ReactNode
 }
-export type DefinitionMap = Record<string, unknown>
-export type DefinitionList = DefinitionMap[]
-export type DefinitionValue = unknown
-export type Definition =
+type DefinitionMap = Record<string, unknown>
+type DefinitionList = DefinitionMap[]
+type DefinitionValue = unknown
+type Definition =
 	| DefinitionValue
 	| DefinitionMap
 	| DefinitionValue[]
 	| DefinitionMap[]
-export type BaseDefinition = {
+type BaseDefinition = {
 	"uesio.id"?: string
 	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.classes"?: string
 }
-export type BaseProps<T = DefinitionMap> = {
+type BaseProps<T = DefinitionMap> = {
 	definition: T & BaseDefinition
 	path: string
 	componentType?: MetadataKey
@@ -353,6 +353,7 @@ export namespace definition {
 		BaseProps,
 		UC,
 		UtilityComponent,
+		UtilityProps,
 		DefinitionMap,
 		DefinitionList,
 		DefinitionValue,
