@@ -158,7 +158,7 @@ Cypress.Commands.add(
 			.should(($div) => {
 				// should have found 1 element
 				expect($div).to.have.length(1)
-				expect($div.children("p").eq(0)).to.contain(expectLabel)
+				expect($div.children("p").eq(0)).to.contain(expectName)
 				expect($div.children("p").eq(1)).to.contain(expectNamespace)
 			})
 		cy.get(tableRowSelector)
