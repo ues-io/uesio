@@ -2,7 +2,7 @@ function init(bot) {
 	var name = bot.params.get("name")
 	var params = {
 		name,
-		pkgName: `${name?.includes('/') ? '@' : ''}${name}`
+		pkgName: `${name?.includes("/") ? "@" : ""}${name}`,
 	}
 	var templatePrefix = "templates/template."
 	bot.generateFile(".gitignore", params, `${templatePrefix}gitignore`)
