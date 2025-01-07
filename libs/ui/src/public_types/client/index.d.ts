@@ -129,7 +129,7 @@ v	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in 
 	mergeString: (template: Mergeable) => string
 	/**
 	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context
-     * with the result being the boolean resulting from the merge operation or the default value
+	 * with the result being the boolean resulting from the merge operation or the default value
 	 * if the result of the merge operation did not yield a boolean typed value.
 	 * If the template specified is not a string or does not contain any merge syntax, the result of the
 	 * merge operation will be the template as-is which will then be returned directly if it is a boolean
@@ -349,7 +349,16 @@ export namespace component {
 // DEFINITION
 //
 export namespace definition {
-	export type { BaseProps, UC, UtilityComponent, DefinitionMap, DefinitionList, DefinitionValue, Definition, BaseDefinition }
+	export type {
+		BaseProps,
+		UC,
+		UtilityComponent,
+		DefinitionMap,
+		DefinitionList,
+		DefinitionValue,
+		Definition,
+		BaseDefinition,
+	}
 }
 
 export const PARAM = "PARAM"
@@ -794,7 +803,6 @@ export namespace api {
 			wireNames: string[],
 			context: Context
 		): (Wire | undefined)[]
-
 	}
 
 	export namespace file {
@@ -852,9 +860,6 @@ export namespace api {
 		 * @param fileId the id of the file
 		 * @returns content of the file
 		 */
-		export function useFile(
-			context: Context,
-			fileId?: string
-		): string
+		export function useFile(context: Context, fileId?: string): string
 	}
 }
