@@ -1,9 +1,9 @@
 import { FC, ReactNode } from "react"
 import { Class, cx } from "@twind/core"
 
-type FieldMode = "READ" | "EDIT"
+export type FieldMode = "READ" | "EDIT"
 
-type SiteState = {
+export type SiteState = {
 	name: string
 	app: string
 	domain: string
@@ -12,7 +12,7 @@ type SiteState = {
 	title?: string
 }
 
-type RouteState = {
+export type RouteState = {
 	view: string
 	params?: Record<string, string>
 	namespace: string
@@ -22,7 +22,7 @@ type RouteState = {
 	isLoading?: boolean
 } | null
 
-type UserState = {
+export type UserState = {
 	id: string
 	username: string
 	site: string
@@ -32,12 +32,12 @@ type UserState = {
 	picture: UserPictureState | null
 } | null
 
-type UserPictureState = {
+export type UserPictureState = {
 	id: string
 	updatedat: number
 }
 
-interface Palette {
+export interface Palette {
 	primary: string
 	secondary: string
 	error: string
@@ -48,7 +48,7 @@ interface Palette {
 	[key: string]: string
 }
 
-type ThemeState = {
+export type ThemeState = {
 	name: string
 	namespace: string
 	definition: {
@@ -57,7 +57,22 @@ type ThemeState = {
 	}
 }
 
-type Context = {
+export type Mergeable = string | number | boolean | undefined
+
+export type DeepMergeable = Mergeable | Record<string, Mergeable> | Mergeable[]
+
+export interface WireContext {
+	wire: string
+	view?: string
+}
+
+export interface RecordContext {
+	view?: string
+	wire: string
+	record: string
+}
+
+export type Context = {
 	/**
 	 * Adds a Component-specific context frame to the current stack
 	 * @param componentType - the fully-qualified component type, e.g. uesio/io.barchart
@@ -76,11 +91,53 @@ type Context = {
 	 */
 	addSignalOutputFrame: (label: string, data: unknown) => Context
 	/**
-	 * Merges a text string containing merges, e.g. ${uesio/core.uniquekey} in the current context
-	 * @param text - the text to be merged
-	 * @returns the merged text
+	 * Adds a record data frame to the current stack
+	 * @param recordData - the record data frame to add
+	 * @param index - the record's zero-indexed position within its parent array/collection
+	 * @returns new Context object
 	 */
-	merge: (text: string) => string
+	addRecordDataFrame: (recordData: PlainWireRecord, index?: number) => Context
+
+	/**
+	 * Adds a record context frame to the current stack
+	 * @param recordContext - the record context frame to add
+	 * @returns new Context object
+	 */
+	addRecordFrame: (recordContext: RecordContext) => Context
+	/**
+	 * Adds a wire context frame to the current stack
+	 * @param wireContext - the wire context frame to add
+	 * @returns new Context object
+	 */
+	addWireFrame: (wireContext: WireContext) => Context
+	/**
+	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context
+	 * If the template specified is not a string or does not contain any merge syntax, the template
+	 * is returned as-is.
+	 * @param template - the template to be merged
+	 * @returns the merged result
+	 */
+	merge: (template: Mergeable) => FieldValue
+	/**
+v	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context
+     * with the result coerced in to a string.
+	 * If the template specified is not a string or does not contain any merge syntax, the value returned
+	 * is the template coerced to a string.
+	 * @param template - the template to be merged
+	 * @returns the merged result as a string
+	 */
+	mergeString: (template: Mergeable) => string
+	/**
+	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context
+     * with the result being the boolean resulting from the merge operation or the default value
+	 * if the result of the merge operation did not yield a boolean typed value.
+	 * If the template specified is not a string or does not contain any merge syntax, the result of the
+	 * merge operation will be the template as-is which will then be returned directly if it is a boolean
+	 * type or the default value if not.
+	 * @param template - the template to be merged
+	 * @returns the merged result as a boolean
+	 */
+	mergeBoolean: (template: Mergeable, defaultValue: boolean) => boolean
 	/**
 	 * Returns an array of errors that are part of the current context
 	 * @returns Array of error strings
@@ -119,6 +176,11 @@ type Context = {
 	 * @returns string
 	 */
 	getRecordId: () => string
+	/**
+	 * Returns the stable, unique id of the closest context Record
+	 * @returns string
+	 */
+	getRecordIdFieldValue: () => string
 	/**
 	 * Returns the state of the context Route
 	 * @returns RouteState object
@@ -227,7 +289,7 @@ export type METADATA = {
 	VIEW: "views"
 }
 export type MetadataType = keyof METADATA
-type MetadataKey = `${string}/${string}.${string}`
+export type MetadataKey = `${string}/${string}.${string}`
 
 //
 // STYLES
@@ -253,7 +315,7 @@ export const styles = {
 // COMPONENT
 //
 
-interface SlotUtilityProps extends UtilityProps {
+export interface SlotUtilityProps extends UtilityProps {
 	path: string
 	definition?: DefinitionMap
 	listName?: string
@@ -262,7 +324,7 @@ interface SlotUtilityProps extends UtilityProps {
 	componentType?: MetadataKey
 }
 
-interface UtilityPropsPlus extends UtilityProps {
+export interface UtilityPropsPlus extends UtilityProps {
 	[x: string]: unknown
 }
 
@@ -287,50 +349,16 @@ export namespace component {
 // DEFINITION
 //
 export namespace definition {
-	export type BaseProps<T = DefinitionMap> = {
-		definition: T & BaseDefinition
-		path: string
-		componentType?: MetadataKey
-		context: Context
-		children?: ReactNode
-	}
-
-	export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
-		signals?: Record<string, ComponentSignalDescriptor>
-	}
-	export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
-	interface UtilityProps {
-		id?: string
-		variant?: MetadataKey
-		styleTokens?: Record<string, string[]>
-		classes?: Record<string, string>
-		className?: string
-		context: Context
-		children?: ReactNode
-	}
-	export type DefinitionMap = Record<string, unknown>
-	export type DefinitionList = DefinitionMap[]
-	export type DefinitionValue = unknown
-	export type Definition =
-		| DefinitionValue
-		| DefinitionMap
-		| DefinitionValue[]
-		| DefinitionMap[]
-	export type BaseDefinition = {
-		"uesio.id"?: string
-		"uesio.styleTokens"?: Record<string, string[]>
-		"uesio.variant"?: MetadataKey
-		"uesio.classes"?: string
-	}
+	export type { BaseProps, UC, UtilityComponent, DefinitionMap, DefinitionList, DefinitionValue, Definition, BaseDefinition }
 }
 
-const PARAM = "PARAM"
-const LOOKUP = "LOOKUP"
-const VALUE = "VALUE"
-const SEARCH = "SEARCH"
-const GROUP = "GROUP"
-type Conjunction = "AND" | "OR"
-type ConditionOperators =
+export const PARAM = "PARAM"
+export const LOOKUP = "LOOKUP"
+export const VALUE = "VALUE"
+export const SEARCH = "SEARCH"
+export const GROUP = "GROUP"
+export type Conjunction = "AND" | "OR"
+export type ConditionOperators =
 	| "EQ"
 	| "NOT_EQ"
 	| "GT"
@@ -341,43 +369,43 @@ type ConditionOperators =
 	| "NOT_IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
-type WireCondition =
+export type WireCondition =
 	| ParamCondition
 	| LookupCondition
 	| ValueCondition
 	| SearchCondition
 	| GroupCondition
-type ConditionBase = {
+export type ConditionBase = {
 	id?: string
 	operator?: ConditionOperators
 	inactive?: boolean
 }
-type GroupCondition = ConditionBase & {
+export type GroupCondition = ConditionBase & {
 	type: typeof GROUP
 	conjunction: Conjunction
 	conditions: ConditionBase[]
 	valueSource: undefined
 }
-type SearchCondition = ConditionBase & {
+export type SearchCondition = ConditionBase & {
 	type: typeof SEARCH
 	value: string
 	valueSource?: undefined
 	fields?: string[]
 }
-type ParamCondition = ConditionBase & {
+export type ParamCondition = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof PARAM
 	param: string
 }
-type LookupCondition = ConditionBase & {
+export type LookupCondition = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof LOOKUP
 	lookupWire: string
 	lookupField: string
 }
-type ValueCondition = ConditionBase & {
+export type ValueCondition = ConditionBase & {
 	type?: undefined
 	field: string
 	valueSource: typeof VALUE | undefined
@@ -388,7 +416,7 @@ type ValueCondition = ConditionBase & {
 	inclusiveEnd?: boolean
 }
 
-type FieldType =
+export type FieldType =
 	| "AUTONUMBER"
 	| "CHECKBOX"
 	| "DATE"
@@ -410,9 +438,9 @@ type FieldType =
 	| "USER"
 	| "ANY"
 
-type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
+export type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
-type SelectOption = {
+export type SelectOption = {
 	label: string
 	value: string
 	languageLabel?: string
@@ -420,32 +448,32 @@ type SelectOption = {
 	title?: string
 }
 
-type NumberMetadata = {
+export type NumberMetadata = {
 	decimals: number
 }
 
-type SelectListMetadata = {
+export type SelectListMetadata = {
 	name: string
 	options: SelectOption[]
 	blank_option_label?: string
 	blank_option_language_label?: string
 }
 
-type FileMetadata = {
+export type FileMetadata = {
 	accept: AcceptTypes
 	filesource: string
 }
 
-type ReferenceMetadata = {
+export type ReferenceMetadata = {
 	collection: string
 }
 
-type ReferenceGroupMetadata = {
+export type ReferenceGroupMetadata = {
 	collection: string
 	field: string
 }
 
-type GetSelectOptionsProps = {
+export type GetSelectOptionsProps = {
 	context: Context
 	// A blank option is added by default, but can be disabled by setting this to false
 	addBlankOption?: boolean
@@ -454,7 +482,7 @@ type GetSelectOptionsProps = {
 /**
  * API for interacting with the Fields on a Collection
  */
-type Field = {
+export type Field = {
 	/**
 	 * Get the fully-qualified field name, e.g. "uesio/core.firstname"
 	 */
@@ -552,18 +580,18 @@ type Collection = {
 	 */
 	getNameField: () => Field | undefined
 }
-type WireField = {
+export type WireField = {
 	id: string
 	fields?: WireField[]
 }
 
-interface CreateRecordsOptions {
+export interface CreateRecordsOptions {
 	context: Context
 	records: PlainWireRecord[]
 	prepend?: boolean
 }
 
-type Wire = {
+export type Wire = {
 	cancel: () => void
 	createRecord: (
 		record: PlainWireRecord,
@@ -599,16 +627,20 @@ type Wire = {
 	toggleCondition: (conditionId: string) => void
 	unmarkRecordForDeletion: (recordId: string) => void
 }
-type FieldValue =
+export type FieldValue =
 	| PlainFieldValue
 	| PlainWireRecord
 	| PlainFieldValue[]
 	| PlainWireRecord[]
-type PlainWireRecord = {
+export type PlainWireRecord = {
 	[key: string]: FieldValue
 }
-type PlainFieldValue = string | number | boolean | undefined | null
-type WireRecord = {
+export type PlainFieldValue = string | number | boolean | undefined | null
+export type WireRecord = {
+	/**
+	 * Returns the unique id of this record
+	 */
+	getId: () => string
 	/**
 	 * Returns the stable, unique id of this record, which is created when the record is first saved.
 	 */
@@ -651,12 +683,12 @@ type WireRecord = {
 	remove: () => void
 }
 
-type OrderState = {
+export type OrderState = {
 	field: MetadataKey
 	desc: boolean
 }
 
-type PlainWire = {
+export type PlainWire = {
 	batchid: string
 	batchnumber: number
 	changes: Record<string, PlainWireRecord>
@@ -681,7 +713,7 @@ interface SignalDefinition {
 
 // SIGNAL
 export namespace signal {
-	export { SignalDefinition }
+	export { SignalDefinition, ComponentSignalDescriptor }
 }
 
 // API
@@ -719,8 +751,6 @@ export namespace api {
 			signals: SignalDefinition[],
 			context: Context
 		): Promise<Context>
-
-		export { getHandler }
 	}
 
 	export namespace view {
@@ -731,8 +761,6 @@ export namespace api {
 		 * @returns handler function
 		 */
 		export function useConfigValue(configValueName: MetadataKey): string
-
-		export { useConfigValue }
 	}
 
 	export namespace wire {
@@ -767,16 +795,66 @@ export namespace api {
 			context: Context
 		): (Wire | undefined)[]
 
-		export { getWire, useWire, useWires }
 	}
 
-	export default { signal, view, wire }
-}
-
-export default {
-	api,
-	component,
-	definition,
-	styles,
-	signal,
+	export namespace file {
+		/**
+		 * Returns the URL of a File
+		 * @param context Context object
+		 * @param fullName Full name of the file
+		 * @param filePath Path to the file
+		 * @returns URL of the File
+		 */
+		export function getURLFromFullName(
+			context: Context,
+			fullName: string,
+			filePath?: string
+		): string
+		/**
+		 * Returns the URL of a User File
+		 * @param context Context object
+		 * @param userfileid Id of the User File
+		 * @param fileVersion Version of the User File
+		 * @returns URL of the User File
+		 */
+		export function getUserFileURL(
+			context: Context,
+			userfileid?: string,
+			fileVersion?: string
+		): string
+		/**
+		 * Returns the URL of the Attachment
+		 * @param context Context object
+		 * @param recordid Id of the record
+		 * @param path Path to the attachment
+		 * @param fileVersion Version of the attachment
+		 * @returns URL of the Attachment
+		 */
+		export function getAttachmentURL(
+			context: Context,
+			recordid: string,
+			path: string,
+			fileVersion?: string
+		): string
+		/**
+		 * A hook to return the content of a user file
+		 * @param context Context object
+		 * @param userFile User file record
+		 * @returns content of the file
+		 */
+		export function useUserFile(
+			context: Context,
+			userFile: PlainWireRecord | undefined
+		): string
+		/**
+		 * A hook to return the content of a file
+		 * @param context Context object
+		 * @param fileId the id of the file
+		 * @returns content of the file
+		 */
+		export function useFile(
+			context: Context,
+			fileId?: string
+		): string
+	}
 }
