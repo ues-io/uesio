@@ -417,7 +417,7 @@ definition:
                               components:
                                 - uesio/io.iconlabel:
                                     uesio.variant: uesio/io.namespacefield
-                                    text: ${uesio/studio.label}
+                                    text: ${uesio/studio.name}
                                     subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -511,7 +511,7 @@ definition:
                               components:
                                 - uesio/io.iconlabel:
                                     uesio.variant: uesio/io.namespacefield
-                                    text: ${uesio/studio.label}
+                                    text: ${uesio/studio.name}
                                     subtitle: ${uesio/studio.namespace}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -711,7 +711,7 @@ definition:
                                                 components:
                                                   - uesio/io.iconlabel:
                                                       uesio.variant: uesio/io.namespacefield
-                                                      text: ${uesio/studio.label}
+                                                      text: ${uesio/studio.name}
                                                       subtitle: ${uesio/studio.namespace}
                                                       icon: ${uesio/studio.appicon}
                                                       color: ${uesio/studio.appcolor}
