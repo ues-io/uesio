@@ -36,11 +36,11 @@ func init() {
 		baseDir = filepath.Join(wd, "..", "..")
 	}
 	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
-	cssPath := filepath.Join(baseDir, "..", "..", "dist", "vendor", "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getComponentPackURLs":      getComponentPackURLs,
 		"getComponentPackStyleURLs": getComponentPackStyleURLs,
-	}).ParseFiles(indexPath, cssPath))
+		"getFontCSSURLs":            getFontCSSURLs,
+	}).ParseFiles(indexPath))
 }
 
 func getComponentPackURLs(componentPackDeps *preload.MetadataMergeData, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) []string {
@@ -78,6 +78,22 @@ func getComponentPackStyleURLs(componentPackDeps *preload.MetadataMergeData, wor
 		}
 	}
 	return packUrls
+}
+
+func getFontCSSURLs(fontDeps *preload.MetadataMergeData, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData) []string {
+	allDeps := fontDeps.GetItems()
+	fontUrls := []string{}
+	for _, fontDep := range allDeps {
+		key := fontDep.GetKey()
+		var fontModstamp int64
+		if font, ok := fontDep.(*meta.Font); ok {
+			fontModstamp = font.UpdatedAt
+			if font.CSSPath != "" {
+				fontUrls = append(fontUrls, getFontUrl(key, fontModstamp, workspace, site, font.CSSPath))
+			}
+		}
+	}
+	return fontUrls
 }
 
 func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMergeData) string {
@@ -123,7 +139,15 @@ func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMe
 
 }
 
-func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
+func getPackUrl(key string, modstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
+	return getAssetUrl(key, "componentpacks", modstamp, workspace, site, filePath)
+}
+
+func getFontUrl(key string, modstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
+	return getAssetUrl(key, "fonts", modstamp, workspace, site, filePath)
+}
+
+func getAssetUrl(key, prefix string, modstamp int64, workspace *preload.WorkspaceMergeData, site *preload.SiteMergeData, filePath string) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -136,12 +160,12 @@ func getPackUrl(key string, packModstamp int64, workspace *preload.WorkspaceMerg
 	if workspace != nil {
 		// If we are in a workspace context, use component pack modstamps to load in their resources,
 		// since we don't have a stable "site" version that we can safely use, as the bundle dependency list is not immutable.
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%d/%s/%s", workspace.App, workspace.Name, user, namepart, packModstamp, name, filePath)
+		return fmt.Sprintf("/workspace/%s/%s/%s/%s/%s/%d/%s/%s", workspace.App, workspace.Name, prefix, user, namepart, modstamp, name, filePath)
 	}
 
-	siteBundleVersion := getSiteBundleVersion(namespace, packModstamp, site)
+	siteBundleVersion := getSiteBundleVersion(namespace, modstamp, site)
 
-	return fmt.Sprintf("/site/componentpacks/%s%s/%s/%s", namespace, siteBundleVersion, name, filePath)
+	return fmt.Sprintf("/site/%s/%s%s/%s/%s", prefix, namespace, siteBundleVersion, name, filePath)
 
 }
 

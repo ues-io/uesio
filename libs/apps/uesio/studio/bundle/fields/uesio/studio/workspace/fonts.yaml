@@ -1,0 +1,7 @@
+name: fonts
+type: REFERENCEGROUP
+label: Fonts
+referenceGroup:
+  collection: font
+  field: workspace
+  onDelete: CASCADE

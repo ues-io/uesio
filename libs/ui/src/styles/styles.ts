@@ -11,6 +11,7 @@ import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
 import {
 	Class,
+	css,
 	getSheet,
 	hash,
 	Preset,
@@ -110,6 +111,16 @@ const setupStyles = (context: Context) => {
 				},
 			},
 		})
+
+		activeStyles(
+			css({
+				"@layer base": {
+					html: {
+						"container-type": "inline-size",
+					},
+				},
+			})
+		)
 	}
 
 	// We need to process the style classes we put on the root element in index.gohtml

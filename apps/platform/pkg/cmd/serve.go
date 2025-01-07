@@ -66,7 +66,7 @@ var (
 	staticPrefix = "/static"
 )
 
-// Vendored scripts/fonts live under /static but do NOT get the GITSHA of the Uesio app,
+// Vendored scripts live under /static but do NOT get the GITSHA of the Uesio app,
 // because they are not expected to change with the GITSHA, but are truly static, immutable
 const vendorPrefix = "/static/vendor"
 
@@ -284,6 +284,15 @@ func serve(cmd *cobra.Command, args []string) {
 
 	sr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	fontFileSuffix := "/{filename:.*}"
+
+	fontPath := fmt.Sprintf("/fonts/%s", versionedItemParam)
+
+	fontFinal := fontPath + fontFileSuffix
+
+	sr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
+	wr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)

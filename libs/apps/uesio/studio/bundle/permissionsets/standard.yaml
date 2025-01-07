@@ -274,6 +274,7 @@ collections:
   uesio/studio.field: true
   uesio/studio.file: true
   uesio/studio.filesource: true
+  uesio/studio.font: true
   uesio/studio.integration: true
   uesio/studio.integrationaction: true
   uesio/studio.integrationtype: true
