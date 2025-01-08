@@ -863,4 +863,13 @@ export namespace api {
 		 */
 		export function useFile(context: Context, fileId?: string): string
 	}
+
+	export namespace component {
+		/**
+		 * Returns the full component id
+		 * @param props the component properties
+		 * @returns the component id
+		 */
+		export function getComponentIdFromProps(props: BaseProps): string
+	}
 }
