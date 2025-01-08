@@ -5,7 +5,4 @@ extends: uesio/sitekit.section_inner
 definition:
   uesio.styleTokens:
     root:
-      - lg:px-20
-      - md:px-10
-      - px-6
       - py-20
