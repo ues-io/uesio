@@ -1,19 +1,19 @@
 import { Context } from "../../context/context"
 import { dispatch } from "../../store/store"
 import { set as setUser } from "."
-import { navigate, redirect } from "../../bands/route/operations"
+import { navigateToRoute, redirect } from "../../bands/route/operations"
 import { getErrorString } from "../utils"
 import { LoginResponse, platform } from "../../platform/platform"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(response: LoginResponse, context: Context) {
 	return "redirectPath" in response
 		? redirect(context, response.redirectPath)
-		: navigate(
+		: navigateToRoute(
 				// Always run the logout action in the base route context.
 				context.getRouteContext(),
 				{
-					path: response.redirectRouteName,
-					namespace: response.redirectRouteNamespace,
+					route: `${response.redirectRouteNamespace}.${response.redirectRouteName}`,
+					params: {},
 				}
 			)
 }
