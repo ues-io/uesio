@@ -1,10 +1,11 @@
 package file
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 var (
@@ -31,8 +32,8 @@ func GetAssetsHost() string {
 }
 
 func Static(currentWorkingDirectory, routePrefix string, cache bool) http.Handler {
-	fontServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "..", "..", "dist")))
-	handler := http.StripPrefix(routePrefix, fontServer)
+	fileServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "..", "..", "dist")))
+	handler := http.StripPrefix(routePrefix, fileServer)
 	if staticAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
 	}

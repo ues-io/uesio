@@ -127,6 +127,10 @@ func HandleOldValuesLookup(
 		}
 		// END TEMPORARY FIX
 
+		if fieldMetadata.Type == "REFERENCEGROUP" {
+			continue
+		}
+
 		allFields = append(allFields, wire.LoadRequestField{
 			ID: fieldID,
 		})

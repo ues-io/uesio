@@ -19,8 +19,6 @@ workspace.json
 **/*.template.ts
 **/dist/**
 
-# Ignore because it uses Go template variables and as such fails prettier CSS parsing
-/libs/vendor/fonts/fonts.css
 # Ignore prettier errors for generated files
 **/generated/@types/**
 /.nx/cache

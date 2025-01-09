@@ -534,6 +534,17 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, errors.New("Failed to get config values: " + err.Error())
 	}
 
+	// Add in fonts
+	var fonts meta.FontCollection
+	err = bundle.LoadAllFromAny(&fonts, nil, session, nil)
+	if err != nil {
+		return nil, errors.New("Failed to load fonts: " + err.Error())
+	}
+
+	for _, font := range fonts {
+		deps.Font.AddItem(font)
+	}
+
 	// Add in route assignments
 	var routeAssignments meta.RouteAssignmentCollection
 	err = bundle.LoadAllFromAny(&routeAssignments, nil, session, nil)

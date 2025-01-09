@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="noicons">
+<html lang="en">
     <head>
         <title>{{ .Route.Title }}</title>
         <meta charset="utf-8" />
@@ -22,11 +22,11 @@
             {{- end -}}
         {{- end }}
         <style>
-            {{template "fonts" .}}
+
         </style>
         {{- range .VendorScriptUrls }}
         <script src="{{.}}"></script>
-        {{- end -}}
+        {{- end }}
         <script src="{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module" crossorigin="true"></script>
     </head>
 <body>
@@ -42,14 +42,17 @@
     {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
-            {{- range getComponentPackURLs .PreloadMetadata.ComponentPack $workspace $site -}}
-                <script src="{{.}}" type="module"></script>
-            {{- end -}}
-            {{- range getComponentPackStyleURLs .PreloadMetadata.ComponentPack $workspace $site -}}
-                <link rel="stylesheet" type="text/css" href="{{.}}"/>
-            {{- end -}}
+            {{- range getComponentPackURLs .PreloadMetadata.ComponentPack $workspace $site }}
+    <script src="{{.}}" type="module"></script>
+            {{- end }}
+            {{- range getComponentPackStyleURLs .PreloadMetadata.ComponentPack $workspace $site }}
+    <link rel="stylesheet" type="text/css" href="{{.}}"/>
+            {{- end }}
+            {{- range getFontCSSURLs .PreloadMetadata.Font $workspace $site }}
+    <link rel="stylesheet" type="text/css" href="{{.}}"/>
+            {{- end }}
         {{- end -}}
-    {{- end -}}
+    {{- end }}
     <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>

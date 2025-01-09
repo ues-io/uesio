@@ -304,6 +304,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&FileSourceCollection{}).GetBundleFolderName():           func() BundleableGroup { return &FileSourceCollection{} },
 	(&FileCollection{}).GetBundleFolderName():                 func() BundleableGroup { return &FileCollection{} },
 	(&FieldCollection{}).GetBundleFolderName():                func() BundleableGroup { return &FieldCollection{} },
+	(&FontCollection{}).GetBundleFolderName():                 func() BundleableGroup { return &FontCollection{} },
 	(&BotCollection{}).GetBundleFolderName():                  func() BundleableGroup { return &BotCollection{} },
 	(&CollectionCollection{}).GetBundleFolderName():           func() BundleableGroup { return &CollectionCollection{} },
 	(&SelectListCollection{}).GetBundleFolderName():           func() BundleableGroup { return &SelectListCollection{} },

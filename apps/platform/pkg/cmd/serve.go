@@ -66,7 +66,7 @@ var (
 	staticPrefix = "/static"
 )
 
-// Vendored scripts/fonts live under /static but do NOT get the GITSHA of the Uesio app,
+// Vendored scripts live under /static but do NOT get the GITSHA of the Uesio app,
 // because they are not expected to change with the GITSHA, but are truly static, immutable
 const vendorPrefix = "/static/vendor"
 
@@ -272,11 +272,6 @@ func serve(cmd *cobra.Command, args []string) {
 	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
 	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt|css){1}(?:\\.map)?}"
 
-	// Un-versioned Component pack routes - for backwards compatibility, and for local development
-	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
-	sr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
-
 	// Versioned component pack file routes
 	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
 
@@ -284,6 +279,15 @@ func serve(cmd *cobra.Command, args []string) {
 
 	sr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	fontFileSuffix := "/{filename:.*}"
+
+	fontPath := fmt.Sprintf("/fonts/%s", versionedItemParam)
+
+	fontFinal := fontPath + fontFileSuffix
+
+	sr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
+	wr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)

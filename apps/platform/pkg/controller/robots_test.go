@@ -172,7 +172,8 @@ func Test_writeAllowedCorePaths(t *testing.T) {
 Allow: /static/vendor/*
 Allow: /*/static/ui/*
 Allow: /favicon.ico
-Allow: /site/componentpacks/*`
+Allow: /site/componentpacks/*
+Allow: /site/fonts/*`
 
 	t.Run("test allowed core paths", func(t *testing.T) {
 		writeAllowedCorePaths(&b)

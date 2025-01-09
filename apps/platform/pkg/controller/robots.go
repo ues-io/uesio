@@ -80,6 +80,7 @@ func writeAllowedCorePaths(w io.Writer) {
 	writeAllowPath(w, "/*/static/ui/*")
 	writeAllowPath(w, "/favicon.ico")
 	writeAllowPath(w, "/site/componentpacks/*")
+	writeAllowPath(w, "/site/fonts/*")
 }
 
 func writeAllowedStaticFiles(w io.Writer, publicFiles map[string]bool) {

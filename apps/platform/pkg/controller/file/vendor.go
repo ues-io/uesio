@@ -101,7 +101,7 @@ func GetVendorScriptUrls() []string {
 	return vendorScriptUrls
 }
 
-// ServeVendor is a handler for serving a vendored script/font file, e.g. React / Material Icons / fonts, etc.
+// ServeVendor is a handler for serving a vendored script file, e.g. React, etc.
 func ServeVendor(routePrefix string, cache bool) http.Handler {
 	fileServer := http.FileServer(http.Dir(vendorDistDir))
 	handler := http.StripPrefix(routePrefix, fileServer)
