@@ -26,7 +26,6 @@ func init() {
 		Long:  "Retrieves all metadata from a remote workspace to the local directory",
 		Run:   workspaceRetrieve,
 	}
-	workspaceRetrieveCmd.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to retrieve into. Defaults to current directory")
 
 	workspaceDeployCmd := &cobra.Command{
 		Use:   "deploy",
@@ -34,7 +33,6 @@ func init() {
 		Long:  "Deploys all local metadata to a remote workspace",
 		Run:   workspaceDeploy,
 	}
-	workspaceDeployCmd.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to deploy from. Defaults to current directory")
 
 	workspaceCreateCmd := &cobra.Command{
 		Use:   "create",
@@ -69,20 +67,18 @@ func init() {
 		Short: "uesio deploy",
 		Run:   workspaceDeploy,
 	}
-	oldDeployCommand.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to deploy from. Defaults to current directory")
 	oldRetrieveCommand := &cobra.Command{
 		Use:   "retrieve",
 		Short: "uesio retrieve",
 		Run:   workspaceRetrieve,
 	}
-	oldRetrieveCommand.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to retrieve into. Defaults to current directory")
 
 	rootCmd.AddCommand(workspaceCommand, oldDeployCommand, oldRetrieveCommand)
 
 }
 
 func workspaceRetrieve(cmd *cobra.Command, args []string) {
-	err := workspace.Retrieve(targetDir)
+	err := workspace.Retrieve()
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		os.Exit(1)
@@ -91,7 +87,7 @@ func workspaceRetrieve(cmd *cobra.Command, args []string) {
 }
 
 func workspaceDeploy(cmd *cobra.Command, args []string) {
-	err := workspace.Deploy(targetDir)
+	err := workspace.Deploy()
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		os.Exit(1)
