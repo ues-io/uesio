@@ -353,6 +353,8 @@ class Context {
 
 	getRecordId = () => this.getRecord()?.getId()
 
+	getRecordIdFieldValue = () => this.getRecord()?.getIdFieldValue()
+
 	removeRecordFrame = (times: number): Context => {
 		if (!times) {
 			return this
@@ -739,7 +741,7 @@ class Context {
 
 	#addFrame = (frame: ContextFrame) => this.clone([frame].concat(this.stack))
 
-	merge = (template: Mergeable, options?: MergeOptions) => {
+	merge = (template: Mergeable, options?: MergeOptions): FieldValue => {
 		if (typeof template !== "string" || !template.length) {
 			return template
 		}
