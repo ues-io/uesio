@@ -16,14 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func Retrieve(targetDir string) error {
-
-	targetDirDescription := targetDir
-	if targetDir == "." || targetDir == "" {
-		targetDirDescription = "current directory"
-	}
-
-	fmt.Printf("Retrieving metadata from studio into %s ... \n", targetDirDescription)
+func Retrieve() error {
 
 	_, err := auth.Login()
 	if err != nil {
@@ -44,7 +37,7 @@ func Retrieve(targetDir string) error {
 		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
 	}
 
-	err = RetrieveBundleForAppWorkspace(appName, workspace, targetDir)
+	err = RetrieveBundleForAppWorkspace(appName, workspace, "")
 	if err != nil {
 		return err
 	}
