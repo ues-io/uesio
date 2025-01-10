@@ -28,7 +28,10 @@ const getPropertiesContext = (context: context.Context, wire?: wire.Wire) => {
 	return context
 }
 
-const getFormFields = (properties: ComponentProperty[] = [], path: FullPath) =>
+export const getFormFields = (
+	properties: ComponentProperty[] = [],
+	path: FullPath
+) =>
 	properties.map((property) => ({
 		"uesio/builder.property": {
 			property,

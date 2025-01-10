@@ -43,6 +43,7 @@ interface StylesSection extends BaseSection {
 	label: "Styles"
 	type: "STYLES"
 	componentType: string
+	properties: string[]
 }
 
 interface SignalsSection extends BaseSection {
@@ -66,14 +67,6 @@ const HOME_ICON = "home"
 const STYLES_LABEL = "Styles"
 const STYLES_TYPE = "STYLES"
 const DISPLAY_TYPE = "DISPLAY"
-
-const getStylesSection = (componentType: string): StylesSection => ({
-	id: component.STYLE_TOKENS,
-	label: STYLES_LABEL,
-	type: STYLES_TYPE,
-	icon: "",
-	componentType,
-})
 
 const DISPLAY_SECTION: DisplaySection = {
 	id: component.DISPLAY_CONDITIONS,
@@ -145,7 +138,6 @@ export {
 	getSectionId,
 	getSectionLabel,
 	getSectionIcon,
-	getStylesSection,
 	getHomeSection,
 }
 
