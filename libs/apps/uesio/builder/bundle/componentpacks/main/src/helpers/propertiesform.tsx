@@ -18,10 +18,11 @@ import {
 	getSectionLabel,
 	HomeSection,
 	PropertiesPanelSection,
+	StylesSection,
 } from "../api/propertysection"
 import { setSelectedPath } from "../api/stateapi"
 import { getDisplaySectionProperties } from "../properties/displayconditionproperties"
-import PropFormInternal from "./propforminternal"
+import PropFormInternal, { getFormFields } from "./propforminternal"
 import { getSignalProperties } from "../api/signalsapi"
 
 type Props = {
@@ -81,7 +82,7 @@ const getProperty = (
 }
 
 function getPropertiesForSection(
-	section: CustomSection | HomeSection,
+	section: CustomSection | HomeSection | StylesSection,
 	properties: ComponentProperty[]
 ): ComponentProperty[] {
 	if (section.properties?.length) {
@@ -116,14 +117,12 @@ const getPropertiesAndContent = (props: Props, selectedTab: string) => {
 			case "STYLES": {
 				properties = [
 					getStyleVariantProperty(selectedSection.componentType),
+					...(properties && selectedSection?.properties?.length
+						? getPropertiesForSection(selectedSection, properties)
+						: []),
 				]
 				content = [
-					{
-						"uesio/builder.property": {
-							property: properties[0],
-							path,
-						},
-					},
+					...getFormFields(properties, path),
 					{
 						"uesio/builder.stylesproperty": {
 							componentType: selectedSection.componentType,
