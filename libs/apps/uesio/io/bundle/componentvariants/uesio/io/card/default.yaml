@@ -1,0 +1,7 @@
+name: default
+label: Default
+definition:
+  tileVariant: uesio/io.default
+  scrollpanelVariant: uesio/io.default
+  titlebarVariant: uesio/io.default
+public: true
