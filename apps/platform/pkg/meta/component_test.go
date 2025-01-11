@@ -93,7 +93,7 @@ func TestComponentMarshalToJSON(t *testing.T) {
 				t.Errorf("Unexpected failure marshalling component: %s", err.Error())
 			}
 
-			assert.Equal(t, string(bytes), tc.expectJson)
+			assert.JSONEq(t, string(bytes), tc.expectJson)
 		})
 	}
 }

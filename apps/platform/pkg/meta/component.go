@@ -136,21 +136,17 @@ func (c *Component) GetBytes() ([]byte, error) {
 }
 
 func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddStringKey("namespace", c.Namespace)
-	enc.AddStringKey("name", c.Name)
+	marshalJSONObjectCommon(c, enc)
 	enc.AddStringKey("title", c.Title)
 	enc.AddStringKey("description", c.Description)
-	enc.AddStringKey("type", c.GetType())
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
 	enc.AddStringKeyOmitEmpty("icon", c.Icon)
-	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(c.Slots))
 	enc.AddArrayKeyOmitEmpty("properties", (*YAMLtoJSONArray)(c.Properties))
 	enc.AddArrayKeyOmitEmpty("sections", (*YAMLtoJSONArray)(c.Sections))
 	enc.AddObjectKeyOmitEmpty("defaultDefinition", (*YAMLtoJSONMap)(c.DefaultDefinition))
 	enc.AddObjectKeyOmitEmpty("signals", (*YAMLtoJSONMap)(c.Signals))
 	enc.AddObjectKeyOmitEmpty("styleRegions", (*YAMLtoJSONMap)(c.StyleRegions))
-	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(c.Definition))
 }
 
 func (c *Component) IsNil() bool {
@@ -225,12 +221,7 @@ func (cdw *RuntimeComponentMetadata) IsNil() bool {
 }
 
 func (cdw *RuntimeComponentMetadata) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddStringKey("namespace", cdw.Namespace)
-	enc.AddStringKey("name", cdw.Name)
-	enc.AddStringKey("type", cdw.GetType())
-	enc.AddStringKeyOmitEmpty("defaultVariant", cdw.DefaultVariant)
-	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(cdw.Definition))
-	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(cdw.Slots))
+	marshalJSONObjectCommon((*Component)(cdw), enc)
 	// This is a hassle, but to avoid sending down a LOT of property metadata which the runtime doesn't need,
 	// we decode into a custom struct and then serialize just that.
 	if cdw.Properties != nil {
@@ -289,4 +280,13 @@ func GetType(componentType string) string {
 		return componentType
 	}
 	return ReactComponent
+}
+
+func marshalJSONObjectCommon(c *Component, enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", c.Namespace)
+	enc.AddStringKey("name", c.Name)
+	enc.AddStringKey("type", c.GetType())
+	enc.AddStringKeyOmitEmpty("defaultVariant", c.DefaultVariant)
+	enc.AddArrayKeyOmitEmpty("slots", (*YAMLtoJSONArray)(c.Slots))
+	enc.AddArrayKeyOmitEmpty("definition", (*YAMLtoJSONArray)(c.Definition))
 }
