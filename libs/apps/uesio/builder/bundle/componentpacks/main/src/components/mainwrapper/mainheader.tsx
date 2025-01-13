@@ -1,4 +1,4 @@
-import { api, definition, component } from "@uesio/ui"
+import { api, definition, component, styles } from "@uesio/ui"
 import HeaderCrumbs from "./headercrumbs"
 import { getBuilderNamespace } from "../../api/stateapi"
 
@@ -10,10 +10,20 @@ export const metaKey =
 		? "⌘" // Command
 		: "^" // Ctrl
 
+const StyleDefaults = Object.freeze({
+	linkButton: ["w-8", "h-8", "rounded", "bg-slate-100", "text-slate-600"],
+})
+
 const MainHeader: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const IOImage = component.getUtility("uesio/io.image")
+	const IOGroup = component.getUtility("uesio/io.group")
+	const IOButton = component.getUtility("uesio/io.button")
 	const Tile = component.getUtility("uesio/io.tile")
+	const Avatar = component.getUtility("uesio/io.avatar")
+	const Tooltip = component.getUtility("uesio/io.tooltip")
+
+	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
 	const workspace = context.getWorkspace()
 	if (!workspace) throw new Error("No Workspace Context Provided")
@@ -31,39 +41,97 @@ const MainHeader: definition.UtilityComponent = (props) => {
 		],
 		context
 	)
+
 	return (
 		<>
-			<Tile
-				context={context}
-				avatar={
-					<IOImage
-						height="32"
-						variant="uesio/appkit.uesio_logo"
-						file="uesio/core.logowhite"
-						context={context}
-						onClick={homeLogoOnClick}
-						link={homeLogoLink}
-					/>
-				}
-			>
-				<component.Component
-					componentType={"uesio/appkit.icontile"}
-					path=""
-					definition={{
-						title: workspace.app,
-						icon: nsInfo?.icon,
-						iconcolor: nsInfo?.color,
-						tileVariant: "uesio/appkit.apptag",
-						signals: [
-							{
-								signal: "route/NAVIGATE",
-								path: `/app/${workspace.app}`,
-								namespace: "uesio/studio",
-							},
-						],
+			<Tile context={context}>
+				<IOGroup
+					styleTokens={{
+						root: ["gap-1"],
 					}}
-					context={context.deleteWorkspace()}
-				/>
+					context={context}
+				>
+					<Tooltip
+						text="ues.io Home"
+						context={context}
+						placement="top"
+						offset={8}
+					>
+						<IOImage
+							height="32"
+							variant="uesio/appkit.uesio_logo"
+							file="uesio/core.logowhite"
+							context={context}
+							onClick={homeLogoOnClick}
+							link={homeLogoLink}
+						/>
+					</Tooltip>
+					<IOButton
+						text={workspace.app}
+						iconText={nsInfo?.icon}
+						tooltip="App Home"
+						tooltipPlacement="top"
+						tooltipOffset={8}
+						onClick={() => {
+							api.signal.run(
+								{
+									signal: "route/NAVIGATE",
+									path: `/app/${workspace.app}`,
+									namespace: "uesio/studio",
+								},
+								context.deleteWorkspace()
+							)
+						}}
+						classes={{ root: classes.linkButton }}
+						styleTokens={{
+							root: [`bg-[${nsInfo?.color}]`, "text-white"],
+						}}
+						context={context}
+					/>
+					<IOButton
+						text={workspace.app}
+						iconText="handyman"
+						tooltip="Workspace Home"
+						tooltipPlacement="top"
+						tooltipOffset={8}
+						onClick={() => {
+							api.signal.run(
+								{
+									signal: "route/NAVIGATE",
+									path: `/app/${workspace.app}/workspace/${workspace.name}`,
+									namespace: "uesio/studio",
+								},
+								context.deleteWorkspace()
+							)
+						}}
+						classes={{ root: classes.linkButton }}
+						context={context}
+					/>
+					<IOButton
+						text={workspace.app}
+						iconText="view_quilt"
+						tooltip="Views List"
+						tooltipPlacement="top"
+						tooltipOffset={8}
+						onClick={() => {
+							api.signal.run(
+								{
+									signal: "route/NAVIGATE",
+									path: `/app/${workspace.app}/workspace/${workspace.name}/views`,
+									namespace: "uesio/studio",
+								},
+								context.deleteWorkspace()
+							)
+						}}
+						classes={{ root: classes.linkButton }}
+						context={context}
+					/>
+					<Avatar
+						image="$User{picture}"
+						text="$User{initials}"
+						context={context}
+					/>
+				</IOGroup>
 			</Tile>
 			<HeaderCrumbs context={context} />
 		</>

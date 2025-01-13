@@ -4,15 +4,14 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-100
     content:
       - p-2
     title:
-      - text-slate-700
+      - text-slate-100
       - tracking-wide
       - uppercase
       - text-xs
     subtitle:
-      - text-slate-700
+      - text-slate-200
       - font-light
 public: true

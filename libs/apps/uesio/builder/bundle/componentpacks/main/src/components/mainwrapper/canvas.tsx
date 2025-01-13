@@ -32,7 +32,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const classes = styles.useUtilityStyleTokens(
 		{
-			root: ["overflow-hidden", "h-full", "relative", "bg-white", "p-12"],
+			root: ["overflow-hidden", "h-full", "relative", "bg-white"],
 
 			scrollwrapper: ["overflow-auto", "h-full", "w-full"],
 
@@ -54,11 +54,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				"border-dashed",
 				"border-slate-300",
 			],
-			line: ["absolute", "border-dashed", "border-slate-300"],
-			top: ["right-0", "left-0", "top-12", "border-t"],
-			bottom: ["right-0", "left-0", "bottom-12", "border-b"],
-			left: ["top-0", "bottom-0", "left-12", "border-l"],
-			right: ["top-0", "bottom-0", "right-12", "border-r"],
 		},
 		props
 	)
@@ -161,18 +156,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			{!height && (
-				<>
-					<div className={styles.cx(classes.line, classes.top)} />
-					<div className={styles.cx(classes.line, classes.bottom)} />
-				</>
-			)}
-			{!width && (
-				<>
-					<div className={styles.cx(classes.line, classes.left)} />
-					<div className={styles.cx(classes.line, classes.right)} />
-				</>
-			)}
 			<SelectBorder viewdef={viewDef} context={context} />
 			{/*<DebugPanel context={context} />*/}
 		</div>

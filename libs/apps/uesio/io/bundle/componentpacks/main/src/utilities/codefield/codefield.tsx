@@ -42,6 +42,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 		language = "typescript",
 		options,
 		onMount,
+		beforeMount,
 		context,
 		theme,
 		mode,
@@ -139,6 +140,8 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 			})
 		}
 		monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)
+
+		beforeMount?.(monaco)
 	}
 
 	function handleEditorDidMount(

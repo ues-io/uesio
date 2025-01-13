@@ -41,46 +41,39 @@ const IndexBuildWrapper: definition.UC = (props) => {
 type IndexSlotProps = {
 	slot: component.SlotDef
 	selectedPath: FullPath
-	parentSelected?: boolean
 	indent?: boolean
 } & definition.BaseProps
 
 const SlotStyleDefaults = Object.freeze({
-	slot: ["border-slate-50", "bg-white"],
-	slotSelected: [
-		"border-[$Theme{color:primary}]",
-		"border-1",
-		"mt-1",
-		"bg-white",
-	],
-	slotIndent: ["border-l-4"],
-	slotHeader: ["border-b-1", "border-slate-200", "flex"],
-	slotContent: ["pt-1", "pl-1", "grid", "gap-1"],
-	slotContentSelected: ["p-1", "grid", "gap-1"],
+	slot: ["grid", "border-transparent"],
+	slotSelected: ["rounded-lg", "bg-slate-800", "ml-1"],
+	slotIndent: ["ml-2"],
+	slotHeader: ["flex", "p-1"],
+	slotHeaderSelected: ["p-2"],
 	slotTitle: [
 		"uppercase",
-		"text-slate-500",
+		"text-slate-400",
 		"font-light",
 		"text-[7pt]",
 		"grow",
 		"p-0.5",
 	],
+	slotContent: [],
+	slotContentSelected: ["p-1", "empty:hidden"],
 	visibilityIcon: ["text-[8pt]", "text-slate-400", "mr-1", "mt-0.5"],
-	actionarea: ["text-right", "bg-slate-50"],
+	actionarea: [
+		"text-right",
+		"text-slate-200",
+		"px-1",
+		"border-b",
+		"border-slate-900",
+	],
 })
 
 const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 	const IOIcon = component.getUtility("uesio/io.icon")
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-	const {
-		context,
-		slot,
-		path,
-		definition,
-		indent,
-		selectedPath,
-		parentSelected,
-	} = props
+	const { context, slot, path, definition, indent, selectedPath } = props
 	const listName = slot.name
 	const label = slot.label || listName || "Slot"
 
@@ -101,16 +94,19 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 			}}
 			className={styles.cx(
 				indent && classes.slotIndent,
-				selected || parentSelected
-					? classes.slotContentSelected
-					: classes.slotContent,
-				selected ? classes.slotSelected : classes.slot
+				classes.slot,
+				selected && classes.slotSelected
 			)}
 			data-accepts={standardAccepts.join(",")}
 			data-path={component.path.toDataAttrPath(listPath)}
 		>
 			<div data-placeholder="true">
-				<div className={classes.slotHeader}>
+				<div
+					className={styles.cx(
+						classes.slotHeader,
+						selected && classes.slotHeaderSelected
+					)}
+				>
 					<div className={classes.slotTitle}>{label}</div>
 					{!hasSlotNode && (
 						<IOIcon
@@ -135,21 +131,28 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
 					</div>
 				</IOExpandPanel>
 			</div>
-			{component
-				.getSlotProps({
-					listName,
-					definition,
-					path,
-					context,
-				})
-				.map((props, index) => (
-					<IndexBuildWrapper key={index} {...props}>
-						<IndexComponent
-							selectedPath={selectedPath}
-							{...props}
-						/>
-					</IndexBuildWrapper>
-				))}
+			<div
+				className={styles.cx(
+					classes.slotContent,
+					selected && classes.slotContentSelected
+				)}
+			>
+				{component
+					.getSlotProps({
+						listName,
+						definition,
+						path,
+						context,
+					})
+					.map((props, index) => (
+						<IndexBuildWrapper key={index} {...props}>
+							<IndexComponent
+								selectedPath={selectedPath}
+								{...props}
+							/>
+						</IndexBuildWrapper>
+					))}
+			</div>
 		</div>
 	)
 }

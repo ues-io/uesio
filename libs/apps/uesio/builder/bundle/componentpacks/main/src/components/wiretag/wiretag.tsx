@@ -39,6 +39,16 @@ const WireTag: definition.UC = (props) => {
 				metadatainfo={nsInfo}
 				context={context}
 				metadatakey={collection}
+				styleTokens={{
+					root: [
+						"text-xs",
+						"bg-slate-900",
+						"rounded",
+						"pl-1",
+						"pr-2",
+						"uppercase",
+					],
+				}}
 			/>
 		</ItemTag>
 	)

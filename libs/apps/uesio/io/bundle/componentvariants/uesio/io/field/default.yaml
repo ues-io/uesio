@@ -16,4 +16,6 @@ definition:
     readonly:
       - bg-primary-50/70
       - border-transparent
+      - grid
+      - items-center
 public: true

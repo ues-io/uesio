@@ -12,8 +12,6 @@ const BuildActionsArea: definition.UtilityComponent<Props> = (props) => {
 				`justify-${props.justify || "end"}`,
 				"p-2",
 				"relative",
-				"bg-slate-50",
-				"text-slate-700",
 			],
 		},
 		props

@@ -19,40 +19,6 @@ const HeaderCrumbs: definition.UtilityComponent = (props) => {
 				componentType={"uesio/appkit.icontile"}
 				path=""
 				definition={{
-					title: workspace.name,
-					icon: "handyman",
-					tileVariant: "uesio/appkit.breadcrumb",
-					signals: [
-						{
-							signal: "route/NAVIGATE",
-							path: `/app/${workspace.app}/workspace/${workspace.name}`,
-							namespace: "uesio/studio",
-						},
-					],
-				}}
-				context={context.deleteWorkspace()}
-			/>
-			<component.Component
-				componentType={"uesio/appkit.icontile"}
-				path=""
-				definition={{
-					title: "views",
-					icon: "view_quilt",
-					tileVariant: "uesio/appkit.breadcrumb",
-					signals: [
-						{
-							signal: "route/NAVIGATE",
-							path: `/app/${workspace.app}/workspace/${workspace.name}/views`,
-							namespace: "uesio/studio",
-						},
-					],
-				}}
-				context={context.deleteWorkspace()}
-			/>
-			<component.Component
-				componentType={"uesio/appkit.icontile"}
-				path=""
-				definition={{
 					title: viewName,
 					icon: itemNSInfo?.icon,
 					iconcolor: itemNSInfo?.color,

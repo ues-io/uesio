@@ -3,8 +3,8 @@ label: Info Badge
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-50
-      - text-slate-500
+      - bg-slate-900
+      - text-slate-400
       - text-xxs
       - px-2
       - py-1

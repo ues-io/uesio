@@ -6,13 +6,24 @@ definition:
     root:
       - after:right-1
       - after:text-xs
+      - after:text-slate-100
     input:
       - text-xs
       - pl-1
       - pr-4
       - py-1
       - gap-1
+      - text-slate-100
+      - bg-slate-800
+      - border-0
+      - text-xs
+      - px-1.5
+      - py-1
     notfound:
     selecteditemwrapper:
+      - bg-slate-900
+      - text-slate-100
       - my-0
+    editbutton:
+      - text-slate-400
 public: true

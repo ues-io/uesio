@@ -44,11 +44,11 @@ const RightToolbar: definition.UtilityComponent = (props) => {
 		context
 	)
 
-	hooks.useHotKeyCallback("meta+y", () => {
+	hooks.useHotKeyCallback("y", () => {
 		toggleCode?.()
 	})
 
-	hooks.useHotKeyCallback("meta+i", () => {
+	hooks.useHotKeyCallback("i", () => {
 		toggleIndex?.()
 	})
 

@@ -3,7 +3,6 @@ label: mainsection
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-100
       - p-2
       - gap-x-2
       - gap-y-1
@@ -17,7 +16,7 @@ definition:
       - text-[8pt]
       - rounded
       - tracking-wide
-      - text-slate-600
+      - text-slate-400
       - whitespace-nowrap
     tabSelected:
       - text-white

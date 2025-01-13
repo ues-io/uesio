@@ -1,4 +1,5 @@
-import { definition, component, metadata, wire } from "@uesio/ui"
+import { definition, metadata, wire } from "@uesio/ui"
+import ConstrainedInput from "../../utilities/constrainedinput/constrainedinput"
 
 type KeyFieldDefinition = {
 	fieldId: string
@@ -12,10 +13,6 @@ const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 		context,
 		definition: { fieldId, wrapperVariant, labelPosition },
 	} = props
-
-	const ConstrainedInput = component.getUtility(
-		"uesio/builder.constrainedinput"
-	)
 
 	const record = context.getRecord()
 
@@ -42,7 +39,8 @@ const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 			fieldWrapperVariant={wrapperVariant}
 			fieldComponentType="uesio/io.textfield"
 			fieldComponentProps={{
-				variant: "uesio/io.field:uesio/builder.propfield",
+				variant: "uesio/builder.propfield",
+				context,
 			}}
 		/>
 	)

@@ -5,9 +5,8 @@ definition:
     root:
       - overflow-hidden
       - select-none
-      - bg-white
     selected:
-      - border-1
-      - border-[$Theme{color:primary}]
-      - rounded-sm
+      - bg-slate-800
+      - -ml-1
+      - rounded-lg
 public: true

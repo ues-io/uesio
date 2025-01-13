@@ -5,8 +5,7 @@ definition:
   uesio.styleTokens:
     root:
       - p-2
-      - text-slate-700
-      - bg-slate-50
+      - text-slate-300
       - text-xs
       - uppercase
     title:

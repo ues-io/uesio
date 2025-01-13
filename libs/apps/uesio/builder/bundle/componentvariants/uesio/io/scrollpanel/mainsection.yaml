@@ -4,11 +4,10 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - bg-white
+      - bg-slate-900
       - relative
-      - rounded
       - overflow-hidden
-      - shadow-sm
-      - border
-      - border-slate-300
+    header:
+      - border-b
+      - border-slate-800
 public: true

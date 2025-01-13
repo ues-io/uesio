@@ -4,13 +4,11 @@ definition:
   uesio.styleTokens:
     root:
       - group
-      - border
-      - border-slate-200
-      - text-slate-600
+      - text-slate-300
       - text-sm
       - rounded
       - overflow-hidden
-      - bg-white
+      - bg-slate-800
       - select-none
       - m-2
     selected:
