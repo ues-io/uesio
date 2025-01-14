@@ -7,6 +7,19 @@ const StyleDefaults = Object.freeze({
 	root: ["contents", "relative"],
 })
 
+const markerClasses = [
+	"empty:before:content-['']",
+	"empty:before:block",
+	["empty:before", "[&>:first-child]"].flatMap((selector) =>
+		[
+			"min-h-[1.25rem]",
+			"outline-dashed",
+			"outline-slate-300",
+			"outline-1",
+		].map((cls) => `${selector}:${cls}`)
+	),
+]
+
 const usePlaceHolders = (
 	context: context.Context,
 	path: string
@@ -39,10 +52,11 @@ const BuildWrapper: definition.UC = (props) => {
 	const [addBefore, addAfter, index] = usePlaceHolders(context, path)
 
 	const classes = styles.useStyleTokens(StyleDefaults, props)
+	const markerStyle = styles.shortcut("marker", markerClasses)
 
 	return (
 		<div
-			className={classes.root}
+			className={styles.cx(classes.root, markerStyle)}
 			data-placeholder="true"
 			data-index={index}
 			data-component={componentType}
