@@ -17,65 +17,81 @@ properties:
   - name: subtitle
     label: Subtitle
     type: TEXT
-  - name: tileVariant
-    label: Tile Variant
-    type: METADATA
-    metadata:
-      type: COMPONENTVARIANT
-      grouping: uesio/io.tile
-  - name: scrollpanelVariant
-    label: Scroll Panel Variant
-    type: METADATA
-    metadata:
-      type: COMPONENTVARIANT
-      grouping: uesio/io.scrollpanel
-  - name: titlebarVariant
-    label: Title Bar Variant
-    type: METADATA
-    metadata:
-      type: COMPONENTVARIANT
-      grouping: uesio/io.titlebar
-    defaultValue: uesio/io.default
 sections:
   - type: HOME
     properties:
       - title
       - subtitle
   - type: STYLES
-    properties:
-      - tileVariant
-      - scrollpanelVariant
-      - titlebarVariant
   - type: DISPLAY
+  - type: SIGNALS
 definition:
   - uesio/io.tile:
-      uesio.variant: $Prop{tileVariant}
+      uesio.variant: uesio/io.default
       uesio.classes:
         selected: $Prop{selectedConditions}
       uesio.styleTokens:
         root:
           - $Region{tile}
+        content:
+          - $Region{tileContent}
+        selected:
+          - $Region{tileSelected}
+        actionable:
+          - $Region{tileActionable}
       signals: $Prop{signals}
       content:
         - uesio/io.scrollpanel:
-            uesio.variant: $Prop{scrollpanelVariant}
+            uesio.variant: uesio/io.default
             uesio.styleTokens:
               root:
                 - $Region{panel}
+              header:
+                - $Region{panelHeader}
+              footer:
+                - $Region{panelFooter}
               inner:
                 - $Region{panelInner}
             header:
               - uesio/io.titlebar:
                   title: $Prop{title}
                   subtitle: $Prop{subtitle}
-                  uesio.variant: $Prop{titlebarVariant}
+                  uesio.variant: uesio/io.default
                   actions:
                     - $Slot{actions}
                   avatar:
                     - $Slot{avatar}
+                  uesio.styleTokens:
+                    root:
+                      - $Region{title}
+                    content:
+                      - $Region{titleContent}
+                    title:
+                      - $Region{titleText}
+                    subtitle:
+                      - $Region{titleSubtitle}
+                    actions:
+                      - $Region{titleActions}
+                    avatar:
+                      - $Region{titleAvatar}
             content:
               - $Slot{content}
             footer:
               - $Slot{footer}
 defaultDefinition:
   uesio.variant: uesio/io.default
+styleRegions:
+  tile:
+  tileContent:
+  tileSelected:
+  tileActionable:
+  panel:
+  panelHeader:
+  panelFooter:
+  panelInner:
+  title:
+  titleContent:
+  titleText:
+  titleSubtitle:
+  titleActions:
+  titleAvatar:
