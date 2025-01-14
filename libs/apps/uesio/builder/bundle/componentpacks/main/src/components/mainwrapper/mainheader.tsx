@@ -1,6 +1,7 @@
 import { api, definition, component, styles } from "@uesio/ui"
-import HeaderCrumbs from "./headercrumbs"
+
 import { getBuilderNamespace } from "../../api/stateapi"
+import SaveCancelArea from "./savecancelarea"
 
 // Yes, navigator.platform is deprecated, but according to MDN in 2023
 // it's still the least bad way to detect what meta key means
@@ -21,7 +22,10 @@ const MainHeader: definition.UtilityComponent = (props) => {
 	const IOButton = component.getUtility("uesio/io.button")
 	const Tile = component.getUtility("uesio/io.tile")
 	const Avatar = component.getUtility("uesio/io.avatar")
-	const Tooltip = component.getUtility("uesio/io.tooltip")
+
+	const viewKey = context.getViewDefId()
+
+	const [viewNamespace, viewName] = component.path.parseKey(viewKey || "")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -51,27 +55,19 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					}}
 					context={context}
 				>
-					<Tooltip
-						text="ues.io Home"
+					<IOImage
+						height="32"
+						variant="uesio/appkit.uesio_logo"
+						file="uesio/core.logowhite"
 						context={context}
-						placement="top"
-						offset={8}
-					>
-						<IOImage
-							height="32"
-							variant="uesio/appkit.uesio_logo"
-							file="uesio/core.logowhite"
-							context={context}
-							onClick={homeLogoOnClick}
-							link={homeLogoLink}
-						/>
-					</Tooltip>
+						onClick={homeLogoOnClick}
+						link={homeLogoLink}
+					/>
 					<IOButton
-						text={workspace.app}
 						iconText={nsInfo?.icon}
 						tooltip="App Home"
 						tooltipPlacement="top"
-						tooltipOffset={8}
+						tooltipOffset={10}
 						onClick={() => {
 							api.signal.run(
 								{
@@ -89,11 +85,10 @@ const MainHeader: definition.UtilityComponent = (props) => {
 						context={context}
 					/>
 					<IOButton
-						text={workspace.app}
 						iconText="handyman"
 						tooltip="Workspace Home"
 						tooltipPlacement="top"
-						tooltipOffset={8}
+						tooltipOffset={10}
 						onClick={() => {
 							api.signal.run(
 								{
@@ -108,16 +103,30 @@ const MainHeader: definition.UtilityComponent = (props) => {
 						context={context}
 					/>
 					<IOButton
-						text={workspace.app}
 						iconText="view_quilt"
 						tooltip="Views List"
 						tooltipPlacement="top"
-						tooltipOffset={8}
+						tooltipOffset={10}
 						onClick={() => {
 							api.signal.run(
 								{
 									signal: "route/NAVIGATE",
 									path: `/app/${workspace.app}/workspace/${workspace.name}/views`,
+									namespace: "uesio/studio",
+								},
+								context.deleteWorkspace()
+							)
+						}}
+						classes={{ root: classes.linkButton }}
+						context={context}
+					/>
+					<IOButton
+						text={viewName}
+						onClick={() => {
+							api.signal.run(
+								{
+									signal: "route/NAVIGATE",
+									path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewNamespace}/${viewName}`,
 									namespace: "uesio/studio",
 								},
 								context.deleteWorkspace()
@@ -133,7 +142,7 @@ const MainHeader: definition.UtilityComponent = (props) => {
 					/>
 				</IOGroup>
 			</Tile>
-			<HeaderCrumbs context={context} />
+			<SaveCancelArea context={context} />
 		</>
 	)
 }

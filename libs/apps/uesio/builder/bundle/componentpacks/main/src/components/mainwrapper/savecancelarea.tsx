@@ -5,22 +5,12 @@ import { useBuildMode } from "../../api/stateapi"
 import { toggleBuildMode } from "../../helpers/buildmode"
 
 const StyleDefaults = Object.freeze({
-	root: [
-		"grid",
-		"gap-3",
-		"grid-flow-col",
-		"auto-cols-min",
-		"absolute",
-		"top-2.5",
-		"right-14",
-		"px-1",
-	],
+	root: ["grid", "gap-1", "grid-cols-3", "mt-1"],
 })
 
 const SaveCancelArea: definition.UtilityComponent = (props) => {
 	const { context, id } = props
 	const Button = component.getUtility("uesio/io.button")
-	const Icon = component.getUtility("uesio/io.icon")
 
 	const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -37,17 +27,9 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{!hasChanges && (
+			{
 				<Button
 					context={context}
-					icon={
-						<Icon
-							context={context}
-							weight={300}
-							fill={false}
-							icon={"visibility"}
-						/>
-					}
 					label="Preview"
 					variant="uesio/builder.secondarytoolbar"
 					onClick={() => {
@@ -56,25 +38,23 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 					tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
 					tooltipPlacement="left"
 				/>
-			)}
-			{hasChanges && (
+			}
+			{
 				<Button
 					context={context}
-					icon={<Icon context={context} icon="check_circle" />}
 					id={`${id}:save-builder-changes`}
 					disabled={!hasChanges}
 					variant="uesio/builder.primarytoolbar"
-					label="Save Changes"
+					label="Save"
 					onClick={() => {
 						save(context)
 					}}
 				/>
-			)}
-			{hasChanges && (
+			}
+			{
 				<Button
 					context={context}
 					id={`${id}:cancel-builder-changes`}
-					icon={<Icon context={context} icon="cancel" />}
 					disabled={!hasChanges}
 					variant="uesio/builder.secondarytoolbar"
 					label="Cancel"
@@ -82,7 +62,7 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 						cancel(context)
 					}}
 				/>
-			)}
+			}
 		</div>
 	)
 }

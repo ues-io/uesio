@@ -5,7 +5,6 @@ definition:
   uesio.styleTokens:
     root:
       - text-slate-800
-      - border-slate-800
       - hover:border-slate-800
 
 public: true
