@@ -77,5 +77,3 @@ definition:
               - $Slot{content}
             footer:
               - $Slot{footer}
-defaultDefinition:
-  uesio.variant: uesio/io.default
