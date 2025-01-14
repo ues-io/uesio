@@ -106,7 +106,7 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 
 	err = bundlestore.DecodeYAML(item, buf)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error decoding metadata item: %s from file: %s : %w", key, fileMetadata.Path(), err)
 	}
 
 	if !b.AllowPrivate && !item.IsPublic() {
