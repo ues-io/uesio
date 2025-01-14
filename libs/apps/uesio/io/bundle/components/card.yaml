@@ -9,7 +9,6 @@ slots:
   - name: avatar
 description: A Card component
 discoverable: true
-defaultVariant: uesio/io.default
 properties:
   - name: title
     label: Title
@@ -24,7 +23,7 @@ properties:
       type: COMPONENTVARIANT
       grouping: uesio/io.tile
   - name: scrollpanelVariant
-    label: Scroll Panel Variant
+    label: Scrollpanel Variant
     type: METADATA
     metadata:
       type: COMPONENTVARIANT
@@ -41,11 +40,7 @@ sections:
     properties:
       - title
       - subtitle
-  - type: STYLES
-    properties:
-      - tileVariant
       - scrollpanelVariant
-      - titlebarVariant
   - type: DISPLAY
 definition:
   - uesio/io.tile:
