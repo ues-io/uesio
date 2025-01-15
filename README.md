@@ -546,3 +546,8 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 - [React](https://reactjs.org/). Framework for UI components.
 - [Redux](https://redux.js.org/). State store for the application's frontend data.
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
+
+## Dependencies
+
+We're pinning monaco to version 0.50.0 for now because of this bug.
+https://github.com/microsoft/monaco-editor/issues/4654

@@ -34,6 +34,13 @@ export type ValidationResult = {
 }
 
 const validateViewDefinition = (viewDefinition: object): ValidationResult => {
+	// If the view definition validator hasn't loaded yet, just let it go through.
+	// We should'nt be bombing the page here.
+	if (!viewDefinitionValidator) {
+		return {
+			valid: true,
+		}
+	}
 	const result = viewDefinitionValidator(viewDefinition) as boolean
 	return {
 		errors: viewDefinitionValidator.errors,
