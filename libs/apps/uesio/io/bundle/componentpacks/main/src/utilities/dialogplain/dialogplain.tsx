@@ -44,7 +44,9 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 	})
 
 	const closeOnOutsideClick =
-		props.closeOnOutsideClick === undefined ? true : !!props.closeOnOutsideClick
+		props.closeOnOutsideClick === undefined
+			? true
+			: !!props.closeOnOutsideClick
 
 	const dismiss = useDismiss(floating.context, {
 		outsidePress: closeOnOutsideClick,
