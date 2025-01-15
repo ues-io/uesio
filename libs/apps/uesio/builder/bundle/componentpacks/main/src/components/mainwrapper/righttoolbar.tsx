@@ -1,6 +1,13 @@
 import { definition, component, styles, hooks, api } from "@uesio/ui"
 import DeviceSizer from "./devicesizer"
-import { metaKey } from "./mainheader"
+
+// Yes, navigator.platform is deprecated, but according to MDN in 2023
+// it's still the least bad way to detect what meta key means
+// https://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform#examples
+export const metaKey =
+	navigator.platform.indexOf("Mac") === 0 || navigator.platform === "iPhone"
+		? "⌘" // Command
+		: "^" // Ctrl
 
 const StyleDefaults = Object.freeze({
 	root: [

@@ -1,14 +1,21 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
-import { cancel, save, useHasChanges } from "../../api/defapi"
-import { metaKey } from "./mainheader"
-import { useBuildMode } from "../../api/stateapi"
-import { toggleBuildMode } from "../../helpers/buildmode"
+import { cancel, save, useHasChanges } from "../../../api/defapi"
+import { useBuildMode } from "../../../api/stateapi"
+import { toggleBuildMode } from "../../../helpers/buildmode"
+
+// Yes, navigator.platform is deprecated, but according to MDN in 2023
+// it's still the least bad way to detect what meta key means
+// https://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform#examples
+export const metaKey =
+	navigator.platform.indexOf("Mac") === 0 || navigator.platform === "iPhone"
+		? "⌘" // Command
+		: "^" // Ctrl
 
 const StyleDefaults = Object.freeze({
 	root: ["grid", "gap-2", "grid-cols-3", "mt-2"],
 })
 
-const SaveCancelArea: definition.UtilityComponent = (props) => {
+const BuildBarMainButtons: definition.UtilityComponent = (props) => {
 	const { context, id } = props
 	const Button = component.getUtility("uesio/io.button")
 
@@ -29,7 +36,7 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 		<div className={classes.root}>
 			<Button
 				context={context}
-				label="Preview"
+				label={buildMode ? "Preview" : "Build"}
 				variant="uesio/builder.secondarytoolbar"
 				onClick={() => {
 					toggleBuildMode(context, setBuildMode, !!buildMode)
@@ -61,4 +68,4 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 	)
 }
 
-export default SaveCancelArea
+export default BuildBarMainButtons

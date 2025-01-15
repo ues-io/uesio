@@ -7,7 +7,7 @@ import IndexPanel from "./indexpanel"
 import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
 import CodePanel from "./codepanel"
 import { toggleBuildMode } from "../../helpers/buildmode"
-import FloatingToolbar from "./floatingtoolbar"
+import BuildBar from "./buildbar/buildbar"
 
 const StyleDefaults = Object.freeze({
 	root: ["h-full", "grid-cols-[1fr]", "auto-cols-auto", "grid-rows-[100%]"],
@@ -110,6 +110,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 					definition={definition}
 					path={path}
 				/>
+				<BuildBar context={builderContext} />
 			</>
 		)
 	}
@@ -134,7 +135,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 							path={path}
 						/>
 					</Canvas>
-					<FloatingToolbar context={builderContext} />
+					<BuildBar context={builderContext} />
 				</div>
 				{showCode && <CodePanel context={builderContext} />}
 			</Grid>

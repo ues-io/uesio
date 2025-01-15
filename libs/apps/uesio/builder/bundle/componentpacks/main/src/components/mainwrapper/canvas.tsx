@@ -75,6 +75,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	}
 
 	const onClickCapture = (e: MouseEvent) => {
+		if (e.shiftKey) {
+			return
+		}
 		e.stopPropagation()
 		e.preventDefault()
 
