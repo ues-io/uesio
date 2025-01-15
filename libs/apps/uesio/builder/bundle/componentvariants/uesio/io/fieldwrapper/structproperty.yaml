@@ -12,6 +12,5 @@ definition:
       - tracking-wider
       - p-2
       - pb-1
-      - font-normal
-      - border-b-1
-      - border-slate-200
+      - font-light
+      - text-slate-400

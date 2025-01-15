@@ -18,6 +18,7 @@ const NamespaceLabel: definition.UtilityComponent<NamespaceLabelProps> = (
 		title,
 		context,
 		classes,
+		styleTokens,
 		icon,
 	} = props
 	const [ns, name] = metadatakey.split(".")
@@ -30,6 +31,7 @@ const NamespaceLabel: definition.UtilityComponent<NamespaceLabelProps> = (
 			text={title || name}
 			context={context}
 			classes={classes}
+			styleTokens={styleTokens}
 		/>
 	)
 }

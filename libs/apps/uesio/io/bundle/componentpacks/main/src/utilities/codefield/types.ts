@@ -17,6 +17,7 @@ export interface CodeFieldUtilityProps {
 	/** monaco code editor options */
 	options?: monaco.editor.IStandaloneEditorConstructionOptions
 	onMount?: EditorProps["onMount"]
+	beforeMount?: EditorProps["beforeMount"]
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
 }

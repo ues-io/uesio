@@ -83,7 +83,7 @@ const IconProp: definition.UC<Definition> = (props) => {
 					referenceEl={anchorEl}
 					matchHeight
 					context={context}
-					offset={6}
+					offset={8}
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					parentSelector="#propertieswrapper"

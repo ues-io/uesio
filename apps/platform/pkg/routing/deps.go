@@ -656,6 +656,15 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 	if workspace != nil {
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
+
+		// Get the metadata list
+		appNames := session.GetContextNamespaces()
+		appData, err := datasource.GetAppData(session.Context(), appNames, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
 		// If there is already an entry for build mode, don't override it, as it may be set to true
 		deps.Component.AddItemIfNotExists(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, sess.GetStudioAnonSession(session.Context()))
@@ -665,6 +674,8 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		if err != nil {
 			return nil, err
 		}
+
+		addComponentType(DEFAULT_BUILDER_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession(session.Context()))
 	}
 
 	return deps, nil

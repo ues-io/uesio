@@ -139,7 +139,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
 					context={context}
 					placement="right-start"
 					autoPlacement={["right-start"]}
-					offset={6}
+					offset={8}
 					parentSelector="#propertieswrapper"
 					matchHeight
 				>

@@ -3,10 +3,10 @@ label: Build Title
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-700
+      - text-slate-400
       - m-1
       - p-1
-      - text-xs
+      - text-sm
       - leading-none
       - whitespace-nowrap
 public: true

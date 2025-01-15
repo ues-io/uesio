@@ -5,24 +5,22 @@ import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import IndexPanel from "./indexpanel"
 import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
-import MainHeader from "./mainheader"
-import ProfileTag from "./profiletag"
 import CodePanel from "./codepanel"
-import RightToolbar from "./righttoolbar"
-import SaveCancelArea from "./savecancelarea"
 import { toggleBuildMode } from "../../helpers/buildmode"
+import BuildBar from "./buildbar/buildbar"
 
 const StyleDefaults = Object.freeze({
-	root: [
-		"bg-slate-50",
-		"h-full",
-		"grid-cols-[auto_1fr]",
-		"auto-cols-auto",
-		"grid-rows-[100%]",
+	root: ["h-full", "grid-cols-[1fr]", "auto-cols-auto", "grid-rows-[100%]"],
+	leftpanel: [
+		"col-end-[-3]",
+		"grid-rows-[1fr_1fr]",
+		"gap-2",
+		"border-r-8",
+		"border-slate-700",
+		"bg-slate-700",
 	],
-	leftpanel: ["grid-rows-[auto_auto_1fr_1fr_auto]", "gap-3", "p-3"],
-	rightpanel: ["col-start-3", "p-3"],
-	canvaswrap: ["grid-rows-1", "auto-rows-auto", "gap-3"],
+	rightpanel: ["col-end-[-2]", "border-r-8", "border-slate-700"],
+	canvaswrap: ["grid-rows-1", "auto-rows-auto", "col-end-[-1]"],
 	canvaswrapinner: ["relative", "grid", "grid-rows-1", "grid-cols-1"],
 })
 
@@ -71,6 +69,36 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		)
 	})
 
+	const toggleCode = api.signal.getHandler(
+		[
+			{
+				signal: "component/CALL",
+				component: "uesio/builder.mainwrapper",
+				componentsignal: "TOGGLE_CODE",
+			},
+		],
+		context
+	)
+
+	const toggleIndex = api.signal.getHandler(
+		[
+			{
+				signal: "component/CALL",
+				component: "uesio/builder.mainwrapper",
+				componentsignal: "TOGGLE_INDEX",
+			},
+		],
+		context
+	)
+
+	hooks.useHotKeyCallback("y", () => {
+		toggleCode?.()
+	})
+
+	hooks.useHotKeyCallback("i", () => {
+		toggleIndex?.()
+	})
+
 	const [showCode] = useBuilderState<boolean>(context, "codepanel")
 	const [showIndex] = useBuilderState<boolean>(context, "indexpanel")
 
@@ -82,6 +110,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 					definition={definition}
 					path={path}
 				/>
+				<BuildBar context={builderContext} />
 			</>
 		)
 	}
@@ -89,11 +118,14 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 	return (
 		<Grid className={classes.root} context={context}>
 			<Grid context={context} className={classes.leftpanel}>
-				<MainHeader context={builderContext} />
 				<PropertiesPanel context={builderContext} />
 				<ViewInfoPanel context={builderContext} />
-				<ProfileTag context={builderContext} />
 			</Grid>
+			{showIndex && (
+				<Grid context={context} className={classes.rightpanel}>
+					<IndexPanel context={builderContext} />
+				</Grid>
+			)}
 			<Grid className={classes.canvaswrap} context={builderContext}>
 				<div className={classes.canvaswrapinner}>
 					<Canvas context={builderContext}>
@@ -103,16 +135,10 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 							path={path}
 						/>
 					</Canvas>
-					<SaveCancelArea context={context} />
-					<RightToolbar context={context} />
+					<BuildBar context={builderContext} />
 				</div>
 				{showCode && <CodePanel context={builderContext} />}
 			</Grid>
-			{showIndex && (
-				<Grid context={context} className={classes.rightpanel}>
-					<IndexPanel context={builderContext} />
-				</Grid>
-			)}
 		</Grid>
 	)
 }

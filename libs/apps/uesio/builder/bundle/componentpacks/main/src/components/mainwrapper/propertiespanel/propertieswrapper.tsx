@@ -81,7 +81,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 			root: ["w-[296px]"],
 			crumbwrapper: ["leading-[8px]"],
 			crumb: [
-				"bg-slate-600",
+				"bg-slate-500",
 				"h-[3px]",
 				"w-[3px]",
 				"inline-block",

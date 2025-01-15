@@ -57,6 +57,9 @@ definition:
                     value: $Prop{selectedConditions}
                   - type: group
                     conditions: $Prop{selectedConditions}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       uesio.variant: $Prop{tileVariant}
       content:
         - uesio/io.group:
@@ -65,6 +68,9 @@ definition:
                 - justify-between
             components:
               - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - $Region{title}
                   text: $Prop{title}
               - $Slot{actions}
       avatar:

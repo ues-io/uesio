@@ -11,14 +11,13 @@ definition:
       - text-xs
       - text-[8pt]
       - uppercase
-      - border
-      - border-slate-50
       - whitespace-nowrap
-      - bg-slate-50
+      - bg-slate-100
       - leading-none
       - tracking-wider
       - gap-2
       - hover:bg-slate-200
       - hover:text-slate-800
-      - hover:border-slate-200
+      - disabled:text-slate-300
+      - disabled:bg-slate-50
 public: true

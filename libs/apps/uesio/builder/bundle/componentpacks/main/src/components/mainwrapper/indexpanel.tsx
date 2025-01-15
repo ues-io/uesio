@@ -18,7 +18,7 @@ import IndexSlot from "./indexslot"
 
 const StyleDefaults = Object.freeze({
 	root: ["w-[296px]"],
-	index: ["pr-1"],
+	index: ["px-2", "py-1"],
 })
 
 const IndexPanel: definition.UtilityComponent = (props) => {

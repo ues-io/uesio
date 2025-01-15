@@ -48,12 +48,14 @@ const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
 			{selected && popperChildren && (
 				<Popper
 					referenceEl={anchorEl}
-					matchHeight
-					offset={6}
+					offset={8}
 					context={context}
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					parentSelector="#propertieswrapper"
+					styleTokens={{
+						popper: ["h-full"],
+					}}
 				>
 					{popperChildren}
 				</Popper>
