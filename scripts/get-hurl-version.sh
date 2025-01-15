@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-cat package.json | jq -r '."devDependencies"."@orangeopensource/hurl"' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'
+cat node_modules/@orangeopensource/hurl/package.json | jq -r '."hurlBinaryVersion"' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'

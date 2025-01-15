@@ -6,27 +6,27 @@ There are a well-defined set of context frame types, with each type requiring di
 
 Currently the context types (defined in `context/context.ts`) are:
 
--   `Error`: For adding errors into the context, for later inspection or use in notifications
--   `Field Mode`: For specifying the current mode to be used for field rendering, e.g. `EDIT` | `READ`
--   `Record`: For specifying the current Wire Record in context, to be used for evaluating merges in record context
--   `Record Data`: For specifying an arbitrary set of data to be used for evaluating merges in record context even in the absence of an actual record
--   `Route`: Modified whenever you change the top-level URL route
--   `Signal Output`: Enables named Signals to expose their outputs for use in later Signals
+- `Error`: For adding errors into the context, for later inspection or use in notifications
+- `Field Mode`: For specifying the current mode to be used for field rendering, e.g. `EDIT` | `READ`
+- `Record`: For specifying the current Wire Record in context, to be used for evaluating merges in record context
+- `Record Data`: For specifying an arbitrary set of data to be used for evaluating merges in record context even in the absence of an actual record
+- `Route`: Modified whenever you change the top-level URL route
+- `Signal Output`: Enables named Signals to expose their outputs for use in later Signals
 
--   `Theme`: Defines the Theme being viewed
--   `View`: Defines the context View
--   `Wire`: Defines the context Wire
+- `Theme`: Defines the Theme being viewed
+- `View`: Defines the context View
+- `Wire`: Defines the context Wire
 
 Some special types of context information are stored top-level on a context object, or are stored externally. These include:
 
--   `Site Admin`: Modified if a user switches into a Site Admin editing context
--   `Workspace`: When you're working in the Studio, this will contain information about the current Workspace that you're editing.
--   `User`: Details about the logged-in User, such as username, email, profile picture, etc.
+- `Site Admin`: Modified if a user switches into a Site Admin editing context
+- `Workspace`: When you're working in the Studio, this will contain information about the current Workspace that you're editing.
+- `User`: Details about the logged-in User, such as username, email, profile picture, etc.
 
 Adding to the context should usually only be necessary in Uesio core code, but if you do need to add a Wire or Record context, you can do so using these methods exposed on the context object:
 
--   `context.addRecordFrame({ record, wire, view })`
--   `context.addWireFrame({ wire, view })`
+- `context.addRecordFrame({ record, wire, view })`
+- `context.addWireFrame({ wire, view })`
 
 ## Context as a Stack
 
@@ -54,8 +54,8 @@ These outputs can be accessed via the following merge syntax:
 
 where
 
--   `stepId`: the name given to the step whose Signal produced an output
--   `propertyPath`: a path indicating the location you want to access within the Signal's output object.
+- `stepId`: the name given to the step whose Signal produced an output
+- `propertyPath`: a path indicating the location you want to access within the Signal's output object.
 
 For example, if you had a step named "convertLead" that called a "uesio/crm.convertLead" Listener Bot which returned an object of values:
 
@@ -100,8 +100,8 @@ Subsequent signals which get run in this context can then reference this output 
 
 where
 
--   `componentType`: the component's fully-qualified type, including the user/org and the app as well as the component's name
--   `propertyPath`: a path indicating the location you want to access within the data object which was attached
+- `componentType`: the component's fully-qualified type, including the user/org and the app as well as the component's name
+- `propertyPath`: a path indicating the location you want to access within the data object which was attached
 
 For example, to access the metric group's "category" property:
 
