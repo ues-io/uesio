@@ -5,7 +5,7 @@ import { useBuildMode } from "../../api/stateapi"
 import { toggleBuildMode } from "../../helpers/buildmode"
 
 const StyleDefaults = Object.freeze({
-	root: ["grid", "gap-1", "grid-cols-3", "mt-1"],
+	root: ["grid", "gap-2", "grid-cols-3", "mt-2"],
 })
 
 const SaveCancelArea: definition.UtilityComponent = (props) => {
@@ -27,42 +27,36 @@ const SaveCancelArea: definition.UtilityComponent = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{
-				<Button
-					context={context}
-					label="Preview"
-					variant="uesio/builder.secondarytoolbar"
-					onClick={() => {
-						toggleBuildMode(context, setBuildMode, !!buildMode)
-					}}
-					tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
-					tooltipPlacement="left"
-				/>
-			}
-			{
-				<Button
-					context={context}
-					id={`${id}:save-builder-changes`}
-					disabled={!hasChanges}
-					variant="uesio/builder.primarytoolbar"
-					label="Save"
-					onClick={() => {
-						save(context)
-					}}
-				/>
-			}
-			{
-				<Button
-					context={context}
-					id={`${id}:cancel-builder-changes`}
-					disabled={!hasChanges}
-					variant="uesio/builder.secondarytoolbar"
-					label="Cancel"
-					onClick={() => {
-						cancel(context)
-					}}
-				/>
-			}
+			<Button
+				context={context}
+				label="Preview"
+				variant="uesio/builder.secondarytoolbar"
+				onClick={() => {
+					toggleBuildMode(context, setBuildMode, !!buildMode)
+				}}
+				tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
+				tooltipPlacement="left"
+			/>
+			<Button
+				context={context}
+				id={`${id}:save-builder-changes`}
+				disabled={!hasChanges}
+				variant="uesio/builder.primarytoolbar"
+				label="Save"
+				onClick={() => {
+					save(context)
+				}}
+			/>
+			<Button
+				context={context}
+				id={`${id}:cancel-builder-changes`}
+				disabled={!hasChanges}
+				variant="uesio/builder.secondarytoolbar"
+				label="Cancel"
+				onClick={() => {
+					cancel(context)
+				}}
+			/>
 		</div>
 	)
 }
