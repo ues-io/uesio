@@ -8,35 +8,35 @@ Uesio is a **low-code** application development platform.
 
 ## Required
 
--   Install [homebrew](https://brew.sh/) (for macOS user)
--   Install git
--   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
--   Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the version used in the repo): `nvm install`
--   Install [Go](https://golang.org/dl/)
--   Install the following brew packages:
-    -   `hurl` (for integration tests): `brew install hurl`
-    -   `jq` (for JSON manipulation in Shell): `brew install jq`
-    -   `wget` (for fetching URLs): `brew install wget`
--   Start dependencies [here](#dependencies).
--   [Build](#build)
--   [Run](#run).
+- Install [homebrew](https://brew.sh/) (for macOS user)
+- Install git
+- Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
+- Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the version used in the repo): `nvm install`
+- Install [Go](https://golang.org/dl/)
+- Install the following brew packages:
+    - `hurl` (for integration tests): `brew install hurl`
+    - `jq` (for JSON manipulation in Shell): `brew install jq`
+    - `wget` (for fetching URLs): `brew install wget`
+- Start dependencies [here](#dependencies).
+- [Build](#build)
+- [Run](#run).
 
 ## Optional
 
--   Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
--   Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
--   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
--   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
--   Install [Oh My Zsh](https://ohmyz.sh/)
--   [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
--   Install the `nx` cli globally: `npm i -g nx`
--   An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
+- Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
+- Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
+- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
+- Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+- Install [Oh My Zsh](https://ohmyz.sh/)
+- [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- Install the `nx` cli globally: `npm i -g nx`
+- An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
 
 ```
     npm run dev
 ```
 
--   _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
+- _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
 {
@@ -60,7 +60,7 @@ Uesio is a **low-code** application development platform.
 
 # Build
 
--   Download and install the npm module dependencies
+- Download and install the npm module dependencies
 
 ```
 npm install
@@ -96,8 +96,8 @@ npm run watch-all
 
 If you'd like to use the Uesio CLI that you have built elsewhere on your machine without having to explicitly reference the binary in `dist/cli`:
 
--   Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
--   Windows: add `<absolute project root path>/dist/cli` to your PATH
+- Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
+- Windows: add `<absolute project root path>/dist/cli` to your PATH
 
 # <a id="dependencies"></a>Start dependencies
 
@@ -152,7 +152,7 @@ This script should create the `certificate.crt` and `private.key` files in the `
 
 On Windows/Linux, you will need to manually trust this self-signed certificate. On Mac OS, this is done automatically.
 
--   Windows: double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
+- Windows: double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
 
 # <a id="set-up-local-dns"></a> Set up your local DNS
 
@@ -535,14 +535,14 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 
 ## Backend
 
--   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
--   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
--   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
+- [Cobra](https://github.com/spf13/cobra). CLI for Go application.
+- [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
+- [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
 
 ## Frontend
 
--   [Node.js](https://www.nodejs.org/). For package management, building process, and development.
--   [TypeScript](https://www.typescriptlang.org/). For strong typing of JavaScript code.
--   [React](https://reactjs.org/). Framework for UI components.
--   [Redux](https://redux.js.org/). State store for the application's frontend data.
--   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
+- [Node.js](https://www.nodejs.org/). For package management, building process, and development.
+- [TypeScript](https://www.typescriptlang.org/). For strong typing of JavaScript code.
+- [React](https://reactjs.org/). Framework for UI components.
+- [Redux](https://redux.js.org/). State store for the application's frontend data.
+- [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.

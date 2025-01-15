@@ -8,10 +8,10 @@ This documentation is not meant to be static. Our tools and processes will chang
 
 ### Agile Manifesto
 
--   **Individuals and interactions** over processes and tools
--   **Working software** over comprehensive documentation
--   **Customer collaboration** over contract negotiation
--   **Responding to change** over following a plan
+- **Individuals and interactions** over processes and tools
+- **Working software** over comprehensive documentation
+- **Customer collaboration** over contract negotiation
+- **Responding to change** over following a plan
 
 Principles https://agilemanifesto.org/principles.html
 
@@ -25,12 +25,12 @@ https://code.visualstudio.com/
 
 ### Recommended Extensions
 
--   EditorConfig for VS Code
--   ESLint
--   Go
--   gotemplate-syntax
--   Prettier - Code formatter
--   YAML
+- EditorConfig for VS Code
+- ESLint
+- Go
+- gotemplate-syntax
+- Prettier - Code formatter
+- YAML
 
 ## Terminal Emulator - iTerm2
 
@@ -42,9 +42,9 @@ https://ohmyz.sh/
 
 ### Recommended Extensions
 
--   autoenv https://github.com/zpm-zsh/autoenv <-- Use this repo
--   git
--   wd (Great for quickly moving between projects)
+- autoenv https://github.com/zpm-zsh/autoenv <-- Use this repo
+- git
+- wd (Great for quickly moving between projects)
 
 ## Git Client - Github Desktop
 
@@ -106,22 +106,22 @@ git push origin
 
 ## Tips for Submitting PRs
 
--   Verify that any automated tests pass before creating a PR and adding a reviewer. Submitting failing PRs is just a waste of time for the reviewer.
--   The smaller the PR, the better (in most cases). Reviewers will most likely spend more time on your PR if it is small and concise.
--   For large, complicated PRs, split the work into smaller commits with good descriptions to aid the reviewer's understanding.
+- Verify that any automated tests pass before creating a PR and adding a reviewer. Submitting failing PRs is just a waste of time for the reviewer.
+- The smaller the PR, the better (in most cases). Reviewers will most likely spend more time on your PR if it is small and concise.
+- For large, complicated PRs, split the work into smaller commits with good descriptions to aid the reviewer's understanding.
 
 ## Tips for Reviewing PRs
 
--   **TONE**: Avoid accusing or embarassing.  
-    Bad: "You keep repeating yourself. You did this the wrong way."  
-    Good: "It would be better if _we_ separated this out into its own function."  
-    Bad: "Why did you write these calls in series, this will be way too slow."  
-    Good: "I think this function may perform better if we did these calls in parallel."
--   **STYLE**: Style discussions are not part of the review process. Style should be completely decided by linter and formatter rules. (eslint, prettier, gofmt)
--   **SPECIFICITY**: Use specific statements instead of general ones.  
-    Bad: "This code is messy"  
-    Good: "Let's move this function to its own class file and rename it so the name better reflects its behavior"
--   **RIGOR**: Read and understand all changes before approving. Feel free to discuss the PR with the submitter outside of the PR, but add any conclusions or action items you came to the PR itself. In most cases, changes should be checked out by the reviewer and manually tested in their local environment.
+- **TONE**: Avoid accusing or embarassing.  
+  Bad: "You keep repeating yourself. You did this the wrong way."  
+  Good: "It would be better if _we_ separated this out into its own function."  
+  Bad: "Why did you write these calls in series, this will be way too slow."  
+  Good: "I think this function may perform better if we did these calls in parallel."
+- **STYLE**: Style discussions are not part of the review process. Style should be completely decided by linter and formatter rules. (eslint, prettier, gofmt)
+- **SPECIFICITY**: Use specific statements instead of general ones.  
+  Bad: "This code is messy"  
+  Good: "Let's move this function to its own class file and rename it so the name better reflects its behavior"
+- **RIGOR**: Read and understand all changes before approving. Feel free to discuss the PR with the submitter outside of the PR, but add any conclusions or action items you came to the PR itself. In most cases, changes should be checked out by the reviewer and manually tested in their local environment.
 
 # Developing with NodeJS and TypeScript
 
