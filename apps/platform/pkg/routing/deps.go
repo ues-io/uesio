@@ -29,6 +29,7 @@ var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
 var DEFAULT_BUILDER_PACK_NAME = "main"
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
+var BUILD_BAR_COMPONENT = "uesio/builder.buildbar"
 
 func getBuilderComponentID(view string) string {
 	return fmt.Sprintf("%s($root):%s", view, DEFAULT_BUILDER_COMPONENT)
@@ -675,7 +676,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 			return nil, err
 		}
 
-		addComponentType(DEFAULT_BUILDER_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession(session.Context()))
+		addComponentType(BUILD_BAR_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession(session.Context()))
 	}
 
 	return deps, nil

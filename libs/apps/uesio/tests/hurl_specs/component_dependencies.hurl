@@ -24,18 +24,18 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 jsonpath "$.dependencies.viewdef[0].definition.wires.animals.collection" == "uesio/tests.animal"
 # test loading of component variant dependencies
-jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.scrollpanel"
-jsonpath "$.dependencies.componentvariant[4].name" == "default"
-jsonpath "$.dependencies.componentvariant[4].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.scrollpanel"
-jsonpath "$.dependencies.componentvariant[5].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[5].name" == "tabpanel"
-jsonpath "$.dependencies.componentvariant[6].component" == "uesio/io.tablabels"
-jsonpath "$.dependencies.componentvariant[6].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[6].name" == "default"
-jsonpath "$.dependencies.componentvariant[7].component" == "uesio/io.tabs"
-jsonpath "$.dependencies.componentvariant[7].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[7].name" == "default"
+jsonpath "$.dependencies.componentvariant[9].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[9].name" == "default"
+jsonpath "$.dependencies.componentvariant[9].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[10].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[10].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[10].name" == "tabpanel"
+jsonpath "$.dependencies.componentvariant[11].component" == "uesio/io.tablabels"
+jsonpath "$.dependencies.componentvariant[11].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[11].name" == "default"
+jsonpath "$.dependencies.componentvariant[12].component" == "uesio/io.tabs"
+jsonpath "$.dependencies.componentvariant[12].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[12].name" == "default"
 
 # test defaulting of variant for tabs component when not set in YAML
 jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" not exists
@@ -88,19 +88,19 @@ HTTP 200
 # Verify that the io pack is loaded
 jsonpath "$.dependencies.componentpack[0].name" == "main"
 # Verify that our expected component type dependencies are loaded
-jsonpath "$.dependencies.componenttype[0].name" == "button"
-jsonpath "$.dependencies.componenttype[1].name" == "text"
-jsonpath "$.dependencies.componenttype[2].name" == "declarative1"
-jsonpath "$.dependencies.componenttype[2].type" == "DECLARATIVE"
-jsonpath "$.dependencies.componenttype[2].definition" exists
-jsonpath "$.dependencies.componenttype[2].definition" count == 2
-jsonpath "$.dependencies.componenttype[2].properties" exists
-jsonpath "$.dependencies.componenttype[2].properties" count == 2
-jsonpath "$.dependencies.componenttype[2].properties[0].name" == "title"
-jsonpath "$.dependencies.componenttype[2].properties[0].defaultValue" == "This is a title"
-jsonpath "$.dependencies.componenttype[2].properties[1].name" == "subtitle"
-jsonpath "$.dependencies.componenttype[2].properties[1].defaultValue" == "This is a subtitle"
-jsonpath "$.dependencies.componenttype[2].title" not exists # no builder metadata should be loaded
+jsonpath "$.dependencies.componenttype[3].name" == "button"
+jsonpath "$.dependencies.componenttype[5].name" == "text"
+jsonpath "$.dependencies.componenttype[7].name" == "declarative1"
+jsonpath "$.dependencies.componenttype[7].type" == "DECLARATIVE"
+jsonpath "$.dependencies.componenttype[7].definition" exists
+jsonpath "$.dependencies.componenttype[7].definition" count == 2
+jsonpath "$.dependencies.componenttype[7].properties" exists
+jsonpath "$.dependencies.componenttype[7].properties" count == 2
+jsonpath "$.dependencies.componenttype[7].properties[0].name" == "title"
+jsonpath "$.dependencies.componenttype[7].properties[0].defaultValue" == "This is a title"
+jsonpath "$.dependencies.componenttype[7].properties[1].name" == "subtitle"
+jsonpath "$.dependencies.componenttype[7].properties[1].defaultValue" == "This is a subtitle"
+jsonpath "$.dependencies.componenttype[7].title" not exists # no builder metadata should be loaded
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative2
 HTTP 200
@@ -109,20 +109,20 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 #Verify that we get the view def from the declarative component
 jsonpath "$.dependencies.viewdef" count == 2
 # Verify that our expected dependencies are loaded
-jsonpath "$.dependencies.componenttype[?(@.type=='DECLARATIVE')]" count == 2
-jsonpath "$.dependencies.componenttype[6].name" == "declarative1"
-jsonpath "$.dependencies.componenttype[6].definition" count == 2
-jsonpath "$.dependencies.componenttype[6].definition" exists
-jsonpath "$.dependencies.componenttype[6].definition" count == 2
-jsonpath "$.dependencies.componenttype[6].title" not exists # no builder metadata should be loaded
-jsonpath "$.dependencies.componenttype[7].name" == "declarative2"
-jsonpath "$.dependencies.componenttype[7].definition" exists
-jsonpath "$.dependencies.componenttype[7].definition" count == 3
-jsonpath "$.dependencies.componenttype[7].slots" count == 2
-jsonpath "$.dependencies.componenttype[7].slots[0].name" == "header"
-jsonpath "$.dependencies.componenttype[7].slots[0].defaultContent" count == 1
-jsonpath "$.dependencies.componenttype[7].slots[1].name" == "footer"
-jsonpath "$.dependencies.componenttype[7].slots[1].defaultContent" not exists
+jsonpath "$.dependencies.componenttype[?(@.type=='DECLARATIVE')]" count == 3
+jsonpath "$.dependencies.componenttype[11].name" == "declarative1"
+jsonpath "$.dependencies.componenttype[11].definition" count == 2
+jsonpath "$.dependencies.componenttype[11].definition" exists
+jsonpath "$.dependencies.componenttype[11].definition" count == 2
+jsonpath "$.dependencies.componenttype[11].title" not exists # no builder metadata should be loaded
+jsonpath "$.dependencies.componenttype[12].name" == "declarative2"
+jsonpath "$.dependencies.componenttype[12].definition" exists
+jsonpath "$.dependencies.componenttype[12].definition" count == 3
+jsonpath "$.dependencies.componenttype[12].slots" count == 2
+jsonpath "$.dependencies.componenttype[12].slots[0].name" == "header"
+jsonpath "$.dependencies.componenttype[12].slots[0].defaultContent" count == 1
+jsonpath "$.dependencies.componenttype[12].slots[1].name" == "footer"
+jsonpath "$.dependencies.componenttype[12].slots[1].defaultContent" not exists
 
 # Test that components with variant properties, and variants with definitions containing variant properties,
 # are propertly parsed to load these variants
@@ -135,15 +135,15 @@ HTTP 200
 # along with its dependencies
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.deck"
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[0].name" == "three_column_grid"
-jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[0].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
-jsonpath "$.dependencies.componentvariant[1].name" == "one_column"
-jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[2].name" == "three_columns"
-jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[2].extends" == "uesio/io.one_column"
+jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[3].name" == "three_column_grid"
+jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[3].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
+jsonpath "$.dependencies.componentvariant[4].name" == "one_column"
+jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[5].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[5].extends" == "uesio/io.one_column"
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
 HTTP 200
@@ -151,10 +151,10 @@ HTTP 200
 # Because we have a default variant we should load it in
 # since secondary and default are in the extends chain, we will also load those
 
-jsonpath "$.dependencies.componentvariant" count == 3
-jsonpath "$.dependencies.componentvariant[0].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[0].name" == "default"
-jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[1].name" == "primary"
+jsonpath "$.dependencies.componentvariant" count == 12
 jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[2].name" == "secondary"
+jsonpath "$.dependencies.componentvariant[2].name" == "default"
+jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[3].name" == "primary"
+jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[4].name" == "secondary"

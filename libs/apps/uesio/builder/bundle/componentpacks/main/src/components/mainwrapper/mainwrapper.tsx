@@ -91,11 +91,11 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 		context
 	)
 
-	hooks.useHotKeyCallback("y", () => {
+	hooks.useHotKeyCallback("meta+y", () => {
 		toggleCode?.()
 	})
 
-	hooks.useHotKeyCallback("i", () => {
+	hooks.useHotKeyCallback("meta+i", () => {
 		toggleIndex?.()
 	})
 

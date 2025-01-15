@@ -1,0 +1,11 @@
+name: buildbar
+pack: main
+entrypoint: components/mainwrapper/mainwrapper
+components:
+  - uesio/appkit.icontile
+variants:
+  - uesio/io.tile:uesio/appkit.breadcrumb
+  - uesio/io.group:uesio/appkit.breadcrumbs
+  - uesio/io.image:uesio/appkit.uesio_logo
+  - uesio/io.button:uesio/builder.primarytoolbar
+  - uesio/io.button:uesio/builder.secondarytoolbar
