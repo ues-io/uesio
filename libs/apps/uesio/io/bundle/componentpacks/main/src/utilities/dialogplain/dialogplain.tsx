@@ -1,5 +1,6 @@
 import { definition, styles } from "@uesio/ui"
 import {
+	FloatingPortal,
 	FloatingFocusManager,
 	FloatingOverlay,
 	useDismiss,
@@ -48,51 +49,46 @@ const DialogPlain: definition.UtilityComponent<DialogPlainUtilityProps> = (
 			: !!props.closeOnOutsideClick
 
 	const dismiss = useDismiss(floating.context, {
-		outsidePress: false,
-		referencePress: closeOnOutsideClick,
+		outsidePress: closeOnOutsideClick,
 	})
 
-	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
+	const { getFloatingProps } = useInteractions([dismiss])
 
 	return (
-		<FloatingOverlay
-			className={styles.cx(
-				classes.blocker,
-				props.closed && classes.blockerClosed
-			)}
-			lockScroll
-			style={{ position: "absolute" }}
-			ref={floating.refs.setReference}
-			{...getReferenceProps()}
-		>
-			<FloatingFocusManager
-				context={floating.context}
-				initialFocus={props.initialFocus}
-				closeOnFocusOut={false}
+		<FloatingPortal>
+			<FloatingOverlay
+				className={styles.cx(
+					classes.blocker,
+					props.closed && classes.blockerClosed
+				)}
+				lockScroll
+				style={{ position: "absolute" }}
 			>
-				<div
-					className={styles.cx(
-						classes.wrapper,
-						props.closed && classes.wrapperClosed
-					)}
-					ref={floating.refs.setFloating}
-					{...getFloatingProps({
-						onPointerDown(e) {
-							e.stopPropagation()
-						},
-					})}
+				<FloatingFocusManager
+					context={floating.context}
+					initialFocus={props.initialFocus}
+					closeOnFocusOut={false}
 				>
 					<div
 						className={styles.cx(
-							classes.inner,
-							props.closed && classes.innerClosed
+							classes.wrapper,
+							props.closed && classes.wrapperClosed
 						)}
+						ref={floating.refs.setFloating}
+						{...getFloatingProps()}
 					>
-						{props.children}
+						<div
+							className={styles.cx(
+								classes.inner,
+								props.closed && classes.innerClosed
+							)}
+						>
+							{props.children}
+						</div>
 					</div>
-				</div>
-			</FloatingFocusManager>
-		</FloatingOverlay>
+				</FloatingFocusManager>
+			</FloatingOverlay>
+		</FloatingPortal>
 	)
 }
 
