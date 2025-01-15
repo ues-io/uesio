@@ -2,7 +2,7 @@
 
 A directory of helpful admin queries to run against the database
 
--   ./usage.sql -- get a summary of non-Uesio users by month and user
+- ./usage.sql -- get a summary of non-Uesio users by month and user
 
 ## Example usage
 
