@@ -1,6 +1,6 @@
 name: buildbar
 pack: main
-entrypoint: components/mainwrapper/mainwrapper
+entrypoint: components/mainwrapper/buildbar/buildbar
 components:
   - uesio/appkit.icontile
 variants:
@@ -9,3 +9,4 @@ variants:
   - uesio/io.image:uesio/appkit.uesio_logo
   - uesio/io.button:uesio/builder.primarytoolbar
   - uesio/io.button:uesio/builder.secondarytoolbar
+  - uesio/io.avatar:uesio/io.default

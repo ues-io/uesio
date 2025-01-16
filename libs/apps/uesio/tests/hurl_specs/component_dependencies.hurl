@@ -24,27 +24,27 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 jsonpath "$.dependencies.viewdef[0].definition.wires.animals.collection" == "uesio/tests.animal"
 # test loading of component variant dependencies
-jsonpath "$.dependencies.componentvariant[9].component" == "uesio/io.scrollpanel"
-jsonpath "$.dependencies.componentvariant[9].name" == "default"
-jsonpath "$.dependencies.componentvariant[9].namespace" == "uesio/io"
 jsonpath "$.dependencies.componentvariant[10].component" == "uesio/io.scrollpanel"
+jsonpath "$.dependencies.componentvariant[10].name" == "default"
 jsonpath "$.dependencies.componentvariant[10].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[10].name" == "tabpanel"
-jsonpath "$.dependencies.componentvariant[11].component" == "uesio/io.tablabels"
+jsonpath "$.dependencies.componentvariant[11].component" == "uesio/io.scrollpanel"
 jsonpath "$.dependencies.componentvariant[11].namespace" == "uesio/io"
-jsonpath "$.dependencies.componentvariant[11].name" == "default"
-jsonpath "$.dependencies.componentvariant[12].component" == "uesio/io.tabs"
+jsonpath "$.dependencies.componentvariant[11].name" == "tabpanel"
+jsonpath "$.dependencies.componentvariant[12].component" == "uesio/io.tablabels"
 jsonpath "$.dependencies.componentvariant[12].namespace" == "uesio/io"
 jsonpath "$.dependencies.componentvariant[12].name" == "default"
+jsonpath "$.dependencies.componentvariant[13].component" == "uesio/io.tabs"
+jsonpath "$.dependencies.componentvariant[13].namespace" == "uesio/io"
+jsonpath "$.dependencies.componentvariant[13].name" == "default"
 
 # test defaulting of variant for tabs component when not set in YAML
 jsonpath "$.dependencies.viewdef[0].definition.components[0]['uesio/io.grid'].items[0]['uesio/io.griditem'].components[0]['uesio/io.tabs']['uesio.variant']" not exists
 # verify that the default variant is loaded for button without a variant
 jsonpath "$.dependencies.viewdef[0].definition.components[1]['uesio/io.button']['uesio.variant']" not exists
-jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
 # verify that the requested variant is loaded for button with a variant specified
 jsonpath "$.dependencies.viewdef[0].definition.components[2]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
-jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.button"
 
 # Fetch component pack dependencies - via workspace router - for a Group with nested chart
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group
@@ -74,7 +74,7 @@ jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['uesio.variant']" n
 jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['title']" == "My Panel"
 # Verify that a manually specified variant is maintained
 jsonpath "$.dependencies.viewdef[0].definition.panels.panel1.actions[0]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
-jsonpath "$.dependencies.componentvariant[1].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
 # verify that variants are loaded
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.button"
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.dialog"
@@ -135,15 +135,15 @@ HTTP 200
 # along with its dependencies
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.deck"
 jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[3].name" == "three_column_grid"
-jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[3].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
-jsonpath "$.dependencies.componentvariant[4].name" == "one_column"
-jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[5].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[4].name" == "three_column_grid"
+jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[4].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
+jsonpath "$.dependencies.componentvariant[5].name" == "one_column"
 jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[5].extends" == "uesio/io.one_column"
+jsonpath "$.dependencies.componentvariant[6].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[6].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[6].extends" == "uesio/io.one_column"
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
 HTTP 200
@@ -151,10 +151,10 @@ HTTP 200
 # Because we have a default variant we should load it in
 # since secondary and default are in the extends chain, we will also load those
 
-jsonpath "$.dependencies.componentvariant" count == 12
-jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[2].name" == "default"
+jsonpath "$.dependencies.componentvariant" count == 13
 jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[3].name" == "primary"
+jsonpath "$.dependencies.componentvariant[3].name" == "default"
 jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[4].name" == "secondary"
+jsonpath "$.dependencies.componentvariant[4].name" == "primary"
+jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[5].name" == "secondary"
