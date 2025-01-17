@@ -1,38 +1,38 @@
-import nx from '@nx/eslint-plugin'
-import reactPlugin from 'eslint-plugin-react';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import globals from 'globals';
+import nx from "@nx/eslint-plugin"
+import reactPlugin from "eslint-plugin-react"
+import reactHooksPlugin from "eslint-plugin-react-hooks"
+import globals from "globals"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
 export default [
-	...nx.configs['flat/base'],
-	...nx.configs['flat/typescript'],
-	...nx.configs['flat/javascript'],
+	...nx.configs["flat/base"],
+	...nx.configs["flat/typescript"],
+	...nx.configs["flat/javascript"],
 	{
 		ignores: [
-			'**/dist',
+			"**/dist",
 			"**/jest.config.js",
 			"**/bundle/bots/*",
-			"**/bundle/componentpacks/*/*/*.js*"
+			"**/bundle/componentpacks/*/*/*.js*",
 		],
 	},
 	{
 		files: ["**/*.spec.ts", "**/*.spec.tsx", "**/test/utils/*.ts"],
 		languageOptions: {
 			globals: {
-				...globals.jest
-			}
-		}
+				...globals.jest,
+			},
+		},
 	},
 	{
 		plugins: {
-			'react-hooks': reactHooksPlugin,
+			"react-hooks": reactHooksPlugin,
 		},
 		rules: reactHooksPlugin.configs.recommended.rules,
 	},
 	{
-		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-		settings: { react: { version: 'detect' } },
+		files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+		settings: { react: { version: "detect" } },
 		plugins: {
 			react: reactPlugin,
 		},
@@ -46,16 +46,16 @@ export default [
 			"no-unneeded-ternary": "error",
 			"object-shorthand": "error",
 			"no-duplicate-imports": "error",
-			"eqeqeq": "error",
-			"radix": "error",
+			eqeqeq: "error",
+			radix: "error",
 			"no-new-wrappers": "error",
 			"react/jsx-key": "error",
 			"react/self-closing-comp": [
 				"error",
 				{
-					"component": true,
-					"html": true
-				}
+					component: true,
+					html: true,
+				},
 			],
 			"react/jsx-closing-bracket-location": "error",
 			"react-hooks/rules-of-hooks": "error",
@@ -63,9 +63,9 @@ export default [
 			"@typescript-eslint/naming-convention": [
 				"error",
 				{
-					"selector": "variable",
-					"format": ["camelCase", "PascalCase", "UPPER_CASE"]
-				}
+					selector: "variable",
+					format: ["camelCase", "PascalCase", "UPPER_CASE"],
+				},
 			],
 			"@typescript-eslint/consistent-type-definitions": "off",
 			"@typescript-eslint/consistent-indexed-object-style": "off",
@@ -74,34 +74,37 @@ export default [
 			"@typescript-eslint/no-unused-vars": [
 				"error",
 				{
-					"ignoreRestSiblings": true
-				}
+					ignoreRestSiblings: true,
+				},
 			],
-			'@nx/enforce-module-boundaries': [
-				'error',
+			"@nx/enforce-module-boundaries": [
+				"error",
 				{
 					enforceBuildableLibDependency: true,
-					allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?js$'],
+					allow: ["^.*/eslint(\\.base)?\\.config\\.[cm]?js$"],
 					depConstraints: [
 						{
-							sourceTag: '*',
-							onlyDependOnLibsWithTags: ['*'],
+							sourceTag: "*",
+							onlyDependOnLibsWithTags: ["*"],
 						},
 					],
 				},
 			],
-			'@typescript-eslint/no-unused-expressions': ['error', { allowTernary: true, allowShortCircuit: true }],
+			"@typescript-eslint/no-unused-expressions": [
+				"error",
+				{ allowTernary: true, allowShortCircuit: true },
+			],
 		},
 	},
 	{
 		files: [
-			'**/*.ts',
-			'**/*.tsx',
-			'**/*.js',
-			'**/*.jsx',
-			'**/*.cjs',
-			'**/*.mjs',
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.js",
+			"**/*.jsx",
+			"**/*.cjs",
+			"**/*.mjs",
 		],
 		rules: {},
 	},
-];
+]

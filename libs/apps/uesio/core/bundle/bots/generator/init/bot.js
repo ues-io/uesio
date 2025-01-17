@@ -7,7 +7,11 @@ function init(bot) {
 	var templatePrefix = "templates/template."
 	bot.generateFile(".gitignore", params, `${templatePrefix}gitignore`)
 	bot.generateFile("tsconfig.json", {}, `${templatePrefix}tsconfig.json`)
-	bot.generateFile("eslint.config.mjs", {}, `${templatePrefix}eslint.config.mjs`)
+	bot.generateFile(
+		"eslint.config.mjs",
+		{},
+		`${templatePrefix}eslint.config.mjs`
+	)
 	bot.generateFile(".prettierrc.yaml", {}, `${templatePrefix}prettierrc.yaml`)
 	bot.generateFile(".prettierignore", {}, `${templatePrefix}prettierignore`)
 	bot.generateFile("package.json", params, `${templatePrefix}package.json`)

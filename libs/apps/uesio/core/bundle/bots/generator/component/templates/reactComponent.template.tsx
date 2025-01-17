@@ -10,7 +10,7 @@ const Component: definition.UC<ComponentDefinition> = (props) => {
 		{
 			root: ["text-green-600"],
 		},
-		props,
+		props
 	)
 	return <div className={classes.root}>{props.context.mergeString(text)}</div>
 }
