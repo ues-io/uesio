@@ -33,8 +33,9 @@
 			"cache": true,
 			"inputs": [
 				"default",
-				"{workspaceRoot}/.eslintrc.json",
-				"{workspaceRoot}/tools/eslint-rules/**/*"
+				"{workspaceRoot}/tools/eslint-rules/**/*",
+				"{workspaceRoot}/eslint.config.mjs",
+				"{workspaceRoot}/eslint.config.cjs"
 			]
 		}
 	},
@@ -47,8 +48,9 @@
 		],
 		"production": [
 			"default",
-			"!{projectRoot}/.eslintrc.json",
-			"!{projectRoot}/src/test-setup.[jt]s"
+			"!{projectRoot}/src/test-setup.[jt]s",
+			"!{projectRoot}/eslint.config.mjs",
+			"!{projectRoot}/eslint.config.cjs"
 		]
 	},
 	"useDaemonProcess": false,

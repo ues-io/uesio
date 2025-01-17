@@ -57,7 +57,7 @@ const parseOnePartExpression = (expression: string) => {
 
 		try {
 			trimmed = expression.substring(1, expression.length - 1)
-		} catch (e) {
+		} catch {
 			throw InvalidExpressionError
 		}
 		if (trimmed.includes("[") || trimmed.includes("]")) {
@@ -88,7 +88,7 @@ const parseTwoPartExpression = (expression: string) => {
 		}
 		try {
 			parts = [part1.substring(1), part2.substring(0, part2.length - 1)]
-		} catch (e) {
+		} catch {
 			throw InvalidExpressionError
 		}
 	} else if (expression.includes(colonDelimiter)) {
@@ -118,7 +118,7 @@ const parseThreePartExpression = (expression: string) => {
 				part2,
 				part3.substring(0, part3.length - 1),
 			]
-		} catch (e) {
+		} catch {
 			throw InvalidExpressionError
 		}
 	} else if (expression.includes(colonDelimiter)) {

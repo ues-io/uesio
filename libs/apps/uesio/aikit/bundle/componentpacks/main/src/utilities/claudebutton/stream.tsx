@@ -24,7 +24,7 @@ const strictParse = (input: string): ParseResult => {
 				remaining: input,
 				objects: [obj],
 			}
-		} catch (e) {
+		} catch {
 			// If we can't parse the data, break out, we can't parse what we've got
 			return {
 				remaining: input,

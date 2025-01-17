@@ -126,7 +126,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		let parts
 		try {
 			parts = parseOneOrTwoPartExpression(expression)
-		} catch (e) {
+		} catch {
 			throw InvalidSignalOutputMergeMsg
 		}
 		const [stepId, propertyPath] = parts
@@ -144,7 +144,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		let parts
 		try {
 			parts = parseTwoPartExpression(expression)
-		} catch (e) {
+		} catch {
 			throw InvalidComponentOutputMsg
 		}
 		const [componentType, propertyPath] = parts
@@ -162,7 +162,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		let parts
 		try {
 			parts = parseThreePartExpression(expression)
-		} catch (e) {
+		} catch {
 			throw InvalidComponentOutputMsg
 		}
 		const [componentType, componentId, propertyPath] = parts
@@ -231,7 +231,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		let parts
 		try {
 			parts = parseOneOrTwoPartExpression(fullExpression)
-		} catch (e) {
+		} catch {
 			throw InvalidCurrencyMsg
 		}
 		const [expression, decimalOption] = parts
@@ -249,7 +249,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		let parts
 		try {
 			parts = parseTwoOrThreePartExpression(expression)
-		} catch (e) {
+		} catch {
 			throw InvalidIfMergeMsg
 		}
 		return context.merge(parts[0])

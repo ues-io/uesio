@@ -39,7 +39,7 @@ type ParamDefault = WireDefaultBase & {
 type WireDefault = ValueDefault | LookupDefault | ParamDefault | ShortIDDefault
 
 const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
-	if (item.valueSource === "LOOKUP") {
+	if (item.valueSource === LOOKUP) {
 		const lookupWire = context.getWire(item.lookupWire)
 		if (!lookupWire) return
 
@@ -48,15 +48,15 @@ const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
 
 		return firstRecord.getFieldValue(item.lookupField)
 	}
-	if (item.valueSource === "VALUE" || !item.valueSource) {
+	if (item.valueSource === VALUE || !item.valueSource) {
 		return context.merge(item.value as Mergeable)
 	}
 
-	if (item.valueSource === "SHORTID") {
+	if (item.valueSource === SHORTID) {
 		return nanoid()
 	}
 
-	if (item.valueSource === "PARAM") {
+	if (item.valueSource === PARAM) {
 		return context.getParam(item.param)
 	}
 }

@@ -2,11 +2,11 @@ import { MetadataKey } from "../../../metadata/types"
 import { PlainFieldValue } from "../../wirerecord/types"
 
 const PARAM = "PARAM"
-const LOOKUP = "LOOKUP"
+type LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
 const GROUP = "GROUP"
-const SUBQUERY = "SUBQUERY"
+type SUBQUERY = "SUBQUERY"
 
 type Conjunction = "AND" | "OR"
 
@@ -52,7 +52,7 @@ type GroupConditionState = ConditionBase & {
 }
 
 type SubqueryConditionState = ConditionBase & {
-	type: typeof SUBQUERY
+	type: SUBQUERY
 	conditions?: WireConditionState[]
 	field: string
 	valueSource?: undefined
@@ -78,7 +78,7 @@ type ParamConditionState = ConditionBase & {
 type LookupConditionState = ConditionBase & {
 	type?: undefined
 	field: string
-	valueSource: typeof LOOKUP
+	valueSource: LOOKUP
 	lookupWire: string
 	lookupField: string
 }
@@ -100,20 +100,20 @@ const isValueCondition = (
 ): condition is ValueConditionState =>
 	!!condition &&
 	!condition.type &&
-	(condition.valueSource === "VALUE" || !condition.valueSource)
+	(condition.valueSource === VALUE || !condition.valueSource)
 
 const isParamCondition = (
 	condition: WireConditionState | undefined
 ): condition is ParamConditionState =>
-	!!condition && !condition.type && condition.valueSource === "PARAM"
+	!!condition && !condition.type && condition.valueSource === PARAM
 
 const isGroupCondition = (
 	condition: WireConditionState | undefined
-): condition is ValueConditionState => condition?.type === "GROUP"
+): condition is ValueConditionState => condition?.type === GROUP
 
 const isSearchCondition = (
 	condition: WireConditionState | undefined
-): condition is ValueConditionState => condition?.type === "SEARCH"
+): condition is ValueConditionState => condition?.type === SEARCH
 
 export {
 	isValueCondition,
