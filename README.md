@@ -547,7 +547,7 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 - [Redux](https://redux.js.org/). State store for the application's frontend data.
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 
-## Dependencies
+## Managing Dependencies
 
-We're pinning monaco to version 0.50.0 for now because of this bug.
-https://github.com/microsoft/monaco-editor/issues/4654
+1. We're pinning monaco to version 0.50.0 for now because of this [bug](https://github.com/microsoft/monaco-editor/issues/4654)
+2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.

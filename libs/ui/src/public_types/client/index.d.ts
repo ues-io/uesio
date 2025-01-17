@@ -324,11 +324,11 @@ export namespace definition {
 	}
 }
 
-const PARAM = "PARAM"
-const LOOKUP = "LOOKUP"
-const VALUE = "VALUE"
-const SEARCH = "SEARCH"
-const GROUP = "GROUP"
+type PARAM = "PARAM"
+type LOOKUP = "LOOKUP"
+type VALUE = "VALUE"
+type SEARCH = "SEARCH"
+type GROUP = "GROUP"
 type Conjunction = "AND" | "OR"
 type ConditionOperators =
 	| "EQ"
@@ -353,13 +353,13 @@ type ConditionBase = {
 	inactive?: boolean
 }
 type GroupCondition = ConditionBase & {
-	type: typeof GROUP
+	type: GROUP
 	conjunction: Conjunction
 	conditions: ConditionBase[]
 	valueSource: undefined
 }
 type SearchCondition = ConditionBase & {
-	type: typeof SEARCH
+	type: SEARCH
 	value: string
 	valueSource?: undefined
 	fields?: string[]
@@ -367,20 +367,20 @@ type SearchCondition = ConditionBase & {
 type ParamCondition = ConditionBase & {
 	type?: undefined
 	field: string
-	valueSource: typeof PARAM
+	valueSource: PARAM
 	param: string
 }
 type LookupCondition = ConditionBase & {
 	type?: undefined
 	field: string
-	valueSource: typeof LOOKUP
+	valueSource: LOOKUP
 	lookupWire: string
 	lookupField: string
 }
 type ValueCondition = ConditionBase & {
 	type?: undefined
 	field: string
-	valueSource: typeof VALUE | undefined
+	valueSource: VALUE | undefined
 	value: PlainFieldValue
 	start?: PlainFieldValue
 	end?: PlainFieldValue

@@ -122,14 +122,16 @@ const TableColumns: definition.UC = (props) => {
 		"uesio/builder.listproperty"
 	)
 	const Popper = component.getUtility("uesio/io.popper")
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
 	const anchorEl = useRef<HTMLDivElement>(null)
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
 	const [showPopper, setShowPopper] = useState(false)
 
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
 	let selectedPath = useSelectedPath(context)
 	let localPath
 	let tempPath = selectedPath
 	// This is a bit of a hack to ensure we're always rendering the TABLE's path, not a nested path
-	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		;[localPath, tempPath] = tempPath.pop()
 		if (localPath === TABLE_TYPE) {
