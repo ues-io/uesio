@@ -1,9 +1,5 @@
-tabWidth: 4
 semi: false
-useTabs: true
-trailingComma: es5
 overrides:
   - files: "*.yaml"
     options:
-      tabWidth: 2
       printWidth: 1000

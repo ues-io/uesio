@@ -12,6 +12,11 @@ function init(bot) {
 		{},
 		`${templatePrefix}eslint.config.mjs`
 	)
+  bot.generateFile(
+		".editorconfig",
+		{},
+		`${templatePrefix}editorconfig`
+	)
 	bot.generateFile(".prettierrc.yaml", {}, `${templatePrefix}prettierrc.yaml`)
 	bot.generateFile(".prettierignore", {}, `${templatePrefix}prettierignore`)
 	bot.generateFile("package.json", params, `${templatePrefix}package.json`)
