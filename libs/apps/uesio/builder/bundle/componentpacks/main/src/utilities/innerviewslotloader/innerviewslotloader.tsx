@@ -4,13 +4,13 @@ import { FunctionComponent } from "react"
 export const InnerViewSlotLoaderId = "uesio/builder.innerviewslotloader"
 
 const InnerViewSlotLoader: FunctionComponent<component.SlotUtilityProps> = (
-	props
+  props,
 ) => (
-	<>
-		{component.getSlotProps(props).map((props, index) => (
-			<component.Component key={index} {...props} />
-		))}
-	</>
+  <>
+    {component.getSlotProps(props).map((props, index) => (
+      <component.Component key={index} {...props} />
+    ))}
+  </>
 )
 
 export default InnerViewSlotLoader

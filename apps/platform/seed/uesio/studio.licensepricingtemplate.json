@@ -1,74 +1,74 @@
 [
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "DATASOURCE",
-		"uesio/studio.actiontype": "LOAD",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "DATASOURCE",
-		"uesio/studio.actiontype": "SAVE",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "FILESOURCE",
-		"uesio/studio.actiontype": "DOWNLOAD",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "FILESOURCE",
-		"uesio/studio.actiontype": "UPLOAD",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "FILESOURCE",
-		"uesio/studio.actiontype": "DOWNLOAD_BYTES",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.licensetemplate": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.metadatatype": "FILESOURCE",
-		"uesio/studio.actiontype": "UPLOAD_BYTES",
-		"uesio/studio.metadataname": "uesio/core.platform",
-		"uesio/studio.price": 1
-	}
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "DATASOURCE",
+    "uesio/studio.actiontype": "LOAD",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "DATASOURCE",
+    "uesio/studio.actiontype": "SAVE",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "FILESOURCE",
+    "uesio/studio.actiontype": "DOWNLOAD",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "FILESOURCE",
+    "uesio/studio.actiontype": "UPLOAD",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "FILESOURCE",
+    "uesio/studio.actiontype": "DOWNLOAD_BYTES",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "FILESOURCE",
+    "uesio/studio.actiontype": "UPLOAD_BYTES",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  }
 ]

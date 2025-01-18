@@ -1,65 +1,65 @@
 [
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.description": "Uesio base functionality",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/studio"
-		},
-		"uesio/studio.description": "The uesio configuration app",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/builder"
-		},
-		"uesio/studio.description": "The viewbuilder App",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/io"
-		},
-		"uesio/studio.description": "Base uesio components",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/sitekit"
-		},
-		"uesio/studio.description": "Tools for building websites",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/aikit"
-		},
-		"uesio/studio.description": "Tools for working with AI",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/appkit"
-		},
-		"uesio/studio.description": "Tools for building apps",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	}
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.description": "Uesio base functionality",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/studio"
+    },
+    "uesio/studio.description": "The uesio configuration app",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/builder"
+    },
+    "uesio/studio.description": "The viewbuilder App",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/io"
+    },
+    "uesio/studio.description": "Base uesio components",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/sitekit"
+    },
+    "uesio/studio.description": "Tools for building websites",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/aikit"
+    },
+    "uesio/studio.description": "Tools for working with AI",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/appkit"
+    },
+    "uesio/studio.description": "Tools for building apps",
+    "uesio/studio.major": 0,
+    "uesio/studio.minor": 0,
+    "uesio/studio.patch": 1
+  }
 ]

@@ -9,119 +9,114 @@ import { makeComponentId } from "../../hooks/componentapi"
 import { produce } from "immer"
 
 interface ComponentSignal extends SignalDefinition {
-	component: string
-	componentsignal: string
-	targettype: "specific" | "multiple"
-	target?: string
-	componentid?: string
+  component: string
+  componentsignal: string
+  targettype: "specific" | "multiple"
+  target?: string
+  componentid?: string
 }
 
 const getComponentSignalDefinition = () => ({
-	dispatcher: async (signal: ComponentSignal, context: Context) => {
-		const {
-			target: signalTarget,
-			signal: signalName,
-			componentid,
-			targettype,
-		} = signal
-		const [band, ...rest] = signalName.split("/")
+  dispatcher: async (signal: ComponentSignal, context: Context) => {
+    const {
+      target: signalTarget,
+      signal: signalName,
+      componentid,
+      targettype,
+    } = signal
+    const [band, ...rest] = signalName.split("/")
 
-		if (band !== "component") return context
+    if (band !== "component") return context
 
-		let componentSignal = ""
-		let componentType = ""
+    let componentSignal = ""
+    let componentType = ""
 
-		// New syntax - signal specified via separate properties, e.g.
-		// { signal: "component/CALL", component: "uesio/io.list", componentsignal: "TOGGLE_MODE" }
-		if (rest.length === 1 && rest[0] === "CALL") {
-			componentType = signal.component
-			componentSignal = signal.componentsignal
-		} else if (rest.length === 3) {
-			// Old syntax - component type and component-specific signal embedded in the signal name,
-			// e.g. { signal: "component/uesio/io.list/TOGGLE_MODE" }
-			componentType = `${rest[0]}/${rest[1]}`
-			componentSignal = rest[2]
-		}
+    // New syntax - signal specified via separate properties, e.g.
+    // { signal: "component/CALL", component: "uesio/io.list", componentsignal: "TOGGLE_MODE" }
+    if (rest.length === 1 && rest[0] === "CALL") {
+      componentType = signal.component
+      componentSignal = signal.componentsignal
+    } else if (rest.length === 3) {
+      // Old syntax - component type and component-specific signal embedded in the signal name,
+      // e.g. { signal: "component/uesio/io.list/TOGGLE_MODE" }
+      componentType = `${rest[0]}/${rest[1]}`
+      componentSignal = rest[2]
+    }
 
-		if (!componentType) {
-			throw new Error("No component type selected for component signal")
-		}
-		if (!componentSignal) {
-			throw new Error("No component signal selected")
-		}
+    if (!componentType) {
+      throw new Error("No component type selected for component signal")
+    }
+    if (!componentSignal) {
+      throw new Error("No component signal selected")
+    }
 
-		const handler = getSignal(componentType, componentSignal)
-		if (!handler) {
-			throw new Error(
-				`Missing handler for component signal. "${componentType}" has no signal "${componentSignal}"`
-			)
-		}
+    const handler = getSignal(componentType, componentSignal)
+    if (!handler) {
+      throw new Error(
+        `Missing handler for component signal. "${componentType}" has no signal "${componentSignal}"`,
+      )
+    }
 
-		const target =
-			(targettype === "specific"
-				? componentid
-				: signalTarget || handler.target) || ""
-		const state = getCurrentState()
+    const target =
+      (targettype === "specific"
+        ? componentid
+        : signalTarget || handler.target) || ""
+    const state = getCurrentState()
 
-		// This is where we select state based on even partial target ids
-		const targetSearch = makeComponentId(context, componentType, target)
+    // This is where we select state based on even partial target ids
+    const targetSearch = makeComponentId(context, componentType, target)
 
-		let componentStates = selectTarget(state, targetSearch)
+    let componentStates = selectTarget(state, targetSearch)
 
-		// If we couldn't find targets in our record context, try without it.
-		if (!componentStates.length) {
-			const targetSearch = makeComponentId(
-				context,
-				componentType,
-				target,
-				true
-			)
-			componentStates = selectTarget(state, targetSearch)
+    // If we couldn't find targets in our record context, try without it.
+    if (!componentStates.length) {
+      const targetSearch = makeComponentId(context, componentType, target, true)
+      componentStates = selectTarget(state, targetSearch)
 
-			// If we still can't find a target, we'll need to create entirely new state
-			if (!componentStates.length) {
-				componentStates = [{ id: targetSearch, state: {} }]
-			}
-		}
+      // If we still can't find a target, we'll need to create entirely new state
+      if (!componentStates.length) {
+        componentStates = [{ id: targetSearch, state: {} }]
+      }
+    }
 
-		// Loop over all ids that match the target and dispatch
-		// to them all
-		for (const componentState of componentStates) {
-			let returnValuePromise: Promise<Context> | undefined = undefined
-			dispatch(
-				setComponent({
-					id: componentState.id,
-					state: produce(componentState.state, (draft) => {
-						const returnvalue = handler.dispatcher(
-							draft,
-							signal,
-							context,
-							platform,
-							componentState.id
-						)
-						// If we returned a context object from our dispatcher,
-						// That means we want to set it as the new context.
-						if (isContextObject(returnvalue)) {
-							context = returnvalue
-							return
-						}
-						if (returnvalue instanceof Promise) {
-							returnValuePromise = returnvalue
-							return
-						}
-						return returnvalue
-					}),
-				})
-			)
-			// Usually returnValuePromise isn't a promise, but in case it is, we should
-			// wait for it to resolve here.
-			if (returnValuePromise) {
-				await Promise.resolve(returnValuePromise)
-			}
-		}
+    // Loop over all ids that match the target and dispatch
+    // to them all
+    for (const componentState of componentStates) {
+      let returnValuePromise: Promise<Context> | undefined = undefined
+      dispatch(
+        setComponent({
+          id: componentState.id,
+          state: produce(componentState.state, (draft) => {
+            const returnvalue = handler.dispatcher(
+              draft,
+              signal,
+              context,
+              platform,
+              componentState.id,
+            )
+            // If we returned a context object from our dispatcher,
+            // That means we want to set it as the new context.
+            if (isContextObject(returnvalue)) {
+              context = returnvalue
+              return
+            }
+            if (returnvalue instanceof Promise) {
+              returnValuePromise = returnvalue
+              return
+            }
+            return returnvalue
+          }),
+        }),
+      )
+      // Usually returnValuePromise isn't a promise, but in case it is, we should
+      // wait for it to resolve here.
+      if (returnValuePromise) {
+        await Promise.resolve(returnValuePromise)
+      }
+    }
 
-		return context
-	},
+    return context
+  },
 })
 
 export { getComponentSignalDefinition }

@@ -1,5 +1,5 @@
 function starter_complete(bot) {
-	/*
+  /*
 	// We could create a sample blog here.
 	const doSampleData = bot.params.get("use_ai_for_sample_data")
 	if (doSampleData && doSampleData !== "false") {
@@ -9,21 +9,21 @@ function starter_complete(bot) {
 	}
 	*/
 
-	// Bundle it all
-	const bundle = bot.createBundle({
-		description: "Sitekit Starter",
-		releaseType: "patch",
-	})
+  // Bundle it all
+  const bundle = bot.createBundle({
+    description: "Sitekit Starter",
+    releaseType: "patch",
+  })
 
-	const version = `v${bundle.major}.${bundle.minor}.${bundle.patch}`
-	const siteName = "prod"
-	const appName = bot.getAppName()
-	const subdomain = `${appName.replaceAll("/", "-")}-${siteName}`
+  const version = `v${bundle.major}.${bundle.minor}.${bundle.patch}`
+  const siteName = "prod"
+  const appName = bot.getAppName()
+  const subdomain = `${appName.replaceAll("/", "-")}-${siteName}`
 
-	// Create Site
-	bot.createSite({
-		siteName,
-		subdomain,
-		version,
-	})
+  // Create Site
+  bot.createSite({
+    siteName,
+    subdomain,
+    version,
+  })
 }

@@ -1,44 +1,44 @@
 [
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "ben"
-		},
-		"uesio/core.federation_id": "ben",
-		"uesio/core.auth_source": "uesio/core.mock"
-	},
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "abel"
-		},
-		"uesio/core.federation_id": "abel",
-		"uesio/core.auth_source": "uesio/core.mock"
-	},
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "wessel"
-		},
-		"uesio/core.federation_id": "wessel",
-		"uesio/core.auth_source": "uesio/core.mock"
-	},
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "baxter"
-		},
-		"uesio/core.federation_id": "baxter",
-		"uesio/core.auth_source": "uesio/core.mock"
-	},
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "zach"
-		},
-		"uesio/core.federation_id": "zach",
-		"uesio/core.auth_source": "uesio/core.mock"
-	},
-	{
-		"uesio/core.user": {
-			"uesio/core.uniquekey": "uesio"
-		},
-		"uesio/core.federation_id": "uesio",
-		"uesio/core.auth_source": "uesio/core.mock"
-	}
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "ben"
+    },
+    "uesio/core.federation_id": "ben",
+    "uesio/core.auth_source": "uesio/core.mock"
+  },
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "abel"
+    },
+    "uesio/core.federation_id": "abel",
+    "uesio/core.auth_source": "uesio/core.mock"
+  },
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "wessel"
+    },
+    "uesio/core.federation_id": "wessel",
+    "uesio/core.auth_source": "uesio/core.mock"
+  },
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "baxter"
+    },
+    "uesio/core.federation_id": "baxter",
+    "uesio/core.auth_source": "uesio/core.mock"
+  },
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "zach"
+    },
+    "uesio/core.federation_id": "zach",
+    "uesio/core.auth_source": "uesio/core.mock"
+  },
+  {
+    "uesio/core.user": {
+      "uesio/core.uniquekey": "uesio"
+    },
+    "uesio/core.federation_id": "uesio",
+    "uesio/core.auth_source": "uesio/core.mock"
+  }
 ]

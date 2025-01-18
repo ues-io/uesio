@@ -138,81 +138,81 @@ wires: {}
 `)
 
 test("YAML MAP move", () => {
-	yamlMove(
-		originalViewDefMap,
-		new FullPath()
-			.addLocal("wires")
-			.addLocal("accounts")
-			.addLocal("fields")
-			.addLocal("uesio/crm.no_of_employees"),
-		new FullPath()
-			.addLocal("wires")
-			.addLocal("accounts")
-			.addLocal("fields")
-			.addLocal("uesio/crm.externalid")
-	)
+  yamlMove(
+    originalViewDefMap,
+    new FullPath()
+      .addLocal("wires")
+      .addLocal("accounts")
+      .addLocal("fields")
+      .addLocal("uesio/crm.no_of_employees"),
+    new FullPath()
+      .addLocal("wires")
+      .addLocal("accounts")
+      .addLocal("fields")
+      .addLocal("uesio/crm.externalid"),
+  )
 
-	expect(originalViewDefMap.toJSON()).toStrictEqual(
-		afterOneMoveViewDefMap.toJSON()
-	)
+  expect(originalViewDefMap.toJSON()).toStrictEqual(
+    afterOneMoveViewDefMap.toJSON(),
+  )
 
-	yamlMove(
-		originalViewDefMap,
-		new FullPath()
-			.addLocal("wires")
-			.addLocal("accounts")
-			.addLocal("fields")
-			.addLocal("uesio/crm.no_of_employees"),
-		new FullPath()
-			.addLocal("wires")
-			.addLocal("accounts")
-			.addLocal("fields")
-			.addLocal("uesio/crm.name")
-	)
+  yamlMove(
+    originalViewDefMap,
+    new FullPath()
+      .addLocal("wires")
+      .addLocal("accounts")
+      .addLocal("fields")
+      .addLocal("uesio/crm.no_of_employees"),
+    new FullPath()
+      .addLocal("wires")
+      .addLocal("accounts")
+      .addLocal("fields")
+      .addLocal("uesio/crm.name"),
+  )
 
-	expect(originalViewDefMap.toJSON()).toStrictEqual(
-		afterTwoMovesViewDefMap.toJSON()
-	)
+  expect(originalViewDefMap.toJSON()).toStrictEqual(
+    afterTwoMovesViewDefMap.toJSON(),
+  )
 })
 
 test("YAML ARRAY move", () => {
-	yamlMove(
-		originalViewDefArray,
-		new FullPath()
-			.addLocal("components")
-			.addLocal("0")
-			.addLocal("uesio/io.group")
-			.addLocal("components")
-			.addLocal("2"),
-		new FullPath()
-			.addLocal("components")
-			.addLocal("0")
-			.addLocal("uesio/io.group")
-			.addLocal("components")
-			.addLocal("1")
-	)
+  yamlMove(
+    originalViewDefArray,
+    new FullPath()
+      .addLocal("components")
+      .addLocal("0")
+      .addLocal("uesio/io.group")
+      .addLocal("components")
+      .addLocal("2"),
+    new FullPath()
+      .addLocal("components")
+      .addLocal("0")
+      .addLocal("uesio/io.group")
+      .addLocal("components")
+      .addLocal("1"),
+  )
 
-	expect(originalViewDefArray.toJSON()).toStrictEqual(
-		afterOneMoveViewDefArray.toJSON()
-	)
+  expect(originalViewDefArray.toJSON()).toStrictEqual(
+    afterOneMoveViewDefArray.toJSON(),
+  )
 
-	yamlMove(
-		originalViewDefArray,
-		new FullPath()
-			.addLocal("components")
-			.addLocal("0")
-			.addLocal("uesio/io.group")
-			.addLocal("components")
-			.addLocal("1"),
-		new FullPath()
-			.addLocal("components")
-			.addLocal("0")
-			.addLocal("uesio/io.group")
-			.addLocal("components")
-			.addLocal("0")
-	)
+  yamlMove(
+    originalViewDefArray,
+    new FullPath()
+      .addLocal("components")
+      .addLocal("0")
+      .addLocal("uesio/io.group")
+      .addLocal("components")
+      .addLocal("1"),
+    new FullPath()
+      .addLocal("components")
+      .addLocal("0")
+      .addLocal("uesio/io.group")
+      .addLocal("components")
+      .addLocal("0"),
+  )
 
-	expect(originalViewDefArray.toJSON()).toStrictEqual(
-		afterTwoMovesViewDefArray.toJSON()
-	)
+  expect(originalViewDefArray.toJSON()).toStrictEqual(
+    afterTwoMovesViewDefArray.toJSON(),
+  )
 })

@@ -4,19 +4,19 @@ import { cloneKey } from "../api/defapi"
 import { FullPath } from "../api/path"
 
 type Props = {
-	path: FullPath
+  path: FullPath
 }
 
 const CloneKeyAction: definition.UtilityComponent<Props> = ({
-	path,
-	context,
+  path,
+  context,
 }) => (
-	<ActionButton
-		title="Clone"
-		onClick={() => cloneKey(context, path)}
-		icon="content_copy"
-		context={context}
-	/>
+  <ActionButton
+    title="Clone"
+    onClick={() => cloneKey(context, path)}
+    icon="content_copy"
+    context={context}
+  />
 )
 
 export default CloneKeyAction
