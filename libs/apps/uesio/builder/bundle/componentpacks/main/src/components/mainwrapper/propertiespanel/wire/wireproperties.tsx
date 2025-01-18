@@ -6,284 +6,275 @@ import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
 import { getHomeSection } from "../../../../api/propertysection"
 import {
-	DisplayConditionProperties,
-	getDisplayConditionLabel,
+  DisplayConditionProperties,
+  getDisplayConditionLabel,
 } from "../../../../properties/displayconditionproperties"
 
 const WireProperties: definition.UtilityComponent = (props) => {
-	const { context } = props
+  const { context } = props
 
-	const selectedPath = useSelectedPath(context)
+  const selectedPath = useSelectedPath(context)
 
-	const wirePath = selectedPath.trimToSize(2)
-	const [wireName] = wirePath.pop()
+  const wirePath = selectedPath.trimToSize(2)
+  const [wireName] = wirePath.pop()
 
-	// This forces a rerender if the definition changes
-	const wireDefinition = useDefinition<wire.WireDefinition>(context, wirePath)
-	const VIEW_ONLY = wireDefinition?.viewOnly === true
-	const AGGREGATE = wireDefinition?.aggregate === true
-	const IS_NOT_VIEW_ONLY = [
-		{
-			type: "hasNoValue",
-			value: VIEW_ONLY,
-		},
-	] as component.DisplayCondition[]
+  // This forces a rerender if the definition changes
+  const wireDefinition = useDefinition<wire.WireDefinition>(context, wirePath)
+  const VIEW_ONLY = wireDefinition?.viewOnly === true
+  const AGGREGATE = wireDefinition?.aggregate === true
+  const IS_NOT_VIEW_ONLY = [
+    {
+      type: "hasNoValue",
+      value: VIEW_ONLY,
+    },
+  ] as component.DisplayCondition[]
 
-	const IS_AGGREGATE = [
-		{
-			type: "hasValue",
-			value: AGGREGATE,
-		},
-	] as component.DisplayCondition[]
+  const IS_AGGREGATE = [
+    {
+      type: "hasValue",
+      value: AGGREGATE,
+    },
+  ] as component.DisplayCondition[]
 
-	const properties: ComponentProperty[] = [
-		// Wire Home properties
-		{
-			name: "wirename",
-			label: "Wire Name",
-			required: true,
-			type: "KEY",
-		},
-		{
-			name: "collection",
-			label: "Collection",
-			required: true,
-			type: "METADATA",
-			metadata: {
-				type: "COLLECTION",
-			},
-			displayConditions: IS_NOT_VIEW_ONLY,
-		},
-		{
-			name: "batchsize",
-			label: "Batch Size",
-			type: "NUMBER",
-			displayConditions: IS_NOT_VIEW_ONLY,
-		},
-		{
-			name: "init",
-			label: "On initial View load...",
-			type: "STRUCT",
-			properties: [
-				{
-					name: "query",
-					type: "CHECKBOX",
-					label: "Query for Wire data",
-					displayConditions: IS_NOT_VIEW_ONLY,
-				},
-				{
-					name: "create",
-					type: "CHECKBOX",
-					label: "Create default record if Wire has none",
-				},
-			],
-		},
-		// Order section properties
-		{
-			name: "order",
-			type: "LIST",
-			items: {
-				title: "Order By",
-				addLabel: "New Order Field",
-				displayTemplate: (order: { desc: boolean; field: string }) => {
-					if (order.field) {
-						return `${order.field} | ${
-							order.desc ? "Descending" : "Ascending"
-						}`
-					}
-					return "NEW_VALUE"
-				},
-				defaultDefinition: { desc: false },
-				properties: [
-					{
-						name: "field",
-						type: "COLLECTION_FIELD",
-						label: "Field",
-						// Currently Wire order fields can only be one level, on the same collection,
-						// we don't support cross-collection ordering
-						allowReferenceTraversal: false,
-						collectionPath: "../collection",
-					},
-					{
-						name: "desc",
-						type: "CHECKBOX",
-						label: "Descending",
-					},
-				],
-			},
-		},
-		// Events section properties
-		{
-			name: "events",
-			type: "LIST",
-			items: {
-				title: "Wire Event Handlers",
-				addLabel: "New Wire Event Handler",
-				displayTemplate: (event: {
-					type: string
-					fields?: string[]
-				}) => {
-					if (event.type) {
-						return `${event.type}${
-							event.fields?.length
-								? ` | ${event.fields.join(", ")}`
-								: ""
-						}`
-					}
-					return "[No Type]"
-				},
-				defaultDefinition: { type: "onChange" },
-				properties: [
-					{
-						name: "type",
-						type: "SELECT",
-						options: [
-							{
-								value: "onChange",
-								label: "Wire Field(s) changed",
-							},
-							{
-								value: "onLoadSuccess",
-								label: "Wire loaded (successfully)",
-							},
-							{
-								value: "onLoadError",
-								label: "Wire loaded (with errors)",
-							},
-							{
-								value: "onSaveSuccess",
-								label: "Wire saved (successfully)",
-							},
-							{
-								value: "onSaveError",
-								label: "Wire saved (with errors)",
-							},
-							{
-								value: "onCancel",
-								label: "Wire changes cancelled",
-							},
-						],
-						label: "Event Type",
-					},
-					{
-						name: "fields",
-						type: "FIELDS",
-						wireName,
-						label: "Fields",
-						displayConditions: [
-							{
-								field: "type",
-								value: "onChange",
-								operator: "EQUALS",
-							},
-						] as component.DisplayCondition[],
-					},
-					{
-						name: "conditions",
-						type: "LIST",
-						items: {
-							title: "Condition",
-							addLabel: "Add Condition",
-							displayTemplate: (record: wire.PlainWireRecord) =>
-								getDisplayConditionLabel(
-									record as component.DisplayCondition
-								),
-							defaultDefinition: { operator: "EQUALS" },
-							properties: DisplayConditionProperties,
-						},
-					},
-				],
-				sections: [
-					{
-						type: "CUSTOM",
-						id: "wireeventhome",
-						label: "",
-						icon: "home",
-						properties: ["type", "fields"],
-					},
-					{ type: "SIGNALS" },
-					{
-						type: "CUSTOM",
-						id: "wireeventconditions",
-						properties: ["conditions"],
-						label: "Conditions",
-						displayConditions: [
-							{
-								field: "type",
-								value: "onChange",
-								operator: "EQUALS",
-							},
-						] as component.DisplayCondition[],
-					},
-				],
-			},
-		},
-	]
+  const properties: ComponentProperty[] = [
+    // Wire Home properties
+    {
+      name: "wirename",
+      label: "Wire Name",
+      required: true,
+      type: "KEY",
+    },
+    {
+      name: "collection",
+      label: "Collection",
+      required: true,
+      type: "METADATA",
+      metadata: {
+        type: "COLLECTION",
+      },
+      displayConditions: IS_NOT_VIEW_ONLY,
+    },
+    {
+      name: "batchsize",
+      label: "Batch Size",
+      type: "NUMBER",
+      displayConditions: IS_NOT_VIEW_ONLY,
+    },
+    {
+      name: "init",
+      label: "On initial View load...",
+      type: "STRUCT",
+      properties: [
+        {
+          name: "query",
+          type: "CHECKBOX",
+          label: "Query for Wire data",
+          displayConditions: IS_NOT_VIEW_ONLY,
+        },
+        {
+          name: "create",
+          type: "CHECKBOX",
+          label: "Create default record if Wire has none",
+        },
+      ],
+    },
+    // Order section properties
+    {
+      name: "order",
+      type: "LIST",
+      items: {
+        title: "Order By",
+        addLabel: "New Order Field",
+        displayTemplate: (order: { desc: boolean; field: string }) => {
+          if (order.field) {
+            return `${order.field} | ${order.desc ? "Descending" : "Ascending"}`
+          }
+          return "NEW_VALUE"
+        },
+        defaultDefinition: { desc: false },
+        properties: [
+          {
+            name: "field",
+            type: "COLLECTION_FIELD",
+            label: "Field",
+            // Currently Wire order fields can only be one level, on the same collection,
+            // we don't support cross-collection ordering
+            allowReferenceTraversal: false,
+            collectionPath: "../collection",
+          },
+          {
+            name: "desc",
+            type: "CHECKBOX",
+            label: "Descending",
+          },
+        ],
+      },
+    },
+    // Events section properties
+    {
+      name: "events",
+      type: "LIST",
+      items: {
+        title: "Wire Event Handlers",
+        addLabel: "New Wire Event Handler",
+        displayTemplate: (event: { type: string; fields?: string[] }) => {
+          if (event.type) {
+            return `${event.type}${
+              event.fields?.length ? ` | ${event.fields.join(", ")}` : ""
+            }`
+          }
+          return "[No Type]"
+        },
+        defaultDefinition: { type: "onChange" },
+        properties: [
+          {
+            name: "type",
+            type: "SELECT",
+            options: [
+              {
+                value: "onChange",
+                label: "Wire Field(s) changed",
+              },
+              {
+                value: "onLoadSuccess",
+                label: "Wire loaded (successfully)",
+              },
+              {
+                value: "onLoadError",
+                label: "Wire loaded (with errors)",
+              },
+              {
+                value: "onSaveSuccess",
+                label: "Wire saved (successfully)",
+              },
+              {
+                value: "onSaveError",
+                label: "Wire saved (with errors)",
+              },
+              {
+                value: "onCancel",
+                label: "Wire changes cancelled",
+              },
+            ],
+            label: "Event Type",
+          },
+          {
+            name: "fields",
+            type: "FIELDS",
+            wireName,
+            label: "Fields",
+            displayConditions: [
+              {
+                field: "type",
+                value: "onChange",
+                operator: "EQUALS",
+              },
+            ] as component.DisplayCondition[],
+          },
+          {
+            name: "conditions",
+            type: "LIST",
+            items: {
+              title: "Condition",
+              addLabel: "Add Condition",
+              displayTemplate: (record: wire.PlainWireRecord) =>
+                getDisplayConditionLabel(record as component.DisplayCondition),
+              defaultDefinition: { operator: "EQUALS" },
+              properties: DisplayConditionProperties,
+            },
+          },
+        ],
+        sections: [
+          {
+            type: "CUSTOM",
+            id: "wireeventhome",
+            label: "",
+            icon: "home",
+            properties: ["type", "fields"],
+          },
+          { type: "SIGNALS" },
+          {
+            type: "CUSTOM",
+            id: "wireeventconditions",
+            properties: ["conditions"],
+            label: "Conditions",
+            displayConditions: [
+              {
+                field: "type",
+                value: "onChange",
+                operator: "EQUALS",
+              },
+            ] as component.DisplayCondition[],
+          },
+        ],
+      },
+    },
+  ]
 
-	return (
-		<PropertiesForm
-			title={wireName || ""}
-			context={context}
-			id="wireproperties"
-			properties={properties}
-			sections={[
-				getHomeSection(["wirename", "collection", "batchsize", "init"]),
-				{
-					id: "fields",
-					label: "Fields",
-					type: "CUSTOM",
-					viewDefinition: [
-						{
-							"uesio/builder.fieldsproperties": {
-								viewOnly: VIEW_ONLY,
-								aggregate: AGGREGATE,
-							},
-						},
-					],
-				},
-				{
-					id: "groupby",
-					label: "Group By",
-					type: "CUSTOM",
-					viewDefinition: [
-						{
-							"uesio/builder.fieldsproperties": {
-								viewOnly: false,
-								aggregate: false,
-								groupBy: true,
-							},
-						},
-					],
-					displayConditions: IS_AGGREGATE,
-				},
-				{
-					id: "conditions",
-					label: "Conditions",
-					type: "CUSTOM",
-					viewDefinition: [
-						{
-							"uesio/builder.conditionsproperties": {},
-						},
-					],
-					displayConditions: IS_NOT_VIEW_ONLY,
-				},
-				{
-					id: "order",
-					label: "Order",
-					type: "CUSTOM",
-					properties: ["order"],
-					displayConditions: IS_NOT_VIEW_ONLY,
-				},
-				{
-					id: "events",
-					label: "Events",
-					type: "CUSTOM",
-					properties: ["events"],
-				},
-			]}
-			path={wirePath}
-		/>
-	)
+  return (
+    <PropertiesForm
+      title={wireName || ""}
+      context={context}
+      id="wireproperties"
+      properties={properties}
+      sections={[
+        getHomeSection(["wirename", "collection", "batchsize", "init"]),
+        {
+          id: "fields",
+          label: "Fields",
+          type: "CUSTOM",
+          viewDefinition: [
+            {
+              "uesio/builder.fieldsproperties": {
+                viewOnly: VIEW_ONLY,
+                aggregate: AGGREGATE,
+              },
+            },
+          ],
+        },
+        {
+          id: "groupby",
+          label: "Group By",
+          type: "CUSTOM",
+          viewDefinition: [
+            {
+              "uesio/builder.fieldsproperties": {
+                viewOnly: false,
+                aggregate: false,
+                groupBy: true,
+              },
+            },
+          ],
+          displayConditions: IS_AGGREGATE,
+        },
+        {
+          id: "conditions",
+          label: "Conditions",
+          type: "CUSTOM",
+          viewDefinition: [
+            {
+              "uesio/builder.conditionsproperties": {},
+            },
+          ],
+          displayConditions: IS_NOT_VIEW_ONLY,
+        },
+        {
+          id: "order",
+          label: "Order",
+          type: "CUSTOM",
+          properties: ["order"],
+          displayConditions: IS_NOT_VIEW_ONLY,
+        },
+        {
+          id: "events",
+          label: "Events",
+          type: "CUSTOM",
+          properties: ["events"],
+        },
+      ]}
+      path={wirePath}
+    />
+  )
 }
 
 WireProperties.displayName = "WireProperties"

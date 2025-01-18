@@ -1,6 +1,6 @@
 import {
-	useCollection as useColl,
-	getCollection as getColl,
+  useCollection as useColl,
+  getCollection as getColl,
 } from "../bands/collection/selectors"
 import { Context } from "../context/context"
 import getMetadata from "../bands/collection/operations/get"
@@ -9,40 +9,40 @@ import Collection from "../bands/collection/class"
 import { useEffect, useMemo } from "react"
 
 type UseCollectionOptions = {
-	needAllFieldMetadata?: boolean
+  needAllFieldMetadata?: boolean
 }
 
 const useCollection = (
-	context: Context,
-	collectionName: string,
-	options?: UseCollectionOptions
+  context: Context,
+  collectionName: string,
+  options?: UseCollectionOptions,
 ) => {
-	const plainCollection = useColl(collectionName)
-	const contextMemo = useMemo(() => context, [context])
+  const plainCollection = useColl(collectionName)
+  const contextMemo = useMemo(() => context, [context])
 
-	useEffect(() => {
-		if (
-			!plainCollection ||
-			(!plainCollection.hasAllFields && options?.needAllFieldMetadata)
-		) {
-			getMetadata(collectionName, contextMemo)
-		}
-	}, [
-		collectionName,
-		options?.needAllFieldMetadata,
-		plainCollection,
-		contextMemo,
-	])
+  useEffect(() => {
+    if (
+      !plainCollection ||
+      (!plainCollection.hasAllFields && options?.needAllFieldMetadata)
+    ) {
+      getMetadata(collectionName, contextMemo)
+    }
+  }, [
+    collectionName,
+    options?.needAllFieldMetadata,
+    plainCollection,
+    contextMemo,
+  ])
 
-	return useMemo(
-		() => (plainCollection ? new Collection(plainCollection) : undefined),
-		[plainCollection]
-	)
+  return useMemo(
+    () => (plainCollection ? new Collection(plainCollection) : undefined),
+    [plainCollection],
+  )
 }
 
 const getCollection = (collectionName: string) => {
-	const plainCollection = getColl(collectionName)
-	return plainCollection && new Collection(plainCollection)
+  const plainCollection = getColl(collectionName)
+  return plainCollection && new Collection(plainCollection)
 }
 
 const createJob = platform.createJob

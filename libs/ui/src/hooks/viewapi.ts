@@ -8,14 +8,14 @@ import { dispatch } from "../store/store"
 const useConfigValue = (key: string) => useCV(key)?.value || ""
 
 const setViewDefinition = (key: string, definition: ViewDefinition) => {
-	const [namespace, name] = parseKey(key)
-	dispatch(
-		upsertOne({
-			name,
-			namespace: namespace as Namespace,
-			definition,
-		})
-	)
+  const [namespace, name] = parseKey(key)
+  dispatch(
+    upsertOne({
+      name,
+      namespace: namespace as Namespace,
+      definition,
+    }),
+  )
 }
 
 export { useViewDef, getViewDef, useConfigValue, setViewDefinition }

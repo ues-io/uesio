@@ -1,45 +1,45 @@
 [
-	{
-		"uesio/core.username": "uesio",
-		"uesio/core.firstname": "ues",
-		"uesio/core.lastname": "io",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "ORG"
-	},
-	{
-		"uesio/core.username": "ben",
-		"uesio/core.firstname": "Ben",
-		"uesio/core.lastname": "Hubbard",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON"
-	},
-	{
-		"uesio/core.username": "abel",
-		"uesio/core.firstname": "Abel",
-		"uesio/core.lastname": "Jimenez Molla",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON"
-	},
-	{
-		"uesio/core.username": "wessel",
-		"uesio/core.firstname": "Wessel",
-		"uesio/core.lastname": "van der Plas",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON",
-		"uesio/core.language": "es"
-	},
-	{
-		"uesio/core.username": "baxter",
-		"uesio/core.firstname": "Gregg",
-		"uesio/core.lastname": "Baxter",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON"
-	},
-	{
-		"uesio/core.username": "zach",
-		"uesio/core.firstname": "Zach",
-		"uesio/core.lastname": "McElrath",
-		"uesio/core.profile": "uesio/studio.standard",
-		"uesio/core.type": "PERSON"
-	}
+  {
+    "uesio/core.username": "uesio",
+    "uesio/core.firstname": "ues",
+    "uesio/core.lastname": "io",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "ORG"
+  },
+  {
+    "uesio/core.username": "ben",
+    "uesio/core.firstname": "Ben",
+    "uesio/core.lastname": "Hubbard",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "PERSON"
+  },
+  {
+    "uesio/core.username": "abel",
+    "uesio/core.firstname": "Abel",
+    "uesio/core.lastname": "Jimenez Molla",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "PERSON"
+  },
+  {
+    "uesio/core.username": "wessel",
+    "uesio/core.firstname": "Wessel",
+    "uesio/core.lastname": "van der Plas",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "PERSON",
+    "uesio/core.language": "es"
+  },
+  {
+    "uesio/core.username": "baxter",
+    "uesio/core.firstname": "Gregg",
+    "uesio/core.lastname": "Baxter",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "PERSON"
+  },
+  {
+    "uesio/core.username": "zach",
+    "uesio/core.firstname": "Zach",
+    "uesio/core.lastname": "McElrath",
+    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.type": "PERSON"
+  }
 ]

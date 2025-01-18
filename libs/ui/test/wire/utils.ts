@@ -8,67 +8,67 @@ import { WireDefinition } from "../../src/definition/wire"
 import { PlainWire } from "../../src/bands/wire/types"
 
 export type WireSignalTest = {
-	name: string
-	wireId: string
-	wireDef: WireDefinition
-	view?: string
-	signals?: SignalDefinition[]
-	context?: Context
-	initialState?: InitialState
-	run: () => (wire: PlainWire, context: Context) => void
+  name: string
+  wireId: string
+  wireDef: WireDefinition
+  view?: string
+  signals?: SignalDefinition[]
+  context?: Context
+  initialState?: InitialState
+  run: () => (wire: PlainWire, context: Context) => void
 }
 
 export const getDefaultContext = (view = "myview") =>
-	newContext().addViewFrame({ view, viewDef: view })
+  newContext().addViewFrame({ view, viewDef: view })
 
 export const testWireSignal = async ({
-	signals,
-	wireId,
-	wireDef,
-	view = "myview",
-	run,
-	initialState,
-	context = getDefaultContext(view),
+  signals,
+  wireId,
+  wireDef,
+  view = "myview",
+  run,
+  initialState,
+  context = getDefaultContext(view),
 }: WireSignalTest) => {
-	const store = create(
-		initialState ||
-			({
-				route: {
-					dependencies: {
-						collection: getCollectionSlice(),
-					},
-				},
-			} as InitialState)
-	)
+  const store = create(
+    initialState ||
+      ({
+        route: {
+          dependencies: {
+            collection: getCollectionSlice(),
+          },
+        },
+      } as InitialState),
+  )
 
-	const test = run()
+  const test = run()
 
-	api.wire.initWires(context, {
-		[wireId]: wireDef,
-	})
+  api.wire.initWires(context, {
+    [wireId]: wireDef,
+  })
 
-	const handler = api.signal.getHandler(signals, context)
-	if (signals && !handler) throw new Error("No signal handler")
-	let resultContext = context
-	if (handler) {
-		resultContext = await handler()
-	}
+  const handler = api.signal.getHandler(signals, context)
+  if (signals && !handler) throw new Error("No signal handler")
+  let resultContext = context
+  if (handler) {
+    resultContext = await handler()
+  }
 
-	const wire = selectWire(store.getState(), view, wireId)
+  const wire = selectWire(store.getState(), view, wireId)
 
-	if (!wire) throw new Error("Wire not created")
-	test(wire, resultContext)
+  if (!wire) throw new Error("Wire not created")
+  test(wire, resultContext)
 }
 
 export const defaultPlainWireProperties = {
-	batchid: "",
-	batchnumber: 0,
-	changes: {},
-	deletes: {},
-	fields: [],
-	original: {},
-	viewOnly: false,
-	data: {},
+  batchid: "",
+  batchnumber: 0,
+  changes: {},
+  deletes: {},
+  fields: [],
+  original: {},
+  viewOnly: false,
+  data: {},
 }
 
 export default testWireSignal

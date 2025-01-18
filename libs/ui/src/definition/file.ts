@@ -1,5 +1,5 @@
 import { BundleableBase } from "../metadata/types"
 
 export type FileState = {
-	updatedAt?: number
+  updatedAt?: number
 } & BundleableBase

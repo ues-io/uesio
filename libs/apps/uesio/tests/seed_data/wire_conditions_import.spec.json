@@ -1,52 +1,52 @@
 {
-	"jobtype": "IMPORT",
-	"collection": "uesio/tests.wire_condition",
-	"filetype": "CSV",
-	"mappings": {
-		"uesio/tests.autonumber": {
-			"columnname": "autonumber"
-		},
-		"uesio/tests.checkbox": {
-			"columnname": "checkbox"
-		},
-		"uesio/tests.date": {
-			"columnname": "date"
-		},
-		"uesio/tests.email": {
-			"columnname": "email"
-		},
-		"uesio/tests.longtext": {
-			"columnname": "longtext"
-		},
-		"uesio/tests.number": {
-			"columnname": "number"
-		},
-		"uesio/tests.reference": {
-			"columnname": "reference"
-		},
-		"uesio/tests.text": {
-			"columnname": "text"
-		},
-		"uesio/tests.timestamp": {
-			"columnname": "timestamp"
-		},
-		"uesio/tests.select": {
-			"columnname": "select"
-		},
-		"uesio/tests.name": {
-			"columnname": "name"
-		},
-		"uesio/tests.multiselect": {
-			"columnname": "multiselect"
-		},
-		"uesio/tests.user": {
-			"columnname": "user"
-		},
-		"uesio/tests.struct": {
-			"columnname": "struct"
-		},
-		"uesio/tests.category": {
-			"columnname": "category"
-		}
-	}
+  "jobtype": "IMPORT",
+  "collection": "uesio/tests.wire_condition",
+  "filetype": "CSV",
+  "mappings": {
+    "uesio/tests.autonumber": {
+      "columnname": "autonumber"
+    },
+    "uesio/tests.checkbox": {
+      "columnname": "checkbox"
+    },
+    "uesio/tests.date": {
+      "columnname": "date"
+    },
+    "uesio/tests.email": {
+      "columnname": "email"
+    },
+    "uesio/tests.longtext": {
+      "columnname": "longtext"
+    },
+    "uesio/tests.number": {
+      "columnname": "number"
+    },
+    "uesio/tests.reference": {
+      "columnname": "reference"
+    },
+    "uesio/tests.text": {
+      "columnname": "text"
+    },
+    "uesio/tests.timestamp": {
+      "columnname": "timestamp"
+    },
+    "uesio/tests.select": {
+      "columnname": "select"
+    },
+    "uesio/tests.name": {
+      "columnname": "name"
+    },
+    "uesio/tests.multiselect": {
+      "columnname": "multiselect"
+    },
+    "uesio/tests.user": {
+      "columnname": "user"
+    },
+    "uesio/tests.struct": {
+      "columnname": "struct"
+    },
+    "uesio/tests.category": {
+      "columnname": "category"
+    }
+  }
 }

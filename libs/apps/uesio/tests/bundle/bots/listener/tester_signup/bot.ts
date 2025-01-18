@@ -1,22 +1,22 @@
 import { ListenerBotApi, WireRecord } from "@uesio/bots"
 
 export default function tester_signup(bot: ListenerBotApi) {
-	const namespace = bot.getNamespace()
-	const redirect =
-		"/site/auth/" + namespace.replace(".", "/") + "/tester/signup/confirm"
-	const username = bot.params.get("username")
-	const email = bot.params.get("email")
-	const code = bot.params.get("code")
-	const host = bot.params.get("host")
-	const firstName = bot.params.get("firstname")
-	const lastName = bot.params.get("lastname")
-	const toName = firstName && lastName ? `${firstName} ${lastName}` : username
-	const link = `${host}${redirect}?code=${code}&username=${username}`
-	const contentType = "text/html"
-	const from = "noreply@ues.io"
-	const fromName = "ues.io"
-	const subject = "Welcome to tests!"
-	const body = `
+  const namespace = bot.getNamespace()
+  const redirect =
+    "/site/auth/" + namespace.replace(".", "/") + "/tester/signup/confirm"
+  const username = bot.params.get("username")
+  const email = bot.params.get("email")
+  const code = bot.params.get("code")
+  const host = bot.params.get("host")
+  const firstName = bot.params.get("firstname")
+  const lastName = bot.params.get("lastname")
+  const toName = firstName && lastName ? `${firstName} ${lastName}` : username
+  const link = `${host}${redirect}?code=${code}&username=${username}`
+  const contentType = "text/html"
+  const from = "noreply@ues.io"
+  const fromName = "ues.io"
+  const subject = "Welcome to tests!"
+  const body = `
 	<!DOCTYPE html>
 	<html>
 		<body>
@@ -33,17 +33,17 @@ export default function tester_signup(bot: ListenerBotApi) {
 		</body>
 	</html>`
 
-	bot.asAdmin.save(`${namespace}.email_log`, [
-		{
-			[`${namespace}.to_emails`]: [email],
-			[`${namespace}.to_names`]: [toName],
-			[`${namespace}.from_email`]: from,
-			[`${namespace}.from_name`]: fromName,
-			[`${namespace}.subject`]: subject,
-			[`${namespace}.html_body`]: body,
-			[`${namespace}.content_type`]: contentType,
-			[`${namespace}.verification_code`]: code,
-			[`${namespace}.link`]: link,
-		} as unknown as WireRecord,
-	])
+  bot.asAdmin.save(`${namespace}.email_log`, [
+    {
+      [`${namespace}.to_emails`]: [email],
+      [`${namespace}.to_names`]: [toName],
+      [`${namespace}.from_email`]: from,
+      [`${namespace}.from_name`]: fromName,
+      [`${namespace}.subject`]: subject,
+      [`${namespace}.html_body`]: body,
+      [`${namespace}.content_type`]: contentType,
+      [`${namespace}.verification_code`]: code,
+      [`${namespace}.link`]: link,
+    } as unknown as WireRecord,
+  ])
 }

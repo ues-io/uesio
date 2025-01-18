@@ -14,9 +14,9 @@ Uesio is a **low-code** application development platform.
 - Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the version used in the repo): `nvm install`
 - Install [Go](https://golang.org/dl/)
 - Install the following brew packages:
-    - `hurl` (for integration tests): `brew install hurl`
-    - `jq` (for JSON manipulation in Shell): `brew install jq`
-    - `wget` (for fetching URLs): `brew install wget`
+  - `hurl` (for integration tests): `brew install hurl`
+  - `jq` (for JSON manipulation in Shell): `brew install jq`
+  - `wget` (for fetching URLs): `brew install wget`
 - Start dependencies [here](#dependencies).
 - [Build](#build)
 - [Run](#run).
@@ -164,21 +164,21 @@ There are two ways to do this, you'll need to pick one:
 
 1. Modify /etc/hosts directly
 
-    On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
+   On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
 
-    `bash ./scripts/seed-etc-hosts.sh`
+   `bash ./scripts/seed-etc-hosts.sh`
 
 2. Use DNSMasq
 
-    ```
-    brew install dnsmasq
-    ```
+   ```
+   brew install dnsmasq
+   ```
 
-    The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
+   The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
 
-    ```
-    sudo brew services start dnsmasq
-    ```
+   ```
+   sudo brew services start dnsmasq
+   ```
 
 ## Worker jobs
 
@@ -458,14 +458,14 @@ bash apps/platform/migrations_test/test_migrations.sh
 To run E2E and Integration tests locally, there are a number of commands available:
 
 1. `npm run tests-all`
-    - Runs all Integration and E2E tests against your local Uesio app.
-    - Use this when writing and debugging tests locally
+   - Runs all Integration and E2E tests against your local Uesio app.
+   - Use this when writing and debugging tests locally
 1. `npm run tests-ci`
-    - This is what we run in Github Actions on `master` branch builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
+   - This is what we run in Github Actions on `master` branch builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
 1. `npm run tests-integration`
-    - Runs _just_ the Integration Tests (against your local app).
+   - Runs _just_ the Integration Tests (against your local app).
 1. `npm run tests-e2e`
-    - Runs _just_ the E2E Tests (against your local app).
+   - Runs _just_ the E2E Tests (against your local app).
 
 TO run just an individual E2E or Integration test, see the sections below.
 

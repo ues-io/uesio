@@ -5,26 +5,26 @@ import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter({
-	selectId: getKey<Component>,
+  selectId: getKey<Component>,
 })
 
 const selectors = adapter.getSelectors(
-	(state: RootState) => state.componenttype
+  (state: RootState) => state.componenttype,
 )
 
 const metadataSlice = createSlice({
-	name: "componenttype",
-	initialState: adapter.getInitialState(),
-	reducers: {
-		set: adapter.upsertOne,
-		setMany: adapter.upsertMany,
-	},
+  name: "componenttype",
+  initialState: adapter.getInitialState(),
+  reducers: {
+    set: adapter.upsertOne,
+    setMany: adapter.upsertMany,
+  },
 })
 
 const selectId = adapter.selectId
 
 const useComponentType = (key: string) =>
-	useSelector((state: RootState) => selectors.selectById(state, key))
+  useSelector((state: RootState) => selectors.selectById(state, key))
 
 const useComponentTypes = () => useSelector(selectors.selectAll)
 

@@ -1,12 +1,12 @@
 [
-	{
-		"uesio/studio.name": "prod",
-		"uesio/studio.bundle": {
-			"uesio/core.uniquekey": "uesio/studio:0:0:1"
-		},
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/studio"
-		},
-		"uesio/studio.title": "Studio"
-	}
+  {
+    "uesio/studio.name": "prod",
+    "uesio/studio.bundle": {
+      "uesio/core.uniquekey": "uesio/studio:0:0:1"
+    },
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/studio"
+    },
+    "uesio/studio.title": "Studio"
+  }
 ]

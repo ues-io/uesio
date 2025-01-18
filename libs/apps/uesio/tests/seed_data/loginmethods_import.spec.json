@@ -1,16 +1,16 @@
 {
-	"jobtype": "IMPORT",
-	"collection": "uesio/core.loginmethod",
-	"filetype": "CSV",
-	"mappings": {
-		"uesio/core.auth_source": {
-			"columnname": "authsource"
-		},
-		"uesio/core.federation_id": {
-			"columnname": "federationid"
-		},
-		"uesio/core.user": {
-			"columnname": "user"
-		}
-	}
+  "jobtype": "IMPORT",
+  "collection": "uesio/core.loginmethod",
+  "filetype": "CSV",
+  "mappings": {
+    "uesio/core.auth_source": {
+      "columnname": "authsource"
+    },
+    "uesio/core.federation_id": {
+      "columnname": "federationid"
+    },
+    "uesio/core.user": {
+      "columnname": "user"
+    }
+  }
 }
