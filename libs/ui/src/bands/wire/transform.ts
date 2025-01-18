@@ -5,7 +5,7 @@ import { nanoid } from "@reduxjs/toolkit"
 // where wire data is an array,
 // to the client format, where data is an object keyed by transient ids
 export const transformServerWire = (wire: ServerWire): PlainWire =>
-	({
-		...wire,
-		data: Object.fromEntries((wire.data || []).map((r) => [nanoid(), r])),
-	}) as PlainWire
+  ({
+    ...wire,
+    data: Object.fromEntries((wire.data || []).map((r) => [nanoid(), r])),
+  }) as PlainWire

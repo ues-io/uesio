@@ -1,50 +1,50 @@
 [
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/studio"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/builder"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/io"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/sitekit"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/aikit"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/appkit"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		},
-		"uesio/studio.name": "maintainers"
-	},
-	{
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/web"
-		},
-		"uesio/studio.name": "maintainers"
-	}
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/studio"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/builder"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/io"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/sitekit"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/aikit"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/appkit"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.name": "maintainers"
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/web"
+    },
+    "uesio/studio.name": "maintainers"
+  }
 ]

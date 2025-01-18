@@ -7,28 +7,28 @@ import { NoValueBehavior } from "../conditions/conditions"
 const SEARCH_CONDITION_ID = "uesio.search"
 
 export default async (
-	context: Context,
-	wireName: string,
-	search: string,
-	fields?: string[],
-	noValueBehavior?: NoValueBehavior
+  context: Context,
+  wireName: string,
+  search: string,
+  fields?: string[],
+  noValueBehavior?: NoValueBehavior,
 ) => {
-	const viewId = context.getViewId()
-	if (!viewId) return context
-	const entity = getFullWireId(viewId, wireName)
-	dispatch(
-		addCondition({
-			condition: {
-				type: "SEARCH",
-				value: search,
-				id: SEARCH_CONDITION_ID,
-				fields,
-				noValueBehavior,
-			},
-			entity,
-		})
-	)
+  const viewId = context.getViewId()
+  if (!viewId) return context
+  const entity = getFullWireId(viewId, wireName)
+  dispatch(
+    addCondition({
+      condition: {
+        type: "SEARCH",
+        value: search,
+        id: SEARCH_CONDITION_ID,
+        fields,
+        noValueBehavior,
+      },
+      entity,
+    }),
+  )
 
-	await loadWiresOp(context, [wireName])
-	return context
+  await loadWiresOp(context, [wireName])
+  return context
 }

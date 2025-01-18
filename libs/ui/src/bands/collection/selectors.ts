@@ -5,20 +5,20 @@ import { PlainCollection } from "./types"
 import { selectors } from "."
 
 const useCollection = (collectionId: string | undefined) =>
-	useSelector((state: RootState) =>
-		collectionId ? selectors.selectById(state, collectionId) : undefined
-	)
+  useSelector((state: RootState) =>
+    collectionId ? selectors.selectById(state, collectionId) : undefined,
+  )
 const getCollection = (collectionId: string | undefined) =>
-	collectionId
-		? selectors.selectById(getCurrentState(), collectionId)
-		: undefined
+  collectionId
+    ? selectors.selectById(getCurrentState(), collectionId)
+    : undefined
 const useCollections = (
-	collectionIds: string[]
+  collectionIds: string[],
 ): Record<string, PlainCollection | undefined> =>
-	Object.fromEntries(
-		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
-			collectionIds.includes(key)
-		)
-	)
+  Object.fromEntries(
+    Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
+      collectionIds.includes(key),
+    ),
+  )
 
 export { useCollection, useCollections, getCollection }

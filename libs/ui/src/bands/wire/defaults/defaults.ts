@@ -12,74 +12,74 @@ const PARAM = "PARAM"
 const SHORTID = "SHORTID"
 
 type WireDefaultBase = {
-	field: string
-	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM | typeof SHORTID
-	conditions?: DisplayCondition[]
+  field: string
+  valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM | typeof SHORTID
+  conditions?: DisplayCondition[]
 }
 
 type ShortIDDefault = WireDefaultBase & {
-	valueSource: typeof SHORTID
+  valueSource: typeof SHORTID
 }
 
 type LookupDefault = WireDefaultBase & {
-	valueSource: typeof LOOKUP
-	lookupWire: string
-	lookupField?: string
+  valueSource: typeof LOOKUP
+  lookupWire: string
+  lookupField?: string
 }
 
 type ValueDefault = WireDefaultBase & {
-	valueSource: typeof VALUE
-	value: FieldValue
+  valueSource: typeof VALUE
+  value: FieldValue
 }
 type ParamDefault = WireDefaultBase & {
-	valueSource: typeof PARAM
-	param: string
+  valueSource: typeof PARAM
+  param: string
 }
 
 type WireDefault = ValueDefault | LookupDefault | ParamDefault | ShortIDDefault
 
 const getDefaultValue = (context: Context, item: WireDefault): FieldValue => {
-	if (item.valueSource === LOOKUP) {
-		const lookupWire = context.getWire(item.lookupWire)
-		if (!lookupWire) return
+  if (item.valueSource === LOOKUP) {
+    const lookupWire = context.getWire(item.lookupWire)
+    if (!lookupWire) return
 
-		const firstRecord = lookupWire.getFirstRecord()
-		if (!firstRecord || !item.lookupField) return
+    const firstRecord = lookupWire.getFirstRecord()
+    if (!firstRecord || !item.lookupField) return
 
-		return firstRecord.getFieldValue(item.lookupField)
-	}
-	if (item.valueSource === VALUE || !item.valueSource) {
-		return context.merge(item.value as Mergeable)
-	}
+    return firstRecord.getFieldValue(item.lookupField)
+  }
+  if (item.valueSource === VALUE || !item.valueSource) {
+    return context.merge(item.value as Mergeable)
+  }
 
-	if (item.valueSource === SHORTID) {
-		return nanoid()
-	}
+  if (item.valueSource === SHORTID) {
+    return nanoid()
+  }
 
-	if (item.valueSource === PARAM) {
-		return context.getParam(item.param)
-	}
+  if (item.valueSource === PARAM) {
+    return context.getParam(item.param)
+  }
 }
 
 const getDefaultRecord = (context: Context, wire: Wire): PlainWireRecord => {
-	const collection = wire.getCollection()
-	const defaultRecord: PlainWireRecord = {}
-	wire.getDefaults().forEach((defaultItem) => {
-		if (!shouldAll(defaultItem.conditions, context)) return
-		const value = getDefaultValue(context, defaultItem)
-		const fieldName = defaultItem.field
-		const field = collection.getField(fieldName)
-		if (!field)
-			throw new Error("No metadata for field in default: " + fieldName)
+  const collection = wire.getCollection()
+  const defaultRecord: PlainWireRecord = {}
+  wire.getDefaults().forEach((defaultItem) => {
+    if (!shouldAll(defaultItem.conditions, context)) return
+    const value = getDefaultValue(context, defaultItem)
+    const fieldName = defaultItem.field
+    const field = collection.getField(fieldName)
+    if (!field)
+      throw new Error("No metadata for field in default: " + fieldName)
 
-		const fieldNameParts = collection.getFieldParts(fieldName)
+    const fieldNameParts = collection.getFieldParts(fieldName)
 
-		if (field.isReference()) fieldNameParts.push(ID_FIELD)
-		if (field.isReference() && !value) return
+    if (field.isReference()) fieldNameParts.push(ID_FIELD)
+    if (field.isReference() && !value) return
 
-		set(defaultRecord, fieldNameParts, value)
-	})
-	return defaultRecord
+    set(defaultRecord, fieldNameParts, value)
+  })
+  return defaultRecord
 }
 
 export type { LookupDefault, ValueDefault, WireDefault }

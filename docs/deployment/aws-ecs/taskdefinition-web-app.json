@@ -1,87 +1,87 @@
 {
-	"family": "uesio",
-	"containerDefinitions": [
-		{
-			"name": "uesio_web",
-			"image": "ghcr.io/ues-io/uesio:latest",
-			"cpu": 256,
-			"memory": 512,
-			"portMappings": [
-				{
-					"containerPort": 3000,
-					"hostPort": 3000,
-					"protocol": "tcp"
-				}
-			],
-			"essential": true,
-			"environment": [
-				{
-					"name": "UESIO_BUNDLE_STORE_DOMAIN",
-					"value": "ues.io"
-				},
-				{
-					"name": "UESIO_PRIMARY_DOMAIN",
-					"value": "your.domain"
-				},
-				{
-					"name": "UESIO_BUNDLES_BUCKET_NAME",
-					"value": "uesio-bundles"
-				},
-				{
-					"name": "REDIS_HOST",
-					"value": "123345678.abcdefg.ng.0001.use1.cache.amazonaws.com"
-				},
-				{
-					"name": "UESIO_SESSION_STORE",
-					"value": "redis"
-				},
-				{
-					"name": "UESIO_DB_USER",
-					"value": "postgres"
-				},
-				{
-					"name": "UESIO_DB_DATABASE",
-					"value": "postgresio"
-				},
-				{
-					"name": "UESIO_USERFILES_BUCKET_NAME",
-					"value": "uesio-userfiles"
-				},
-				{
-					"name": "UESIO_DB_HOST",
-					"value": "your.db.url"
-				}
-			],
-			"secrets": [
-				{
-					"name": "UESIO_DB_PASSWORD",
-					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:db_password::"
-				},
-				{
-					"name": "UESIO_SECRET_UESIO_CORE_OPENAIKEY",
-					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:openai_api_key::"
-				},
-				{
-					"name": "UESIO_SECRET_UESIO_APPKIT_RESEND_KEY",
-					"valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:resend_api_key::"
-				}
-			],
-			"mountPoints": [],
-			"volumesFrom": [],
-			"logConfiguration": {
-				"logDriver": "awslogs",
-				"options": {
-					"awslogs-group": "uesio-logs",
-					"awslogs-region": "us-east-1",
-					"awslogs-stream-prefix": "uesio"
-				}
-			}
-		}
-	],
-	"taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/your-cluster-ECSTaskIamRole-AAAAAAAAAA",
-	"executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/your-cluster-ECSTaskExecutionRole-AAAAAAAAAA",
-	"networkMode": "awsvpc",
-	"requiresCompatibilities": ["FARGATE"],
-	"cpu": "256",
-	"memory": "512"
+  "family": "uesio",
+  "containerDefinitions": [
+    {
+      "name": "uesio_web",
+      "image": "ghcr.io/ues-io/uesio:latest",
+      "cpu": 256,
+      "memory": 512,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "UESIO_BUNDLE_STORE_DOMAIN",
+          "value": "ues.io"
+        },
+        {
+          "name": "UESIO_PRIMARY_DOMAIN",
+          "value": "your.domain"
+        },
+        {
+          "name": "UESIO_BUNDLES_BUCKET_NAME",
+          "value": "uesio-bundles"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "123345678.abcdefg.ng.0001.use1.cache.amazonaws.com"
+        },
+        {
+          "name": "UESIO_SESSION_STORE",
+          "value": "redis"
+        },
+        {
+          "name": "UESIO_DB_USER",
+          "value": "postgres"
+        },
+        {
+          "name": "UESIO_DB_DATABASE",
+          "value": "postgresio"
+        },
+        {
+          "name": "UESIO_USERFILES_BUCKET_NAME",
+          "value": "uesio-userfiles"
+        },
+        {
+          "name": "UESIO_DB_HOST",
+          "value": "your.db.url"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "UESIO_DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:db_password::"
+        },
+        {
+          "name": "UESIO_SECRET_UESIO_CORE_OPENAIKEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:openai_api_key::"
+        },
+        {
+          "name": "UESIO_SECRET_UESIO_APPKIT_RESEND_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:resend_api_key::"
+        }
+      ],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "uesio-logs",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "uesio"
+        }
+      }
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/your-cluster-ECSTaskIamRole-AAAAAAAAAA",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/your-cluster-ECSTaskExecutionRole-AAAAAAAAAA",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
 }

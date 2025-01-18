@@ -1,5 +1,5 @@
 import { BundleableBase } from "../metadata/types"
 
 export type ConfigValueState = {
-	value: string
+  value: string
 } & BundleableBase

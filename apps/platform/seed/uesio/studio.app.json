@@ -1,128 +1,128 @@
 [
-	{
-		"uesio/studio.name": "core",
-		"uesio/studio.fullname": "uesio/core",
-		"uesio/studio.description": "Base uesio functionality",
-		"uesio/studio.color": "#a05195",
-		"uesio/studio.icon": "hub",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "io",
-		"uesio/studio.fullname": "uesio/io",
-		"uesio/studio.description": "A component library for uesio",
-		"uesio/studio.color": "#2f4b7c",
-		"uesio/studio.icon": "widgets",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "sitekit",
-		"uesio/studio.fullname": "uesio/sitekit",
-		"uesio/studio.description": "Build great websites fast",
-		"uesio/studio.color": "#818cf8",
-		"uesio/studio.icon": "public",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "aikit",
-		"uesio/studio.fullname": "uesio/aikit",
-		"uesio/studio.description": "Integrate with AI",
-		"uesio/studio.color": "#a05195",
-		"uesio/studio.icon": "bolt",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "appkit",
-		"uesio/studio.fullname": "uesio/appkit",
-		"uesio/studio.description": "Build great apps fast",
-		"uesio/studio.color": "#818cf8",
-		"uesio/studio.icon": "apps",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "studio",
-		"uesio/studio.fullname": "uesio/studio",
-		"uesio/studio.description": "The uesio configuration app",
-		"uesio/studio.color": "#ff7c43",
-		"uesio/studio.icon": "design_services",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "builder",
-		"uesio/studio.fullname": "uesio/builder",
-		"uesio/studio.description": "The view builder app",
-		"uesio/studio.color": "#2dd4bf",
-		"uesio/studio.icon": "build_circle",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "crm",
-		"uesio/studio.fullname": "uesio/crm",
-		"uesio/studio.description": "A sample CRM app",
-		"uesio/studio.color": "#a05195",
-		"uesio/studio.icon": "person",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "cms",
-		"uesio/studio.fullname": "uesio/cms",
-		"uesio/studio.description": "Content management tools",
-		"uesio/studio.color": "#665191",
-		"uesio/studio.icon": "description",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "docs",
-		"uesio/studio.fullname": "uesio/docs",
-		"uesio/studio.description": "Docs for uesio",
-		"uesio/studio.color": "#d45087",
-		"uesio/studio.icon": "support",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "web",
-		"uesio/studio.fullname": "uesio/web",
-		"uesio/studio.description": "Uesio website",
-		"uesio/studio.color": "#003f5c",
-		"uesio/studio.icon": "public",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	},
-	{
-		"uesio/studio.name": "stripe",
-		"uesio/studio.fullname": "uesio/stripe",
-		"uesio/studio.description": "Stripe Integration",
-		"uesio/studio.color": "#818cf8",
-		"uesio/studio.icon": "payments",
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
-	}
+  {
+    "uesio/studio.name": "core",
+    "uesio/studio.fullname": "uesio/core",
+    "uesio/studio.description": "Base uesio functionality",
+    "uesio/studio.color": "#a05195",
+    "uesio/studio.icon": "hub",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "io",
+    "uesio/studio.fullname": "uesio/io",
+    "uesio/studio.description": "A component library for uesio",
+    "uesio/studio.color": "#2f4b7c",
+    "uesio/studio.icon": "widgets",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "sitekit",
+    "uesio/studio.fullname": "uesio/sitekit",
+    "uesio/studio.description": "Build great websites fast",
+    "uesio/studio.color": "#818cf8",
+    "uesio/studio.icon": "public",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "aikit",
+    "uesio/studio.fullname": "uesio/aikit",
+    "uesio/studio.description": "Integrate with AI",
+    "uesio/studio.color": "#a05195",
+    "uesio/studio.icon": "bolt",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "appkit",
+    "uesio/studio.fullname": "uesio/appkit",
+    "uesio/studio.description": "Build great apps fast",
+    "uesio/studio.color": "#818cf8",
+    "uesio/studio.icon": "apps",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "studio",
+    "uesio/studio.fullname": "uesio/studio",
+    "uesio/studio.description": "The uesio configuration app",
+    "uesio/studio.color": "#ff7c43",
+    "uesio/studio.icon": "design_services",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "builder",
+    "uesio/studio.fullname": "uesio/builder",
+    "uesio/studio.description": "The view builder app",
+    "uesio/studio.color": "#2dd4bf",
+    "uesio/studio.icon": "build_circle",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "crm",
+    "uesio/studio.fullname": "uesio/crm",
+    "uesio/studio.description": "A sample CRM app",
+    "uesio/studio.color": "#a05195",
+    "uesio/studio.icon": "person",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "cms",
+    "uesio/studio.fullname": "uesio/cms",
+    "uesio/studio.description": "Content management tools",
+    "uesio/studio.color": "#665191",
+    "uesio/studio.icon": "description",
+    "uesio/studio.public": true,
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "docs",
+    "uesio/studio.fullname": "uesio/docs",
+    "uesio/studio.description": "Docs for uesio",
+    "uesio/studio.color": "#d45087",
+    "uesio/studio.icon": "support",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "web",
+    "uesio/studio.fullname": "uesio/web",
+    "uesio/studio.description": "Uesio website",
+    "uesio/studio.color": "#003f5c",
+    "uesio/studio.icon": "public",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  },
+  {
+    "uesio/studio.name": "stripe",
+    "uesio/studio.fullname": "uesio/stripe",
+    "uesio/studio.description": "Stripe Integration",
+    "uesio/studio.color": "#818cf8",
+    "uesio/studio.icon": "payments",
+    "uesio/studio.user": {
+      "uesio/core.uniquekey": "uesio"
+    }
+  }
 ]

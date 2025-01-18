@@ -1,33 +1,33 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"jsx": "react-jsx",
-		"noImplicitAny": true,
-		"noImplicitThis": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"strictNullChecks": true,
-		"esModuleInterop": true,
-		"allowJs": false,
-		"rootDir": ".",
-		"sourceMap": true,
-		"declaration": false,
-		"moduleResolution": "node",
-		"importHelpers": true,
-		"noUnusedLocals": true,
-		"target": "es2023",
-		"module": "esnext",
-		"typeRoots": ["node_modules/@types"],
-		"lib": ["esnext", "dom", "dom.iterable"],
-		"skipLibCheck": true,
-		"skipDefaultLibCheck": true,
-		"useUnknownInCatchVariables": true,
-		"isolatedModules": true,
-		"baseUrl": ".",
-		"paths": {
-			"@uesio/bots": ["libs/ui/src/public_types/server/index.d.ts"],
-			"@uesio/ui": ["libs/ui/src/index.ts"]
-		}
-	},
-	"exclude": ["node_modules", "tmp"]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "noUnusedLocals": true,
+    "target": "es2023",
+    "module": "esnext",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "useUnknownInCatchVariables": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@uesio/bots": ["libs/ui/src/public_types/server/index.d.ts"],
+      "@uesio/ui": ["libs/ui/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
 }

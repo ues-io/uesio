@@ -1,492 +1,490 @@
 import {
-	definition,
-	api,
-	context as ctx,
-	component,
-	collection,
-	platform,
-	wire,
+  definition,
+  api,
+  context as ctx,
+  component,
+  collection,
+  platform,
+  wire,
 } from "@uesio/ui"
 import {
-	addNodeAtPath,
-	getNodeAtPath,
-	getParentPathArray,
-	parse,
-	removeNodeAtPath,
-	setNodeAtPath,
+  addNodeAtPath,
+  getNodeAtPath,
+  getParentPathArray,
+  parse,
+  removeNodeAtPath,
+  setNodeAtPath,
 } from "../yaml/yamlutils"
 import { FullPath } from "./path"
 import {
-	getBuilderExternalEntity,
-	getBuilderExternalState,
-	getBuilderExternalStates,
-	getBuilderState,
-	getSelectedPath,
-	removeBuilderState,
-	setBuilderState,
-	setSelectedPath,
-	useBuilderExternalEntity,
-	useBuilderExternalState,
-	useBuilderExternalStatesCount,
+  getBuilderExternalEntity,
+  getBuilderExternalState,
+  getBuilderExternalStates,
+  getBuilderState,
+  getSelectedPath,
+  removeBuilderState,
+  setBuilderState,
+  setSelectedPath,
+  useBuilderExternalEntity,
+  useBuilderExternalState,
+  useBuilderExternalStatesCount,
 } from "./stateapi"
 import yaml from "yaml"
 import get from "lodash/get"
 import { validateViewDefinition, ValidationResult } from "../yaml/validate"
 
 const moveInArray = (arr: unknown[], fromIndex: number, toIndex: number) =>
-	arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
+  arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
 
 const getMetadataValue = (context: ctx.Context, path: FullPath) => {
-	const metadataId = getMetadataId(path)
-	return getBuilderState<string>(context, metadataId)
+  const metadataId = getMetadataId(path)
+  return getBuilderState<string>(context, metadataId)
 }
 
 const setMetadataValue = (
-	context: ctx.Context,
-	path: FullPath,
-	yamlDoc: yaml.Document.Parsed<yaml.ParsedNode>,
-	text?: string // Optionally send the text so we can save a toString call
+  context: ctx.Context,
+  path: FullPath,
+  yamlDoc: yaml.Document.Parsed<yaml.ParsedNode>,
+  text?: string, // Optionally send the text so we can save a toString call
 ) => {
-	const metadataId = getMetadataId(path)
-	const originalMetadataId = `original:${metadataId}`
-	const original = getBuilderState<string>(context, originalMetadataId)
-	const current = getMetadataValue(context, path)
-	const newTextValue = text || yamlDoc.toString()
+  const metadataId = getMetadataId(path)
+  const originalMetadataId = `original:${metadataId}`
+  const original = getBuilderState<string>(context, originalMetadataId)
+  const current = getMetadataValue(context, path)
+  const newTextValue = text || yamlDoc.toString()
 
-	const isViewDef = path.itemType === "viewdef"
-	let validationResult: ValidationResult | undefined
+  const isViewDef = path.itemType === "viewdef"
+  let validationResult: ValidationResult | undefined
 
-	// Validate the view definition before proceeding any further
-	if (isViewDef) {
-		validationResult = validateViewDefinition(yamlDoc.toJS())
-	}
-	const isValid = validationResult?.valid || false
-	if (original === undefined) {
-		setBuilderState(context, originalMetadataId, current)
-	}
-	if (original && newTextValue === original) {
-		removeBuilderState(context, originalMetadataId)
-	}
+  // Validate the view definition before proceeding any further
+  if (isViewDef) {
+    validationResult = validateViewDefinition(yamlDoc.toJS())
+  }
+  const isValid = validationResult?.valid || false
+  if (original === undefined) {
+    setBuilderState(context, originalMetadataId, current)
+  }
+  if (original && newTextValue === original) {
+    removeBuilderState(context, originalMetadataId)
+  }
 
-	setBuilderState(context, metadataId, newTextValue)
-	if (isViewDef && isValid) {
-		api.view.setViewDefinition(path.itemName, yamlDoc.toJSON())
-	}
+  setBuilderState(context, metadataId, newTextValue)
+  if (isViewDef && isValid) {
+    api.view.setViewDefinition(path.itemName, yamlDoc.toJSON())
+  }
 }
 
 const parseCache = new WeakMap()
 
 const getCachedParseResult = (result: component.ComponentState) => {
-	const cacheResult = parseCache.get(result)
-	if (cacheResult) {
-		return cacheResult
-	}
-	const parsedResult = parse(result.state as string).toJS()
-	parseCache.set(result, parsedResult)
-	return parsedResult
+  const cacheResult = parseCache.get(result)
+  if (cacheResult) {
+    return cacheResult
+  }
+  const parsedResult = parse(result.state as string).toJS()
+  parseCache.set(result, parsedResult)
+  return parsedResult
 }
 
 const useDefinition = <T extends definition.Definition>(
-	context: ctx.Context,
-	path: FullPath
+  context: ctx.Context,
+  path: FullPath,
 ) => {
-	const result = useBuilderExternalEntity(context, getMetadataId(path))
-	if (result) {
-		const viewDef = getCachedParseResult(result)
-		return getDefAtPath<T>(viewDef, path)
-	}
+  const result = useBuilderExternalEntity(context, getMetadataId(path))
+  if (result) {
+    const viewDef = getCachedParseResult(result)
+    return getDefAtPath<T>(viewDef, path)
+  }
 }
 
 const getDef = <T extends definition.Definition>(
-	context: ctx.Context,
-	path: FullPath
+  context: ctx.Context,
+  path: FullPath,
 ) => {
-	if (path.itemType === "viewdef" && path.itemName) {
-		const result = getBuilderExternalEntity(context, getMetadataId(path))
+  if (path.itemType === "viewdef" && path.itemName) {
+    const result = getBuilderExternalEntity(context, getMetadataId(path))
 
-		let viewDef = null
-		if (result) {
-			viewDef = getCachedParseResult(result)
-		}
-		// If we don't have this state yet, we need to initialize it
-		if (!viewDef) {
-			viewDef = api.view.getViewDef(path.itemName)
-		}
-		return getDefAtPath<T>(viewDef, path)
-	}
+    let viewDef = null
+    if (result) {
+      viewDef = getCachedParseResult(result)
+    }
+    // If we don't have this state yet, we need to initialize it
+    if (!viewDef) {
+      viewDef = api.view.getViewDef(path.itemName)
+    }
+    return getDefAtPath<T>(viewDef, path)
+  }
 }
 
 // A faster version of getDef where you privide a def. This is good for use in loops.
 const getDefAtPath = <T extends definition.Definition>(
-	definition: definition.Definition,
-	path: FullPath
+  definition: definition.Definition,
+  path: FullPath,
 ): T | undefined => {
-	if (!path.localPath) {
-		return definition as T
-	}
-	return get(definition, path.localPath)
+  if (!path.localPath) {
+    return definition as T
+  }
+  return get(definition, path.localPath)
 }
 
 const set = (
-	context: ctx.Context,
-	path: FullPath,
-	definition: definition.Definition,
-	autoSelect?: boolean
+  context: ctx.Context,
+  path: FullPath,
+  definition: definition.Definition,
+  autoSelect?: boolean,
 ) => {
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	// If the new definition is undefined, interpret this as a "remove"
-	if (definition === undefined) {
-		remove(context, path)
-		return
-	}
+  // If the new definition is undefined, interpret this as a "remove"
+  if (definition === undefined) {
+    remove(context, path)
+    return
+  }
 
-	const yamlDoc = parse(current)
-	const pathArray = component.path.toPath(path.localPath)
-	const parentPath = getParentPathArray(pathArray)
-	const parentNode = yamlDoc.getIn(parentPath)
-	// if the parent is "null" or "undefined", the yaml library won't set our pair in the object.
-	const newNodeSrc = parentNode
-		? definition
-		: { [`${component.path.toPath(path.localPath).pop()}`]: definition }
-	const pathToUpdate = parentNode ? pathArray : parentPath
-	const newNode = yamlDoc.createNode(newNodeSrc)
-	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
+  const yamlDoc = parse(current)
+  const pathArray = component.path.toPath(path.localPath)
+  const parentPath = getParentPathArray(pathArray)
+  const parentNode = yamlDoc.getIn(parentPath)
+  // if the parent is "null" or "undefined", the yaml library won't set our pair in the object.
+  const newNodeSrc = parentNode
+    ? definition
+    : { [`${component.path.toPath(path.localPath).pop()}`]: definition }
+  const pathToUpdate = parentNode ? pathArray : parentPath
+  const newNode = yamlDoc.createNode(newNodeSrc)
+  setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
 
-	setMetadataValue(context, path, yamlDoc)
+  setMetadataValue(context, path, yamlDoc)
 
-	if (autoSelect) {
-		setSelectedPath(context, path)
-	}
+  if (autoSelect) {
+    setSelectedPath(context, path)
+  }
 }
 
 const remove = (context: ctx.Context, path: FullPath) => {
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	const pathArray = component.path.toPath(path.localPath)
-	const yamlDoc = parse(current)
-	removeNodeAtPath(pathArray, yamlDoc.contents)
+  const pathArray = component.path.toPath(path.localPath)
+  const yamlDoc = parse(current)
+  removeNodeAtPath(pathArray, yamlDoc.contents)
 
-	setMetadataValue(context, path, yamlDoc)
+  setMetadataValue(context, path, yamlDoc)
 
-	const selectedPath = getSelectedPath(context)
-	const [key, poppedSelectedPath] = selectedPath.pop()
-	// If we're a component then we may be selected at two paths
-	// ["components"]["0"] or ["components"]["0"]["blah/blah.blah"]
-	const wasSelected =
-		(component.path.isComponentIndex(key) &&
-			poppedSelectedPath.equals(path)) ||
-		selectedPath.equals(path)
+  const selectedPath = getSelectedPath(context)
+  const [key, poppedSelectedPath] = selectedPath.pop()
+  // If we're a component then we may be selected at two paths
+  // ["components"]["0"] or ["components"]["0"]["blah/blah.blah"]
+  const wasSelected =
+    (component.path.isComponentIndex(key) && poppedSelectedPath.equals(path)) ||
+    selectedPath.equals(path)
 
-	if (wasSelected) setSelectedPath(context, path.parent())
+  if (wasSelected) setSelectedPath(context, path.parent())
 }
 
 const add = (
-	context: ctx.Context,
-	path: FullPath,
-	definition: definition.Definition,
-	autoSelect?: boolean
+  context: ctx.Context,
+  path: FullPath,
+  definition: definition.Definition,
+  autoSelect?: boolean,
 ) => {
-	const [index, parent] = path.popIndex()
+  const [index, parent] = path.popIndex()
 
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	const yamlDoc = parse(current)
-	const newNode = yamlDoc.createNode(definition)
-	addNodeAtPath(
-		component.path.toPath(parent.localPath),
-		yamlDoc.contents,
-		newNode,
-		index || 0
-	)
+  const yamlDoc = parse(current)
+  const newNode = yamlDoc.createNode(definition)
+  addNodeAtPath(
+    component.path.toPath(parent.localPath),
+    yamlDoc.contents,
+    newNode,
+    index || 0,
+  )
 
-	setMetadataValue(context, path, yamlDoc)
+  setMetadataValue(context, path, yamlDoc)
 
-	if (autoSelect) {
-		setSelectedPath(context, path)
-	}
+  if (autoSelect) {
+    setSelectedPath(context, path)
+  }
 }
 
 const yamlMove = (
-	yamlDoc: yaml.Document,
-	fromPath: FullPath,
-	toPath: FullPath
+  yamlDoc: yaml.Document,
+  fromPath: FullPath,
+  toPath: FullPath,
 ) => {
-	// First get the content of the from item
-	const fromNode = getNodeAtPath(fromPath.localPath, yamlDoc.contents)
-	const fromParentPath = component.path.getParentPath(fromPath.localPath)
-	const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
-	const toParentPath = component.path.getParentPath(toPath.localPath)
-	const clonedNode = fromNode?.clone()
-	const isArrayMove = yaml.isSeq(fromParent)
-	const isMapMove = yaml.isMap(fromParent) && fromParentPath === toParentPath
+  // First get the content of the from item
+  const fromNode = getNodeAtPath(fromPath.localPath, yamlDoc.contents)
+  const fromParentPath = component.path.getParentPath(fromPath.localPath)
+  const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
+  const toParentPath = component.path.getParentPath(toPath.localPath)
+  const clonedNode = fromNode?.clone()
+  const isArrayMove = yaml.isSeq(fromParent)
+  const isMapMove = yaml.isMap(fromParent) && fromParentPath === toParentPath
 
-	if (isArrayMove) {
-		if (!yaml.isCollection(clonedNode)) return
-		const index = component.path.getIndexFromPath(toPath.localPath) || 0
-		if (fromParentPath === toParentPath) {
-			const fromIndex =
-				component.path.getIndexFromPath(fromPath.localPath) || 0
-			// When in the same list parent, we can just swap
-			moveInArray(fromParent.items, fromIndex, index)
-		} else {
-			// Set that content at the to item
-			addNodeAtPath(toParentPath, yamlDoc.contents, clonedNode, index)
+  if (isArrayMove) {
+    if (!yaml.isCollection(clonedNode)) return
+    const index = component.path.getIndexFromPath(toPath.localPath) || 0
+    if (fromParentPath === toParentPath) {
+      const fromIndex = component.path.getIndexFromPath(fromPath.localPath) || 0
+      // When in the same list parent, we can just swap
+      moveInArray(fromParent.items, fromIndex, index)
+    } else {
+      // Set that content at the to item
+      addNodeAtPath(toParentPath, yamlDoc.contents, clonedNode, index)
 
-			// Loop over the items of the from parent
-			fromParent.items.forEach((item, index) => {
-				if (item === fromNode) {
-					fromParent.items.splice(index, 1)
-				}
-			})
-		}
-	}
-	if (isMapMove) {
-		const fromKey = component.path.getKeyAtPath(fromPath.localPath)
-		const toKey = component.path.getKeyAtPath(toPath.localPath)
-		const fromIndex = fromParent.items.findIndex(
-			(item) => (item.key as yaml.Scalar).value === fromKey
-		)
-		const toIndex = fromParent.items.findIndex(
-			(item) => (item.key as yaml.Scalar).value === toKey
-		)
-		const temp = fromParent.items[fromIndex]
-		fromParent.items[fromIndex] = fromParent.items[toIndex]
-		fromParent.items[toIndex] = temp
-	}
+      // Loop over the items of the from parent
+      fromParent.items.forEach((item, index) => {
+        if (item === fromNode) {
+          fromParent.items.splice(index, 1)
+        }
+      })
+    }
+  }
+  if (isMapMove) {
+    const fromKey = component.path.getKeyAtPath(fromPath.localPath)
+    const toKey = component.path.getKeyAtPath(toPath.localPath)
+    const fromIndex = fromParent.items.findIndex(
+      (item) => (item.key as yaml.Scalar).value === fromKey,
+    )
+    const toIndex = fromParent.items.findIndex(
+      (item) => (item.key as yaml.Scalar).value === toKey,
+    )
+    const temp = fromParent.items[fromIndex]
+    fromParent.items[fromIndex] = fromParent.items[toIndex]
+    fromParent.items[toIndex] = temp
+  }
 }
 
 const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
-	if (toPath.itemType !== fromPath.itemType) return
-	if (toPath.itemName !== fromPath.itemName) return
-	const toCurrent = getMetadataValue(context, toPath)
-	if (!toCurrent) return
-	const yamlDoc = parse(toCurrent)
-	yamlMove(yamlDoc, fromPath, toPath)
-	setMetadataValue(context, toPath, yamlDoc)
-	setSelectedPath(context, toPath)
+  if (toPath.itemType !== fromPath.itemType) return
+  if (toPath.itemName !== fromPath.itemName) return
+  const toCurrent = getMetadataValue(context, toPath)
+  if (!toCurrent) return
+  const yamlDoc = parse(toCurrent)
+  yamlMove(yamlDoc, fromPath, toPath)
+  setMetadataValue(context, toPath, yamlDoc)
+  setSelectedPath(context, toPath)
 }
 
 const clone = (
-	context: ctx.Context,
-	path: FullPath,
-	purgeProperties?: string[]
+  context: ctx.Context,
+  path: FullPath,
+  purgeProperties?: string[],
 ) => {
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	const yamlDoc = parse(current)
-	const parentPath = component.path.getParentPath(path.localPath)
-	const index = component.path.getIndexFromPath(path.localPath)
-	if (!index && index !== 0) return
-	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
-	if (!yaml.isSeq(parentNode)) return
-	const items = parentNode.items
-	//Purge properties
-	const itemToClone = items[index]
-	if (!yaml.isCollection(itemToClone)) return
-	const itemToCloneComponentType = itemToClone.items[0]
-	if (!yaml.isPair(itemToCloneComponentType)) return
-	const itemToCloneCopy = itemToClone.clone()
+  const yamlDoc = parse(current)
+  const parentPath = component.path.getParentPath(path.localPath)
+  const index = component.path.getIndexFromPath(path.localPath)
+  if (!index && index !== 0) return
+  const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+  if (!yaml.isSeq(parentNode)) return
+  const items = parentNode.items
+  //Purge properties
+  const itemToClone = items[index]
+  if (!yaml.isCollection(itemToClone)) return
+  const itemToCloneComponentType = itemToClone.items[0]
+  if (!yaml.isPair(itemToCloneComponentType)) return
+  const itemToCloneCopy = itemToClone.clone()
 
-	purgeProperties?.forEach((property) => {
-		// Handle clones of Components
-		if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])) {
-			itemToCloneCopy.deleteIn([itemToCloneComponentType.key, property])
-		}
-		// Handle clones of more normal objects in an array
-		if (itemToCloneCopy.has(property)) {
-			itemToCloneCopy.delete(property)
-		}
-	})
+  purgeProperties?.forEach((property) => {
+    // Handle clones of Components
+    if (itemToCloneCopy.hasIn([itemToCloneComponentType.key, property])) {
+      itemToCloneCopy.deleteIn([itemToCloneComponentType.key, property])
+    }
+    // Handle clones of more normal objects in an array
+    if (itemToCloneCopy.has(property)) {
+      itemToCloneCopy.delete(property)
+    }
+  })
 
-	items.splice(index, 0, itemToCloneCopy)
-	setMetadataValue(context, path, yamlDoc)
+  items.splice(index, 0, itemToCloneCopy)
+  setMetadataValue(context, path, yamlDoc)
 }
 
 const cloneKey = (context: ctx.Context, path: FullPath) => {
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	const newKey =
-		(component.path.getKeyAtPath(path.localPath) || "") +
-		(Math.floor(Math.random() * 60) + 1)
+  const newKey =
+    (component.path.getKeyAtPath(path.localPath) || "") +
+    (Math.floor(Math.random() * 60) + 1)
 
-	const yamlDoc = parse(current)
-	const parentPath = component.path.getParentPath(path.localPath)
-	const cloneNode = getNodeAtPath(path.localPath, yamlDoc.contents)
-	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
-	if (!yaml.isMap(parentNode)) return
-	parentNode.setIn([newKey], cloneNode)
+  const yamlDoc = parse(current)
+  const parentPath = component.path.getParentPath(path.localPath)
+  const cloneNode = getNodeAtPath(path.localPath, yamlDoc.contents)
+  const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+  if (!yaml.isMap(parentNode)) return
+  parentNode.setIn([newKey], cloneNode)
 
-	setMetadataValue(context, path, yamlDoc)
+  setMetadataValue(context, path, yamlDoc)
 }
 
 const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
-	const pathArray = component.path.toPath(path.localPath)
+  const pathArray = component.path.toPath(path.localPath)
 
-	const current = getMetadataValue(context, path)
-	if (!current) return
+  const current = getMetadataValue(context, path)
+  if (!current) return
 
-	// Stop if old and new key are equal
-	if (component.path.getKeyAtPath(path.localPath) === key) return
-	// create a new document so components using useYaml will rerender
-	const yamlDoc = parse(current)
-	// make a copy so we can place with a new key and delete the old node
-	const newNode = yamlDoc.getIn(pathArray)
-	// replace the old with the new key
-	pathArray.splice(-1, 1, key)
+  // Stop if old and new key are equal
+  if (component.path.getKeyAtPath(path.localPath) === key) return
+  // create a new document so components using useYaml will rerender
+  const yamlDoc = parse(current)
+  // make a copy so we can place with a new key and delete the old node
+  const newNode = yamlDoc.getIn(pathArray)
+  // replace the old with the new key
+  pathArray.splice(-1, 1, key)
 
-	/*
+  /*
 	Keys need to be unique.
 	TEST:oldKeyEqualsNew
 	*/
-	if (yamlDoc.getIn(pathArray)) {
-		api.notification.addNotification(
-			`"${key}" already exists.`,
-			"error",
-			context
-		)
-		return
-	}
+  if (yamlDoc.getIn(pathArray)) {
+    api.notification.addNotification(
+      `"${key}" already exists.`,
+      "error",
+      context,
+    )
+    return
+  }
 
-	yamlDoc.setIn(pathArray, newNode)
-	yamlDoc.deleteIn(component.path.toPath(path.localPath))
+  yamlDoc.setIn(pathArray, newNode)
+  yamlDoc.deleteIn(component.path.toPath(path.localPath))
 
-	setMetadataValue(context, path, yamlDoc)
+  setMetadataValue(context, path, yamlDoc)
 
-	setSelectedPath(context, path.pop()[1].addLocal(key))
+  setSelectedPath(context, path.pop()[1].addLocal(key))
 }
 
 const getMetadataId = (path: FullPath) =>
-	`metadata:${path ? `${path.itemType}:${path.itemName}` : "undefined"}`
+  `metadata:${path ? `${path.itemType}:${path.itemName}` : "undefined"}`
 
 const useContent = (context: ctx.Context, path: FullPath) =>
-	useBuilderExternalState<string>(context, getMetadataId(path))
+  useBuilderExternalState<string>(context, getMetadataId(path))
 
 const setContent = (context: ctx.Context, path: FullPath, value: string) => {
-	setMetadataValue(context, path, parse(value), value)
+  setMetadataValue(context, path, parse(value), value)
 }
 
 const useHasChanges = (context: ctx.Context) => {
-	const originalEntities = useBuilderExternalStatesCount(
-		context,
-		"original:metadata:"
-	)
-	return originalEntities > 0
+  const originalEntities = useBuilderExternalStatesCount(
+    context,
+    "original:metadata:",
+  )
+  return originalEntities > 0
 }
 
 const save = async (context: ctx.Context) => {
-	const workspace = context.getWorkspace()
+  const workspace = context.getWorkspace()
 
-	if (!workspace) {
-		api.notification.addError("No Workspace in context", context)
-		return
-	}
-	const originalEntities = getBuilderExternalStates(
-		context,
-		"original:metadata:"
-	)
+  if (!workspace) {
+    api.notification.addError("No Workspace in context", context)
+    return
+  }
+  const originalEntities = getBuilderExternalStates(
+    context,
+    "original:metadata:",
+  )
 
-	const viewChanges: Record<string, wire.PlainWireRecord> = {}
+  const viewChanges: Record<string, wire.PlainWireRecord> = {}
 
-	if (originalEntities && originalEntities.length) {
-		originalEntities.forEach((entity) => {
-			const parts = entity.id.split("original:metadata:")
-			const [itemType, itemName] = parts[1].split(":")
-			const currentValue = getBuilderExternalState(
-				context,
-				"metadata:" + parts[1]
-			)
-			const [, name] = component.path.parseKey(itemName)
-			if (itemType === "viewdef") {
-				viewChanges[entity.id] = {
-					"uesio/studio.definition": currentValue as string,
-					[collection.UNIQUE_KEY_FIELD]: `${workspace.app}:${workspace.name}:${name}`,
-				}
-			}
-		})
-	}
+  if (originalEntities && originalEntities.length) {
+    originalEntities.forEach((entity) => {
+      const parts = entity.id.split("original:metadata:")
+      const [itemType, itemName] = parts[1].split(":")
+      const currentValue = getBuilderExternalState(
+        context,
+        "metadata:" + parts[1],
+      )
+      const [, name] = component.path.parseKey(itemName)
+      if (itemType === "viewdef") {
+        viewChanges[entity.id] = {
+          "uesio/studio.definition": currentValue as string,
+          [collection.UNIQUE_KEY_FIELD]: `${workspace.app}:${workspace.name}:${name}`,
+        }
+      }
+    })
+  }
 
-	// We do NOT want to use the existing context, because that would put us in workspace context.
-	// Here, to save the view (workspace METADATA), we need to save in the Studio context,
-	// BUT we have to indicate which workspace and app we are saving for.
-	const result = await platform.platform.saveData(
-		// THis is a bit hacky, the only way to attach params is via a ViewFrame
-		ctx.newContext().addViewFrame({
-			view: "",
-			viewDef: "",
-			params: {
-				workspacename: workspace.name,
-				app: workspace.app,
-			},
-		}),
-		{
-			wires: [
-				{
-					wire: "saveview",
-					collection: "uesio/studio.view",
-					changes: viewChanges,
-					deletes: {},
-					options: {
-						upsert: true,
-					},
-				},
-			],
-		}
-	)
-	if (result?.wires?.length === 1 && result.wires[0].errors?.length) {
-		api.notification.addError(
-			"Error saving view: " + result.wires[0].errors[0].message,
-			context
-		)
-		return
-	}
+  // We do NOT want to use the existing context, because that would put us in workspace context.
+  // Here, to save the view (workspace METADATA), we need to save in the Studio context,
+  // BUT we have to indicate which workspace and app we are saving for.
+  const result = await platform.platform.saveData(
+    // THis is a bit hacky, the only way to attach params is via a ViewFrame
+    ctx.newContext().addViewFrame({
+      view: "",
+      viewDef: "",
+      params: {
+        workspacename: workspace.name,
+        app: workspace.app,
+      },
+    }),
+    {
+      wires: [
+        {
+          wire: "saveview",
+          collection: "uesio/studio.view",
+          changes: viewChanges,
+          deletes: {},
+          options: {
+            upsert: true,
+          },
+        },
+      ],
+    },
+  )
+  if (result?.wires?.length === 1 && result.wires[0].errors?.length) {
+    api.notification.addError(
+      "Error saving view: " + result.wires[0].errors[0].message,
+      context,
+    )
+    return
+  }
 
-	if (originalEntities && originalEntities.length) {
-		originalEntities.forEach((entity) => {
-			const parts = entity.id.split("original:metadata:")
-			removeBuilderState(context, "original:metadata:" + parts[1])
-		})
-	}
+  if (originalEntities && originalEntities.length) {
+    originalEntities.forEach((entity) => {
+      const parts = entity.id.split("original:metadata:")
+      removeBuilderState(context, "original:metadata:" + parts[1])
+    })
+  }
 }
 
 const cancel = (context: ctx.Context) => {
-	const originalEntities = getBuilderExternalStates(
-		context,
-		"original:metadata:"
-	)
+  const originalEntities = getBuilderExternalStates(
+    context,
+    "original:metadata:",
+  )
 
-	if (originalEntities && originalEntities.length) {
-		originalEntities.forEach((entity) => {
-			const parts = entity.id.split("original:metadata:")
-			const [itemType, itemName] = parts[1].split(":")
-			const path = new FullPath(itemType, itemName, "")
-			setContent(context, path, entity.state as string)
-		})
-	}
+  if (originalEntities && originalEntities.length) {
+    originalEntities.forEach((entity) => {
+      const parts = entity.id.split("original:metadata:")
+      const [itemType, itemName] = parts[1].split(":")
+      const path = new FullPath(itemType, itemName, "")
+      setContent(context, path, entity.state as string)
+    })
+  }
 }
 
 export {
-	set,
-	add,
-	remove,
-	move,
-	yamlMove,
-	getDef as get,
-	getDefAtPath,
-	getMetadataId,
-	getMetadataValue,
-	clone,
-	cloneKey,
-	changeKey,
-	useContent,
-	setContent,
-	useDefinition,
-	useHasChanges,
-	save,
-	cancel,
+  set,
+  add,
+  remove,
+  move,
+  yamlMove,
+  getDef as get,
+  getDefAtPath,
+  getMetadataId,
+  getMetadataValue,
+  clone,
+  cloneKey,
+  changeKey,
+  useContent,
+  setContent,
+  useDefinition,
+  useHasChanges,
+  save,
+  cancel,
 }

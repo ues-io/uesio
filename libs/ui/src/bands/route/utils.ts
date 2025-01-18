@@ -23,67 +23,67 @@ import { getKey } from "../../metadata/metadata"
 import { ComponentPackState } from "../../definition/componentpack"
 
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
-	if (!wires || !viewdefs) return [] as PlainWire[]
-	return wires.map((wire) => {
-		const viewId = wire.view.split("(")[0]
-		const wireDef = viewdefs.find((viewdef) => getKey(viewdef) === viewId)
-			?.definition.wires?.[wire.name]
-		if (!wireDef)
-			throw new Error(
-				`Could not find wire def for wire: ${wire.view} : ${wire.name}`
-			)
-		return initExistingWire(transformServerWire(wire), wireDef)
-	})
+  if (!wires || !viewdefs) return [] as PlainWire[]
+  return wires.map((wire) => {
+    const viewId = wire.view.split("(")[0]
+    const wireDef = viewdefs.find((viewdef) => getKey(viewdef) === viewId)
+      ?.definition.wires?.[wire.name]
+    if (!wireDef)
+      throw new Error(
+        `Could not find wire def for wire: ${wire.view} : ${wire.name}`,
+      )
+    return initExistingWire(transformServerWire(wire), wireDef)
+  })
 }
 
 const dispatchRouteDeps = (deps: Dependencies | undefined) => {
-	if (!deps) return
-	const { viewdef, wire } = deps
-	if (deps.collection) dispatch(initCollection(deps.collection))
-	if (deps.component) dispatch(setComponent(deps.component))
-	if (deps.componenttype) dispatch(setComponentTypes(deps.componenttype))
-	if (deps.componentvariant)
-		dispatch(setComponentVariant(deps.componentvariant))
-	if (deps.configvalue) dispatch(setConfigValue(deps.configvalue))
-	if (deps.featureflag) dispatch(setFeatureFlag(deps.featureflag))
-	if (deps.file) dispatch(setFile(deps.file))
-	if (deps.label) dispatch(setLabel(deps.label))
-	if (deps.routeassignment) dispatch(setRouteAssignment(deps.routeassignment))
-	if (deps.selectlist) dispatch(setSelectList(deps.selectlist))
-	if (deps.theme) dispatch(setTheme(deps.theme))
-	if (deps.viewdef) dispatch(setViewDef(deps.viewdef))
+  if (!deps) return
+  const { viewdef, wire } = deps
+  if (deps.collection) dispatch(initCollection(deps.collection))
+  if (deps.component) dispatch(setComponent(deps.component))
+  if (deps.componenttype) dispatch(setComponentTypes(deps.componenttype))
+  if (deps.componentvariant)
+    dispatch(setComponentVariant(deps.componentvariant))
+  if (deps.configvalue) dispatch(setConfigValue(deps.configvalue))
+  if (deps.featureflag) dispatch(setFeatureFlag(deps.featureflag))
+  if (deps.file) dispatch(setFile(deps.file))
+  if (deps.label) dispatch(setLabel(deps.label))
+  if (deps.routeassignment) dispatch(setRouteAssignment(deps.routeassignment))
+  if (deps.selectlist) dispatch(setSelectList(deps.selectlist))
+  if (deps.theme) dispatch(setTheme(deps.theme))
+  if (deps.viewdef) dispatch(setViewDef(deps.viewdef))
 
-	// Special case - need both wire and viewdef to init wire state
-	if (wire && viewdef) {
-		dispatch(initWire(attachDefToWires(wire, viewdef) || []))
-	}
+  // Special case - need both wire and viewdef to init wire state
+  if (wire && viewdef) {
+    dispatch(initWire(attachDefToWires(wire, viewdef) || []))
+  }
 }
 
 const getPackUrlsForDeps = (
-	packDeps: ComponentPackState[] | undefined,
-	context: Context
+  packDeps: ComponentPackState[] | undefined,
+  context: Context,
 ) => {
-	if (!packDeps) return []
-	return packDeps.flatMap((pack) => {
-		const contextToUse = pack.siteOnly ? context.deleteWorkspace() : context
-		const js = platform.getComponentPackURL(
-			contextToUse,
-			pack.namespace,
-			pack.name,
-			`${pack.updatedAt || 0}`
-		)
-		if (pack.hasStyles) {
-			const css = platform.getComponentPackURL(
-				contextToUse,
-				pack.namespace,
-				pack.name,
-				`${pack.updatedAt || 0}`,
-				"runtime.css"
-			)
-			return [js, css]
-		}
-		return [js]
-	})
+  if (!packDeps) return []
+  return packDeps.flatMap((pack) => {
+    const contextToUse = pack.siteOnly ? context.deleteWorkspace() : context
+    const js = platform.getComponentPackURL(
+      contextToUse,
+      pack.namespace,
+      pack.name,
+      `${pack.updatedAt || 0}`,
+    )
+    if (pack.hasStyles) {
+      const css = platform.getComponentPackURL(
+        contextToUse,
+        pack.namespace,
+        pack.name,
+        `${pack.updatedAt || 0}`,
+        "runtime.css",
+      )
+      return [js, css]
+    }
+    return [js]
+  })
 }
 
 export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

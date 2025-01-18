@@ -24,50 +24,50 @@ import { newContext } from "../context/context"
 import { handleNavigateResponse } from "../bands/route/operations"
 
 type InitialState = {
-	route?: RouteState
-	user?: UserState
-	site?: SiteState
+  route?: RouteState
+  user?: UserState
+  site?: SiteState
 }
 
 let store: ReturnType<typeof create>
 
 const create = (initialState: InitialState) => {
-	const newStore = configureStore({
-		reducer: {
-			collection,
-			component,
-			componenttype,
-			componentvariant,
-			configvalue,
-			featureflag,
-			file,
-			label,
-			notification,
-			panel,
-			route,
-			routeassignment,
-			selectlist,
-			site,
-			theme,
-			user,
-			viewdef,
-			wire,
-		},
-		devTools: true,
-		preloadedState: {
-			user: initialState.user,
-			site: initialState.site,
-		},
-	})
-	store = newStore
-	handleNavigateResponse(newContext(), initialState.route)
-	return newStore
+  const newStore = configureStore({
+    reducer: {
+      collection,
+      component,
+      componenttype,
+      componentvariant,
+      configvalue,
+      featureflag,
+      file,
+      label,
+      notification,
+      panel,
+      route,
+      routeassignment,
+      selectlist,
+      site,
+      theme,
+      user,
+      viewdef,
+      wire,
+    },
+    devTools: true,
+    preloadedState: {
+      user: initialState.user,
+      site: initialState.site,
+    },
+  })
+  store = newStore
+  handleNavigateResponse(newContext(), initialState.route)
+  return newStore
 }
 
 type RootState = ReturnType<typeof store.getState>
 
 const dispatch = (action: Parameters<typeof store.dispatch>[0]) =>
-	store.dispatch(action)
+  store.dispatch(action)
 
 const getCurrentState = () => store.getState()
 

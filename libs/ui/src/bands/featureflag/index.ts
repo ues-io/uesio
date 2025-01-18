@@ -4,21 +4,21 @@ import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter({
-	selectId: getKey<FeatureFlagState>,
+  selectId: getKey<FeatureFlagState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.featureflag)
 
 const selectByName = (state: RootState, name: string) =>
-	selectors.selectAll(state).find((el) => el.name && el.name === name)
+  selectors.selectAll(state).find((el) => el.name && el.name === name)
 
 const metadataSlice = createSlice({
-	name: "featureflag",
-	initialState: adapter.getInitialState(),
-	reducers: {
-		set: adapter.upsertOne,
-		setMany: adapter.upsertMany,
-	},
+  name: "featureflag",
+  initialState: adapter.getInitialState(),
+  reducers: {
+    set: adapter.upsertOne,
+    setMany: adapter.upsertMany,
+  },
 })
 
 export { selectByName, selectors, adapter }

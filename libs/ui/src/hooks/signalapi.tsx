@@ -1,125 +1,125 @@
 import {
-	ComponentSignalDescriptor,
-	SignalDefinition,
-	SignalDescriptor,
+  ComponentSignalDescriptor,
+  SignalDefinition,
+  SignalDescriptor,
 } from "../definition/signal"
 import { getComponentSignalDefinition } from "../bands/component/signals"
 import { Context } from "../context/context"
 import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
 import {
-	AssignmentNavigateSignal,
-	PathNavigateSignal,
-	RedirectSignal,
+  AssignmentNavigateSignal,
+  PathNavigateSignal,
+  RedirectSignal,
 } from "../bands/route/signals"
 import { getRouteUrl } from "../bands/route/operations"
 import { MouseEvent } from "react"
 
 const getNavigateLink = (
-	signals: SignalDefinition[] | undefined,
-	context: Context
+  signals: SignalDefinition[] | undefined,
+  context: Context,
 ) => {
-	if (!signals || signals.length !== 1) return undefined
-	const signal = signals[0] as
-		| PathNavigateSignal
-		| AssignmentNavigateSignal
-		| RedirectSignal
+  if (!signals || signals.length !== 1) return undefined
+  const signal = signals[0] as
+    | PathNavigateSignal
+    | AssignmentNavigateSignal
+    | RedirectSignal
 
-	if (signal.preventLinkTag) return undefined
+  if (signal.preventLinkTag) return undefined
 
-	if (signal.signal === "route/NAVIGATE") {
-		if (!signal.path) return undefined
-		return getRouteUrl(context, signal.namespace, signal.path)
-	}
+  if (signal.signal === "route/NAVIGATE") {
+    if (!signal.path) return undefined
+    return getRouteUrl(context, signal.namespace, signal.path)
+  }
 
-	if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
-		const assignment = context.getRouteAssignment(
-			signal.viewtype,
-			signal.collection
-		)
-		if (!assignment) return undefined
-		return getRouteUrl(
-			context.addRecordDataFrame({
-				recordid: context.mergeString(signal.recordid),
-			}),
-			assignment.namespace,
-			assignment.path.replace(/{/g, "${")
-		)
-	}
+  if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
+    const assignment = context.getRouteAssignment(
+      signal.viewtype,
+      signal.collection,
+    )
+    if (!assignment) return undefined
+    return getRouteUrl(
+      context.addRecordDataFrame({
+        recordid: context.mergeString(signal.recordid),
+      }),
+      assignment.namespace,
+      assignment.path.replace(/{/g, "${"),
+    )
+  }
 
-	if (signal.signal === "route/REDIRECT") {
-		if (!signal.path) return undefined
-		return context.mergeString(signal.path)
-	}
+  if (signal.signal === "route/REDIRECT") {
+    if (!signal.path) return undefined
+    return context.mergeString(signal.path)
+  }
 
-	return undefined
+  return undefined
 }
 
 const useLinkHandler = (
-	signals: SignalDefinition[] | undefined,
-	context: Context,
-	setPendingState?: (isPending: boolean) => void
+  signals: SignalDefinition[] | undefined,
+  context: Context,
+  setPendingState?: (isPending: boolean) => void,
 ) => {
-	const link = getNavigateLink(signals, context)
-	if (!signals) return [undefined, undefined] as const
-	return [
-		link,
-		async (e: MouseEvent) => {
-			// Allow the default behavior if the meta key is active
-			const isMeta = e.getModifierState("Meta")
-			if (isMeta) return
-			e.preventDefault()
-			// Stopping propagation here to prevent actions higher in the
-			// hierarchy from firing. For example a default row action
-			// for a table row.
-			e.stopPropagation()
-			setPendingState?.(true)
-			await runMany(signals, context)
-			setPendingState?.(false)
-		},
-	] as const
+  const link = getNavigateLink(signals, context)
+  if (!signals) return [undefined, undefined] as const
+  return [
+    link,
+    async (e: MouseEvent) => {
+      // Allow the default behavior if the meta key is active
+      const isMeta = e.getModifierState("Meta")
+      if (isMeta) return
+      e.preventDefault()
+      // Stopping propagation here to prevent actions higher in the
+      // hierarchy from firing. For example a default row action
+      // for a table row.
+      e.stopPropagation()
+      setPendingState?.(true)
+      await runMany(signals, context)
+      setPendingState?.(false)
+    },
+  ] as const
 }
 
 // Returns a handler function for running a list of signals
 const getHandler = (
-	signals: SignalDefinition[] | undefined,
-	context: Context
+  signals: SignalDefinition[] | undefined,
+  context: Context,
 ) => {
-	if (!signals) return undefined
-	return () => runMany(signals, context)
+  if (!signals) return undefined
+  return () => runMany(signals, context)
 }
 
 const useRegisterHotKey = (
-	keycode: string | undefined,
-	signals: SignalDefinition[] | undefined,
-	context: Context
+  keycode: string | undefined,
+  signals: SignalDefinition[] | undefined,
+  context: Context,
 ) =>
-	useHotKeyCallback(
-		keycode,
-		(event) => {
-			event.preventDefault()
-			getHandler(signals, context)?.()
-		},
-		signals && signals.length > 0
-	)
+  useHotKeyCallback(
+    keycode,
+    (event) => {
+      event.preventDefault()
+      getHandler(signals, context)?.()
+    },
+    signals && signals.length > 0,
+  )
 
 // Returns a map of all SignalDescriptors from the registry
 const getSignals = (): Record<string, SignalDescriptor> => ({
-	...registry,
+  ...registry,
 })
 
 // Returns the SignalDescriptor associated with the given signal name
 const getSignal = (signalType: string) => registry[signalType]
 
 export {
-	useLinkHandler,
-	getComponentSignalDefinition,
-	getSignal,
-	getSignals,
-	getHandler,
-	useRegisterHotKey,
-	runMany,
-	run,
+  useLinkHandler,
+  getComponentSignalDefinition,
+  getSignal,
+  getSignals,
+  getHandler,
+  useRegisterHotKey,
+  runMany,
+  run,
 }
 
 export type { ComponentSignalDescriptor }

@@ -3,25 +3,25 @@ import { RouteAssignmentState } from "../../definition/routeassignment"
 import { RootState } from "../../store/store"
 
 const adapter = createEntityAdapter({
-	selectId: (assignment: RouteAssignmentState) => assignment.name,
+  selectId: (assignment: RouteAssignmentState) => assignment.name,
 })
 
 const selectors = adapter.getSelectors(
-	(state: RootState) => state.routeassignment
+  (state: RootState) => state.routeassignment,
 )
 
 const selectById = (state: RootState, name: string) =>
-	selectors.selectById(state, name)
+  selectors.selectById(state, name)
 
 const selectAll = (state: RootState) => selectors.selectAll(state)
 
 const metadataSlice = createSlice({
-	name: "routeassignment",
-	initialState: adapter.getInitialState(),
-	reducers: {
-		set: adapter.upsertOne,
-		setMany: adapter.upsertMany,
-	},
+  name: "routeassignment",
+  initialState: adapter.getInitialState(),
+  reducers: {
+    set: adapter.upsertOne,
+    setMany: adapter.upsertMany,
+  },
 })
 
 export { selectById, selectAll, selectors, adapter }

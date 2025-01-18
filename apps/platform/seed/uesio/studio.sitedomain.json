@@ -1,9 +1,9 @@
 [
-	{
-		"uesio/studio.site": {
-			"uesio/core.uniquekey": "uesio/studio:prod"
-		},
-		"uesio/studio.type": "subdomain",
-		"uesio/studio.domain": "studio"
-	}
+  {
+    "uesio/studio.site": {
+      "uesio/core.uniquekey": "uesio/studio:prod"
+    },
+    "uesio/studio.type": "subdomain",
+    "uesio/studio.domain": "studio"
+  }
 ]

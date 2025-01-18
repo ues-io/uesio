@@ -14,37 +14,37 @@ const MONACO = "monaco-editor"
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
-	{
-		name: REACT,
-		module: REACT,
-		path: `umd/react.${devMode ? "development" : "production.min"}.js`,
-		dest: "umd",
-		preload: true,
-		order: 1,
-	},
-	{
-		name: REACT_DOM,
-		module: REACT_DOM,
-		path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
-		dest: "umd",
-		preload: true,
-		order: 2,
-	},
-	{
-		name: "react/jsx-runtime",
-		module: REACT,
-		base: "files",
-		path: "umd/react-jsx-runtime.production.min.js",
-		dest: "umd",
-		preload: true,
-		order: 3,
-	},
-	{
-		name: MONACO,
-		module: MONACO,
-		src: "min/vs/**",
-		dest: "min/vs",
-	},
+  {
+    name: REACT,
+    module: REACT,
+    path: `umd/react.${devMode ? "development" : "production.min"}.js`,
+    dest: "umd",
+    preload: true,
+    order: 1,
+  },
+  {
+    name: REACT_DOM,
+    module: REACT_DOM,
+    path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
+    dest: "umd",
+    preload: true,
+    order: 2,
+  },
+  {
+    name: "react/jsx-runtime",
+    module: REACT,
+    base: "files",
+    path: "umd/react-jsx-runtime.production.min.js",
+    dest: "umd",
+    preload: true,
+    order: 3,
+  },
+  {
+    name: MONACO,
+    module: MONACO,
+    src: "min/vs/**",
+    dest: "min/vs",
+  },
 ]
 
 // END EDITABLE REGION
@@ -55,53 +55,51 @@ const modules = [
  * Promise, a Stream or take a callback and call it
  */
 function clean(cb) {
-	fs.rm(distVendor, { recursive: true, force: true }, cb)
+  fs.rm(distVendor, { recursive: true, force: true }, cb)
 }
 
 function generateVendorManifest(cb) {
-	const vendorManifest = modules.reduce(
-		(manifestObj, { name, module, path, preload = false, order }) => {
-			const { version } = packageLock.packages[`node_modules/${module}`]
-			console.log(`Using ${module}@${version}`)
-			manifestObj[name] = {
-				version,
-				path,
-				preload,
-				order,
-			}
-			return manifestObj
-		},
-		{}
-	)
-	fs.writeFile(
-		distVendor + "/manifest.json",
-		JSON.stringify(vendorManifest),
-		cb
-	)
+  const vendorManifest = modules.reduce(
+    (manifestObj, { name, module, path, preload = false, order }) => {
+      const { version } = packageLock.packages[`node_modules/${module}`]
+      console.log(`Using ${module}@${version}`)
+      manifestObj[name] = {
+        version,
+        path,
+        preload,
+        order,
+      }
+      return manifestObj
+    },
+    {},
+  )
+  fs.writeFile(
+    distVendor + "/manifest.json",
+    JSON.stringify(vendorManifest),
+    cb,
+  )
 }
 
 const scriptTasks = modules.map(
-	({ src, dest, path, base = "../../node_modules", module, name }) => {
-		const { version } = packageLock.packages[`node_modules/${module}`]
-		const gulpSrc = [base, module, src, path].filter((x) => !!x).join("/")
-		const gulpDest = [distVendor, name, version, dest]
-			.filter((x) => !!x)
-			.join("/")
-		return function () {
-			return gulp
-				.src(gulpSrc, { encoding: false })
-				.pipe(gulp.dest(gulpDest))
-		}
-	}
+  ({ src, dest, path, base = "../../node_modules", module, name }) => {
+    const { version } = packageLock.packages[`node_modules/${module}`]
+    const gulpSrc = [base, module, src, path].filter((x) => !!x).join("/")
+    const gulpDest = [distVendor, name, version, dest]
+      .filter((x) => !!x)
+      .join("/")
+    return function () {
+      return gulp.src(gulpSrc, { encoding: false }).pipe(gulp.dest(gulpDest))
+    }
+  },
 )
 
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
 const build = gulp.series(
-	clean,
-	gulp.parallel.apply(this, scriptTasks),
-	generateVendorManifest
+  clean,
+  gulp.parallel.apply(this, scriptTasks),
+  generateVendorManifest,
 )
 
 /*

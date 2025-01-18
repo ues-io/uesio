@@ -1,14 +1,14 @@
 {
-	"extends": "../../../../tsconfig.base.json",
-	"files": [],
-	"include": [],
-	"references": [
-		{
-			"path": "./tsconfig.lib.json"
-		}
-	],
-	"typeRoots": ["node_modules/@types", "./generated/@types"],
-	"compilerOptions": {
-		"sourceMap": true
-	}
+  "extends": "../../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ],
+  "typeRoots": ["node_modules/@types", "./generated/@types"],
+  "compilerOptions": {
+    "sourceMap": true
+  }
 }

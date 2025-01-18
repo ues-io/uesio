@@ -6,11 +6,11 @@ import { Context } from "../context/context"
 import { create, InitialState } from "../store/store"
 
 export default (element: HTMLElement, initialState: InitialState) => {
-	createRoot(element).render(
-		<StrictMode>
-			<Provider store={create(initialState)}>
-				<Route context={new Context()} />
-			</Provider>
-		</StrictMode>
-	)
+  createRoot(element).render(
+    <StrictMode>
+      <Provider store={create(initialState)}>
+        <Route context={new Context()} />
+      </Provider>
+    </StrictMode>,
+  )
 }
