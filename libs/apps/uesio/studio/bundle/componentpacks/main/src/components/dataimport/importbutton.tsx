@@ -25,7 +25,7 @@ const readCSV = async (file: File): Promise<string[][]> =>
         resolve(results.data)
       },
       error: (parseErr) => {
-        console.log(parseErr.message)
+        console.error(parseErr.message)
         resolve([])
       },
     })

@@ -16,7 +16,7 @@ import {
 
 interface MenuButtonUtilityProps<T> {
   itemRenderer: (item: T) => ReactNode
-  onSelect: (item: T) => void
+  onSelect?: (item: T) => void
   items: T[]
   getItemKey: (item: T) => string
   onSearch?: (search: string) => void
@@ -178,7 +178,7 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
                         onClick(event) {
                           event.preventDefault()
                           event.stopPropagation()
-                          onSelect(item)
+                          onSelect && onSelect(item)
                           closeOnSelect && setIsOpen(false)
                         },
                         // Handle keyboard select.
@@ -186,7 +186,7 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
                           if (event.key === "Enter") {
                             event.preventDefault()
                             event.stopPropagation()
-                            onSelect(item)
+                            onSelect && onSelect(item)
                             closeOnSelect && setIsOpen(false)
                           }
                         },

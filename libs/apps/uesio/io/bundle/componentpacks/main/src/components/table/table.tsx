@@ -296,7 +296,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
               { label: "Sort Remove Sorting" },
             ]}
             itemRenderer={(item: ColumnDefinition) => item.label}
-            onSelect={(item: ColumnDefinition) => console.log(item.label)}
             getItemKey={(item: ColumnDefinition) => item.label}
             fill={false}
             context={context}

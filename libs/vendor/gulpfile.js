@@ -62,7 +62,7 @@ function generateVendorManifest(cb) {
   const vendorManifest = modules.reduce(
     (manifestObj, { name, module, path, preload = false, order }) => {
       const { version } = packageLock.packages[`node_modules/${module}`]
-      console.log(`Using ${module}@${version}`)
+      console.info(`Using ${module}@${version}`) // eslint-disable-line no-console -- used during build time for status
       manifestObj[name] = {
         version,
         path,

@@ -24,6 +24,7 @@ const tailwindUrl = "https://unpkg.com/tailwindcss@2/dist/tailwind.css"
 
 // Use fs to check if the file at targetPath already exists
 if (fs.existsSync(targetPath)) {
+  // eslint-disable-next-line no-console -- used during build time for status
   console.info(`Tailwind CSS class index already exists, skipping generation.`)
   process.exit(0)
 }
@@ -38,11 +39,10 @@ return loadTailwindCss(tailwindUrl)
       )
     }
     fs.writeFileSync(targetPath, JSON.stringify(parsedTokens))
-    console.log(" ")
+    // eslint-disable-next-line no-console -- used during build time for status
     console.info(
       `Successfully generated Tailwind CSS class index with ${parsedTokens.length} classes to ${targetPath}`,
     )
-    console.log(" ")
   })
   .catch((err) => {
     console.error("Fatal error processing Tailwind CSS:", err)

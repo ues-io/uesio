@@ -94,6 +94,7 @@ export default [
         "error",
         { allowTernary: true, allowShortCircuit: true },
       ],
+      "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },
   {

@@ -16,7 +16,7 @@ const walk = (tree, prefix, items = []) => {
       if (classes.length === 0) {
         // skip
       } else if (classes.length > 1) {
-        // console.log("Found more than 1 classes:", selector)
+        // console.warn("Found more than 1 classes:", selector)
       } else if (child.block) {
         const declarations = child.block.children
           .map((node) => {
@@ -47,7 +47,7 @@ const walk = (tree, prefix, items = []) => {
             css,
           })
         } else {
-          console.log("No declaration found", child)
+          console.warn("No declaration found", child)
         }
       }
     } else if (child.type === "Atrule") {
@@ -56,18 +56,18 @@ const walk = (tree, prefix, items = []) => {
         walk(child.block, [...prefix, prelude])
       }
     } else {
-      console.log("Unhandled", child.type)
+      console.warn("Unhandled", child.type)
     }
   }
 }
 
 const parseTailwindCss = (css) => {
-  console.log("Parsing CSS...")
+  console.warn("Parsing CSS...")
   const ast = csstree.toPlainObject(csstree.parse(css))
   const items = []
   // Walk the parsed CSS AST
   walk(ast, [], items)
-  console.log("Generating search index...")
+  console.warn("Generating search index...")
   const entries = []
   const byClassName = new Map()
   for (const item of items) {
@@ -80,7 +80,7 @@ const parseTailwindCss = (css) => {
     }
     entry.results.push({ css, prefix, declarations })
   }
-  console.log("Parsing entries...")
+  console.warn("Parsing entries...")
   entries.sort((a, b) => a.className.localeCompare(b.className))
   return entries.map((entry) => {
     const classNamePrepared = entry.className
