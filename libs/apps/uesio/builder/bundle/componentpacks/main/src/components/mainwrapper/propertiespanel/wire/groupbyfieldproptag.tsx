@@ -20,8 +20,7 @@ const GroupByFieldPropTag: definition.UtilityComponent<T> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const Text = component.getUtility("uesio/io.text")
 	const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
-	const { fieldId, fieldDef, collectionKey, context, path, selectedPath } =
-		props
+	const { fieldId, collectionKey, context, path, selectedPath } = props
 
 	const collectionMetadata = api.collection.useCollection(
 		context,
@@ -33,8 +32,6 @@ const GroupByFieldPropTag: definition.UtilityComponent<T> = (props) => {
 
 	const selected = path.equals(selectedPath)
 	const hasSelectedChild = selectedPath.startsWith(path)
-	const aggfunction = fieldDef?.function
-	console.log(aggfunction)
 
 	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
 

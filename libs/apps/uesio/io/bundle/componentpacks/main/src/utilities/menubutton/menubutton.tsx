@@ -6,7 +6,7 @@ import IconButton from "../iconbutton/iconbutton"
 
 interface MenuButtonUtilityProps<I> {
 	itemRenderer: (item: I) => ReactNode
-	onSelect: (item: I) => void
+	onSelect?: (item: I) => void
 	getItemKey: (item: I) => string
 	buttonVariant?: metadata.MetadataKey
 	icon?: string

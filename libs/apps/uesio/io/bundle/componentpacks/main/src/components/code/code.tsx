@@ -30,9 +30,6 @@ const CodeComponent: definition.UC<CodeComponentDefinition> = (props) => {
 		<IOCodeField
 			classes={classes}
 			value={fileContent || ""}
-			setValue={(value: string) => {
-				console.log(value)
-			}}
 			language={language}
 			context={context}
 			theme={definition?.theme}

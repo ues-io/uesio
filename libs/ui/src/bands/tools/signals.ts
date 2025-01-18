@@ -49,9 +49,7 @@ const signals: Record<string, SignalDescriptor> = {
 				endMarker ? context.mergeString(endMarker) : undefined
 			)
 			if (logToConsole) {
-				// The entire point of this signal is to log to the console,
-				// so make sure that this console.log does not get stripped out
-				console.log(results)
+				console.info(results) // eslint-disable-line no-console -- The entire point of this signal is to log to the console
 			}
 			if (stepId) {
 				return context.addSignalOutputFrame(stepId, {
@@ -65,9 +63,7 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${BAND}/LOG`]: {
 		dispatcher: (signalInvocation: ConsoleLogSignal, context: Context) => {
 			const { text } = signalInvocation
-			// The entire point of this signal is to log to the console,
-			// so make sure that this console.log does not get stripped out
-			console.log(context.mergeString(text))
+			console.info(context.mergeString(text)) // eslint-disable-line no-console -- The entire point of this signal is to log to the console
 			return context
 		},
 	},
