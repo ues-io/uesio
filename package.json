@@ -29,6 +29,8 @@
 		"format": "nx format:write",
 		"format:check": "nx format:check",
 		"format:write": "nx format:write",
+    "format-all": "nx format:write --all",
+    "format-check-all": "nx format:check --all",
 		"help": "nx help",
 		"in-docker": "docker compose up -d && docker-compose -f docker-compose-local.yaml up -d",
 		"in-docker-force-build": "docker compose up -d && docker-compose -f docker-compose-local.yaml up -d --build",
