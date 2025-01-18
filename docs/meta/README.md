@@ -175,9 +175,9 @@ tabWidth: 4
 semi: false
 useTabs: true
 overrides:
-    - files: "*.yaml"
-      options:
-          tabWidth: 2
+  - files: "*.yaml"
+    options:
+      tabWidth: 2
 ```
 
 # Developing with Go

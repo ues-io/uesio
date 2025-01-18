@@ -9,56 +9,56 @@ type ReactType = typeof React | ""
 export type ComponentType = typeof Declarative | ReactType
 
 interface BaseComponent extends Bundleable {
-	type: ComponentType
-	slots?: SlotDef[]
-	properties?: ComponentProperty[]
-	defaultVariant?: MetadataKey
+  type: ComponentType
+  slots?: SlotDef[]
+  properties?: ComponentProperty[]
+  defaultVariant?: MetadataKey
 }
 
 export type ComponentProperty = {
-	name: string
-	defaultValue?: FieldValue
+  name: string
+  defaultValue?: FieldValue
 }
 
 interface WireContextProvision {
-	type: "WIRE"
-	wireProperty: string
+  type: "WIRE"
+  wireProperty: string
 }
 
 interface RecordContextProvision {
-	type: "RECORD"
-	wireProperty: string
+  type: "RECORD"
+  wireProperty: string
 }
 
 interface FieldModeContextProvision {
-	type: "FIELD_MODE"
-	modeProperty: string
+  type: "FIELD_MODE"
+  modeProperty: string
 }
 
 type SlotContextProvision =
-	| WireContextProvision
-	| RecordContextProvision
-	| FieldModeContextProvision
+  | WireContextProvision
+  | RecordContextProvision
+  | FieldModeContextProvision
 
 type SlotDirection = "VERTICAL" | "HORIZONTAL"
 
 export type SlotDef = {
-	name: string
-	path?: string
-	providesContexts?: SlotContextProvision[]
-	defaultContent?: DefinitionList
-	label?: string
-	direction?: SlotDirection
-	onSelectSignals?: SignalDefinition[]
+  name: string
+  path?: string
+  providesContexts?: SlotContextProvision[]
+  defaultContent?: DefinitionList
+  label?: string
+  direction?: SlotDirection
+  onSelectSignals?: SignalDefinition[]
 }
 
 export interface DeclarativeComponent extends BaseComponent {
-	type: typeof Declarative
-	definition: DefinitionList
+  type: typeof Declarative
+  definition: DefinitionList
 }
 
 export interface ReactComponent extends BaseComponent {
-	type: ReactType
+  type: ReactType
 }
 
 export type Component = DeclarativeComponent | ReactComponent

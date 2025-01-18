@@ -10,42 +10,42 @@ import { dirname } from "node:path"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default [
-	{
-		ignores: ["generated/**", "**/dist"],
-	},
-	pluginJs.configs.recommended,
-	...tseslint.configs.recommended,
-	pluginReact.configs.flat.recommended,
-	pluginReact.configs.flat["jsx-runtime"],
-	{
-		plugins: {
-			"react-hooks": pluginReactHooks,
-		},
-		rules: pluginReactHooks.configs.recommended.rules,
-	},
-	eslintConfigPrettier,
-	{
-		files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
-		languageOptions: {
-			parserOptions: {
-				projectService: true,
-				tsconfigRootDir: __dirname,
-			},
-		},
-	},
-	{
-		languageOptions: {
-			globals: {
-				...globals.browser,
-			},
-		},
-		settings: {
-			react: {
-				version: "detect",
-			},
-		},
-		rules: {
-			"react/prop-types": "off",
-		},
-	},
+  {
+    ignores: ["generated/**", "**/dist"],
+  },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat["jsx-runtime"],
+  {
+    plugins: {
+      "react-hooks": pluginReactHooks,
+    },
+    rules: pluginReactHooks.configs.recommended.rules,
+  },
+  eslintConfigPrettier,
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
+  },
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+    rules: {
+      "react/prop-types": "off",
+    },
+  },
 ]

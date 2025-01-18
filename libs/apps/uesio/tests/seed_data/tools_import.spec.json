@@ -1,16 +1,16 @@
 {
-	"jobtype": "IMPORT",
-	"collection": "uesio/tests.tool",
-	"filetype": "CSV",
-	"mappings": {
-		"uesio/tests.brand": {
-			"columnname": "brand"
-		},
-		"uesio/tests.category": {
-			"columnname": "category"
-		},
-		"uesio/tests.type": {
-			"columnname": "type"
-		}
-	}
+  "jobtype": "IMPORT",
+  "collection": "uesio/tests.tool",
+  "filetype": "CSV",
+  "mappings": {
+    "uesio/tests.brand": {
+      "columnname": "brand"
+    },
+    "uesio/tests.category": {
+      "columnname": "category"
+    },
+    "uesio/tests.type": {
+      "columnname": "type"
+    }
+  }
 }

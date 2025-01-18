@@ -1,50 +1,50 @@
 [
-	{
-		"uesio/studio.description": "Uesio base functionality",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/core"
-		}
-	},
-	{
-		"uesio/studio.description": "Uesio view builder",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/builder"
-		}
-	},
-	{
-		"uesio/studio.description": "Base uesio components",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/io"
-		}
-	},
-	{
-		"uesio/studio.description": "Tools for building websites",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/sitekit"
-		}
-	},
-	{
-		"uesio/studio.description": "Tools for working with AI",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/aikit"
-		}
-	},
-	{
-		"uesio/studio.description": "Tools for building apps",
-		"uesio/studio.status": "PUBLISHED",
-		"uesio/studio.approved": true,
-		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/appkit"
-		}
-	}
+  {
+    "uesio/studio.description": "Uesio base functionality",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    }
+  },
+  {
+    "uesio/studio.description": "Uesio view builder",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/builder"
+    }
+  },
+  {
+    "uesio/studio.description": "Base uesio components",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/io"
+    }
+  },
+  {
+    "uesio/studio.description": "Tools for building websites",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/sitekit"
+    }
+  },
+  {
+    "uesio/studio.description": "Tools for working with AI",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/aikit"
+    }
+  },
+  {
+    "uesio/studio.description": "Tools for building apps",
+    "uesio/studio.status": "PUBLISHED",
+    "uesio/studio.approved": true,
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/appkit"
+    }
+  }
 ]

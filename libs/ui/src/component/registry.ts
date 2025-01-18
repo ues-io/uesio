@@ -7,29 +7,29 @@ type Registry<T> = Record<string, T>
 const registry: Registry<UC> = {}
 const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
-	{}
+  {}
 
 const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
-	registry[key] = item
+  registry[key] = item
 }
 
 const registerSignals = (
-	key: MetadataKey,
-	signals: Registry<ComponentSignalDescriptor>
+  key: MetadataKey,
+  signals: Registry<ComponentSignalDescriptor>,
 ) => {
-	addToRegistry(componentSignalsRegistry, key, signals)
+  addToRegistry(componentSignalsRegistry, key, signals)
 }
 
 const register = (key: MetadataKey, componentType: UC) => {
-	addToRegistry<UC>(registry, key, componentType)
-	componentType.signals && registerSignals(key, componentType.signals)
+  addToRegistry<UC>(registry, key, componentType)
+  componentType.signals && registerSignals(key, componentType.signals)
 }
 
 const registerUtilityComponent = (
-	key: MetadataKey,
-	componentType: FC<UtilityProps>
+  key: MetadataKey,
+  componentType: FC<UtilityProps>,
 ) => {
-	addToRegistry(utilityRegistry, key, componentType)
+  addToRegistry(utilityRegistry, key, componentType)
 }
 
 const getRuntimeLoader = (key: MetadataKey) => registry[key]
@@ -37,12 +37,12 @@ const getRuntimeLoader = (key: MetadataKey) => registry[key]
 const getUtilityLoader = (key: MetadataKey) => utilityRegistry[key]
 
 const getSignal = (key: string, signal: string) =>
-	componentSignalsRegistry[key]?.[signal]
+  componentSignalsRegistry[key]?.[signal]
 
 export {
-	register,
-	registerUtilityComponent,
-	getRuntimeLoader,
-	getUtilityLoader,
-	getSignal,
+  register,
+  registerUtilityComponent,
+  getRuntimeLoader,
+  getUtilityLoader,
+  getSignal,
 }

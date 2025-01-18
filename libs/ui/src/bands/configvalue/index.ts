@@ -5,25 +5,25 @@ import { RootState } from "../../store/store"
 import { getKey } from "../../metadata/metadata"
 
 const adapter = createEntityAdapter({
-	selectId: getKey<ConfigValueState>,
+  selectId: getKey<ConfigValueState>,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.configvalue)
 
 const selectById = (state: RootState, name: string) =>
-	selectors.selectById(state, name)
+  selectors.selectById(state, name)
 
 const metadataSlice = createSlice({
-	name: "configvalue",
-	initialState: adapter.getInitialState(),
-	reducers: {
-		set: adapter.upsertOne,
-		setMany: adapter.upsertMany,
-	},
+  name: "configvalue",
+  initialState: adapter.getInitialState(),
+  reducers: {
+    set: adapter.upsertOne,
+    setMany: adapter.upsertMany,
+  },
 })
 
 const useConfigValue = (key: string) =>
-	useSelector((state: RootState) => selectors.selectById(state, key))
+  useSelector((state: RootState) => selectors.selectById(state, key))
 
 const useConfigValueKeys = () => useSelector(selectors.selectIds) as string[]
 

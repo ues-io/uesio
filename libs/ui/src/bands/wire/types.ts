@@ -12,52 +12,52 @@ type CollectionKey = MetadataKey | string
 type CollectionFieldKey = MetadataKey | string
 
 type OrderState = {
-	field: MetadataKey
-	desc?: boolean
+  field: MetadataKey
+  desc?: boolean
 }
 
 type PlainWire = {
-	batchid?: string
-	batchnumber?: number
-	changes: Record<string, PlainWireRecord>
-	collection: CollectionKey
-	conditions?: WireConditionState[]
-	order?: OrderState[]
-	data: Record<string, PlainWireRecord>
-	deletes: Record<string, PlainWireRecord>
-	errors?: Record<string, SaveError[]>
-	more?: boolean
-	name: string
-	original: Record<string, PlainWireRecord>
-	query?: boolean
-	create?: boolean
-	preloaded?: boolean
-	view: string
-	defaults?: WireDefault[]
-	events?: WireEvents
-	batchsize?: number
-	requirewriteaccess?: boolean
-	viewOnly?: boolean
-	viewOnlyMetadata?: PlainCollection
-	fields: LoadRequestField[]
-	isLoading?: boolean
-	loadAll?: boolean
-	hasLoadedMetadata?: boolean
-	paramsHash?: string
-	definitionHash?: string
+  batchid?: string
+  batchnumber?: number
+  changes: Record<string, PlainWireRecord>
+  collection: CollectionKey
+  conditions?: WireConditionState[]
+  order?: OrderState[]
+  data: Record<string, PlainWireRecord>
+  deletes: Record<string, PlainWireRecord>
+  errors?: Record<string, SaveError[]>
+  more?: boolean
+  name: string
+  original: Record<string, PlainWireRecord>
+  query?: boolean
+  create?: boolean
+  preloaded?: boolean
+  view: string
+  defaults?: WireDefault[]
+  events?: WireEvents
+  batchsize?: number
+  requirewriteaccess?: boolean
+  viewOnly?: boolean
+  viewOnlyMetadata?: PlainCollection
+  fields: LoadRequestField[]
+  isLoading?: boolean
+  loadAll?: boolean
+  hasLoadedMetadata?: boolean
+  paramsHash?: string
+  definitionHash?: string
 }
 
 type ServerWire = Omit<
-	PlainWire,
-	"changes" | "deletes" | "original" | "data"
+  PlainWire,
+  "changes" | "deletes" | "original" | "data"
 > & {
-	data: PlainWireRecord[]
+  data: PlainWireRecord[]
 }
 
 export type {
-	CollectionKey,
-	CollectionFieldKey,
-	PlainWire,
-	OrderState,
-	ServerWire,
+  CollectionKey,
+  CollectionFieldKey,
+  PlainWire,
+  OrderState,
+  ServerWire,
 }

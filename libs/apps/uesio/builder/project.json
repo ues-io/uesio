@@ -1,41 +1,41 @@
 {
-	"name": "apps-uesio-builder",
-	"$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-	"sourceRoot": "libs/apps/uesio/builder/bundle",
-	"projectType": "library",
-	"generators": {},
-	"targets": {
-		"build": {
-			"executor": "nx:run-commands",
-			"outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
-			"options": {
-				"commands": [
-					"../../../../dist/cli/uesio pack",
-					"npx tsc --noEmit --project ./tsconfig.lib.json",
-					"node ./build/generate-tailwind-classes-index.js"
-				],
-				"cwd": "libs/apps/uesio/builder"
-			}
-		},
-		"watch": {
-			"executor": "nx:run-commands",
-			"options": {
-				"command": "../../../../dist/cli/uesio pack -w",
-				"cwd": "libs/apps/uesio/builder"
-			}
-		},
-		"lint": {
-			"executor": "@nx/eslint:lint"
-		},
-		"test": {
-			"executor": "@nx/jest:jest",
-			"options": {
-				"jestConfig": "libs/apps/uesio/builder/jest.config.js",
-				"passWithNoTests": false
-			},
-			"outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/builder"]
-		}
-	},
-	"tags": [],
-	"implicitDependencies": ["cli", "ui"]
+  "name": "apps-uesio-builder",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/apps/uesio/builder/bundle",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
+      "options": {
+        "commands": [
+          "../../../../dist/cli/uesio pack",
+          "npx tsc --noEmit --project ./tsconfig.lib.json",
+          "node ./build/generate-tailwind-classes-index.js"
+        ],
+        "cwd": "libs/apps/uesio/builder"
+      }
+    },
+    "watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../../dist/cli/uesio pack -w",
+        "cwd": "libs/apps/uesio/builder"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/apps/uesio/builder/jest.config.js",
+        "passWithNoTests": false
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/builder"]
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["cli", "ui"]
 }
