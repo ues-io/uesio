@@ -551,3 +551,8 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 
 1. We're pinning monaco to version 0.50.0 for now because of this [bug](https://github.com/microsoft/monaco-editor/issues/4654)
 2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.
+3. When running `npm install` there are errors related to `inflight@1.0.6`, `abab@2.0.6`, `glob@7.2.3`, `domexception@4.0.0` that all are dependencies of jest and its related tooling. There is a jest@next package (currently v30.0.0-alpha.6) that should address most (and hopefully) all of these. See:
+   - https://github.com/jestjs/jest/issues/15173
+   - https://github.com/jestjs/jest/issues/15236
+   - https://github.com/jestjs/jest/issues/15325
+4. Unable to update to `eslint-config-prettier` v10 due to `@nx/eslint-plugin` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/eslint-plugin/package.json#L29)
