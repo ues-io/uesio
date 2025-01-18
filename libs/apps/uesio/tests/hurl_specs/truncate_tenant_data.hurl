@@ -38,7 +38,7 @@ jsonpath "$.success" == true
 jsonpath "$.error" == ""
 
 # Test truncate API
-POST https://{{host}}:{{port}}}/workspace/uesio/tests/truncatetests/data/truncate
+POST https://{{host}}:{{port}}/workspace/uesio/tests/truncatetests/data/truncate
 {}
 HTTP 200
 [Asserts]

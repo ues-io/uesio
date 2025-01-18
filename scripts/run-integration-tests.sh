@@ -22,10 +22,13 @@ echo "Running tests..."
 
 cd libs/apps/uesio/tests
 
+# TODO: Hurl 5.0 added parallel test execution which is enabled by default.  Currently, hurl tests fail when run in parallel.  For now, forcing
+# sequential execution via --jobs flag but this should be investigated and, assuming possible depending on root cause, changed to not limit parallel execution.
+# See https://github.com/ues-io/uesio/issues/4457
 # Run specs
-hurl --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
+hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
 # Run field condition tests
-hurl --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_fields/*.hurl
+hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_fields/*.hurl
 
 # FYI if you want to view the output of the request made by a specific hurl spec,
 # you can comment out the assertions of the last hurl request made in a hurl file, and then run the spec
