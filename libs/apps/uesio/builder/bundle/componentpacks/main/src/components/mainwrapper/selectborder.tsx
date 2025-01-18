@@ -105,7 +105,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
-  const selectedStyle = styles.shortcut("selected", selectedClasses)
+  const selectedStyle = styles.shortcut(context, "selected", selectedClasses)
 
   const selectedComponentPath = useSelectedComponentPath(context)
 
@@ -130,12 +130,16 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
 
   useEffect(() => {
     prevSelectedChildren.current?.forEach((child) => {
-      child.classList.remove(selectedStyle)
+      selectedStyle.split(" ").forEach((s) => {
+        child.classList.remove(s)
+      })
     })
     prevSelectedChildren.current = selectedChildren
     if (!selectedChildren) return
     selectedChildren.forEach((target) => {
-      target.classList.add(selectedStyle)
+      selectedStyle.split(" ").forEach((s) => {
+        target.classList.add(s)
+      })
     })
   })
 
@@ -166,6 +170,7 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
       offset={8}
       arrow={true}
       classes={classes}
+      portalId="canvas-root"
     >
       <div>
         <div

@@ -23,6 +23,7 @@ interface TooltipProps {
   parentSelector?: string
   matchHeight?: boolean
   arrow?: boolean
+  portalId?: string
 }
 
 const defaultPlacement: Placement[] = ["top", "bottom"]
@@ -54,7 +55,10 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
     placement: props.placement,
     middleware: [
       offset(props.offset),
-      autoPlacement({ allowedPlacements: autoPlacements }),
+      autoPlacement({
+        allowedPlacements: autoPlacements,
+        //boundary: document.querySelector(".uesio-theme") || undefined,
+      }),
       hide(),
       ...(props.matchHeight
         ? [
@@ -87,7 +91,7 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
   return (
-    <FloatingPortal>
+    <FloatingPortal id={props.portalId}>
       <div
         ref={refs.setFloating}
         style={{

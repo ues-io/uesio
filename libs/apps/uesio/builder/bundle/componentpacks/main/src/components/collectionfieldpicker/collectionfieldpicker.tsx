@@ -111,6 +111,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
           offset={8}
           parentSelector="#propertieswrapper"
           matchHeight
+          portalId="builder-root"
         >
           <FieldPicker
             allowReferenceTraversal={allowReferenceTraversal}

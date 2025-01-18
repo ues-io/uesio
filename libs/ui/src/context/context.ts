@@ -478,7 +478,7 @@ class Context {
     get(this.getViewDef(), getAncestorPath(path, 3))
 
   getTheme = () =>
-    themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") || {}
+    themeSelectors.selectById(getCurrentState(), this.getThemeId() || "")
 
   getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 

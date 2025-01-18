@@ -31,11 +31,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
     {
       root: ["overflow-hidden", "h-full", "relative", "bg-white"],
 
-      scrollwrapper: ["overflow-auto", "h-full", "w-full"],
+      scrollwrapper: ["h-full", "w-full"],
 
       outerwrapper: [
         "relative",
-        "overflow-auto",
         "bg-white",
         `w-[${width ? width + "px" : "100%"}]`,
         `h-[${height ? height + "px" : "100%"}]`,
@@ -144,12 +143,14 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
             onDrop={onDrop}
             onClickCapture={onClickCapture}
             onChangeCapture={onChangeCapture}
+            id="canvas-root"
           >
-            {props.children}
+            {/* This cancels the theme scope for the builder */}
+            <div className="uesio-theme">{props.children}</div>
+            <SelectBorder viewdef={viewDef} context={context} />
           </div>
         </div>
       </div>
-      <SelectBorder viewdef={viewDef} context={context} />
       {/*<DebugPanel context={context} />*/}
     </div>
   )

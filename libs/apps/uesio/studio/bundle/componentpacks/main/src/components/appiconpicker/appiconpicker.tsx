@@ -159,7 +159,7 @@ const AppIconPicker: definition.UC<AppIconPickerDefinition> = (props) => {
             <div
               key={index}
               className={styles.process(
-                undefined,
+                context,
                 classes.iconwrapper,
                 isSelected && `border-[${color}]`,
                 isSelected && `text-[${color}]`,

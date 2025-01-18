@@ -36,7 +36,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
     <Tag
       ref={ref}
       className={styles.process(
-        undefined,
+        context,
         classes.root,
         color && `text-[color:${context.mergeString(color)}]`,
         align && `text-${align}`,
