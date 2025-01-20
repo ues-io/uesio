@@ -14,9 +14,9 @@ HTTP 200
 # Verify that the theme is the one specified in the route
 jsonpath "$.theme" == "uesio/tests.christmas"
 jsonpath "$.dependencies.theme" count == 2
-# Since we're in workspace mode, we get the studio theme as well
+# Since we're in workspace mode, we get the builder theme as well
 jsonpath "$.dependencies.theme[0].name" == "default"
-jsonpath "$.dependencies.theme[0].namespace" == "uesio/studio"
+jsonpath "$.dependencies.theme[0].namespace" == "uesio/builder"
 jsonpath "$.dependencies.theme[1].name" == "christmas"
 jsonpath "$.dependencies.theme[1].namespace" == "uesio/tests"
 
@@ -27,11 +27,11 @@ HTTP 200
 # Verify that the theme is uesio/core.default
 jsonpath "$.theme" == "uesio/core.default"
 jsonpath "$.dependencies.theme" count == 2
-# Since we're in workspace mode, we get the studio theme as well
+# Since we're in workspace mode, we get the builder theme as well
 jsonpath "$.dependencies.theme[0].name" == "default"
-jsonpath "$.dependencies.theme[0].namespace" == "uesio/core"
+jsonpath "$.dependencies.theme[0].namespace" == "uesio/builder"
 jsonpath "$.dependencies.theme[1].name" == "default"
-jsonpath "$.dependencies.theme[1].namespace" == "uesio/studio"
+jsonpath "$.dependencies.theme[1].namespace" == "uesio/core"
 
 # Get the workspace id
 POST https://{{host}}:{{port}}/site/wires/load
@@ -89,7 +89,7 @@ HTTP 200
 jsonpath "$.theme" == "uesio/tests.default"
 jsonpath "$.dependencies.theme" count == 2
 jsonpath "$.dependencies.theme[0].name" == "default"
-jsonpath "$.dependencies.theme[0].namespace" == "uesio/studio"
+jsonpath "$.dependencies.theme[0].namespace" == "uesio/builder"
 jsonpath "$.dependencies.theme[1].name" == "default"
 jsonpath "$.dependencies.theme[1].namespace" == "uesio/tests"
 

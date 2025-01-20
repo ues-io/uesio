@@ -201,7 +201,7 @@ const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
 const isThemeContextFrame = (
   frame: ContextFrame,
 ): frame is ThemeContextFrame | RouteContextFrame =>
-  [THEME, ROUTE].includes(frame.type)
+  [THEME].includes(frame.type)
 
 const isRecordContextFrame = (
   frame: ContextFrame,
@@ -219,6 +219,11 @@ const providesRecordContext = (
   frame: ContextFrame,
 ): frame is RecordContextFrame | RecordDataContextFrame =>
   [RECORD, RECORD_DATA].includes(frame.type)
+
+const providesThemeContext = (
+  frame: ContextFrame,
+): frame is ThemeContextFrame | RouteContextFrame =>
+  [THEME, ROUTE].includes(frame.type)
 
 const providesRecordOrMultiRecordContext = (
   frame: ContextFrame,
@@ -385,6 +390,13 @@ class Context {
           wireRecord === undefined || frame.recordData === wireRecord.source,
       )?.index
 
+  removeAllThemeFrames = (): Context =>
+    this.clone(
+      this.stack.filter(
+        (frame): frame is ThemeContextFrame => !isThemeContextFrame(frame),
+      ),
+    )
+
   // Gets either multiple records or a single record depending on the
   // topmost record-having frame in the context.
   getRecords = (wireId?: string) => {
@@ -477,10 +489,21 @@ class Context {
   getParentComponentDef = (path: string) =>
     get(this.getViewDef(), getAncestorPath(path, 3))
 
-  getTheme = () =>
-    themeSelectors.selectById(getCurrentState(), this.getThemeId() || "")
+  getTheme = () => {
+    const themeFrame = this.stack.find(providesThemeContext)
+    if (!themeFrame) return
+    const isScoped = !isRouteContextFrame(themeFrame)
+    const themeData = themeSelectors.selectById(
+      getCurrentState(),
+      themeFrame.theme,
+    )
+    return {
+      ...themeData,
+      isScoped,
+    }
+  }
 
-  getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
+  getThemeId = () => this.stack.find(providesThemeContext)?.theme
 
   getCustomSlotLoader = () => this.slotLoader
 

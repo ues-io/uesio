@@ -81,37 +81,58 @@ const presetAddThemeScope = (scope: string): Preset => {
   }
 }
 
+type StyleEntryCache = {
+  twind: Twind
+  scoped: boolean
+  theme: string
+}
+
 // stylesCache stores a map of themeKey to Twind instance.
-const stylesCache: Record<string, Twind | undefined> = {}
+const stylesCache: Record<string, StyleEntryCache | undefined> = {}
 
 let twMerge: ReturnType<typeof extendTailwindMerge>
 
-const getThemeKey = (themeData: ThemeState | undefined) =>
-  themeData ? `${themeData.namespace}.${themeData.name}` : ""
+const getThemeKey = (themeData: ThemeState) =>
+  `${themeData.namespace}.${themeData.name}`
 
-const getThemeClass = (themeKey: string) =>
+const getThemeCacheKey = (themeData: ThemeState) =>
+  themeData.isScoped ? getThemeKey(themeData) : ""
+
+const getThemeClass = (context: Context) => {
+  const themeData = context.getTheme()
+  if (!themeData) return ""
+  const themeKey = getThemeKey(themeData)
+  return "uesio-theme " + generateThemeClass(themeKey)
+}
+
+const generateThemeClass = (themeKey: string) =>
   themeKey.replace("/", "_").replace(".", "_")
 
-const getActiveStyles = (context: Context) =>
-  stylesCache[getThemeKey(context.getTheme())]
+const getActiveStyles = (context: Context) => {
+  const themeData = context.getTheme()
+  if (!themeData) return undefined
+  const themeCacheKey = getThemeCacheKey(themeData)
+  return stylesCache[themeCacheKey]
+}
 
 const setupStyles = (context: Context) => {
   const themeData = context.getTheme()
-  const themeKey = themeData.namespace + "." + themeData.name
-  const themeClass = getThemeClass(themeKey)
-  // Check if the route theme is different than the context theme.
-  const routeTheme = context.getRoute()?.theme
-  let scope = ""
-  if (routeTheme && routeTheme !== themeKey) {
-    scope = themeClass
+  if (!themeData) return ""
+  const themeCacheKey = getThemeCacheKey(themeData)
+  const themeKey = getThemeKey(themeData)
+  const themeClass = generateThemeClass(themeKey)
+
+  let activeStyles = stylesCache[themeCacheKey]
+
+  if (activeStyles && activeStyles.theme !== themeKey) {
+    activeStyles.twind.destroy()
+    delete stylesCache[themeCacheKey]
+    activeStyles = undefined
   }
-  let activeStyles = getActiveStyles(context)
 
   const themeClasses = "uesio-theme " + themeClass
 
-  if (activeStyles) {
-    return themeClasses
-  }
+  if (activeStyles) return themeClasses
 
   const presets = [
     presetAutoprefix(),
@@ -119,11 +140,11 @@ const setupStyles = (context: Context) => {
     presetContainerQueries(),
   ]
 
-  if (scope) {
-    presets.push(presetAddThemeScope(scope))
+  if (themeData.isScoped) {
+    presets.push(presetAddThemeScope(themeClass))
   }
 
-  stylesCache[themeKey] = twind(
+  const stylesInstance = twind(
     {
       presets,
       hash: false,
@@ -141,7 +162,11 @@ const setupStyles = (context: Context) => {
     },
     getSheet(),
   )
-  activeStyles = stylesCache[themeKey]
+  stylesCache[themeCacheKey] = {
+    twind: stylesInstance,
+    theme: themeKey,
+    scoped: themeData.isScoped,
+  }
 
   twMerge = extendTailwindMerge({
     extend: {
@@ -151,7 +176,7 @@ const setupStyles = (context: Context) => {
     },
   })
 
-  activeStyles(
+  stylesInstance(
     css({
       "@layer base": {
         html: {
@@ -236,7 +261,9 @@ function process(context: Context, ...classes: Class[]) {
   const output = interpolate(classes, [])
   const activeStyles = getActiveStyles(context)
   if (!activeStyles) return ""
-  return activeStyles(twMerge(context ? context?.mergeString(output) : output))
+  return activeStyles.twind(
+    twMerge(context ? context?.mergeString(output) : output),
+  )
 }
 
 function useUtilityStyleTokens<K extends string>(
@@ -272,7 +299,7 @@ function useUtilityStyleTokens<K extends string>(
 
 function getThemeValue(context: Context, key: string) {
   const activeStyles = getActiveStyles(context)
-  return activeStyles?.theme(key) || ""
+  return activeStyles?.twind.theme(key) || ""
 }
 
 function cx(...input: Class[]): string {
@@ -282,7 +309,7 @@ function cx(...input: Class[]): string {
 function shortcut(context: Context, name: string, ...input: Class[]): string {
   const activeStyles = getActiveStyles(context)
   if (!activeStyles) return ""
-  return activeStyles(name + "~(" + interpolate(input) + ")")
+  return activeStyles.twind(name + "~(" + interpolate(input) + ")")
 }
 
 export type { StyleProps, ThemeState }
@@ -296,6 +323,7 @@ export {
   useStyleTokens,
   getVariantTokens,
   getThemeValue,
+  getThemeClass,
   colors,
   hash,
 }
