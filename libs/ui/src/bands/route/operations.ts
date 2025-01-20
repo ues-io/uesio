@@ -12,11 +12,6 @@ import { dispatch } from "../../store/store"
 import { RouteState } from "./types"
 import { nanoid } from "@reduxjs/toolkit"
 
-// Check if we are in a real browser (vs in JSDom)
-const isRealBrowser = Object.getOwnPropertyDescriptor(self, "window")
-  ?.get?.toString()
-  .includes("[native code]")
-
 const redirect = (context: Context, path: string, newTab?: boolean) => {
   const mergedPath = context.mergeString(path)
   if (newTab) {
@@ -185,9 +180,7 @@ const handleNavigateResponse = async (
   dispatchRouteDeps(deps)
 
   // Always scroll to top of view after doing a route navigate
-  if (isRealBrowser) {
-    window.scrollTo(0, 0)
-  }
+  window.scrollTo(0, 0)
 
   return context
 }

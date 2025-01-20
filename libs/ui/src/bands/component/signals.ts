@@ -79,6 +79,46 @@ const getComponentSignalDefinition = () => ({
       }
     }
 
+    const setContext = (newContext: Context) => {
+      context = newContext
+    }
+
+    // This function runs the dispatcher provided on the component signal
+    // handler. There are a few different scenarios depending on what is
+    // returned from the dispatcher.
+    // 1. If the value returned from the dispatcher is a Context object,
+    // we set our signal context to that context.
+    // 2. If the value returned from the dispatcher is a Promise, await
+    // the promise.
+    // 3. If the value returned from the dispatcher is anything else, use
+    // the normal immer "produce" functionality.
+    const runComponentDispatcher =
+      (
+        componentId: string,
+        setContext: (context: Context) => void,
+        setPromise: (promise: Promise<Context>) => void,
+      ) =>
+      (draft: unknown) => {
+        const returnvalue = handler.dispatcher(
+          draft,
+          signal,
+          context,
+          platform,
+          componentId,
+        )
+        // If we returned a context object from our dispatcher,
+        // That means we want to set it as the new context.
+        if (isContextObject(returnvalue)) {
+          setContext(returnvalue)
+          return
+        }
+        if (returnvalue instanceof Promise) {
+          setPromise(returnvalue)
+          return
+        }
+        return returnvalue
+      }
+
     // Loop over all ids that match the target and dispatch
     // to them all
     for (const componentState of componentStates) {
@@ -86,29 +126,15 @@ const getComponentSignalDefinition = () => ({
       dispatch(
         setComponent({
           id: componentState.id,
-          state: produce(componentState.state, (draft) => {
-            const returnvalue = handler.dispatcher(
-              draft,
-              signal,
-              context,
-              platform,
-              componentState.id,
-            )
-            // If we returned a context object from our dispatcher,
-            // That means we want to set it as the new context.
-            if (isContextObject(returnvalue)) {
-              context = returnvalue
-              return
-            }
-            if (returnvalue instanceof Promise) {
-              returnValuePromise = returnvalue
-              return
-            }
-            return returnvalue
-          }),
+          state: produce(
+            componentState.state,
+            runComponentDispatcher(componentState.id, setContext, (promise) => {
+              returnValuePromise = promise
+            }),
+          ),
         }),
       )
-      // Usually returnValuePromise isn't a promise, but in case it is, we should
+      // Usually the value returned from the dispatcher isn't a promise, but in case it is, we should
       // wait for it to resolve here.
       if (returnValuePromise) {
         await Promise.resolve(returnValuePromise)
