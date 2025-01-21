@@ -55,10 +55,7 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
     placement: props.placement,
     middleware: [
       offset(props.offset),
-      autoPlacement({
-        allowedPlacements: autoPlacements,
-        //boundary: document.querySelector(".uesio-theme") || undefined,
-      }),
+      autoPlacement({ allowedPlacements: autoPlacements }),
       hide(),
       ...(props.matchHeight
         ? [
