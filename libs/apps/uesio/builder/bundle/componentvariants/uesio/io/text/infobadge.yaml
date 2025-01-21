@@ -3,12 +3,13 @@ label: Info Badge
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-900
-      - text-slate-400
+      - bg-item_tag_badge_bg_color
+      - text-item_tag_badge_text
       - text-xxs
       - px-2
       - py-1
       - rounded
       - ml-2
       - leading-none
+      - uppercase
 public: true

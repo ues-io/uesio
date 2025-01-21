@@ -21,7 +21,7 @@ interface ConstrainedInputProps {
 
 const StyleDefaults = Object.freeze({
   root: ["grid", "grid-cols-[1fr_max-content]", "gap-1"],
-  button: ["p-1", "text-slate-200"],
+  button: ["p-1", "text-field_badge_action_text_color"],
 })
 
 const ConstrainedInput: definition.UtilityComponent<ConstrainedInputProps> = (

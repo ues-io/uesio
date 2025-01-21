@@ -9,4 +9,40 @@ definition:
     success: "#4caf50"
     fontcolor: slate
     accent: rose
+    panel_bg_color: slate-900
+    panel_header_divider_color: slate-800
+    panel_header_title_color: slate-100
+    panel_header_subtitle_color: slate-200
+    panel_divider_color: slate-700
+    panel_action_button_bg_color: slate-700
+    panel_action_button_text_color: slate-300
+    panel_subsection_text_color: slate-400
+    tab_label_text_color: slate-400
+    tab_label_selected_bg_color: slate-800
+    tab_label_selected_text_color: slate-100
+    searchbox_bg_color: slate-800
+    searchbox_text_color: slate-300
+    searchbox_placeholder_color: slate-400
+    properties_crumb_bg_color: slate-400
+    properties_header_button_bg_color: slate-400
+    properties_header_title_bg_color: slate-400
+    properties_header_subtitle_bg_color: slate-400
+    index_selected_bg_color: slate-800
+    index_selected_divider_color: slate-900
+    index_slot_title_color: slate-400
+    index_component_title_color: slate-300
+    index_visibility_button_color: slate-400
+    index_action_button_color: slate-200
+    item_tag_bg_color: slate-800
+    item_tag_badge_bg_color: slate-900
+    item_tag_badge_text_color: slate-400
+    item_tag_title_color: slate-300
+    item_tag_subtitle_color: slate-400
+    item_tag_action_color: slate-400
+    field_bg_color: slate-800
+    field_text_color: slate-100
+    field_label_text_color: slate-200
+    field_badge_bg_color: slate-700
+    field_badge_text_color: slate-100
+    field_badge_action_text_color: slate-400
 public: true

@@ -5,11 +5,10 @@ definition:
   uesio.styleTokens:
     root:
       - p-2
-      - text-slate-300
       - text-xs
       - uppercase
     title:
-      - text-slate-400
+      - text-panel_subsection_text_color
       - text-base
       - text-xs
       - font-light

@@ -3,7 +3,7 @@ label: Build Title
 definition:
   uesio.styleTokens:
     root:
-      - text-slate-400
+      - text-panel_subsection_text_color
       - m-1
       - p-1
       - text-sm

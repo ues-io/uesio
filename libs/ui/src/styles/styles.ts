@@ -40,6 +40,14 @@ const processThemeColor = (
       },
     ]
   }
+  const valueParts = value.split("-")
+  // If we're a color value plus shade
+  if (valueParts.length === 2) {
+    const hue = valueParts[0]
+    const shade = valueParts[1]
+    return [key, themeFunc("colors." + hue + "." + shade)]
+  }
+
   return [key, value]
 }
 

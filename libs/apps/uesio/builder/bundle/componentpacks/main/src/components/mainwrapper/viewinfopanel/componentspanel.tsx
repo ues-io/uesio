@@ -24,7 +24,6 @@ import {
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
-import ItemTag from "../../../utilities/itemtag/itemtag"
 import {
   getDragEndHandler,
   getDragStartHandler,
@@ -228,7 +227,7 @@ const CategoryBlockStyleDefaults = Object.freeze({
     "-mb-1",
     "text-xs",
     "font-light",
-    "text-slate-500",
+    "text-panel_subsection_text_color",
   ],
 })
 
@@ -276,54 +275,86 @@ const ComponentTag: definition.UtilityComponent<ComponentTagProps> = (
   const { namespace, name, icon, title, description } = componentDef
   if (!namespace) throw new Error("Invalid Property Definition")
   const fullName = `${namespace}.${name}` as metadata.MetadataKey
-  const NamespaceLabel = getUtility("uesio/io.namespacelabel")
-  const IconButton = getUtility("uesio/io.iconbutton")
   const Group = getUtility("uesio/io.group")
+  const IconButton = getUtility("uesio/io.iconbutton")
+  const Tile = getUtility("uesio/io.tile")
+  const TitleBar = getUtility("uesio/io.titlebar")
+  const Text = getUtility("uesio/io.text")
 
   const nsInfo = getBuilderNamespace(context, namespace)
 
   return (
-    <ItemTag description={description} context={context}>
-      <NamespaceLabel
-        metadatakey={namespace}
-        metadatainfo={nsInfo}
-        title={title || name}
+    <Tile
+      description={description}
+      context={context}
+      variant="uesio/appkit.item"
+      styleTokens={{
+        root: ["items-start", "gap-2"],
+      }}
+      avatar={
+        <Text
+          variant="uesio/appkit.avataricon"
+          styleTokens={{
+            root: ["bg-item_tag_badge_bg_color"],
+          }}
+          color={nsInfo?.color || ""}
+          text={icon || nsInfo?.icon || ""}
+          context={context}
+        />
+      }
+    >
+      <TitleBar
         context={context}
-        icon={icon}
+        title={title || name}
+        subtitle={description}
+        variant="uesio/appkit.item"
+        styleTokens={{
+          root: ["py-1", "items-start"],
+          title: ["text-item_tag_title_color"],
+          subtitle: ["text-item_tag_subtitle_color"],
+          actions: ["text-item_tag_action_color"],
+        }}
+        actions={
+          <Group
+            context={context}
+            styleTokens={{
+              root: ["gap-1"],
+            }}
+          >
+            <IconButton
+              icon="info"
+              variant="uesio/builder.hoveraction"
+              label="Component Info"
+              onClick={(e: MouseEvent) => {
+                // Only run once on a double-click
+                if (e.detail > 1) return
+                setSelectedPath(context, new FullPath("component", fullName))
+              }}
+              tooltipPlacement="bottom"
+              tooltipOffset={10}
+              context={context}
+            />
+            <IconButton
+              icon="tab_move"
+              variant="uesio/builder.hoveraction"
+              label="Add to Canvas"
+              onClick={(e: MouseEvent) => {
+                // Only run once on a double-click
+                if (e.detail > 1) return
+                addComponentToCanvas(
+                  context,
+                  fullName,
+                  findClosestSlot(selectedPath, context),
+                )
+              }}
+              tooltipPlacement="bottom"
+              tooltipOffset={10}
+              context={context}
+            />
+          </Group>
+        }
       />
-      <Group context={context}>
-        <IconButton
-          icon="info"
-          variant="uesio/builder.hoveraction"
-          label="Component Info"
-          onClick={(e: MouseEvent) => {
-            // Only run once on a double-click
-            if (e.detail > 1) return
-            setSelectedPath(context, new FullPath("component", fullName))
-          }}
-          tooltipPlacement="bottom"
-          tooltipOffset={10}
-          context={context}
-        />
-        <IconButton
-          icon="tab_move"
-          variant="uesio/builder.hoveraction"
-          label="Add to Canvas"
-          onClick={(e: MouseEvent) => {
-            // Only run once on a double-click
-            if (e.detail > 1) return
-            addComponentToCanvas(
-              context,
-              fullName,
-              findClosestSlot(selectedPath, context),
-            )
-          }}
-          tooltipPlacement="bottom"
-          tooltipOffset={10}
-          context={context}
-        />
-      </Group>
-    </ItemTag>
+    </Tile>
   )
 }
 

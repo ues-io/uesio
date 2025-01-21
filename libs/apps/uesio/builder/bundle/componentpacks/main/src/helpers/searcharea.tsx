@@ -19,9 +19,10 @@ const StyleDefaults = Object.freeze({
     "py-1.5",
     "font-light",
     "rounded",
-    "bg-slate-800",
-    "text-slate-300",
+    "text-searchbox_text_color",
+    "bg-searchbox_bg_color",
     "outline-offset-0",
+    "placeholder:text-searchbox_placeholder_text_color",
   ],
   actions: ["grow-0"],
 })

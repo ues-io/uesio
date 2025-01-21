@@ -46,13 +46,13 @@ type IndexSlotProps = {
 
 const SlotStyleDefaults = Object.freeze({
   slot: ["grid", "border-transparent"],
-  slotSelected: ["rounded-lg", "bg-slate-800", "ml-1"],
+  slotSelected: ["rounded-lg", "bg-index_selected_bg_color", "ml-1", "mb-1"],
   slotIndent: ["ml-2"],
   slotHeader: ["flex", "p-1"],
   slotHeaderSelected: ["p-2"],
   slotTitle: [
     "uppercase",
-    "text-slate-400",
+    "text-index_slot_title_color",
     "font-light",
     "text-[7pt]",
     "grow",
@@ -60,13 +60,18 @@ const SlotStyleDefaults = Object.freeze({
   ],
   slotContent: [],
   slotContentSelected: ["p-1", "empty:hidden"],
-  visibilityIcon: ["text-[8pt]", "text-slate-400", "mr-1", "mt-0.5"],
+  visibilityIcon: [
+    "text-[8pt]",
+    "text-index_visibility_button_color",
+    "mr-1",
+    "mt-0.5",
+  ],
   actionarea: [
     "text-right",
-    "text-slate-200",
+    "text-index_action_button_color",
     "px-1",
     "border-b",
-    "border-slate-900",
+    "border-index_selected_divider_color",
   ],
 })
 

@@ -6,7 +6,8 @@ definition:
       - overflow-hidden
       - select-none
     selected:
-      - bg-slate-800
+      - bg-index_selected_bg_color
       - -ml-1
+      - mb-1
       - rounded-lg
 public: true
