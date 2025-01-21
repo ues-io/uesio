@@ -41,8 +41,6 @@ const BuildBarMainButtons: definition.UtilityComponent = (props) => {
         onClick={() => {
           toggleBuildMode(context, setBuildMode, !!buildMode)
         }}
-        tooltip={`Toggle Preview / Build mode (${metaKey} + U)`}
-        tooltipPlacement="left"
       />
       <Button
         context={context}

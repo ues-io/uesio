@@ -16,10 +16,10 @@ const StyleDefaults = Object.freeze({
     "grid-rows-[1fr_1fr]",
     "gap-2",
     "border-r-8",
-    "border-slate-700",
-    "bg-slate-700",
+    "border-panel_divider_color",
+    "bg-panel_divider_color",
   ],
-  rightpanel: ["col-end-[-2]", "border-r-8", "border-slate-700"],
+  rightpanel: ["col-end-[-2]", "border-r-8", "border-panel_divider_color"],
   canvaswrap: ["grid-rows-1", "auto-rows-auto", "col-end-[-1]"],
   canvaswrapinner: ["relative", "grid", "grid-rows-1", "grid-cols-1"],
 })

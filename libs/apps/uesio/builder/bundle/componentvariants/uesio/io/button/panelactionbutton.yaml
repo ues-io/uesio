@@ -4,12 +4,12 @@ extends: uesio/builder.actionbutton
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-800
+      - bg-panel_action_button_bg_color
       - gap-x-1
       - px-2
       - py-1.5
       - rounded-md
       - hover:bg-slate-700
       - hover:text-slate-100
-      - text-slate-300
+      - text-panel_action_button_text_color
 public: true

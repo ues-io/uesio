@@ -3,6 +3,8 @@ import { api, definition, component, styles } from "@uesio/ui"
 import { getBuilderNamespace } from "../../../api/stateapi"
 
 const StyleDefaults = Object.freeze({
+  root: ["flex", "gap-1"],
+  crumbs: ["grow", "mr-1"],
   linkButton: ["h-8", "rounded", "text-slate-600", "px-2", "text-xs"],
 })
 
@@ -37,12 +39,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
   )
 
   return (
-    <IOGroup
-      styleTokens={{
-        root: ["gap-1"],
-      }}
-      context={context}
-    >
+    <div className={classes.root}>
       <IOImage
         height="32"
         width="32"
@@ -55,9 +52,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
       <IOGroup
         context={context}
         variant="uesio/appkit.breadcrumbs"
-        styleTokens={{
-          root: ["mr-1"],
-        }}
+        className={classes.crumbs}
       >
         <IOButton
           iconText={nsInfo?.icon}
@@ -138,7 +133,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
         />
       </IOGroup>
       <Avatar image="$User{picture}" text="$User{initials}" context={context} />
-    </IOGroup>
+    </div>
   )
 }
 

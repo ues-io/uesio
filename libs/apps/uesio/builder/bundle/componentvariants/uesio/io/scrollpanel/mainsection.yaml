@@ -4,10 +4,10 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
-      - bg-slate-900
+      - bg-panel_bg_color
       - relative
       - overflow-hidden
     header:
       - border-b
-      - border-slate-800
+      - border-panel_header_divider_color
 public: true

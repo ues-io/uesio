@@ -6,9 +6,9 @@ definition:
     root:
       - m-2
       - p-0
-      - text-slate-200
+      - text-field_label_text_color
     label:
       - text-xs
-      - text-slate-200
+      - text-field_label_text_color
       - p-0
 public: true

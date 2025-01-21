@@ -1,4 +1,4 @@
-import { component, definition, metadata, api } from "@uesio/ui"
+import { component, definition, metadata, api, styles } from "@uesio/ui"
 import { getBuilderNamespace } from "../../api/stateapi"
 import ItemTag from "../../utilities/itemtag/itemtag"
 
@@ -6,13 +6,15 @@ const WireTag: definition.UC = (props) => {
   const { context } = props
   const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
   const IconLabel = component.getUtility("uesio/io.iconlabel")
+  const Text = component.getUtility("uesio/io.text")
   const record = context.getRecord()
-  const wireId = record?.getFieldValue("key") as string
+  const wireId = record?.getFieldValue<string>("key")
   const wire = api.wire.useWire(wireId, context)
 
   if (!record) return null
 
-  const collection = record.getFieldValue("value->collection") as string
+  const collection = record.getFieldValue<string>("value->collection")
+  const viewOnly = record.getFieldValue<string>("value->viewOnly")
 
   const nsInfo = getBuilderNamespace(
     context,
@@ -35,21 +37,26 @@ const WireTag: definition.UC = (props) => {
         text={wireId}
         context={context}
       />
-      <NamespaceLabel
-        metadatainfo={nsInfo}
-        context={context}
-        metadatakey={collection}
-        styleTokens={{
-          root: [
-            "text-xs",
-            "bg-slate-900",
-            "rounded",
-            "pl-1",
-            "pr-2",
-            "uppercase",
-          ],
-        }}
-      />
+      {viewOnly ? (
+        <div>
+          <Text
+            text="VIEW ONLY"
+            context={context}
+            variant="uesio/builder.infobadge"
+          />
+        </div>
+      ) : (
+        <NamespaceLabel
+          metadatainfo={nsInfo}
+          context={context}
+          metadatakey={collection}
+          styleTokens={styles.getVariantTokens(
+            "uesio/io.text",
+            "uesio/builder.infobadge",
+            context,
+          )}
+        />
+      )}
     </ItemTag>
   )
 }

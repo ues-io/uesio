@@ -6,10 +6,10 @@ definition:
     root:
       - after:right-1
       - after:text-xs
-      - after:text-slate-100
+      - after:text-field_text_color
     input:
-      - text-slate-100
-      - bg-slate-800
+      - bg-field_bg_color
+      - text-field_text_color
       - border-0
       - text-xs
       - px-1.5

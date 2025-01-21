@@ -13,4 +13,4 @@ definition:
       - p-2
       - pb-1
       - font-light
-      - text-slate-400
+      - text-panel_subsection_text_color

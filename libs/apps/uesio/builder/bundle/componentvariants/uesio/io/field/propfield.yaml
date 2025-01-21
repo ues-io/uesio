@@ -4,12 +4,12 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     input:
-      - text-slate-100
-      - bg-slate-800
+      - bg-field_bg_color
+      - text-field_text_color
       - border-0
       - text-xs
       - px-1.5
       - py-1
     readonly:
-      - bg-slate-800
+      - bg-field_bg_color
 public: true

@@ -4,13 +4,13 @@ definition:
   uesio.styleTokens:
     root:
       - group
-      - text-slate-300
+      - text-item_tag_title_color
       - text-sm
       - rounded
       - overflow-hidden
-      - bg-slate-800
+      - bg-item_tag_bg_color
       - select-none
       - m-2
     selected:
-      - border-[$Theme{color:primary}]
+      - border-primary
 public: true

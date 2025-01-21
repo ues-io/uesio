@@ -16,9 +16,11 @@ definition:
       - text-[8pt]
       - rounded
       - tracking-wide
-      - text-slate-400
+      - text-tab_label_text_color
       - whitespace-nowrap
     tabSelected:
-      - text-white
-      - bg-slate-800
+      - text-tab_label_selected_text_color
+      - bg-tab_label_selected_bg_color
+    menuButton:
+      - text-tab_label_text_color
 public: true
