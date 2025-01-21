@@ -59,26 +59,8 @@ const testCases = [
 ]
 
 describe("addTokenToList", () => {
-  uesioTest.create({
-    route: {
-      dependencies: {
-        theme: [
-          {
-            namespace: "myuser/myapp",
-            name: "mytheme",
-            definition: {},
-          },
-        ],
-      },
-      namespace: "myuser/myapp",
-      path: "/mypath",
-      theme: "myuser/myapp.mytheme",
-      view: "",
-    },
-  })
-  const contextInstance = new context.Context().addThemeFrame(
-    "myuser/myapp.mytheme",
-  )
+  uesioTest.create({})
+  const contextInstance = new context.Context()
   styles.setupStyles(contextInstance)
   testCases.forEach((tc) => {
     test(tc.name, () => {

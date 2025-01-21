@@ -83,9 +83,16 @@ const presetAddThemeScope = (scope: string): Preset => {
 
 type StyleEntryCache = {
   twind: Twind
-  scoped: boolean
   theme: string
 }
+
+const DEFAULT_THEME_DATA = {
+  namespace: "uesio/core" as const,
+  name: "notheme",
+}
+
+const getTheme = (context: Context): ThemeState =>
+  context.getTheme() || DEFAULT_THEME_DATA
 
 // stylesCache stores a map of themeKey to Twind instance.
 const stylesCache: Record<string, StyleEntryCache | undefined> = {}
@@ -99,8 +106,7 @@ const getThemeCacheKey = (themeData: ThemeState) =>
   themeData.isScoped ? getThemeKey(themeData) : ""
 
 const getThemeClass = (context: Context) => {
-  const themeData = context.getTheme()
-  if (!themeData) return ""
+  const themeData = getTheme(context)
   const themeKey = getThemeKey(themeData)
   return "uesio-theme " + generateThemeClass(themeKey)
 }
@@ -109,15 +115,13 @@ const generateThemeClass = (themeKey: string) =>
   themeKey.replace("/", "_").replace(".", "_")
 
 const getActiveStyles = (context: Context) => {
-  const themeData = context.getTheme()
-  if (!themeData) return undefined
+  const themeData = getTheme(context)
   const themeCacheKey = getThemeCacheKey(themeData)
   return stylesCache[themeCacheKey]
 }
 
 const setupStyles = (context: Context) => {
-  const themeData = context.getTheme()
-  if (!themeData) return ""
+  const themeData = getTheme(context)
   const themeCacheKey = getThemeCacheKey(themeData)
   const themeKey = getThemeKey(themeData)
   const themeClass = generateThemeClass(themeKey)
@@ -165,7 +169,6 @@ const setupStyles = (context: Context) => {
   stylesCache[themeCacheKey] = {
     twind: stylesInstance,
     theme: themeKey,
-    scoped: themeData.isScoped,
   }
 
   twMerge = extendTailwindMerge({

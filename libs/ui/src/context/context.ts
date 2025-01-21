@@ -497,6 +497,7 @@ class Context {
       getCurrentState(),
       themeFrame.theme,
     )
+    if (!themeData) return
     return {
       ...themeData,
       isScoped,
