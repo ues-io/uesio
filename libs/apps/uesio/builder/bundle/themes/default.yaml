@@ -9,3 +9,4 @@ definition:
     success: "#4caf50"
     fontcolor: slate
     accent: rose
+public: true

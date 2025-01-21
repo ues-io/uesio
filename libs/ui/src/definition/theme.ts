@@ -9,6 +9,7 @@ type ThemeState = {
     spacing?: number
     palette?: Palette
   }
+  isScoped?: boolean
 } & BundleableBase
 
 export type { Palette, ThemeState, PaletteValue }

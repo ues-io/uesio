@@ -23,6 +23,7 @@ interface TooltipProps {
   parentSelector?: string
   matchHeight?: boolean
   arrow?: boolean
+  portalId?: string
 }
 
 const defaultPlacement: Placement[] = ["top", "bottom"]
@@ -87,7 +88,7 @@ const Popper: definition.UtilityComponent<TooltipProps> = (props) => {
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
   return (
-    <FloatingPortal>
+    <FloatingPortal id={props.portalId}>
       <div
         ref={refs.setFloating}
         style={{

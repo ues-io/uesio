@@ -87,6 +87,7 @@ const IconProp: definition.UC<Definition> = (props) => {
           placement="right-start"
           autoPlacement={["right-start"]}
           parentSelector="#propertieswrapper"
+          portalId="builder-root"
         >
           <PropertiesWrapper
             title="Select an Icon"

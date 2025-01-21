@@ -56,6 +56,7 @@ const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
           styleTokens={{
             popper: ["h-full"],
           }}
+          portalId="builder-root"
         >
           {popperChildren}
         </Popper>

@@ -123,8 +123,8 @@ const Route: UtilityComponent = (props) => {
           path=""
         />
       )}
-      <Progress context={props.context} />
-      <NotificationArea context={props.context} />
+      <Progress context={routeContext} />
+      <NotificationArea context={routeContext} />
     </>
   )
 }

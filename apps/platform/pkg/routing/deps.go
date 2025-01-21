@@ -387,6 +387,32 @@ func InBuildMode(fullViewId string, deps *preload.MetadataMergeData) bool {
 	return deps.Has(buildModeKey)
 }
 
+func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, builderComponentID string) error {
+	// Load in the builder theme.
+	theme, err := meta.NewTheme("uesio/builder.default")
+	if err != nil {
+		return err
+	}
+
+	err = bundle.Load(theme, nil, session.RemoveWorkspaceContext(), nil)
+	if err != nil {
+		return err
+	}
+
+	deps.Theme.AddItem(theme)
+
+	// Get the metadata list
+	appNames := session.GetContextNamespaces()
+	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
+	if err != nil {
+		return err
+	}
+
+	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+
+	return nil
+}
+
 func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
@@ -458,27 +484,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 		deps.FeatureFlag.AddItem(flag)
 	}
 
-	// Load in the studio theme.
-	theme, err := meta.NewTheme("uesio/studio.default")
-	if err != nil {
-		return err
-	}
-
-	err = bundle.Load(theme, nil, session.RemoveWorkspaceContext(), nil)
-	if err != nil {
-		return err
-	}
-
-	deps.Theme.AddItem(theme)
-
-	// Get the metadata list
-	appNames := session.GetContextNamespaces()
-	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
-	if err != nil {
-		return err
-	}
-
-	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
 	deps.Component.AddItem(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
 	deps.Component.AddItem(preload.NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
 
@@ -658,14 +663,10 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 
-		// Get the metadata list
-		appNames := session.GetContextNamespaces()
-		appData, err := datasource.GetAppData(session.Context(), appNames, nil)
+		err = GetWorkspaceModeDeps(deps, session, builderComponentID)
 		if err != nil {
 			return nil, err
 		}
-
-		deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
 		// If there is already an entry for build mode, don't override it, as it may be set to true
 		deps.Component.AddItemIfNotExists(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
 		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, sess.GetStudioAnonSession(session.Context()))

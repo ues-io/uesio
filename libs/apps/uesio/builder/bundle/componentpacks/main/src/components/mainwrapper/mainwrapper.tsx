@@ -34,14 +34,19 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 
   // Add a view frame to our builder context so that our component ids work right
   const builderContext = context
-    .addThemeFrame("uesio/studio.default")
+    .addThemeFrame("uesio/builder.default")
     .addViewFrame({
       view: context.getViewId(),
       viewDef: context.getViewDefId() || "",
     })
+
+  const themeClass = styles.setupStyles(builderContext)
   const canvasContext = context.setCustomSlotLoader(SlotBuilderComponentId)
 
-  const classes = styles.useStyleTokens(StyleDefaults, props)
+  const classes = styles.useStyleTokens(StyleDefaults, {
+    ...props,
+    context: builderContext,
+  })
 
   hooks.useHotKeyCallback(
     "meta+u",
@@ -110,36 +115,40 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
           definition={definition}
           path={path}
         />
-        <BuildBar context={builderContext} />
+        <div className={themeClass}>
+          <BuildBar context={builderContext} />
+        </div>
       </>
     )
   }
 
   return (
-    <Grid className={classes.root} context={context}>
-      <Grid context={context} className={classes.leftpanel}>
-        <PropertiesPanel context={builderContext} />
-        <ViewInfoPanel context={builderContext} />
-      </Grid>
-      {showIndex && (
-        <Grid context={context} className={classes.rightpanel}>
-          <IndexPanel context={builderContext} />
+    <div className={themeClass}>
+      <Grid className={classes.root} context={context} id="builder-root">
+        <Grid context={context} className={classes.leftpanel}>
+          <PropertiesPanel context={builderContext} />
+          <ViewInfoPanel context={builderContext} />
         </Grid>
-      )}
-      <Grid className={classes.canvaswrap} context={builderContext}>
-        <div className={classes.canvaswrapinner}>
-          <Canvas context={builderContext}>
-            <component.ViewArea
-              context={canvasContext}
-              definition={definition}
-              path={path}
-            />
-          </Canvas>
-          <BuildBar context={builderContext} />
-        </div>
-        {showCode && <CodePanel context={builderContext} />}
+        {showIndex && (
+          <Grid context={context} className={classes.rightpanel}>
+            <IndexPanel context={builderContext} />
+          </Grid>
+        )}
+        <Grid className={classes.canvaswrap} context={builderContext}>
+          <div className={classes.canvaswrapinner}>
+            <Canvas context={builderContext}>
+              <component.ViewArea
+                context={canvasContext}
+                definition={definition}
+                path={path}
+              />
+            </Canvas>
+            <BuildBar context={builderContext} />
+          </div>
+          {showCode && <CodePanel context={builderContext} />}
+        </Grid>
       </Grid>
-    </Grid>
+    </div>
   )
 }
 

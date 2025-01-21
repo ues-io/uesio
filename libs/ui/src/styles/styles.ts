@@ -58,72 +58,144 @@ const processThemeColors = (
 }
 
 // This converts all our @media queries to @container queries
-const presetContainerQueries = () =>
-  ({
+const presetContainerQueries = (): Preset => ({
+  finalize: (rule) => {
+    if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
+      rule.r[0] = rule.r[0].replace("@media", "@container")
+    }
+    return rule
+  },
+})
+
+// this adds a @scope prefix to any rule that needs a scope.
+// (Used for themes-within-themes)
+const presetAddThemeScope = (scope: string): Preset => {
+  const scopeRule = `@scope (.${scope}) to (:scope .uesio-theme)`
+  return {
     finalize: (rule) => {
-      if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
-        rule.r[0] = rule.r[0].replace("@media", "@container")
+      if (scope) {
+        rule.r.unshift(scopeRule)
       }
       return rule
     },
-  }) as Preset
+  }
+}
 
-let activeStyles: Twind
-let activeThemeData: ThemeState
+type StyleEntryCache = {
+  twind: Twind
+  theme: string
+}
+
+const DEFAULT_THEME_DATA = {
+  namespace: "uesio/core" as const,
+  name: "notheme",
+}
+
+const getTheme = (context: Context): ThemeState =>
+  context.getTheme() || DEFAULT_THEME_DATA
+
+// stylesCache stores a map of themeKey to Twind instance.
+const stylesCache: Record<string, StyleEntryCache | undefined> = {}
+
 let twMerge: ReturnType<typeof extendTailwindMerge>
 
+const getThemeKey = (themeData: ThemeState) =>
+  `${themeData.namespace}.${themeData.name}`
+
+const getThemeCacheKey = (themeData: ThemeState) =>
+  themeData.isScoped ? getThemeKey(themeData) : ""
+
+const getThemeClass = (context: Context) => {
+  const themeData = getTheme(context)
+  const themeKey = getThemeKey(themeData)
+  return "uesio-theme " + generateThemeClass(themeKey)
+}
+
+const generateThemeClass = (themeKey: string) =>
+  themeKey.replace("/", "_").replace(".", "_")
+
+const getActiveStyles = (context: Context) => {
+  const themeData = getTheme(context)
+  const themeCacheKey = getThemeCacheKey(themeData)
+  return stylesCache[themeCacheKey]
+}
+
 const setupStyles = (context: Context) => {
-  const themeData = context.getTheme()
-  if (
-    !activeStyles ||
-    JSON.stringify(activeThemeData) !== JSON.stringify(themeData)
-  ) {
-    activeStyles?.destroy()
-    activeThemeData = themeData
-    activeStyles = twind(
-      {
-        presets: [
-          presetAutoprefix(),
-          presetTailwind(),
-          presetContainerQueries(),
-        ],
-        hash: false,
-        theme: {
-          extend: {
-            colors: ({ theme }) => processThemeColors(theme, themeData),
-            fontFamily: {
-              sans: ["Roboto", "sans-serif"],
-            },
-            fontSize: {
-              xxs: ["8pt", "16px"],
-            },
-          },
-        },
-      },
-      getSheet(),
-    )
+  const themeData = getTheme(context)
+  const themeCacheKey = getThemeCacheKey(themeData)
+  const themeKey = getThemeKey(themeData)
+  const themeClass = generateThemeClass(themeKey)
 
-    twMerge = extendTailwindMerge({
-      extend: {
-        classGroups: {
-          "font-size": ["xxs"],
-        },
-      },
-    })
+  let activeStyles = stylesCache[themeCacheKey]
 
-    activeStyles(
-      css({
-        "@layer base": {
-          html: {
-            "container-type": "inline-size",
-          },
-        },
-      }),
-    )
+  if (activeStyles && activeStyles.theme !== themeKey) {
+    activeStyles.twind.destroy()
+    delete stylesCache[themeCacheKey]
+    activeStyles = undefined
   }
 
+  const themeClasses = "uesio-theme " + themeClass
+
+  if (activeStyles) return themeClasses
+
+  const presets = [
+    presetAutoprefix(),
+    presetTailwind(),
+    presetContainerQueries(),
+  ]
+
+  if (themeData.isScoped) {
+    presets.push(presetAddThemeScope(themeClass))
+  }
+
+  const stylesInstance = twind(
+    {
+      presets,
+      hash: false,
+      theme: {
+        extend: {
+          colors: ({ theme }) => processThemeColors(theme, themeData),
+          fontFamily: {
+            sans: ["Roboto", "sans-serif"],
+          },
+          fontSize: {
+            xxs: ["8pt", "16px"],
+          },
+        },
+      },
+    },
+    getSheet(),
+  )
+  stylesCache[themeCacheKey] = {
+    twind: stylesInstance,
+    theme: themeKey,
+  }
+
+  twMerge = extendTailwindMerge({
+    extend: {
+      classGroups: {
+        "font-size": ["xxs"],
+      },
+    },
+  })
+
+  stylesInstance(
+    css({
+      "@layer base": {
+        html: {
+          "container-type": "inline-size",
+        },
+        [".uesio-theme"]: {
+          display: "contents",
+        },
+      },
+    }),
+  )
+
   // We need to process the style classes we put on the root element in index.gohtml
-  process(undefined, "h-screen overflow-auto hidden contents")
+  process(context, "h-screen overflow-auto hidden contents")
+
+  return themeClasses
 }
 
 export interface StyleDefinition {
@@ -156,38 +228,45 @@ function useStyleTokens<K extends string>(
 }
 
 function getVariantDefinition(
-  props: UtilityProps,
   componentType: MetadataKey | undefined,
+  variantKey: MetadataKey | undefined,
+  context: Context,
 ) {
   if (!componentType) return undefined
 
   const [variantComponentType, variantName] = parseVariantName(
-    props.variant,
+    variantKey,
     componentType,
   )
 
   if (!variantComponentType || !variantName) return undefined
 
-  const variant = props.context.getComponentVariant(
-    variantComponentType,
-    variantName,
-  )
+  const variant = context.getComponentVariant(variantComponentType, variantName)
   if (!variant) return undefined
-  return getDefinitionFromVariant(variant, props.context)
+  return getDefinitionFromVariant(variant, context)
 }
 
 function getVariantTokens(
-  props: UtilityProps,
   componentType: MetadataKey | undefined,
+  variantKey: MetadataKey | undefined,
+  context: Context,
 ) {
-  const variantDefinition = getVariantDefinition(props, componentType)
+  const variantDefinition = getVariantDefinition(
+    componentType,
+    variantKey,
+    context,
+  )
   if (!variantDefinition) return {}
   return variantDefinition?.[STYLE_TOKENS] as Record<string, string[]>
 }
 
-function process(context: Context | undefined, ...classes: Class[]) {
+function process(context: Context, ...classes: Class[]) {
   const output = interpolate(classes, [])
-  return activeStyles(twMerge(context ? context?.mergeString(output) : output))
+  const activeStyles = getActiveStyles(context)
+  if (!activeStyles) return ""
+  return activeStyles.twind(
+    twMerge(context ? context?.mergeString(output) : output),
+  )
 }
 
 function useUtilityStyleTokens<K extends string>(
@@ -195,7 +274,11 @@ function useUtilityStyleTokens<K extends string>(
   props: UtilityProps,
   defaultVariantComponentType?: MetadataKey,
 ) {
-  const variantTokens = getVariantTokens(props, defaultVariantComponentType)
+  const variantTokens = getVariantTokens(
+    defaultVariantComponentType,
+    props.variant,
+    props.context,
+  )
   const inlineTokens = props.styleTokens
 
   return Object.entries(defaults).reduce(
@@ -218,15 +301,18 @@ function useUtilityStyleTokens<K extends string>(
 }
 
 function getThemeValue(context: Context, key: string) {
-  return activeStyles?.theme(key) || ""
+  const activeStyles = getActiveStyles(context)
+  return activeStyles?.twind.theme(key) || ""
 }
 
 function cx(...input: Class[]): string {
   return twMerge?.(interpolate(input)) || ""
 }
 
-function shortcut(name: string, ...input: Class[]): string {
-  return activeStyles(name + "~(" + interpolate(input) + ")")
+function shortcut(context: Context, name: string, ...input: Class[]): string {
+  const activeStyles = getActiveStyles(context)
+  if (!activeStyles) return ""
+  return activeStyles.twind(name + "~(" + interpolate(input) + ")")
 }
 
 export type { StyleProps, ThemeState }
@@ -238,7 +324,9 @@ export {
   setupStyles,
   useUtilityStyleTokens,
   useStyleTokens,
+  getVariantTokens,
   getThemeValue,
+  getThemeClass,
   colors,
   hash,
 }
