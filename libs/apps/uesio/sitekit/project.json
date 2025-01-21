@@ -24,7 +24,7 @@
       }
     },
     "lint": {
-      "executor": "nx:noop"
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
