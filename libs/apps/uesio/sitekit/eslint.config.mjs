@@ -7,7 +7,7 @@ export default [
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     languageOptions: {
       parserOptions: {
-        project: ["libs/apps/uesio/sitekit/tsconfig.*?.json"]
+        project: ["libs/apps/uesio/sitekit/tsconfig.*?.json"],
       },
     },
     rules: {},
