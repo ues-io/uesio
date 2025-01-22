@@ -193,9 +193,6 @@ const setupStyles = (context: Context) => {
         html: {
           "container-type": "inline-size",
         },
-        ".uesio-theme": {
-          display: "contents",
-        },
       },
     }),
   )

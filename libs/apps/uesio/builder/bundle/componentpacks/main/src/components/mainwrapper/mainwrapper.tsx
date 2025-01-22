@@ -8,6 +8,7 @@ import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
 import CodePanel from "./codepanel"
 import { toggleBuildMode } from "../../helpers/buildmode"
 import BuildBar from "./buildbar/buildbar"
+import { ReactNode } from "react"
 
 const StyleDefaults = Object.freeze({
   root: ["h-full", "grid-cols-[1fr]", "auto-cols-auto", "grid-rows-[100%]"],
@@ -23,6 +24,22 @@ const StyleDefaults = Object.freeze({
   canvaswrap: ["grid-rows-1", "auto-rows-auto", "col-end-[-1]"],
   canvaswrapinner: ["relative", "grid", "grid-rows-1", "grid-cols-1"],
 })
+
+type ThemeWrapperProps = {
+  themeClass: string
+  children?: ReactNode
+}
+
+const ThemeWrapper = (props: ThemeWrapperProps) => (
+  <div
+    className={props.themeClass}
+    style={{
+      display: "contents",
+    }}
+  >
+    {props.children}
+  </div>
+)
 
 const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
   props,
@@ -115,15 +132,15 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
           definition={definition}
           path={path}
         />
-        <div className={themeClass}>
+        <ThemeWrapper themeClass={themeClass}>
           <BuildBar context={builderContext} />
-        </div>
+        </ThemeWrapper>
       </>
     )
   }
 
   return (
-    <div className={themeClass}>
+    <ThemeWrapper themeClass={themeClass}>
       <Grid className={classes.root} context={context} id="builder-root">
         <Grid context={context} className={classes.leftpanel}>
           <PropertiesPanel context={builderContext} />
@@ -148,7 +165,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
           {showCode && <CodePanel context={builderContext} />}
         </Grid>
       </Grid>
-    </div>
+    </ThemeWrapper>
   )
 }
 
