@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   bot.runGenerator("uesio/core", "route", {
     name: "login",
     path: "login",

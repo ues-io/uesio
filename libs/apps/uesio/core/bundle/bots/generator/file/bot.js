@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   const files = bot.params.get("files")
   const path = bot.params.get("path")

@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const type = bot.params.get("type")
   const route = bot.params.get("route")
   const collection = bot.params.get("collection")

@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const appName = bot.getAppName()
   const instructions = bot.params.get("instructions")
 

@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   function getDefinition(template, parameters) {
     const params = parameters.reduce((prev, key) => {
       const value = bot.params.get(key)

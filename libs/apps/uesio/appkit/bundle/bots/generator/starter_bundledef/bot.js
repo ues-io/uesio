@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   bot.generateFile(
     "bundle.yaml",
     {

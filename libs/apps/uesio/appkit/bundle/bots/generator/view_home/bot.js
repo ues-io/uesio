@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   const definition = bot.mergeYamlTemplate(
     {

@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const fullCollectionName = bot.params.get("collection")
   const fieldIds = bot.params.get("fields")
 

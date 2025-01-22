@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   const componentKey = bot.params.get("component")
   const parts = componentKey.split(".")

@@ -1,8 +1,6 @@
 import { AfterSaveBotApi, InsertApi, FieldValue } from "@uesio/bots"
 
-// @ts-expect-error -- TODO: why is this not default export?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: why is this not default export?
-function afterbundlelisting(bot: AfterSaveBotApi) {
+export default function afterbundlelisting(bot: AfterSaveBotApi) {
   const historyChanges: Record<string, FieldValue>[] = []
 
   const getHistoryItem = (change: InsertApi) => {

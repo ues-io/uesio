@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   const label = bot.params.get("label")
   const pluralLabel = bot.params.get("pluralLabel")

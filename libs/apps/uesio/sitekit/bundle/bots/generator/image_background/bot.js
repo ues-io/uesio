@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const description = bot.params.get("description")
   const name = bot.params.get("name")
   const samples = bot.params.get("samples")

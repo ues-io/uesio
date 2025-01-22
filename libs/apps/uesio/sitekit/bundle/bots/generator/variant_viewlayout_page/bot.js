@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   const backgroundFile = bot.params.get("backgroundFile")
   const backgroundFilePath = bot.params.get("backgroundFilePath")

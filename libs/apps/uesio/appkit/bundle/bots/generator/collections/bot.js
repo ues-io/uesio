@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
   const appInfo = bot.getApp()
   const appFullName = bot.getAppName()

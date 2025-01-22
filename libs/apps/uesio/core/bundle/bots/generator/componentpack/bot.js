@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   bot.generateYamlFile(
     `componentpacks/${name}/pack.yaml`,

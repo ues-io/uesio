@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   const categories = bot.params.get("categories")
   const logoFile = bot.params.get("logoFile")

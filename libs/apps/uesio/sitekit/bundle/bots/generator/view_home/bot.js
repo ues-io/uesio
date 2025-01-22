@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   const tagline = bot.params.get("tagline")
   const taglineSub = bot.params.get("tagline_sub")

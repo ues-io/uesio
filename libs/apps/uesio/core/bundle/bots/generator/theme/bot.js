@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   const primary = bot.params.get("primary")
   const secondary = bot.params.get("secondary")

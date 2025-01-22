@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const collection = bot.params.get("collection")
   const collectionParts = collection?.split(".")
   const collectionName = collectionParts[1]

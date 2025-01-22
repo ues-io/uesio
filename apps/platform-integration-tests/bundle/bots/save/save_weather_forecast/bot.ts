@@ -18,9 +18,7 @@ type BotResult = {
   params?: Record<string, unknown>
 }
 
-// @ts-expect-error -- bot entry point
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- bot entry point
-function save_weather_forecast(bot: SaveBotApi) {
+export default function save_weather_forecast(bot: SaveBotApi) {
   const result = bot.http.request({
     method: "POST",
     url: `${bot

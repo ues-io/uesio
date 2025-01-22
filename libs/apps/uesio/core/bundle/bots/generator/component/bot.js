@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const pack = bot.params.get("pack")
   const name = bot.params.get("name")
   const type = bot.params.get("type")

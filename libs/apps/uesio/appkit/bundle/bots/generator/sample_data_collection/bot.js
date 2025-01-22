@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const collection = bot.params.get("collection")
   const instructions = bot.params.get("instructions")
 

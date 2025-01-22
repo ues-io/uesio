@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const doSampleData = bot.params.get("use_ai_for_sample_data")
   if (doSampleData && doSampleData !== "false") {
     bot.runGenerator("uesio/appkit", "sample_data", {

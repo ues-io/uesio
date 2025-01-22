@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const modelID = "stability.stable-image-ultra-v1:0"
   const prompt = bot.params.get("prompt")
   const name = bot.params.get("name")

@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const contextApp = bot.getAppName()
   const params = bot.params.getAll()
   // Strip off the context app name from the bot key

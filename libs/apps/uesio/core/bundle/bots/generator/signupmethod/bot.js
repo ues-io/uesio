@@ -1,4 +1,4 @@
-function generate(bot) {
+function run(bot) {
   const name = bot.params.get("name")
   const authSource = bot.params.get("authSource") || ""
   const profile = bot.params.get("profile") || ""
