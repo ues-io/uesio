@@ -13,7 +13,6 @@
 /.vscode
 package-lock.json
 package.json
-nx.json
 workspace.json
 **/*.template.yaml
 **/*.template.ts

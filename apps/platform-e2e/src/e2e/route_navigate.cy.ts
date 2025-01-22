@@ -92,7 +92,8 @@ describe("route/NAVIGATE and route/NAVIGATE_TO_ROUTE", () => {
         `/app/${username}/${appName}/workspace/${workspaceName}/routes/${username}/${appName}/view_with_single_optional_param`,
       )
       cy.clickButton("preview-route")
-      cy.get("input[value='false']").clear().type("true")
+      cy.get("input[value='false']").clear()
+      cy.get("input[value='']").type("true")
       cy.get("#launch-preview").click()
       cy.url().should("include", "view_with_single_optional_param?show=true")
     })

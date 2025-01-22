@@ -19,13 +19,13 @@ npx tsc --noEmit --project ./tsconfig.lib.json
 # Generate JSON Schema for TS types that we want to validate server-side
 npx ts-json-schema-generator -j extended \
     --path "src/definition/definition.ts" \
-    --tsconfig "../../tsconfig.json" \
+    --tsconfig "./tsconfig.lib.json" \
     --type 'ViewDefinition' \
     --no-type-check \
     -o ../../dist/ui/types/metadata/view/viewDefinition.schema.json
 npx ts-json-schema-generator -j extended \
     --path "src/definition/definition.ts" \
-    --tsconfig "../../tsconfig.json" \
+    --tsconfig "./tsconfig.lib.json" \
     --type 'ViewMetadata' \
     --no-type-check \
     -o ../../dist/ui/types/metadata/view/view.schema.json
