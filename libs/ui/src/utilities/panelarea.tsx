@@ -54,34 +54,31 @@ const DynamicPanel: UtilityComponent<DynamicPanelProps> = ({
 
 const PanelArea: UtilityComponent = (props) => {
   const panels = usePanels()
-  return (
-    <>
-      {panels &&
-        panels.map((panel) => {
-          if (!panel.context) return null
-          const newContext = props.context.clone(panel.context)
-          if (panel.definition) {
-            return (
-              <DynamicPanel
-                key={panel.id}
-                context={newContext}
-                panelId={panel.id}
-                definition={panel.definition}
-                closed={!!panel.closed}
-              />
-            )
-          }
+  return panels && panels.length
+    ? panels.map((panel) => {
+        if (!panel.context) return null
+        const newContext = props.context.clone(panel.context)
+        if (panel.definition) {
           return (
-            <Panel
+            <DynamicPanel
               key={panel.id}
               context={newContext}
               panelId={panel.id}
+              definition={panel.definition}
               closed={!!panel.closed}
             />
           )
-        })}
-    </>
-  )
+        }
+        return (
+          <Panel
+            key={panel.id}
+            context={newContext}
+            panelId={panel.id}
+            closed={!!panel.closed}
+          />
+        )
+      })
+    : null
 }
 
 export default PanelArea

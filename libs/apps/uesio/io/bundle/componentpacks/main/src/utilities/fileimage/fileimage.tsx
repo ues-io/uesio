@@ -72,6 +72,7 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
         </>
       )}
       {fileInfo ? (
+        // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
         <img className={classes.image} src={fileInfo.url} />
       ) : (
         <div className={classes.nofile}>

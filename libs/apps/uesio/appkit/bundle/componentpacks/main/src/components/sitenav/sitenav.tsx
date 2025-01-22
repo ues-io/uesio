@@ -60,7 +60,7 @@ const SiteNav: definition.UC<SiteNavDefinition> = (props) => {
 
             return {
               "uesio/appkit.icontile": {
-                ["uesio.id"]: primaryAssignment.path,
+                "uesio.id": primaryAssignment.path,
                 selectedid: selected ? primaryAssignment.path : "",
                 tileVariant: definition.tileVariant || "uesio/io.nav",
                 title: primaryAssignment.label,

@@ -194,7 +194,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
         componentType="uesio/io.searchbox"
         definition={{
           id: searchboxId,
-          ["uesio.variant"]: "uesio/appkit.main",
+          "uesio.variant": "uesio/appkit.main",
           wire: wireId,
           searchFields: getSearchFieldIds(collectionMetadata),
           focusOnRender: true,
@@ -206,7 +206,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
         componentType="uesio/io.table"
         definition={{
           id: tableId,
-          ["uesio.variant"]: "uesio/appkit.main",
+          "uesio.variant": "uesio/appkit.main",
           wire: wireId,
           mode: "EDIT",
           rownumbers: true,

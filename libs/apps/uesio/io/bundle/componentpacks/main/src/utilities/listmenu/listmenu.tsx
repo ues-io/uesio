@@ -172,7 +172,7 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
                       ref={(node) => {
                         listRef.current[index] = node
                       }}
-                      role="option"
+                      aria-selected={activeIndex === index}
                       {...getItemProps({
                         // Handle pointer select.
                         onClick(event) {

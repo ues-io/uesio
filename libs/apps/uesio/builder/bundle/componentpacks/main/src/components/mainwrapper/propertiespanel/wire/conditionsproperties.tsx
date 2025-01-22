@@ -716,56 +716,54 @@ const ConditionsProperties: definition.UC = (props) => {
   }
 
   return (
-    <>
-      <ListPropertyUtility
-        context={context}
-        path={conditionsPath}
-        actions={[
-          {
-            label: "Add Group",
-            action: () => {
-              add(
-                context,
-                conditionsPath.addLocal(`${items?.length || 0}`),
-                defaultConditionGroupDef,
-              )
-            },
+    <ListPropertyUtility
+      context={context}
+      path={conditionsPath}
+      actions={[
+        {
+          label: "Add Group",
+          action: () => {
+            add(
+              context,
+              conditionsPath.addLocal(`${items?.length || 0}`),
+              defaultConditionGroupDef,
+            )
           },
-          {
-            label: "Add Condition",
-            action: () => {
-              let targetPath = conditionsPath
-              let conditionsArray = items
-              // If the selected path is a Group, add the condition to the group
-              if (
-                (get(context, selectedPath) as wire.WireConditionState)
-                  ?.type === "GROUP"
-              ) {
-                targetPath = selectedPath.addLocal("conditions")
-                conditionsArray = get(
-                  context,
-                  targetPath,
-                ) as wire.WireConditionState[]
-              }
-              add(
+        },
+        {
+          label: "Add Condition",
+          action: () => {
+            let targetPath = conditionsPath
+            let conditionsArray = items
+            // If the selected path is a Group, add the condition to the group
+            if (
+              (get(context, selectedPath) as wire.WireConditionState)?.type ===
+              "GROUP"
+            ) {
+              targetPath = selectedPath.addLocal("conditions")
+              conditionsArray = get(
                 context,
-                targetPath.addLocal(`${conditionsArray?.length || 0}`),
-                defaultConditionDef,
-              )
-            },
+                targetPath,
+              ) as wire.WireConditionState[]
+            }
+            add(
+              context,
+              targetPath.addLocal(`${conditionsArray?.length || 0}`),
+              defaultConditionDef,
+            )
           },
-        ]}
-        items={items}
-        itemProperties={getItemPropertiesFunction(
-          context,
-          conditionsPath,
-          wireName || "",
-        )}
-        itemDisplayTemplate={getConditionTitle}
-        itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
-        itemChildren={getWireConditionItemsChildrenFunction(wireName || "")}
-      />
-    </>
+        },
+      ]}
+      items={items}
+      itemProperties={getItemPropertiesFunction(
+        context,
+        conditionsPath,
+        wireName || "",
+      )}
+      itemDisplayTemplate={getConditionTitle}
+      itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
+      itemChildren={getWireConditionItemsChildrenFunction(wireName || "")}
+    />
   )
 }
 

@@ -127,7 +127,7 @@ const SuggestedFields: definition.UC<ComponentDefinition> = (props) => {
     context,
     definition: {
       collectionWire: collectionWireName,
-      collectionId: collectionId,
+      collectionId,
       fieldWire: fieldWireName,
       targetTableId,
     },

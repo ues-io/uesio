@@ -22,6 +22,7 @@ const Link: definition.UtilityComponent<LinkProps> = (props) => {
         onClick && onClick()
       }}
       target={newTab ? "_blank" : undefined}
+      rel={newTab ? "noreferrer" : undefined}
       className={classes.root}
     >
       {text}

@@ -58,19 +58,15 @@ const ReferenceGroupField: definition.UtilityComponent<
   const value = record.getFieldValue<wire.PlainWireRecord[]>(fieldId)
 
   if (components) {
-    return (
-      <>
-        {value?.map((item, index) => (
-          <component.Slot
-            key={index}
-            definition={options}
-            listName="components"
-            path={`${path}["referencegroup"]["${index}"]`}
-            context={context.addRecordDataFrame(item)}
-          />
-        ))}
-      </>
-    )
+    return value?.map((item, index) => (
+      <component.Slot
+        key={index}
+        definition={options}
+        listName="components"
+        path={`${path}["referencegroup"]["${index}"]`}
+        context={context.addRecordDataFrame(item)}
+      />
+    ))
   }
 
   return (

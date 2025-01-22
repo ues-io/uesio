@@ -473,7 +473,7 @@ class Context {
 
   getViewId = () => {
     const frame = this.stack.find(hasViewContext)
-    if (!frame || !frame.view) throw "No View frame found in context"
+    if (!frame || !frame.view) throw new Error("No View frame found in context")
     return frame.view
   }
 
