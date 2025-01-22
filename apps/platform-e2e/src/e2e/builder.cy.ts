@@ -163,9 +163,8 @@ describe("Uesio Builder Tests", () => {
       cy.get('[id*=":uesio/io.tile:views"]').click()
       cy.title().should("eq", "Views")
       cy.url().should("contain", `${workspaceBasePath}/views`)
-      cy.getByIdFragment("button", "new-view")
-        .scrollIntoView()
-        .should("be.visible")
+      cy.getByIdFragment("button", "new-view").scrollIntoView()
+      cy.getByIdFragment("button", "new-view").should("be.visible")
       // Click the new view button
       cy.clickButton("new-view")
       // Fill out the form to create a new view
@@ -209,7 +208,8 @@ describe("Uesio Builder Tests", () => {
       )
 
       // Search for button component
-      cy.get("#builder-components-search").clear().type("box")
+      cy.get("#builder-components-search").clear()
+      cy.get("#builder-components-search").type("box")
 
       // Now test doubleclicking
       getComponentBankElement("component", "uesio/io.box").dblclick()
@@ -254,7 +254,8 @@ describe("Uesio Builder Tests", () => {
       )
 
       // Search for button component
-      cy.get("#builder-components-search").clear().type("button")
+      cy.get("#builder-components-search").clear()
+      cy.get("#builder-components-search").type("button")
 
       // Now test doubleclicking a button
       // (This is different than io.box because buttons don't have slots)
@@ -382,6 +383,7 @@ describe("Uesio Builder Tests", () => {
       cy.url().should("contain", `/edit`)
       cy.title().should("eq", `Edit: ${viewName}`)
       // Wait for the schema definitions to load
+      // eslint-disable-next-line cypress/no-unnecessary-waiting -- TODO: Eliminate arbitrary wait
       cy.wait(1000)
     })
   })

@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import { getBaseUrl, getWorkspaceBasePath } from "../support/paths"
+import type { SinonStub } from "cypress/types/sinon"
 
 describe("OAuth 2 Authorization Code flow", () => {
   // Use the tests app and dev workspace, which will exist if Integration Tests have been run
@@ -51,8 +52,9 @@ describe("OAuth 2 Authorization Code flow", () => {
       cy.window().its("open").should("be.called")
       cy.get("@open").should("have.been.calledOnce")
       cy.get("@openFunc").then((func) => {
-        const theFunc = func as unknown as sinon.SinonStub
-        expect(theFunc).to.have.been.calledOnce
+        const theFunc = func as unknown as SinonStub
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        expect(func).to.have.been.calledOnce
         const [url, queryString] = theFunc.firstCall.args[0].split("?")
         cy.log("url", url)
         // Verify that the URL is correct

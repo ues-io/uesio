@@ -1,60 +1,63 @@
 {
-	"defaultProject": "cli",
-	"$schema": "./node_modules/nx/schemas/nx-schema.json",
-	"targetDefaults": {
-		"build": {
-			"dependsOn": ["^build"],
-			"cache": true
-		},
-		"lint": {
-			"cache": true
-		},
-		"test": {
-			"cache": true
-		},
-		"@nx/jest:jest": {
-			"cache": true,
-			"inputs": [
-				"default",
-				"^production",
-				"{workspaceRoot}/jest.preset.js"
-			],
-			"options": {
-				"passWithNoTests": true
-			},
-			"configurations": {
-				"ci": {
-					"ci": true,
-					"codeCoverage": true
-				}
-			}
-		},
-		"@nx/eslint:lint": {
-			"cache": true,
-			"inputs": [
-				"default",
-				"{workspaceRoot}/tools/eslint-rules/**/*",
-				"{workspaceRoot}/eslint.config.mjs",
-				"{workspaceRoot}/eslint.config.cjs"
-			]
-		}
-	},
-	"namedInputs": {
-		"default": ["{projectRoot}/**/*", "sharedGlobals"],
-		"sharedGlobals": [
-			"{workspaceRoot}/workspace.json",
-			"{workspaceRoot}/tsconfig.base.json",
-			"{workspaceRoot}/nx.json"
-		],
-		"production": [
-			"default",
-			"!{projectRoot}/src/test-setup.[jt]s",
-			"!{projectRoot}/eslint.config.mjs",
-			"!{projectRoot}/eslint.config.cjs"
-		]
-	},
-	"useDaemonProcess": false,
-	"parallel": 5,
-	"useInferencePlugins": false,
-	"defaultBase": "master"
+  "defaultProject": "cli",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "@nx/jest:jest": {
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/eslint:lint": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/tools/eslint-rules/**/*",
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/eslint.config.cjs"
+      ]
+    },
+    "e2e": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": [
+      "{workspaceRoot}/workspace.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/nx.json"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/eslint.config.cjs",
+      "!{projectRoot}/cypress/**/*",
+      "!{projectRoot}/**/*.cy.[jt]s?(x)",
+      "!{projectRoot}/cypress.config.[jt]s"
+    ]
+  },
+  "useDaemonProcess": false,
+  "parallel": 5,
+  "useInferencePlugins": false,
+  "defaultBase": "master"
 }

@@ -31,9 +31,8 @@ describe("Uesio Sanity Smoke Tests", () => {
       cy.get('[id*=":uesio/io.tile:collections"]').click()
       cy.title().should("eq", "Collections")
       cy.url().should("contain", `${workspaceBasePath}/collections`)
-      cy.getByIdFragment("button", "new-collection")
-        .scrollIntoView()
-        .should("be.visible")
+      cy.getByIdFragment("button", "new-collection").scrollIntoView()
+      cy.getByIdFragment("button", "new-collection").should("be.visible")
       // Click the new collection button
       cy.clickButton("new-collection")
       // Fill out the form to create a new collection
@@ -72,6 +71,7 @@ describe("Uesio Sanity Smoke Tests", () => {
       cy.changeSelectValue("new-field-type", "CHECKBOX")
       cy.clickButton("save-field-and-add-another")
       //Save takes time so this was to fast
+      // eslint-disable-next-line cypress/no-unnecessary-waiting -- TODO: Eliminate arbitrary wait
       cy.wait(500)
       // Create a NUMBER field
       cy.typeInInput("new-field-name", "estimated_population")
@@ -106,7 +106,8 @@ describe("Uesio Sanity Smoke Tests", () => {
         "Is Extinct",
       )
       // Search the table to find one field
-      cy.get("input[type=search]").scrollIntoView().type("ext")
+      cy.get("input[type=search]").scrollIntoView()
+      cy.get("input[type=search]").type("ext")
       // verify that only one result is returned
       cy.get('table[id$="fields"]>tbody')
         .children("tr")
@@ -120,7 +121,8 @@ describe("Uesio Sanity Smoke Tests", () => {
         "Is Extinct",
       )
       // Clear the search to verify that both results come back
-      cy.get("input[type=search]").scrollIntoView().clear()
+      cy.get("input[type=search]").scrollIntoView()
+      cy.get("input[type=search]").clear()
       cy.get('table[id$="fields"]>tbody')
         .children("tr")
         .should("have.length", 2)
