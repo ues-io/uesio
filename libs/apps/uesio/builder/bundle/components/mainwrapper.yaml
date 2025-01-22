@@ -5,6 +5,7 @@ components:
   - uesio/appkit.icontile
 variants:
   - uesio/io.tile:uesio/appkit.breadcrumb
+  - uesio/io.tile:uesio/appkit.item
   - uesio/io.group:uesio/appkit.breadcrumbs
   - uesio/io.button:uesio/builder.actionbutton
   - uesio/io.button:uesio/builder.buildtitle
@@ -25,6 +26,7 @@ variants:
   - uesio/io.selectfield:uesio/builder.propfield
   - uesio/io.tablabels:uesio/builder.mainsection
   - uesio/io.text:uesio/builder.infobadge
+  - uesio/io.text:uesio/appkit.avataricon
   - uesio/io.tile:uesio/appkit.apptag
   - uesio/io.tile:uesio/builder.indextag
   - uesio/io.tile:uesio/builder.propnodetag
