@@ -49,9 +49,9 @@ export default [
     },
   },
   {
-    files: ["**/bundle/bots/**/*.js",],
+    files: ["**/bundle/bots/**/*.js"],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
     },
-  }
+  },
 ]
