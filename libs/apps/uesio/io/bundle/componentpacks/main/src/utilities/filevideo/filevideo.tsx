@@ -64,12 +64,10 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
         </>
       )}
       {fileInfo ? (
-        <>
-          <video autoPlay={autoplay || true} muted={muted || true}>
-            <source src={fileUrl} />
-            Your browser does not support the video tag.
-          </video>
-        </>
+        <video autoPlay={autoplay || true} muted={muted || true}>
+          <source src={fileUrl} />
+          Your browser does not support the video tag.
+        </video>
       ) : (
         <div className={classes.nofile}>
           <Icon className={classes.nofileicon} context={context} icon="movie" />

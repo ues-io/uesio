@@ -1,6 +1,6 @@
 import { definition, api, wire, collection, styles } from "@uesio/ui"
 
-interface TimestampFilter {
+interface TimestampFilterProps {
   path: string
   wire: wire.Wire
   fieldMetadata: collection.Field
@@ -22,7 +22,7 @@ const StyleDefaults = Object.freeze({
   readonly: [],
 })
 
-const TimestampFilter: definition.UtilityComponent<TimestampFilter> = (
+const TimestampFilter: definition.UtilityComponent<TimestampFilterProps> = (
   props,
 ) => {
   const { wire, context, condition } = props

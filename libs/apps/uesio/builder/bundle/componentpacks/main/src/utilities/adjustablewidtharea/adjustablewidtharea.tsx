@@ -93,7 +93,7 @@ const AdjustableWidthArea: definition.UtilityComponent = (props) => {
   return (
     <div ref={slideRef} className={classes.root}>
       <div
-        role="seperator"
+        role="separator"
         aria-valuenow={0}
         onMouseDown={() => setDragging(true)}
         className={classes.separator}

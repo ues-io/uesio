@@ -131,7 +131,7 @@ const handlers: Record<MergeType, MergeHandler> = {
     const [stepId, propertyPath] = parts
     const signalOutputData = context.getSignalOutputData(stepId)
     if (!signalOutputData) {
-      throw `Could not find signal output for step: ${stepId}`
+      throw new Error(`Could not find signal output for step: ${stepId}`)
     }
     if (!propertyPath) {
       return signalOutputData
@@ -149,8 +149,8 @@ const handlers: Record<MergeType, MergeHandler> = {
     const [componentType, propertyPath] = parts
     const frame = context.getComponentData(componentType)
     if (!frame) {
-      throw (
-        "Could not find component output data for component: " + componentType
+      throw new Error(
+        "Could not find component output data for component: " + componentType,
       )
     }
     return get(frame.data, propertyPath) as string
@@ -397,7 +397,7 @@ const handlers: Record<MergeType, MergeHandler> = {
       slotContext = undefined
     }
     return {
-      ["uesio/core.slot"]: {
+      "uesio/core.slot": {
         name: expression,
         definition: {
           [expression]: slotContents,

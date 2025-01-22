@@ -442,10 +442,14 @@ const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
   useSelector((state: RootState) => selectWire(state, viewId, wireName))
 
 // This is just a copy from the redux "is" function
+// Reference:
+//  https://github.com/reduxjs/react-redux/blob/master/src/utils/shallowEqual.ts#L1
+//  https://github.com/facebook/fbjs/blob/main/packages/fbjs/src/core/shallowEqual.js#L22
 function is(x: unknown, y: unknown) {
   if (x === y) {
     return x !== 0 || y !== 0 || 1 / x === 1 / y
   } else {
+    // eslint-disable-next-line no-self-compare -- handles NaN == NaN case
     return x !== x && y !== y
   }
 }

@@ -146,7 +146,7 @@ const IndexComponent: definition.UtilityComponent<IndexComponentProps> = (
       {slotsNode}
     </PropNodeTag>
   ) : (
-    <>{slotsNode}</>
+    slotsNode
   )
 }
 

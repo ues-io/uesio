@@ -170,6 +170,7 @@ const AutocompleteField: definition.UtilityComponent<
                         listRef.current[index] = node
                       }}
                       role="option"
+                      aria-selected={activeIndex === index}
                       {...getItemProps({
                         // Handle pointer select.
                         onClick() {

@@ -39,7 +39,7 @@ type TableDefinition = {
   mode: context.FieldMode
   columns: ColumnDefinition[]
   drawer: definition.DefinitionList
-  rowactions?: RowAction[]
+  rowactions?: RowActionDefinition[]
   recordDisplay?: component.DisplayCondition[]
   rownumbers?: boolean
   pagesize?: string
@@ -47,7 +47,7 @@ type TableDefinition = {
   selectable?: boolean
 }
 
-type RowAction = {
+type RowActionDefinition = {
   text: string
   signals: signal.SignalDefinition[]
   type?: "DEFAULT"
@@ -121,7 +121,7 @@ const StyleDefaults = Object.freeze({
 })
 
 const RowAction: definition.UtilityComponent<{
-  action: RowAction
+  action: RowActionDefinition
 }> = (props) => {
   const { action, context } = props
   const [link, handler] = api.signal.useLinkHandler(action.signals, context)

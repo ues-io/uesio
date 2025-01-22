@@ -86,7 +86,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
                 namespace: "uesio/studio",
               },
             ],
-            ["uesio.styleTokens"]: {
+            "uesio.styleTokens": {
               root: ["ml-2.5"],
             },
           }}
@@ -105,7 +105,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
                 namespace: "uesio/studio",
               },
             ],
-            ["uesio.styleTokens"]: {
+            "uesio.styleTokens": {
               root: ["ml-1.5"],
             },
           }}
@@ -124,7 +124,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
                 namespace: "uesio/studio",
               },
             ],
-            ["uesio.styleTokens"]: {
+            "uesio.styleTokens": {
               root: ["ml-1.5", "max-w-[80px]"],
               title: ["overflow-hidden", "[text-overflow:ellipsis]"],
             },

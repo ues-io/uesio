@@ -14,9 +14,7 @@ const NothingSelectedProperties: definition.UtilityComponent = (props) => {
       path={selectedPath}
       title={"Nothing Selected"}
       onUnselect={() => setSelectedPath(context)}
-    >
-      <></>
-    </PropertiesWrapper>
+    />
   )
 }
 

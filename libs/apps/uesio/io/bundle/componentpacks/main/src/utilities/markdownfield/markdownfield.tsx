@@ -155,7 +155,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
             {props.children}
           </a>
         ),
-        pre: ({ children }) => <>{children}</>,
+        pre: ({ children }) => children,
         code: ({ node, className, children, ...props }) => {
           const match = /language-(\w+)/.exec(className || "")
           return match ? (
