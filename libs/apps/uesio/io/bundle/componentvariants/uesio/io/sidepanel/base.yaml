@@ -2,7 +2,7 @@ name: base
 label: Base
 definition:
   uesio.styleTokens:
-    root:
+    wrapper:
       - absolute
       - inset-0
       - pointer-events-none
@@ -14,7 +14,7 @@ definition:
       - ease-in-out
       - transition-all
       - duration-200
-    rootClosed:
+    wrapperClosed:
     blockerClosed:
       - backdrop-blur-none
       - backdrop-grayscale-0
