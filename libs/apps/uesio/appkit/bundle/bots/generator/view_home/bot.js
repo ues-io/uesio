@@ -1,6 +1,6 @@
-function view_home(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
     },

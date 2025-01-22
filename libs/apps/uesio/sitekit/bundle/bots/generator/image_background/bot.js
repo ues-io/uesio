@@ -1,8 +1,8 @@
-function image_background(bot) {
+function run(bot) {
   const description = bot.params.get("description")
   const name = bot.params.get("name")
   const samples = bot.params.get("samples")
-  const aspect_ratio = bot.params.get("aspect_ratio")
+  const aspectRatio = bot.params.get("aspect_ratio")
   const namespace = bot.getAppName()
 
   const prompt = `
@@ -18,7 +18,7 @@ function image_background(bot) {
     name,
     prompt,
     samples,
-    aspect_ratio,
+    aspect_ratio: aspectRatio,
   })
 
   bot.setRedirect(`/files/${namespace}/${name}`)

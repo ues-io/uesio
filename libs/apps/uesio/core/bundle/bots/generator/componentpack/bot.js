@@ -1,5 +1,5 @@
-function collection(bot) {
-  var name = bot.params.get("name")
+function run(bot) {
+  const name = bot.params.get("name")
   bot.generateYamlFile(
     `componentpacks/${name}/pack.yaml`,
     {

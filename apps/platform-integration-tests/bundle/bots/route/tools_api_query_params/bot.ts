@@ -4,7 +4,7 @@ import { Params } from "@uesio/app/bots/route/uesio/tests/tools_api_query_params
 export default function tools_api_query_params(bot: RouteBotApi) {
   const params = bot.params.getAll() as Params
   const ns = bot.getNamespace()
-  const { brand_name, category, type, limit } = params
+  const { brand_name: brandName, category, type, limit } = params
   const loadRequest = {
     collection: `${ns}.tool`,
     fields: [
@@ -24,11 +24,11 @@ export default function tools_api_query_params(bot: RouteBotApi) {
       value: category,
     })
   }
-  if (brand_name) {
+  if (brandName) {
     loadRequest.conditions?.push({
       field: `${ns}.brand`,
       operator: "EQ",
-      value: brand_name,
+      value: brandName,
     })
   }
   if (type) {

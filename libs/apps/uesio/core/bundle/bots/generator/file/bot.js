@@ -1,7 +1,7 @@
-function file(bot) {
-  var name = bot.params.get("name")
-  var files = bot.params.get("files")
-  var path = bot.params.get("path")
+function run(bot) {
+  const name = bot.params.get("name")
+  const files = bot.params.get("files")
+  const path = bot.params.get("path")
 
   files.forEach((file) => {
     bot.generateBase64File("files/" + name + "/" + file.path, file.data)

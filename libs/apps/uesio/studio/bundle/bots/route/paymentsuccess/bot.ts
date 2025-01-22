@@ -12,19 +12,19 @@ interface Subscription {
 
 export default function paymentsuccess(bot: RouteBotApi) {
   const params = bot.params.getAll()
-  const { session_id } = params
+  const { session_id: sessionId } = params
   const integration = "uesio/stripe.stripe"
 
   const sessionResult = bot.runIntegrationAction(
     integration,
     "checkout_retrieve",
     {
-      id: session_id,
+      id: sessionId,
     },
   ) as Record<string, Session>
 
-  const session = sessionResult["session"]
-  if (session.payment_status == "paid") {
+  const session = sessionResult.session
+  if (session.payment_status === "paid") {
     const subscriptionResult = bot.runIntegrationAction(
       integration,
       "subscription_retrieve",
@@ -33,7 +33,7 @@ export default function paymentsuccess(bot: RouteBotApi) {
       },
     ) as Record<string, Subscription>
 
-    const subscription = subscriptionResult["subscription"]
+    const subscription = subscriptionResult.subscription
     //get the related plan from uesio based on the stripe key
     const loadresult = bot.load({
       collection: "uesio/studio.usage_plan",

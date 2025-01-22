@@ -48,4 +48,10 @@ export default [
       "react/prop-types": "off",
     },
   },
+  {
+    files: ["**/bundle/bots/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
 ]

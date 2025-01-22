@@ -4,7 +4,7 @@ import baseConfig from "../../eslint.config.mjs"
 export default [
   ...baseConfig,
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     languageOptions: {
       parserOptions: {
         project: ["apps/platform-integration-tests/tsconfig.*?.json"],

@@ -22,7 +22,7 @@ const walk = (tree, prefix, items = []) => {
           .map((node) => {
             if (node.type !== "Declaration") {
               console.warn("Non-declaration found", node)
-              return
+              return false
             }
             return {
               property: node.property,

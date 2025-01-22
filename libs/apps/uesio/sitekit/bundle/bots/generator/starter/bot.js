@@ -1,4 +1,4 @@
-function starter(bot) {
+function run(bot) {
   const appInfo = bot.getApp()
   const appName = appInfo.getName()
   const appDescription = appInfo.getDescription()
@@ -23,7 +23,7 @@ function starter(bot) {
   let footerLogoFile = "uesio/sitekit.yourlogo"
   let footerLogoFilePath = "yourlogo_dark.png"
 
-  let backgroundPaths = [
+  const backgroundPaths = [
     "files/orangesplash.jpg",
     "files/paintsplash.jpg",
     "files/pinksplash1.jpg",
@@ -38,7 +38,7 @@ function starter(bot) {
   let backgroundFilePath = backgroundPaths[random]
 
   let tagline = "Hello World."
-  let tagline_sub = "Generate websites quickly and easily with SiteKit."
+  let taglineSub = "Generate websites quickly and easily with SiteKit."
   let testimonials = [
     {
       quote: "By far the best thing since sliced bagels.",
@@ -324,7 +324,7 @@ function starter(bot) {
     const input = result[0].input
 
     tagline = input.tagline
-    tagline_sub = input.tagline_secondary_text
+    taglineSub = input.tagline_secondary_text
     testimonials = input.testimonials
     features = input.key_features
     pages = input.pages
@@ -402,7 +402,7 @@ function starter(bot) {
       name: "view_home",
       params: {
         tagline,
-        tagline_sub,
+        tagline_sub: taglineSub,
         testimonials,
         features,
       },

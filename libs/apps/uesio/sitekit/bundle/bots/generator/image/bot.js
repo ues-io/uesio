@@ -1,4 +1,4 @@
-function image(bot) {
+function run(bot) {
   const modelID = "stability.stable-image-ultra-v1:0"
   const prompt = bot.params.get("prompt")
   const name = bot.params.get("name")
@@ -10,7 +10,7 @@ function image(bot) {
   }
   if (samples > 4) samples = 4
 
-  const aspect_ratio = bot.params.get("aspect_ratio")
+  const aspectRatio = bot.params.get("aspect_ratio")
 
   const requests = []
 
@@ -21,14 +21,14 @@ function image(bot) {
       options: {
         model: modelID,
         input: prompt,
-        aspect_ratio,
+        aspect_ratio: aspectRatio,
       },
     })
   }
   const results = bot.runIntegrationActions(requests)
 
   bot.runGenerator("uesio/core", "file", {
-    name: name,
+    name,
     files: results.map((result, i) => ({
       path: `${name}${i ? `_${i}` : ""}.png`,
       data: result,

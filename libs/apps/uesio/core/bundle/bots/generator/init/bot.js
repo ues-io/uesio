@@ -1,10 +1,10 @@
-function init(bot) {
-  var name = bot.params.get("name")
-  var params = {
+function run(bot) {
+  const name = bot.params.get("name")
+  const params = {
     name,
     pkgName: `${name?.includes("/") ? "@" : ""}${name}`,
   }
-  var templatePrefix = "templates/template."
+  const templatePrefix = "templates/template."
   bot.generateFile(".gitignore", params, `${templatePrefix}gitignore`)
   bot.generateFile("tsconfig.json", {}, `${templatePrefix}tsconfig.json`)
   bot.generateFile(

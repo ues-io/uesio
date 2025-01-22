@@ -8,7 +8,7 @@
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "allowJs": false,
+    "allowJs": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,

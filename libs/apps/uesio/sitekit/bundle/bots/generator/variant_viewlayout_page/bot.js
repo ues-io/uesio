@@ -1,8 +1,8 @@
-function variant_viewlayout_page(bot) {
-  var namespace = bot.getAppName()
+function run(bot) {
+  const namespace = bot.getAppName()
   const backgroundFile = bot.params.get("backgroundFile")
   const backgroundFilePath = bot.params.get("backgroundFilePath")
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
       backgroundFile,

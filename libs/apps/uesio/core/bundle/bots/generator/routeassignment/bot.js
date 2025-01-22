@@ -1,7 +1,7 @@
-function routeassignment(bot) {
-  var type = bot.params.get("type")
-  var route = bot.params.get("route")
-  var collection = bot.params.get("collection")
+function run(bot) {
+  const type = bot.params.get("type")
+  const route = bot.params.get("route")
+  const collection = bot.params.get("collection")
   const collectionParts = collection.split(".")
   const collectionNamespace = collectionParts[0]
   const collectionName = collectionParts[1]
@@ -9,8 +9,8 @@ function routeassignment(bot) {
   bot.generateFile(
     `routeassignments/${collectionNamespace}/${collectionName}/${type}.yaml`,
     {
-      type: type,
-      route: route,
+      type,
+      route,
     },
     "templates/routeassignment.yaml",
   )
