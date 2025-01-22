@@ -1,6 +1,6 @@
-function view_leftnav(bot) {
-  var app = bot.getApp()
-  var definition = bot.mergeYamlTemplate(
+function generate(bot) {
+  const app = bot.getApp()
+  const definition = bot.mergeYamlTemplate(
     {
       icon: app.getIcon(),
       iconcolor: '"' + app.getColor() + '"',

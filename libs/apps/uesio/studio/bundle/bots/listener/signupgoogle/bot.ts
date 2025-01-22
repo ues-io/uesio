@@ -48,8 +48,8 @@ export default function signupgoogle(bot: ListenerBotApi) {
   )
 
   const nl2br = (str: string) => {
-    var breakTag = "<br>"
-    var replaceStr = "$1" + breakTag
+    const breakTag = "<br>"
+    const replaceStr = "$1" + breakTag
     return (str + "").replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, replaceStr)
   }
 

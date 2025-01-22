@@ -1,6 +1,6 @@
-function profile(bot) {
-  var name = bot.params.get("name")
-  var permissionSets = bot.params.get("permissionSets") || "[]"
+function generate(bot) {
+  const name = bot.params.get("name")
+  const permissionSets = bot.params.get("permissionSets") || "[]"
 
   bot.generateYamlFile(
     "profiles/" + name + ".yaml",

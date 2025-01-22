@@ -1,4 +1,4 @@
-function view_list(bot) {
+function generate(bot) {
   const collection = bot.params.get("collection")
   const collectionParts = collection?.split(".")
   const collectionName = collectionParts[1]
@@ -9,7 +9,7 @@ function view_list(bot) {
   const fieldsYaml = fields.map((field) => `${field}:\n`).join("")
   const tableColumnsYaml = fields.map((field) => `- field: ${field}\n`).join("")
 
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       collection,
       namespace,

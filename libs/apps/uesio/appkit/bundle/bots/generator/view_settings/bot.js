@@ -1,6 +1,6 @@
-function view_settings(bot) {
+function generate(bot) {
   const namespace = bot.getAppName()
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
     },

@@ -1,22 +1,22 @@
-function theme(bot) {
-  var name = bot.params.get("name")
-  var primary = bot.params.get("primary")
-  var secondary = bot.params.get("secondary")
-  var error = bot.params.get("error")
-  var warning = bot.params.get("warning")
-  var info = bot.params.get("info")
-  var success = bot.params.get("success")
+function generate(bot) {
+  const name = bot.params.get("name")
+  const primary = bot.params.get("primary")
+  const secondary = bot.params.get("secondary")
+  const error = bot.params.get("error")
+  const warning = bot.params.get("warning")
+  const info = bot.params.get("info")
+  const success = bot.params.get("success")
 
   bot.generateFile(
     "themes/" + name + ".yaml",
     {
-      name: name,
-      primary: primary,
-      secondary: secondary,
-      error: error,
-      warning: warning,
-      info: info,
-      success: success,
+      name,
+      primary,
+      secondary,
+      error,
+      warning,
+      info,
+      success,
     },
     "templates/theme.yaml",
   )

@@ -9,15 +9,10 @@ export default [
   ...nx.configs["flat/typescript"],
   ...nx.configs["flat/javascript"],
   {
-    ignores: [
-      "**/dist",
-      "**/jest.config.js",
-      "**/bundle/bots/*",
-      "**/bundle/componentpacks/*/*/*.js*",
-    ],
+    ignores: ["**/dist"],
   },
   {
-    files: ["**/*.spec.ts", "**/*.spec.tsx", "**/test/utils/*.ts"],
+    files: ["**/*.spec.{ts,tsx,js,jsx}"],
     languageOptions: {
       globals: {
         ...globals.jest,
@@ -101,6 +96,8 @@ export default [
     files: [
       "**/*.ts",
       "**/*.tsx",
+      "**/*.cts",
+      "**/*.mts",
       "**/*.js",
       "**/*.jsx",
       "**/*.cjs",

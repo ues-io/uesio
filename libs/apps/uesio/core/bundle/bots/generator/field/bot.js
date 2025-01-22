@@ -1,6 +1,6 @@
-function field(bot) {
+function generate(bot) {
   function getDefinition(template, parameters) {
-    var params = parameters.reduce((prev, key) => {
+    const params = parameters.reduce((prev, key) => {
       const value = bot.params.get(key)
 
       return value
@@ -16,38 +16,38 @@ function field(bot) {
     return bot.mergeYamlTemplate(params, template)
   }
 
-  var name = bot.params.get("name")
-  var collectionKey = bot.params.get("collection")
-  var type = bot.params.get("type")
-  var label = bot.params.get("label")
+  const name = bot.params.get("name")
+  const collectionKey = bot.params.get("collection")
+  const type = bot.params.get("type")
+  const label = bot.params.get("label")
 
   //Common part for all fields
-  var common_definition = bot.mergeYamlTemplate(
+  const commonDefinition = bot.mergeYamlTemplate(
     {
-      name: name,
-      type: type,
-      label: label,
+      name,
+      type,
+      label,
       collection: collectionKey,
     },
     "templates/common.yaml",
   )
 
-  var number_definition = getDefinition("templates/number.yaml", [
+  const numberDefinition = getDefinition("templates/number.yaml", [
     "number_decimals",
   ])
-  var reference_definition = getDefinition("templates/reference.yaml", [
+  const referenceDefinition = getDefinition("templates/reference.yaml", [
     "ref_collection",
   ])
-  var selectlist_definition = getDefinition("templates/selectlist.yaml", [
+  const selectlistDefinition = getDefinition("templates/selectlist.yaml", [
     "select_list",
   ])
-  var autonumber_definition = getDefinition("templates/autonumber.yaml", [
+  const autonumberDefinition = getDefinition("templates/autonumber.yaml", [
     "autonumber_prefix",
     "autonumber_leadingzeros",
   ])
 
-  var file_definition = getDefinition("templates/file.yaml", ["accept"])
-  var referencegroup_definition = getDefinition(
+  const fileDefinition = getDefinition("templates/file.yaml", ["accept"])
+  const referencegroupDefinition = getDefinition(
     "templates/referencegroup.yaml",
     [
       "referencegroup_collection",
@@ -56,14 +56,14 @@ function field(bot) {
     ],
   )
 
-  var field = [
-    common_definition,
-    number_definition,
-    reference_definition,
-    selectlist_definition,
-    autonumber_definition,
-    file_definition,
-    referencegroup_definition,
+  const field = [
+    commonDefinition,
+    numberDefinition,
+    referenceDefinition,
+    selectlistDefinition,
+    autonumberDefinition,
+    fileDefinition,
+    referencegroupDefinition,
   ]
     .filter((val) => val)
     .join("")

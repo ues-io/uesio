@@ -1,4 +1,4 @@
-function starter(bot) {
+function generate(bot) {
   bot.runGenerators([
     {
       // Create a default layout variant

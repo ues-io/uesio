@@ -59,7 +59,7 @@ export default function load_weather_forecast(bot: LoadBotApi) {
       switch (localField) {
         case "low":
         case "high":
-        case "avg":
+        case "avg": {
           const numericValue =
             (typeof value === "string" ? parseFloat(value) : value) || 0
           if (operator === "GT") {
@@ -76,6 +76,7 @@ export default function load_weather_forecast(bot: LoadBotApi) {
             return itemValue === numericValue
           }
           break
+        }
         case "day":
           if (operator === "EQ") {
             return itemValue === value

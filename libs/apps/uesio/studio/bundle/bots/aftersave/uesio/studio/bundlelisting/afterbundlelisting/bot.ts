@@ -1,5 +1,7 @@
 import { AfterSaveBotApi, InsertApi, FieldValue } from "@uesio/bots"
-// @ts-ignore
+
+// @ts-expect-error -- TODO: why is this not default export?
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: why is this not default export?
 function afterbundlelisting(bot: AfterSaveBotApi) {
   const historyChanges: Record<string, FieldValue>[] = []
 
@@ -85,6 +87,7 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
   })
 
   if (historyChanges.length) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: Revisit types used for bot methods (see https://github.com/ues-io/uesio/issues/4483)
     bot.save("uesio/studio.bundlelistinghistory", historyChanges as any)
   }
 }

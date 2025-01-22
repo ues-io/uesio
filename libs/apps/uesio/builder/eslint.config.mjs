@@ -7,7 +7,7 @@ export default [
     ignores: ["**/build/*"],
   },
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     languageOptions: {
       parserOptions: {
         project: ["libs/apps/uesio/builder/tsconfig.*?.json"],

@@ -1,4 +1,4 @@
-function signupmethod_admin(bot) {
+function generate(bot) {
   const namespace = bot.getAppName()
 
   bot.runGenerator("uesio/core", "bot", {

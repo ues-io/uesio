@@ -1,17 +1,17 @@
-function signupmethod(bot) {
-  var name = bot.params.get("name")
-  var authSource = bot.params.get("authSource") || ""
-  var profile = bot.params.get("profile") || ""
-  var usernameTemplate = bot.params.get("usernameTemplate") || ""
-  var landingRoute = bot.params.get("landingRoute") || ""
-  var createLoginBot = bot.params.get("createLoginBot") || ""
-  var signupBot = bot.params.get("signupBot") || ""
-  var resetPasswordBot = bot.params.get("resetPasswordBot") || ""
-  var usernameRegex = bot.params.get("usernameRegex") || ""
-  var usernameFormatExplanation =
+function generate(bot) {
+  const name = bot.params.get("name")
+  const authSource = bot.params.get("authSource") || ""
+  const profile = bot.params.get("profile") || ""
+  const usernameTemplate = bot.params.get("usernameTemplate") || ""
+  const landingRoute = bot.params.get("landingRoute") || ""
+  const createLoginBot = bot.params.get("createLoginBot") || ""
+  const signupBot = bot.params.get("signupBot") || ""
+  const resetPasswordBot = bot.params.get("resetPasswordBot") || ""
+  const usernameRegex = bot.params.get("usernameRegex") || ""
+  const usernameFormatExplanation =
     bot.params.get("usernameFormatExplanation") || ""
-  var autoLogin = bot.params.get("autoLogin") || ""
-  var enableSelfSignup = bot.params.get("enableSelfSignup") || ""
+  const autoLogin = bot.params.get("autoLogin") || ""
+  const enableSelfSignup = bot.params.get("enableSelfSignup") || ""
 
   bot.generateFile(
     `signupmethods/${name}.yaml`,

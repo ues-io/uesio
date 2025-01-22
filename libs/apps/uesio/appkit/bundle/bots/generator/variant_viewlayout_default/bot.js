@@ -1,6 +1,6 @@
-function variant_viewlayout_default(bot) {
-  var namespace = bot.getAppName()
-  var definition = bot.mergeYamlTemplate(
+function generate(bot) {
+  const namespace = bot.getAppName()
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
     },

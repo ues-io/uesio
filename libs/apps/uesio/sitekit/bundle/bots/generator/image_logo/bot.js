@@ -1,14 +1,14 @@
-function image_logo(bot) {
-  const organization_name = bot.params.get("organization_name")
+function generate(bot) {
+  const organizationName = bot.params.get("organization_name")
   const description = bot.params.get("description")
   const name = bot.params.get("name")
   const samples = bot.params.get("samples")
-  const aspect_ratio = bot.params.get("aspect_ratio") || "21:9"
+  const aspectRatio = bot.params.get("aspect_ratio") || "21:9"
   const namespace = bot.getAppName()
 
   const prompt = `
 		A (minimal:0.5), (artistic:0.6), (wordmark:1) for the app
-		named (${organization_name}:1). The description of the wordmark is:
+		named (${organizationName}:1). The description of the wordmark is:
 
 		${description}
 
@@ -19,7 +19,7 @@ function image_logo(bot) {
     name,
     prompt,
     samples,
-    aspect_ratio,
+    aspect_ratio: aspectRatio,
   })
 
   bot.setRedirect(`/files/${namespace}/${name}`)

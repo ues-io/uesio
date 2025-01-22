@@ -9,7 +9,11 @@
   },
   "include": [
     "**/*.ts",
+    "**/*.mts",
+    "**/*.cts",
     "**/*.js",
+    "**/*.mjs",
+    "**/*.cjs",
     "cypress.config.ts",
     "**/*.cy.ts",
     "**/*.cy.tsx",

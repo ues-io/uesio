@@ -1,4 +1,4 @@
-function bot(botapi) {
+function generate(botapi) {
   // Get the name of the context workspace's app
   const app = botapi.getAppName()
   const params = botapi.params.getAll()

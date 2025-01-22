@@ -1,4 +1,4 @@
-function starter_complete(bot) {
+function generate(bot) {
   /*
 	// We could create a sample blog here.
 	const doSampleData = bot.params.get("use_ai_for_sample_data")

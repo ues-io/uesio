@@ -6,7 +6,7 @@ export default [
   cypress.configs["recommended"],
   ...baseConfig,
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     languageOptions: {
       parserOptions: {
         project: ["apps/platform-e2e/tsconfig.json"],

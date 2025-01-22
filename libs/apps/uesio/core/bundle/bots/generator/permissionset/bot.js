@@ -1,24 +1,24 @@
-function permissionset(bot) {
-  var name = bot.params.get("name")
-  var namedPermissions = bot.params.get("namedPermissions") || "{}"
+function generate(bot) {
+  const name = bot.params.get("name")
+  const namedPermissions = bot.params.get("namedPermissions") || "{}"
 
-  var views = bot.params.get("views") || "{}"
-  var collections = bot.params.get("collections") || "{}"
-  var routes = bot.params.get("routes") || "{}"
-  var files = bot.params.get("files") || "{}"
-  var bots = bot.params.get("bots") || "{}"
-  var integrationActions = bot.params.get("integrationActions") || "{}"
+  const views = bot.params.get("views") || "{}"
+  const collections = bot.params.get("collections") || "{}"
+  const routes = bot.params.get("routes") || "{}"
+  const files = bot.params.get("files") || "{}"
+  const bots = bot.params.get("bots") || "{}"
+  const integrationActions = bot.params.get("integrationActions") || "{}"
 
-  var allowAllBots = bot.params.get("allowAllBots") || false
-  var allowAllCollections = bot.params.get("allowAllCollections") || false
-  var allowAllViews = bot.params.get("allowAllViews") || false
-  var allowAllRoutes = bot.params.get("allowAllRoutes") || false
-  var allowAllFiles = bot.params.get("allowAllFiles") || false
-  var allowAllIntegrationActions =
+  const allowAllBots = bot.params.get("allowAllBots") || false
+  const allowAllCollections = bot.params.get("allowAllCollections") || false
+  const allowAllViews = bot.params.get("allowAllViews") || false
+  const allowAllRoutes = bot.params.get("allowAllRoutes") || false
+  const allowAllFiles = bot.params.get("allowAllFiles") || false
+  const allowAllIntegrationActions =
     bot.params.get("allowAllIntegrationActions") || false
 
-  var modifyAllRecords = bot.params.get("modifyAllRecords") || false
-  var viewAllRecords = bot.params.get("viewAllRecords") || false
+  const modifyAllRecords = bot.params.get("modifyAllRecords") || false
+  const viewAllRecords = bot.params.get("viewAllRecords") || false
 
   bot.generateYamlFile(
     "permissionsets/" + name + ".yaml",

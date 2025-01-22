@@ -1,6 +1,6 @@
-function views_collection(bot) {
-  var fullCollectionName = bot.params.get("collection")
-  var fieldIds = bot.params.get("fields")
+function generate(bot) {
+  const fullCollectionName = bot.params.get("collection")
+  const fieldIds = bot.params.get("fields")
 
   bot.runGenerator("uesio/appkit", "view_list", {
     collection: fullCollectionName,

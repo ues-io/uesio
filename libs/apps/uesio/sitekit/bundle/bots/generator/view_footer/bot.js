@@ -1,4 +1,4 @@
-function view_footer(bot) {
+function generate(bot) {
   const namespace = bot.getAppName()
   const categories = bot.params.get("categories")
   const logoFile = bot.params.get("logoFile")
@@ -7,15 +7,15 @@ function view_footer(bot) {
   const categoriesYaml = categories
     .map((category) => {
       const buttonsYaml = category.links
-        .map((link) => {
-          return bot.mergeYamlTemplate(
+        .map((link) =>
+          bot.mergeYamlTemplate(
             {
               name: link.name,
               variant: "uesio/sitekit.footer_link",
             },
             "templates/button.yaml",
-          )
-        })
+          ),
+        )
         .join("")
 
       return bot.mergeYamlTemplate(
@@ -28,7 +28,7 @@ function view_footer(bot) {
     })
     .join("")
 
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
       categoriesYaml,

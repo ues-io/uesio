@@ -1,9 +1,9 @@
-function collection(bot) {
-  var collectionName = bot.params.get("collection")
-  var collectionLabel = bot.params.get("label")
-  var collectionPluralLabel = bot.params.get("pluralLabel")
-  var collectionIcon = bot.params.get("icon")
-  var additionalCollections = bot.params.get("additionalCollections")
+function generate(bot) {
+  const collectionName = bot.params.get("collection")
+  const collectionLabel = bot.params.get("label")
+  const collectionPluralLabel = bot.params.get("pluralLabel")
+  const collectionIcon = bot.params.get("icon")
+  const additionalCollections = bot.params.get("additionalCollections")
   const instructions = bot.params.get("instructions")
 
   const namespace = bot.getAppName()

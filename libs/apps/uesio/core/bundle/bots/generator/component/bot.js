@@ -1,9 +1,9 @@
-function collection(bot) {
-  var pack = bot.params.get("pack")
-  var name = bot.params.get("name")
-  var type = bot.params.get("type")
-  var definition = bot.params.get("definition")
-  var componentName = `${name.charAt(0).toUpperCase() + name.slice(1)}`
+function generate(bot) {
+  const pack = bot.params.get("pack")
+  const name = bot.params.get("name")
+  const type = bot.params.get("type")
+  const definition = bot.params.get("definition")
+  const componentName = `${name.charAt(0).toUpperCase() + name.slice(1)}`
   if (type === "DECLARATIVE") {
     if (definition) {
       bot.generateStringFile(`components/${name}.yaml`, definition)

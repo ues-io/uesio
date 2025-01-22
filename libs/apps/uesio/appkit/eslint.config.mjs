@@ -4,12 +4,21 @@ import baseConfig from "../../../../eslint.config.mjs"
 export default [
   ...baseConfig,
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     languageOptions: {
       parserOptions: {
         project: ["libs/apps/uesio/appkit/tsconfig.*?.json"],
       },
     },
     rules: {},
+  },
+  {
+    files: ["**/generator/**/bot.js"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^generate", ignoreRestSiblings: true },
+      ],
+    },
   },
 ]

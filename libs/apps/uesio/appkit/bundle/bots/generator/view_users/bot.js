@@ -1,4 +1,4 @@
-function view_users(bot) {
+function generate(bot) {
   const namespace = bot.getAppName()
   bot.runGenerator("uesio/core", "view", {
     name: "users",
