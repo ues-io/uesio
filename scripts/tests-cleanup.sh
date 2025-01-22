@@ -11,7 +11,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 alias uesio="$SCRIPT_DIR/../dist/cli/uesio"
 
 #Navigate
-cd libs/apps/uesio/tests
+cd apps/platform-integration-tests
 
 echo "Logging in to Studio as uesio user..."
 uesio logout
@@ -28,10 +28,10 @@ echo "dev workspace should be clear"
 cd - >> /dev/null
 
 # Run specs
-hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test libs/apps/uesio/tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
+hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
 # Delete the workspaces
-cd libs/apps/uesio/tests
+cd apps/platform-integration-tests
 uesio workspace delete -n truncatetests
 uesio workspace delete -n dev
 cd - >> /dev/null

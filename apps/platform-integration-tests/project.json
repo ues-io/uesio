@@ -1,0 +1,12 @@
+{
+  "name": "platform-integration-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/platform-integration-tests",
+  "projectType": "application",
+  "implicitDependencies": ["platform"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

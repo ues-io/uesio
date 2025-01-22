@@ -20,7 +20,7 @@ bash "scripts/tests-init.sh"
 
 echo "Running tests..."
 
-cd libs/apps/uesio/tests
+cd apps/platform-integration-tests
 
 # TODO: Hurl 5.0 added parallel test execution which is enabled by default.  Currently, hurl tests fail when run in parallel.  For now, forcing
 # sequential execution via --jobs flag but this should be investigated and, assuming possible depending on root cause, changed to not limit parallel execution.

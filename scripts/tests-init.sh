@@ -11,7 +11,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 alias uesio="$SCRIPT_DIR/../dist/cli/uesio"
 
 # Deploy the sample app using Uesio
-cd libs/apps/uesio/tests
+cd apps/platform-integration-tests
 
 echo "Logging in to Studio as uesio user..."
 uesio logout
