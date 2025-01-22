@@ -51,7 +51,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
   hooks.useHotKeyCallback(
     "meta+u",
     () => {
-      toggleBuildMode(context, setBuildMode, !!buildMode)
+      toggleBuildMode(builderContext, setBuildMode, !!buildMode)
     },
     true,
     [buildMode, setBuildMode],

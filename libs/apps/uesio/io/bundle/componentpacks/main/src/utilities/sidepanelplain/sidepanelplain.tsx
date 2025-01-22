@@ -1,11 +1,5 @@
 import { definition, styles } from "@uesio/ui"
-import {
-  FloatingFocusManager,
-  FloatingOverlay,
-  useDismiss,
-  useFloating,
-  useInteractions,
-} from "@floating-ui/react"
+import PanelWrapper from "../panelwrapper/panelwrapper"
 
 interface SidePanelUtilityProps {
   onClose?: () => void
@@ -16,78 +10,34 @@ interface SidePanelUtilityProps {
 
 const StyleDefaults = Object.freeze({
   blocker: [],
-  root: [],
+  wrapper: [],
   inner: [],
   blockerClosed: [],
-  rootClosed: [],
+  wrapperClosed: [],
   innerClosed: [],
 })
 
 const SidePanelPlain: definition.UtilityComponent<SidePanelUtilityProps> = (
   props,
 ) => {
+  const { onClose, initialFocus, closeOnOutsideClick, closed, children } = props
   const classes = styles.useUtilityStyleTokens(
     StyleDefaults,
     props,
     "uesio/io.sidepanel",
   )
 
-  const floating = useFloating({
-    open: true,
-    onOpenChange: (open) => {
-      if (!open && props.onClose) props.onClose()
-    },
-  })
-
-  const closeOnOutsideClick =
-    props.closeOnOutsideClick === undefined ? true : !!props.closeOnOutsideClick
-
-  const dismiss = useDismiss(floating.context, {
-    outsidePress: false,
-    referencePress: closeOnOutsideClick,
-  })
-
-  const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
-
   return (
-    <FloatingOverlay
-      className={styles.cx(
-        classes.blocker,
-        props.closed && classes.blockerClosed,
-      )}
-      lockScroll
-      style={{ position: "absolute" }}
-      ref={floating.refs.setReference}
-      {...getReferenceProps()}
+    <PanelWrapper
+      onClose={onClose}
+      initialFocus={initialFocus}
+      closeOnOutsideClick={closeOnOutsideClick}
+      closed={closed}
+      context={props.context}
+      classes={classes}
     >
-      <FloatingFocusManager
-        context={floating.context}
-        initialFocus={props.initialFocus}
-        closeOnFocusOut={false}
-      >
-        <div
-          className={styles.cx(
-            classes.root,
-            props.closed && classes.rootClosed,
-          )}
-          ref={floating.refs.setFloating}
-          {...getFloatingProps({
-            onPointerDown(e) {
-              e.stopPropagation()
-            },
-          })}
-        >
-          <div
-            className={styles.cx(
-              classes.inner,
-              props.closed && classes.innerClosed,
-            )}
-          >
-            {props.children}
-          </div>
-        </div>
-      </FloatingFocusManager>
-    </FloatingOverlay>
+      {children}
+    </PanelWrapper>
   )
 }
 

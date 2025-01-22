@@ -329,7 +329,7 @@ const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
     }
   }
 
-  api.signal.runMany(signals, context)
+  api.signal.runMany(signals, context.removeAllThemeFrames())
 
   setBuilderState<string>(context, "selected", combinePath(path))
 }
