@@ -70,9 +70,9 @@ __debug_bin
 **/bundle/componentpacks/*/dist/
 
 # Cypress
-cypress/downloads
-cypress/screenshots
-cypress/videos
+**/cypress/downloads
+**/cypress/screenshots
+**/cypress/videos
 
 # Ad-hoc query results
 queries/results
