@@ -137,15 +137,14 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
         <div className={classes.outerwrapper} id="canvas-root">
           <div
             ref={contentRef}
-            className={classes.contentwrapper}
+            className={"uesio-theme " + classes.contentwrapper}
             onDragOver={getDragOverHandler(context, dragPath, dropPath)}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
             onClickCapture={onClickCapture}
             onChangeCapture={onChangeCapture}
           >
-            {/* This cancels the theme scope for the builder */}
-            <div className="uesio-theme">{props.children}</div>
+            {props.children}
           </div>
           <SelectBorder viewdef={viewDef} context={context} />
         </div>
