@@ -2,7 +2,7 @@ import nx from "@nx/eslint-plugin"
 import reactPlugin from "eslint-plugin-react"
 import reactHooksPlugin from "eslint-plugin-react-hooks"
 import globals from "globals"
-import { workspaceRoot } from '@nx/devkit';
+import { workspaceRoot } from "@nx/devkit"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
 export default [
@@ -16,11 +16,11 @@ export default [
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["eslint.config.mjs", "eslint.config.cjs"]
+          allowDefaultProject: ["eslint.config.mjs", "eslint.config.cjs"],
         },
         tsconfigRootDir: workspaceRoot,
-      }
-    }
+      },
+    },
   },
   {
     files: ["**/*.spec.{ts,tsx,js,jsx}"],
