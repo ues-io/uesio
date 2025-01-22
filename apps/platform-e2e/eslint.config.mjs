@@ -5,13 +5,4 @@ import baseConfig from "../../eslint.config.mjs"
 export default [
   cypress.configs["recommended"],
   ...baseConfig,
-  {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    languageOptions: {
-      parserOptions: {
-        project: ["apps/platform-e2e/tsconfig.json"],
-      },
-    },
-    rules: {},
-  },
 ]
