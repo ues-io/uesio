@@ -18,8 +18,7 @@ type BotResult = {
   params?: Record<string, unknown>
 }
 
-// @ts-ignore
-function save_weather_forecast(bot: SaveBotApi) {
+export default function save_weather_forecast(bot: SaveBotApi) {
   const result = bot.http.request({
     method: "POST",
     url: `${bot

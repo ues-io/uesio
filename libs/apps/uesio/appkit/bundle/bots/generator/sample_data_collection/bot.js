@@ -1,8 +1,8 @@
-function sample_data_collection(bot) {
+function run(bot) {
   const collection = bot.params.get("collection")
   const instructions = bot.params.get("instructions")
 
-  var collectionFieldsMeta = bot.load({
+  const collectionFieldsMeta = bot.load({
     collection: "uesio/core.field",
     conditions: [
       {
@@ -103,11 +103,11 @@ function sample_data_collection(bot) {
       const refInfo = field["uesio/core.reference"]
       const refCollection = refInfo["uesio/core.collection"]
       refFields[fieldFullName] = refCollection
-      if (refCollection == "uesio/core.user") {
+      if (refCollection === "uesio/core.user") {
         return
       }
       // Don't get sample data for self-references
-      if (refCollection == collection) {
+      if (refCollection === collection) {
         return
       }
       refCollections[refCollection] = []

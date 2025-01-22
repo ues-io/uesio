@@ -1,8 +1,8 @@
-function sample_data(bot) {
+function run(bot) {
   const appName = bot.getAppName()
   const instructions = bot.params.get("instructions")
 
-  var collectionMeta = bot.load({
+  const collectionMeta = bot.load({
     collection: "uesio/core.collection",
     conditions: [
       {

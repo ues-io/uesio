@@ -118,7 +118,7 @@ export default function load_tasks(bot: LoadBotApi) {
         itemValue = item.subject
       }
       switch (localField) {
-        case "priority":
+        case "priority": {
           const numericValue =
             (typeof value === "string" ? parseFloat(value) : value) || 0
           if (operator === "GT") {
@@ -139,6 +139,7 @@ export default function load_tasks(bot: LoadBotApi) {
             return values?.every((value) => (itemValue as number) !== value)
           }
           break
+        }
         case "subject":
         case "status->name":
         case "status->color":

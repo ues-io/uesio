@@ -1,6 +1,6 @@
-function componentvariant(bot) {
-  var name = bot.params.get("name")
-  var componentKey = bot.params.get("component")
+function run(bot) {
+  const name = bot.params.get("name")
+  const componentKey = bot.params.get("component")
   const parts = componentKey.split(".")
   bot.generateYamlFile(
     "componentvariants/" + parts[0] + "/" + parts[1] + "/" + name + ".yaml",

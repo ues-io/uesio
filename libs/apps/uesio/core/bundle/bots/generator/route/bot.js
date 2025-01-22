@@ -1,6 +1,6 @@
-function route(bot) {
+function run(bot) {
   const contextApp = bot.getAppName()
-  let params = bot.params.getAll()
+  const params = bot.params.getAll()
   // Strip off the context app name from the bot key
   // if it is the same as the current app
   if (params.bot && params.bot.startsWith(contextApp)) {

@@ -1,4 +1,4 @@
-function profile_public(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   bot.runGenerator("uesio/core", "permissionset", {
     name: "public",

@@ -44,7 +44,7 @@ export default function select_plan(bot: ListenerBotApi) {
 
   if (!customer) {
     const email = user.getEmail()
-    if (email == "") {
+    if (email === "") {
       throw new Error("Email is required to in order to change a plan")
     }
     const createResult = bot.runIntegrationAction(
@@ -56,7 +56,7 @@ export default function select_plan(bot: ListenerBotApi) {
         metadata: { "uesio/core.uniquekey": user.getUniqueKey() },
       },
     ) as Record<string, Customer>
-    customer = createResult["customer"]
+    customer = createResult.customer
   }
 
   const subscriptionResult = bot.runIntegrationAction(

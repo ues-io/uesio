@@ -1,13 +1,13 @@
-function view_home(bot) {
+function run(bot) {
   const namespace = bot.getAppName()
   const tagline = bot.params.get("tagline")
-  const tagline_sub = bot.params.get("tagline_sub")
+  const taglineSub = bot.params.get("tagline_sub")
   const testimonials = bot.params.get("testimonials")
   const features = bot.params.get("features")
 
   const mainTestimonial = testimonials.pop()
 
-  let avatarPaths = [
+  const avatarPaths = [
     "images/connie_forrester.jpg",
     "images/gavin_foster.jpg",
     "images/josie_malkovic.jpg",
@@ -62,11 +62,11 @@ function view_home(bot) {
     )
     .join("")
 
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       namespace,
       tagline,
-      tagline_sub,
+      tagline_sub: taglineSub,
       featuresYaml,
       mainTestimonialYaml,
       testimonialsYaml,

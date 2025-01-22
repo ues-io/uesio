@@ -1,4 +1,4 @@
-function view_detail(bot) {
+function run(bot) {
   const collection = bot.params.get("collection")
   const collectionParts = collection?.split(".")
   const collectionName = collectionParts[1]
@@ -24,7 +24,7 @@ function view_detail(bot) {
     },
   }))
 
-  var definition = bot.mergeYamlTemplate(
+  const definition = bot.mergeYamlTemplate(
     {
       collection,
       namespace,

@@ -1,6 +1,6 @@
 import { AfterSaveBotApi, InsertApi, FieldValue } from "@uesio/bots"
-// @ts-ignore
-function afterbundlelisting(bot: AfterSaveBotApi) {
+
+export default function afterbundlelisting(bot: AfterSaveBotApi) {
   const historyChanges: Record<string, FieldValue>[] = []
 
   const getHistoryItem = (change: InsertApi) => {
@@ -85,6 +85,7 @@ function afterbundlelisting(bot: AfterSaveBotApi) {
   })
 
   if (historyChanges.length) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: Revisit types used for bot methods (see https://github.com/ues-io/uesio/issues/4483)
     bot.save("uesio/studio.bundlelistinghistory", historyChanges as any)
   }
 }
