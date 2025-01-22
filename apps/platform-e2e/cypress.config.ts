@@ -15,7 +15,7 @@ if (!useMockLogin && !automationPassword) {
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, {
-      cypressDir: "src",
+      cypressDir: "cypress",
     }),
     baseUrl: studioBaseUrl,
     viewportWidth: 1024,
