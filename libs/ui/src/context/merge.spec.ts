@@ -80,7 +80,9 @@ const signalOutputMergeTestCases: MergeWithContextTestCase[] = [
     name: "sad path - signal outputs not found for step",
     context: signalOutputContextHappyPath,
     input: "$SignalOutput{[someOtherStep][foo]}",
-    expectError: new Error(`Could not find signal output for step: someOtherStep`),
+    expectError: new Error(
+      `Could not find signal output for step: someOtherStep`,
+    ),
   },
   {
     name: "happy path - boolean true",
@@ -138,7 +140,9 @@ const componentOutputMergeTestCases: MergeWithContextTestCase[] = [
     name: "sad path - component outputs not found",
     context: componentOutputContextHappyPath,
     input: "$ComponentOutput{[someComponent][foo]}",
-    expectError: new Error(`Could not find component output data for component: someComponent`),
+    expectError: new Error(
+      `Could not find component output data for component: someComponent`,
+    ),
   },
 ]
 
