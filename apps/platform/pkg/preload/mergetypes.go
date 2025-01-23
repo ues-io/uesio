@@ -90,7 +90,9 @@ type MergeData struct {
 // look pretty in the html source.
 func (md MergeData) String() string {
 	// Remove the component pack dep info because we don't need it on the client
-	md.ComponentPack = nil
+	if md.PreloadMetadata != nil {
+		md.ComponentPack = nil
+	}
 
 	serialized, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)

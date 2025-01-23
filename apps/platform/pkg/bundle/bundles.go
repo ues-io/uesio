@@ -166,7 +166,7 @@ func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOpti
 func Load(item meta.BundleableItem, options *bundlestore.GetItemOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load item: %s of type: %s with error: %w", item.GetKey(), item.GetBundleFolderName(), err)
 	}
 	return bs.GetItem(item, options)
 }
