@@ -7,6 +7,7 @@ import eslintConfigPrettier from "eslint-config-prettier"
 import { fileURLToPath } from "node:url"
 import { dirname } from "node:path"
 import json from "@eslint/json"
+import eslintPluginYml from "eslint-plugin-yml"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -65,6 +66,17 @@ export default tseslint.config(
     language: "json/jsonc",
     ...json.configs.recommended,
   },
+  ...[
+    ...eslintPluginYml.configs["flat/recommended"],
+    {
+      rules: {
+        "yml/no-empty-mapping-value": "off",
+      },
+    },
+  ].map((c) => ({
+    ...c,
+    files: ["*.yaml", "**/*.yaml", "*.yml", "**/*.yml"],
+  })),
   eslintConfigPrettier,
   {
     files: ["**/bundle/bots/**/*.js"],

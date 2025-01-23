@@ -18,6 +18,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-yml": "^1.16.0",
     "prettier": "^3.4.2",
     "react": "^18.3.1",
     "typescript": "^5.7.3"
