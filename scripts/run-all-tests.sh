@@ -8,6 +8,9 @@
 
 set -e
 
+# Runs unit tests
+npm run test
+
 # Runs Hurl integration tests against the app
 bash ./scripts/run-integration-tests.sh
 
