@@ -1,9 +1,21 @@
 import nx from "@nx/eslint-plugin"
 import globals from "globals"
 import { workspaceRoot } from "@nx/devkit"
+import json from "@eslint/json"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
 export default [
+  {
+    files: ["**/*.json"],
+    ignores: ["package-lock.json"],
+    language: "json/json",
+    ...json.configs.recommended,
+  },
+  {
+    files: ["**/*.jsonc"],
+    language: "json/jsonc",
+    ...json.configs.recommended,
+  },
   ...nx.configs["flat/base"],
   ...nx.configs["flat/typescript"],
   ...nx.configs["flat/javascript"],
