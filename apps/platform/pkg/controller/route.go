@@ -214,8 +214,8 @@ type errorResponse struct {
 	Details string `json:"details,omitempty"`
 }
 
-func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, namespace string, err error, redirect bool) {
-	slog.Debug("Error Getting Route: " + err.Error())
+func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, namespace string, incomingErr error, redirect bool) {
+	slog.Debug("Error Getting Route: " + incomingErr.Error())
 
 	// If this is an invalid param exception
 
@@ -229,22 +229,31 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	var route *meta.Route
 	if redirect {
 		showButton := "false"
-		switch err.(type) {
+		switch incomingErr.(type) {
 		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
 			showButton = "true"
 		}
-		route = getNotFoundRoute(path, namespace, err.Error(), showButton)
+		route = getNotFoundRoute(path, namespace, incomingErr.Error(), showButton)
 	} else {
-		route = GetErrorRoute(path, namespace, err.Error())
+		route = GetErrorRoute(path, namespace, incomingErr.Error())
 	}
 
-	// We can upgrade to the site session to be sure to have access to the not found route
-	adminSession := sess.GetAnonSessionFrom(session)
-	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
+	// Enter into a version context to display the error page
+	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	if err != nil {
+		ctlutil.HandleError(w, fmt.Errorf("Error Getting Version Session: %w", err))
+		return
+	}
+
+	depsCache, err := routing.GetMetadataDeps(route, versionSession.RemoveWorkspaceContext())
+	if err != nil {
+		ctlutil.HandleError(w, fmt.Errorf("Error Getting Error Route Metadata: %w", err))
+		return
+	}
 
 	// This method is usually used for returning "not found" ctlutil, so if we can't derive a more specific error code,
 	// default to 404, but ideally we would have a more specific code here.
-	statusCode := exceptions.GetStatusCodeForError(err)
+	statusCode := exceptions.GetStatusCodeForError(incomingErr)
 	if statusCode == http.StatusInternalServerError {
 		statusCode = http.StatusNotFound
 	}
@@ -254,12 +263,12 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	if strings.Contains(acceptHeader, "html") {
 		// Must write status code BEFORE executing index template
 		w.WriteHeader(statusCode)
-		ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
+		ExecuteIndexTemplate(w, route, depsCache, false, session)
 		return
 	}
 	// Respond with a structured JSON error response
 	w.WriteHeader(statusCode)
-	filejson.RespondJSON(w, r, getErrorResponse(err, statusCode))
+	filejson.RespondJSON(w, r, getErrorResponse(incomingErr, statusCode))
 }
 
 func getErrorResponse(err error, statusCode int) *errorResponse {

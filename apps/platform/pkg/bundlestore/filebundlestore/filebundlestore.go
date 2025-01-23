@@ -89,7 +89,7 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	buf := &bytes.Buffer{}
 	fileMetadata, err := b.download(buf, filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
-		return exceptions.NewNotFoundException("Metadata item: " + key + " does not exist")
+		return exceptions.NewNotFoundException(fmt.Sprintf("Metadata item: %s of type: %s does not exist", key, collectionName))
 	}
 	fakeNamespaceUser := &meta.User{
 		BuiltIn: meta.BuiltIn{
