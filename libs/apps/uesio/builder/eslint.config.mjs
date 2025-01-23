@@ -3,8 +3,8 @@ import nx from "@nx/eslint-plugin"
 
 // nx react config does not apply files property so limit rules to avoid conflicts with other plugins
 const reactConfig = nx.configs["flat/react"].map((c) => ({
-  files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
   ...c,
+  files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
 }))
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */

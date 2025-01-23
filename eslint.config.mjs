@@ -2,9 +2,13 @@ import nx from "@nx/eslint-plugin"
 import globals from "globals"
 import { workspaceRoot } from "@nx/devkit"
 import json from "@eslint/json"
+import eslintPluginYml from "eslint-plugin-yml"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
 export default [
+  ...nx.configs["flat/base"],
+  ...nx.configs["flat/typescript"],
+  ...nx.configs["flat/javascript"],
   {
     files: ["**/*.json"],
     ignores: ["package-lock.json"],
@@ -16,9 +20,17 @@ export default [
     language: "json/jsonc",
     ...json.configs.recommended,
   },
-  ...nx.configs["flat/base"],
-  ...nx.configs["flat/typescript"],
-  ...nx.configs["flat/javascript"],
+  ...[
+    ...eslintPluginYml.configs["flat/recommended"],
+    {
+      rules: {
+        "yml/no-empty-mapping-value": "off",
+      },
+    },
+  ].map((c) => ({
+    ...c,
+    files: ["*.yaml", "**/*.yaml", "*.yml", "**/*.yml"],
+  })),
   {
     ignores: ["**/dist"],
   },
