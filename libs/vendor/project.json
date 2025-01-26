@@ -10,14 +10,17 @@
       "outputs": ["{workspaceRoot}/dist/vendor"],
       "options": {
         "commands": ["gulp -f libs/vendor/gulpfile.js"]
-      },
-      "watch": {
-        "builder": "nx:run-commands",
-        "options": {
-          "command": "echo TODO: watch libs/vendor",
-          "cwd": "libs/vendor"
-        }
       }
+    },
+    "watch": {
+      "builder": "nx:run-commands",
+      "options": {
+        "command": "echo TODO: watch libs/vendor",
+        "cwd": "libs/vendor"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": []
