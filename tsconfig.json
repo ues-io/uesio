@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "eslint.config.cjs",
+    "eslint.config.mjs",
+    "jest.config.js",
+    "jest.preset.js"
+  ]
+}

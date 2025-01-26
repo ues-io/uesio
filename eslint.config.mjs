@@ -37,9 +37,7 @@ export default [
   {
     languageOptions: {
       parserOptions: {
-        projectService: {
-          allowDefaultProject: ["eslint.config.mjs", "eslint.config.cjs"],
-        },
+        projectService: true,
         tsconfigRootDir: workspaceRoot,
       },
     },
