@@ -17,7 +17,6 @@
     "noUnusedLocals": true,
     "target": "es2023",
     "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
     "lib": ["esnext", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
