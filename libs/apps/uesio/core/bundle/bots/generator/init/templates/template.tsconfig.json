@@ -15,7 +15,6 @@
     "noUnusedLocals": true,
     "target": "es6",
     "module": "esnext",
-    "typeRoots": ["node_modules/@types", "generated/@types"],
     "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
