@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../../dist/out-tsc/libs/vendor",
+    "declaration": true
+  },
+  "exclude": [
+    "jest.config.js",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "**/*.test.jsx",
+    "**/*.spec.jsx",
+    "**/*.d.ts"
+  ],
+  "include": [
+    "**/*.js",
+    "**/*.*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/*.cjs",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mts",
+    "**/*.cts"
+  ]
+}
