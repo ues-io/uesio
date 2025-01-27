@@ -6,7 +6,7 @@
   "include": [
     "eslint.config.cjs",
     "eslint.config.mjs",
-    "jest.config.js",
+    "jest.config.ts",
     "jest.preset.js"
   ]
 }

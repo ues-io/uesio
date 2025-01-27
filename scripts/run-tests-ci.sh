@@ -14,9 +14,6 @@ set -e
 # Spins up dependencies and runs the app in Docker
 bash ./scripts/tests-setup.sh
 
-# Runs unit tests
-npm run test
-
 # Runs Hurl integration tests against the app
 bash ./scripts/run-integration-tests.sh
 

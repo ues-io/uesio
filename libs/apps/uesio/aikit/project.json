@@ -14,27 +14,30 @@
           "npx tsc --noEmit --project ./tsconfig.lib.json"
         ],
         "cwd": "libs/apps/uesio/aikit"
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "watch": {
       "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
       "options": {
         "command": "../../../../dist/cli/uesio pack -w",
         "cwd": "libs/apps/uesio/aikit"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      },
+      "dependsOn": ["^build"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/apps/uesio/aikit/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/aikit"]
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   },
   "tags": [],
-  "implicitDependencies": ["cli", "ui"]
+  "implicitDependencies": ["cli"]
 }

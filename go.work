@@ -1,0 +1,12 @@
+// There are differing opinions on whether or not go.work/go.work.sum should be checked in to version control.
+// This repo is a monorepo containing containing multiple-go modules that are NOT intended to be consumed
+// externally.  The general guidance on this, although unofficial, is that is is OK to commit these files
+// to version control.  See https://github.com/golang/go/issues/53502
+
+go 1.23.4
+
+
+use (
+	./apps/cli
+	./apps/platform
+)

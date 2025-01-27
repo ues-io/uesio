@@ -29,6 +29,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: master
+      - name: Ensure tracking against master
+        run: git branch --track master origin/master
+        if: ${{ github.event_name == 'pull_request' }}
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -37,15 +44,16 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
-          cache-dependency-path: apps/*/go.sum
-      - name: Install, lint, build, test
+          go-version-file: go.work
+          cache-dependency-path: |
+            apps/*/go.sum
+            go.work.sum
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Check formatting
+        run: npx nx format:check --verbose
+      - name: Lint, test, build
         shell: bash
         env:
           UESIO_DEV: "true"
-        run: |
-          npm ci
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run build-all
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+        run: npx nx affected -t lint test build --configuration=ci --parallel=5

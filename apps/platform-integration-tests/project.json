@@ -4,9 +4,5 @@
   "sourceRoot": "apps/platform-integration-tests",
   "projectType": "application",
   "implicitDependencies": ["platform"],
-  "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    }
-  }
+  "targets": {}
 }

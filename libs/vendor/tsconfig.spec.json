@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
     "module": "commonjs",
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "outDir": "../../dist/out-tsc"
   },
   "include": [
     "jest.config.js",

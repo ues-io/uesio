@@ -41,4 +41,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
+// The presence of go.work makes this replace unncessary for building, however go mod tidy is module
+// specific and will fail without replace being used.  See https://github.com/golang/go/issues/50750
 replace github.com/thecloudmasters/uesio => ../platform

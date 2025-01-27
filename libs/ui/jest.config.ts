@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayName: "ui",
   preset: "../../jest.preset.js",
   clearMocks: true,

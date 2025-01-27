@@ -4,9 +4,5 @@
   "sourceRoot": "apps/platform-e2e/src",
   "projectType": "application",
   "implicitDependencies": ["platform"],
-  "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    }
-  }
+  "targets": {}
 }
