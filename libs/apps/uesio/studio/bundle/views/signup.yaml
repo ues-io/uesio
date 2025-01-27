@@ -267,3 +267,5 @@ definition:
                                     - text-blue-600
                             - uesio/io.text:
                                 text: "."
+        splash:
+          - uesio/studio.splash:

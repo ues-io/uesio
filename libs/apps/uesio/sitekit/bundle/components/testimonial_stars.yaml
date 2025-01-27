@@ -12,6 +12,9 @@ properties:
 definition:
   - uesio/io.box:
       uesio.variant: $Prop{wrapperVariant}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
       uesio.display:
         - type: group
           conjunction: OR

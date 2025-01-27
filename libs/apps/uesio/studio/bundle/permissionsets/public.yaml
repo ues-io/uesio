@@ -1,6 +1,7 @@
 name: public
 named:
 views:
+  uesio/studio.login: true
   uesio/studio.signup: true
   uesio/studio.signuplanding: true
   uesio/studio.publicbundlelisting: true
