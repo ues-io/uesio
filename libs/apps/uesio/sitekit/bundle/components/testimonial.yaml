@@ -61,11 +61,11 @@ definition:
         root:
           - $Region{root}
       components:
-        - uesio/io.box:
-            components:
-              - uesio/sitekit.testimonial_stars:
-                  wrapperVariant: $Prop{starsVariant}
-                  stars: $Prop{stars}
+        - uesio/sitekit.testimonial_stars:
+            uesio.styleTokens:
+              root: $Region{stars}
+            wrapperVariant: $Prop{starsVariant}
+            stars: $Prop{stars}
         - uesio/io.text:
             uesio.variant: $Prop{quoteVariant}
             uesio.styleTokens:
@@ -74,6 +74,9 @@ definition:
             text: $Prop{quote}
         - uesio/io.titlebar:
             uesio.variant: uesio/io.item
+            uesio.display:
+              - type: hasValue
+                value: $Prop{name}
             title: $Prop{name}
             subtitle: $Prop{title}
             avatar:
@@ -81,6 +84,9 @@ definition:
                   uesio.variant: $Prop{avatarVariant}
                   image: $File{$Prop{avatar}:$Prop{avatarPath}}
         - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{extra}
             uesio.styleTokens:
               root:
                 - $Region{extra}

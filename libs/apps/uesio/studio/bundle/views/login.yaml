@@ -1,0 +1,10 @@
+name: login
+public: true
+definition:
+  components:
+    - uesio/core.view:
+        view: uesio/appkit.login
+        uesio.id: login
+        slots:
+          splash:
+            - uesio/studio.splash:

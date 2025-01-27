@@ -15,9 +15,7 @@ definition:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - bg-[url($File{uesio/appkit.splash})]
-                - bg-cover
-                - bg-right
+                - bg-slate-100
   components:
     - uesio/appkit.splash:
         content:
