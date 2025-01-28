@@ -180,7 +180,7 @@ const handleNavigateResponse = async (
   dispatchRouteDeps(deps)
 
   // Always scroll to top of view after doing a route navigate
-  window.scrollTo(0, 0)
+  document.getElementById("root")?.scrollTo(0, 0)
 
   return context
 }
