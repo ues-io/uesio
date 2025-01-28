@@ -92,9 +92,7 @@ jobs:
               echo "Image does not exist, building and pushing"
           fi
 
-          # TODO: nx format using deprecated fs.Stats constructor which fails on Node 22+.  Migrate to format:check once resolved.
-          # npx nx format:check --verbose
-          npm run prettier-check
+          npx nx format:check --verbose
           npx nx affected -t lint test build --configuration=ci --parallel=5
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
