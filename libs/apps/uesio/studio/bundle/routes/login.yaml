@@ -1,5 +1,5 @@
 name: login
 path: login
-view: uesio/appkit.login
+view: uesio/studio.login
 theme: default
 title: Uesio - Login

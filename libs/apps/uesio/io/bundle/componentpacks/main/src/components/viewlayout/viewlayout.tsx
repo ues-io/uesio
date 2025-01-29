@@ -45,7 +45,7 @@ const HeaderArea = (props: {
     return () => container.removeEventListener("scroll", handleScroll)
   }, [trackScrolling])
 
-  return <div className={styles.cx(className, direction)}>{children}</div>
+  return <header className={styles.cx(className, direction)}>{children}</header>
 }
 
 const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
@@ -85,7 +85,7 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
         </div>
       )}
       {content && (
-        <div className={classes.content}>
+        <main className={classes.content}>
           <component.Slot
             definition={definition}
             listName="content"
@@ -93,7 +93,7 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
             context={context}
             componentType={componentType}
           />
-        </div>
+        </main>
       )}
       {right && (
         <div className={classes.right}>
@@ -107,7 +107,7 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
         </div>
       )}
       {footer && (
-        <div className={classes.footer}>
+        <footer className={classes.footer}>
           <component.Slot
             definition={definition}
             listName="footer"
@@ -115,7 +115,7 @@ const ViewLayout: definition.UC<ViewLayoutDefinition> = (props) => {
             context={context}
             componentType={componentType}
           />
-        </div>
+        </footer>
       )}
     </div>
   )

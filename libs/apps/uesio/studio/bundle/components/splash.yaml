@@ -1,0 +1,37 @@
+name: splash
+category: LAYOUT
+title: Secret Section
+type: DECLARATIVE
+discoverable: false
+description: The studio splash screen
+properties:
+sections:
+  - type: HOME
+  - type: DISPLAY
+definition:
+  - uesio/sitekit.testimonial:
+      quote: Develop apps in minutes, not months.
+      uesio.styleTokens:
+        root:
+          - grid
+          - bg-slate-100
+          - justify-center
+          - items-center
+          - text-center
+          - content-center
+          - font-bold
+          - xl:px-48
+          - lg:px-24
+          - md:px-12
+          - px-8
+          - py-24
+          - "[text-wrap:balance]"
+        quote:
+          - text-4xl
+          - font-light
+          - text-slate-700
+        stars:
+          - justify-center
+          - text-slate-700
+          - text-2xl
+          - order-last

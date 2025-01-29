@@ -8,9 +8,7 @@ slots:
       - uesio/io.box:
           uesio.styleTokens:
             root:
-              - bg-[url($File{uesio/appkit.splash})]
-              - bg-cover
-              - bg-right
+              - bg-slate-100
 defaultVariant: uesio/appkit.default
 definition:
   - uesio/io.grid:
