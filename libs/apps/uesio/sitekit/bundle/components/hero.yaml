@@ -38,6 +38,9 @@ definition:
               root:
                 - $Region{category}
             text: $Prop{category}
+            uesio.display:
+              - type: hasValue
+                value: $Prop{category}
         - uesio/io.text:
             uesio.styleTokens:
               root:
