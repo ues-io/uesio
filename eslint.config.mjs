@@ -3,12 +3,42 @@ import globals from "globals"
 import { workspaceRoot } from "@nx/devkit"
 import json from "@eslint/json"
 import eslintPluginYml from "eslint-plugin-yml"
+import tseslint from "typescript-eslint"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
 export default [
+  {
+    ignores: ["**/dist"],
+  },
   ...nx.configs["flat/base"],
-  ...nx.configs["flat/typescript"],
-  ...nx.configs["flat/javascript"],
+  ...tseslint.config(
+    {
+      files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
+      extends: [nx.configs["flat/typescript"], nx.configs["flat/javascript"]],
+      languageOptions: {
+        parserOptions: {
+          projectService: true,
+          tsconfigRootDir: workspaceRoot,
+        },
+      },
+    },
+    {
+      files: ["**/*.{ts,mts,cts,tsx}"],
+      extends: [
+        // TODO: Uncomment once all the rule violations are addressed
+        // tseslint.configs.strictTypeChecked,
+        // tseslint.configs.stylisticTypeChecked,
+      ],
+      rules: {
+        // Permanent Overrides
+        "@typescript-eslint/consistent-type-definitions": "off",
+
+        // TODO: Remove all temporary rules once all the rule violations are addressed
+        // Temporary Rules
+        //"@typescript-eslint/prefer-nullish-coalescing": "error"
+      },
+    },
+  ),
   {
     files: ["**/*.json"],
     ignores: ["package-lock.json"],
@@ -31,17 +61,6 @@ export default [
     ...c,
     files: ["*.yaml", "**/*.yaml", "*.yml", "**/*.yml"],
   })),
-  {
-    ignores: ["**/dist"],
-  },
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: workspaceRoot,
-      },
-    },
-  },
   {
     files: ["**/*.spec.{ts,tsx,js,jsx}"],
     languageOptions: {
