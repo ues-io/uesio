@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"mime"
 	"os"
 
@@ -40,7 +39,6 @@ import (
 )
 
 func init() {
-	fmt.Println("test ci build")
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 	mime.AddExtensionType(".md", "text/markdown")
