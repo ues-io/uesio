@@ -347,6 +347,8 @@ class Context {
   siteadmin?: SiteAdminState
   slotLoader?: MetadataKey
 
+  testSHA = () => 1
+
   // returns the context app name, using workspace/site admin context if present
   // or otherwise defaulting to the site context app name
   getApp = () =>
