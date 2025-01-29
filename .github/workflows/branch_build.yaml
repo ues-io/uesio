@@ -17,6 +17,9 @@ jobs:
   build_and_test:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # required for nx-set-shas
+      actions: read # required for nx-set-shas
     env:
       FULL_SHA: ${{ github.sha }}
     steps:
