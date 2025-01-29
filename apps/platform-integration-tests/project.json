@@ -7,7 +7,9 @@
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/dist/out-tsc/apps/platform-integration-tests"],
+      "outputs": [
+        "{workspaceRoot}/dist/out-tsc/apps/platform-integration-tests"
+      ],
       "options": {
         "commands": [
           "npx tsc --build --emitDeclarationOnly --pretty --verbose"

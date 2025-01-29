@@ -9,9 +9,7 @@
       "executor": "nx:run-commands",
       "outputs": ["{projectRoot}/bundle/componentpacks/app/dist"],
       "options": {
-        "commands": [
-          "../../../../dist/cli/uesio pack"
-        ],
+        "commands": ["../../../../dist/cli/uesio pack"],
         "cwd": "libs/apps/uesio/core"
       },
       "dependsOn": ["^build"]
