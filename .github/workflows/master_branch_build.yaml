@@ -3,15 +3,6 @@ on:
   push:
     branches:
       - master
-    secrets:
-      GH_PAT:
-        required: true
-      AWS_ACCOUNT_ID_DEV:
-        required: true
-      AWS_ECR_ROLE_DEV:
-        required: true
-      AWS_REGION_DEV:
-        required: true
 
 # Ensure that only the latest push to master is run,
 # and any previous builds on the branch are cancelled automatically
@@ -95,6 +86,10 @@ jobs:
 
           npx nx format:check --verbose
           npx nx affected -t lint test build typecheck --configuration=ci --parallel=5
+          # We lint/test/build affected but in order to build image, we need to ensure everything
+          # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
+          # for anything already built from above)
+          npx nx run-many -t build --all
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG
