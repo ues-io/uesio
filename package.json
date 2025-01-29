@@ -117,7 +117,7 @@
     "react-use": "^17.6.0",
     "reactflow": "^11.11.4",
     "remark-gfm": "^4.0.0",
-    "sonner": "^1.7.2",
+    "sonner": "^1.7.3",
     "tailwind-merge": "^2.6.0",
     "ts-jest": "^29.2.5",
     "ts-json-schema-generator": "^2.3.0",
