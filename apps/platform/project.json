@@ -55,7 +55,8 @@
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     },
     "test": {
-      "executor": "@nx-go/nx-go:test"
+      "executor": "@nx-go/nx-go:test",
+      "dependsOn": ["vendor:build", "ui:build"]
     },
     "tidy": {
       "executor": "@nx-go/nx-go:tidy"
