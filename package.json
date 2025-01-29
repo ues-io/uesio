@@ -88,7 +88,7 @@
     "chart.js": "^4.4.7",
     "css-tree": "^3.1.0",
     "cypress": "^13.17.0",
-    "eslint": "^9.18.0",
+    "eslint": "^9.19.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^4.1.0",
     "eslint-plugin-import": "^2.31.0",
