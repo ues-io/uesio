@@ -4,5 +4,16 @@
   "sourceRoot": "apps/platform-e2e/src",
   "projectType": "application",
   "implicitDependencies": ["platform"],
-  "targets": {}
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/apps/platform-e2e"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "apps/platform-e2e"
+      }
+    }
+  }
 }

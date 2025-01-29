@@ -4,5 +4,16 @@
   "sourceRoot": "apps/platform-integration-tests",
   "projectType": "application",
   "implicitDependencies": ["platform"],
-  "targets": {}
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/apps/platform-integration-tests"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "apps/platform-integration-tests"
+      }
+    }
+  }
 }

@@ -93,7 +93,7 @@ jobs:
           fi
 
           npx nx format:check --verbose
-          npx nx affected -t lint test build --configuration=ci --parallel=5
+          npx nx affected -t lint test build typecheck --configuration=ci --parallel=5
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG

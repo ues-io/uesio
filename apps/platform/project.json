@@ -20,7 +20,7 @@
         "main": "{projectRoot}/main.go",
         "args": ["seed"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["vendor:build"]
     },
     "migrate-db": {
       "executor": "@nx-go/nx-go:serve",
@@ -28,7 +28,7 @@
         "main": "{projectRoot}/main.go",
         "args": ["migrate"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["vendor:build"]
     },
     "serve": {
       "executor": "@nx-go/nx-go:serve",
@@ -36,7 +36,7 @@
         "main": "{projectRoot}/main.go",
         "args": ["serve"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build"}]
     },
     "worker": {
       "executor": "@nx-go/nx-go:serve",
@@ -44,7 +44,7 @@
         "main": "{projectRoot}/main.go",
         "args": ["worker"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["vendor:build"]
     },
     "build-image": {
       "executor": "nx:run-commands",
@@ -52,16 +52,15 @@
         "command": "export GITSHA=$(git rev-parse --short HEAD) && docker build --tag uesio:$GITSHA --tag uesio:latest -f ./apps/platform/Dockerfile .",
         "cwd": "."
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build"}]
     },
     "test": {
-      "executor": "@nx-go/nx-go:test",
-      "dependsOn": ["^build"]
+      "executor": "@nx-go/nx-go:test"
     },
     "tidy": {
       "executor": "@nx-go/nx-go:tidy"
     }
   },
   "tags": [],
-  "implicitDependencies": ["vendor", "ui"]
+  "implicitDependencies": []
 }

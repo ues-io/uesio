@@ -11,12 +11,21 @@
       "options": {
         "commands": [
           "../../../../dist/cli/uesio pack",
-          "npx tsc --noEmit --project ./tsconfig.lib.json",
           "node ./build/generate-tailwind-classes-index.js"
         ],
         "cwd": "libs/apps/uesio/builder"
       },
       "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/apps/uesio/builder"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "libs/apps/uesio/builder"
+      }
     },
     "watch": {
       "executor": "nx:run-commands",
@@ -36,6 +45,6 @@
       }
     }
   },
-  "tags": [],
-  "implicitDependencies": ["cli"]
+  "tags": ["type:platform-dep"],
+  "implicitDependencies": ["cli", "ui"]
 }

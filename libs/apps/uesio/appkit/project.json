@@ -10,12 +10,21 @@
       "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
       "options": {
         "commands": [
-          "../../../../dist/cli/uesio pack",
-          "npx tsc --noEmit --project ./tsconfig.lib.json"
+          "../../../../dist/cli/uesio pack"
         ],
         "cwd": "libs/apps/uesio/appkit"
       },
       "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/apps/uesio/appkit"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "libs/apps/uesio/appkit"
+      }
     },
     "watch": {
       "executor": "nx:run-commands",
@@ -38,6 +47,6 @@
       }
     }
   },
-  "tags": [],
-  "implicitDependencies": ["cli"]
+  "tags": ["type:platform-dep"],
+  "implicitDependencies": ["cli", "ui"]
 }

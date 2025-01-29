@@ -58,4 +58,4 @@ jobs:
         shell: bash
         env:
           UESIO_DEV: "true"
-        run: npx nx affected -t lint test build --configuration=ci --parallel=5
+        run: npx nx affected -t lint test build typecheck --configuration=ci --parallel=5

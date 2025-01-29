@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "master",
-  "defaultProject": "cli",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
@@ -32,6 +31,9 @@
       "cache": true
     },
     "e2e": {
+      "cache": true
+    },
+    "typecheck": {
       "cache": true
     }
   },
