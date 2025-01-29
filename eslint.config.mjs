@@ -36,7 +36,7 @@ export default [
         // TODO: Remove all temporary rules once all the rule violations are addressed
         // Temporary Rules
         //"@typescript-eslint/prefer-nullish-coalescing": "error"
-      }
+      },
     },
   ),
   {
