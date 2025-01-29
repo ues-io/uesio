@@ -20,15 +20,10 @@ jobs:
     env:
       FULL_SHA: ${{ github.sha }}
     steps:
-      # Checkout master (so we can use nx:affected)
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-          ref: master
-      # Checkout the current branch
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
         with:
