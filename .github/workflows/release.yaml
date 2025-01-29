@@ -98,8 +98,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
-          cache-dependency-path: apps/*/go.sum
+          go-version-file: go.work
+          cache-dependency-path: |
+            apps/*/go.sum
+            go.work.sum
       - name: Build CLI
         shell: bash
         env:

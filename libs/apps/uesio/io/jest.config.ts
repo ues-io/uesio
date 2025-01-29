@@ -1,9 +1,9 @@
-module.exports = {
-  displayName: "builder",
+export default {
+  displayName: "io",
   preset: "../../../../jest.preset.js",
   transform: {
     "^.+\\.(t|j)sx?$": "@swc/jest",
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  coverageDirectory: "../../coverage/libs/apps/uesio/builder",
+  coverageDirectory: "../../../../coverage/libs/apps/uesio/io",
 }

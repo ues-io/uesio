@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ################################################################################
-# Purpose: For developers to run integration and E2E tests against their local app
+# Purpose: For developers to run unit, integration and E2E tests against their local app
 # (so that you can debug the tests locally)
 # Assumes that you have the Uesio app and deps running already
 ################################################################################

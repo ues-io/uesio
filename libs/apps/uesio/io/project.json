@@ -9,32 +9,39 @@
       "executor": "nx:run-commands",
       "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
       "options": {
+        "commands": ["../../../../dist/cli/uesio pack"],
+        "cwd": "libs/apps/uesio/io"
+      },
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/apps/uesio/io"],
+      "options": {
         "commands": [
-          "../../../../dist/cli/uesio pack",
-          "npx tsc --noEmit --project ./tsconfig.lib.json"
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
         "cwd": "libs/apps/uesio/io"
       }
     },
     "watch": {
       "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
       "options": {
         "command": "../../../../dist/cli/uesio pack -w",
         "cwd": "libs/apps/uesio/io"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      },
+      "dependsOn": ["^build"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/apps/uesio/io/jest.config.js",
-        "passWithNoTests": false
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/io"]
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   },
-  "tags": [],
+  "tags": ["type:platform-dep"],
   "implicitDependencies": ["cli", "ui"]
 }

@@ -11,6 +11,17 @@
       "options": {
         "commands": ["bash build.sh"],
         "cwd": "libs/ui"
+      },
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/ui"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "libs/ui"
       }
     },
     "watch": {
@@ -19,19 +30,18 @@
       "options": {
         "command": "../../dist/cli/uesio packui --watch",
         "cwd": "libs/ui"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      },
+      "dependsOn": ["build"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/ui/jest.config.js"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/ui"]
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   },
-  "tags": [],
+  "tags": ["type:platform-dep"],
   "implicitDependencies": ["cli"]
 }

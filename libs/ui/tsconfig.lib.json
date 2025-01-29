@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/ui/types",
-    "declaration": true
+    "outDir": "../../dist/out-tsc"
   },
   "exclude": [
-    "jest.config.js",
+    "jest.config.ts",
+    "jest-test-setup.js",
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.test.tsx",

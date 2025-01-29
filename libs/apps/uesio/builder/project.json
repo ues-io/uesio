@@ -11,31 +11,40 @@
       "options": {
         "commands": [
           "../../../../dist/cli/uesio pack",
-          "npx tsc --noEmit --project ./tsconfig.lib.json",
           "node ./build/generate-tailwind-classes-index.js"
+        ],
+        "cwd": "libs/apps/uesio/builder"
+      },
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/apps/uesio/builder"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
         "cwd": "libs/apps/uesio/builder"
       }
     },
     "watch": {
       "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
       "options": {
         "command": "../../../../dist/cli/uesio pack -w",
         "cwd": "libs/apps/uesio/builder"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
+      },
+      "dependsOn": ["^build"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/apps/uesio/builder/jest.config.js",
-        "passWithNoTests": false
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/apps/uesio/builder"]
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   },
-  "tags": [],
+  "tags": ["type:platform-dep"],
   "implicitDependencies": ["cli", "ui"]
 }

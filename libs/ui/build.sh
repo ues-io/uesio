@@ -13,8 +13,6 @@ echo -e "declare module \"@uesio/bots\" {\n$(cat src/public_types/server/index.d
 # @uesio/ui API
 echo -e "declare module \"@uesio/ui\" {\n$(cat src/public_types/client/index.d.ts)\n}" >> ../../dist/ui/types/client/index.d.ts
 
-npx tsc --noEmit --project ./tsconfig.lib.json
-
 # Generate JSON Schema for TS types that we want to validate server-side
 npx ts-json-schema-generator -j extended \
     --path "src/definition/definition.ts" \

@@ -12,16 +12,23 @@
         "commands": ["gulp -f libs/vendor/gulpfile.js"]
       }
     },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/out-tsc/libs/vendor"],
+      "options": {
+        "commands": [
+          "npx tsc --build --emitDeclarationOnly --pretty --verbose"
+        ],
+        "cwd": "libs/vendor"
+      }
+    },
     "watch": {
       "builder": "nx:run-commands",
       "options": {
         "command": "echo TODO: watch libs/vendor",
         "cwd": "libs/vendor"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   },
-  "tags": []
+  "tags": ["type:platform-dep"]
 }

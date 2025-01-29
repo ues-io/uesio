@@ -37,6 +37,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: master
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -54,8 +58,12 @@ jobs:
       - name: Use Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23.4
-          cache-dependency-path: apps/*/go.sum
+          go-version-file: go.work
+          cache-dependency-path: |
+            apps/*/go.sum
+            go.work.sum
+      - name: Install NPM dependencies
+        run: npm ci
       - name: Build, test, and docker push to ECR
         shell: bash
         env:
@@ -73,8 +81,6 @@ jobs:
           # Skip build if image already exists
           image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
 
-          npm ci
-
           if [[ "$image_exists" == "yes" ]]; then
               echo "Docker image already exists, skipping build and docker push"
               docker pull $IMAGE_TAG
@@ -86,10 +92,8 @@ jobs:
               echo "Image does not exist, building and pushing"
           fi
 
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run build-all
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npx nx format:check --verbose
+          npx nx affected -t lint test build typecheck --configuration=ci --parallel=5
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG
