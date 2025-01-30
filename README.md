@@ -4,6 +4,8 @@
 
 Uesio is a **low-code** application development platform.
 
+Do not build on md change
+
 # Set up dev environment
 
 ## Required
