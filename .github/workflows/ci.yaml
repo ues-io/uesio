@@ -3,12 +3,12 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths-ignore: [".vscode/**", "**/*.md"] # TODO: Verify no md files are used in bundles, etc.
+    paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
   merge_group:
   pull_request:
     branches: [main]
     # Note - Ignore is not commit specific, if any file in the PR is outside of this list, workflow will run, see https://github.com/orgs/community/discussions/25161#discussioncomment-3246673
-    paths-ignore: [".vscode/**", "**/*.md"] # TODO: Verify no md files are used in bundles, etc.
+    paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
 
 # Automatically cancel in-progress actions on the same branch except for main
 concurrency:
