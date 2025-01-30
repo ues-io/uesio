@@ -6,7 +6,7 @@ set -e
 CERT_FILE="./apps/platform/ssl/certificate.crt"
 if [ -f "$CERT_FILE" ]; then
     echo "SSL certificate already exists."
-else 
+else
     echo "SSL certificate does not exist, creating..."
     cd apps/platform/ssl
     bash ./create.sh
@@ -22,10 +22,9 @@ fi
 # In CI, we should have the image built already, but locally we may not
 if [[ -z "${GITSHA}" ]]; then
     export GITSHA=$(git rev-parse --short HEAD)
-    if [[ "$(docker images -q $GITSHA 2> /dev/null)" == "" ]]; then
-        docker build --tag "$GITSHA" -f ./apps/platform/Dockerfile .
-        export APP_IMAGE="$GITSHA"
-    fi
+    # force a (re)build to ensure we use current filesystem (e.g., uncommitted changes)
+    docker build --tag "$GITSHA" -f ./apps/platform/Dockerfile .
+    export APP_IMAGE="$GITSHA"
 fi
 if [[ -z "${APP_IMAGE}" ]]; then
     export APP_IMAGE="$GITSHA"
