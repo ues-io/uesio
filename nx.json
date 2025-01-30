@@ -16,7 +16,7 @@
       "!{projectRoot}/jest.config.[jt]s"
     ],
     "sharedGlobals": [
-      "{workspaceRoot}/.github/workflows/branch_build.yaml",
+      "{workspaceRoot}/.github/workflows/ci.yaml",
       "{workspaceRoot}/go.work"
     ]
   },
