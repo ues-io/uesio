@@ -100,6 +100,13 @@ jobs:
             GITSHA=${{ steps.setDockerSHAs.outputs.gitsha }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=docker,dest=${{ runner.temp }}/uesio-image.tar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uesio-image
+          path: ${{ runner.temp }}/uesio-image.tar
 
       - name: Integration and e2e tests
         env:

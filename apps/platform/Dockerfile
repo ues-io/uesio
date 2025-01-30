@@ -16,7 +16,8 @@ COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
 
 ARG GITSHA
-ENV GITSHA ${GITSHA}
+ENV GITSHA=${GITSHA}
+LABEL version=${GITSHA}
 
 EXPOSE 3000
 
