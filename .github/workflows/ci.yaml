@@ -107,7 +107,7 @@ jobs:
             type=docker
             type=docker,dest=${{ runner.temp }}/uesio-image.tar
 
-      - name: Upload artifact
+      - name: Upload docker image artifact
         uses: actions/upload-artifact@v4
         with:
           name: uesio-image
@@ -129,3 +129,64 @@ jobs:
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
           npm run tests-ci
+
+  update-dev-branch:
+    name: Update Dev environment to latest image
+    if: github.ref_name == 'main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 3
+    steps:
+      - name: Checkout TheCloudMasters/uesio-infra
+        uses: actions/checkout@v4
+        with:
+          repository: TheCloudMasters/uesio-infra
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
+          fetch-depth: 1
+
+      - name: Download docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: uesio-image
+          path: ${{ runner.temp }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ECR_ROLE_DEV }}
+          role-session-name: ecrpush
+          aws-region: ${{ secrets.AWS_REGION_DEV }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push image to ECR
+        id: pushImageToECR
+        env:
+          LOCAL_IMAGE_TAG: ${{ needs.build.outputs.gitsha }}
+          REGISTRY_IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ needs.build.outputs.gitsha }}
+        run: |
+          echo "LOCAL_IMAGE_TAG=${LOCAL_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "REGISTRY_IMAGE_TAG=${REGISTRY_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          docker load --input ${{ runner.temp }}/uesio-image.tar
+          docker tag $LOCAL_IMAGE_TAG $REGISTRY_IMAGE_TAG
+          docker image push $REGISTRY_IMAGE_TAG
+
+      - name: Update docker container image tag for dev
+        env:
+          LOCAL_IMAGE_TAG: ${{ steps.pushImageToECR.outputs.LOCAL_IMAGE_TAG }}
+          REGISTRY_IMAGE_TAG: ${{ steps.pushImageToECR.outputs.REGISTRY_IMAGE_TAG }}
+          appTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_web.json
+          workerTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_worker.json
+        run: |
+          echo "Docker image SHA updated to $LOCAL_IMAGE_TAG"
+          jq --arg img "$REGISTRY_IMAGE_TAG" '.containerDefinitions[0].image = $img' $appTaskDefPath > tmp1.json
+          jq --arg img "$REGISTRY_IMAGE_TAG" '.containerDefinitions[0].image = $img' $workerTaskDefPath > tmp2.json
+          mv tmp1.json $appTaskDefPath
+          mv tmp2.json $workerTaskDefPath
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add $appTaskDefPath $workerTaskDefPath
+          git commit -m "ci: Auto-update dev image to $LOCAL_IMAGE_TAG"
+          git push
