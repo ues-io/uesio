@@ -1,0 +1,54 @@
+name: CI
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  merge_group:
+  pull_request:
+    branches: [main]
+    paths-ignore: [".vscode/**", "**/*.md"] # TODO: Verify no md files are used in bundles, etc.
+
+# Automatically cancel in-progress actions on the same branch except for main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  NODE_VERSION: 22.13.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+      - name: Ensure tracking against main
+        run: git branch --track main origin/main
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.work
+          cache-dependency-path: |
+            apps/*/go.sum
+            go.work.sum
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Check formatting
+        env:
+          UESIO_DEV: "true"
+        run: npx nx format:check --verbose
+      - name: Lint, test, build
+        env:
+          UESIO_DEV: "true"
+        run: npx nx affected -t lint test build typecheck --configuration=ci --parallel=5
