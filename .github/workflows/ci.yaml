@@ -93,8 +93,11 @@ jobs:
       - name: Build and export to docker
         uses: docker/build-push-action@v6
         with:
+          context: .
           load: true
           file: ./apps/platform/Dockerfile
+          build-args: |
+            GITSHA=${{ steps.setDockerSHAs.outputs.gitsha }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
