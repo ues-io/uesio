@@ -76,7 +76,8 @@ jobs:
           # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
           # for anything already built from above)
           npx nx run-many -t build --all
-          echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8)-${{ github.run_number }}-${{ github.run_attempt }}`" >> "$GITHUB_OUTPUT"
+          #echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8)-${{ github.run_number }}-${{ github.run_attempt }}`" >> "$GITHUB_OUTPUT"
+          echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8)`" >> "$GITHUB_OUTPUT"
 
       - name: Docker meta
         id: meta
