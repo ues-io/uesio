@@ -27,8 +27,8 @@ jobs:
           fetch-depth: 0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
-      - name: Ensure tracking against master
-        run: git branch --track master origin/master
+      - name: Ensure tracking against main
+        run: git branch --track main origin/main
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
       - name: Setup node
         uses: actions/setup-node@v4
