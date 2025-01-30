@@ -135,6 +135,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     timeout-minutes: 3
+    permissions:
+      id-token: write # This is required for requesting a OIDC JWT for AWS
     steps:
       - name: Checkout TheCloudMasters/uesio-infra
         uses: actions/checkout@v4
