@@ -51,10 +51,11 @@ var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var nameParam = getMetadataItemParam("name")
 var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
-var versionParam = "{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}"
+var versionParam = "{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,}(?:\\.[0-9]+\\.[0-9]+)?)}"
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
-// Or an 8-character short Git sha, e.g. abcd1234
+// an 8-character short Git sha, e.g. abcd1234 or an 8-character short
+// Git sha followed by runnumber.runattempt, e.g. abcd1234.13.3
 var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
