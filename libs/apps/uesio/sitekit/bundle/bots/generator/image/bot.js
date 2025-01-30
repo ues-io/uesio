@@ -6,7 +6,7 @@ function run(bot) {
   let samples = bot.params.get("samples") || 1
 
   if (typeof samples !== "number") {
-    throw new Error("Invalid samples parameter")
+    throw new Error("Invalid samples parameter - Change a non-md & non-.vscode file")
   }
   if (samples > 4) samples = 4
 
