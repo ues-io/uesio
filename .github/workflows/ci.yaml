@@ -86,6 +86,8 @@ jobs:
             type=raw,value=${{ steps.setDockerSHAs.outputs.gitsha }}
             type=ref,event=branch
             type=ref,event=pr
+          labels: |
+            org.opencontainers.image.version=${{ steps.setDockerSHAs.outputs.gitsha }}
 
       - name: Set up docker buildx
         uses: docker/setup-buildx-action@v3
@@ -100,7 +102,9 @@ jobs:
             GITSHA=${{ steps.setDockerSHAs.outputs.gitsha }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=docker,dest=${{ runner.temp }}/uesio-image.tar
+          outputs: |
+            type=docker
+            type=docker,dest=${{ runner.temp }}/uesio-image.tar
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
