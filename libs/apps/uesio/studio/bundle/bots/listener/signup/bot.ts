@@ -2,12 +2,12 @@ import { ListenerBotApi } from "@uesio/bots"
 
 export default function signup(bot: ListenerBotApi) {
   const redirect = `/site/auth/${bot.getNamespace()}/platform/signup/confirm`
-  const username = bot.params.get("username")
-  const email = bot.params.get("email")
-  const code = bot.params.get("code")
-  const host = bot.params.get("host")
-  const firstName = bot.params.get("firstname")
-  const lastName = bot.params.get("lastname")
+  const username = bot.params.get("username") as string
+  const email = bot.params.get("email") as string
+  const code = bot.params.get("code") as string
+  const host = bot.params.get("host") as string
+  const firstName = bot.params.get("firstname") as string
+  const lastName = bot.params.get("lastname") as string
   const toName = firstName && lastName ? `${firstName} ${lastName}` : username
   const link = host + redirect + "?code=" + code + "&username=" + username
   const from = "info@updates.ues.io"

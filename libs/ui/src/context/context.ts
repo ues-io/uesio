@@ -770,6 +770,12 @@ class Context {
         if (expressionResult === undefined || expressionResult === null) {
           return ""
         }
+
+        // Stringify the result
+        if (typeof expressionResult === "object") {
+          return JSON.stringify(expressionResult)
+        }
+
         return `${expressionResult}`
       },
     )

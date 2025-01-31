@@ -1,11 +1,11 @@
 import { ListenerBotApi } from "@uesio/bots"
 
 export default function signupgoogle(bot: ListenerBotApi) {
-  const username = bot.params.get("username")
-  const email = bot.params.get("email")
-  const host = bot.params.get("host")
-  const firstName = bot.params.get("firstname")
-  const lastName = bot.params.get("lastname")
+  const username = bot.params.get("username") as string
+  const email = bot.params.get("email") as string
+  const host = bot.params.get("host") as string
+  const firstName = bot.params.get("firstname") as string
+  const lastName = bot.params.get("lastname") as string
   const toName = firstName && lastName ? `${firstName} ${lastName}` : username
   const from = "info@updates.ues.io"
   const subject = "Welcome to the ues.io studio!"

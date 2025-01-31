@@ -8,9 +8,9 @@ export default function resetpassword(bot: ListenerBotApi) {
 	}
 	const email = bot.params.get("email")
 	const redirect = "/site/app/uesio/appkit/changepassword"
-	const username = bot.params.get("username")
-	const code = bot.params.get("code")
-	const host = bot.params.get("host")
+	const username = bot.params.get("username") as string
+	const code = bot.params.get("code") as string
+	const host = bot.params.get("host") as string
 	const link = host + redirect + "?code=" + code + "&username=" + username
 	const from = "info@updates.ues.io"
 	const subject = "Password change requested in a ues.io AppKit app"

@@ -6,10 +6,10 @@ export default function createlogin(bot: ListenerBotApi) {
     return
   }
   const redirect = "/site/app/uesio/appkit/changepassword"
-  const username = bot.params.get("username")
-  const email = bot.params.get("email")
-  const code = bot.params.get("code")
-  const host = bot.params.get("host")
+  const username = bot.params.get("username") as string
+  const email = bot.params.get("email") as string
+  const code = bot.params.get("code") as string
+  const host = bot.params.get("host") as string
   const link = host + redirect + "?code=" + code + "&username=" + username
   const from = "info@updates.ues.io"
   const subject = "User created in ues.io studio"

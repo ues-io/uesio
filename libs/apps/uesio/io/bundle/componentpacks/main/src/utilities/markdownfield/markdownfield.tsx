@@ -7,8 +7,10 @@ import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import CodeField from "../codefield/codefield"
 
 import languageTypescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript"
+import languageYaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"
 
 SyntaxHighlighter.registerLanguage("typescript", languageTypescript)
+SyntaxHighlighter.registerLanguage("yaml", languageYaml)
 
 interface MarkDownFieldProps {
   setValue?: (value: wire.FieldValue) => void
@@ -158,10 +160,11 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
         pre: ({ children }) => children,
         code: ({ node, className, children, ...props }) => {
           const match = /language-(\w+)/.exec(className || "")
-          return match ? (
+          const isString = typeof children === "string"
+          return match && isString ? (
             <SyntaxHighlighter
               className={classes.code}
-              children={String(children).replace(/\n$/, "")}
+              children={children}
               style={materialDark}
               language={match[1]}
             />
