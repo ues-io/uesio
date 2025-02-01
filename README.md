@@ -498,7 +498,7 @@ To run API integration tests locally against your running Uesio container, use `
 The easiest way to run a single Integration Test is to go into the `run-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here:
 
 ```
-hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
+npx hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
 ```
 
 You could run this from the CLI, but you would have to make sure that you are (a) in the right directory (b) have the right environment variables set up. (See the top of this `run-integration-tests.sh` for a better understanding).

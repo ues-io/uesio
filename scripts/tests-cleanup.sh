@@ -28,7 +28,7 @@ echo "dev workspace should be clear"
 cd - >> /dev/null
 
 # Run specs
-hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
+npx hurl -k --variable host=studio.uesio-dev.com --variable port=3000 --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
 # Delete the workspaces
 cd apps/platform-integration-tests
