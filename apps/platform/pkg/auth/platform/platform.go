@@ -359,16 +359,22 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}
 
 	// 1. If the payload includes a "password", go ahead and auto verify and set the password
-	password, hasPassword := payload["password"]
-	if hasPassword {
-		payload["hasPassword"] = true
+	var password string
+	if passwordValue, ok := payload["password"]; ok {
+		if passwordValue, ok := passwordValue.(string); !ok {
+			return exceptions.NewInvalidParamException("password must be a string", "password")
+		} else {
+			password = passwordValue
+		}
 	}
+	hasPassword := password != ""
+	payload["hasPassword"] = hasPassword
 
 	// 2. If the payload includes a "password" and a "setTemporary" flag, set the password into
 	//    the temporary password field as well.
 	setTemporary := param.GetBoolean(payload, "setTemporary")
 	if hasPassword && setTemporary {
-		loginMethod.TemporaryPassword = password.(string)
+		loginMethod.TemporaryPassword = password
 	}
 
 	// 3. If the payload includes a "password" and a "forceReset" flag, set the forceReset flag on
