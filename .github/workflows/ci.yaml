@@ -78,6 +78,9 @@ jobs:
           npx nx run-many -t build --all
           echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8).${{ github.run_number }}.${{ github.run_attempt }}`" >> "$GITHUB_OUTPUT"
 
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -89,13 +92,29 @@ jobs:
           labels: |
             org.opencontainers.image.version=${{ steps.setDockerSHAs.outputs.gitsha }}
 
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Cache for docker
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            go-build-cache
+          key: ${{ runner.os }}-docker-cache-${{ hashFiles('apps/**/go.sum') }}
+
+      - name: Inject cache into docker
+        uses: reproducible-containers/buildkit-cache-dance@v3
+        with:
+          cache-map: |
+            {
+              "go-build-cache": "/root/.cache/go-build"
+            }
+          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Build and export to docker
         uses: docker/build-push-action@v6
         with:
           context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           load: true
           file: ./apps/platform/Dockerfile
           build-args: |
