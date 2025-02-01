@@ -461,7 +461,7 @@ To run E2E and Integration tests locally, there are a number of commands availab
    - Runs all Integration and E2E tests against your local Uesio app.
    - Use this when writing and debugging tests locally
 1. `npm run tests-ci`
-   - This is what we run in Github Actions on `master` branch builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
+   - This is what we run in Github Actions [CI](./.github/workflows/ci.yaml) builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
 1. `npm run tests-integration`
    - Runs _just_ the Integration Tests (against your local app).
 1. `npm run tests-e2e`
