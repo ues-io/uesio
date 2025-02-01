@@ -25,6 +25,7 @@ import (
 type Auth struct{}
 
 func (a *Auth) GetAuthConnection(credentials *wire.Credentials, authSource *meta.AuthSource, connection wire.Connection, session *sess.Session) (auth.AuthConnection, error) {
+	fmt.Println("test a code change")
 	return &Connection{
 		credentials: credentials,
 		authSource:  authSource,
