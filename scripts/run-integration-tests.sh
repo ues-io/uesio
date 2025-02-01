@@ -26,15 +26,15 @@ cd apps/platform-integration-tests
 # sequential execution via --jobs flag but this should be investigated and, assuming possible depending on root cause, changed to not limit parallel execution.
 # See https://github.com/ues-io/uesio/issues/4457
 # Run specs
-hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
+npx hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs/*.hurl
 # Run field condition tests
-hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_fields/*.hurl
+npx hurl --jobs 1 --error-format long -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_fields/*.hurl
 
 # FYI if you want to view the output of the request made by a specific hurl spec,
 # you can comment out the assertions of the last hurl request made in a hurl file, and then run the spec
 # without the "--test" flag, like this
-# hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
+# npx hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
 
-hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs_single_run/perf_stats.hurl
+npx hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 --test hurl_specs_single_run/perf_stats.hurl
 
 cd - >> /dev/null
