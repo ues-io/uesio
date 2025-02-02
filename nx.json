@@ -14,9 +14,7 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s"
     ],
-    "sharedGlobals": [
-      "{workspaceRoot}/.github/workflows/ci.yaml"
-    ],
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yaml"],
     "golang": [
       "{projectRoot}/go.mod",
       "{projectRoot}/go.sum",
@@ -42,28 +40,14 @@
       "cache": true
     },
     "@nx-go/nx-go:build": {
-      "inputs": [
-        "golang",
-        "^production",
-        "sharedGlobals"
-      ],
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "inputs": ["golang", "^production", "sharedGlobals"],
+      "outputs": ["{options.outputPath}"]
     },
     "@nx-go/nx-go:test": {
-      "inputs": [
-        "golang",
-        "^production",
-        "sharedGlobals"
-      ]
+      "inputs": ["golang", "^production", "sharedGlobals"]
     },
     "@nx-go/nx-go:lint": {
-      "inputs": [
-        "golang",
-        "^production",
-        "sharedGlobals"
-      ]
+      "inputs": ["golang", "^production", "sharedGlobals"]
     }
   },
   "plugins": [
