@@ -7,6 +7,10 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "^production"
+      ],
       "outputs": ["{workspaceRoot}/dist/vendor"],
       "options": {
         "commands": ["gulp -f libs/vendor/gulpfile.js"]
@@ -14,6 +18,10 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "^production"
+      ],
       "outputs": ["{workspaceRoot}/dist/out-tsc/libs/vendor"],
       "options": {
         "commands": [
