@@ -5,5 +5,5 @@ export default {
     "^.+\\.(t|j)sx?$": "@swc/jest",
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  coverageDirectory: "../../../..coverage/libs/apps/uesio/builder",
+  coverageDirectory: "../../../../coverage/libs/apps/uesio/builder",
 }

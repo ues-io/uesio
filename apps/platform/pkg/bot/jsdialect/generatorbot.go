@@ -187,6 +187,8 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 }
 
 func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
+	// TODO: Ensure generated password meets our current requirements - as written currently
+	// do not believe it will guarantee at least 1 lower & upper case characters
 	return passwordGenerator.Generate(10, 1, 1, false, false)
 }
 

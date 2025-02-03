@@ -1,4 +1,5 @@
 name: CI
+run-name: ${{ (github.event_name == 'workflow_dispatch' && format('manual{0} {1}', ':', github.sha)) || '' }}
 on:
   workflow_dispatch:
   push:
@@ -16,11 +17,11 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  NODE_VERSION: 22.13.0
+  GO_CACHE_INFO_FILE: wf-go-cache-info.txt
 
 jobs:
   build:
-    name: Check, build and test
+    name: Build and test
     runs-on: ubuntu-latest
     outputs:
       gitsha: ${{ steps.setDockerSHAs.outputs.gitsha }}
@@ -43,8 +44,15 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
+
+      # https://github.com/actions/setup-go/issues/358 - cache is shared across jobs by default since the dependency
+      # graph is the same, however each job results in different dependencies being downloaded and the first one
+      # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
+      # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      - name: Create go cache info file
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
 
       - name: Setup go
         uses: actions/setup-go@v5
@@ -53,19 +61,15 @@ jobs:
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum
+            ${{ env.GO_CACHE_INFO_FILE }}
 
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Check formatting
+      - name: Build and test
         env:
           UESIO_DEV: "true"
-        run: npx nx format:check --verbose
-
-      - name: Lint, test, build
-        env:
-          UESIO_DEV: "true"
-        run: npx nx affected -t lint test build typecheck --configuration=ci --parallel=5
+        run: npx nx affected -t build test --configuration=ci --parallel=5
 
       - name: Prep for docker image
         id: setDockerSHAs
@@ -78,6 +82,9 @@ jobs:
           npx nx run-many -t build --all
           echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8).${{ github.run_number }}.${{ github.run_attempt }}`" >> "$GITHUB_OUTPUT"
 
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -89,13 +96,29 @@ jobs:
           labels: |
             org.opencontainers.image.version=${{ steps.setDockerSHAs.outputs.gitsha }}
 
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Cache for docker
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            go-build-cache
+          key: ${{ runner.os }}-docker-cache-${{ hashFiles('apps/**/go.sum', 'go.work.sum') }}
+
+      - name: Inject cache into docker
+        uses: reproducible-containers/buildkit-cache-dance@v3
+        with:
+          cache-map: |
+            {
+              "go-build-cache": "/root/.cache/go-build"
+            }
+          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Build and export to docker
         uses: docker/build-push-action@v6
         with:
           context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           load: true
           file: ./apps/platform/Dockerfile
           build-args: |
@@ -118,22 +141,102 @@ jobs:
         run: |
           ./scripts/seed-etc-hosts.sh
 
-          # install hurl for debian. Using the NPM package has SSL issues with node-keytar... really frustrating
-          # Make sure we're using the same Hurl version specified in package.json
-          hurlversion=$(bash ./scripts/get-hurl-version.sh)
-          echo "Installing hurl $hurlversion for Debian..."
-          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/${hurlversion}/hurl_${hurlversion}_amd64.deb
-          sudo apt update && sudo apt install ./hurl_${hurlversion}_amd64.deb
-
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
           npm run tests-ci
+
+  check:
+    name: Check format and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        id: setNxSHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Ensure tracking against main
+        run: git branch --track main origin/main
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      # https://github.com/actions/setup-go/issues/358 - cache is shared across jobs by default since the dependency
+      # graph is the same, however each job results in different dependencies being downloaded and the first one
+      # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
+      # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      - name: Create go cache info file
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.work
+          cache-dependency-path: |
+            apps/*/go.sum
+            go.work.sum
+            ${{ env.GO_CACHE_INFO_FILE }}
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Check formatting
+        env:
+          UESIO_DEV: "true"
+        run: npx nx format:check --verbose
+
+      - name: Lint
+        env:
+          UESIO_DEV: "true"
+        run: npx nx affected -t lint --configuration=ci --parallel=5
+
+  typecheck:
+    name: Check types
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        id: setNxSHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Ensure tracking against main
+        run: git branch --track main origin/main
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Typecheck
+        env:
+          UESIO_DEV: "true"
+        run: npx nx affected -t typecheck --configuration=ci --parallel=5
 
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, check, typecheck]
     timeout-minutes: 3
     permissions:
       id-token: write # This is required for requesting a OIDC JWT for AWS

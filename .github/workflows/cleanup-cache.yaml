@@ -1,0 +1,46 @@
+# GH will purge cache items when full to make room but keep things tidy
+# when cached assets are (likely) no longer required
+name: Cleanup cache
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 11 * * *"
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Cleanup caches older than 5 days
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: MyAlbum/purge-cache@v2
+        with:
+          max-age: 432000
+
+      # https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#force-deleting-cache-entries
+      - name: Cleanup on PR close
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
+        run: |
+          echo "Fetching list of cache key"
+          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
+
+          ## Setting this to not fail the workflow while deleting cache keys.
+          set +e
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeysForPR
+          do
+              gh cache delete $cacheKey
+          done
+          echo "Done"
