@@ -1,3 +1,4 @@
+# Force a change that will require everything to be fully built & tested
 name: CI
 run-name: ${{ (github.event_name == 'workflow_dispatch' && format('manual{0} {1}', ':', github.sha)) || '' }}
 on:
