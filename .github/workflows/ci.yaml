@@ -51,8 +51,11 @@ jobs:
       # graph is the same, however each job results in different dependencies being downloaded and the first one
       # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
       # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      # Note that the cache key used (https://github.com/actions/setup-go/blob/main/src/cache-restore.ts#L35) by
+      # actions/setup-go is already platform/arch/go-version specific so we only need to further differentiate
+      # by workflow and job.
       - name: Create go cache info file
-        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}" > ${GO_CACHE_INFO_FILE}
 
       - name: Setup go
         uses: actions/setup-go@v5
@@ -174,8 +177,11 @@ jobs:
       # graph is the same, however each job results in different dependencies being downloaded and the first one
       # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
       # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      # Note that the cache key used (https://github.com/actions/setup-go/blob/main/src/cache-restore.ts#L35) by
+      # actions/setup-go is already platform/arch/go-version specific so we only need to further differentiate
+      # by workflow and job.
       - name: Create go cache info file
-        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}" > ${GO_CACHE_INFO_FILE}
 
       - name: Setup go
         uses: actions/setup-go@v5
