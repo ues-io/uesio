@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+env:
+  GO_CACHE_INFO_FILE: wf-go-cache-info.txt
+
 jobs:
   build:
     name: Build and test
@@ -44,6 +47,13 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # https://github.com/actions/setup-go/issues/358 - cache is shared across jobs by default since the dependency
+      # graph is the same, however each job results in different dependencies being downloaded and the first one
+      # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
+      # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      - name: Create go cache info file
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
+
       - name: Setup go
         uses: actions/setup-go@v5
         with:
@@ -51,6 +61,7 @@ jobs:
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum
+            ${{ env.GO_CACHE_INFO_FILE }}
 
       - name: Install NPM dependencies
         run: npm ci
@@ -159,6 +170,13 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # https://github.com/actions/setup-go/issues/358 - cache is shared across jobs by default since the dependency
+      # graph is the same, however each job results in different dependencies being downloaded and the first one
+      # to finish wins with regards to saving the cache.  To workaround, we create a file to include in the graph
+      # that contains information specified to the workflow & job so that each job gets a separate go cache.
+      - name: Create go cache info file
+        run: echo "go-cache-${{ github.workflow }}-${{ github.job }}-${{ runner.os }}" > ${GO_CACHE_INFO_FILE}
+
       - name: Setup go
         uses: actions/setup-go@v5
         with:
@@ -166,6 +184,7 @@ jobs:
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum
+            ${{ env.GO_CACHE_INFO_FILE }}
 
       - name: Install NPM dependencies
         run: npm ci
