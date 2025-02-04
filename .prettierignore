@@ -17,6 +17,7 @@ workspace.json
 **/*.template.yaml
 **/*.template.ts
 **/dist/**
+**/emailtemplates/**/*.html
 
 # Ignore prettier errors for generated files
 **/generated/@types/**
