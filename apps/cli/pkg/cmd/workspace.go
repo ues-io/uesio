@@ -26,7 +26,7 @@ func init() {
 		Long:  "Retrieves all metadata from a remote workspace to the local directory",
 		Run:   workspaceRetrieve,
 	}
-	workspaceRetrieveCmd.Flags().BoolP("onlyTypes", "t", false, "Only retrieve types")
+	workspaceRetrieveCmd.Flags().Bool("onlyTypes", false, "Only retrieve types")
 
 	workspaceDeployCmd := &cobra.Command{
 		Use:   "deploy",
@@ -73,7 +73,7 @@ func init() {
 		Short: "uesio retrieve",
 		Run:   workspaceRetrieve,
 	}
-	oldRetrieveCommand.Flags().BoolP("onlyTypes", "t", false, "Only retrieve types")
+	oldRetrieveCommand.Flags().Bool("onlyTypes", false, "Only retrieve types")
 
 	rootCmd.AddCommand(workspaceCommand, oldDeployCommand, oldRetrieveCommand)
 
