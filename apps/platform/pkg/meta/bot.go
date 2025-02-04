@@ -550,7 +550,7 @@ const NEWLINE = `
 `
 
 func (b *Bot) GenerateTypeDefinitions() (string, error) {
-	if b.Type != "ROUTE" && b.Type != "LISTENER" && b.Type != "RUNACTION" {
+	if b.Type != "ROUTE" && b.Type != "LISTENER" && b.Type != "RUNACTION" && b.Type != "GENERATOR" {
 		return "", nil
 	}
 	if b.Name == "" || b.Namespace == "" {
