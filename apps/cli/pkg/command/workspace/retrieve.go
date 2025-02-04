@@ -9,6 +9,7 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/auth"
 	"github.com/thecloudmasters/cli/pkg/call"
+	"github.com/thecloudmasters/cli/pkg/command"
 	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/config/ws"
 	"github.com/thecloudmasters/cli/pkg/context"
@@ -16,7 +17,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func Retrieve() error {
+type RetrieveOptions struct {
+	OnlyTypes bool
+}
+
+func Retrieve(options *RetrieveOptions) error {
+
+	if options == nil {
+		options = &RetrieveOptions{}
+	}
 
 	_, err := auth.Login()
 	if err != nil {
@@ -35,6 +44,22 @@ func Retrieve() error {
 
 	if workspace == "" {
 		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
+	}
+
+	if options.OnlyTypes {
+		appContext := context.NewWorkspaceContext(appName, workspace)
+
+		sessionId, err := config.GetSessionID()
+		if err != nil {
+			return err
+		}
+
+		if err = command.GenerateAppTypeDefinitions(appName, workspace, sessionId, appContext); err != nil {
+			return err
+		}
+
+		fmt.Println("Type definitions successfully updated.")
+		return nil
 	}
 
 	err = RetrieveBundleForAppWorkspace(appName, workspace, "")
