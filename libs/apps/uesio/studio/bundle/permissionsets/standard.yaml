@@ -245,7 +245,10 @@ collections:
   uesio/core.signupmethod: true
   uesio/core.configvalue: true
   uesio/core.secret: true
-  uesio/core.bulkjob: true
+  uesio/core.bulkjob:
+    read: true # TODO: Remove/adjust once https://github.com/ues-io/uesio/issues/4554 is addressed
+  uesio/core.bulkbatch:
+    read: true # TODO: Remove/adjust once https://github.com/ues-io/uesio/issues/4554 is addressed
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true
