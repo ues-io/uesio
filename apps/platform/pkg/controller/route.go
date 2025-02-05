@@ -238,14 +238,22 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		route = GetErrorRoute(path, namespace, incomingErr.Error())
 	}
 
-	// Enter into a version context to display the error page
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
-	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("Error Getting Version Session: %w", err))
-		return
+	var errorSession *sess.Session
+
+	// If we're in a workspace context, just use the workspace session.
+	if session.GetWorkspace() != nil {
+		errorSession = session
+	} else {
+		// Otherwise, Enter into a version context to display the error page
+		versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+		if err != nil {
+			ctlutil.HandleError(w, fmt.Errorf("Error Getting Version Session: %w", err))
+			return
+		}
+		errorSession = versionSession
 	}
 
-	depsCache, err := routing.GetMetadataDeps(route, versionSession.RemoveWorkspaceContext())
+	depsCache, err := routing.GetMetadataDeps(route, errorSession)
 	if err != nil {
 		ctlutil.HandleError(w, fmt.Errorf("Error Getting Error Route Metadata: %w", err))
 		return
