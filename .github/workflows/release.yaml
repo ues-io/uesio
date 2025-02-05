@@ -1,6 +1,7 @@
 name: Uesio Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -133,9 +134,11 @@ jobs:
 
   upload_release_binaries:
     name: Upload binaries to release
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
-    needs:
-      - cli_release_artifacts
+    permissions:
+      contents: write
+    needs: [cli_release_artifacts]
     steps:
       - name: Download binary artifacts
         uses: actions/download-artifact@v4
@@ -145,9 +148,7 @@ jobs:
           merge-multiple: true
 
       - name: Upload release artifacts
-        uses: Roang-zero1/github-upload-release-artifacts-action@v2
+        uses: softprops/action-gh-release@v2
         with:
-          args: "binaries/uesio.exe binaries/uesio-macos-amd64 binaries/uesio-macos-arm64 binaries/uesio-linux"
-          created_tag: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: binaries/*
+          fail_on_unmatched_files: true
