@@ -40,7 +40,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Pull the latest Docker image from ECR
+      - name: Push the latest docker image for SHA from ECR to GHCR
         env:
           SHA_TAG: ${{ github.sha }}-latest
           ECR_REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
