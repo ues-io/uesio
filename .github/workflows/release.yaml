@@ -63,7 +63,10 @@ jobs:
 
           echo "Pushing tag $GHCR_IMAGE_TAG_BASE to Github Container Registry..."=
           docker tag $ECR_SHA_TAG $GHCR_IMAGE_TAG_BASE:$RELEASE_TAG
-          docker tag $ECR_SHA_TAG $GHCR_IMAGE_TAG_BASE:latest
+          # Only tag latest if v#.#.# (e.g., not a pre-release/beta/etc.)
+          if [[ "$RELEASE_TAG" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            docker tag $ECR_SHA_TAG $GHCR_IMAGE_TAG_BASE:latest
+          fi
           docker push --all-tags $GHCR_IMAGE_TAG_BASE
 
   cli_release_artifacts:
