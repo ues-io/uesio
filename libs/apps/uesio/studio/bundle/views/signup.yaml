@@ -69,14 +69,11 @@ definition:
                       - uesio/io.field:
                           fieldId: username
                           label: Pick a username
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.note
+                      - uesio/appkit.note:
                           uesio.styleTokens:
                             root:
                               - mb-4
-                          components:
-                            - uesio/io.text:
-                                text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
+                          text: "Your username must contain only lowercase characters a-z, the underscore character, or the numerals 0-9."
                       - uesio/io.button:
                           uesio.variant: uesio/appkit.primary
                           text: Check Availability

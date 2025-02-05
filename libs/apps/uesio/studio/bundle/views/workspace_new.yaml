@@ -57,16 +57,13 @@ definition:
                             - signal: route/NAVIGATE
                               path: app/${uesio/core.uniquekey}
               content:
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.note
-                    components:
-                      - uesio/io.text:
-                          text: |
-                            Let's create a new workspace!
+                - uesio/appkit.note:
+                    text: |
+                      Let's create a new workspace!
 
-                            Workspaces allow you to make changes to your app without affecting your production sites.
+                      Workspaces allow you to make changes to your app without affecting your production sites.
 
-                            For individual builders and small teams, one workspace, (usually called "dev"), is all you'll need to start building. For larger teams, you might want to have a workspace per developer or per feature. You can think of them like branches in git.
+                      For individual builders and small teams, one workspace, (usually called "dev"), is all you'll need to start building. For larger teams, you might want to have a workspace per developer or per feature. You can think of them like branches in git.
               footer:
                 - uesio/core.view:
                     view: profiletag
@@ -106,11 +103,8 @@ definition:
                                       fieldId: uesio/studio.description
                                       uesio.id: workspace-description
                                 note:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: "Note: Your workspace name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The workspace description is optional."
+                                  - uesio/appkit.note:
+                                      text: "Note: Your workspace name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The workspace description is optional."
                             - uesio/io.titlebar:
                                 title: Workspace Clone Settings
                                 uesio.variant: uesio/appkit.sub
@@ -154,11 +148,8 @@ definition:
                                                 field: uesio/studio.clonefrombundle
                                                 value: true
                                 note:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: If you've already created bundles for this app, you can use one of those a starting point.
+                                  - uesio/appkit.note:
+                                      text: If you've already created bundles for this app, you can use one of those a starting point.
                             - uesio/io.box:
                                 uesio.display:
                                   - type: hasValue

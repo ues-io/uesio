@@ -23,8 +23,5 @@ definition:
           - uesio/io.box:
               uesio.variant: uesio/appkit.primarysection
               components:
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.note
-                    components:
-                      - uesio/io.text:
-                          text: This is where you manage your ues.io instance. More features are coming here soon.
+                - uesio/appkit.note:
+                    text: This is where you manage your ues.io instance. More features are coming here soon.

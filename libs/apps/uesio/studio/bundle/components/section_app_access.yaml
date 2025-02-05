@@ -14,11 +14,8 @@ definition:
                   fieldId: uesio/studio.public
                   uesio.id: new-app-public
             note:
-              - uesio/io.box:
-                  uesio.variant: uesio/appkit.note
-                  components:
-                    - uesio/io.text:
-                        text: "This determines whether other apps can see this app. (Only select this box if you plan on publishing your app on the bundle store.)"
+              - uesio/appkit.note:
+                  text: "This determines whether other apps can see this app. (Only select this box if you plan on publishing your app on the bundle store.)"
 title: App Access Section
 discoverable: false
 description: App Access Section

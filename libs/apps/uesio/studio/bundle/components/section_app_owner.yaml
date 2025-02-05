@@ -16,11 +16,8 @@ definition:
                   reference:
                     requirewriteaccess: true
             note:
-              - uesio/io.box:
-                  uesio.variant: uesio/appkit.note
-                  components:
-                    - uesio/io.text:
-                        text: Choose who will own this app. If this is a personal app you can leave yourself as the owner. If you are a member of an organization, you can also make that organization the owner of the app.
+              - uesio/appkit.note:
+                  text: Choose who will own this app. If this is a personal app you can leave yourself as the owner. If you are a member of an organization, you can also make that organization the owner of the app.
 title: App Owner Section
 discoverable: false
 description: App Owner Section

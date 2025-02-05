@@ -17,11 +17,8 @@ definition:
                   fieldId: uesio/studio.description
                   uesio.id: new-app-description
             note:
-              - uesio/io.box:
-                  uesio.variant: uesio/appkit.note
-                  components:
-                    - uesio/io.text:
-                        text: "Note: Your app name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The app description is optional."
+              - uesio/appkit.note:
+                  text: "Note: Your app name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The app description is optional."
 title: App Name and Description
 discoverable: false
 description: App Name and Description
