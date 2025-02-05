@@ -17,6 +17,10 @@ properties:
   - type: CHECKBOX
     name: collapsed
     label: Start Collapsed
+  - type: TEXT
+    name: icon
+    label: Icon
+    defaultValue: help
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.note
@@ -39,6 +43,13 @@ definition:
               title:
                 - font-normal
             uesio.variant: uesio/appkit.item
+            avatar:
+              - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - text-lg
+                  uesio.variant: uesio/io.iconoutline
+                  text: $Prop{icon}
         - uesio/io.text:
             uesio.styleTokens:
               root:
@@ -61,18 +72,28 @@ definition:
       uesio.styleTokens:
         root:
           - $Region{root}
+          - p-0
       components:
         - uesio/io.accordion:
+            avataricon: $Prop{icon}
+            avatariconfill: false
             uesio.styleTokens:
               content:
-                - mt-4
+                - px-4
+                - pb-4
               icon:
                 - bg-primary-200/60
                 - rounded-full
                 - leading-none
                 - p-1
+              titlebar:
+                - p-4
               titlebarTitle:
                 - font-normal
+              titlebarAvatar:
+                - leading-none
+              avataricon:
+                - text-lg
             titlebarVariant: uesio/appkit.item
             initialItem: $If{[$Prop{collapsed}][][note]}
             items:
