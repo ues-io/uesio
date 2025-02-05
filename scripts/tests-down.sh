@@ -3,10 +3,7 @@
 set -e
 
 if [[ -z "${APP_IMAGE}" ]]; then
-    if [[ -z "${GITSHA}" ]]; then
-        export GITSHA=$(git rev-parse --short HEAD)
-    fi
-    export APP_IMAGE="$GITSHA"
+    export APP_IMAGE="uesio-test:latest"
 fi
 
 # Spin down the tests network's Docker containers

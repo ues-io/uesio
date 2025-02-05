@@ -1,4 +1,4 @@
-name: "uesio_test"
+name: "uesio-test"
 
 services:
   redis:

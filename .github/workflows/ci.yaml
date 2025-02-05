@@ -24,7 +24,9 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     outputs:
-      gitsha: ${{ steps.setDockerSHAs.outputs.gitsha }}
+      image_sha: ${{ steps.setDockerSHAs.outputs.image_sha }}
+      image_version: ${{ steps.setDockerSHAs.outputs.image_version }}
+      build_version: ${{ steps.setDockerSHAs.outputs.build_version }}
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -82,8 +84,17 @@ jobs:
           # We lint/test/build affected but in order to build image, we need to ensure everything
           # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
           # for anything already built from above)
-          npx nx run-many -t build --all
-          echo "GITSHA=`echo $(echo ${{ steps.setNxSHAs.outputs.head }} | cut -c1-8).${{ github.run_number }}.${{ github.run_attempt }}`" >> "$GITHUB_OUTPUT"
+          npx nx run-many -t build
+
+          # build values for docker image tags
+          VERSION_SUFFIX=${{ github.run_number }}.${{ github.run_attempt }}
+          FULL_SHA=${{ steps.setNxSHAs.outputs.head }}
+          # instead of using rev-parse we always just get the first 8 characters but we'll ensure
+          # its unique (just in case 8 is not enough) by appending the VERSION_SUFFIX
+          SHORT_SHA=$(echo ${FULL_SHA} | cut -c1-8)
+          echo "IMAGE_SHA=${FULL_SHA}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_VERSION=${FULL_SHA}.${VERSION_SUFFIX}" >> "$GITHUB_OUTPUT"
+          echo "BUILD_VERSION=${SHORT_SHA}.${VERSION_SUFFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Set up docker buildx
         uses: docker/setup-buildx-action@v3
@@ -93,11 +104,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           tags: |
-            type=raw,value=${{ steps.setDockerSHAs.outputs.gitsha }}
+            type=raw,value=${{ steps.setDockerSHAs.outputs.image_version }}
             type=ref,event=branch
             type=ref,event=pr
           labels: |
-            org.opencontainers.image.version=${{ steps.setDockerSHAs.outputs.gitsha }}
+            org.opencontainers.image.version=${{ steps.setDockerSHAs.outputs.image_version }}
 
       - name: Cache for docker
         id: cache
@@ -125,7 +136,7 @@ jobs:
           load: true
           file: ./apps/platform/Dockerfile
           build-args: |
-            GITSHA=${{ steps.setDockerSHAs.outputs.gitsha }}
+            BUILD_VERSION=${{ steps.setDockerSHAs.outputs.build_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: |
@@ -140,7 +151,7 @@ jobs:
 
       - name: Integration and e2e tests
         env:
-          GITSHA: ${{ steps.setDockerSHAs.outputs.gitsha }}
+          APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
         run: |
           ./scripts/seed-etc-hosts.sh
 
@@ -274,29 +285,31 @@ jobs:
       - name: Push image to ECR
         id: pushImageToECR
         env:
-          LOCAL_IMAGE_TAG: ${{ needs.build.outputs.gitsha }}
-          REGISTRY_IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ needs.build.outputs.gitsha }}
+          IMAGE_VERSION_TAG: ${{ needs.build.outputs.image_version }}
+          IMAGE_SHA_TAG: ${{ needs.build.outputs.image_sha }}-latest
+          REGISTRY_IMAGE_TAG_BASE: ${{ steps.login-ecr.outputs.registry }}/uesio
         run: |
-          echo "LOCAL_IMAGE_TAG=${LOCAL_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-          echo "REGISTRY_IMAGE_TAG=${REGISTRY_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          REGISTRY_SHA_TAG=${REGISTRY_IMAGE_TAG_BASE}:${IMAGE_SHA_TAG}
+          REGISTRY_VERSION_TAG=${REGISTRY_IMAGE_TAG_BASE}:${IMAGE_VERSION_TAG}
+          echo "REGISTRY_VERSION_TAG=${REGISTRY_VERSION_TAG}" >> "$GITHUB_OUTPUT"
           docker load --input ${{ runner.temp }}/uesio-image.tar
-          docker tag $LOCAL_IMAGE_TAG $REGISTRY_IMAGE_TAG
-          docker image push $REGISTRY_IMAGE_TAG
+          docker tag $IMAGE_VERSION_TAG $REGISTRY_SHA_TAG
+          docker tag $IMAGE_VERSION_TAG $REGISTRY_VERSION_TAG
+          docker image push $REGISTRY_IMAGE_TAG_BASE
 
       - name: Update docker container image tag for dev
         env:
-          LOCAL_IMAGE_TAG: ${{ steps.pushImageToECR.outputs.LOCAL_IMAGE_TAG }}
-          REGISTRY_IMAGE_TAG: ${{ steps.pushImageToECR.outputs.REGISTRY_IMAGE_TAG }}
-          appTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_web.json
-          workerTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_worker.json
+          REGISTRY_VERSION_TAG: ${{ steps.pushImageToECR.outputs.registry_version_tag }}
+          APP_TASK_DEF_PATH: ./aws/dev/ecs/task_definitions/uesio_web.json
+          WORKER_TASK_DEF_PATH: ./aws/dev/ecs/task_definitions/uesio_worker.json
         run: |
-          echo "Docker image SHA updated to $LOCAL_IMAGE_TAG"
-          jq --arg img "$REGISTRY_IMAGE_TAG" '.containerDefinitions[0].image = $img' $appTaskDefPath > tmp1.json
-          jq --arg img "$REGISTRY_IMAGE_TAG" '.containerDefinitions[0].image = $img' $workerTaskDefPath > tmp2.json
-          mv tmp1.json $appTaskDefPath
-          mv tmp2.json $workerTaskDefPath
+          echo "Docker image SHA updated to $REGISTRY_VERSION_TAG"
+          jq --arg img "$REGISTRY_VERSION_TAG" '.containerDefinitions[0].image = $img' $APP_TASK_DEF_PATH > tmp1.json
+          jq --arg img "$REGISTRY_VERSION_TAG" '.containerDefinitions[0].image = $img' $WORKER_TASK_DEF_PATH > tmp2.json
+          mv tmp1.json $APP_TASK_DEF_PATH
+          mv tmp2.json $WORKER_TASK_DEF_PATH
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add $appTaskDefPath $workerTaskDefPath
-          git commit -m "ci: Auto-update dev image to $LOCAL_IMAGE_TAG"
+          git add $APP_TASK_DEF_PATH $WORKER_TASK_DEF_PATH
+          git commit -m "ci: Auto-update dev image to $REGISTRY_VERSION_TAG"
           git push

@@ -92,7 +92,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 	}
 
 	PackUpdatedAt := int64(123456789)
-	UesioAppGitSha := "/abcd1234"
+	UesioAppVersion := "/abcd1234"
 
 	var tests = []testCase{
 		{
@@ -110,7 +110,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 					},
 				},
 			},
-			UesioAppGitSha,
+			UesioAppVersion,
 			"/site/componentpacks/ben/mosaic/v1.2.1/main/runtime.js",
 		},
 		{
@@ -120,7 +120,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 				App:     "zach/foo",
 				Version: "v0.0.2",
 			},
-			UesioAppGitSha,
+			UesioAppVersion,
 			fmt.Sprintf("/site/componentpacks/ben/mosaic/%d/main/runtime.js", PackUpdatedAt),
 		},
 		{
@@ -130,7 +130,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 				App:     "zach/foo",
 				Version: "v0.2.4",
 			},
-			UesioAppGitSha,
+			UesioAppVersion,
 			"/site/componentpacks/zach/foo/v0.2.4/main/runtime.js",
 		},
 		{
@@ -140,8 +140,8 @@ func TestGetPackUrl_Site(t *testing.T) {
 				App:     "zach/foo",
 				Version: "v0.2.4",
 			},
-			UesioAppGitSha,
-			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppGitSha),
+			UesioAppVersion,
+			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppVersion),
 		},
 		{
 			"[custom app] use the correct dependency for non-system-bundle Uesio pack loads",
@@ -158,7 +158,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 					},
 				},
 			},
-			UesioAppGitSha,
+			UesioAppVersion,
 			"/site/componentpacks/uesio/extras/v1.2.1/main/runtime.js",
 		},
 		{
@@ -176,11 +176,11 @@ func TestGetPackUrl_Site(t *testing.T) {
 					},
 				},
 			},
-			UesioAppGitSha,
-			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppGitSha),
+			UesioAppVersion,
+			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppVersion),
 		},
 		{
-			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no Gitsha (local dev)",
+			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no BUILD_VERSION (local dev)",
 			"uesio/io.main",
 			&preload.SiteMergeData{
 				App:     "uesio/studio",

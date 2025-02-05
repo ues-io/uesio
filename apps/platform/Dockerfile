@@ -18,9 +18,9 @@ COPY ./apps/platform/platform ./platform
 COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
 
-ARG GITSHA
-ENV GITSHA=${GITSHA}
-LABEL build_version=${GITSHA}
+ARG BUILD_VERSION
+ENV BUILD_VERSION=${BUILD_VERSION}
+LABEL build_version=${BUILD_VERSION}
 
 EXPOSE 3000
 
