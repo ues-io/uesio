@@ -295,7 +295,7 @@ jobs:
           docker load --input ${{ runner.temp }}/uesio-image.tar
           docker tag $IMAGE_VERSION_TAG $REGISTRY_SHA_TAG
           docker tag $IMAGE_VERSION_TAG $REGISTRY_VERSION_TAG
-          docker image push $REGISTRY_IMAGE_TAG_BASE
+          docker image push --all-tags $REGISTRY_IMAGE_TAG_BASE
 
       - name: Update docker container image tag for dev
         env:
