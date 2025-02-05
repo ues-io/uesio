@@ -15,7 +15,7 @@ In Production, you may also want to run the Uesio `worker` command as a separate
 To run the app locally with Docker Compose, simply run the following:
 
 ```
-docker compose up -d
+npm run in-docker
 open http://localhost:3000
 ```
 

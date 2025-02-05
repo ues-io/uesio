@@ -2,7 +2,7 @@ import { BundleDependencyDefMap, SiteState } from "../bands/site"
 import { getSiteBundleAssetVersion, setStaticAssetsPath } from "./platform"
 
 const PackUpdatedAt = `${123456789}`
-const UesioAppGitSha = "/abcd1234"
+const UesioAppVersion = "/abcd1234"
 
 const getSiteBundleAssetVersionTests = [
   {
@@ -20,7 +20,7 @@ const getSiteBundleAssetVersionTests = [
         },
       } as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
     expected: "/v1.2.1",
   },
   {
@@ -31,7 +31,7 @@ const getSiteBundleAssetVersionTests = [
       version: "v0.0.2",
       dependencies: {} as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
     expected: `/${PackUpdatedAt}`,
   },
   {
@@ -42,7 +42,7 @@ const getSiteBundleAssetVersionTests = [
       version: "v0.2.4",
       dependencies: {} as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
     expected: "/v0.2.4",
   },
   {
@@ -53,8 +53,8 @@ const getSiteBundleAssetVersionTests = [
       version: "v0.2.4",
       dependencies: {} as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
-    expected: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
+    expected: UesioAppVersion,
   },
   {
     name: "[custom app] use the correct dependency for non-system-bundle Uesio pack loads",
@@ -71,7 +71,7 @@ const getSiteBundleAssetVersionTests = [
         },
       } as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
     expected: "/v1.2.1",
   },
   {
@@ -89,11 +89,11 @@ const getSiteBundleAssetVersionTests = [
         },
       } as BundleDependencyDefMap,
     },
-    staticAssetsPath: UesioAppGitSha,
-    expected: UesioAppGitSha,
+    staticAssetsPath: UesioAppVersion,
+    expected: UesioAppVersion,
   },
   {
-    name: "[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no Gitsha (local dev)",
+    name: "[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no BUILD_VERSION (local dev)",
     namespace: "uesio/io",
     site: {
       app: "uesio/studio",

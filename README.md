@@ -134,12 +134,6 @@ npm run in-docker
 open https://studio.uesio-dev.com:3000
 ```
 
-**NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:
-
-```
-npm run in-docker-force-build
-```
-
 # <a id="set-up-ssl"></a> Set up SSL
 
 SSL is optional for local development. It is enabled using by setting the environment variable `UESIO_USE_HTTPS=true`
