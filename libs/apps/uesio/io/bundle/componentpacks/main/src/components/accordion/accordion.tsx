@@ -36,6 +36,7 @@ const StyleDefaults = Object.freeze({
   icon: [],
   expanded: [],
   titlebar: [],
+  titlebarTitle: [],
   titlebarContent: [],
   titlebarContentExpanded: [],
 })
@@ -55,7 +56,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
 
   const [selectedItemId, setSelectedItem] = api.component.useState<string>(
     componentId,
-    initialItem,
+    context.mergeString(initialItem),
   )
   const foundIndex = items.findIndex((item) => item.id === selectedItemId)
   const selectedIndex = foundIndex === -1 ? 0 : foundIndex
@@ -93,6 +94,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
                   classes.titlebarContent,
                   expanded && classes.titlebarContentExpanded,
                 ),
+                title: classes.titlebarTitle,
               }}
               variant={titlebarVariant}
               onClick={() => setSelectedItem(expanded ? "" : item.id)}

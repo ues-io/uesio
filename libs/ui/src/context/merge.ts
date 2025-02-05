@@ -250,7 +250,8 @@ const handlers: Record<MergeType, MergeHandler> = {
     } catch {
       throw InvalidIfMergeMsg
     }
-    return context.merge(parts[0])
+    const conditionResult = context.merge(parts[0])
+    return conditionResult && conditionResult !== "false"
       ? context.merge(parts[1])
       : context.merge(parts[2])
   },

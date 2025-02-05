@@ -149,6 +149,17 @@ definition:
                                             title: No Workspaces
                                             subtitle: You haven't created any yet.
                                             icon: handyman
+                                  - uesio/appkit.note:
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-8
+                                      title: Workspaces Help
+                                      collapsible: true
+                                      collapsed: true
+                                      text: |
+                                        A workspace is a named environment where you can make changes to an app's metadata. Workspaces are created from the app home screen, and can be either long-lived or transient.
+
+                                        For those familiar with Git, a workspace is similar to a Git branch. You could just have one workspace and do all your work there, or you could have one long-lived "main" workspace and have each team member do all of their work on short-lived "feature" workspaces, and merge changes into the "main" workspace with Git and a continuous-integration process.
                             - uesio/io.griditem:
                                 components:
                                   - uesio/io.titlebar:
@@ -208,3 +219,11 @@ definition:
                                             title: No Sites
                                             subtitle: You haven't created any yet.
                                             icon: public
+                                  - uesio/appkit.note:
+                                      uesio.styleTokens:
+                                        root:
+                                          - mt-8
+                                      title: Sites Help
+                                      collapsible: true
+                                      collapsed: true
+                                      text: Sites are how we publish our app to users. Each site is a separate "tenant" of the ues.io platform. That means any data in on site can never be accessed from another site. You may want multiple sites for different stages of the application lifecycle, like "prod", "uat", "dev", etc., but you can also use sites for different customers of your app. You could have one site for Customer A, and another site for Customer B.
