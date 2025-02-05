@@ -30,6 +30,13 @@ properties:
   - name: expanded
     type: CHECKBOX
     label: Expanded by default
+  - name: titlebarVariant
+    label: Title Bar Variant
+    type: METADATA
+    metadata:
+      type: COMPONENTVARIANT
+      grouping: uesio/io.titlebar
+    defaultValue: uesio/io.default
 sections:
   - type: HOME
     properties:
