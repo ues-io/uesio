@@ -8,6 +8,12 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.slug:
+      conditions:
+        - field: uesio/studio.category
+          operator: IN
+          values:
+            - news
+            - insights
       batchsize: 5
       order:
         - field: uesio/core.updatedat
@@ -125,7 +131,7 @@ definition:
                                       element: div
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://$Site{domain}/blog/${uesio/studio.slug}"
+                                    path: "https://$Site{domain}/news/${uesio/studio.slug}"
                                     newtab: true
                                 avatar:
                                   - uesio/io.text:
