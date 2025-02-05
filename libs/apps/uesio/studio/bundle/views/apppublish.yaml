@@ -185,21 +185,15 @@ definition:
                                   - type: wireHasNoRecords
                                     wire: bundles
                                 components:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: It seems that you don't have any bundles yet, try creating one and then return to this page.
+                                  - uesio/appkit.note:
+                                      text: It seems that you don't have any bundles yet, try creating one and then return to this page.
                             - uesio/io.box:
                                 uesio.display:
                                   - type: wireHasRecords
                                     wire: bundles
                                 components:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: Welcome! Now that you have your application $Param{app} ready, it's time to share it with the world!
+                                  - uesio/appkit.note:
+                                      text: Welcome! Now that you have your application $Param{app} ready, it's time to share it with the world!
                                   - uesio/io.button:
                                       uesio.styleTokens:
                                         root:

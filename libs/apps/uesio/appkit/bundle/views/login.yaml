@@ -20,14 +20,11 @@ definition:
     - uesio/appkit.splash:
         content:
           - $Slot{logo}
-          - uesio/io.box:
+          - uesio/appkit.note:
               uesio.display:
                 - type: paramIsSet
                   param: expired
-              uesio.variant: uesio/appkit.note
-              components:
-                - uesio/io.text:
-                    text: $Label{uesio/core.session_expiration_msg}
+              text: $Label{uesio/core.session_expiration_msg}
           - uesio/appkit.login_mock:
           - uesio/appkit.login_platform:
           - uesio/appkit.login_google:

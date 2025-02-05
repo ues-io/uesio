@@ -16,11 +16,8 @@ definition:
                   fieldId: uesio/studio.icon
                   colorFieldId: uesio/studio.color
             note:
-              - uesio/io.box:
-                  uesio.variant: uesio/appkit.note
-                  components:
-                    - uesio/io.text:
-                        text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
+              - uesio/appkit.note:
+                  text: Select a color and icon for your app. These settings will help you quickly recognize your app when you are working with it. (You can change these settings later.)
 title: App Icon and Color
 discoverable: false
 description: App Icon and Color

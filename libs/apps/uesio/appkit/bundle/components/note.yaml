@@ -1,0 +1,38 @@
+name: note
+category: LAYOUT
+type: DECLARATIVE
+slots:
+  - name: extra
+    label: Extra
+properties:
+  - type: TEXT
+    name: text
+    label: Text Content
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.note
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+      components:
+        - uesio/io.text:
+            uesio.styleTokens:
+              root:
+                - $Region{text}
+            text: $Prop{text}
+        - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{extra}
+            uesio.styleTokens:
+              root:
+                - $Region{extra}
+            components:
+              - $Slot{extra}
+title: Note
+discoverable: true
+description: Display a note or help text to the user.
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

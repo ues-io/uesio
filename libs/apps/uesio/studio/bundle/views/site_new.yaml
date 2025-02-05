@@ -60,14 +60,11 @@ definition:
                             - signal: route/NAVIGATE
                               path: home
               content:
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.note
-                    components:
-                      - uesio/io.text:
-                          text: |
-                            Let's create a new site!
+                - uesio/appkit.note:
+                    text: |
+                      Let's create a new site!
 
-                            Publish your app to users with sites. Each site has completely separate users and data and is associated with a specific version of your app.
+                      Publish your app to users with sites. Each site has completely separate users and data and is associated with a specific version of your app.
               footer:
                 - uesio/core.view:
                     view: profiletag
@@ -107,11 +104,8 @@ definition:
                                       fieldId: uesio/studio.description
                                       uesio.id: workspace-description
                                 note:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: "Note: Your site name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The site description is optional."
+                                  - uesio/appkit.note:
+                                      text: "Note: Your site name must contain only lowercase characters a-z, the underscore character, or the numerals 0-9. The site description is optional."
                             - uesio/io.titlebar:
                                 title: Source Bundle
                                 uesio.variant: uesio/appkit.sub
@@ -135,8 +129,5 @@ definition:
                                           - field: uesio/studio.app
                                             value: ${uesio/studio.app->uesio/core.id}
                                 note:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: "Pick the version of your app you want this site to use. You can change this later easily by upgrading or rolling back to a different version."
+                                  - uesio/appkit.note:
+                                      text: "Pick the version of your app you want this site to use. You can change this later easily by upgrading or rolling back to a different version."

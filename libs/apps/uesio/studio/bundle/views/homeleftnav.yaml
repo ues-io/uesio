@@ -129,8 +129,7 @@ definition:
                                           collection: uesio/studio.app
                                           viewtype: createnew
                     content:
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.note
+                      - uesio/appkit.note:
                           uesio.display:
                             - type: wireHasNoRecords
                               wire: apps
@@ -138,9 +137,8 @@ definition:
                               wire: apps
                             - type: wireIsNotLoading
                               wire: apps
-                          components:
-                            - uesio/io.text:
-                                text: Welcome to the ues.io studio! Create an app to get started.
+                          text: Welcome to the ues.io studio! Create an app to get started.
+                          extra:
                             - uesio/io.button:
                                 uesio.variant: uesio/studio.navcta
                                 icon: add
