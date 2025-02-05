@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting a OIDC JWT for AWS
+      packages: write # This is required for pushing to GHCR
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,7 +53,7 @@ jobs:
           IMAGE_EXISTS=$(bash ./scripts/ecr-image-exists.sh $ECR_REGISTRY_ID $ECR_REPOSITORY_NAME $SHA_TAG)
 
           if [[ "$IMAGE_EXISTS" == "no" ]]; then
-              echo "Docker image does not exist in ECR for tag $SHA_LATEST_TAG"
+              echo "Docker image does not exist in ECR for tag $SHA_TAG"
               exit 1
           fi
 
