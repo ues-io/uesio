@@ -36,7 +36,6 @@ const StylesProperty: definition.UC<Props> = (props) => {
   const PillBox = component.getUtility("uesio/io.pillbox")
   const Button = component.getUtility("uesio/io.button")
   const tokensPath = componentPath.addLocal("uesio.styleTokens")
-  const Popper = component.getUtility("uesio/io.popper")
   const anchorEl = useRef<HTMLDivElement>(null)
 
   const tokensByRegion = (get(context, tokensPath) || {}) as Record<
