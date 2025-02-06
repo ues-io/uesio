@@ -5,6 +5,12 @@ definition:
     - uesio/core.view:
         view: uesio/appkit.login
         uesio.id: login
+        params:
+          expired: $Param{expired}
         slots:
           splash:
             - uesio/studio.splash:
+  params:
+    expired:
+      type: CHECKBOX
+      required: false

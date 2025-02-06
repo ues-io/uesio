@@ -509,15 +509,12 @@ definition:
                     - type: hasNoValue
                       value: ${value}
                   fieldId: name
-              - uesio/io.box:
-                  uesio.variant: uesio/appkit.note
+              - uesio/appkit.note:
                   uesio.display:
                     - type: hasValue
                       value: ${value}
-                  components:
-                    - uesio/io.text:
-                        text: Your api key has been generated. You will not be shown this key again. Keep it secret, keep it safe!
-                        element: div
+                  text: Your api key has been generated. You will not be shown this key again. Keep it secret, keep it safe!
+                  extra:
                     - uesio/io.text:
                         uesio.styleTokens:
                           root:
@@ -529,6 +526,7 @@ definition:
                             - rounded-md
                             - text-[8pt]
                             - text-center
+                        element: div
                         text: ${value}
       actions:
         - uesio/io.item:

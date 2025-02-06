@@ -6,19 +6,21 @@ slots:
   - name: left
 definition:
   - uesio/io.grid:
-      uesio.variant: uesio/io.three_columns
       uesio.styleTokens:
         root:
+          - grid-cols-1
+          - lg:grid-cols-3
+          - xl:grid-cols-4
           - gap-0
-          - h-screen
+          - h-full
           - overflow-auto
       items:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - col-span-2
+                - lg:col-span-2
+                - xl:col-span-3
                 - "[container-type:inline-size]"
-                - pb-40
             components:
               - $Slot{main}
         - uesio/io.box:

@@ -182,6 +182,7 @@ func init() {
 				"LISTENER",
 				"ROUTE",
 				"RUNACTION",
+				"GENERATOR",
 			},
 		}
 	}

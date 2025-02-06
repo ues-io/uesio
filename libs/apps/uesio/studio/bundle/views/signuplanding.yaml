@@ -25,11 +25,8 @@ definition:
                         - border-b-1
                         - border-slate-200
                         - pb-4
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.note
-                    components:
-                      - uesio/io.text:
-                          text: "Check your email for a confirmation link. Once you've confirmed your email, you'll be logged in automatically."
+                - uesio/appkit.note:
+                    text: "Check your email for a confirmation link. Once you've confirmed your email, you'll be logged in automatically."
                 - uesio/io.grid:
                     uesio.styleTokens:
                       root:

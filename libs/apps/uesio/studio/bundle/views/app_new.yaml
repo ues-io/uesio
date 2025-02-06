@@ -55,14 +55,11 @@ definition:
                             - signal: route/NAVIGATE
                               path: home
               content:
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.note
-                    components:
-                      - uesio/io.text:
-                          text: |
-                            Let's create a new app!
+                - uesio/appkit.note:
+                    text: |
+                      Let's create a new app!
 
-                            In ues.io, an app is the starting place for everything you will build. An app can have many versions and improve and change over time.
+                      In ues.io, an app is the starting place for everything you will build. An app can have many versions and improve and change over time.
               footer:
                 - uesio/core.view:
                     view: profiletag
@@ -141,11 +138,8 @@ definition:
                                                 field: uesio/studio.starter_template
                                                 value: ""
                                 note:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/appkit.note
-                                      components:
-                                        - uesio/io.text:
-                                            text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)
+                                  - uesio/appkit.note:
+                                      text: Get started quickly with a starter template. (Using a starter template is recommended for new users.)
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           uesio.display:

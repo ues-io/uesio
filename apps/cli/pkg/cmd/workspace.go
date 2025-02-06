@@ -26,6 +26,7 @@ func init() {
 		Long:  "Retrieves all metadata from a remote workspace to the local directory",
 		Run:   workspaceRetrieve,
 	}
+	workspaceRetrieveCmd.Flags().Bool("onlyTypes", false, "Only retrieve types")
 
 	workspaceDeployCmd := &cobra.Command{
 		Use:   "deploy",
@@ -72,13 +73,17 @@ func init() {
 		Short: "uesio retrieve",
 		Run:   workspaceRetrieve,
 	}
+	oldRetrieveCommand.Flags().Bool("onlyTypes", false, "Only retrieve types")
 
 	rootCmd.AddCommand(workspaceCommand, oldDeployCommand, oldRetrieveCommand)
 
 }
 
 func workspaceRetrieve(cmd *cobra.Command, args []string) {
-	err := workspace.Retrieve()
+	onlyTypes, _ := cmd.Flags().GetBool("onlyTypes")
+	err := workspace.Retrieve(&workspace.RetrieveOptions{
+		OnlyTypes: onlyTypes,
+	})
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		os.Exit(1)

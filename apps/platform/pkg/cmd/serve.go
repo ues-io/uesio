@@ -53,9 +53,9 @@ var nameParam = getMetadataItemParam("name")
 var itemParam = fmt.Sprintf("%s/%s", nsParam, nameParam)
 var versionParam = "{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,}(?:\\.[0-9]+\\.[0-9]+)?)}"
 
-// Version will either be a Uesio bundle version string, e.g. v1.2.3,
-// an 8-character short Git sha, e.g. abcd1234 or an 8-character short
-// Git sha followed by runnumber.runattempt, e.g. abcd1234.13.3
+// Version will either be a Uesio bundle version string, e.g. v1.2.3, an 8-character
+// short Git sha followed by runnumber.runattempt, e.g. abcd1234.13.3 or the current
+// unix epoch time (e.g., 1738704509)
 var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, nameParam)
 
 // Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
@@ -67,8 +67,8 @@ var (
 	staticPrefix = "/static"
 )
 
-// Vendored scripts live under /static but do NOT get the GITSHA of the Uesio app,
-// because they are not expected to change with the GITSHA, but are truly static, immutable
+// Vendored scripts live under /static but do NOT get the version of the Uesio app,
+// because they are not expected to change with the version, but are truly static, immutable
 const vendorPrefix = "/static/vendor"
 
 func serve(cmd *cobra.Command, args []string) {
@@ -82,13 +82,13 @@ func serve(cmd *cobra.Command, args []string) {
 		panic("Failed to obtain working directory")
 	}
 
-	// If we have gitsha, append that to the prefixes to enable us to have versioned assets
-	gitsha := os.Getenv("GITSHA")
+	// If we have BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
+	version := os.Getenv("BUILD_VERSION")
 	cacheSiteBundles := os.Getenv("UESIO_CACHE_SITE_BUNDLES")
 	cacheStaticAssets := false
 	staticAssetsPath := ""
-	if gitsha != "" {
-		staticAssetsPath = "/" + gitsha
+	if version != "" {
+		staticAssetsPath = "/" + version
 	} else if cacheSiteBundles == "true" {
 		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
 	}

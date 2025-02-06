@@ -4,8 +4,8 @@ services:
       context: "."
       dockerfile: ./apps/platform/Dockerfile
       args:
-        # Increment this number to force static asset versions to be refetched when running in Docker
-        - GITSHA=latest11
+        # Intentionally leaving BUILD_VERSION blank so that current time is used to ensure static assets are always refetched
+        - BUILD_VERSION=
     ports:
       - "3000:3000"
     environment:
@@ -26,7 +26,9 @@ services:
       UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
       UESIO_MOCK_AUTH: "true"
       UESIO_USE_HTTPS: "true"
+      UESIO_DEBUG_SQL: "true"
       PORT: 3000
+      UESIO_DEV: "true"
       UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
     volumes:
       - ./apps/platform/ssl:/ssl

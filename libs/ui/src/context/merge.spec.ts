@@ -574,6 +574,51 @@ const mergeFormulaTestCases: MergeWithContextTestCase[] = [
   },
 ]
 
+const mergeIfTestCases: MergeWithContextTestCase[] = [
+  {
+    name: "simple if statement true",
+    context: new Context(),
+    input: "$If{[true][a][b]}",
+    expected: "a",
+  },
+  {
+    name: "simple if statement false",
+    context: new Context(),
+    input: "$If{[false][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value present",
+    context: new Context().addRecordDataFrame({
+      foo: "A value",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "a",
+  },
+  {
+    name: "if with context value empty string",
+    context: new Context().addRecordDataFrame({
+      foo: "",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value missing",
+    context: new Context().addRecordDataFrame({}),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value false string",
+    context: new Context().addRecordDataFrame({
+      foo: "false",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
+  },
+]
+
 describe("merge", () => {
   describe("$SignalOutput context", () => {
     signalOutputMergeTestCases.forEach((tc) => {
@@ -685,6 +730,14 @@ describe("merge", () => {
 
   describe("mergeFormula", () => {
     mergeFormulaTestCases.forEach((tc) => {
+      test(tc.name, () => {
+        expect(tc.context.merge(tc.input, tc.options)).toEqual(tc.expected)
+      })
+    })
+  })
+
+  describe("mergeIf", () => {
+    mergeIfTestCases.forEach((tc) => {
       test(tc.name, () => {
         expect(tc.context.merge(tc.input, tc.options)).toEqual(tc.expected)
       })

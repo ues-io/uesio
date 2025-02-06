@@ -8,6 +8,12 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.slug:
+      conditions:
+        - field: uesio/studio.category
+          operator: IN
+          values:
+            - news
+            - insights
       batchsize: 5
       order:
         - field: uesio/core.updatedat
@@ -25,137 +31,167 @@ definition:
       batchsize: 5
   # Components are how we describe the layout of our view
   components:
-    - uesio/io.box:
-        uesio.variant: uesio/appkit.section
-        uesio.styleTokens:
-          root:
-            - overflow-hidden
-            - shadow-lg
-            - bg-white
-            - rounded-lg
-            - mb-10
-        components:
+    - uesio/appkit.layout_detail_split:
+        main:
           - uesio/io.box:
+              uesio.variant: uesio/appkit.section
               uesio.styleTokens:
                 root:
-                  - mb-0
-                  - p-32
-                  - bg-black
-                  - bg-cover
-                  - bg-[url($File{uesio/appkit.splash})]
-          - uesio/io.box:
-              uesio.styleTokens:
-                root:
-                  - p-10
-                  - text-[#FFFFFFC0]
-                  - bg-neutral-900
+                  - overflow-hidden
+                  - shadow-lg
+                  - bg-white
+                  - rounded-lg
+                  - mb-10
               components:
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
-                        - font-[Gosha]
-                        - text-5xl
-                        - mb-2
-                    components:
-                      - uesio/io.text:
-                          text: "Get started with "
-                      - uesio/io.text:
-                          color: white
-                          text: ues.io
+                        - mb-0
+                        - p-32
+                        - bg-black
+                        - bg-cover
+                        - bg-[url($File{uesio/appkit.splash})]
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
-                        - font-light
+                        - p-10
+                        - text-[#FFFFFFC0]
+                        - bg-neutral-900
                     components:
-                      - uesio/io.text:
+                      - uesio/io.box:
                           uesio.styleTokens:
                             root:
-                              - text-white
-                          text: "Build "
-                      - uesio/io.text:
-                          text: "web applications declaratively. "
-                      - uesio/io.text:
-                          uesio.styleTokens:
-                            root:
-                              - text-white
-                          text: "Reuse "
-                      - uesio/io.text:
-                          text: "components from other apps. "
-                      - uesio/io.text:
-                          uesio.styleTokens:
-                            root:
-                              - text-white
-                          text: "Iterate "
-                      - uesio/io.text:
-                          text: "quickly."
-    - uesio/io.box:
-        uesio.variant: uesio/appkit.section
-        components:
-          - uesio/io.grid:
-              uesio.variant: uesio/io.two_columns
-              uesio.styleTokens:
-                root:
-                  - gap-x-12
-              items:
-                - uesio/io.griditem:
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Latest Updates & News
-                      - uesio/io.deck:
-                          wire: blogentries
-                          mode: READ
-                          uesio.variant: uesio/appkit.main
-                          emptyState:
-                            - uesio/io.emptystate:
-                                uesio.variant: uesio/studio.main
-                                title: Such Empty
-                                subtitle: No news is good news.
-                                icon: newspaper
+                              - font-[Gosha]
+                              - text-5xl
+                              - mb-2
                           components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/appkit.card
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                      element: div
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.description}
-                                      uesio.variant: uesio/io.smallcontent
-                                      element: div
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://$Site{domain}/blog/${uesio/studio.slug}"
-                                    newtab: true
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/appkit.avataricon
-                                      text: newspaper
-                - uesio/io.griditem:
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Recent Documentation
-                      - uesio/io.deck:
-                          wire: recentdocs
-                          mode: READ
-                          uesio.variant: uesio/appkit.main
+                            - uesio/io.text:
+                                text: "Get started with "
+                            - uesio/io.text:
+                                color: white
+                                text: ues.io
+                      - uesio/io.box:
+                          uesio.styleTokens:
+                            root:
+                              - font-light
                           components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/appkit.card
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                      element: div
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.description}
-                                      uesio.variant: uesio/io.smallcontent
-                                      element: div
-                                signals:
-                                  - signal: "route/REDIRECT"
-                                    path: "https://docs.$Site{domain}/${uesio/studio.slug}"
-                                    newtab: true
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/appkit.avataricon
-                                      text: school
+                            - uesio/io.text:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                text: "Build "
+                            - uesio/io.text:
+                                text: "web applications declaratively. "
+                            - uesio/io.text:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                text: "Reuse "
+                            - uesio/io.text:
+                                text: "components from other apps. "
+                            - uesio/io.text:
+                                uesio.styleTokens:
+                                  root:
+                                    - text-white
+                                text: "Iterate "
+                            - uesio/io.text:
+                                text: "quickly."
+          - uesio/io.box:
+              uesio.variant: uesio/appkit.section
+              components:
+                - uesio/io.grid:
+                    uesio.variant: uesio/io.two_columns
+                    uesio.styleTokens:
+                      root:
+                        - gap-x-12
+                    items:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Latest Updates & News
+                            - uesio/io.deck:
+                                wire: blogentries
+                                mode: READ
+                                uesio.variant: uesio/appkit.main
+                                emptyState:
+                                  - uesio/io.emptystate:
+                                      uesio.variant: uesio/studio.main
+                                      title: Such Empty
+                                      subtitle: No news is good news.
+                                      icon: newspaper
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/appkit.card
+                                      content:
+                                        - uesio/io.text:
+                                            text: ${uesio/studio.name}
+                                            element: div
+                                        - uesio/io.text:
+                                            text: ${uesio/studio.description}
+                                            uesio.variant: uesio/io.smallcontent
+                                            element: div
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://$Site{domain}/news/${uesio/studio.slug}"
+                                          newtab: true
+                                      avatar:
+                                        - uesio/io.text:
+                                            uesio.variant: uesio/appkit.avataricon
+                                            text: newspaper
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Recent Documentation
+                            - uesio/io.deck:
+                                wire: recentdocs
+                                mode: READ
+                                uesio.variant: uesio/appkit.main
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/appkit.card
+                                      content:
+                                        - uesio/io.text:
+                                            text: ${uesio/studio.name}
+                                            element: div
+                                        - uesio/io.text:
+                                            text: ${uesio/studio.description}
+                                            uesio.variant: uesio/io.smallcontent
+                                            element: div
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://docs.$Site{domain}/${uesio/studio.slug}"
+                                          newtab: true
+                                      avatar:
+                                        - uesio/io.text:
+                                            uesio.variant: uesio/appkit.avataricon
+                                            text: school
+        left:
+          - uesio/io.box:
+              components:
+                - uesio/io.titlebar:
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                    uesio.variant: uesio/appkit.sub
+                    title: Learn ues.io
+                - uesio/appkit.note:
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                    title: What is an app?
+                    collapsible: true
+                    collapsed: true
+                    text: |
+                      In ues.io, an App is a bundle of metadata items. An App could have a few metadata items, e.g. a custom component that you've created and want to share with other ues.io builders, or an App could have a lot of items that comprise what we traditionally think of as an "application", e.g. a recruiting management application or an employee portal, which each might have various collections, views, routes, and other metadata items.
+
+                      Each user (or organization) can create or own one or more apps. Apps are referred to by the combination of their name and the name of the user/orgnaization who owns the app, e.g. anna/restaurant-management, jose/animal-finder. This combination of user and app name is also sometimes referred to as a namespace.
+                - uesio/appkit.note:
+                    uesio.styleTokens:
+                      root:
+                        - mb-4
+                    title: What is an organization?
+                    collapsible: true
+                    collapsed: true
+                    text: In ues.io, an organization is just like another user who can be the "owner" of an app. However an organization cannot log in on their own. Users who are real people must log in and be associated with an organization. Apps that are part of an organization have their usage billed to that organization instead of a particular user.

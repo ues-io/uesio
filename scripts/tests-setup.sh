@@ -19,15 +19,15 @@ else
 fi
 
 # Ensure that we have a Uesio docker image to run
-# In CI, we should have the image built already, but locally we may not
-if [[ -z "${GITSHA}" ]]; then
-    export GITSHA=$(git rev-parse --short HEAD)
-    # force a (re)build to ensure we use current filesystem (e.g., uncommitted changes)
-    docker build --tag "$GITSHA" -f ./apps/platform/Dockerfile .
-    export APP_IMAGE="$GITSHA"
-fi
+# In CI, we should have the image built already but locally we want to re-build on every run
 if [[ -z "${APP_IMAGE}" ]]; then
-    export APP_IMAGE="$GITSHA"
+    # use a specific tag to avoid each built image remaining in docker
+    IMAGE_TAG="uesio-test:latest"
+    # force a (re)build to ensure we use current filesystem (e.g., uncommitted changes)
+    # intentionally not providing BUILD_VERSION argument so that platform just uses
+    # current time for version
+    docker build --tag $IMAGE_TAG -f ./apps/platform/Dockerfile .
+    export APP_IMAGE="$IMAGE_TAG"
 fi
 
 export APP_HOST="https://studio.uesio-dev.com:3000"
