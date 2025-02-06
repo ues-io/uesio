@@ -1,7 +1,6 @@
 
 declare module "@uesio/app/selectlists/uesio/tests" {
 	export type Selectlist = "one" | "two" | "three" | "four" | "five"
-
 	export type ToolCategory = "Hand" | "Machine"
 }
 declare module "@uesio/app/bots/listener/uesio/tests/add_numbers" {
