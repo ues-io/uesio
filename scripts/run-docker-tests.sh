@@ -12,7 +12,6 @@
 set -e
 
 # Ensure everything is built with latest code
-echo "UESIO_DEV=$UESIO_DEV"
 npm run build-all
 
 # Initial setup

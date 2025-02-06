@@ -155,11 +155,6 @@ jobs:
           bash ./create.sh
           cd ../../../
 
-          echo "CI_SCRIPT=$UESIO_DEV"
-          ls -la go-build-cache/github.com/evanw/esbuild@v0.24.2/compat-table
-          cat go-build-cache/github.com/evanw/esbuild@v0.24.2/compat-table/package.json
-          npx nx graph --file=nx-graph.json
-          cat nx-graph.json
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
           npm run tests-docker
