@@ -17,6 +17,7 @@ import { useRef, useState } from "react"
 import FieldPicker from "./wire/fieldpicker"
 import { FullPath } from "../../../api/path"
 import { getWirePath, getWireProperty } from "../../../api/wireapi"
+import PopoutPanel from "./popoutpanel"
 
 export type ColumnDefinition = {
   field?: string
@@ -119,7 +120,6 @@ const TableColumns: definition.UC = (props) => {
   const { context } = props
 
   const ListPropertyUtility = component.getUtility("uesio/builder.listproperty")
-  const Popper = component.getUtility("uesio/io.popper")
   // eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
   const anchorEl = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
@@ -254,16 +254,7 @@ const TableColumns: definition.UC = (props) => {
   return (
     <div ref={anchorEl}>
       {showPopper && anchorEl && (
-        <Popper
-          referenceEl={anchorEl.current}
-          context={context}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          offset={8}
-          parentSelector="#propertieswrapper"
-          matchHeight
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl.current} context={context}>
           <FieldPicker
             context={context}
             baseCollectionKey={wireCollection}
@@ -277,7 +268,7 @@ const TableColumns: definition.UC = (props) => {
               fieldId: string,
             ) => isSelected(columns, path, fieldId)}
           />
-        </Popper>
+        </PopoutPanel>
       )}
       <ListPropertyUtility
         context={context}
