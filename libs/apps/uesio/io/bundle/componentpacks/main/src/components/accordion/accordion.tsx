@@ -16,8 +16,11 @@ type AccordionDefinition = {
   items?: AccordionItemDefinition[]
   titlebarVariant?: metadata.MetadataKey
   expandicon: string
-  collapseicon: string
+  collapseicon?: string
+  collapseiconfill?: boolean
   initialItem?: string
+  avataricon?: string
+  avatariconfill?: boolean
 }
 
 interface SelectItemSignal extends signal.SignalDefinition {
@@ -34,9 +37,11 @@ const StyleDefaults = Object.freeze({
   root: [],
   content: [],
   icon: [],
+  avataricon: [],
   expanded: [],
   titlebar: [],
   titlebarTitle: [],
+  titlebarAvatar: [],
   titlebarContent: [],
   titlebarContentExpanded: [],
 })
@@ -48,6 +53,9 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
     titlebarVariant,
     expandicon = "expand_more",
     collapseicon = "expand_less",
+    collapseiconfill,
+    avataricon,
+    avatariconfill,
     initialItem,
   } = definition
   const classes = styles.useStyleTokens(StyleDefaults, props)
@@ -95,6 +103,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
                   expanded && classes.titlebarContentExpanded,
                 ),
                 title: classes.titlebarTitle,
+                avatar: classes.titlebarAvatar,
               }}
               variant={titlebarVariant}
               onClick={() => setSelectedItem(expanded ? "" : item.id)}
@@ -103,7 +112,18 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
                   className={classes.icon}
                   context={context}
                   icon={expanded === true ? collapseicon : expandicon}
+                  fill={collapseiconfill}
                 />
+              }
+              avatar={
+                avataricon && (
+                  <IconButton
+                    className={classes.avataricon}
+                    context={context}
+                    icon={avataricon}
+                    fill={avatariconfill}
+                  />
+                )
               }
             />
             <ExpandPanel
