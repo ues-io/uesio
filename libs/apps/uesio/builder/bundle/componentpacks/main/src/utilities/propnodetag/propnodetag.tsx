@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react"
 import { component, styles, definition } from "@uesio/ui"
+import PopoutPanel from "../../components/mainwrapper/propertiespanel/popoutpanel"
 
 type Props = {
   selected?: boolean
@@ -15,7 +16,6 @@ const StyleDefaults = Object.freeze({
 
 const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
   const Tile = component.getUtility("uesio/io.tile")
-  const Popper = component.getUtility("uesio/io.popper")
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
   const {
     onClick,
@@ -46,20 +46,9 @@ const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
       )}
     >
       {selected && popperChildren && (
-        <Popper
-          referenceEl={anchorEl}
-          offset={8}
-          context={context}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          parentSelector="#propertieswrapper"
-          styleTokens={{
-            popper: ["h-full"],
-          }}
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl} context={context}>
           {popperChildren}
-        </Popper>
+        </PopoutPanel>
       )}
       {props.children}
     </Tile>

@@ -5,6 +5,7 @@ import { FullPath } from "../../api/path"
 import { IconProperty } from "../../properties/componentproperty"
 import { materialIcons } from "../../icons/materialicons"
 import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
+import PopoutPanel from "../mainwrapper/propertiespanel/popoutpanel"
 
 type Definition = {
   property: IconProperty
@@ -12,9 +13,22 @@ type Definition = {
 }
 
 const StyleDefaults = Object.freeze({
-  icons: ["grid", "overflow-auto", "grid-cols-6", "p-4", "gap-4"],
+  icons: [
+    "grid",
+    "overflow-auto",
+    "grid-cols-6",
+    "p-4",
+    "gap-4",
+    "text-field_label_text_color",
+  ],
   iconfield: ["grid", "grid-cols-[1fr_min-content]", "items-center", "gap-2"],
-  iconpreview: ["bg-slate-100", "p-2", "rounded-full", "text-xs"],
+  iconpreview: [
+    "bg-field_bg_color",
+    "p-2",
+    "rounded-full",
+    "text-xs",
+    "leading-none",
+  ],
 })
 
 const IconProp: definition.UC<Definition> = (props) => {
@@ -22,7 +36,6 @@ const IconProp: definition.UC<Definition> = (props) => {
   const { path, property } = definition
 
   const TextField = component.getUtility("uesio/io.textfield")
-  const Popper = component.getUtility("uesio/io.popper")
   const IconButton = component.getUtility("uesio/io.iconbutton")
   const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
@@ -79,16 +92,7 @@ const IconProp: definition.UC<Definition> = (props) => {
       </FieldWrapper>
 
       {selected && anchorEl && (
-        <Popper
-          referenceEl={anchorEl}
-          matchHeight
-          context={context}
-          offset={8}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          parentSelector="#propertieswrapper"
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl} context={context}>
           <PropertiesWrapper
             title="Select an Icon"
             path={iconPropPath}
@@ -110,7 +114,7 @@ const IconProp: definition.UC<Definition> = (props) => {
               ))}
             </div>
           </PropertiesWrapper>
-        </Popper>
+        </PopoutPanel>
       )}
     </div>
   )
