@@ -8,15 +8,19 @@
 
 set -e
 
+# Initial setup
+source ./scripts/tests/setup-common.sh
+
 # Runs unit tests
 npm run test
 
 # Runs Hurl integration tests against the app
-bash ./scripts/run-integration-tests.sh
+bash ./scripts/tests/start-integration-tests.sh
 
 # Runs Cypress End-to-End tests against the app
-bash ./scripts/run-e2e-tests.sh
+bash ./scripts/tests/start-e2e-tests.sh
 
-# Cleans up the tests app and workspaces
-bash ./scripts/tests-cleanup.sh
+# cleans up the tests app and workspaces,
+# and verifies that cleanup worked as expected
+bash ./scripts/tests/cleanup-common.sh
 
