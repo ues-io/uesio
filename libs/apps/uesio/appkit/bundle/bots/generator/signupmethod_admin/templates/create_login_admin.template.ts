@@ -1,16 +1,24 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function create_login_admin(bot: ListenerBotApi) {
+type CreateLoginParams = {
+  username: string;
+  email: string;
+  code: string;
+  host: string;
+  hasPassword: boolean;
+}
+
+export default function create_login_admin(bot: ListenerBotApi<CreateLoginParams>) {
 	const hasPassword = bot.params.get("hasPassword")
 	// Don't send emails if the password was already provided
 	if (hasPassword) {
 		return
 	}
 	const redirect = "/site/app/uesio/appkit/changepassword"
-	const username = bot.params.get("username") as string
-	const email = bot.params.get("email") as string
-	const code = bot.params.get("code") as string
-	const host = bot.params.get("host") as string
+	const username = bot.params.get("username")
+	const email = bot.params.get("email")
+	const code = bot.params.get("code")
+	const host = bot.params.get("host")
 	const link = host + redirect + "?code=" + code + "&username=" + username
 	const from = "info@updates.ues.io"
 	const subject = "User created in an AppKit app"

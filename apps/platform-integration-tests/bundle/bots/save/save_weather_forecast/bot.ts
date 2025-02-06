@@ -52,22 +52,15 @@ export default function save_weather_forecast(bot: SaveBotApi) {
       bot.saveRequest.upsert,
   )
   bot.deletes.get().forEach((deleteItem) => {
-    bot.log.info(
-      "Deleting item with old id: " +
-        (deleteItem.getOld("uesio/core.id") as string),
-    )
+    bot.log.info("Deleting item with old id: " + deleteItem.getId())
   })
   bot.inserts.get().forEach((insertItem) => {
-    bot.log.info(
-      "inserting item with id: " + (insertItem.get("uesio/core.id") as string),
-    )
+    bot.log.info("inserting item with id: " + insertItem.getId())
     insertItem.set("uesio/tests.current", current)
     insertItem.set("uesio/tests.forecast", forecast)
   })
   bot.updates.get().forEach((changeItem) => {
-    bot.log.info(
-      "updating item with id: " + (changeItem.get("uesio/core.id") as string),
-    )
+    bot.log.info("updating item with id: " + changeItem.getId())
     changeItem.setAll({
       "uesio/tests.current": current,
       "uesio/tests.forecast": forecast,
