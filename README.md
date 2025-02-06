@@ -515,7 +515,7 @@ You could run the individual test from the CLI, but you would have to make sure 
 
 ```bash
 npm run tests-init # initialize test app/workspace/site/data/etc.
-source scripts/tests/setup-common.sh # setup environment variables used in tests
+source scripts/tests/setup-env.sh # setup environment variables used in tests
 npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
 ```
 
