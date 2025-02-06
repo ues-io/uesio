@@ -511,7 +511,8 @@ func GetMetadataForLoad(
 			if collectionMetadata.IsDynamic() {
 				continue
 			}
-			return err
+			op.Error = exceptions.NewLoadExceptionForError(err)
+			continue
 		}
 		specialRef, ok := specialRefs[fieldMetadata.Type]
 		if ok {
@@ -794,7 +795,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	}
 
 	for _, op := range allOps {
-		if op.ViewOnly {
+		if op.ViewOnly || op.Error != nil {
 			continue
 		}
 		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately

@@ -9,28 +9,30 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type LoadOp struct {
-	CollectionName     string                 `json:"collection" bot:"collection"`
-	WireName           string                 `json:"name"`
-	View               string                 `json:"view"`
-	Collection         meta.Group             `json:"data,omitempty"`
-	Conditions         []LoadRequestCondition `json:"conditions,omitempty" bot:"conditions"`
-	Fields             []LoadRequestField     `json:"fields,omitempty" bot:"fields"`
-	GroupBy            []LoadRequestField     `json:"groupby,omitempty" bot:"groupby"`
-	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"order,omitempty" bot:"order"`
-	BatchSize          int                    `json:"batchsize" bot:"batchsize"`
-	BatchNumber        int                    `json:"batchnumber" bot:"batchnumber"`
-	HasMoreBatches     bool                   `json:"more"`
-	RequireWriteAccess bool                   `json:"requirewriteaccess"`
-	Params             map[string]interface{} `json:"params,omitempty"`
-	Preloaded          bool                   `json:"preloaded"`
-	LoadAll            bool                   `json:"loadAll" bot:"loadAll"`
-	DebugQueryString   string                 `json:"debugQueryString"`
-	ViewOnly           bool                   `json:"viewOnly,omitempty"`
-	Aggregate          bool                   `json:"aggregate,omitempty"`
+	CollectionName     string                    `json:"collection" bot:"collection"`
+	WireName           string                    `json:"name"`
+	View               string                    `json:"view"`
+	Collection         meta.Group                `json:"data,omitempty"`
+	Conditions         []LoadRequestCondition    `json:"conditions,omitempty" bot:"conditions"`
+	Fields             []LoadRequestField        `json:"fields,omitempty" bot:"fields"`
+	GroupBy            []LoadRequestField        `json:"groupby,omitempty" bot:"groupby"`
+	Query              bool                      `json:"query"`
+	Order              []LoadRequestOrder        `json:"order,omitempty" bot:"order"`
+	BatchSize          int                       `json:"batchsize" bot:"batchsize"`
+	BatchNumber        int                       `json:"batchnumber" bot:"batchnumber"`
+	HasMoreBatches     bool                      `json:"more"`
+	RequireWriteAccess bool                      `json:"requirewriteaccess"`
+	Params             map[string]interface{}    `json:"params,omitempty"`
+	Preloaded          bool                      `json:"preloaded"`
+	LoadAll            bool                      `json:"loadAll" bot:"loadAll"`
+	DebugQueryString   string                    `json:"debugQueryString"`
+	ViewOnly           bool                      `json:"viewOnly,omitempty"`
+	Aggregate          bool                      `json:"aggregate,omitempty"`
+	Error              *exceptions.LoadException `json:"error,omitempty"`
 	// Internal only conveniences for LoadBots to be able to access prefetched metadata
 	metadata                    *MetadataCache
 	integrationConnection       *IntegrationConnection
