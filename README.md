@@ -466,9 +466,9 @@ To run the various test suites, there are a number of commands available:
 5. `npm run tests-e2e`
    - Runs _just_ the E2E Tests (against your local app).
 6. `npm run tests-init`
-   - Deletes the `uesio/tests` app if it exists and then creates the `uesio/tests` app with related workspaces and sites and loads seed data.  All of the above scripts execute this script automatically so there is not typically a need to run it.  However, if you want to run individual tests (via hurl, cypress, etc.) separate from one of the above scripts which runs an entire suite, you will need to run this script to prepare for test execution.
+   - Deletes the `uesio/tests` app if it exists and then creates the `uesio/tests` app with related workspaces and sites and loads seed data. All of the above scripts execute this script automatically so there is not typically a need to run it. However, if you want to run individual tests (via hurl, cypress, etc.) separate from one of the above scripts which runs an entire suite, you will need to run this script to prepare for test execution.
 7. `npm run tests-cleanup`
-   - Removes the `uesio/tests` app (if it exists).  Similar to `tests-init`, the automated test suite scripts will execute this script prior to completion.  However, if a test run terminates abnormally and/or if you ran `tests-init` manually, you can execute this script to remove the test related `uesio/tests` app.
+   - Removes the `uesio/tests` app (if it exists). Similar to `tests-init`, the automated test suite scripts will execute this script prior to completion. However, if a test run terminates abnormally and/or if you ran `tests-init` manually, you can execute this script to remove the test related `uesio/tests` app.
 8. `npm run tests-cypress-open`
    - Runs the cypress visual UI where you can run E2E tests from. See [E2E testing with cypress](#e2e-testing-with-cypress) for details.
 9. `npm run tests-cypress-run`
@@ -477,7 +477,7 @@ To run the various test suites, there are a number of commands available:
 TO run just an individual E2E or Integration test, see the sections below.
 
 > [!NOTE]
-> You must manually run `npm run tests-init` in order to run individual tests.  Depending on the test, you may need to re-run this script prior to every test execution.  Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server and for each test so that mock logins can be used.
+> You must manually run `npm run tests-init` in order to run individual tests. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server and for each test so that mock logins can be used.
 
 ### E2E testing with Cypress
 
@@ -485,7 +485,7 @@ We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio a
 
 E2E tests are the most expensive and most brittle, and as such should be used sparingly.
 
-If you're running Uesio locally, you can use `npm run tests-cypress-open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run all the tests in a headless runner.  Note that when running using the visual UI or when running individual tests as per the below, you must have the `UESIO_DEV=true` environment variable set and have run `npm run tests-init`.
+If you're running Uesio locally, you can use `npm run tests-cypress-open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run all the tests in a headless runner. Note that when running using the visual UI or when running individual tests as per the below, you must have the `UESIO_DEV=true` environment variable set and have run `npm run tests-init`.
 
 #### Running a single E2E spec
 
