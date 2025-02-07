@@ -1,3 +1,0 @@
-# CI workflows cache go which created go-build-cache directory that contains packages that contain package.json files
-# so nx "thinks" they are "projects" in the nx workspace and then fails to parse them.
-/go-build-cache

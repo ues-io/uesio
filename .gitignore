@@ -78,3 +78,10 @@ __debug_bin
 queries/results
 .nx/cache
 .nx/workspace-data
+
+# CI workflows cache go which creates a go-build-cache directory that contains packages that contain package.json files
+# so whenever nx is run, it "thinks" they are "projects" in the nx workspace and then fails to parse them (e.g., they
+# do not have a "name" property).  The below could be included in a .nxignore file since the problem is nx specific,
+# however putting here instead because we would also never want to commit these files if we ever committed in
+# our workflows.
+/go-build-cache
