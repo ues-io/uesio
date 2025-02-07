@@ -221,7 +221,6 @@ func GetMetadataForViewOnlyWire(
 	for _, requestField := range op.Fields {
 		getMetadataForViewOnlyField(requestField, metadataRequest)
 	}
-	// TBD : WHY does connection have to be nil?
 	return metadataRequest.Load(metadataResponse, session, connection)
 }
 

@@ -16,6 +16,57 @@ type LoadOptions struct {
 	Metadata   *wire.MetadataCache
 }
 
+func getOpMetadata(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
+	// Attach the collection metadata to the LoadOp so that Load Bots can access it
+	op.AttachMetadataCache(metadata)
+	// Special processing for View-only wires
+	if op.ViewOnly {
+		if err := GetMetadataForViewOnlyWire(op, metadata, connection, session); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
+		return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
+	}
+
+	return GetMetadataForLoad(op, metadata, ops, session, connection)
+}
+
+func addDefaultFieldsAndOrder(op *wire.LoadOp) {
+	// Verify that the id field is present
+	hasIDField := false
+	hasUniqueKeyField := false
+	for i := range op.Fields {
+		if op.Fields[i].ID == commonfields.Id {
+			hasIDField = true
+			break
+		}
+		if op.Fields[i].ID == commonfields.UniqueKey {
+			hasUniqueKeyField = true
+			break
+		}
+	}
+
+	if !hasIDField && !op.Aggregate {
+		op.Fields = append(op.Fields, wire.LoadRequestField{
+			ID: commonfields.Id,
+		})
+	}
+
+	if !hasUniqueKeyField && !op.Aggregate {
+		op.Fields = append(op.Fields, wire.LoadRequestField{
+			ID: commonfields.UniqueKey,
+		})
+	}
+
+	//Set default order by: id - asc
+	if op.Order == nil && !op.Aggregate {
+		op.Order = append(op.Order, GetDefaultOrder())
+	}
+}
+
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
@@ -39,56 +90,14 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 
-		// Attach the collection metadata to the LoadOp so that Load Bots can access it
-		op.AttachMetadataCache(metadataResponse)
-		// Special processing for View-only wires
-		if op.ViewOnly {
-			if err = GetMetadataForViewOnlyWire(op, metadataResponse, connection, session); err != nil {
-				return nil, err
-			}
-			continue
-		}
-
-		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
-			return nil, exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
-		}
-
-		if err = GetMetadataForLoad(op, metadataResponse, ops, session, connection); err != nil {
+		err := getOpMetadata(op, ops, metadataResponse, session, connection)
+		if err != nil {
 			return nil, err
 		}
 
-		// Verify that the id field is present
-		hasIDField := false
-		hasUniqueKeyField := false
-		for i := range op.Fields {
-			if op.Fields[i].ID == commonfields.Id {
-				hasIDField = true
-				break
-			}
-			if op.Fields[i].ID == commonfields.UniqueKey {
-				hasUniqueKeyField = true
-				break
-			}
-		}
+		addDefaultFieldsAndOrder(op)
 
-		if !hasIDField && !op.Aggregate {
-			op.Fields = append(op.Fields, wire.LoadRequestField{
-				ID: commonfields.Id,
-			})
-		}
-
-		if !hasUniqueKeyField && !op.Aggregate {
-			op.Fields = append(op.Fields, wire.LoadRequestField{
-				ID: commonfields.UniqueKey,
-			})
-		}
-
-		//Set default order by: id - asc
-		if op.Order == nil && !op.Aggregate {
-			op.Order = append(op.Order, GetDefaultOrder())
-		}
-
-		if !op.Query || op.ViewOnly {
+		if !op.Query {
 			continue
 		}
 
@@ -101,7 +110,6 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 			op.SetNeedsRecordLevelAccessCheck()
 		}
 		opsToQuery = append(opsToQuery, op)
-
 	}
 
 	if opsNeedRecordLevelAccessCheck {
@@ -112,71 +120,76 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	}
 
 	for _, op := range opsToQuery {
-		// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
-		// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
-		// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
-		// etc. will also only include active condiitons).
-		// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
-		// conditions, and then we will, at the end of the operation, restore them back.
-		// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
-		// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
-		originalConditions := op.Conditions
-		originalQuery := op.Query
-		activeConditions, err := processConditions(op, op.CollectionName, originalConditions, metadataResponse, opsToQuery, session)
+		err := queryOp(op, opsToQuery, metadataResponse, session, connection)
 		if err != nil {
 			return nil, err
-		}
-
-		// The op could have been cancelled in the process conditions step, so we need
-		// to check op.Query again.
-		if !op.Query {
-			op.Query = originalQuery
-			continue
-		}
-
-		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-		if err != nil {
-			return nil, err
-		}
-
-		if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
-			return nil, err
-		}
-
-		collectionKey := collectionMetadata.GetFullName()
-
-		integrationName := collectionMetadata.GetIntegrationName()
-
-		usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
-		usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
-
-		// Mutate the conditions immediately before handing off to the load implementations
-		op.Conditions = activeConditions
-
-		// 3 branches:
-		// 1. Dynamic collections
-		// 2. External integration collections
-		// 3. Native Uesio DB collections
-		var loadErr error
-		if collectionMetadata.IsDynamic() {
-			// Dynamic collection loads
-			loadErr = runDynamicCollectionLoadBots(op, connection, session)
-		} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
-			// external integration loads
-			loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
-		} else {
-			// native Uesio DB loads
-			loadErr = LoadOp(op, connection, session)
-		}
-		// Regardless of what happened with the load, restore the original conditions list now that we're done
-		op.Conditions = originalConditions
-
-		if loadErr != nil {
-			return nil, loadErr
 		}
 	}
 
 	return metadataResponse, nil
+}
+
+func queryOp(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
+	// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
+	// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
+	// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
+	// etc. will also only include active condiitons).
+	// We will temporarily mutate the load op's conditions so that all load implementations will now have only active
+	// conditions, and then we will, at the end of the operation, restore them back.
+	// NOTICE that this activeConditions slice is NOT a pointer, it's a value, so it is functionally a clone
+	// of the original conditions, which we need to preserve as is so that the client can know what the original state was.
+	originalConditions := op.Conditions
+	originalQuery := op.Query
+	activeConditions, err := processConditions(op, op.CollectionName, originalConditions, metadata, ops, session)
+	if err != nil {
+		return err
+	}
+
+	// The op could have been cancelled in the process conditions step, so we need
+	// to check op.Query again.
+	if !op.Query {
+		op.Query = originalQuery
+		return nil
+	}
+
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	if err = addMetadataToCollection(op.Collection, collectionMetadata); err != nil {
+		return err
+	}
+
+	collectionKey := collectionMetadata.GetFullName()
+
+	integrationName := collectionMetadata.GetIntegrationName()
+
+	usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
+	usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
+
+	// Mutate the conditions immediately before handing off to the load implementations
+	op.Conditions = activeConditions
+
+	// 3 branches:
+	// 1. Dynamic collections
+	// 2. External integration collections
+	// 3. Native Uesio DB collections
+	var loadErr error
+	if collectionMetadata.IsDynamic() {
+		// Dynamic collection loads
+		loadErr = runDynamicCollectionLoadBots(op, connection, session)
+	} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
+		// external integration loads
+		loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
+	} else {
+		// native Uesio DB loads
+		loadErr = LoadOp(op, connection, session)
+	}
+	// Regardless of what happened with the load, restore the original conditions list now that we're done
+	op.Conditions = originalConditions
+
+	return loadErr
 }
 
 func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
