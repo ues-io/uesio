@@ -5,10 +5,10 @@ shopt -s expand_aliases
 
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
-export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
+export UESIO_CLI_HOST=$UESIO_TEST_APP_URL
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-alias uesio="$SCRIPT_DIR/../dist/cli/uesio"
+alias uesio="$SCRIPT_DIR/../../dist/cli/uesio"
 
 # Deploy the sample app using Uesio
 cd apps/platform-integration-tests
@@ -18,8 +18,10 @@ uesio logout
 uesio sethost
 uesio login
 
-echo "Deleting and recreating the tests app and dev workspace..."
-npx hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/app_and_workspace.hurl
+echo "Deleting tests app if it exists..."
+npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/delete_app.hurl
+echo "Creating the tests app and dev workspace..."
+npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/create_app_and_workspace.hurl
 
 # truncatetests workspace
 echo "Changing to truncatetests workspace..."
@@ -43,12 +45,12 @@ uesio upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 uesio upsert -f seed_data/tools.csv -s seed_data/tools_import.spec.json
 
 # Populate secrets and config values for the dev workspace
-npx hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/populate_secrets_and_config_values.hurl
+npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/populate_secrets_and_config_values.hurl
 
 echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..."
 
 # Now that we have deployed our metadata to the workspace, we can create a bundle, site, and domain which uses its metadata
-npx hurl -k --error-format long --no-output --variable host=studio.uesio-dev.com --variable port=3000 --variable domain=uesio-dev.com hurl_seeds/site_domain_bundle.hurl
+npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/site_domain_bundle.hurl
 
 echo "Seeding data into our test site..."
 uesio siteadmin -n=testsite
