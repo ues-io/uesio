@@ -2,13 +2,14 @@
 
 set -e
 
-# Ensure everything is built with latest code
-# UESIO_DEV set to ensure packui is built
-UESIO_DEV=true npm run build-all
-
 # Ensure that we have a Uesio docker image to run
 # In CI, we should have the image built already but locally we want to re-build on every run
 if [[ -z "${APP_IMAGE}" ]]; then
+    # Ensure everything is built with latest code
+    echo "Building projects..."
+    # UESIO_DEV set to ensure packui is built
+    UESIO_DEV=true npm run build-all
+
     echo "Building docker image..."
     # use a specific tag to avoid each built image remaining in docker
     IMAGE_TAG="uesio-test:latest"
