@@ -7,9 +7,6 @@ import (
 )
 
 func opNeedsRecordLevelAccessCheck(op *wire.LoadOp, collectionMetadata *wire.CollectionMetadata, userPerms *meta.PermissionSet, session *sess.Session) bool {
-	if op.ViewOnly {
-		return false
-	}
 
 	// If we don't need a record level access check at all, move on.
 	needsAccessCheck := collectionMetadata.IsReadProtected() || (collectionMetadata.IsWriteProtected() && op.RequireWriteAccess)
