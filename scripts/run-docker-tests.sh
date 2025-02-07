@@ -11,9 +11,6 @@
 
 set -e
 
-# Ensure everything is built with latest code
-npm run build-all
-
 # Initial setup
 source ./scripts/tests/setup-common.sh
 
