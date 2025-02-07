@@ -1,6 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function signup(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/signup"
+
+export default function signup(bot: ListenerBotApi<Params>) {
   const redirect = `/site/auth/${bot.getNamespace()}/platform/signup/confirm`
   const username = bot.params.get("username")
   const email = bot.params.get("email")

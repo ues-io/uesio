@@ -13,3 +13,5 @@ params:
   - name: host
     type: TEXT
     required: true
+  - name: authenticated
+    type: CHECKBOX

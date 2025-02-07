@@ -1,6 +1,8 @@
 import { ListenerBotApi, WireRecord } from "@uesio/bots"
 
-export default function tester_forgotpassword(bot: ListenerBotApi) {
+import type { Params } from "@uesio/app/bots/listener/uesio/tests/tester_resetpassword"
+
+export default function tester_forgotpassword(bot: ListenerBotApi<Params>) {
   const namespace = bot.getNamespace()
   const redirect = "/site/app/uesio/appkit/changepassword"
   const username = bot.params.get("username")

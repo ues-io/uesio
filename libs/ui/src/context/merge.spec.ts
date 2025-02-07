@@ -460,6 +460,17 @@ const mergeTestCases: MergeWithContextTestCase[] = [
     input: "${foo} || ${bar} => ${foo}",
     expected: "true || false => true",
   },
+  {
+    name: "multiple values requested in the merge, values are objects/arrays, merge is a string with stringified values",
+    context: new Context().addRecordDataFrame({
+      foo: [],
+      bar: {
+        test: "blah",
+      },
+    }),
+    input: "${foo} || ${bar} => ${foo}",
+    expected: '[] || {"test":"blah"} => []',
+  },
 ]
 
 const mergeOptionsTestCases: MergeWithContextTestCase[] = [

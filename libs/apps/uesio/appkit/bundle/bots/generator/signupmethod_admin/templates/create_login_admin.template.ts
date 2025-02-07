@@ -1,6 +1,14 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function create_login_admin(bot: ListenerBotApi) {
+type CreateLoginParams = {
+  username: string;
+  email: string;
+  code: string;
+  host: string;
+  hasPassword: boolean;
+}
+
+export default function create_login_admin(bot: ListenerBotApi<CreateLoginParams>) {
 	const hasPassword = bot.params.get("hasPassword")
 	// Don't send emails if the password was already provided
 	if (hasPassword) {

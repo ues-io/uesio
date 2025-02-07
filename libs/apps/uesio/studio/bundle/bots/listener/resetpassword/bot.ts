@@ -1,6 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function resetpassword(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/resetpassword"
+
+export default function resetpassword(bot: ListenerBotApi<Params>) {
   const authenticated = bot.params.get("authenticated")
   // Don't send emails for authenticated password resets
   if (authenticated) {

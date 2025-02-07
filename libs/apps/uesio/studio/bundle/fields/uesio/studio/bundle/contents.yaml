@@ -2,3 +2,5 @@ name: contents
 type: FILE
 label: Contents
 createOnly: true
+file:
+  accept: ANY
