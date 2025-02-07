@@ -1,15 +1,17 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function createlogin(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/createlogin"
+
+export default function createlogin(bot: ListenerBotApi<Params>) {
   const hasPassword = bot.params.get("hasPassword")
   if (hasPassword) {
     return
   }
   const redirect = "/site/app/uesio/appkit/changepassword"
-  const username = bot.params.get("username") as string
-  const email = bot.params.get("email") as string
-  const code = bot.params.get("code") as string
-  const host = bot.params.get("host") as string
+  const username = bot.params.get("username")
+  const email = bot.params.get("email")
+  const code = bot.params.get("code")
+  const host = bot.params.get("host")
   const link = host + redirect + "?code=" + code + "&username=" + username
   const from = "info@updates.ues.io"
   const subject = "User created in ues.io studio"

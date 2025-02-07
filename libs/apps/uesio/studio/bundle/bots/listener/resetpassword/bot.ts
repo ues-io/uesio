@@ -1,6 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function resetpassword(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/resetpassword"
+
+export default function resetpassword(bot: ListenerBotApi<Params>) {
   const authenticated = bot.params.get("authenticated")
   // Don't send emails for authenticated password resets
   if (authenticated) {
@@ -13,9 +15,9 @@ export default function resetpassword(bot: ListenerBotApi) {
     )
   }
   const redirect = "/site/app/uesio/appkit/changepassword"
-  const username = bot.params.get("username") as string
-  const code = bot.params.get("code") as string
-  const host = bot.params.get("host") as string
+  const username = bot.params.get("username")
+  const code = bot.params.get("code")
+  const host = bot.params.get("host")
   const link = host + redirect + "?code=" + code + "&username=" + username
   const from = "info@updates.ues.io"
   const subject = "Password change requested in ues.io studio"
