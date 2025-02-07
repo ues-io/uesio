@@ -73,13 +73,13 @@ jobs:
 
       - name: Build and test
         env:
-          UESIO_DEV: "true"
+          UESIO_DEV: "true" # required to ensure packui gets built
         run: npx nx affected -t build test --configuration=ci --parallel=5
 
       - name: Prep for docker image
         id: setDockerSHAs
         env:
-          UESIO_DEV: "true"
+          UESIO_DEV: "true" # required to ensure packui gets built
         run: |
           # build values for docker image tags
           VERSION_SUFFIX=${{ github.run_number }}.${{ github.run_attempt }}
@@ -207,13 +207,9 @@ jobs:
         run: npm ci
 
       - name: Check formatting
-        env:
-          UESIO_DEV: "true"
         run: npx nx format:check --verbose
 
       - name: Lint
-        env:
-          UESIO_DEV: "true"
         run: npx nx affected -t lint --configuration=ci --parallel=5
 
   typecheck:
@@ -245,8 +241,6 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        env:
-          UESIO_DEV: "true"
         run: npx nx affected -t typecheck --configuration=ci --parallel=5
 
   update-dev-branch:

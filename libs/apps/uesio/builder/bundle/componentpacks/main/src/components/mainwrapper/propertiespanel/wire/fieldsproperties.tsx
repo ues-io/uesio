@@ -9,6 +9,7 @@ import FieldPicker from "./fieldpicker"
 import { FullPath } from "../../../../api/path"
 import AggregateFieldPropTag from "./aggregatefieldproptag"
 import GroupByFieldPropTag from "./groupbyfieldproptag"
+import PopoutPanel from "../popoutpanel"
 
 type FieldsPropertiesDefinition = {
   viewOnly?: boolean
@@ -20,7 +21,6 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
   const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
   const Icon = component.getUtility("uesio/io.icon")
   const Button = component.getUtility("uesio/io.button")
-  const Popper = component.getUtility("uesio/io.popper")
   const { context, definition } = props
   const { viewOnly, aggregate, groupBy } = definition
   const isViewOnlyWire = viewOnly
@@ -54,16 +54,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
   return (
     <>
       {showPopper && anchorEl && (
-        <Popper
-          referenceEl={anchorEl.current}
-          context={context}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          offset={8}
-          parentSelector="#propertieswrapper"
-          matchHeight
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl.current} context={context}>
           <FieldPicker
             context={context}
             baseCollectionKey={collection}
@@ -73,7 +64,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
             allowMultiselect={true}
             isSelected={isSelected}
           />
-        </Popper>
+        </PopoutPanel>
       )}
       <ScrollPanel
         ref={anchorEl}
