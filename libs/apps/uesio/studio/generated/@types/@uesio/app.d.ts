@@ -33,6 +33,7 @@ declare module "@uesio/app/bots/listener/uesio/studio/createlogin" {
 		email: string
 		code: string
 		host: string
+		hasPassword?: boolean
 	}
 
 	export type {
@@ -46,6 +47,7 @@ declare module "@uesio/app/bots/listener/uesio/studio/resetpassword" {
 		email?: string
 		code: string
 		host: string
+		authenticated?: boolean
 	}
 
 	export type {
@@ -69,6 +71,8 @@ declare module "@uesio/app/bots/listener/uesio/studio/signup" {
 		email: string
 		code: string
 		host: string
+		firstname: string
+		lastname: string
 	}
 
 	export type {
@@ -80,6 +84,9 @@ declare module "@uesio/app/bots/listener/uesio/studio/signupgoogle" {
 	type Params = {
 		username: string
 		email: string
+		host: string
+		firstname: string
+		lastname: string
 	}
 
 	export type {
