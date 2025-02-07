@@ -170,7 +170,7 @@ func deleteKeys(keys []string) error {
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
 	if err != nil {
-		return fmt.Errorf("Error deleting cache keys from bot: " + err.Error())
+		return fmt.Errorf("Error deleting cache keys from bot: %w", err)
 	}
 	return nil
 }

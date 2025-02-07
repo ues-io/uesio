@@ -231,7 +231,7 @@ func copyFileIntoZip(create bundlestore.FileCreator, sourcePath, targetPath stri
 	defer f.Close()
 	_, err = io.Copy(f, source)
 	if err != nil {
-		return fmt.Errorf("failed to create file at path %s : %s", targetPath, err.Error())
+		return fmt.Errorf("failed to create file at path %s : %w", targetPath, err)
 	}
 	return nil
 }

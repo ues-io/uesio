@@ -25,7 +25,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value interface{}) (strin
 	case "LIST", "STRUCT", "MAP":
 		byteValue, err := json.Marshal(value)
 		if err != nil {
-			return "", fmt.Errorf("Failed to serialize: " + fieldMetadata.GetFullName() + ": " + err.Error())
+			return "", fmt.Errorf("Failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
 		}
 		return string(byteValue), nil
 	case "MULTISELECT":
@@ -36,7 +36,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value interface{}) (strin
 		sort.Strings(values)
 		byteValue, err := json.Marshal(values)
 		if err != nil {
-			return "", fmt.Errorf("Failed to serialize: " + fieldMetadata.GetFullName() + ": " + err.Error())
+			return "", fmt.Errorf("Failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
 		}
 		return string(byteValue), nil
 	case "TIMESTAMP":

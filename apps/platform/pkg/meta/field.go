@@ -174,7 +174,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if fieldType == "SELECT" || fieldType == "MULTISELECT" {
 		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
 		if err != nil {
-			return fmt.Errorf("Invalid selectlist metadata provided for field: " + f.GetKey() + " : Missing select list name")
+			return fmt.Errorf("Invalid selectlist metadata provided for field: %s : Missing select list name", f.GetKey())
 		}
 	}
 

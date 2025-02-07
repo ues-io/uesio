@@ -114,7 +114,7 @@ func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
 		}
 	}
 
-	return nil, 0, fmt.Errorf("Node not found of key: " + key)
+	return nil, 0, fmt.Errorf("Node not found of key: %s", key)
 }
 
 // Removes an entry from a map node and returns it.

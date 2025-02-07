@@ -52,7 +52,7 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 
 		obj, err = getFieldReflect(objValue.FieldByName(fieldName))
 		if err != nil {
-			return nil, fmt.Errorf("%v: %s", err, name)
+			return nil, fmt.Errorf("%w: %s", err, name)
 		}
 	}
 

@@ -42,7 +42,7 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 	}
 
 	if user.ID == "" {
-		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
+		return fmt.Errorf("Error Registering Usage Event: Empty User ID")
 	}
 
 	currentTime := time.Now()
