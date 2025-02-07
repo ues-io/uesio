@@ -32,7 +32,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 	// in order to ensure that a subsequent job processes them.
 	keys, err := redis.Strings(conn.Do("SPOP", KEYS_SET_NAME, MAX_USAGE_PER_RUN))
 	if err != nil {
-		return fmt.Errorf("Error getting usage set members: " + err.Error())
+		return fmt.Errorf("Error getting usage set members: %w", err)
 	}
 
 	if len(keys) == 0 {
@@ -44,7 +44,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 
 	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
 	if err != nil {
-		return fmt.Errorf("Error fetching usage keys: " + err.Error())
+		return fmt.Errorf("Error fetching usage keys: %w", err)
 	}
 
 	changes := meta.UsageCollection{}
@@ -94,11 +94,11 @@ func setRedisUsage(key string, size int64) error {
 
 	err := conn.Flush()
 	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
+		return fmt.Errorf("Error Setting cache value: %w", err)
 	}
 	_, err = conn.Receive()
 	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
+		return fmt.Errorf("Error Setting cache value: %w", err)
 	}
 
 	return nil
