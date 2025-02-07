@@ -25,7 +25,7 @@ describe("Wire Lookup Conditions", () => {
       )
       cy.get("table[id$='contactsTable']>tbody>tr", {
         timeout: 4000,
-      }).should("have.length", 2)
+      }).should("have.length", 3)
 
       // Now initiate a manual requery by searching
       cy.getByIdFragment("input", "contactsSearch").type("Fred")

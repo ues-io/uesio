@@ -7,6 +7,7 @@ const automationUsername = process.env.UESIO_AUTOMATION_USERNAME || "uesio"
 const automationPassword = process.env.UESIO_AUTOMATION_PASSWORD
 const useMockLogin = !automationPassword
 const inCi = process.env.CI === "true"
+
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, {

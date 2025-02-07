@@ -447,38 +447,54 @@ docker compose up -d
 bash apps/platform/migrations_test/test_migrations.sh
 ```
 
-## End-to-end Testing and Integration testing
+## Testing (Unit, Integration & E2E)
 
-To run E2E and Integration tests locally, there are a number of commands available:
+> ![IMPORTANT]
+> The default behavior for all tests is to run against `https://studio.uesio-dev.com:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
 
-1. `npm run tests-all`
-   - Runs all Integration and E2E tests against your local Uesio app.
+To run the various test suites, there are a number of commands available:
+
+1. `npm run tests`
+   - Runs all Unit tests
+2. `npm run tests-all`
+   - Runs all Unit, Integration and E2E tests against your local Uesio app.
    - Use this when writing and debugging tests locally
-1. `npm run tests-ci`
-   - This is what we run in Github Actions [CI](./.github/workflows/ci.yaml) builds. It spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
-1. `npm run tests-integration`
+3. `npm run tests-docker`
+   - This is what we run in Github Actions [CI](./.github/workflows/ci.yaml) builds for integration & E2E tests. It builds the latest code, spins up all dependencies, and a Dockerized version of the Uesio app, runs integration and E2E tests against the app, and then spins down all Docker containers.
+4. `npm run tests-integration`
    - Runs _just_ the Integration Tests (against your local app).
-1. `npm run tests-e2e`
+5. `npm run tests-e2e`
    - Runs _just_ the E2E Tests (against your local app).
+6. `npm run tests-init`
+   - Deletes the `uesio/tests` app if it exists and then creates the `uesio/tests` app with related workspaces and sites and loads seed data. All of the above scripts execute this script automatically so there is not typically a need to run it. However, if you want to run individual tests (via hurl, cypress, etc.) separate from one of the above scripts which runs an entire suite, you will need to run this script to prepare for test execution.
+7. `npm run tests-cleanup`
+   - Removes the `uesio/tests` app (if it exists). Similar to `tests-init`, the automated test suite scripts will execute this script prior to completion. However, if a test run terminates abnormally and/or if you ran `tests-init` manually, you can execute this script to remove the test related `uesio/tests` app.
+8. `npm run tests-cypress-open`
+   - Runs the cypress visual UI where you can run E2E tests from. See [E2E testing with cypress](#e2e-testing-with-cypress) for details.
+9. `npm run tests-cypress-run`
+   - Runs the cypress in headless mode, helpful when you want to run individual tests. See [E2E testing with cypress](#e2e-testing-with-cypress) for details.
 
 TO run just an individual E2E or Integration test, see the sections below.
 
+> [!NOTE]
+> You must manually run `npm run tests-init` in order to run individual tests. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server and for each test so that mock logins can be used.
+
 ### E2E testing with Cypress
 
-We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app. All E2E tests are defined in `cypress/e2e` directory.
+We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app. All E2E tests are defined in `apps/platform-e2e` directory.
 
 E2E tests are the most expensive and most brittle, and as such should be used sparingly.
 
-If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run the tests in a headless runner.
+If you're running Uesio locally, you can use `npm run tests-cypress-open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run all the tests in a headless runner. Note that when running using the visual UI or when running individual tests as per the below, you must have the `UESIO_DEV=true` environment variable set and have run `npm run tests-init`.
 
 #### Running a single E2E spec
 
 If you want to _visually_ run a single spec, use the Cypress visual UI and then select the individual spec.
 
-Or, use `npx cypress run --spec <path to spec>` to run a specific file in a headless Electron instance, e.g.
+Or, use `npm run tests-cypress-run -- --spec <path to spec>` to run a specific file in a headless Electron instance, e.g.
 
-```
-npx cypress run --spec cypress/e2e/builder.cy.ts
+```bash
+npx run tests-cypress-run -- --spec apps/platform-e2e/cypress/e2e/builder.cy.ts
 ```
 
 ### Integration / API testing with Hurl
@@ -489,13 +505,19 @@ To run API integration tests locally against your running Uesio container, use `
 
 #### Running a single Integration Test
 
-The easiest way to run a single Integration Test is to go into the `run-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here:
+The easiest way to run a single Integration Test is to go into the `scripts/tests/start-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here and then run `npm run tests-integration`:
 
 ```
-npx hurl --very-verbose -k --variable host=studio.uesio-dev.com --variable domain=uesio-dev.com --variable port=3000 hurl_specs/wire_collection_dependencies.hurl
+# npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
 ```
 
-You could run this from the CLI, but you would have to make sure that you are (a) in the right directory (b) have the right environment variables set up. (See the top of this `run-integration-tests.sh` for a better understanding).
+You could run the individual test from the CLI, but you would have to make sure that you have the test app created and the right environment variables set up. If you would like to run via the CLI:
+
+```bash
+npm run tests-init # initialize test app/workspace/site/data/etc.
+source scripts/tests/setup-env.sh # setup environment variables used in tests
+npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
+```
 
 # Continous integration (CI)
 

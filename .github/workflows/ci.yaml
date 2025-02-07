@@ -81,11 +81,6 @@ jobs:
         env:
           UESIO_DEV: "true" # required to ensure packui gets built
         run: |
-          # We lint/test/build affected but in order to build image, we need to ensure everything
-          # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
-          # for anything already built from above)
-          npx nx run-many -t build
-
           # build values for docker image tags
           VERSION_SUFFIX=${{ github.run_number }}.${{ github.run_attempt }}
           FULL_SHA=${{ steps.setNxSHAs.outputs.head }}
@@ -155,9 +150,13 @@ jobs:
         run: |
           ./scripts/seed-etc-hosts.sh
 
+          cd apps/platform/ssl
+          bash ./create.sh
+          cd ../../../
+
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
-          npm run tests-ci
+          npm run tests-docker
 
   check:
     name: Check format and lint
