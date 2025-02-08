@@ -94,7 +94,7 @@ npm run watch-all
 
 ## Live Reload (for development)
 
-> ![NOTE]
+> [!NOTE]
 > Live reload is not currently supported when running against the docker image (e.g., `npm run in-docker`).
 
 When running the platform, in addition to [watching](#watch-mode-for-development) and rebuilding when files change, you likely want to have the platform itself and/or the browser to automatically reload after assets have been rebuilt.
@@ -487,7 +487,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 
 ## Testing (Unit, Integration & E2E)
 
-> ![IMPORTANT]
+> [!IMPORTANT]
 > The default behavior for all tests is to run against `https://studio.uesio-dev.com:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
 
 To run the various test suites, there are a number of commands available:
