@@ -92,6 +92,16 @@ While developing you may want the entire monorepo to rebuild changed files. You 
 npm run watch-all
 ```
 
+Or, if you want to watch just a single project, you can do the following which will watch the project for changes and ensure that any of the projects its dependent on are (re)built (if needed) first:
+
+`npx nx watch -p <projectname> --includeDependentProjects -- nx run-many -t build -p \$NX_PROJECT_NAME`
+
+For example, to monitor the `apps-uesio-studio` project:
+
+```bash
+npx nx watch -p apps-uesio-studio --includeDependentProjects -- nx run-many -t build -p \$NX_PROJECT_NAME
+```
+
 ## Live Reload (for development)
 
 > [!NOTE]
