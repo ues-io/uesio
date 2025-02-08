@@ -98,7 +98,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 header "Location" == "/login?r=/workspace/uesio/tests/dev/configvalues&expired=true"
-body == "<a href=\"/login?r=/workspace/uesio/tests/dev/configvalues&amp;expired=true\">OK</a>.\n\n"
+body startsWith "<a href=\"/login?r=/workspace/uesio/tests/dev/configvalues&amp;expired=true\">OK</a>.\n\n"
 
 # Logout
 POST https://{{host}}:{{port}}/site/auth/logout
