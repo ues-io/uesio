@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -37,7 +38,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 	}
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
-	if fileRequest.TreatAsImmutable() {
+	if fileRequest.TreatAsImmutable() && !env.InDevMode() {
 		w.Header().Set("Cache-Control", CacheFor1Year)
 	}
 

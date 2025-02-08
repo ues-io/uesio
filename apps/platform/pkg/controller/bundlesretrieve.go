@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -43,7 +44,9 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s.zip\"", version))
-	w.Header().Set("Cache-Control", file.CacheFor1Year)
+	if !env.InDevMode() {
+		w.Header().Set("Cache-Control", file.CacheFor1Year)
+	}
 	err = source.GetBundleZip(w, nil)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))

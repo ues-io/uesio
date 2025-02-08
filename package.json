@@ -40,10 +40,11 @@
     "typecheck-all": "nx run-many -t typecheck --all",
     "seeds": "nx seed platform",
     "setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
-    "start": "nx serve platform",
+    "start": "nx run platform:serve",
     "test": "nx run-many --target=test --all",
-    "watch-all": "nx run-many --target=watch --all --parallel=8",
-    "watch-all-nx": "nx run-many --target=build --all && nx watch --all -- nx run-many -t build --all"
+    "watch-all": "npm run build-all && nx watch --all -- nx run-many -t build -p \\$NX_PROJECT_NAME",
+    "watch-platform-deps": "nx run platform:watch-deps",
+    "watch-dev": "nx run platform:serve:watch"
   },
   "files": [],
   "devDependencies": {

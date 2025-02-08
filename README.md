@@ -88,8 +88,46 @@ nx build apps-uesio-studio
 
 While developing you may want the entire monorepo to rebuild changed files. You can do this with:
 
-```
+```bash
 npm run watch-all
+```
+
+## Live Reload (for development)
+
+> ![NOTE]
+> Live reload is not currently supported when running against the docker image (e.g., `npm run in-docker`).
+
+When running the platform, in addition to [watching](#watch-mode-for-development) and rebuilding when files change, you likely want to have the platform itself and/or the browser to automatically reload after assets have been rebuilt.
+
+See [Live Reload](./docs/development/live-reload.md) for more details on how live reload works.
+
+Depending on your preference, there are two options:
+
+### Platform & Browser
+
+Whenever any changes are made to code within the platform go module itself or any of the libraries that are a part of the platform itself (e.g., `libs/apps/uesio/studio`, `libs/apps/uesio/appkit`, `libs/ui`, `libs/vendor`, etc.) the module/package will be rebuilt and if necessary, the platform automatically restarted. Additionally, the browser will automatically refresh.
+
+In order to accomplish, the [Air](https://github.com/air-verse/air) package must be installed on your machine. This is a one-time installation:
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+Once `Air` is installed, you can simply run the following:
+
+```bash
+npm run watch-dev
+```
+
+### Browser Only
+
+Whenever any changes are made to code within the libraries that the platform uses (e.g., `libs/apps/uesio/studio`, `libs/apps/uesio/appkit`, `libs/ui`, `libs/vendor`, etc.), the module/package will be rebuilt and the browser reloaded. This is very similar to [Platform & Browser](#platform--browser) but changes to the platform itself (e.g., `*.go` files) will not trigger a rebuild or a restart of the platform go module.
+
+It is recommended to use [Platform & Browser](#platform--browser) for live reload, however `Browser Only` can be used if you do not want to install `Air` or if you know you will not be making any changes to the platform module directly.
+
+```bash
+npm run watch-platform-deps # In a separate terminal
+npm run start # In a separate terminal
 ```
 
 ## (Optional) Using Uesio CLI globally

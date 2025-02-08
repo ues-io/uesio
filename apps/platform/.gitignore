@@ -19,9 +19,9 @@ pgdata
 /temp/
 /ssl/certificate.crt
 /ssl/private.key
-sessions/*
-userfiles/*
-localbundlestore/*
+sessions/
+userfiles/
+localbundlestore/
 .DS_Store
 .idea
 .vscode/launch.json
@@ -34,6 +34,7 @@ firebase-debug.log
 __debug_bin*
 uesiofiles-dev/
 uesiobundlestore-dev/
+.watch/
 
 # static js files, compilated by webpack, which are served by gorilla/mux
 /platform/*.js

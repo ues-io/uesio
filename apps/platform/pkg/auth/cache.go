@@ -29,6 +29,10 @@ func DeleteUserCacheEntries(userKeys ...string) error {
 	return userCache.Del(userKeys...)
 }
 
+func InvalidateUserCache() error {
+	return userCache.DeleteAll()
+}
+
 func setUserCache(userUniqueKey string, site *meta.Site, user *meta.User) error {
 	// Shallow clone the user, so the caller doesn't have
 	// a reference to the one in the cache.
@@ -71,10 +75,26 @@ func ClearHostCacheForDomains(ids []string) error {
 	return hostCache.Del(keys...)
 }
 
+func InvalidateHostCache() error {
+	return hostCache.DeleteAll()
+}
+
 func getHostKeyFromDomainId(id string) (string, error) {
 	idParts := strings.Split(id, ":")
 	if len(idParts) != 2 {
 		return "", errors.New("Bad Domain ID: " + id)
 	}
 	return getHostKey(idParts[1], idParts[0]), nil
+}
+
+func InvalidateCache() error {
+	if err := InvalidateUserCache(); err != nil {
+		return err
+	}
+
+	if err := InvalidateHostCache(); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -44,6 +44,14 @@ func (b *PlatformBundleStore) GetConnection(options bundlestore.ConnectionOption
 	}, nil
 }
 
+func InvalidateCache() error {
+	if bundleStoreCache != nil {
+		return bundleStoreCache.InvalidateCache()
+	}
+
+	return nil
+}
+
 func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
