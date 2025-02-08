@@ -63,3 +63,23 @@ func (bsc *BundleStoreCache) AddItemToCache(namespace, version, groupName, itemK
 func (bsc *BundleStoreCache) InvalidateCacheItem(namespace, version, groupName, itemKey string) error {
 	return bsc.bundleEntryCache.Del(bsc.getItemCacheKey(namespace, version, groupName, itemKey))
 }
+
+func (bsc *BundleStoreCache) InvalidateCache() error {
+	if err := bsc.invalidateBundleEntryCache(); err != nil {
+		return err
+	}
+
+	if err := bsc.invalidateFileListCache(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (bsc *BundleStoreCache) invalidateBundleEntryCache() error {
+	return bsc.bundleEntryCache.DeleteAll()
+}
+
+func (bsc *BundleStoreCache) invalidateFileListCache() error {
+	return bsc.fileListCache.DeleteAll()
+}

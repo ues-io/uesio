@@ -26,15 +26,6 @@
         "cwd": "libs/apps/uesio/core"
       }
     },
-    "watch": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/bundle/componentpacks/app/dist"],
-      "options": {
-        "command": "../../../../dist/cli/uesio pack -w",
-        "cwd": "libs/apps/uesio/core"
-      },
-      "dependsOn": ["^build"]
-    },
     "test": {
       "options": {
         "passWithNoTests": true

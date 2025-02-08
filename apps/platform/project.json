@@ -68,6 +68,26 @@
     },
     "tidy": {
       "executor": "@nx-go/nx-go:tidy"
+    },
+    "watch-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p apps/platform/.watch",
+          "nx watch -p tag:type:platform-dep  -- \"date && nx run-many -t build -p \\$NX_PROJECT_NAME && date > apps/platform/.watch/nxwatch.log\""
+        ]
+      }
+    },
+    "serve:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd apps/platform && air serve",
+          "nx run platform:watch-deps"
+        ],
+        "parallel": true
+      },
+      "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     }
   },
   "tags": [],

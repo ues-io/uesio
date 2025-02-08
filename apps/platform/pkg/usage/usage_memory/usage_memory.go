@@ -40,6 +40,7 @@ func (pcuh *MemoryUsageHandler) ApplyBatch(session *sess.Session) error {
 	}
 
 	// Remove Keys
+	// TODO: Should we be ignoring the error here?
 	usageCache.DeleteAll()
 
 	return nil

@@ -39,3 +39,11 @@ func (b *SystemBundleStore) GetConnection(options bundlestore.ConnectionOptions)
 		ReadOnly:          false,
 	}, nil
 }
+
+func InvalidateCache() error {
+	if bundleStoreCache != nil {
+		return bundleStoreCache.InvalidateCache()
+	}
+
+	return nil
+}

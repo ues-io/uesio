@@ -23,13 +23,6 @@
         ],
         "cwd": "libs/vendor"
       }
-    },
-    "watch": {
-      "builder": "nx:run-commands",
-      "options": {
-        "command": "echo TODO: watch libs/vendor",
-        "cwd": "libs/vendor"
-      }
     }
   },
   "tags": ["type:platform-dep"]

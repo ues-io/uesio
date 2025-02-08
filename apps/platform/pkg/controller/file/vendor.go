@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -108,7 +109,7 @@ func ServeVendor(routePrefix string, cache bool) http.Handler {
 	if vendorAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
 	}
-	if cache {
+	if cache && !env.InDevMode() {
 		handler = middleware.With1YearCache(handler)
 	}
 	return handler

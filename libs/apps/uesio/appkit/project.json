@@ -26,15 +26,6 @@
         "cwd": "libs/apps/uesio/appkit"
       }
     },
-    "watch": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/bundle/componentpacks/main/dist"],
-      "options": {
-        "command": "../../../../dist/cli/uesio pack -w",
-        "cwd": "libs/apps/uesio/appkit"
-      },
-      "dependsOn": ["^build"]
-    },
     "test": {
       "options": {
         "passWithNoTests": true

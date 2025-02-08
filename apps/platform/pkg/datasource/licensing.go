@@ -22,6 +22,10 @@ func InvalidateLicenseCaches(namespaces []string) error {
 	return licenseCache.Del(namespaces...)
 }
 
+func InvalidateCache() error {
+	return licenseCache.DeleteAll()
+}
+
 func setLicenseCache(namespace string, licenses LicenseMap) error {
 	return licenseCache.Set(namespace, licenses)
 }
