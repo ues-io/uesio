@@ -1,5 +1,5 @@
 import { PaletteValue, ThemeState } from "../definition/theme"
-import { UtilityProps } from "../definition/definition"
+import { BaseProps, UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
 import {
@@ -19,7 +19,7 @@ import {
   Twind,
   twind,
 } from "@twind/core"
-import { STYLE_TOKENS } from "../componentexports"
+import { STYLE_TOKENS, STYLE_VARIANT } from "../componentexports"
 import interpolate from "./interpolate"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
@@ -203,20 +203,16 @@ const setupStyles = (context: Context) => {
   return themeClasses
 }
 
-export interface StyleDefinition {
-  "uesio.styleTokens"?: Record<string, string[]>
-}
-
-interface StyleProps {
-  context: Context
-  definition: StyleDefinition
-}
-
 function useStyleTokens<K extends string>(
   defaults: Record<K, Class[]>,
-  props: StyleProps,
+  props: BaseProps,
 ) {
-  const { definition, context } = props
+  const { definition, context, componentType } = props
+  const variantTokens = getVariantTokens(
+    componentType,
+    definition?.[STYLE_VARIANT],
+    context,
+  )
   const inlineTokens = definition?.[STYLE_TOKENS] || {}
   return Object.entries(defaults).reduce(
     (classNames, entry: [K, Class[]]) => {
@@ -224,6 +220,7 @@ function useStyleTokens<K extends string>(
       classNames[className] = process(
         context,
         defaultClasses,
+        variantTokens?.[className],
         inlineTokens[className],
       )
       return classNames
@@ -320,7 +317,7 @@ function shortcut(context: Context, name: string, ...input: Class[]): string {
   return activeStyles.twind(name + "~(" + interpolate(input) + ")")
 }
 
-export type { StyleProps, ThemeState }
+export type { ThemeState }
 
 export {
   cx,

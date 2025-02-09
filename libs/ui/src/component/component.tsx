@@ -64,13 +64,25 @@ function getDefinitionFromVariant(
 function mergeContextVariants(
   definition: DefinitionMap | undefined,
   componentType: MetadataKey,
+  isDeclarative: boolean,
   context: Context,
 ): DefinitionMap | undefined {
   if (!definition) return definition
   const variantName = definition[component.STYLE_VARIANT] as MetadataKey
   const variant = context.getComponentVariant(componentType, variantName)
   const variantDefinition = getDefinitionFromVariant(variant, context)
-  return mergeDefinitionMaps(variantDefinition, definition, undefined)
+  return mergeDefinitionMaps(
+    isDeclarative ? variantDefinition : removeStylesNode(variantDefinition),
+    definition,
+    undefined,
+  )
+}
+
+function removeStylesNode(definition: DefinitionMap): DefinitionMap {
+  if (!definition) return {}
+  const { [component.STYLE_TOKENS]: value, ...variantDefinitionWithoutStyle } =
+    definition
+  return variantDefinitionWithoutStyle
 }
 
 type DeclarativeProps = {
@@ -210,10 +222,11 @@ const Component: UC<DefinitionMap> = (props) => {
   let Loader = getRuntimeLoader(componentType) as UC | undefined
 
   const componentTypeDef = getComponentType(componentType)
+  const isDeclarative = componentTypeDef?.type === Declarative
 
   if (!Loader) {
     // Check if this is a declarative component, and if so use the declarative loader
-    if (componentTypeDef?.type === Declarative) {
+    if (isDeclarative) {
       Loader = DeclarativeComponent
     }
   }
@@ -223,7 +236,8 @@ const Component: UC<DefinitionMap> = (props) => {
   }
 
   const mergedDefinition = addDefaultPropertyAndSlotValues(
-    mergeContextVariants(definition, componentType, context) || {},
+    mergeContextVariants(definition, componentType, isDeclarative, context) ||
+      {},
     componentTypeDef?.properties,
     componentTypeDef?.slots,
     componentType,
