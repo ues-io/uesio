@@ -135,9 +135,9 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
         .getData()
         .map(
           (record) =>
-            record.getFieldValue("uesio/studio.namespace") +
+            record.getFieldValue<string>("uesio/studio.namespace") +
             "." +
-            record.getFieldValue(nameFieldId),
+            record.getFieldValue<string>(nameFieldId),
         )
       itemNames.sort()
       return itemNames

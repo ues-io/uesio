@@ -43,11 +43,11 @@ const ReferenceGroupField: definition.UtilityComponent<
       const itemContext = context.addRecordDataFrame(item)
       return itemContext.mergeString(template)
     }
-    return item[nameField] || ""
+    return (item[nameField] as string) || ""
   }
 
   const itemsToString = (item: wire.PlainWireRecord[] | undefined) => {
-    const items: wire.FieldValue[] = []
+    const items: string[] = []
     if (!item) return ""
     for (const element of item) {
       items.push(itemToString(element))

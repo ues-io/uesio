@@ -460,6 +460,17 @@ const mergeTestCases: MergeWithContextTestCase[] = [
     input: "${foo} || ${bar} => ${foo}",
     expected: "true || false => true",
   },
+  {
+    name: "multiple values requested in the merge, values are objects/arrays, merge is a string with stringified values",
+    context: new Context().addRecordDataFrame({
+      foo: [],
+      bar: {
+        test: "blah",
+      },
+    }),
+    input: "${foo} || ${bar} => ${foo}",
+    expected: '[] || {"test":"blah"} => []',
+  },
 ]
 
 const mergeOptionsTestCases: MergeWithContextTestCase[] = [
@@ -560,6 +571,51 @@ const mergeFormulaTestCases: MergeWithContextTestCase[] = [
     }),
     input: '$Formula{getField("foo") + 1} $Formula{getField("bar") / 2} hello',
     expected: "5 4 hello",
+  },
+]
+
+const mergeIfTestCases: MergeWithContextTestCase[] = [
+  {
+    name: "simple if statement true",
+    context: new Context(),
+    input: "$If{[true][a][b]}",
+    expected: "a",
+  },
+  {
+    name: "simple if statement false",
+    context: new Context(),
+    input: "$If{[false][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value present",
+    context: new Context().addRecordDataFrame({
+      foo: "A value",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "a",
+  },
+  {
+    name: "if with context value empty string",
+    context: new Context().addRecordDataFrame({
+      foo: "",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value missing",
+    context: new Context().addRecordDataFrame({}),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
+  },
+  {
+    name: "if with context value false string",
+    context: new Context().addRecordDataFrame({
+      foo: "false",
+    }),
+    input: "$If{[${foo}][a][b]}",
+    expected: "b",
   },
 ]
 
@@ -674,6 +730,14 @@ describe("merge", () => {
 
   describe("mergeFormula", () => {
     mergeFormulaTestCases.forEach((tc) => {
+      test(tc.name, () => {
+        expect(tc.context.merge(tc.input, tc.options)).toEqual(tc.expected)
+      })
+    })
+  })
+
+  describe("mergeIf", () => {
+    mergeIfTestCases.forEach((tc) => {
       test(tc.name, () => {
         expect(tc.context.merge(tc.input, tc.options)).toEqual(tc.expected)
       })

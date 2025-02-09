@@ -50,6 +50,7 @@ func (mc *MemoryCache[T]) GetAll() map[string]T {
 	return result
 }
 
-func (mc *MemoryCache[T]) DeleteAll() {
+func (mc *MemoryCache[T]) DeleteAll() error {
 	mc.c.Flush()
+	return nil
 }

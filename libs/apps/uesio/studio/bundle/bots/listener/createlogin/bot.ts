@@ -1,6 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function createlogin(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/createlogin"
+
+export default function createlogin(bot: ListenerBotApi<Params>) {
   const hasPassword = bot.params.get("hasPassword")
   if (hasPassword) {
     return

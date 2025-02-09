@@ -73,13 +73,13 @@ jobs:
 
       - name: Build and test
         env:
-          UESIO_DEV: "true"
+          UESIO_DEV: "true" # required to ensure packui gets built
         run: npx nx affected -t build test --configuration=ci --parallel=5
 
       - name: Prep for docker image
         id: setDockerSHAs
         env:
-          UESIO_DEV: "true"
+          UESIO_DEV: "true" # required to ensure packui gets built
         run: |
           # We lint/test/build affected but in order to build image, we need to ensure everything
           # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
@@ -155,9 +155,13 @@ jobs:
         run: |
           ./scripts/seed-etc-hosts.sh
 
+          cd apps/platform/ssl
+          bash ./create.sh
+          cd ../../../
+
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
-          npm run tests-ci
+          npm run tests-docker
 
   check:
     name: Check format and lint
@@ -207,13 +211,9 @@ jobs:
         run: npm ci
 
       - name: Check formatting
-        env:
-          UESIO_DEV: "true"
         run: npx nx format:check --verbose
 
       - name: Lint
-        env:
-          UESIO_DEV: "true"
         run: npx nx affected -t lint --configuration=ci --parallel=5
 
   typecheck:
@@ -245,8 +245,6 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        env:
-          UESIO_DEV: "true"
         run: npx nx affected -t typecheck --configuration=ci --parallel=5
 
   update-dev-branch:

@@ -2,7 +2,12 @@
 
 set -e
 
-# Run e2e tests with cypress
-export UESIO_APP_URL="https://studio.uesio-dev.com:3000"
-export UESIO_DEV=true
-npx cypress run --project apps/platform-e2e
+# Initial setup
+source ./scripts/tests/setup-common.sh
+
+# Runs Cypress End-to-End tests against the app
+bash ./scripts/tests/start-e2e-tests.sh
+
+# cleans up the tests app and workspaces,
+# and verifies that cleanup worked as expected
+bash ./scripts/tests/cleanup-common.sh

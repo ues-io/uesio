@@ -8,13 +8,48 @@ properties:
   - type: TEXT
     name: text
     label: Text Content
+  - type: TEXT
+    name: title
+    label: Note Title
+  - type: CHECKBOX
+    name: collapsible
+    label: Is Collapsible
+  - type: CHECKBOX
+    name: collapsed
+    label: Start Collapsed
+  - type: TEXT
+    name: icon
+    label: Icon
+    defaultValue: help
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.note
+      uesio.display:
+        - type: hasNoValue
+          value: $Prop{collapsible}
       uesio.styleTokens:
         root:
           - $Region{root}
       components:
+        - uesio/io.titlebar:
+            uesio.display:
+              - type: hasValue
+                value: $Prop{title}
+            title: $Prop{title}
+            uesio.styleTokens:
+              root:
+                - mt-1
+                - mb-2
+              title:
+                - font-normal
+            uesio.variant: uesio/appkit.item
+            avatar:
+              - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - text-lg
+                  uesio.variant: uesio/io.iconoutline
+                  text: $Prop{icon}
         - uesio/io.text:
             uesio.styleTokens:
               root:
@@ -29,6 +64,57 @@ definition:
                 - $Region{extra}
             components:
               - $Slot{extra}
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.note
+      uesio.display:
+        - type: hasValue
+          value: $Prop{collapsible}
+      uesio.styleTokens:
+        root:
+          - $Region{root}
+          - p-0
+      components:
+        - uesio/io.accordion:
+            avataricon: $Prop{icon}
+            avatariconfill: false
+            uesio.styleTokens:
+              content:
+                - px-4
+                - pb-4
+              icon:
+                - bg-primary-200/60
+                - rounded-full
+                - leading-none
+                - p-1
+              titlebar:
+                - p-4
+              titlebarTitle:
+                - font-normal
+              titlebarAvatar:
+                - leading-none
+              avataricon:
+                - text-lg
+            titlebarVariant: uesio/appkit.item
+            initialItem: $If{[$Prop{collapsed}][][note]}
+            items:
+              - id: note
+                title: $Prop{title}
+                components:
+                  - uesio/io.text:
+                      uesio.styleTokens:
+                        root:
+                          - $Region{text}
+                      text: $Prop{text}
+                  - uesio/io.box:
+                      uesio.display:
+                        - type: hasValue
+                          value: $Prop{extra}
+                      uesio.styleTokens:
+                        root:
+                          - $Region{extra}
+                      components:
+                        - $Slot{extra}
+
 title: Note
 discoverable: true
 description: Display a note or help text to the user.

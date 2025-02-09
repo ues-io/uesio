@@ -71,6 +71,11 @@ func (r RedisCache[T]) Del(keys ...string) error {
 	return deleteKeys(namespacedKeys)
 }
 
+func (r RedisCache[T]) DeleteAll() error {
+	// TODO: This may need to change to flushDB if/when we partition in to different databases in redis
+	return flushAll()
+}
+
 func (r RedisCache[T]) WithExpiration(expiration time.Duration) RedisCache[T] {
 	r.options.Expiration = expiration
 	return r
@@ -170,7 +175,17 @@ func deleteKeys(keys []string) error {
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
 	if err != nil {
-		return fmt.Errorf("Error deleting cache keys from bot: " + err.Error())
+		return fmt.Errorf("Error deleting cache keys from bot: %w", err)
+	}
+	return nil
+}
+
+func flushAll() error {
+	conn := GetRedisConn()
+	defer conn.Close()
+	_, err := conn.Do("FLUSHALL")
+	if err != nil {
+		return fmt.Errorf("Error flushing cache from bot: %w", err)
 	}
 	return nil
 }

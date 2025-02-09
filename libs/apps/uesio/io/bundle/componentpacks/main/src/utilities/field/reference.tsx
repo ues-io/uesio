@@ -120,7 +120,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 
   const renderer = (item: wire.PlainWireRecord) => {
     if (components) {
-      const recordid = item[collection.ID_FIELD]
+      const recordid = item[collection.ID_FIELD] as string
       return (
         <component.Slot
           definition={options}

@@ -22,7 +22,7 @@ export default function afterbundlelisting(bot: AfterSaveBotApi) {
 
   bot.updates.get().forEach((change) => {
     const NewStatus = change.get("uesio/studio.status") as string
-    const OldStatus = change.getOld("uesio/studio.status")
+    const OldStatus = change.getOld("uesio/studio.status") as string
 
     // If the status is not changing, we're good
     if (NewStatus === OldStatus) {

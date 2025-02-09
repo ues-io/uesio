@@ -14,7 +14,11 @@ export default function loadexternalbundleversion(bot: LoadBotApi) {
     (condition) => condition.id === "externalBundleVersionUniquekey",
   )
 
-  if (!externalBundleVersionUniquekey?.value) {
+  const bundleVersionValue = externalBundleVersionUniquekey?.value as
+    | string
+    | undefined
+
+  if (!bundleVersionValue) {
     bot.addError("Missing Uniquekey")
     return
   }
@@ -23,7 +27,7 @@ export default function loadexternalbundleversion(bot: LoadBotApi) {
     "https://studio." +
     bundleStoreDomain +
     "/site/bundles/v1/versions/" +
-    externalBundleVersionUniquekey.value +
+    bundleVersionValue +
     "/list"
 
   const response = bot.http.request({

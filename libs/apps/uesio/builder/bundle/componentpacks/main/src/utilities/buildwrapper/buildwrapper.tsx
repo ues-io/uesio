@@ -38,11 +38,9 @@ const BuildWrapper: definition.UC = (props) => {
 
   const [addBefore, addAfter, index] = usePlaceHolders(context, path)
 
-  const classes = styles.useStyleTokens(StyleDefaults, props)
-
   return (
     <div
-      className={classes.root}
+      className={styles.process(context, StyleDefaults.root)}
       data-placeholder="true"
       data-index={index}
       data-component={componentType}

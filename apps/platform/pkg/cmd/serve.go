@@ -7,6 +7,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/aarol/reload"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
 	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/tls"
@@ -419,9 +422,24 @@ func serve(cmd *cobra.Command, args []string) {
 	serveAddr := host + ":" + port
 
 	// Universal middlewares
-	r.Use(middleware.GZip())
+	// In order for reload package to inject its script (and avoid manually having to have it in our code)
+	// gzip compression must be disabled.  Additionally, when running in dev mode, gzip isn't really needed.
+	if !env.InDevMode() {
+		r.Use(middleware.GZip())
+	}
 
-	server := controller.NewServer(serveAddr, r)
+	var handler http.Handler = r
+	if env.InDevMode() {
+		reloader := reload.New(".watch")
+		reloader.OnReload = func() {
+			// invalidate any caches
+			platformbundlestore.InvalidateCache()
+			systembundlestore.InvalidateCache()
+		}
+		handler = reloader.Handle(r)
+	}
+
+	server := controller.NewServer(serveAddr, handler)
 	var serveErr error
 
 	done := make(chan bool)

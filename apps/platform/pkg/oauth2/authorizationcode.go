@@ -86,3 +86,7 @@ func GetRedirectMetadata(conf *oauth2.Config, integrationName string, s *sess.Se
 		State:   stateString,
 	}, nil
 }
+
+func InvalidateCache() error {
+	return oauthExchangeCache.DeleteAll()
+}

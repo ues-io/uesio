@@ -26,14 +26,6 @@
         "cwd": "libs/ui"
       }
     },
-    "watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../dist/cli/uesio packui --watch",
-        "cwd": "libs/ui"
-      },
-      "dependsOn": ["build"]
-    },
     "test": {
       "configurations": {
         "ci": {

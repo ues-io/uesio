@@ -2,6 +2,7 @@ import { definition, component, context, metadata, styles } from "@uesio/ui"
 import FieldPicker from "../mainwrapper/propertiespanel/wire/fieldpicker"
 import { useRef, useState } from "react"
 import { FullPath } from "../../api/path"
+import PopoutPanel from "../mainwrapper/propertiespanel/popoutpanel"
 
 type ComponentDefinition = {
   allowReferenceTraversal?: boolean
@@ -55,7 +56,6 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
   const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
   const IconButton = component.getUtility("uesio/io.iconbutton")
   const TextField = component.getUtility("uesio/io.textfield")
-  const Popper = component.getUtility("uesio/io.popper")
   const anchorEl = useRef<HTMLDivElement>(null)
   const [showPopper, setShowPopper] = useState(false)
   const record = context.getRecord()
@@ -103,16 +103,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
   return (
     <>
       {showPopper && anchorEl && (
-        <Popper
-          referenceEl={anchorEl.current}
-          context={context}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          offset={8}
-          parentSelector="#propertieswrapper"
-          matchHeight
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl.current} context={context}>
           <FieldPicker
             allowReferenceTraversal={allowReferenceTraversal}
             allowMultiselect={allowMultiselect}
@@ -122,7 +113,7 @@ const CollectionFieldPicker: definition.UC<ComponentDefinition> = (props) => {
             onSelect={onSelect}
             isSelected={isSelected}
           />
-        </Popper>
+        </PopoutPanel>
       )}
       <FieldWrapper
         ref={anchorEl}

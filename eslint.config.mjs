@@ -34,8 +34,22 @@ export default [
         "@typescript-eslint/consistent-type-definitions": "off",
 
         // TODO: Remove all temporary rules once all the rule violations are addressed
-        // Temporary Rules
-        //"@typescript-eslint/prefer-nullish-coalescing": "error"
+        // Temporary Fixed Rules
+        "@typescript-eslint/no-base-to-string": "error",
+
+        // Temporary TODO Rules (Not necessarily a complete list)
+        //"@typescript-eslint/prefer-nullish-coalescing": "error",
+        //"@typescript-eslint/prefer-promise-reject-errors": "error",
+        //"@typescript-eslint/no-unnecessary-condition": "error",
+        //"@typescript-eslint/no-dynamic-delete": "error",
+        //"@typescript-eslint/no-floating-promises": "error",
+        //"@typescript-eslint/no-confusing-void-expression": "error",
+        //"@typescript-eslint/no-unsafe-return": "error",
+        //"@typescript-eslint/no-unsafe-assignment": "error",
+        //"@typescript-eslint/no-unnecessary-type-assertion-return": "error",
+        //"@typescript-eslint/no-unnecessary-type-parameters": "error",
+        //"@typescript-eslint/restrict-plus-operands": "error",
+        //"@typescript-eslint/restrict-template-expressions": "error",
       },
     },
   ),

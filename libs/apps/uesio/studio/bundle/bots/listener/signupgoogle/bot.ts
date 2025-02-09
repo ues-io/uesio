@@ -1,6 +1,8 @@
 import { ListenerBotApi } from "@uesio/bots"
 
-export default function signupgoogle(bot: ListenerBotApi) {
+import { Params } from "@uesio/app/bots/listener/uesio/studio/signupgoogle"
+
+export default function signupgoogle(bot: ListenerBotApi<Params>) {
   const username = bot.params.get("username")
   const email = bot.params.get("email")
   const host = bot.params.get("host")

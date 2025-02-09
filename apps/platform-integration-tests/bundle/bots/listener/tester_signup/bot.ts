@@ -1,6 +1,8 @@
 import { ListenerBotApi, WireRecord } from "@uesio/bots"
 
-export default function tester_signup(bot: ListenerBotApi) {
+import type { Params } from "@uesio/app/bots/listener/uesio/tests/tester_signup"
+
+export default function tester_signup(bot: ListenerBotApi<Params>) {
   const namespace = bot.getNamespace()
   const redirect =
     "/site/auth/" + namespace.replace(".", "/") + "/tester/signup/confirm"

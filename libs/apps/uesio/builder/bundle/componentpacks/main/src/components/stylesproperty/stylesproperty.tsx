@@ -12,6 +12,7 @@ import { getComponentDef } from "../../api/stateapi"
 import { useEffect, useRef, useState } from "react"
 import PropertiesWrapper from "../mainwrapper/propertiespanel/propertieswrapper"
 import TailwindClassPicker from "../../utilities/tailwindclasspicker/tailwindclasspicker"
+import PopoutPanel from "../mainwrapper/propertiespanel/popoutpanel"
 
 type Props = {
   componentType: metadata.MetadataKey
@@ -35,7 +36,6 @@ const StylesProperty: definition.UC<Props> = (props) => {
   const PillBox = component.getUtility("uesio/io.pillbox")
   const Button = component.getUtility("uesio/io.button")
   const tokensPath = componentPath.addLocal("uesio.styleTokens")
-  const Popper = component.getUtility("uesio/io.popper")
   const anchorEl = useRef<HTMLDivElement>(null)
 
   const tokensByRegion = (get(context, tokensPath) || {}) as Record<
@@ -131,16 +131,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
         )
       })}
       {showPopper && anchorEl && (
-        <Popper
-          referenceEl={anchorEl.current}
-          context={context}
-          placement="right-start"
-          autoPlacement={["right-start"]}
-          offset={8}
-          parentSelector="#propertieswrapper"
-          matchHeight
-          portalId="builder-root"
-        >
+        <PopoutPanel referenceEl={anchorEl.current} context={context}>
           <PropertiesWrapper
             context={context}
             path={parseFullPath(path)}
@@ -158,7 +149,7 @@ const StylesProperty: definition.UC<Props> = (props) => {
               parsedTokens={tailwindTokens}
             />
           </PropertiesWrapper>
-        </Popper>
+        </PopoutPanel>
       )}
     </div>
   )

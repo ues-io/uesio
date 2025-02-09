@@ -59,9 +59,9 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
     <>
       {data.map((record, i) => {
         const itemName =
-          record.getFieldValue("uesio/studio.namespace") +
+          record.getFieldValue<string>("uesio/studio.namespace") +
           "." +
-          record.getFieldValue(nameNameField)
+          record.getFieldValue<string>(nameNameField)
         return (
           <TitleBar
             key={`${itemName}.${i}`}

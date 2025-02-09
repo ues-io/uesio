@@ -59,7 +59,7 @@ func getFilteredFields(fieldNames []string) []wire.LoadRequestField {
 
 }
 
-func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, includeUserFields bool, looper func(meta.Item, []wire.ReferenceLocator, string) error) error {
+func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, includeUserFields bool, looper func(meta.BundleableItem, []wire.ReferenceLocator, string) error) error {
 	if b.Workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
@@ -116,11 +116,11 @@ func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableIte
 			dbID := bundleable.GetDBID(b.Workspace.UniqueKey)
 			match, ok := locatorMap[dbID]
 			if !ok {
-				return looper(item, nil, dbID)
+				return looper(bundleable, nil, dbID)
 			}
 			// Remove the id from the map, so we can figure out which ones weren't used
 			delete(locatorMap, dbID)
-			return looper(item, match, dbID)
+			return looper(bundleable, match, dbID)
 		})
 		if err != nil {
 			return err
@@ -225,7 +225,7 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 	if options == nil {
 		options = &bundlestore.GetManyItemsOptions{}
 	}
-	return b.processItems(items, options.IncludeUserFields, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(items, options.IncludeUserFields, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -233,7 +233,7 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 			if options.AllowMissingItems {
 				return nil
 			}
-			return fmt.Errorf("Could not find workspace item: " + id)
+			return fmt.Errorf("Could not find workspace item: %s", id)
 		}
 		for _, locator := range locators {
 			err := meta.Copy(locator.Item, item)
@@ -455,12 +455,12 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 }
 
 func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
-	return b.processItems(items, false, func(item meta.Item, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(items, false, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
 		if item == nil {
-			return fmt.Errorf("Could not find workspace item: " + id)
+			return fmt.Errorf("Could not find workspace item: %s", id)
 		}
 		return nil
 	})

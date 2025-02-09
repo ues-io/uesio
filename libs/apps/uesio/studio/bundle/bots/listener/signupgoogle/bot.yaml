@@ -8,3 +8,12 @@ params:
   - name: email
     type: TEXT
     required: true
+  - name: host
+    type: TEXT
+    required: true
+  - name: firstname
+    type: TEXT
+    required: true
+  - name: lastname
+    type: TEXT
+    required: true

@@ -10,7 +10,7 @@ import (
 func getAutonumber(connection wire.Connection, collectionMetadata *wire.CollectionMetadata, session *sess.Session) (int, error) {
 	autonumber, err := connection.GetAutonumber(collectionMetadata, session)
 	if err != nil {
-		return 0, fmt.Errorf("error getting max autonumber value from database: " + err.Error())
+		return 0, fmt.Errorf("error getting max autonumber value from database: %w", err)
 	}
 	return autonumber, nil
 }

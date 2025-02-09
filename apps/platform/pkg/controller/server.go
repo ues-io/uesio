@@ -11,8 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
-
 	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
@@ -33,7 +31,7 @@ func GetGracefulShutdownSeconds() int {
 	return gracefulShutdownSeconds
 }
 
-func NewServer(serveAddress string, router *mux.Router) *ServerWithShutdown {
+func NewServer(serveAddress string, router http.Handler) *ServerWithShutdown {
 	return &ServerWithShutdown{
 		Server: http.Server{
 			Addr:    serveAddress,
