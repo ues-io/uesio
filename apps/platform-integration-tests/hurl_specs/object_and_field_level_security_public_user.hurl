@@ -20,9 +20,11 @@ Accept: application/json
         }
     ]
 }
-HTTP 403
+HTTP 200
 [Asserts]
-body contains "Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].error.message" == "Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
+
 
 # Object level security -- we SHOULD be able to query the animal collection
 # because the public profile DOES have access to it
