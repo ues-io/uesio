@@ -31,7 +31,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].error.message" == "invalid input syntax for type json"
 
 # Operator: EQ | valueSource: VALUE | value as number
 # entry 3
