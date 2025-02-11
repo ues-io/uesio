@@ -85,7 +85,7 @@ definition:
                   image: $File{$Prop{avatar}:$Prop{avatarPath}}
         - uesio/io.box:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{extra}
             uesio.styleTokens:
               root:

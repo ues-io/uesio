@@ -32,7 +32,7 @@ definition:
               - $Slot{content}
         - uesio/io.box:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{image}
             uesio.styleTokens:
               root:

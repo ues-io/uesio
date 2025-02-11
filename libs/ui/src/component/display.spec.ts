@@ -864,6 +864,77 @@ const shouldTestCases = [
       },
     ],
   },
+  {
+    type: "hasSlotValue",
+    tests: [
+      {
+        name: "hasSlotValue - no value",
+        condition: {
+          type: "hasSlotValue",
+        },
+        context: new Context(),
+        expected: false,
+      },
+      {
+        name: "hasSlotValue - array",
+        condition: {
+          type: "hasSlotValue",
+          value: [],
+        },
+        context: new Context(),
+        expected: false,
+      },
+      {
+        name: "hasSlotValue - normal component",
+        condition: {
+          type: "hasSlotValue",
+          value: [
+            {
+              "uesio/io.box": {
+                components: [],
+              },
+            },
+          ],
+        },
+        context: new Context(),
+        expected: true,
+      },
+      {
+        name: "hasSlotValue - with value",
+        condition: {
+          type: "hasSlotValue",
+          value: [
+            {
+              "uesio/core.slot": {
+                name: "foo",
+                definition: {
+                  foo: [],
+                },
+              },
+            },
+          ],
+        },
+        context: new Context(),
+        expected: true,
+      },
+      {
+        name: "hasSlotValue - with no value",
+        condition: {
+          type: "hasSlotValue",
+          value: [
+            {
+              "uesio/core.slot": {
+                name: "foo",
+                definition: {},
+              },
+            },
+          ],
+        },
+        context: new Context(),
+        expected: false,
+      },
+    ],
+  },
 ]
 
 describe("should", () => {

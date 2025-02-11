@@ -17,7 +17,7 @@ definition:
               - $Slot{content}
         - uesio/io.box:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{note}
             uesio.styleTokens:
               root:

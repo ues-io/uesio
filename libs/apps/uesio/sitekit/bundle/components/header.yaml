@@ -25,7 +25,7 @@ definition:
       uesio.type: uesio/io.sidepanel
       uesio.variant: uesio/io.right
       uesio.display:
-        - type: hasValue
+        - type: hasSlotValue
           value: $Prop{menu}
       uesio.styleTokens:
         blocker:

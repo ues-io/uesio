@@ -122,6 +122,11 @@ type HasValueCondition = {
   wire?: string
 }
 
+type HasSlotValueCondition = {
+  type: "hasSlotValue"
+  value: unknown
+}
+
 type CollectionContextCondition = {
   type: "collectionContext"
   collection: string
@@ -250,6 +255,7 @@ type DisplayCondition =
   | WireHasMoreRecordsToLoad
   | MergeValue
   | HasConfigValue
+  | HasSlotValueCondition
 
 type ItemContext<T> = {
   item: T
@@ -346,6 +352,23 @@ function should(condition: DisplayCondition, context: Context): boolean {
     return conditions[
       conjunction === "OR" && conditions?.length ? "some" : "every"
     ]((c) => should(c, context))
+  }
+
+  if (type === "hasSlotValue") {
+    const slotValue = condition.value
+    if (!slotValue) return false
+    if (!Array.isArray(slotValue)) return false
+    const slotContent = slotValue[0]
+    if (!slotContent) return false
+    if (typeof slotContent !== "object") return false
+    const slotComponent = slotContent["uesio/core.slot"]
+    if (!slotComponent) return true
+    const slotName = slotComponent.name
+    const compDef = slotComponent.definition
+    if (!slotName || !compDef) return false
+    const slotDef = compDef[slotName]
+    if (!slotDef) return false
+    return true
   }
 
   if (type === "paramIsSet") return !!context.getParam(condition.param)
