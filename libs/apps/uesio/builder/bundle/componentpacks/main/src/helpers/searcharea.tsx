@@ -11,7 +11,14 @@ interface Props {
 }
 
 const StyleDefaults = Object.freeze({
-  root: ["flex", "p-2", "relative", "align-center", "gap-2"],
+  root: [
+    "flex",
+    "p-2",
+    "relative",
+    "align-center",
+    "gap-2",
+    "bg-panel_header_bg_color",
+  ],
   input: [
     "grow",
     "text-xs",
@@ -19,6 +26,8 @@ const StyleDefaults = Object.freeze({
     "py-1.5",
     "font-light",
     "rounded",
+    "border-1",
+    "border-searchbox_border_color",
     "text-searchbox_text_color",
     "bg-searchbox_bg_color",
     "outline-offset-0",

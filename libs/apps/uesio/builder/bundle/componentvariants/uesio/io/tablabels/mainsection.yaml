@@ -4,15 +4,17 @@ definition:
   uesio.styleTokens:
     root:
       - p-2
-      - gap-x-2
+      - gap-x-1
       - gap-y-1
       - grid
       - grid-flow-col
       - auto-cols-max
       - leading-none
+      - bg-panel_header_bg_color
     tab:
       - uppercase
-      - p-1.5
+      - py-1.5
+      - px-2
       - text-[8pt]
       - rounded
       - tracking-wide

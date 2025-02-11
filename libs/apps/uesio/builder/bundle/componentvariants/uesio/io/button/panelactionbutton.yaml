@@ -5,11 +5,15 @@ definition:
   uesio.styleTokens:
     root:
       - bg-panel_action_button_bg_color
+      - border-1
+      - border-panel_action_button_border_color
+      - text-panel_action_button_text_color
       - gap-x-1
-      - px-2
+      - px-2.5
       - py-1.5
       - rounded-md
-      - hover:bg-slate-700
-      - hover:text-slate-100
-      - text-panel_action_button_text_color
+      - hover:bg-panel_action_button_hover_bg_color
+      - hover:text-panel_action_button_hover_text_color
+      - hover:border-panel_action_button_hover_border_color
+
 public: true

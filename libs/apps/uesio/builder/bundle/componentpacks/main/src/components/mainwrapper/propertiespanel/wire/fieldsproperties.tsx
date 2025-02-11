@@ -82,7 +82,7 @@ const FieldsProperties: definition.UC<FieldsPropertiesDefinition> = (props) => {
                     variant="uesio/builder.actionicon"
                   />
                 }
-                label={"Collection Fields"}
+                label={"Collection Field"}
                 onClick={() => {
                   setShowPopper(true)
                 }}

@@ -132,7 +132,9 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
       </div>
 
       {isOpen && (
-        <FloatingPortal>
+        <FloatingPortal
+          root={refs.domReference.current?.closest<HTMLElement>(".uesio-theme")}
+        >
           <FloatingFocusManager context={floating.context} modal={false}>
             <div
               ref={refs.setFloating}

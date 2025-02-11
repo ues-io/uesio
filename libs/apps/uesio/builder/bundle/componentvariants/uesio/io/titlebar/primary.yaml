@@ -4,6 +4,7 @@ extends: uesio/io.default
 definition:
   uesio.styleTokens:
     root:
+      - bg-panel_header_bg_color
     content:
       - p-2
     title:

@@ -10,7 +10,8 @@ definition:
     input:
       - bg-field_bg_color
       - text-field_text_color
-      - border-0
+      - border-1
+      - border-field_border_color
       - text-xs
       - px-1.5
       - py-1
