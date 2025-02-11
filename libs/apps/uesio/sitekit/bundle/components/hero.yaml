@@ -53,7 +53,7 @@ definition:
             text: $Prop{subtitle}
         - uesio/io.box:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{extra}
             uesio.styleTokens:
               root:
@@ -62,7 +62,7 @@ definition:
               - $Slot{extra}
         - uesio/io.group:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{actions}
             uesio.styleTokens:
               root:
@@ -71,7 +71,7 @@ definition:
               - $Slot{actions}
         - uesio/io.box:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{image}
             uesio.styleTokens:
               root:

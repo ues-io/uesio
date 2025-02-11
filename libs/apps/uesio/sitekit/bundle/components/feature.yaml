@@ -41,7 +41,7 @@ definition:
             element: div
         - uesio/io.group:
             uesio.display:
-              - type: hasValue
+              - type: hasSlotValue
                 value: $Prop{actions}
             uesio.styleTokens:
               root:
