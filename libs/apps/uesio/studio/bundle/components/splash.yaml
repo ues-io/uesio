@@ -14,7 +14,6 @@ definition:
       uesio.styleTokens:
         root:
           - grid
-          - bg-slate-100
           - justify-center
           - items-center
           - text-center
@@ -23,9 +22,15 @@ definition:
           - xl:px-48
           - lg:px-24
           - md:px-12
+          - gap-8
           - px-8
           - py-24
           - "[text-wrap:balance]"
+          - bg-[url($File{uesio/studio.background_blocks:files/right.svg}),url($File{uesio/studio.background_blocks:files/top.svg})]
+          - bg-[right_bottom,left_top]
+          - bg-no-repeat
+          - "[background-size:650px]"
+          - "[background-color:rgb(241,245,249)]"
         quote:
           - text-4xl
           - font-light
@@ -35,3 +40,12 @@ definition:
           - text-slate-700
           - text-2xl
           - order-last
+        extra:
+          - order-first
+      extra:
+        - uesio/io.image:
+            uesio.variant: uesio/appkit.fancy
+            file: uesio/core.logo
+            signals:
+              - signal: "route/REDIRECT"
+                path: "https://$Site{domain}"
