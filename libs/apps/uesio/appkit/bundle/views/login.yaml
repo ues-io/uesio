@@ -3,13 +3,6 @@ public: true
 definition:
   slots:
     - name: logo
-      defaultContent:
-        - uesio/io.image:
-            uesio.variant: uesio/appkit.fancy
-            file: uesio/core.logo
-            signals:
-              - signal: "route/REDIRECT"
-                path: "https://$Site{domain}"
     - name: splash
       defaultContent:
         - uesio/io.box:

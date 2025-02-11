@@ -40,12 +40,6 @@ definition:
   components:
     - uesio/appkit.splash:
         content:
-          - uesio/io.image:
-              uesio.variant: uesio/appkit.fancy
-              file: uesio/core.logo
-              signals:
-                - signal: "route/REDIRECT"
-                  path: "https://$Site{domain}"
           - uesio/io.list:
               uesio.id: credslist
               wire: userData

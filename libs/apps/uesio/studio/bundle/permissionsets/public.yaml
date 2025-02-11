@@ -13,6 +13,7 @@ routes:
   uesio/studio.signuplanding: true
   uesio/studio.publicbundlelisting: true
 files:
+  uesio/studio.background_blocks: true
 bots:
   uesio/studio.checkavailability: true
 collections:
