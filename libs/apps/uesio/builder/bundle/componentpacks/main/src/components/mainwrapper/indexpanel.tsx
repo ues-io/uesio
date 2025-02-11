@@ -17,7 +17,7 @@ import {
 import IndexSlot from "./indexslot"
 
 const StyleDefaults = Object.freeze({
-  root: ["w-[296px]"],
+  root: ["w-[300px]"],
   index: ["px-2", "py-1"],
 })
 

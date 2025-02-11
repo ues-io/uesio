@@ -24,7 +24,9 @@ const StyleDefaults = Object.freeze({
   iconfield: ["grid", "grid-cols-[1fr_min-content]", "items-center", "gap-2"],
   iconpreview: [
     "bg-field_bg_color",
-    "p-2",
+    "p-1.5",
+    "border-1",
+    "border-field_border_color",
     "rounded-full",
     "text-xs",
     "leading-none",

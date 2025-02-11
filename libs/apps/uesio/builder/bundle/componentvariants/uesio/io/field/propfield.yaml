@@ -6,10 +6,13 @@ definition:
     input:
       - bg-field_bg_color
       - text-field_text_color
-      - border-0
+      - border-1
       - text-xs
       - px-1.5
       - py-1
+      - border-field_border_color
     readonly:
+      - border-1
       - bg-field_bg_color
+      - border-field_border_color
 public: true

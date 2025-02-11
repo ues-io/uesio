@@ -78,7 +78,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 
   const classes = styles.useUtilityStyleTokens(
     {
-      root: ["w-[296px]"],
+      root: ["w-[300px]"],
       crumbwrapper: ["leading-[8px]"],
       crumb: [
         "bg-properties_crumb_bg_color",

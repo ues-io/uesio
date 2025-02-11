@@ -45,8 +45,8 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 ]
 
 const StyleDefaults = Object.freeze({
-  lineDecoration: ["bg-slate-800", "-z-10"],
-  root: ["h-[300px]", "border-t-8", "border-slate-700"],
+  lineDecoration: ["bg-slate-100", "-z-10"],
+  root: ["h-[300px]", "border-t-8", "border-panel_divider_color"],
 })
 
 const CodePanel: definition.UtilityComponent = (props) => {
@@ -118,6 +118,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
   }
 
   const beforeMount: EditorProps["beforeMount"] = (monaco) => {
+    /*
     monaco.editor.defineTheme("custom-dark", {
       base: "vs-dark",
       inherit: true,
@@ -128,6 +129,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
       },
     })
     monaco.editor.setTheme("custom-dark")
+    */
   }
 
   const onMount: EditorProps["onMount"] = (editor, monaco) => {
