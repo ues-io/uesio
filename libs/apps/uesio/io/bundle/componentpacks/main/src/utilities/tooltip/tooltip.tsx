@@ -69,7 +69,7 @@ const Tooltip: definition.UtilityComponent<TooltipUtilityProps> = (props) => {
         )}
       {open && (
         <FloatingPortal
-          root={refs.domReference.current?.closest<HTMLElement>(".uesio-theme")}
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
         >
           {
             <div

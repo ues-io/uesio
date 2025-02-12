@@ -140,7 +140,7 @@ const AutocompleteField: definition.UtilityComponent<
 
       {isOpen && (
         <FloatingPortal
-          root={refs.domReference.current?.closest<HTMLElement>(".uesio-theme")}
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
         >
           <FloatingFocusManager context={floating.context} modal={false}>
             <div

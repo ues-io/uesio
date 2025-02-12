@@ -86,7 +86,7 @@ const Menu: definition.UC<MenuDefinition> = (props) => {
       </div>
       {isOpen && (
         <FloatingPortal
-          root={refs.domReference.current?.closest<HTMLElement>(".uesio-theme")}
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
         >
           <FloatingFocusManager
             initialFocus={-1}
