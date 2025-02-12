@@ -8,6 +8,7 @@ const StyleDefaults = Object.freeze({
     "rounded",
     "text-slate-600",
     "text-xs",
+    "[max-width:1.65em]",
   ],
 })
 

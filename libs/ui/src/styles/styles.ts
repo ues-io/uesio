@@ -99,6 +99,11 @@ const DEFAULT_THEME_DATA = {
   name: "notheme",
 }
 
+const getClosestThemeRoot = (element: Element | null) => {
+  const themeRoot = element?.closest<HTMLElement>(".uesio-theme") || undefined
+  return themeRoot
+}
+
 const getTheme = (context: Context): ThemeState =>
   context.getTheme() || DEFAULT_THEME_DATA
 
@@ -327,6 +332,7 @@ export {
   useUtilityStyleTokens,
   useStyleTokens,
   getVariantTokens,
+  getClosestThemeRoot,
   getThemeValue,
   getThemeClass,
   colors,
