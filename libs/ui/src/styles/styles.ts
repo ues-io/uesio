@@ -276,6 +276,12 @@ function process(context: Context, ...classes: Class[]) {
   )
 }
 
+function add(context: Context, value: Parameters<typeof css>[0]) {
+  const activeStyles = getActiveStyles(context)
+  if (!activeStyles) return ""
+  activeStyles.twind(css(value))
+}
+
 function useUtilityStyleTokens<K extends string>(
   defaults: Record<K, Class[]>,
   props: UtilityProps,
@@ -326,6 +332,7 @@ export type { ThemeState }
 
 export {
   cx,
+  add,
   shortcut,
   process,
   setupStyles,

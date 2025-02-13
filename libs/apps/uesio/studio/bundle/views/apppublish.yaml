@@ -158,183 +158,186 @@ definition:
                 app: $Param{app}
                 selected: publish
         content:
-          - uesio/io.list:
-              uesio.display:
-                - type: wireHasNoRecords
-                  wire: bundlelisting
-              uesio.id: bundleListingDeck
-              wire: apps
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: Publish App
-                    subtitle: ${uesio/core.uniquekey}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: outbox
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.list:
+                    uesio.display:
+                      - type: wireHasNoRecords
+                        wire: bundlelisting
+                    uesio.id: bundleListingDeck
+                    wire: apps
+                    mode: READ
                     components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.two_columns
-                          items:
-                            - uesio/io.box:
-                                uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: bundles
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: Publish App
+                          subtitle: ${uesio/core.uniquekey}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: outbox
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - type: wireHasNoRecords
+                                          wire: bundles
+                                      components:
+                                        - uesio/appkit.note:
+                                            text: It seems that you don't have any bundles yet, try creating one and then return to this page.
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - type: wireHasRecords
+                                          wire: bundles
+                                      components:
+                                        - uesio/appkit.note:
+                                            text: Welcome! Now that you have your application $Param{app} ready, it's time to share it with the world!
+                                        - uesio/io.button:
+                                            uesio.styleTokens:
+                                              root:
+                                                - mt-6
+                                            uesio.variant: uesio/io.secondary
+                                            text: Start
+                                            signals:
+                                              - signal: panel/TOGGLE
+                                                panel: termsAndConditions
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/studio.bundlelistingvisual:
+                                            color: ${uesio/studio.color}
+                                            icon: ${uesio/studio.icon}
+                                            title: ${uesio/studio.fullname}
+                                            subtitle: ${uesio/studio.title}
+                                            description: ${uesio/studio.description}
+                                            verified: false
+                - uesio/io.list:
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: bundlelisting
+                    uesio.id: bundleListingDeck
+                    wire: bundlelisting
+                    mode: READ
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: Publish App
+                          subtitle: ${uesio/core.uniquekey}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: outbox
+                          actions:
+                            - uesio/io.group:
                                 components:
-                                  - uesio/appkit.note:
-                                      text: It seems that you don't have any bundles yet, try creating one and then return to this page.
-                            - uesio/io.box:
-                                uesio.display:
-                                  - type: wireHasRecords
-                                    wire: bundles
-                                components:
-                                  - uesio/appkit.note:
-                                      text: Welcome! Now that you have your application $Param{app} ready, it's time to share it with the world!
                                   - uesio/io.button:
-                                      uesio.styleTokens:
-                                        root:
-                                          - mt-6
-                                      uesio.variant: uesio/io.secondary
-                                      text: Start
+                                      uesio.variant: uesio/io.primary
+                                      text: Send for Review
                                       signals:
                                         - signal: panel/TOGGLE
-                                          panel: termsAndConditions
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.bundlelistingvisual:
-                                      color: ${uesio/studio.color}
-                                      icon: ${uesio/studio.icon}
-                                      title: ${uesio/studio.fullname}
-                                      subtitle: ${uesio/studio.title}
-                                      description: ${uesio/studio.description}
-                                      verified: false
-          - uesio/io.list:
-              uesio.display:
-                - type: wireHasRecords
-                  wire: bundlelisting
-              uesio.id: bundleListingDeck
-              wire: bundlelisting
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: Publish App
-                    subtitle: ${uesio/core.uniquekey}
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: outbox
-                    actions:
-                      - uesio/io.group:
+                                          panel: sendForReview
+                                      uesio.display:
+                                        - field: uesio/studio.status
+                                          value: OPEN
+                                        - type: wireHasRecords
+                                          wire: licensetemplate
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: Publish
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: publish
+                                      uesio.display:
+                                        - field: uesio/studio.status
+                                          value: APPROVED
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: Send for Review
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: sendForReview
-                                uesio.display:
-                                  - field: uesio/studio.status
-                                    value: OPEN
-                                  - type: wireHasRecords
-                                    wire: licensetemplate
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: Publish
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: publish
-                                uesio.display:
-                                  - field: uesio/studio.status
-                                    value: APPROVED
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.title
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.description
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.splash
+                                            displayAs: IMAGE
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.status
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.approved
+                                  - uesio/io.box:
+                                      components:
+                                        - uesio/studio.bundlelistingvisual:
+                                            color: ${uesio/studio.app->uesio/studio.color}
+                                            icon: ${uesio/studio.app->uesio/studio.icon}
+                                            title: ${uesio/studio.app->uesio/studio.fullname}
+                                            subtitle: ${uesio/studio.title}
+                                            description: ${uesio/studio.description}
+                                            verified: false
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: bundlelisting
+                    uesio.variant: uesio/appkit.section
                     components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.two_columns
-                          items:
-                            - uesio/io.box:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Pricing Template
+                          subtitle: Set the monthly price of your application
+                          actions:
+                            - uesio/io.group:
                                 components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.title
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.description
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.splash
-                                      displayAs: IMAGE
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.status
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.approved
-                            - uesio/io.box:
-                                components:
-                                  - uesio/studio.bundlelistingvisual:
-                                      color: ${uesio/studio.app->uesio/studio.color}
-                                      icon: ${uesio/studio.app->uesio/studio.icon}
-                                      title: ${uesio/studio.app->uesio/studio.fullname}
-                                      subtitle: ${uesio/studio.title}
-                                      description: ${uesio/studio.description}
-                                      verified: false
-          - uesio/io.box:
-              uesio.display:
-                - type: wireHasRecords
-                  wire: bundlelisting
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.section
-                    title: Pricing Template
-                    subtitle: Set the monthly price of your application
-                    actions:
-                      - uesio/io.group:
+                                  - uesio/io.button:
+                                      text: add Template
+                                      uesio.variant: uesio/io.primary
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: newLicenseTemplate
+                                      uesio.display:
+                                        - type: wireHasNoRecords
+                                          wire: licensetemplate
+                      - uesio/io.list:
+                          uesio.id: licensetemplateList
+                          wire: licensetemplate
+                          mode: READ
                           components:
-                            - uesio/io.button:
-                                text: add Template
-                                uesio.variant: uesio/io.primary
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newLicenseTemplate
-                                uesio.display:
-                                  - type: wireHasNoRecords
-                                    wire: licensetemplate
-                - uesio/io.list:
-                    uesio.id: licensetemplateList
-                    wire: licensetemplate
-                    mode: READ
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.monthlyprice
-                            - uesio/io.field:
-                                fieldId: uesio/studio.autocreate
-          - uesio/io.box:
-              uesio.display:
-                - type: wireHasRecords
-                  wire: bundlelisting
-              uesio.variant: uesio/io.section
-              components:
-                - uesio/io.titlebar:
-                    title: History
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.monthlyprice
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.autocreate
+                - uesio/io.box:
+                    uesio.display:
+                      - type: wireHasRecords
+                        wire: bundlelisting
                     uesio.variant: uesio/io.section
-                - uesio/io.table:
-                    uesio.id: bundlelistinghistoryTable
-                    wire: bundlelistinghistory
-                    mode: READ
-                    columns:
-                      - field: uesio/studio.actiontype
-                      - field: uesio/studio.comment
-                      - field: uesio/core.createdby
-                        user:
-                          subtitle: $Time{uesio/core.createdat}
-                      - field: uesio/core.updatedby
-                        user:
-                          subtitle: $Time{uesio/core.updatedat}
+                    components:
+                      - uesio/io.titlebar:
+                          title: History
+                          uesio.variant: uesio/io.section
+                      - uesio/io.table:
+                          uesio.id: bundlelistinghistoryTable
+                          uesio.variant: uesio/appkit.main
+                          wire: bundlelistinghistory
+                          mode: READ
+                          columns:
+                            - field: uesio/studio.actiontype
+                            - field: uesio/studio.comment
+                            - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
   panels:
     termsAndConditions:
       uesio.type: uesio/io.dialog
