@@ -38,25 +38,32 @@ definition:
               uesio.styleTokens:
                 root:
                   - overflow-hidden
-                  - shadow-lg
                   - bg-white
                   - rounded-lg
                   - mb-10
+                  - bg-[url($File{uesio/studio.background_blocks:files/top.svg})]
+                  - bg-left-top
+                  - bg-no-repeat
+                  - bg-blend-darken
+                  - "[background-size:650px]"
+                  - border-l-1
+                  - border-t-1
+                  - border-b-2
+                  - border-r-2
+                  - border-fontcolor-900/90
               components:
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
                         - mb-0
-                        - p-32
-                        - bg-black
-                        - bg-cover
-                        - bg-[url($File{uesio/appkit.splash})]
+                        - p-20
                 - uesio/io.box:
                     uesio.styleTokens:
                       root:
                         - p-10
-                        - text-[#FFFFFFC0]
-                        - bg-neutral-900
+                        - text-black/80
+                        - from-white
+                        - bg-gradient-to-t
                     components:
                       - uesio/io.box:
                           uesio.styleTokens:
@@ -66,36 +73,26 @@ definition:
                               - mb-2
                           components:
                             - uesio/io.text:
-                                text: "Get started with "
-                            - uesio/io.text:
-                                color: white
-                                text: ues.io
+                                text: "Get started with ues.io"
                       - uesio/io.box:
-                          uesio.styleTokens:
-                            root:
-                              - font-light
                           components:
                             - uesio/io.text:
                                 uesio.styleTokens:
                                   root:
-                                    - text-white
-                                text: "Build "
-                            - uesio/io.text:
-                                text: "web applications declaratively. "
-                            - uesio/io.text:
-                                uesio.styleTokens:
-                                  root:
-                                    - text-white
-                                text: "Reuse "
-                            - uesio/io.text:
-                                text: "components from other apps. "
-                            - uesio/io.text:
-                                uesio.styleTokens:
-                                  root:
-                                    - text-white
-                                text: "Iterate "
-                            - uesio/io.text:
-                                text: "quickly."
+                                    - text-black/60
+                                    - font-light
+                                    - mb-8
+                                element: div
+                                text: "Build web applications declaratively. Reuse components from other apps. Iterate quickly."
+                      - uesio/io.button:
+                          text: Create an app
+                          uesio.variant: uesio/appkit.secondary
+                          icon: add
+                          uesio.id: add-app-maini
+                          signals:
+                            - signal: route/NAVIGATE_TO_ASSIGNMENT
+                              collection: uesio/studio.app
+                              viewtype: createnew
           - uesio/io.box:
               uesio.variant: uesio/appkit.section
               components:

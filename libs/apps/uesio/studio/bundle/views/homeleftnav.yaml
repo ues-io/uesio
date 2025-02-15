@@ -118,35 +118,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           title: My Apps
                           actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      icon: add
-                                      uesio.id: add-app
-                                      uesio.variant: uesio/appkit.navicon
-                                      signals:
-                                        - signal: route/NAVIGATE_TO_ASSIGNMENT
-                                          collection: uesio/studio.app
-                                          viewtype: createnew
                     content:
-                      - uesio/appkit.note:
-                          uesio.display:
-                            - type: wireHasNoRecords
-                              wire: apps
-                            - type: wireHasNoSearchCondition
-                              wire: apps
-                            - type: wireIsNotLoading
-                              wire: apps
-                          text: Welcome to the ues.io studio! Create an app to get started.
-                          extra:
-                            - uesio/io.button:
-                                uesio.variant: uesio/studio.navcta
-                                icon: add
-                                text: Create an App
-                                signals:
-                                  - signal: route/NAVIGATE_TO_ASSIGNMENT
-                                    collection: uesio/studio.app
-                                    viewtype: createnew
                       - uesio/io.list:
                           uesio.id: appslist
                           wire: apps
