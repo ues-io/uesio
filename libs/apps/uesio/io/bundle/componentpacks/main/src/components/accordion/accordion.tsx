@@ -4,13 +4,15 @@ import ExpandPanel from "../../utilities/expandpanel/expandpanel"
 import IconButton from "../../utilities/iconbutton/iconbutton"
 import { Fragment, useEffect } from "react"
 
-export type AccordionItemDefinition = {
+type AccordionItemDefinition = {
   id: string
   title: string
   components: definition.DefinitionList
   "uesio.display"?: component.DisplayCondition[]
   expanded?: boolean
 }
+
+type AccordionItemWithIndex = AccordionItemDefinition & { index: number }
 
 type AccordionDefinition = {
   items?: AccordionItemDefinition[]
@@ -66,26 +68,34 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
     componentId,
     context.mergeString(initialItem),
   )
-  const foundIndex = items.findIndex((item) => item.id === selectedItemId)
+
+  // Add indexes to items
+  const indexedItems: AccordionItemWithIndex[] = items.map((item, index) => {
+    return {
+      ...item,
+      index,
+    }
+  })
+
+  const foundIndex = indexedItems.findIndex(
+    (item) => item.id === selectedItemId,
+  )
   const selectedIndex = foundIndex === -1 ? 0 : foundIndex
-  const selectedItem = items[selectedIndex]
-  const allVisibleItems = component.useShouldFilter<AccordionItemDefinition>(
-    items,
+  const selectedItem = indexedItems[selectedIndex]
+  const allVisibleItems = component.useShouldFilter<AccordionItemWithIndex>(
+    indexedItems,
     context,
   )
   const shouldDisplaySelectedItem =
     allVisibleItems.findIndex((item) => item.id === selectedItem.id) > -1
+  const firstVisibleItemToDisplay = !shouldDisplaySelectedItem
+    ? allVisibleItems[0]?.id
+    : ""
   useEffect(() => {
-    if (!shouldDisplaySelectedItem) {
-      setSelectedItem(allVisibleItems[0]?.id)
+    if (firstVisibleItemToDisplay) {
+      setSelectedItem(firstVisibleItemToDisplay)
     }
-  }, [
-    selectedItemId,
-    shouldDisplaySelectedItem,
-    items,
-    setSelectedItem,
-    allVisibleItems,
-  ])
+  }, [firstVisibleItemToDisplay, setSelectedItem])
 
   return (
     <div className={classes.root}>
@@ -134,7 +144,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
               <component.Slot
                 definition={item}
                 listName="components"
-                path={path}
+                path={`${path}["items"]["${item.index}"]`}
                 context={context}
                 componentType={componentType}
               />

@@ -9,6 +9,8 @@ definition:
       - rounded
       - overflow-hidden
       - bg-item_tag_bg_color
+      - border-1
+      - border-item_tag_border_color
       - select-none
       - m-2
     selected:

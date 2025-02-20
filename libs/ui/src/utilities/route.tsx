@@ -15,6 +15,38 @@ import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
 import { setupStyles } from "../styles/styles"
 
+// This is a hack to get webfonts to show up in safari
+// after they've been loaded. I've tried a bunch of different things,
+// including different font-display: swap,block,optional,etc to no avail.
+// All this code does is cause the browser to repaint after a while.
+
+// https://stackoverflow.com/a/23522755 -- isSafari code
+const isSafari = () =>
+  /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+const repaintSafari = () => {
+  document.documentElement.style.display = "none"
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  document.documentElement.offsetHeight
+  document.documentElement.style.display = ""
+}
+
+if (isSafari()) {
+  // I realize this is super dumb. But i've tried all kinds of things to get
+  // safari to work correctly from FontFaceObserver, to the font-display property.
+  // The issue is that if the font isn't "used" in the initial html markup in safari,
+  // the browser isn't notified that the font has loaded.
+
+  // It would be nice to be able to figure out if we were successful in loading
+  // the font and cancel the rest of these.
+  window.setTimeout(repaintSafari, 100)
+  window.setTimeout(repaintSafari, 500)
+  window.setTimeout(repaintSafari, 1000)
+  window.setTimeout(repaintSafari, 2000)
+  window.setTimeout(repaintSafari, 4000)
+}
+// End hack
+
 const Route: UtilityComponent = (props) => {
   const site = useSite()
   const route = useRoute()

@@ -69,7 +69,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
           link={`/app/${workspace.app}`}
           classes={{ root: classes.linkButton }}
           styleTokens={{
-            root: [`text-[${nsInfo?.color}]`],
+            root: [`text-[${nsInfo?.color}]`, "max-w-[2.4em]"],
           }}
           context={context}
         />
@@ -87,7 +87,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
               },
             ],
             "uesio.styleTokens": {
-              root: ["ml-2.5"],
+              root: ["ml-2.5", "max-w-[2.4em]"],
             },
           }}
           context={context.deleteWorkspace()}
@@ -106,7 +106,7 @@ const BuildBarHeader: definition.UtilityComponent = (props) => {
               },
             ],
             "uesio.styleTokens": {
-              root: ["ml-1.5"],
+              root: ["ml-1.5", "max-w-[2.4em]"],
             },
           }}
           context={context.deleteWorkspace()}

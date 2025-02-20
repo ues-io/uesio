@@ -25,14 +25,16 @@ const Slot: UC<SlotDefinition> = (props) => {
   } = props.definition
 
   if (!definition) return null
-  const slotContext = props.definition.context || context
+
   return (
     <SlotUtility
       definition={definition}
       listName={name}
       readonly={readonly}
       path={path}
-      context={slotContext.removeAllComponentFrames(DECLARATIVE_COMPONENT)}
+      context={context
+        .removeAllComponentFrames(DECLARATIVE_COMPONENT)
+        .removeAllPropsFrames()}
       componentType={props.definition.componentType || componentType}
     />
   )

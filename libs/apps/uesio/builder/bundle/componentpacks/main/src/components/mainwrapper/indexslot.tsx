@@ -46,10 +46,18 @@ type IndexSlotProps = {
 
 const SlotStyleDefaults = Object.freeze({
   slot: ["grid", "border-transparent"],
-  slotSelected: ["rounded-lg", "bg-index_selected_bg_color", "ml-1", "mb-1"],
+  slotSelected: [
+    "rounded-lg",
+    "bg-index_selected_bg_color",
+    "border-1",
+    "border-index_selected_border_color",
+    "ml-1",
+    "mb-1",
+    "overflow-hidden",
+  ],
   slotIndent: ["ml-2"],
   slotHeader: ["flex", "p-1"],
-  slotHeaderSelected: ["p-2"],
+  slotHeaderSelected: ["p-2", "bg-index_selected_header_bg_color"],
   slotTitle: [
     "uppercase",
     "text-index_slot_title_color",
@@ -58,7 +66,7 @@ const SlotStyleDefaults = Object.freeze({
     "grow",
     "p-0.5",
   ],
-  slotContent: [],
+  slotContent: ["border-index_selected_divider_color"],
   slotContentSelected: ["p-1", "empty:hidden"],
   visibilityIcon: [
     "text-[8pt]",
@@ -71,7 +79,8 @@ const SlotStyleDefaults = Object.freeze({
     "text-index_action_button_color",
     "px-1",
     "border-b",
-    "border-index_selected_divider_color",
+    "border-index_selected_header_border_color",
+    "bg-index_selected_header_bg_color",
   ],
 })
 
@@ -113,7 +122,7 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
           )}
         >
           <div className={classes.slotTitle}>{label}</div>
-          {!hasSlotNode && (
+          {!hasSlotNode && selected && (
             <IOIcon
               className={classes.visibilityIcon}
               context={context}

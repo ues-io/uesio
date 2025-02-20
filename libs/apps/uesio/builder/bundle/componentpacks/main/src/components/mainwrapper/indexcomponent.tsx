@@ -16,7 +16,7 @@ import CloneAction from "../../actions/cloneaction"
 
 const StyleDefaults = Object.freeze({
   tag: ["m-0"],
-  tagSelected: ["p-1"],
+  tagSelected: ["p-1", "bg-index_selected_header_bg_color"],
   tagTitleSelected: [],
   tagTitle: [
     "py-1",
@@ -32,7 +32,8 @@ const StyleDefaults = Object.freeze({
     "text-index_action_button_color",
     "px-1",
     "border-b",
-    "border-index_selected_divider_color",
+    "border-index_selected_header_border_color",
+    "bg-index_selected_header_bg_color",
   ],
   tagContent: [],
   tagContentSelected: ["p-1", "empty:hidden"],

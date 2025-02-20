@@ -180,9 +180,6 @@ const resolveDeclarativeComponentDefinitionTests = [
                 path: "",
                 componentType: "me/myapp.testcomponent",
                 readonly: false,
-                context: expect.objectContaining({
-                  stack: getViewContext().stack,
-                }),
               },
             },
           ],

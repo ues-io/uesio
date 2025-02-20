@@ -180,7 +180,10 @@ const SelectBorder: definition.UtilityComponent<Props> = (props) => {
     <>
       {selectedChildren.map((selectedChild) =>
         createPortal(
-          <div className={styles.getThemeClass(context)}>
+          <div
+            className={styles.getThemeClass(context)}
+            style={{ display: "contents" }}
+          >
             <div className={selectBorderStyle} />
           </div>,
           selectedChild,

@@ -85,7 +85,9 @@ const Menu: definition.UC<MenuDefinition> = (props) => {
         />
       </div>
       {isOpen && (
-        <FloatingPortal>
+        <FloatingPortal
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
+        >
           <FloatingFocusManager
             initialFocus={-1}
             context={floating.context}

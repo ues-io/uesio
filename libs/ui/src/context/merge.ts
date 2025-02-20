@@ -393,10 +393,7 @@ const handlers: Record<MergeType, MergeHandler> = {
     if (!slotDef) {
       return {}
     }
-    let slotContext: Context | undefined = context.removeAllPropsFrames()
-    if (slotDef.providesContexts) {
-      slotContext = undefined
-    }
+
     return {
       "uesio/core.slot": {
         name: expression,
@@ -406,7 +403,6 @@ const handlers: Record<MergeType, MergeHandler> = {
         path: propsFrame.path || "",
         readonly: !!componentFrame,
         componentType: propsFrame.componentType,
-        context: slotContext as unknown as wire.FieldValue,
       },
     }
   },

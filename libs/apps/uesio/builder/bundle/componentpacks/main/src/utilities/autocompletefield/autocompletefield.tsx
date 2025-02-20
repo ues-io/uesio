@@ -139,7 +139,9 @@ const AutocompleteField: definition.UtilityComponent<
       </div>
 
       {isOpen && (
-        <FloatingPortal>
+        <FloatingPortal
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
+        >
           <FloatingFocusManager context={floating.context} modal={false}>
             <div
               ref={refs.setFloating}

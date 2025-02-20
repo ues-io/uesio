@@ -67,30 +67,34 @@ const Tooltip: definition.UtilityComponent<TooltipUtilityProps> = (props) => {
             ...children.props,
           }),
         )}
-      <FloatingPortal>
-        {open && (
-          <div
-            {...getFloatingProps()}
-            className={classes.tooltip}
-            ref={refs.setFloating}
-            style={{
-              position: strategy,
-              top: y ?? 0,
-              left: x ?? 0,
-              width: "max-content",
-            }}
-          >
-            {props.text}
-            <FloatingArrow
-              width={12}
-              height={6}
-              className={classes.arrow}
-              ref={arrowRef}
-              context={context}
-            />
-          </div>
-        )}
-      </FloatingPortal>
+      {open && (
+        <FloatingPortal
+          root={styles.getClosestThemeRoot(refs.domReference.current)}
+        >
+          {
+            <div
+              {...getFloatingProps()}
+              className={classes.tooltip}
+              ref={refs.setFloating}
+              style={{
+                position: strategy,
+                top: y ?? 0,
+                left: x ?? 0,
+                width: "max-content",
+              }}
+            >
+              {props.text}
+              <FloatingArrow
+                width={12}
+                height={6}
+                className={classes.arrow}
+                ref={arrowRef}
+                context={context}
+              />
+            </div>
+          }
+        </FloatingPortal>
+      )}
     </>
   )
 }

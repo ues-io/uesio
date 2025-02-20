@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component } from "@uesio/ui"
 import { FunctionComponent } from "react"
 import { SlotBuilderComponentId } from "../slotbuilder/slotbuilder"
 import { InnerViewSlotLoaderId } from "../innerviewslotloader/innerviewslotloader"
@@ -15,15 +15,15 @@ const getSlotProps = (slotProps: component.SlotUtilityProps) =>
       return {
         ...props,
         context: context.setCustomSlotLoader(SlotBuilderComponentId),
-      } as definition.BaseProps
+      }
     }
     if (componentType === component.ViewComponentId) {
       return {
         ...props,
         context: context.setCustomSlotLoader(InnerViewSlotLoaderId),
-      } as definition.BaseProps
+      }
     }
-    return props as definition.BaseProps
+    return props
   })
 
 const DeclarativeComponentSlotLoader: FunctionComponent<

@@ -46,8 +46,10 @@ definition:
             category: $Prop{category}
             title: $Prop{title}
             subtitle: $Prop{subtitle}
-            actions: $Prop{actions}
-            image: $Prop{image}
+            actions:
+              - $Slot{actions}
+            image:
+              - $Slot{image}
 title: Hero Section
 discoverable: true
 description: A hero section
