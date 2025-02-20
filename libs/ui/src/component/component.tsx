@@ -202,6 +202,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
         componentType,
         path,
       })}
+      readonly={true}
       path={path}
       listName={DefaultSlotName}
       definition={{ [DefaultSlotName]: actualDefinition }}

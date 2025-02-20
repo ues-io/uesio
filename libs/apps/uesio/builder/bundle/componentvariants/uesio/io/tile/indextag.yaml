@@ -7,7 +7,6 @@ definition:
       - select-none
     selected:
       - bg-index_selected_bg_color
-      - -ml-[5px]
       - border-1
       - border-index_selected_border_color
       - mb-1

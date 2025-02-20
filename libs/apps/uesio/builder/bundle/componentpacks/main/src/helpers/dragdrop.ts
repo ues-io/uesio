@@ -3,16 +3,31 @@ import { getComponentDef, setDragPath, setDropPath } from "../api/stateapi"
 import { FullPath } from "../api/path"
 import { DragEventHandler, DragEvent } from "react"
 import { add, move } from "../api/defapi"
+import throttle from "lodash/throttle"
 
 const CURSOR_GRABBING = "cursor-grabbing"
 
-const standardAccepts = ["component", "viewdef", "componentvariant"]
+const standardAccepts = ["component", "viewdef", "componentvariant"].join(",")
 
 const isDropAllowed = (accepts: string[], dragNode: FullPath): boolean => {
   for (const accept of accepts) {
     if (accept === dragNode.itemType) return true
   }
   return false
+}
+
+const isComponentElementBeforePosition = (
+  e: DragEvent,
+  element: Element,
+  direction: "HORIZONTAL" | "VERTICAL",
+) => {
+  // If we're a real component, we need to find the midpoint of our
+  // position, and see if the cursor is greater than or less than it.
+  const bounds = element.getBoundingClientRect()
+
+  return direction === "HORIZONTAL"
+    ? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
+    : bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
 }
 
 // This function uses the mouse position and the bounding boxes of the slot's
@@ -27,21 +42,10 @@ const getDragIndex = (slotTarget: Element | null, e: DragEvent): number => {
 
   // loop over targets children
   for (const child of Array.from(slotTarget.children)) {
-    // If the child was a placeholder, and not a real component
-    // in this slot, we can skip it.
+    if (child.getAttribute("data-wrappertype") !== "component") continue
     for (const grandchild of Array.from(child.children)) {
       if (grandchild.getAttribute("data-placeholder") === "true") continue
-
-      // If we're a real component, we need to find the midpoint of our
-      // position, and see if the cursor is greater than or less than it.
-      const bounds = grandchild.getBoundingClientRect()
-
-      const isChildBeforePosition =
-        dataDirection === "HORIZONTAL"
-          ? bounds.left + bounds.width / 2 <= e.pageX + window.scrollX
-          : bounds.top + bounds.height / 2 <= e.pageY + window.scrollY
-
-      if (!isChildBeforePosition) break
+      if (!isComponentElementBeforePosition(e, grandchild, dataDirection)) break
       index++
     }
   }
@@ -68,6 +72,7 @@ const getDragStartHandler =
 const getDragEndHandler =
   (context: context.Context): DragEventHandler =>
   (e) => {
+    throttledDragOver.cancel()
     setDragPath(context)
     setDropPath(context)
     const target = e.target as HTMLDivElement
@@ -127,16 +132,13 @@ const handleDrop = (
   }
 }
 
-const getDragOverHandler =
+const throttledDragOver = throttle(
   (
     context: context.Context,
     dragPath: FullPath,
     dropPath: FullPath,
-  ): DragEventHandler =>
-  (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-
+    e: DragEvent,
+  ) => {
     // Step 1: Find the closest slot that is accepting the current dragpath.
     let slotTarget = e.target as Element | null
     let validPath = ""
@@ -152,6 +154,12 @@ const getDragOverHandler =
         break
       }
       slotTarget = slotTarget.parentElement || null
+    }
+
+    // If we've found the root canvas node
+    if (e.target === e.currentTarget) {
+      validPath = "components"
+      slotTarget = e.currentTarget.children[0]
     }
 
     if (validPath && dropPath && dragPath) {
@@ -171,7 +179,21 @@ const getDragOverHandler =
     if (!dropPath) {
       setDropPath(context)
     }
+  },
+  200,
+)
+
+const getDragOverHandler = (
+  context: context.Context,
+  dragPath: FullPath,
+  dropPath: FullPath,
+) => {
+  return (e: DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    throttledDragOver(context, dragPath, dropPath, e)
   }
+}
 
 const getDropHandler =
   (
@@ -182,7 +204,8 @@ const getDropHandler =
   (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!dropPath || !dragPath) {
+    throttledDragOver.cancel()
+    if (!dropPath.localPath || !dragPath) {
       return
     }
     handleDrop(dragPath, dropPath, context)
