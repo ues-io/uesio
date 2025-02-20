@@ -26,7 +26,7 @@ const IndexBuildWrapper: definition.UC = (props) => {
   const [addBefore, addAfter] = usePlaceHolders(context, path)
 
   return (
-    <div className="contents" data-placeholder="true">
+    <>
       {addBefore && (
         <div className={classes.placeholder} data-placeholder="true" />
       )}
@@ -34,7 +34,7 @@ const IndexBuildWrapper: definition.UC = (props) => {
       {addAfter && (
         <div className={classes.placeholder} data-placeholder="true" />
       )}
-    </div>
+    </>
   )
 }
 
@@ -111,45 +111,44 @@ const IndexSlot: definition.UtilityComponent<IndexSlotProps> = (props) => {
         classes.slot,
         selected && classes.slotSelected,
       )}
-      data-accepts={standardAccepts.join(",")}
+      data-accepts={standardAccepts}
       data-path={component.path.toDataAttrPath(listPath)}
     >
-      <div data-placeholder="true">
-        <div
-          className={styles.cx(
-            classes.slotHeader,
-            selected && classes.slotHeaderSelected,
-          )}
-        >
-          <div className={classes.slotTitle}>{label}</div>
-          {!hasSlotNode && selected && (
-            <IOIcon
-              className={classes.visibilityIcon}
-              context={context}
-              icon="visibility_off"
-            />
-          )}
-        </div>
-        <IOExpandPanel context={context} expanded={selected}>
-          <div className={classes.actionarea}>
-            <ActionButton
-              title={hasSlotNode ? "Delete Contents" : "Activate"}
-              onClick={() =>
-                hasSlotNode
-                  ? remove(context, slotPath)
-                  : set(context, slotPath, [])
-              }
-              icon={hasSlotNode ? "delete" : "visibility"}
-              context={context}
-            />
-          </div>
-        </IOExpandPanel>
+      <div
+        className={styles.cx(
+          classes.slotHeader,
+          selected && classes.slotHeaderSelected,
+        )}
+      >
+        <div className={classes.slotTitle}>{label}</div>
+        {!hasSlotNode && selected && (
+          <IOIcon
+            className={classes.visibilityIcon}
+            context={context}
+            icon="visibility_off"
+          />
+        )}
       </div>
+      <IOExpandPanel context={context} expanded={selected}>
+        <div className={classes.actionarea}>
+          <ActionButton
+            title={hasSlotNode ? "Delete Contents" : "Activate"}
+            onClick={() =>
+              hasSlotNode
+                ? remove(context, slotPath)
+                : set(context, slotPath, [])
+            }
+            icon={hasSlotNode ? "delete" : "visibility"}
+            context={context}
+          />
+        </div>
+      </IOExpandPanel>
       <div
         className={styles.cx(
           classes.slotContent,
           selected && classes.slotContentSelected,
         )}
+        data-wrappertype="component"
       >
         {component
           .getSlotProps({

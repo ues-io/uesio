@@ -7,7 +7,7 @@ import {
   useSelectedViewPath,
 } from "../../api/stateapi"
 import SearchArea from "../../helpers/searcharea"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   getDragEndHandler,
   getDragOverHandler,
@@ -42,6 +42,19 @@ const IndexPanel: definition.UtilityComponent = (props) => {
     selectedPath,
     viewDefinition,
   )
+
+  const selectedComponentPathString = selectedComponentPath.combine()
+
+  useEffect(() => {
+    if (!selectedComponentPathString) return
+    const selectedElem = document.querySelector(
+      `div[data-type="${CSS.escape(selectedComponentPathString)}"]`,
+    )
+    selectedElem?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    })
+  }, [selectedComponentPathString])
 
   const [searchTerm, setSearchTerm] = useState("")
 
