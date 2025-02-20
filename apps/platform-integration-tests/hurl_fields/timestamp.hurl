@@ -31,7 +31,11 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].error.message" == "invalid input syntax for type bigint: \"BAD_VALUE\""
+
 
 # Operator: EQ | valueSource: VALUE | value as string
 # entry 3
@@ -93,7 +97,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].error.message" == "invalid input syntax for type bigint: \"2001-01-01T01:01:00Z\""
 
 # Operator: EQ | valueSource: VALUE | value as number (unix timestamp)
 # entry 5
