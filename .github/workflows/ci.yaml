@@ -74,7 +74,7 @@ jobs:
       - name: Build and test
         env:
           UESIO_DEV: "true" # required to ensure packui gets built
-        run: npx nx affected -t build test --configuration=ci --parallel=5
+        run: npx nx affected -t build test --configuration=ci --parallel=5 --verbose
 
       - name: Prep for docker image
         id: setDockerSHAs
@@ -209,6 +209,9 @@ jobs:
 
       - name: Install NPM dependencies
         run: npm ci
+
+      - name: test step
+        run: npx nx graph --verbose
 
       - name: Check formatting
         run: npx nx format:check --verbose
