@@ -3,6 +3,8 @@ import BuildBarHeader from "./buildbar_header"
 import BuildBarMainButtons from "./buildbar_main_buttons"
 import BuildBarHandle from "./buildbar_handle"
 import BuildBarTools from "./buildbar_tools"
+import { useRef } from "react"
+import BuildBarDraggable from "./buildbar_draggable"
 
 const SHADOWS = Object.freeze([
   "0 0px 3px 0 rgb(0 0 0 / 0.1)",
@@ -12,11 +14,7 @@ const SHADOWS = Object.freeze([
 
 const StyleDefaults = Object.freeze({
   root: [
-    "absolute",
     "p-2",
-    "right-0",
-    "bottom-0",
-    "z-30",
     "m-3",
     `shadow-[${SHADOWS.join(",").split(" ").join("_")}]`,
     "bg-white",
@@ -31,15 +29,21 @@ const BuildBar: definition.UtilityComponent = (props) => {
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
+  const handleRef = useRef<HTMLDivElement>(null)
+
   return (
-    <div className={classes.root}>
-      <div>
-        <BuildBarHeader context={context} />
-        <BuildBarMainButtons context={context} />
+    <BuildBarDraggable context={context} handleRef={handleRef}>
+      <div className={classes.root}>
+        <div>
+          <BuildBarHeader context={context} />
+          <BuildBarMainButtons context={context} />
+        </div>
+        <div ref={handleRef}>
+          <BuildBarHandle context={context} />
+        </div>
+        <BuildBarTools context={context} />
       </div>
-      <BuildBarHandle context={context} />
-      <BuildBarTools context={context} />
-    </div>
+    </BuildBarDraggable>
   )
 }
 
