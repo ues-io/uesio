@@ -74,7 +74,7 @@ jobs:
       - name: Build and test
         env:
           UESIO_DEV: "true" # required to ensure packui gets built
-        run: npx nx affected -t build test --configuration=ci --parallel=5
+        run: npx nx affected -t build test --configuration=ci --parallel=5 --verbose
 
       - name: Prep for docker image
         id: setDockerSHAs
@@ -84,7 +84,7 @@ jobs:
           # We lint/test/build affected but in order to build image, we need to ensure everything
           # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
           # for anything already built from above)
-          npx nx run-many -t build
+          npx nx run-many -t build --verbose
 
           # build values for docker image tags
           VERSION_SUFFIX=${{ github.run_number }}.${{ github.run_attempt }}
@@ -214,7 +214,7 @@ jobs:
         run: npx nx format:check --verbose
 
       - name: Lint
-        run: npx nx affected -t lint --configuration=ci --parallel=5
+        run: npx nx affected -t lint --configuration=ci --parallel=5 --verbose
 
   typecheck:
     name: Check types
@@ -245,7 +245,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        run: npx nx affected -t typecheck --configuration=ci --parallel=5
+        run: npx nx affected -t typecheck --configuration=ci --parallel=5 --verbose
 
   update-dev-branch:
     name: Update Dev environment to latest image
