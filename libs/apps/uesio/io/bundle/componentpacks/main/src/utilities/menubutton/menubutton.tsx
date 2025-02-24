@@ -3,6 +3,7 @@ import { definition, metadata } from "@uesio/ui"
 
 import ListMenu from "../listmenu/listmenu"
 import IconButton from "../iconbutton/iconbutton"
+import { Placement } from "@floating-ui/react"
 
 interface MenuButtonUtilityProps<I> {
   itemRenderer: (item: I) => ReactNode
@@ -12,6 +13,9 @@ interface MenuButtonUtilityProps<I> {
   icon?: string
   fill?: boolean
   items: I[]
+  reference?: Element
+  defaultPlacement?: Placement
+  offset?: number
 }
 
 const MenuButton: definition.UtilityComponent<
@@ -27,6 +31,10 @@ const MenuButton: definition.UtilityComponent<
     getItemKey,
     className,
     buttonVariant,
+    reference,
+    defaultPlacement,
+    classes,
+    offset,
   } = props
 
   return (
@@ -36,6 +44,10 @@ const MenuButton: definition.UtilityComponent<
       itemRenderer={itemRenderer}
       items={items}
       getItemKey={getItemKey}
+      reference={reference}
+      defaultPlacement={defaultPlacement}
+      classes={classes}
+      offset={offset}
     >
       <IconButton
         className={className}

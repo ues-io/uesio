@@ -3,6 +3,7 @@ import { RefObject, useEffect, useRef, useState, useCallback } from "react"
 
 type DraggableProps = {
   handleRef: RefObject<HTMLDivElement>
+  rootRef: RefObject<HTMLDivElement>
 }
 
 const StyleDefaults = Object.freeze({
@@ -12,7 +13,7 @@ const StyleDefaults = Object.freeze({
 const BuildBarDraggable: definition.UtilityComponent<DraggableProps> = (
   props,
 ) => {
-  const { children, handleRef } = props
+  const { children, handleRef, rootRef } = props
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -22,8 +23,6 @@ const BuildBarDraggable: definition.UtilityComponent<DraggableProps> = (
     startX: 0,
     startY: 0,
   })
-
-  const rootRef = useRef<HTMLDivElement>(null)
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     dragRef.current = {
@@ -42,9 +41,12 @@ const BuildBarDraggable: definition.UtilityComponent<DraggableProps> = (
 
       // Add boundary constraints
       const bounding = rootRef.current?.getBoundingClientRect()
-      if (!bounding) return
-      const maxX = window.innerWidth - bounding.width
-      const maxY = window.innerHeight - bounding.height
+      const container = rootRef.current
+        ?.closest(".relative")
+        ?.getBoundingClientRect()
+      if (!bounding || !container) return
+      const maxX = container.width - bounding.width
+      const maxY = container.height - bounding.height
 
       setPosition({
         x: Math.max(0, Math.min(position.x - newX, maxX)),

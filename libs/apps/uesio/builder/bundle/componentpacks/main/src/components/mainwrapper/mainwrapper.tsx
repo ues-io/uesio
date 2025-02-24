@@ -91,36 +91,6 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
     )
   })
 
-  const toggleCode = api.signal.getHandler(
-    [
-      {
-        signal: "component/CALL",
-        component: "uesio/builder.mainwrapper",
-        componentsignal: "TOGGLE_CODE",
-      },
-    ],
-    context,
-  )
-
-  const toggleIndex = api.signal.getHandler(
-    [
-      {
-        signal: "component/CALL",
-        component: "uesio/builder.mainwrapper",
-        componentsignal: "TOGGLE_INDEX",
-      },
-    ],
-    context,
-  )
-
-  hooks.useHotKeyCallback("meta+y", () => {
-    toggleCode?.()
-  })
-
-  hooks.useHotKeyCallback("meta+i", () => {
-    toggleIndex?.()
-  })
-
   const [showCode] = useBuilderState<boolean>(context, "codepanel")
   const [showIndex] = useBuilderState<boolean>(context, "indexpanel")
 
