@@ -2,15 +2,9 @@ import { definition, styles } from "@uesio/ui"
 import BuildBarHeader from "./buildbar_header"
 import BuildBarMainButtons from "./buildbar_main_buttons"
 import BuildBarHandle from "./buildbar_handle"
-import BuildBarTools from "./buildbar_tools"
+import BuildBarTools, { SHADOWS } from "./buildbar_tools"
 import { useRef } from "react"
 import BuildBarDraggable from "./buildbar_draggable"
-
-const SHADOWS = Object.freeze([
-  "0 0px 3px 0 rgb(0 0 0 / 0.1)",
-  "0 1px 2px -1px rgb(0 0 0 / 0.1)",
-  "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-])
 
 const StyleDefaults = Object.freeze({
   root: [
@@ -29,11 +23,17 @@ const BuildBar: definition.UtilityComponent = (props) => {
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
+  const rootRef = useRef<HTMLDivElement>(null)
   const handleRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
   return (
-    <BuildBarDraggable context={context} handleRef={handleRef}>
-      <div className={classes.root}>
+    <BuildBarDraggable
+      context={context}
+      rootRef={wrapperRef}
+      handleRef={handleRef}
+    >
+      <div ref={rootRef} className={classes.root}>
         <div>
           <BuildBarHeader context={context} />
           <BuildBarMainButtons context={context} />
@@ -41,10 +41,12 @@ const BuildBar: definition.UtilityComponent = (props) => {
         <div ref={handleRef}>
           <BuildBarHandle context={context} />
         </div>
-        <BuildBarTools context={context} />
+        <BuildBarTools context={context} rootRef={rootRef} />
       </div>
     </BuildBarDraggable>
   )
 }
 
 export default BuildBar
+
+export { SHADOWS }
