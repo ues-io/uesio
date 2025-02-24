@@ -12,6 +12,7 @@ slots:
 variants:
   - uesio/io.text:uesio/io.icon
   - uesio/io.text:uesio/io.iconoutline
+defaultVariant: uesio/io.default
 properties:
   - type: COMPONENT_ID
     name: uesio.id

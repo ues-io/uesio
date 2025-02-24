@@ -14,6 +14,7 @@ slots:
     direction: HORIZONTAL
 defaultDefinition:
   title: New Title
+defaultVariant: uesio/io.default
 properties:
   - name: title
     label: Title

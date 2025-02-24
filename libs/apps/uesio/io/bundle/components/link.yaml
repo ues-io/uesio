@@ -9,6 +9,7 @@ discoverable: true
 defaultDefinition:
   text: Text Goes Here
   link: https://ues.io
+defaultVariant: uesio/io.default
 properties:
   - name: text
     label: Text
