@@ -4,6 +4,7 @@ description: A scrollable area for long content
 category: LAYOUT
 pack: main
 entrypoint: components/scrollpanel/scrollpanel
+defaultVariant: uesio/io.default
 slots:
   - name: content
     label: Content

@@ -241,13 +241,11 @@ function getVariantDefinition(
 ) {
   if (!componentType) return undefined
 
-  const [variantComponentType, variantName] = parseVariantName(
-    variantKey,
-    componentType,
-  )
+  const parsed = parseVariantName(variantKey, componentType)
 
-  if (!variantComponentType || !variantName) return undefined
+  if (!parsed) return undefined
 
+  const [variantComponentType, variantName] = parsed
   const variant = context.getComponentVariant(variantComponentType, variantName)
   if (!variant) return undefined
   return getDefinitionFromVariant(variant, context)
