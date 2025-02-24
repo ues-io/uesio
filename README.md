@@ -619,5 +619,5 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - https://github.com/jestjs/jest/issues/15173
    - https://github.com/jestjs/jest/issues/15236
    - https://github.com/jestjs/jest/issues/15325
-4. Unable to update to `eslint-config-prettier` v10 due to `@nx/eslint-plugin` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/eslint-plugin/package.json#L29)
-5. Unable to update to `cypress` v14 due to `@nx/cypress` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/cypress/package.json#L47)
+4. Unable to update to `eslint-config-prettier` v10 due to `@nx/eslint-plugin` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/eslint-plugin/package.json#L29). See https://github.com/nrwl/nx/issues/30145.
+5. Unable to update to `cypress` v14 due to `@nx/cypress` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/cypress/package.json#L47). See https://github.com/nrwl/nx/issues/30097.
