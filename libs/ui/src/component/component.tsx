@@ -265,8 +265,8 @@ const parseVariantName = (
   fullName: MetadataKey | undefined,
   key: MetadataKey,
 ): [MetadataKey, MetadataKey] | undefined => {
-  return fullName ?
-    parseVariantNameFromFullName(fullName, key)
+  return fullName
+    ? parseVariantNameFromFullName(fullName, key)
     : parseVariantNameFromKey(key)
 }
 
