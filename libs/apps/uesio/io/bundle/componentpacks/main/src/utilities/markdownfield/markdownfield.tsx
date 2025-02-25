@@ -97,87 +97,88 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
   }
 
   return (
-    <ReactMarkdown
-      children={value}
-      remarkPlugins={[remarkGfm]}
-      className={classes.root}
-      components={{
-        p: (props) => <p className={classes.p}>{props.children}</p>,
-        h1: (props) => <Heading {...props} className={classes.h1} />,
-        h2: (props) => <Heading {...props} className={classes.h2} />,
-        h3: (props) => <Heading {...props} className={classes.h3} />,
-        h4: (props) => <Heading {...props} className={classes.h4} />,
-        h5: (props) => <Heading {...props} className={classes.h5} />,
-        h6: (props) => <Heading {...props} className={classes.h6} />,
-        ol: (props) => <ol className={classes.ol}>{props.children}</ol>,
-        ul: (props) => <ul className={classes.ul}>{props.children}</ul>,
-        li: (props) => <li className={classes.li}>{props.children}</li>,
-        img: (props) => {
-          let { src, alt } = props
-          const { title } = props
+    <div className={classes.root}>
+      <ReactMarkdown
+        children={value}
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: (props) => <p className={classes.p}>{props.children}</p>,
+          h1: (props) => <Heading {...props} className={classes.h1} />,
+          h2: (props) => <Heading {...props} className={classes.h2} />,
+          h3: (props) => <Heading {...props} className={classes.h3} />,
+          h4: (props) => <Heading {...props} className={classes.h4} />,
+          h5: (props) => <Heading {...props} className={classes.h5} />,
+          h6: (props) => <Heading {...props} className={classes.h6} />,
+          ol: (props) => <ol className={classes.ol}>{props.children}</ol>,
+          ul: (props) => <ul className={classes.ul}>{props.children}</ul>,
+          li: (props) => <li className={classes.li}>{props.children}</li>,
+          img: (props) => {
+            let { src, alt } = props
+            const { title } = props
 
-          const metastring = alt
-          alt = metastring?.replace(/ *\{[^)]*\} */g, "")
-          const metaWidth = metastring?.match(/{([^}]+)x/)
-          const metaHeight = metastring?.match(/x([^}]+)}/)
-          const width = metaWidth ? metaWidth[1] : undefined
-          const height = metaHeight ? metaHeight[1] : undefined
+            const metastring = alt
+            alt = metastring?.replace(/ *\{[^)]*\} */g, "")
+            const metaWidth = metastring?.match(/{([^}]+)x/)
+            const metaHeight = metastring?.match(/x([^}]+)}/)
+            const width = metaWidth ? metaWidth[1] : undefined
+            const height = metaHeight ? metaHeight[1] : undefined
 
-          if (src && isRelativeUrl(src)) {
-            if (recordid) {
-              src = api.file.getAttachmentURL(
-                context,
-                recordid,
-                src.slice(2),
-                recordmod + "",
-              )
-            } else {
-              src = ""
+            if (src && isRelativeUrl(src)) {
+              if (recordid) {
+                src = api.file.getAttachmentURL(
+                  context,
+                  recordid,
+                  src.slice(2),
+                  recordmod + "",
+                )
+              } else {
+                src = ""
+              }
             }
-          }
 
-          return (
-            <div className={classes.imgWrapper}>
-              <div className={classes.imgInner}>
-                <img
-                  className={classes.img}
-                  alt={alt}
-                  title={title}
-                  src={src}
-                  width={width}
-                  height={height}
-                />
+            return (
+              <div className={classes.imgWrapper}>
+                <div className={classes.imgInner}>
+                  <img
+                    className={classes.img}
+                    alt={alt}
+                    title={title}
+                    src={src}
+                    width={width}
+                    height={height}
+                  />
+                </div>
+                <div className={classes.imgTitle}>{title}</div>
               </div>
-              <div className={classes.imgTitle}>{title}</div>
-            </div>
-          )
-        },
-        a: (props) => (
-          <a className={classes.a} href={props.href}>
-            {props.children}
-          </a>
-        ),
-        pre: ({ children }) => children,
-        code: ({ node, className, children, ...props }) => {
-          const match = /language-(\w+)/.exec(className || "")
-          const isString = typeof children === "string"
-          return match && isString ? (
-            <SyntaxHighlighter
-              className={classes.code}
-              children={children}
-              style={materialDark}
-              language={match[1]}
-            />
-          ) : (
-            <span className={classes.codeInline}>
-              <code {...props} className={className}>
-                {children}
-              </code>
-            </span>
-          )
-        },
-      }}
-    />
+            )
+          },
+          a: (props) => (
+            <a className={classes.a} href={props.href}>
+              {props.children}
+            </a>
+          ),
+          pre: ({ children }) => children,
+          code: ({ node, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || "")
+            const isString = typeof children === "string"
+            return match && isString ? (
+              <SyntaxHighlighter
+                className={classes.code}
+                children={children}
+                style={materialDark}
+                language={match[1]}
+              />
+            ) : (
+              <span className={classes.codeInline}>
+                <code {...props} className={className}>
+                  {children}
+                </code>
+              </span>
+            )
+          },
+        }}
+      />
+    </div>
   )
 }
 
