@@ -8,6 +8,7 @@ defaultDefinition: {}
 discoverable: true
 category: DATA
 icon: select_check_box
+defaultVariant: uesio/io.default
 variants:
   - uesio/io.avatar:uesio/io.default
   - uesio/io.checkboxfield:uesio/io.default
