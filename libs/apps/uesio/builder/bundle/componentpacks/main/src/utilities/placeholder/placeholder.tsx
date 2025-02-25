@@ -19,10 +19,8 @@ const PlaceHolder: definition.UtilityComponent<PlaceHolderProps> = (props) => {
       ],
       root: [
         isHovering ? "bg-blue-600" : "bg-blue-50",
-        "py-2",
-        "px-3",
+        "p-3",
         "grid",
-        "my-1",
         "rounded-md",
         "items-center",
       ],

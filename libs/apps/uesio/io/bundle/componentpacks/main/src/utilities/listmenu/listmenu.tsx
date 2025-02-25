@@ -4,7 +4,7 @@ import {
   autoPlacement,
   useFloating,
   autoUpdate,
-  offset,
+  offset as setOffset,
   FloatingPortal,
   useListNavigation,
   useInteractions,
@@ -12,6 +12,7 @@ import {
   useClick,
   useRole,
   FloatingFocusManager,
+  Placement,
 } from "@floating-ui/react"
 
 interface MenuButtonUtilityProps<T> {
@@ -23,6 +24,9 @@ interface MenuButtonUtilityProps<T> {
   searchFilter?: (item: T, search: string) => boolean
   closeOnSelect?: boolean
   open?: boolean
+  reference?: Element
+  defaultPlacement?: Placement
+  offset?: number
 }
 
 const StyleDefaults = Object.freeze({
@@ -42,6 +46,7 @@ const NoStyle = Object.freeze(
 const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
   props,
 ) => {
+  const { defaultPlacement = "bottom-start", offset = 2, reference } = props
   const [isOpen, setIsOpen] = useState(props.open || false)
   const [searchText, setSearchText] = useState("")
 
@@ -64,13 +69,18 @@ const ListMenu: definition.UtilityComponent<MenuButtonUtilityProps<unknown>> = (
   const floating = useFloating({
     open: isOpen,
     onOpenChange,
-    placement: "bottom-start",
+    placement: defaultPlacement,
+    elements: reference
+      ? {
+          reference,
+        }
+      : undefined,
     middleware: [
-      offset(2),
+      setOffset(offset),
       autoPlacement({
         allowedPlacements: [
+          "top-end",
           "top-start",
-          "bottom-start",
           "bottom-start",
           "bottom-end",
         ],

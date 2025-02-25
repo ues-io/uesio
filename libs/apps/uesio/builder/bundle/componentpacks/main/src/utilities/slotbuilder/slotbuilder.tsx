@@ -1,5 +1,5 @@
 import { definition, component } from "@uesio/ui"
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent } from "react"
 import { FullPath } from "../../api/path"
 import {
   getBuildMode,
@@ -27,8 +27,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
   const buildMode = getBuildMode(context)
 
-  const ref = useRef<HTMLDivElement>(null)
-
   const listDef = (definition?.[listName] || []) as definition.DefinitionList
   const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
   const size = listDef.length
@@ -48,17 +46,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
   const direction = slotDef?.direction || "VERTICAL"
   const label = slotDef?.label || "Empty Component Area"
 
-  useEffect(() => {
-    const parentElem = ref?.current?.parentElement
-    if (!parentElem || readonly) return
-    parentElem.setAttribute("data-accepts", standardAccepts.join(","))
-    parentElem.setAttribute("data-direction", direction)
-    parentElem.setAttribute(
-      "data-path",
-      component.path.toDataAttrPath(listPath),
-    )
-  }, [listPath, listName, label, direction, readonly])
-
   if (!buildMode) {
     return (
       <>
@@ -70,8 +57,12 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
   }
 
   return (
-    <>
-      <div data-placeholder="true" ref={ref} style={{ display: "none" }} />
+    <div
+      data-accepts={readonly ? "" : standardAccepts}
+      data-direction={direction}
+      data-path={readonly ? "" : component.path.toDataAttrPath(listPath)}
+      style={{ display: "contents" }}
+    >
       {!readonly && size === 0 && isDragging && (
         <PlaceHolder
           label={label}
@@ -109,7 +100,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
           </BuildWrapper>
         )
       })}
-    </>
+    </div>
   )
 }
 

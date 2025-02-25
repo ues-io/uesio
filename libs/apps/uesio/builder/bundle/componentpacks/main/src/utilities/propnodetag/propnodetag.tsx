@@ -34,6 +34,7 @@ const PropNodeTag: definition.UtilityComponent<Props> = (props) => {
       rootAttributes={{
         draggable: !!draggable,
         "data-type": draggable,
+        "data-wrappertype": "component",
       }}
       variant={variant || "uesio/builder.propnodetag"}
       context={context}
