@@ -367,6 +367,19 @@ class Context {
     return this.clone(this.stack.slice(index + 1)).removeRecordFrame(times - 1)
   }
 
+  removeViewFrame = (times: number): Context => {
+    if (!times) {
+      return this
+    }
+    const index = this.stack.findIndex((frame): frame is ViewContextFrame =>
+      hasViewContext(frame),
+    )
+    if (index === -1) {
+      return this.clone([])
+    }
+    return this.clone(this.stack.slice(index + 1)).removeRecordFrame(times - 1)
+  }
+
   removeAllPropsFrames = (): Context =>
     this.clone(
       this.stack.filter(
