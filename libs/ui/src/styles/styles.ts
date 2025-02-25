@@ -24,6 +24,7 @@ import interpolate from "./interpolate"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { isStandardColorName } from "./colors"
+import { parseKey } from "../component/path"
 
 const processThemeColor = (
   themeFunc: ThemeFunction,
@@ -285,9 +286,18 @@ function useUtilityStyleTokens<K extends string>(
   props: UtilityProps,
   defaultVariantComponentType?: MetadataKey,
 ) {
+  // This is a slight hack, but necessary for the moment.
+  // There is an assumption that utility components without
+  // a variant specified should use a variant called "default"
+  // in the namespace of the associated defaultVariantComponentType.
+  let defaultVariant = ""
+  if (defaultVariantComponentType) {
+    const [namespace] = parseKey(defaultVariantComponentType)
+    defaultVariant = `${namespace}.default`
+  }
   const variantTokens = getVariantTokens(
     defaultVariantComponentType,
-    props.variant,
+    props.variant || defaultVariant,
     props.context,
   )
   const inlineTokens = props.styleTokens
