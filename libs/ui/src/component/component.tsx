@@ -265,19 +265,36 @@ const parseVariantName = (
   fullName: MetadataKey | undefined,
   key: MetadataKey,
 ): [MetadataKey, MetadataKey] | undefined => {
-  const parts = fullName?.split(":")
-  if (parts?.length === 2 && parts[0] && parts[1]) {
+  return fullName ?
+    parseVariantNameFromFullName(fullName, key)
+    : parseVariantNameFromKey(key)
+}
+
+const parseVariantNameFromFullName = (
+  fullName: MetadataKey,
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
+  const parts = fullName.split(":")
+  if (parts.length === 2 && parts[0] && parts[1]) {
     return [parts[0] as MetadataKey, parts[1] as MetadataKey]
   }
-  if (parts?.length === 1 && parts[0]) {
+  if (parts.length === 1 && parts[0]) {
     return [key, parts[0] as MetadataKey]
   }
+
+  // fullName could be empty or one of the parts could be empty
+  return undefined
+}
+
+const parseVariantNameFromKey = (
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
   const componentTypeDef = getComponentType(key)
   if (!componentTypeDef || !componentTypeDef.defaultVariant) {
     return undefined
   }
 
-  return [key, componentTypeDef.defaultVariant]
+  return parseVariantNameFromFullName(componentTypeDef.defaultVariant, key)
 }
 
 // This is bad and should eventually go away when we do proper typing
