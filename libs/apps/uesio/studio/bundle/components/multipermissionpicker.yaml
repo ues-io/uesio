@@ -14,3 +14,4 @@ variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.table:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.table
+  - uesio/io.table:uesio/appkit.main

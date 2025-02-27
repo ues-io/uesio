@@ -1,0 +1,37 @@
+name: view_landing
+dialect: JAVASCRIPT
+label: Landing Page
+description: Creates a landing page with a form for the user to enter their information.
+type: GENERATOR
+params:
+  - name: name
+    prompt: View Name
+    type: METADATANAME
+    required: true
+  - name: path
+    prompt: Path
+    type: TEXT
+    required: true
+  - name: title
+    prompt: Title
+    type: TEXT
+  - name: subtitle
+    prompt: Sub Title
+    type: TEXT
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    required: true
+  - name: fields
+    prompt: Fields
+    type: MULTIMETADATA
+    metadataType: FIELD
+    grouping: ${collection}
+    conditions:
+      - param: collection
+        type: hasValue
+    required: true
+public: true
+tags:
+  - uesio/core.views

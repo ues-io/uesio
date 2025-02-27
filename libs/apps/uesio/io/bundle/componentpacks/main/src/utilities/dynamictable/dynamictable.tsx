@@ -103,7 +103,7 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
           })),
         mode,
         [component.COMPONENT_ID]: id,
-        [component.STYLE_VARIANT]: "uesio/io.default",
+        [component.STYLE_VARIANT]: props.variant,
         rowactions,
       }}
       context={context}
