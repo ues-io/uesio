@@ -1,0 +1,11 @@
+name: section_inner_content_form
+label: Section Inner Content Form
+public: true
+extends: uesio/sitekit.section_inner
+definition:
+  uesio.styleTokens:
+    root:
+      - py-20
+      - grid
+      - justify-center
+      - grid-cols-[minmax(0px,400px)]

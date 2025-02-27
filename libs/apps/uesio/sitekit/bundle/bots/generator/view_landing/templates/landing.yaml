@@ -1,0 +1,53 @@
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+    init:
+      create: true
+      query: false
+components:
+  - uesio/io.viewlayout:
+      uesio.variant: uesio/sitekit.default
+      header:
+      content:
+        - uesio/sitekit.section_hero:
+            title: ${title}
+            subtitle: ${subtitle}
+        - uesio/sitekit.section:
+            innerVariant: uesio/sitekit.section_inner_content
+            content:
+              - uesio/io.box:
+                  uesio.styleTokens:
+                    root:
+                      - grid
+                      - justify-center
+                      - grid-cols-[minmax(0px,400px)]
+                  components:
+                    - uesio/io.item:
+                        wire: ${wirename}
+                        mode: EDIT
+                        components:
+                          - uesio/io.box:
+                              uesio.display:
+                                - type: recordIsNew
+                              components:
+                                - uesio/io.box:
+                                    components: ${formFields}
+                                - uesio/io.box:
+                                    components:
+                                      - uesio/io.button:
+                                          uesio.styleTokens:
+                                            root:
+                                              - w-full
+                                              - mt-4
+                                          uesio.variant: uesio/sitekit.primary_dark
+                                          text: Submit
+                                          signals:
+                                            - signal: wire/SAVE
+                          - uesio/io.box:
+                              uesio.display:
+                                - type: recordIsNotNew
+                              components:
+                                - uesio/io.text:
+                                    text: Thank you for submitting your information!
+      footer:
