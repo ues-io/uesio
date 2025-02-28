@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -168,4 +169,8 @@ func GetMockUsers() (wire.Collection, error) {
 		},
 	)
 
+}
+
+func DeleteApp(appFullName string) (bool, error) {
+	return DeleteOne("uesio/studio.app", "uesio/core.uniquekey", appFullName, context.NewAppContext(appFullName))
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command/app"
@@ -32,7 +33,15 @@ func init() {
 	}
 	appCloneCommand.Flags().StringVarP(&targetDir, "dir", "d", "", "Directory to clone into. Defaults to current directory")
 
-	appCommand.AddCommand(appInitCommand, appCloneCommand)
+	appDeleteCmd := &cobra.Command{
+		Use:   "delete",
+		Short: "Deletes an app from the selected uesio server",
+		Long:  "Deletes an app, and all data in all workspaces in the specified app",
+		Run:   appDelete,
+	}
+	appDeleteCmd.Flags().StringVarP(&name, "name", "n", "", "Name of app to delete")
+
+	appCommand.AddCommand(appInitCommand, appCloneCommand, appDeleteCmd)
 
 	rootCmd.AddCommand(appCommand)
 
@@ -50,6 +59,15 @@ func appClone(cmd *cobra.Command, args []string) {
 	err := app.AppClone(targetDir)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		return
+	}
+}
+
+func appDelete(cmd *cobra.Command, args []string) {
+	err := app.Delete(name)
+	if err != nil {
+		fmt.Println("Error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 }
