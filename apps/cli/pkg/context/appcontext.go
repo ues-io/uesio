@@ -8,6 +8,12 @@ type AppContext struct {
 	Site      string
 }
 
+func NewAppContext(appName string) *AppContext {
+	return &AppContext{
+		App: appName,
+	}
+}
+
 func NewWorkspaceContext(appName, workspaceName string) *AppContext {
 	return &AppContext{
 		App:       appName,
