@@ -281,7 +281,6 @@ function add(context: Context, value: Parameters<typeof css>[0]) {
   activeStyles.twind(css(value))
 }
 
-
 // This is a slight hack, but necessary for the moment.
 // There is an assumption that utility components without
 // a variant specified should use a variant called "default"
@@ -289,7 +288,9 @@ function add(context: Context, value: Parameters<typeof css>[0]) {
 // See:
 //   https://github.com/ues-io/uesio/issues/4632
 //   https://github.com/ues-io/uesio/issues/4433
-function getDefaultVariant(defaultVariantComponentType?: MetadataKey): MetadataKey | undefined {
+function getDefaultVariant(
+  defaultVariantComponentType?: MetadataKey,
+): MetadataKey | undefined {
   if (!defaultVariantComponentType) return undefined
 
   const [namespace] = parseKey(defaultVariantComponentType)
