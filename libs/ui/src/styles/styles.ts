@@ -281,23 +281,30 @@ function add(context: Context, value: Parameters<typeof css>[0]) {
   activeStyles.twind(css(value))
 }
 
+
+// This is a slight hack, but necessary for the moment.
+// There is an assumption that utility components without
+// a variant specified should use a variant called "default"
+// in the namespace of the associated defaultVariantComponentType.
+// See:
+//   https://github.com/ues-io/uesio/issues/4632
+//   https://github.com/ues-io/uesio/issues/4433
+function getDefaultVariant(defaultVariantComponentType?: MetadataKey): MetadataKey | undefined {
+  if (!defaultVariantComponentType) return undefined
+
+  const [namespace] = parseKey(defaultVariantComponentType)
+  return `${namespace}.default`
+}
+
 function useUtilityStyleTokens<K extends string>(
   defaults: Record<K, Class[]>,
   props: UtilityProps,
   defaultVariantComponentType?: MetadataKey,
 ) {
-  // This is a slight hack, but necessary for the moment.
-  // There is an assumption that utility components without
-  // a variant specified should use a variant called "default"
-  // in the namespace of the associated defaultVariantComponentType.
-  let defaultVariant = ""
-  if (defaultVariantComponentType) {
-    const [namespace] = parseKey(defaultVariantComponentType)
-    defaultVariant = `${namespace}.default`
-  }
   const variantTokens = getVariantTokens(
     defaultVariantComponentType,
-    props.variant || defaultVariant,
+    // TODO: Eliminate call to getDefaultVariant when https://github.com/ues-io/uesio/issues/4632 is addressed
+    props.variant || getDefaultVariant(defaultVariantComponentType),
     props.context,
   )
   const inlineTokens = props.styleTokens
