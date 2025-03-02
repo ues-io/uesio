@@ -525,7 +525,10 @@ class Context {
     componentType: MetadataKey,
     variantName: MetadataKey,
   ) => {
-    const [component, variant] = parseVariantName(variantName, componentType)
+    const parsed = parseVariantName(variantName, componentType)
+    if (!parsed) return undefined
+
+    const [component, variant] = parsed
     return componentVariantSelectors.selectById(
       getCurrentState(),
       `${component}:${variant}`,

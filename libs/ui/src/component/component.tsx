@@ -13,7 +13,6 @@ import {
 } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../utilities/notfound"
-import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../utilities/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
@@ -265,23 +264,37 @@ Component.displayName = "Component"
 const parseVariantName = (
   fullName: MetadataKey | undefined,
   key: MetadataKey,
-): [MetadataKey, MetadataKey] => {
-  const parts = fullName?.split(":")
-  if (parts?.length === 2) {
+): [MetadataKey, MetadataKey] | undefined => {
+  return fullName
+    ? parseVariantNameFromFullName(fullName, key)
+    : parseVariantNameFromKey(key)
+}
+
+const parseVariantNameFromFullName = (
+  fullName: MetadataKey,
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
+  const parts = fullName.split(":")
+  if (parts.length === 2 && parts[0] && parts[1]) {
     return [parts[0] as MetadataKey, parts[1] as MetadataKey]
   }
-  if (parts?.length === 1) {
+  if (parts.length === 1 && parts[0]) {
     return [key, parts[0] as MetadataKey]
   }
-  const [keyNamespace] = parseKey(key)
+
+  // fullName could be empty or one of the parts could be empty
+  return undefined
+}
+
+const parseVariantNameFromKey = (
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
   const componentTypeDef = getComponentType(key)
   if (!componentTypeDef || !componentTypeDef.defaultVariant) {
-    // This is bad and should go away at some point. I'm just not sure
-    // how many components are relying on this functionality.
-    return [key, `${keyNamespace}.default` as MetadataKey]
+    return undefined
   }
 
-  return [key, componentTypeDef.defaultVariant]
+  return parseVariantNameFromFullName(componentTypeDef.defaultVariant, key)
 }
 
 // This is bad and should eventually go away when we do proper typing

@@ -8,6 +8,7 @@ icon: format_list_numbered
 discoverable: true
 defaultDefinition:
   markdown: markdown Goes Here
+defaultVariant: uesio/io.markdownfield:uesio/io.default
 properties:
   - name: file
     type: METADATA

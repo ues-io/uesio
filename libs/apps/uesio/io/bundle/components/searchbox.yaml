@@ -36,5 +36,6 @@ sections:
   - type: DISPLAY
 variants:
   - uesio/io.field:uesio/io.search
+defaultVariant: uesio/io.default
 styleRegions:
   root:
