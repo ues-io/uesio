@@ -32,4 +32,8 @@ description: A section
 sections:
   - type: HOME
     properties:
+  - type: STYLES
   - type: DISPLAY
+styleRegions:
+  root:
+  inner:

@@ -56,4 +56,12 @@ description: A hero section
 sections:
   - type: HOME
     properties:
+  - type: STYLES
   - type: DISPLAY
+styleRegions:
+  sectionRoot:
+  root:
+  category:
+  title:
+  subtitle:
+  actions:

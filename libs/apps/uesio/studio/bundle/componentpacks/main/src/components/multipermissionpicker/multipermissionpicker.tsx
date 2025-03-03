@@ -184,6 +184,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
     <DynamicTable
       id={dynamicTableId}
       context={context.deleteWorkspace()}
+      variant="uesio/appkit.main"
       path={path}
       mode={mode}
       fields={tableFields.reduce(
