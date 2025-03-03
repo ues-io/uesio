@@ -92,7 +92,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].error.message" == "failed to encode args[2]: unable to encode 123 into text format for text (OID 25): cannot find encode plan"
 
 # Operator: EQ | valueSource: VALUE | Self reference (ID-001 --> ID-001)
 # entry 5

@@ -63,13 +63,7 @@ const getWireRequest = (context: Context, wires: PlainWire[]): LoadRequest[] =>
             }
             const { type, selectlist } = md
             if (type === "SELECT" || type === "MULTISELECT") {
-              return {
-                ...f,
-                viewOnlyMetadata: {
-                  type,
-                  selectlist,
-                },
-              }
+              return { ...f, viewOnlyMetadata: { type, selectlist } }
             } else {
               return f
             }
@@ -221,7 +215,7 @@ export default async (
     (wire) =>
       ({
         ...wire,
-        error: addErrorState(wire.errors, "Invalid Wire Definition"),
+        errors: addErrorState(wire.errors, "Invalid Wire Definition"),
         isLoading: false,
       }) as PlainWire,
   )
