@@ -29,6 +29,12 @@ func Delete(appFullName string) error {
 		appFullName = app.FullName
 	}
 
+	// Verify that the requested app exists
+	appExists := wire.DoesAppExist(appFullName)
+	if !appExists {
+		return errors.New("the requested app does not exist: " + appFullName)
+	}
+
 	// Delete the app
 	success, err := wire.DeleteApp(appFullName)
 	if err != nil {
