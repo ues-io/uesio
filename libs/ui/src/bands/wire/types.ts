@@ -16,10 +16,6 @@ type OrderState = {
   desc?: boolean
 }
 
-type LoadException = {
-  message: string
-}
-
 type PlainWire = {
   batchid?: string
   batchnumber?: number
@@ -30,7 +26,6 @@ type PlainWire = {
   data: Record<string, PlainWireRecord>
   deletes: Record<string, PlainWireRecord>
   errors?: Record<string, SaveError[]>
-  error?: LoadException
   more?: boolean
   name: string
   original: Record<string, PlainWireRecord>

@@ -71,8 +71,8 @@ func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess
 		return err
 	}
 
-	if op.Error != nil {
-		return op.Error
+	if op.Errors != nil {
+		return op.Errors[0]
 	}
 
 	if options.LoadAll && op.HasMoreBatches {

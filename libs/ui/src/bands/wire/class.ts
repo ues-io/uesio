@@ -74,22 +74,9 @@ class Wire {
 
   getErrors = () => this.source?.errors
 
-  getErrorArray = () => {
-    const errors = []
-    if (this.source?.errors) {
-      Object.values(this.source.errors).forEach((errgroup) => {
-        errors.push(...(Array.isArray(errgroup) ? errgroup : [errgroup]))
-      })
-    }
-    if (this.source?.error) {
-      errors.push(
-        ...(Array.isArray(this.source.error)
-          ? this.source.error
-          : [this.source.error]),
-      )
-    }
-    return errors
-  }
+  getErrorArray = () =>
+    this.source?.errors &&
+    Object.values(this.source.errors).flatMap((errgroup) => errgroup)
 
   getViewId = () => this.source?.view
   getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
