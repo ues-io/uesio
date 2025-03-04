@@ -65,14 +65,11 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 }
 
 func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
-	if _, err := Load([]*wire.LoadOp{op}, session, &LoadOptions{
+	err := LoadWithError(op, session, &LoadOptions{
 		Connection: options.Connection,
-	}); err != nil {
+	})
+	if err != nil {
 		return err
-	}
-
-	if op.Errors != nil {
-		return (*op.Errors)[0]
 	}
 
 	if options.LoadAll && op.HasMoreBatches {

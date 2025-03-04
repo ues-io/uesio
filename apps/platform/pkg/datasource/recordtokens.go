@@ -26,7 +26,7 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 func resetTokenBatches(loadOp *wire.LoadOp, session *sess.Session) error {
 
 	for {
-		_, err := Load([]*wire.LoadOp{loadOp}, session, nil)
+		err := LoadWithError(loadOp, session, nil)
 		if err != nil {
 			return err
 		}

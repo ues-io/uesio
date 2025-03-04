@@ -59,18 +59,13 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 		return errors.New("Cannot process that file type: " + spec.FileType)
 	}
 
-	_, err = datasource.Load([]*wire.LoadOp{{
+	return datasource.LoadWithError(&wire.LoadOp{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,
 		Fields:         fields,
 		Query:          true,
 		LoadAll:        true,
-	}}, session, nil)
-	if err != nil {
-		return err
-	}
-
-	return err
+	}, session, nil)
 
 }

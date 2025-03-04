@@ -109,7 +109,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 		Params:         params,
 	}
 
-	_, err := datasource.Load([]*wire.LoadOp{op}, session, nil)
+	err := datasource.LoadWithError(op, session, nil)
 
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("Error querying collection records to delete: "+err.Error()))

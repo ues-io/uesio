@@ -67,6 +67,17 @@ func addDefaultFieldsAndOrder(op *wire.LoadOp) {
 	}
 }
 
+func LoadWithError(op *wire.LoadOp, session *sess.Session, options *LoadOptions) error {
+	if _, err := Load([]*wire.LoadOp{op}, session, options); err != nil {
+		return err
+	}
+
+	if op.Errors != nil {
+		return (*op.Errors)[0]
+	}
+	return nil
+}
+
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}

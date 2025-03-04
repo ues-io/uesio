@@ -58,7 +58,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connectio
 		LoadAll:        request.LoadAll,
 	}
 
-	_, err := datasource.Load([]*wire.LoadOp{op}, session, &datasource.LoadOptions{
+	err := datasource.LoadWithError(op, session, &datasource.LoadOptions{
 		Connection: connection,
 		Metadata:   metadata,
 	})
