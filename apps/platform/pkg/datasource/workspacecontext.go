@@ -118,26 +118,24 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 	results := &wire.Collection{}
 
 	// Lookup to see if this user wants to impersonate a profile.
-	_, err := Load([]*wire.LoadOp{
-		{
-			WireName:       "CheckImpersonationWorkspaceContext",
-			CollectionName: "uesio/studio.workspaceuser",
-			Collection:     results,
-			Query:          true,
-			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/studio.profile",
-				},
+	err := LoadWithError(&wire.LoadOp{
+		WireName:       "CheckImpersonationWorkspaceContext",
+		CollectionName: "uesio/studio.workspaceuser",
+		Collection:     results,
+		Query:          true,
+		Fields: []wire.LoadRequestField{
+			{
+				ID: "uesio/studio.profile",
 			},
-			Conditions: []wire.LoadRequestCondition{
-				{
-					Field: "uesio/studio.user",
-					Value: session.GetSiteUser().ID,
-				},
-				{
-					Field: "uesio/studio.workspace",
-					Value: workspace.ID,
-				},
+		},
+		Conditions: []wire.LoadRequestCondition{
+			{
+				Field: "uesio/studio.user",
+				Value: session.GetSiteUser().ID,
+			},
+			{
+				Field: "uesio/studio.workspace",
+				Value: workspace.ID,
 			},
 		},
 	}, session.RemoveWorkspaceContext(), &LoadOptions{

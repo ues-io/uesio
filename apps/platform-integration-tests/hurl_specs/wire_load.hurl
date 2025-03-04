@@ -373,3 +373,38 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Lathe:Franklin"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "Soitoux:Franklin"
 # Verify that metadata for the order fields was loaded and is available in the wire
 jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_population'].type" == "NUMBER"
+
+
+# Test two wire loads one should return en error the other should load normally
+POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "batchsize":2,
+            "fields": [
+                {
+                    "id": "uesio/tests.genus"
+                }
+            ]
+        },
+        {
+            "collection":"uesio/tests.animal",
+            "query":true,
+            "batchsize":2,
+            "fields": [
+                {
+                    "id": "uesio/tests.non_existing_field"
+                }
+            ]
+        }
+    ]
+}
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" count == 2
+jsonpath "$.wires[0].errors[0].message" not exists
+jsonpath "$.wires[1].data[*]" isEmpty
+jsonpath "$.wires[1].errors[0].message" == "No metadata provided for field: uesio/tests.non_existing_field in collection: animal"

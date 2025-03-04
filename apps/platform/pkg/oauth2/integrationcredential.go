@@ -159,8 +159,8 @@ func GetIntegrationCredential(
 			},
 		},
 	}
-	if _, err := datasource.Load(
-		[]*wire.LoadOp{fetchIntegrationCredentialOp},
+	if err := datasource.LoadWithError(
+		fetchIntegrationCredentialOp,
 		coreSession,
 		&datasource.LoadOptions{
 			Connection: connection,

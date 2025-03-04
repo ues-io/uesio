@@ -51,9 +51,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 403
+HTTP 200
 [Asserts]
-body == "Your profile has no access to the uesio/core.secretstorevalue collection\n"
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors[0].message" == "Your profile has no access to the uesio/core.secretstorevalue collection"
 
 # Invoke a bot that runs an integration action that fetches a secret which we SHOULD have access to
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/secret_access_tester

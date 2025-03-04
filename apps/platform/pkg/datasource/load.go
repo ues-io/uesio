@@ -67,6 +67,17 @@ func addDefaultFieldsAndOrder(op *wire.LoadOp) {
 	}
 }
 
+func LoadWithError(op *wire.LoadOp, session *sess.Session, options *LoadOptions) error {
+	if _, err := Load([]*wire.LoadOp{op}, session, options); err != nil {
+		return err
+	}
+
+	if op.Errors != nil {
+		return (*op.Errors)[0]
+	}
+	return nil
+}
+
 func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
@@ -92,7 +103,8 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 		err := getOpMetadata(op, ops, metadataResponse, session, connection)
 		if err != nil {
-			return nil, err
+			op.AddError(exceptions.NewLoadExceptionForError(err))
+			continue
 		}
 
 		addDefaultFieldsAndOrder(op)
@@ -103,7 +115,8 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
-			return nil, err
+			op.AddError(exceptions.NewLoadExceptionForError(err))
+			continue
 		}
 		if opNeedsRecordLevelAccessCheck(op, collectionMetadata, userPerms, session) {
 			opsNeedRecordLevelAccessCheck = true
@@ -122,7 +135,8 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	for _, op := range opsToQuery {
 		err := queryOp(op, opsToQuery, metadataResponse, session, connection)
 		if err != nil {
-			return nil, err
+			op.AddError(exceptions.NewLoadExceptionForError(err))
+			continue
 		}
 	}
 

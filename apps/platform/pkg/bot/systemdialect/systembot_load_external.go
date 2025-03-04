@@ -199,7 +199,7 @@ func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, 
 
 	loadOp.Collection = &wire.Collection{}
 
-	_, err = datasource.Load([]*wire.LoadOp{loadOp}, publicSession, nil)
+	err = datasource.LoadWithError(loadOp, publicSession, nil)
 	if err != nil {
 		return err
 	}

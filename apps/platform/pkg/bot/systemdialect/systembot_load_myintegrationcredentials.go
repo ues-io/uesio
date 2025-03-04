@@ -181,7 +181,7 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 		Params:  params,
 	}
 
-	_, err = datasource.Load([]*wire.LoadOp{newOp}, versionSession, &datasource.LoadOptions{
+	err = datasource.LoadWithError(newOp, versionSession, &datasource.LoadOptions{
 		Connection: connection,
 	})
 	if err != nil {

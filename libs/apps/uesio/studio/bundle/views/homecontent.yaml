@@ -145,6 +145,12 @@ definition:
                                 wire: recentdocs
                                 mode: READ
                                 uesio.variant: uesio/appkit.main
+                                emptyState:
+                                  - uesio/io.emptystate:
+                                      uesio.variant: uesio/studio.main
+                                      title: Such Empty
+                                      subtitle: No docs available.
+                                      icon: school
                                 components:
                                   - uesio/io.tile:
                                       uesio.variant: uesio/appkit.card

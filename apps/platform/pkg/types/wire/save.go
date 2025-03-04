@@ -21,7 +21,7 @@ type SaveOp struct {
 	Updates        ChangeItems
 	Deletes        ChangeItems
 	Options        *SaveOptions
-	Errors         *[]exceptions.SaveException
+	Errors         *[]*exceptions.SaveException
 	InsertCount    int
 	Params         map[string]interface{}
 
@@ -42,9 +42,9 @@ func (op *SaveOp) AttachIntegrationConnection(ic *IntegrationConnection) {
 
 func (op *SaveOp) AddError(saveError *exceptions.SaveException) {
 	if op.Errors == nil {
-		op.Errors = &[]exceptions.SaveException{}
+		op.Errors = &[]*exceptions.SaveException{}
 	}
-	*op.Errors = append(*op.Errors, *saveError)
+	*op.Errors = append(*op.Errors, saveError)
 }
 
 func (op *SaveOp) HasErrors() bool {
