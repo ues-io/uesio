@@ -99,7 +99,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].error.message" == "Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection."
+jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection."
 
 # Verify that I can still load routes and their dependencies
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
@@ -143,7 +143,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].error.message" == "Profile uesio/tests.public does not have read access to the uesio/tests.account collection."
+jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not have read access to the uesio/tests.account collection."
 
 
 # But I should be able to see animal records

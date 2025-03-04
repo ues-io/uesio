@@ -30,7 +30,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].error.message" == "Invalid Condition, param 'genus' was not provided"
+jsonpath "$.wires[0].errors[0].message" == "Invalid Condition, param 'genus' was not provided"
 
 # Test again a wire load with novaluebehavor property set to deactivate on the condition
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

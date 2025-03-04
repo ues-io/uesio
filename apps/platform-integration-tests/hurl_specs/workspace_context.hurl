@@ -89,7 +89,7 @@ GET https://{{host}}:{{port}}/site/routes/path/uesio/studio/app/uesio/tests/work
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire[0].error.message" == "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it."
+jsonpath "$.dependencies.wire[0].errors[0].message" == "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it."
 
 # Try get config values for the dev workspace
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/configvalues

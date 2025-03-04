@@ -34,7 +34,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].error.message" == "failed to encode args[2]: unable to encode 2.023051e+07 into text format for text (OID 25): cannot find encode plan"
+jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to encode 2.023051e+07 into text format for text (OID 25): cannot find encode plan"
 
 # Operator: EQ | valueSource: VALUE
 # entry 3

@@ -182,7 +182,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Check for before save errors here
 	if op.HasErrors() {
-		return op.Errors[0]
+		return (*op.Errors)[0]
 	}
 
 	// Fetch References again.
@@ -211,7 +211,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 		// if we're ignoring validation errors, and all the errors are validation errors,
 		if op.Options != nil && op.Options.IgnoreValidationErrors {
 			unSkippedErrors := []*exceptions.SaveException{}
-			for _, err := range op.Errors {
+			for _, err := range *op.Errors {
 
 				recordID := err.RecordID
 				foundRecord := false
@@ -230,10 +230,10 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 			if len(unSkippedErrors) > 0 {
 				return unSkippedErrors[0]
 			} else {
-				op.Errors = unSkippedErrors
+				op.Errors = &unSkippedErrors
 			}
 		} else {
-			return op.Errors[0]
+			return (*op.Errors)[0]
 		}
 	}
 
@@ -275,7 +275,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 	// Check for after save errors here
 	if op.HasErrors() {
-		return op.Errors[0]
+		return (*op.Errors)[0]
 	}
 
 	return nil

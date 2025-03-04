@@ -32,7 +32,7 @@ func (ol *OpList) getCurrentIndex() int {
 			Updates:        wire.ChangeItems{},
 			Deletes:        wire.ChangeItems{},
 			Options:        ol.Request.Options,
-			Errors:         ol.Request.Errors,
+			Errors:         &ol.Request.Errors,
 			Params:         ol.Request.Params,
 		})
 	}
