@@ -613,10 +613,10 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 
 ## Managing Dependencies
 
-1. We're pinning monaco to version 0.50.0 for now because of this [bug](https://github.com/microsoft/monaco-editor/issues/4654).  
+1. We're pinning monaco to version 0.50.0 for now because of this [bug](https://github.com/microsoft/monaco-editor/issues/4654).
    - The issue only seems to occur when running the Cypress tests (haven't been able to reproduce in a live browser when using builder) and only [builder.cy.ts](./apps/platform-e2e/cypress/e2e/builder.cy.ts) tests fail (believe this is the only test that uses the code panel but not 100% sure).
    - Given the issue is intermittent, it is likely some type of race condition either in the browser and/or in cypress.
-   - Only experienced the failure on @humandad machine (2019 Intel-based MacBook Pro)which does seem to run perf tests slower than other machines so possibly the slower execution/latency is the key to encountering the issue.  
+   - Only experienced the failure on @humandad machine (2019 Intel-based MacBook Pro)which does seem to run perf tests slower than other machines so possibly the slower execution/latency is the key to encountering the issue.
    - Need to continue to monitor the monaco-editor issue along with eventually updating to cypress 14 when nx supports it (see #5 below).
 2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.
 3. When running `npm install` there are errors related to `inflight@1.0.6`, `abab@2.0.6`, `glob@7.2.3`, `domexception@4.0.0` that all are dependencies of jest and its related tooling. There is a jest@next package (currently v30.0.0-alpha.6) that should address most (and hopefully) all of these. See:
