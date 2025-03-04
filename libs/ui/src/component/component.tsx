@@ -13,7 +13,6 @@ import {
 } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../utilities/notfound"
-import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../utilities/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
@@ -31,6 +30,7 @@ import {
 import { COMPONENT_CONTEXT, DISPLAY_CONDITIONS } from "../componentexports"
 import Slot, { DefaultSlotName } from "../utilities/slot"
 import { FieldValue } from "../bands/wirerecord/types"
+import type { Component as ComponentDef } from "../definition/component"
 
 // A cache of full variant definitions, where all variant extensions have been resolved
 // NOTE: This cache will be persisted across all route navigations, and has no upper bound.
@@ -64,15 +64,26 @@ function getDefinitionFromVariant(
 function mergeContextVariants(
   definition: DefinitionMap | undefined,
   componentType: MetadataKey,
-  isDeclarative: boolean,
+  componentTypeDef: ComponentDef,
   context: Context,
 ): DefinitionMap | undefined {
   if (!definition) return definition
-  const variantName = definition[component.STYLE_VARIANT] as MetadataKey
+  let variantName = definition[component.STYLE_VARIANT] as MetadataKey
+  if (!variantName && componentTypeDef?.defaultVariant) {
+    // update the definition with the default variant to ensure
+    // downstream usage can rely on the definition
+    variantName = componentTypeDef.defaultVariant
+    definition = {
+      ...definition,
+      [component.STYLE_VARIANT]: variantName,
+    }
+  }
   const variant = context.getComponentVariant(componentType, variantName)
   const variantDefinition = getDefinitionFromVariant(variant, context)
   return mergeDefinitionMaps(
-    isDeclarative ? variantDefinition : removeStylesNode(variantDefinition),
+    componentTypeDef?.type === Declarative
+      ? variantDefinition
+      : removeStylesNode(variantDefinition),
     definition,
     undefined,
   )
@@ -220,25 +231,23 @@ const Component: UC<DefinitionMap> = (props) => {
   }
   if (!componentType) return <NotFound {...props} />
 
-  let Loader = getRuntimeLoader(componentType) as UC | undefined
-
   const componentTypeDef = getComponentType(componentType)
-  const isDeclarative = componentTypeDef?.type === Declarative
-
-  if (!Loader) {
-    // Check if this is a declarative component, and if so use the declarative loader
-    if (isDeclarative) {
-      Loader = DeclarativeComponent
-    }
-  }
+  const Loader: UC | undefined =
+    componentTypeDef?.type === Declarative
+      ? DeclarativeComponent
+      : getRuntimeLoader(componentType)
 
   if (!Loader) {
     return <NotFound {...props} />
   }
 
   const mergedDefinition = addDefaultPropertyAndSlotValues(
-    mergeContextVariants(definition, componentType, isDeclarative, context) ||
-      {},
+    mergeContextVariants(
+      definition,
+      componentType,
+      componentTypeDef,
+      context,
+    ) || {},
     componentTypeDef?.properties,
     componentTypeDef?.slots,
     componentType,
@@ -265,23 +274,41 @@ Component.displayName = "Component"
 const parseVariantName = (
   fullName: MetadataKey | undefined,
   key: MetadataKey,
-): [MetadataKey, MetadataKey] => {
-  const parts = fullName?.split(":")
-  if (parts?.length === 2) {
+): [MetadataKey, MetadataKey] | undefined => {
+  return fullName
+    ? parseVariantNameFromFullName(fullName, key)
+    : parseVariantNameFromKey(key)
+}
+
+const parseVariantNameFromFullName = (
+  fullName: MetadataKey,
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
+  const parts = fullName.split(":")
+  if (parts.length === 2 && parts[0] && parts[1]) {
     return [parts[0] as MetadataKey, parts[1] as MetadataKey]
   }
-  if (parts?.length === 1) {
+  if (parts.length === 1 && parts[0]) {
     return [key, parts[0] as MetadataKey]
   }
-  const [keyNamespace] = parseKey(key)
+
+  // fullName could be empty or one of the parts could be empty
+  console.error(`Unable to parse variant name '${fullName}' for key '${key}'`)
+  return undefined
+}
+
+const parseVariantNameFromKey = (
+  key: MetadataKey,
+): [MetadataKey, MetadataKey] | undefined => {
   const componentTypeDef = getComponentType(key)
-  if (!componentTypeDef || !componentTypeDef.defaultVariant) {
-    // This is bad and should go away at some point. I'm just not sure
-    // how many components are relying on this functionality.
-    return [key, `${keyNamespace}.default` as MetadataKey]
+  if (!componentTypeDef) {
+    console.error(`Unable to find component type definition for key '${key}'`)
+    return undefined
   }
 
-  return [key, componentTypeDef.defaultVariant]
+  return !componentTypeDef.defaultVariant
+    ? undefined
+    : parseVariantNameFromFullName(componentTypeDef.defaultVariant, key)
 }
 
 // This is bad and should eventually go away when we do proper typing
