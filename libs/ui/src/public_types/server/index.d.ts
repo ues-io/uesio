@@ -145,10 +145,6 @@ interface HttpApi {
   ) => BotHttpResponse<ResponseBody>
 }
 
-interface SaveOptionsApi {
-  upsert: boolean
-}
-
 interface IntegrationApi {
   getBaseURL(): string | undefined
 }

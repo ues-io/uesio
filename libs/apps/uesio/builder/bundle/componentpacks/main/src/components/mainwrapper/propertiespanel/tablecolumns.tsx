@@ -120,12 +120,9 @@ const TableColumns: definition.UC = (props) => {
   const { context } = props
 
   const ListPropertyUtility = component.getUtility("uesio/builder.listproperty")
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
   const anchorEl = useRef<HTMLDivElement>(null)
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
   const [showPopper, setShowPopper] = useState(false)
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- waiting on release of https://github.com/facebook/react/pull/31720
   let selectedPath = useSelectedPath(context)
   let localPath
   let tempPath = selectedPath
