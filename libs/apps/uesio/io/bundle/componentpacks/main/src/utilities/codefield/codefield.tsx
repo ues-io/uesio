@@ -171,6 +171,12 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
         value={value}
         loading={loadingNode}
         options={{
+          stickyScroll: {
+            // Disabling for now because of a bug in monaco editor 0.52.2
+            // where we get an intermittent "illegal value for lineNumber"
+            // error with this enabled.
+            enabled: false,
+          },
           scrollBeyondLastLine: false,
           automaticLayout: true,
           readOnly: mode === "READ",
