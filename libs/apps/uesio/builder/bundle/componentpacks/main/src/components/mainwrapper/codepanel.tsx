@@ -46,7 +46,7 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 
 const StyleDefaults = Object.freeze({
   lineDecoration: ["bg-slate-100", "-z-10"],
-  root: ["h-[300px]", "border-t-8", "border-panel_divider_color"],
+  root: ["h-full"],
 })
 
 const CodePanel: definition.UtilityComponent = (props) => {
