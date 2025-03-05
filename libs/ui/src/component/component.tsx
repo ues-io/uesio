@@ -37,6 +37,35 @@ import type { Component as ComponentDef } from "../definition/component"
 // Consider adding a cache eviction policy if this becomes a problem.
 const expandedVariantDefinitionCache = {} as Record<string, DefinitionMap>
 
+function getVariantDefinition(
+  componentType: MetadataKey | undefined,
+  componentTypeDef: ComponentDef | undefined,
+  variantKey: MetadataKey | undefined,
+  context: Context,
+) {
+  if (!componentType) return undefined
+  let parsed = parseVariantName(variantKey, componentType)
+
+  // If we could not successfully parse our variant key/componentType combination,
+  // check to see if we have a default variant provided on the componentType definition.
+  if (!parsed && !componentTypeDef?.defaultVariant) return undefined
+
+  // If we do have a default variant, try to use that.
+  if (!parsed && componentTypeDef) {
+    parsed = parseVariantName(componentTypeDef.defaultVariant, componentType)
+  }
+
+  // If we still don't have a valid variant, give up and don't get the variant definition.
+  if (!parsed) return undefined
+  const [parsedComponentType, parsedVariant] = parsed
+  const variant = context.getComponentVariant(
+    parsedComponentType,
+    parsedVariant,
+  )
+  if (!variant) return undefined
+  return getDefinitionFromVariant(variant, context)
+}
+
 function getDefinitionFromVariant(
   variant: ComponentVariant | undefined,
   context: Context,
@@ -48,12 +77,14 @@ function getDefinitionFromVariant(
   const variantKey = `${variant.component}:${getKey(variant)}`
   const cachedDef = expandedVariantDefinitionCache[variantKey]
   if (cachedDef) return cachedDef
+
+  const parsed = parseVariantName(variant.extends, variant.component)
+  if (!parsed) return variant.definition
+  const [extendsComponentType, extendsVariant] = parsed
+
   return (expandedVariantDefinitionCache[variantKey] = mergeDefinitionMaps(
     getDefinitionFromVariant(
-      context.getComponentVariant(
-        variant.component,
-        variant.extends as MetadataKey,
-      ),
+      context.getComponentVariant(extendsComponentType, extendsVariant),
       context,
     ),
     variant.definition,
@@ -78,10 +109,16 @@ function mergeContextVariants(
       [component.STYLE_VARIANT]: variantName,
     }
   }
-  const variant = context.getComponentVariant(componentType, variantName)
-  const variantDefinition = getDefinitionFromVariant(variant, context)
+  if (!componentTypeDef) return definition
+  const variantDefinition = getVariantDefinition(
+    componentType,
+    componentTypeDef,
+    variantName,
+    context,
+  )
+  if (!variantDefinition) return definition
   return mergeDefinitionMaps(
-    componentTypeDef?.type === Declarative
+    componentTypeDef.type === Declarative
       ? variantDefinition
       : removeStylesNode(variantDefinition),
     definition,
@@ -273,42 +310,22 @@ Component.displayName = "Component"
 
 const parseVariantName = (
   fullName: MetadataKey | undefined,
-  key: MetadataKey,
+  componentType: MetadataKey,
 ): [MetadataKey, MetadataKey] | undefined => {
-  return fullName
-    ? parseVariantNameFromFullName(fullName, key)
-    : parseVariantNameFromKey(key)
-}
-
-const parseVariantNameFromFullName = (
-  fullName: MetadataKey,
-  key: MetadataKey,
-): [MetadataKey, MetadataKey] | undefined => {
+  if (!fullName) return undefined
   const parts = fullName.split(":")
   if (parts.length === 2 && parts[0] && parts[1]) {
     return [parts[0] as MetadataKey, parts[1] as MetadataKey]
   }
   if (parts.length === 1 && parts[0]) {
-    return [key, parts[0] as MetadataKey]
+    return [componentType, parts[0] as MetadataKey]
   }
 
   // fullName could be empty or one of the parts could be empty
-  console.error(`Unable to parse variant name '${fullName}' for key '${key}'`)
+  console.error(
+    `Unable to parse variant name '${fullName}' for componentType '${componentType}'`,
+  )
   return undefined
-}
-
-const parseVariantNameFromKey = (
-  key: MetadataKey,
-): [MetadataKey, MetadataKey] | undefined => {
-  const componentTypeDef = getComponentType(key)
-  if (!componentTypeDef) {
-    console.error(`Unable to find component type definition for key '${key}'`)
-    return undefined
-  }
-
-  return !componentTypeDef.defaultVariant
-    ? undefined
-    : parseVariantNameFromFullName(componentTypeDef.defaultVariant, key)
 }
 
 // This is bad and should eventually go away when we do proper typing
@@ -325,7 +342,7 @@ export {
   addDefaultPropertyAndSlotValues,
   Component,
   DECLARATIVE_COMPONENT,
-  getDefinitionFromVariant,
+  getVariantDefinition,
   getUtility,
   parseVariantName,
   resolveDeclarativeComponentDefinition,
