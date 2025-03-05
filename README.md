@@ -11,7 +11,7 @@ Uesio is a **low-code** application development platform.
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
 - Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
-- Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the version used in the repo): `nvm install`
+- Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the [version](./.nvmrc) used in the repo): `nvm install`
 - Install [Go](https://golang.org/dl/)
 - Install the following brew packages:
   - `hurl` (for integration tests): `brew install hurl`
