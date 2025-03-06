@@ -25,13 +25,19 @@ const AdjustableHeightArea: definition.UtilityComponent<Props> = (props) => {
   )
   const startY = useRef(0)
   const startHeight = useRef(0)
+  const abortController = useRef<AbortController>()
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
+    abortController.current = new AbortController()
     startY.current = e.clientY
     startHeight.current = height || INITIAL_HEIGHT
-    document.addEventListener("mousemove", handleMouseMove)
-    document.addEventListener("mouseup", handleMouseUp)
+    document.addEventListener("mousemove", handleMouseMove, {
+      signal: abortController.current.signal,
+    })
+    document.addEventListener("mouseup", handleMouseUp, {
+      signal: abortController.current.signal,
+    })
   }
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -42,8 +48,7 @@ const AdjustableHeightArea: definition.UtilityComponent<Props> = (props) => {
 
   const handleMouseUp = (e: MouseEvent) => {
     e.preventDefault()
-    document.removeEventListener("mousemove", handleMouseMove)
-    document.removeEventListener("mouseup", handleMouseUp)
+    abortController.current?.abort()
   }
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
