@@ -51,7 +51,7 @@ function getVariantDefinition(
   if (!parsed && !componentTypeDef?.defaultVariant) return undefined
 
   // If we do have a default variant, try to use that.
-  if (!parsed && componentTypeDef) {
+  if (!parsed && componentTypeDef?.defaultVariant) {
     parsed = parseVariantName(componentTypeDef.defaultVariant, componentType)
   }
 
