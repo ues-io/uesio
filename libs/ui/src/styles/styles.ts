@@ -2,10 +2,7 @@ import { PaletteValue, ThemeState } from "../definition/theme"
 import { BaseProps, UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
-import {
-  getDefinitionFromVariant,
-  parseVariantName,
-} from "../component/component"
+import { getVariantDefinition } from "../component/component"
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
@@ -25,6 +22,7 @@ import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { isStandardColorName } from "./colors"
 import { parseKey } from "../component/path"
+import { getComponentType } from "../hooks/componentapi"
 
 const processThemeColor = (
   themeFunc: ThemeFunction,
@@ -235,23 +233,6 @@ function useStyleTokens<K extends string>(
   )
 }
 
-function getVariantDefinition(
-  componentType: MetadataKey | undefined,
-  variantKey: MetadataKey | undefined,
-  context: Context,
-) {
-  if (!componentType) return undefined
-
-  const parsed = parseVariantName(variantKey, componentType)
-
-  if (!parsed) return undefined
-
-  const [variantComponentType, variantName] = parsed
-  const variant = context.getComponentVariant(variantComponentType, variantName)
-  if (!variant) return undefined
-  return getDefinitionFromVariant(variant, context)
-}
-
 function getVariantTokens(
   componentType: MetadataKey | undefined,
   variantKey: MetadataKey | undefined,
@@ -259,6 +240,7 @@ function getVariantTokens(
 ) {
   const variantDefinition = getVariantDefinition(
     componentType,
+    componentType ? getComponentType(componentType) : undefined,
     variantKey,
     context,
   )
