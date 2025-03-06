@@ -58,6 +58,7 @@ definition:
     panel_header_title_color: slate-900
     panel_header_subtitle_color: slate-800
     panel_divider_color: slate-200
+    panel_divider_hover_color: rose-300
     panel_action_button_bg_color: slate-100
     panel_action_button_border_color: slate-300
     panel_action_button_text_color: slate-700

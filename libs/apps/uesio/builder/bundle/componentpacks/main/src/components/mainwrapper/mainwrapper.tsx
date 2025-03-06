@@ -1,6 +1,10 @@
 import { definition, hooks, component, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
-import { useBuildMode, useBuilderState } from "../../api/stateapi"
+import {
+  useBuildMode,
+  useBuilderState,
+  getBuilderComponentId,
+} from "../../api/stateapi"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import IndexPanel from "./indexpanel"
@@ -9,6 +13,7 @@ import CodePanel from "./codepanel"
 import { toggleBuildMode } from "../../helpers/buildmode"
 import BuildBar from "./buildbar/buildbar"
 import { ReactNode } from "react"
+import AdjustableHeightArea from "../../utilities/adjustableheightarea/adjustableheightarea"
 
 const StyleDefaults = Object.freeze({
   root: ["h-full", "grid-cols-[1fr]", "auto-cols-auto", "grid-rows-[100%]"],
@@ -132,7 +137,14 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
             </Canvas>
             <BuildBar context={builderContext} />
           </div>
-          {showCode && <CodePanel context={builderContext} />}
+          {showCode && (
+            <AdjustableHeightArea
+              componentId={getBuilderComponentId(context, "code_panel_height")}
+              context={builderContext}
+            >
+              <CodePanel context={builderContext} />
+            </AdjustableHeightArea>
+          )}
         </Grid>
       </Grid>
     </ThemeWrapper>

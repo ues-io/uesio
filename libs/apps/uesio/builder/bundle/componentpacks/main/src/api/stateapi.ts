@@ -511,6 +511,7 @@ export {
   setDropPath,
   useDragPath,
   setDragPath,
+  getBuilderComponentId,
   getBuilderNamespaces,
   getBuilderNamespace,
   getBuilderState,
