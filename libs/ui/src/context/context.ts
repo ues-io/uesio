@@ -19,7 +19,6 @@ import get from "lodash/get"
 import { getAncestorPath, parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
-import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeOptions, MergeType } from "./merge"
@@ -521,17 +520,10 @@ class Context {
 
   getCustomSlotLoader = () => this.slotLoader
 
-  getComponentVariant = (
-    componentType: MetadataKey,
-    variantName: MetadataKey,
-  ) => {
-    const parsed = parseVariantName(variantName, componentType)
-    if (!parsed) return undefined
-
-    const [component, variant] = parsed
+  getComponentVariant = (componentType: MetadataKey, variant: MetadataKey) => {
     return componentVariantSelectors.selectById(
       getCurrentState(),
-      `${component}:${variant}`,
+      `${componentType}:${variant}`,
     )
   }
 
