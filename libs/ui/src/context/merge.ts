@@ -23,7 +23,6 @@ import {
 import { getThemeValue } from "../styles/styles"
 import { DECLARATIVE_COMPONENT } from "../component/component"
 import { Parser } from "expr-eval"
-import { getRouteUrl } from "../bands/route/operations"
 import { getRouteAssignmentUrl } from "../hooks/routeapi"
 
 type MergeType =
