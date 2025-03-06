@@ -129,6 +129,7 @@ const parseThreePartExpression = (expression: string) => {
 const parseWireExpression = (
   fullExpression: string,
 ): [string | undefined, string] => {
+  // TODO: Could/should this ever be more than 2 parts?
   const expressionParts = fullExpression.split(colonDelimiter)
   if (expressionParts.length === 1) {
     return [undefined, fullExpression]

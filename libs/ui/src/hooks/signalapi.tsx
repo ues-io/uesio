@@ -14,6 +14,7 @@ import {
 } from "../bands/route/signals"
 import { getRouteUrl } from "../bands/route/operations"
 import { MouseEvent } from "react"
+import { getRouteAssignmentUrl } from "./routeapi"
 
 const getNavigateLink = (
   signals: SignalDefinition[] | undefined,
@@ -33,17 +34,11 @@ const getNavigateLink = (
   }
 
   if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
-    const assignment = context.getRouteAssignment(
+    return getRouteAssignmentUrl(
+      context,
       signal.viewtype,
       signal.collection,
-    )
-    if (!assignment) return undefined
-    return getRouteUrl(
-      context.addRecordDataFrame({
-        recordid: context.mergeString(signal.recordid),
-      }),
-      assignment.namespace,
-      assignment.path.replace(/{/g, "${"),
+      signal.recordid !== undefined ? { recordid: signal.recordid } : undefined,
     )
   }
 

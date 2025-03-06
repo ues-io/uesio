@@ -149,6 +149,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
+	// TODO: Should we handle kvp from request here, leave recordid for now or?
 	if viewtype == "detail" {
 		muxRoute, err := mux.NewRouter().Path("/"+route.Path).URL("recordid", recordID)
 		if err != nil {
