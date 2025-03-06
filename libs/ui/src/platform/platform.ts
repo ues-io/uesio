@@ -147,13 +147,8 @@ type RouteNavigateRequest = {
 type AssignmentNavigateRequest = {
   collection: string
   viewtype?: string
-  /**
-   * Support backwards compatibility for recordid property
-   * @deprecated Route Assignment token replacement values are defined within the Route Assignment Tokens map
-   */
   recordid?: string
   newtab?: boolean
-  // TODO: Add Tokens here?
 }
 
 type MetadataInfo = {
@@ -323,7 +318,6 @@ const platform = {
     const [namespace, name] = parseKey(request.collection)
     const viewtype = request.viewtype || "list"
 
-    // TODO: Need to adjust based on tokens - kvp in request url?  body?
     return getJSON(
       context,
       `${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +

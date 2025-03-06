@@ -542,8 +542,7 @@ class Context {
   getSelectList = (id: string) =>
     selectListSelectors.selectById(getCurrentState(), id)
 
-  getRouteAssignment = (viewtype = "list", collection = "") =>
-    // TODO: Is a collection of empty string valid in this scenario?
+  getRouteAssignment = (viewtype = "list", collection: string) =>
     routeAssignmentSelectors.selectById(
       getCurrentState(),
       `${collection}_${viewtype}`,

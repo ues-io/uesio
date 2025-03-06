@@ -8,5 +8,5 @@ export type RouteAssignmentState = {
   path: string
   label: string
   icon?: string
-  tokens?: RouteTokens // TODO: Server side equivalent?
+  tokens?: RouteTokens
 } & BundleableBase

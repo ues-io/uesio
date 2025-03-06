@@ -148,7 +148,6 @@ const signals: SignalBandDefinition = {
             },
           ],
         },
-        // TODO: Should we remove this?
         {
           type: "TEXT",
           name: "recordid",

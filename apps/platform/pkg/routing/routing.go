@@ -149,13 +149,15 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
-	// TODO: Should we handle kvp from request here, leave recordid for now or?
 	if viewtype == "detail" {
 		muxRoute, err := mux.NewRouter().Path("/"+route.Path).URL("recordid", recordID)
 		if err != nil {
 			return nil, err
 		}
 		route.Path = muxRoute.Path[1:]
+		// TODO: Update to lookup the record based on recordId and then use the tokens from the Route Assignment
+		// to generate the route params.  For now, we "default" the tokens to be "recordId" until Route Assignment
+		// fully supports token based mapping. See https://github.com/ues-io/uesio/pull/4656
 		route.Params = map[string]interface{}{
 			"recordid": recordID,
 		}

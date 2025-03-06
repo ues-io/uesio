@@ -12,7 +12,11 @@ const mergePath = (
   tokens: RouteTokens = { recordid: `\${${ID_FIELD}}` },
 ) => {
   for (const key in tokens) {
-    // TODO: This approach is less than ideal due to fixed deiimiter
+    // TODO: This approach is less than ideal due to fixed delimiter pattern, for example
+    // a url that contains {sometokenname} which is actually part of the url and not intended
+    // to be replaced with a token. To solve for, would need to account for some way to escape
+    // the sequence of characters.  This is an unlikely scenario but this approach may need
+    // to be revisited to more accurately identify tokens.
     path = path.replace(new RegExp(`{${key}}`, "g"), tokens[key])
   }
   return path
@@ -20,8 +24,8 @@ const mergePath = (
 
 const getRouteAssignmentUrl = (
   context: Context,
-  viewtype = "list",
-  collection = "",
+  collection: string,
+  viewtype?: string,
   tokens?: RouteTokens,
 ) => {
   const assignment = context.getRouteAssignment(viewtype, collection)

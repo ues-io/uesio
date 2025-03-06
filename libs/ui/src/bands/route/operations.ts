@@ -58,7 +58,6 @@ const navigateToAssignment = async (
   request: AssignmentNavigateRequest,
 ) => {
   dispatch(setLoading())
-  // TODO: Can we avoid platform call and use client side?
   const routeResponse = await platform.getRouteAssignment(context, request)
   const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
   const isRedirectRoute = isRedirect(routeResponse)
@@ -79,7 +78,6 @@ const navigateToRoute = async (
   request: RouteNavigateRequest,
 ) => {
   dispatch(setLoading())
-  // TODO: Can we avoid platform call and use client side?
   const routeResponse = await platform.getRouteByKey(context, request)
   const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
   const isRedirectRoute = isRedirect(routeResponse)
