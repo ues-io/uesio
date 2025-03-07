@@ -146,7 +146,7 @@ type RouteNavigateRequest = {
 
 type AssignmentNavigateRequest = {
   collection: string
-  viewtype?: string
+  viewtype: string
   recordid?: string
   newtab?: boolean
 }
@@ -318,9 +318,13 @@ const platform = {
     const [namespace, name] = parseKey(request.collection)
     const viewtype = request.viewtype || "list"
 
+    // TODO: Currently we only support collection base routed assignments server-side.  The only
+    // non-collection based route we currently have is "signup" which we never need to grab from server
+    // so we only retrieve collection based routes below.  As route assignments evolve, the url
+    // will need to be adjusted to handle the different types of route assignments.
     return getJSON(
       context,
-      `${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
+      `${prefix}/routes/assignment/${viewtype}/collection/${namespace}/${name}` +
         (request.recordid ? `/${context.mergeString(request.recordid)}` : ""),
     )
   },

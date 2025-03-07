@@ -542,10 +542,12 @@ class Context {
   getSelectList = (id: string) =>
     selectListSelectors.selectById(getCurrentState(), id)
 
-  getRouteAssignment = (viewtype = "list", collection = "") =>
+  // Collection default to empty string to handle cases where
+  // there is no collection for the route assignment (e.g., signup)
+  getRouteAssignment = (viewtype: string, collection = "") =>
     routeAssignmentSelectors.selectById(
       getCurrentState(),
-      `${collection}_${viewtype}`,
+      `${viewtype}_${collection}`,
     )
 
   getRouteAssignments = () =>

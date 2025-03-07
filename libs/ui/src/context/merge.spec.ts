@@ -1,10 +1,15 @@
 import { FieldValue } from "../bands/wirerecord/types"
+import { RouteAssignmentState } from "../definition/routeassignment"
+import { setMany as setRouteAssignment } from "../bands/routeassignment"
+import { create, dispatch } from "../store/store"
 import { Context } from "./context"
 import {
   InvalidComponentOutputMsg,
+  InvalidRouteAssignmentMsg,
   InvalidSignalOutputMergeMsg,
   MergeOptions,
 } from "./merge"
+import { ID_FIELD } from "../collectionexports"
 
 type MergeWithContextTestCase = {
   name: string
@@ -14,6 +19,10 @@ type MergeWithContextTestCase = {
   expectError?: string | Error
   options?: MergeOptions
 }
+
+type MergeRouteAssignmentTestCase = {
+  routeAssignments?: RouteAssignmentState[]
+} & MergeWithContextTestCase
 
 type MergeBooleanTestCase = {
   name: string
@@ -619,6 +628,93 @@ const mergeIfTestCases: MergeWithContextTestCase[] = [
   },
 ]
 
+const mergeRouteAssignmentTestCases: MergeRouteAssignmentTestCase[] = [
+  {
+    name: "no route for viewtype",
+    context: new Context(),
+    routeAssignments: [],
+    input: "$RouteAssignment{myviewtype}",
+    expected: undefined,
+  },
+  {
+    name: "no route for viewtype:collection",
+    context: new Context(),
+    routeAssignments: [],
+    input: "$RouteAssignment{myviewtype:myuser/myapp.mycollection}",
+    expected: undefined,
+  },
+  {
+    name: "has route for viewtype",
+    context: new Context(),
+    routeAssignments: [
+      {
+        type: "myviewtype",
+        namespace: "",
+        collection: "",
+        path: "/my-view-type",
+        label: "",
+        name: "myviewtype_",
+      },
+    ],
+    input: "$RouteAssignment{myviewtype}",
+    expected: "/my-view-type",
+  },
+  {
+    name: "has route for viewtype:collection",
+    context: new Context().addRecordDataFrame({
+      [ID_FIELD]: 4,
+    }),
+    routeAssignments: [
+      {
+        type: "detail",
+        namespace: "myuser/myapp",
+        collection: "myuser/myapp.mycollection",
+        path: "/mycollection/detail/{recordid}",
+        label: "mycollectionlabel",
+        name: "detail_myuser/myapp.mycollection",
+      },
+    ],
+    input: "$RouteAssignment{detail:myuser/myapp.mycollection}",
+    expected: "/mycollection/detail/4",
+  },
+  {
+    name: "has route for viewtype:collection with tokens",
+    context: new Context().addRecordDataFrame({
+      foo: "abc",
+      bar: "xyz",
+    }),
+    routeAssignments: [
+      {
+        type: "detail",
+        namespace: "myuser/myapp",
+        collection: "myuser/myapp.mycollection",
+        path: "/mycollection/detail/{segment1}/{segment2}/{segment3}/{segment4}",
+        label: "mycollectionlabel",
+        name: "detail_myuser/myapp.mycollection",
+        tokens: {
+          segment1: "${foo}",
+          segment2: "${bar}",
+          segment4: "111",
+        },
+      },
+    ],
+    input: "$RouteAssignment{detail:myuser/myapp.mycollection}",
+    expected: "/mycollection/detail/abc/xyz/{segment3}/111",
+  },
+  {
+    name: "invalid syntax - missing viewtype",
+    context: new Context(),
+    input: "$RouteAssignment{}",
+    expectError: InvalidRouteAssignmentMsg,
+  },
+  {
+    name: "invalid syntax - empty viewtype",
+    context: new Context(),
+    input: "$RouteAssignment{:myuser/myapp.mycollection}",
+    expectError: InvalidRouteAssignmentMsg,
+  },
+]
+
 describe("merge", () => {
   describe("$SignalOutput context", () => {
     signalOutputMergeTestCases.forEach((tc) => {
@@ -740,6 +836,23 @@ describe("merge", () => {
     mergeIfTestCases.forEach((tc) => {
       test(tc.name, () => {
         expect(tc.context.merge(tc.input, tc.options)).toEqual(tc.expected)
+      })
+    })
+  })
+
+  describe("mergeRouteAssignment", () => {
+    mergeRouteAssignmentTestCases.forEach((tc) => {
+      test(tc.name, () => {
+        create({})
+        if (tc.routeAssignments) {
+          dispatch(setRouteAssignment(tc.routeAssignments))
+        }
+        const run = () => tc.context.merge(tc.input, tc.options)
+        if (tc.expectError) {
+          expect(() => run()).toThrow(tc.expectError)
+        } else {
+          expect(run()).toEqual(tc.expected)
+        }
       })
     })
   })
