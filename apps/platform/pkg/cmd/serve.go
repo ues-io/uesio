@@ -258,12 +258,20 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
 	wr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
 
-	// Route navigation apis for site and workspace context
-	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
-	sr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath, controller.RouteAssignment).Methods(http.MethodGet)
-	sr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
-	wr.HandleFunc(collectionRoutePath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+	// Route navigation apis for site and workspace context for collection based route assignments
+	collectionRouteAssignmentPath := fmt.Sprintf("/routes/assignment/{viewtype}/collection/%s", itemParam)
+	sr.HandleFunc(collectionRouteAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRouteAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRouteAssignmentPath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRouteAssignmentPath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
+
+	// TODO: Currently only supporting collection based route assignments since the only non-collection
+	// route we have is "signup".  As route assignments evolve and non-collection based routes are added
+	// need to support those assignment routes.
+	// Route navigation apis for site and workspace context for non-collection based route assignments
+	// routeAssignmentPath := fmt.Sprintf("/routes/assignment/{viewtype}")
+	// sr.HandleFunc(routeAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
+	// wr.HandleFunc(routeAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
 
 	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
 	sr.HandleFunc(pathRoutePath, controller.RouteByPath).Methods(http.MethodGet)

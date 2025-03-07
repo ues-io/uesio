@@ -547,7 +547,7 @@ class Context {
   getRouteAssignment = (viewtype: string, collection = "") =>
     routeAssignmentSelectors.selectById(
       getCurrentState(),
-      `${collection}_${viewtype}`,
+      `${viewtype}_${collection}`,
     )
 
   getRouteAssignments = () =>

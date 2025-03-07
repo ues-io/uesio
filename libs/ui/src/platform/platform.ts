@@ -318,16 +318,13 @@ const platform = {
     const [namespace, name] = parseKey(request.collection)
     const viewtype = request.viewtype || "list"
 
-    // TODO: merge syntax ($RouteAssignment) gets a route assignment from the store and only
-    // requires a viewtype but supports an optional collection.  However, here, we require a
-    // collection and viewtype but ultimately both avenues are getting a route assignment.
-    // Need to rethink how we want Route Assignments to work - are they only for collections
-    // or more general and if general (which is the current line of thinking for things like `signup`
-    // route), then either have specific end points for collection routes or change the order of
-    // url segments to have viewtype first with optional collection segments.
+    // TODO: Currently we only support collection base routed assignments server-side.  The only
+    // non-collection based route we currently have is "signup" which we never need to grab from server
+    // so we only retrieve collection based routes below.  As route assignments evolve, the url
+    // will need to be adjusted to handle the different types of route assignments.
     return getJSON(
       context,
-      `${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
+      `${prefix}/routes/assignment/${viewtype}/collection/${namespace}/${name}` +
         (request.recordid ? `/${context.mergeString(request.recordid)}` : ""),
     )
   },
