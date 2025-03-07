@@ -23,7 +23,7 @@ import {
 import { getThemeValue } from "../styles/styles"
 import { DECLARATIVE_COMPONENT } from "../component/component"
 import { Parser } from "expr-eval"
-import { getRouteUrl } from "../bands/route/operations"
+import { getRouteAssignmentUrl } from "../hooks/routeapi"
 
 type MergeType =
   | "Error"
@@ -79,6 +79,8 @@ export const InvalidComponentOutputMsg =
   "Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
 export const InvalidCurrencyMsg =
   "Invalid Currency merge - invalid currency merge - $Currency{[value][decimals]} or $Currency{value}"
+export const InvalidRouteAssignmentMsg =
+  "Invalid Route Assignment merge - a viewtype must be provided, e.g. $RouteAssignment{viewtype} or $RouteAssignment{viewtype:collection}"
 
 const handlers: Record<MergeType, MergeHandler> = {
   Record: (fullExpression, context) => {
@@ -267,12 +269,11 @@ const handlers: Record<MergeType, MergeHandler> = {
     return context.getRoute()?.[expression] ?? ""
   },
   RouteAssignment: (fullExpression, context) => {
-    const [collection, viewtype] = parseWireExpression(fullExpression)
-    const assignment = context.getRouteAssignment(viewtype, collection)
-    if (!assignment) {
-      return ""
+    const [viewtype, collection] = parseFileExpression(fullExpression)
+    if (!viewtype) {
+      throw new Error(InvalidRouteAssignmentMsg)
     }
-    return getRouteUrl(context, assignment.namespace, assignment.path)
+    return getRouteAssignmentUrl(context, viewtype, collection)
   },
   RecordMeta: (fullExpression, context) => {
     const [wirename, expression] = parseWireExpression(fullExpression)
