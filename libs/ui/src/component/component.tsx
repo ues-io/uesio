@@ -3,7 +3,6 @@ import {
   UtilityProps,
   UC,
   UtilityComponent,
-  BaseDefinition,
   DefinitionList,
 } from "../definition/definition"
 import {
@@ -24,7 +23,6 @@ import { getComponentType } from "../bands/componenttype/selectors"
 import {
   ComponentProperty,
   Declarative,
-  DeclarativeComponent as DeclarativeComponentDef,
   SlotDef,
 } from "../definition/component"
 import { COMPONENT_CONTEXT, DISPLAY_CONDITIONS } from "../componentexports"
@@ -133,10 +131,6 @@ function removeStylesNode(definition: DefinitionMap): DefinitionMap {
   return variantDefinitionWithoutStyle
 }
 
-type DeclarativeProps = {
-  definition: BaseDefinition
-}
-
 const DECLARATIVE_COMPONENT = "uesio/core.declarativecomponent"
 
 const propMergeOptions = {
@@ -224,13 +218,11 @@ function addDefaultPropertyAndSlotValues(
   }
 }
 
-const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
+const DeclarativeComponent: UC = (props) => {
   const { componentType, context, definition, path } = props
   if (!componentType) return null
-  const componentTypeDef = getComponentType(
-    componentType,
-  ) as DeclarativeComponentDef
-  if (!componentTypeDef) return null
+  const componentTypeDef = getComponentType(componentType)
+  if (!componentTypeDef || componentTypeDef.type !== Declarative) return null
 
   // Merge YAML-defined properties into the Declarative Component definition
   // by adding a props frame, to resolve all "$Prop{propName}" merges.
@@ -261,7 +253,7 @@ const DeclarativeComponent: UC<DeclarativeProps> = (props) => {
 
 DeclarativeComponent.displayName = "DeclarativeComponent"
 
-const Component: UC<DefinitionMap> = (props) => {
+const Component: UC = (props) => {
   const { componentType, context, definition, path } = props
   if (!useShould(definition?.[DISPLAY_CONDITIONS], context)) {
     return null
@@ -269,7 +261,7 @@ const Component: UC<DefinitionMap> = (props) => {
   if (!componentType) return <NotFound {...props} />
 
   const componentTypeDef = getComponentType(componentType)
-  const Loader: UC | undefined =
+  const Loader =
     componentTypeDef?.type === Declarative
       ? DeclarativeComponent
       : getRuntimeLoader(componentType)
