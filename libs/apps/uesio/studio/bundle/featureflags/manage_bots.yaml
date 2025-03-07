@@ -1,4 +1,4 @@
 name: manage_bots
 label: Manage Bots
 type: CHECKBOX
-defaultValue: false
+defaultValue: true
