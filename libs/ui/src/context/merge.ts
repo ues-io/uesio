@@ -271,7 +271,7 @@ const handlers: Record<MergeType, MergeHandler> = {
   RouteAssignment: (fullExpression, context) => {
     const [viewtype, collection] = parseFileExpression(fullExpression)
     if (!viewtype) {
-      throw InvalidRouteAssignmentMsg
+      throw new Error(InvalidRouteAssignmentMsg)
     }
     return getRouteAssignmentUrl(context, viewtype, collection)
   },
