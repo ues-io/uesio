@@ -146,7 +146,7 @@ type RouteNavigateRequest = {
 
 type AssignmentNavigateRequest = {
   collection: string
-  viewtype?: string
+  viewtype: string
   recordid?: string
   newtab?: boolean
 }
@@ -318,6 +318,13 @@ const platform = {
     const [namespace, name] = parseKey(request.collection)
     const viewtype = request.viewtype || "list"
 
+    // TODO: merge syntax ($RouteAssignment) gets a route assignment from the store and only
+    // requires a viewtype but supports an optional collection.  However, here, we require a
+    // collection and viewtype but ultimately both avenues are getting a route assignment.
+    // Need to rethink how we want Route Assignments to work - are they only for collections
+    // or more general and if general (which is the current line of thinking for things like `signup`
+    // route), then either have specific end points for collection routes or change the order of
+    // url segments to have viewtype first with optional collection segments.
     return getJSON(
       context,
       `${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +

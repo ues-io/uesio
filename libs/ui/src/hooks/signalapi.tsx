@@ -36,8 +36,8 @@ const getNavigateLink = (
   if (signal.signal === "route/NAVIGATE_TO_ASSIGNMENT") {
     return getRouteAssignmentUrl(
       context,
-      signal.collection,
       signal.viewtype,
+      signal.collection,
       signal.recordid !== undefined ? { recordid: signal.recordid } : undefined,
     )
   }

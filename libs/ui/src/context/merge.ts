@@ -80,7 +80,7 @@ export const InvalidComponentOutputMsg =
 export const InvalidCurrencyMsg =
   "Invalid Currency merge - invalid currency merge - $Currency{[value][decimals]} or $Currency{value}"
 export const InvalidRouteAssignmentMsg =
-  "Invalid Route Assignment merge - a collection and viewtype must be provided, e.g. $RouteAssignment{[collection]:[viewtype]}"
+  "Invalid Route Assignment merge - a viewtype must be provided, e.g. $RouteAssignment{viewtype} or $RouteAssignment{viewtype:collection}"
 
 const handlers: Record<MergeType, MergeHandler> = {
   Record: (fullExpression, context) => {
@@ -269,11 +269,11 @@ const handlers: Record<MergeType, MergeHandler> = {
     return context.getRoute()?.[expression] ?? ""
   },
   RouteAssignment: (fullExpression, context) => {
-    const [collection, viewtype] = parseWireExpression(fullExpression)
-    if (!collection || !viewtype) {
+    const [viewtype, collection] = parseFileExpression(fullExpression)
+    if (!viewtype) {
       throw InvalidRouteAssignmentMsg
     }
-    return getRouteAssignmentUrl(context, collection, viewtype)
+    return getRouteAssignmentUrl(context, viewtype, collection)
   },
   RecordMeta: (fullExpression, context) => {
     const [wirename, expression] = parseWireExpression(fullExpression)

@@ -24,8 +24,8 @@ const mergePath = (
 
 const getRouteAssignmentUrl = (
   context: Context,
-  collection: string,
-  viewtype?: string,
+  viewtype: string,
+  collection?: string,
   tokens?: RouteTokens,
 ) => {
   const assignment = context.getRouteAssignment(viewtype, collection)
