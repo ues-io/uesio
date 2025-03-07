@@ -123,14 +123,14 @@ definition:
                                             selectedConditions:
                                               - type: hasNoValue
                                                 wire: app
-                                                value: ${uesio/studio.clonefrombundle}
+                                                value: ${clonefrombundle}
                                             content:
                                               - uesio/io.text:
                                                   text: Start with a completely empty workspace.
                                             signals:
                                               - signal: wire/UPDATE_RECORD
                                                 wire: newworkspace
-                                                field: uesio/studio.clonefrombundle
+                                                field: clonefrombundle
                                                 value: false
                                         - uesio/io.card:
                                             title: Clone from an Existing Bundle
@@ -138,14 +138,14 @@ definition:
                                             selectedConditions:
                                               - type: hasValue
                                                 wire: app
-                                                value: ${uesio/studio.clonefrombundle}
+                                                value: ${clonefrombundle}
                                             content:
                                               - uesio/io.text:
                                                   text: Use an existing bundle as a starting point.
                                             signals:
                                               - signal: wire/UPDATE_RECORD
                                                 wire: newworkspace
-                                                field: uesio/studio.clonefrombundle
+                                                field: clonefrombundle
                                                 value: true
                                 note:
                                   - uesio/appkit.note:
@@ -154,7 +154,7 @@ definition:
                                 uesio.display:
                                   - type: hasValue
                                     wire: app
-                                    value: ${uesio/studio.clonefrombundle}
+                                    value: ${clonefrombundle}
                                 components:
                                   - uesio/io.titlebar:
                                       title: Source Bundle
