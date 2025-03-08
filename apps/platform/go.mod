@@ -7,16 +7,16 @@ require (
 	github.com/PaesslerAG/gval v1.2.4
 	github.com/aarol/reload v1.2.0
 	github.com/aws/aws-sdk-go-v2 v1.36.3
-	github.com/aws/aws-sdk-go-v2/config v1.29.8
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.61
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.64
-	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.26.0
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.78.0
+	github.com/aws/aws-sdk-go-v2/config v1.29.9
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.62
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.65
+	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.26.1
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.78.1
 	github.com/aws/smithy-go v1.22.3
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.4.14
 	github.com/dimchansky/utfbom v1.1.1
-	github.com/dop251/goja v0.0.0-20250125213203-5ef83b82af17
+	github.com/dop251/goja v0.0.0-20250307175808-203961f822d6
 	github.com/evanw/esbuild v0.25.0
 	github.com/fatih/color v1.18.0
 	github.com/felixge/httpsnoop v1.0.4
@@ -37,10 +37,10 @@ require (
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
-	golang.org/x/crypto v0.35.0
-	golang.org/x/oauth2 v0.27.0
-	golang.org/x/text v0.22.0
-	google.golang.org/api v0.223.0
+	golang.org/x/crypto v0.36.0
+	golang.org/x/oauth2 v0.28.0
+	golang.org/x/text v0.23.0
+	google.golang.org/api v0.224.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -58,9 +58,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.25.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.29.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.25.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.29.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17 // indirect
 	github.com/beevik/etree v1.5.0 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/crewjam/httperr v0.2.0 // indirect
@@ -100,15 +100,15 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.59.0 // indirect
-	go.opentelemetry.io/otel v1.34.0 // indirect
-	go.opentelemetry.io/otel/metric v1.34.0 // indirect
-	go.opentelemetry.io/otel/trace v1.34.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0 // indirect
+	go.opentelemetry.io/otel v1.35.0 // indirect
+	go.opentelemetry.io/otel/metric v1.35.0 // indirect
+	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/net v0.35.0 // indirect
-	golang.org/x/sync v0.11.0
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/sync v0.12.0
+	golang.org/x/sys v0.31.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect
-	google.golang.org/grpc v1.70.0 // indirect
+	google.golang.org/grpc v1.71.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 )
