@@ -21,7 +21,6 @@ import * as param from "./paramexports"
 import { register } from "./component/registry"
 import "./globals"
 
-
 // Register with the component registry so that these are not explicit dependencies
 register(ViewComponentId, View)
 register(SlotComponentId, Slot)

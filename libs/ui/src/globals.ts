@@ -1,5 +1,5 @@
-import * as _React from "react";
-import * as _ReactDOM from "react-dom";
+import * as _React from "react"
+import * as _ReactDOM from "react-dom"
 import * as _ReactDOMClient from "react-dom/client"
 import * as _ReactDOMServer from "react-dom/server"
 import * as _ReactJsxRuntime from "react/jsx-runtime"
@@ -11,8 +11,8 @@ declare global {
   var ReactJsxRuntime: typeof _ReactJsxRuntime
 }
 
-globalThis.React = _React;
-globalThis.ReactDOM = _ReactDOM;
+globalThis.React = _React
+globalThis.ReactDOM = _ReactDOM
 globalThis.ReactDOMClient = _ReactDOMClient
 globalThis.ReactDOMServer = _ReactDOMServer
 globalThis.ReactJsxRuntime = _ReactJsxRuntime

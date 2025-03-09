@@ -5,6 +5,7 @@ This module generates static NPM vendor dependences, e.g. React, React DOM, and 
 For example, if you run `nx build vendor`, you should see an output `manifest.json` generated within the `/dist/vendor` folder looking something like this:
 
 // TODO: Adjust/Remove once final approach for global react is determined
+
 ```
 {"react":{"version":"17.0.2","path":"umd/react.development.js"},"react-dom":{"version":"17.0.2","path":"umd/react-dom.development.js"},"monaco-editor":{"version":"0.34.0"}}
 ```
