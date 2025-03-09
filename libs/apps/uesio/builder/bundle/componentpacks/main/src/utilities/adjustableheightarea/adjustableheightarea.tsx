@@ -25,7 +25,7 @@ const AdjustableHeightArea: definition.UtilityComponent<Props> = (props) => {
   )
   const startY = useRef(0)
   const startHeight = useRef(0)
-  const abortController = useRef<AbortController>()
+  const abortController = useRef<AbortController>(undefined)
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
