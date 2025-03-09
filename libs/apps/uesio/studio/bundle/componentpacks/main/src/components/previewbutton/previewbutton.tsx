@@ -164,7 +164,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
   const DynamicForm = component.getUtility("uesio/io.dynamicform")
   const Group = component.getUtility("uesio/io.group")
   const Button = component.getUtility("uesio/io.button")
-  const wireRef = useRef<wire.Wire | undefined>()
+  const wireRef = useRef<wire.Wire | undefined>(undefined)
   if (!params) return null
 
   return (

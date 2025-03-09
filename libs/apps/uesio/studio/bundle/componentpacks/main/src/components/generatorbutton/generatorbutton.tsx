@@ -143,7 +143,7 @@ const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
     "generator",
   )
 
-  const wireRef = useRef<wire.Wire | undefined>()
+  const wireRef = useRef<wire.Wire | undefined>(undefined)
 
   if (!params) return null
 

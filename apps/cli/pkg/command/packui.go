@@ -17,17 +17,21 @@ func PackUI(options *PackOptions) error {
 	start := time.Now()
 
 	globalsMap := map[string]string{
-		"react":            "React",
-		"react-dom":        "ReactDOM",
-		"react-dom/server": "ReactDOM",
-		"react-dom/client": "ReactDOM",
-		// We're adding "react/jsx-runtime" here as a global
-		// because we were running into issues with the
-		// react-hotkeys-hook library adding a module import for
-		// "react/jsx-runtime". I'm not sure exactly what the global
-		// value for "react/jsx-runtime" should be, but setting it
-		// to React seems to fix the issue.
-		"react/jsx-runtime": "jsxRuntime",
+		// TODO: Adjust/Remove once final approach for global react is determined
+		// "react":            "React",
+		// "react-dom":        "ReactDOM",
+		// "react-dom/server": "ReactDOMServer",
+		// "react-dom/client": "ReactDOMClient",
+		// // We're adding "react/jsx-runtime" here as a global for three reasons:
+		// //    1. react-hotkeys-hook library has a module import for it
+		// //    2. floating-ui/react library has a module import for it and uses jsxs
+		// // TODO: It's possible that we may be able to avoid this global and configure build to
+		// // resolve react/jsx-runtime.  The underlying issue relates to the fact that react/jsx-runtime
+		// // paths are hardcoded in React and not exposed as an export.  See:
+		// //    https://github.com/evanw/esbuild/issues/2704
+		// //    https://github.com/evanw/esbuild/issues/2704#issuecomment-1329325044
+		// //    https://github.com/evanw/esbuild/issues/2791
+		// "react/jsx-runtime": "ReactJsxRuntime",
 	}
 	globalsList := pack.GetGlobalsList(globalsMap)
 

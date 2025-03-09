@@ -2,8 +2,8 @@ import { definition, styles } from "@uesio/ui"
 import { RefObject, useEffect, useRef, useState, useCallback } from "react"
 
 type DraggableProps = {
-  handleRef: RefObject<HTMLDivElement>
-  rootRef: RefObject<HTMLDivElement>
+  handleRef: RefObject<HTMLDivElement | null>
+  rootRef: RefObject<HTMLDivElement | null>
 }
 
 const StyleDefaults = Object.freeze({

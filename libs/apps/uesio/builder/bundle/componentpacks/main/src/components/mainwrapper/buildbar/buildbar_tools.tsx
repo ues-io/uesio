@@ -8,7 +8,7 @@ type ViewOption = {
 }
 
 type Props = {
-  rootRef: RefObject<HTMLDivElement>
+  rootRef: RefObject<HTMLDivElement | null>
 }
 
 const SHADOWS = Object.freeze([

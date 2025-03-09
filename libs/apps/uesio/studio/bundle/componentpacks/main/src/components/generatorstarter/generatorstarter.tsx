@@ -29,7 +29,7 @@ const GeneratorStarter: definition.UC<GeneratorStarterDefinition> = (props) => {
 
   const params = (response?.params?.params || []) as param.ParamDefinition[]
 
-  const wireRef = useRef<wire.Wire | undefined>()
+  const wireRef = useRef<wire.Wire | undefined>(undefined)
 
   if (error || !appWire) return null
 

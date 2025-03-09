@@ -141,7 +141,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
   let selectOptions: wire.SelectOption[]
   let values: string[]
   let multiSelectProps
-  let content: ReactElement
+  let content: ReactElement<unknown>
   const referenceMetadata = fieldMetadata.getReferenceMetadata()
 
   switch (displayType) {

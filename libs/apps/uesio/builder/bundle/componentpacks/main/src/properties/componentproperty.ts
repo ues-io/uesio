@@ -204,7 +204,7 @@ interface ListPropertyItemChildrenFunctionOptions {
 
 type ListPropertyItemChildrenFunction = (
   options: ListPropertyItemChildrenFunctionOptions,
-) => ReactElement | null
+) => ReactElement<unknown> | null
 
 type ListPropertyActionFunction = (options: ListPropertyActionOptions) => void
 

@@ -8,7 +8,7 @@ interface UploadAreaProps {
   onClick?: () => void
   uploadLabelId?: string
   deleteLabelId?: string
-  fileInputRef?: RefObject<HTMLInputElement>
+  fileInputRef?: RefObject<HTMLInputElement | null>
 }
 
 const StyleDefaults = Object.freeze({

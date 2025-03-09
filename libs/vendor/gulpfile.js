@@ -2,43 +2,46 @@ const gulp = require("gulp")
 const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
-const devMode = process.env.UESIO_DEV === "true"
+// TODO: Adjust/Remove once final approach for global react is determined
+//const devMode = process.env.UESIO_DEV === "true"
 
 ////////////////////////////
 // BEGIN EDITABLE REGION
 
 // MODULE NAMES
-const REACT = "react"
-const REACT_DOM = "react-dom"
+// TODO: Adjust/Remove once final approach for global react is determined
+// const REACT = "react"
+// const REACT_DOM = "react-dom"
 const MONACO = "monaco-editor"
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
-  {
-    name: REACT,
-    module: REACT,
-    path: `umd/react.${devMode ? "development" : "production.min"}.js`,
-    dest: "umd",
-    preload: true,
-    order: 1,
-  },
-  {
-    name: REACT_DOM,
-    module: REACT_DOM,
-    path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
-    dest: "umd",
-    preload: true,
-    order: 2,
-  },
-  {
-    name: "react/jsx-runtime",
-    module: REACT,
-    base: "files",
-    path: "umd/react-jsx-runtime.production.min.js",
-    dest: "umd",
-    preload: true,
-    order: 3,
-  },
+  // TODO: Adjust/Remove once final approach for global react is determined
+  // {
+  //   name: REACT,
+  //   module: REACT,
+  //   path: `umd/react.${devMode ? "development" : "production.min"}.js`,
+  //   dest: "umd",
+  //   preload: true,
+  //   order: 1,
+  // },
+  // {
+  //   name: REACT_DOM,
+  //   module: REACT_DOM,
+  //   path: `umd/react-dom.${devMode ? "development" : "production.min"}.js`,
+  //   dest: "umd",
+  //   preload: true,
+  //   order: 2,
+  // },
+  // {
+  //   name: "react/jsx-runtime",
+  //   module: REACT,
+  //   base: "files",
+  //   path: "umd/react-jsx-runtime.production.min.js",
+  //   dest: "umd",
+  //   preload: true,
+  //   order: 3,
+  // },
   {
     name: MONACO,
     module: MONACO,

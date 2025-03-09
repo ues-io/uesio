@@ -39,7 +39,7 @@ const useLoadWiresAndEvents = (
 
   const viewParamsHash = getParamsHash(context)
   const viewId = context.getViewId()
-  const prevRouteBatch = useRef<string>()
+  const prevRouteBatch = useRef<string>(undefined)
 
   useEffect(() => {
     ;(async () => {
