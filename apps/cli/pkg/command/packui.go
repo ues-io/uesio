@@ -17,17 +17,9 @@ func PackUI(options *PackOptions) error {
 	start := time.Now()
 
 	globalsMap := map[string]string{
-		"react":            "React",
-		"react-dom":        "ReactDOM",
-		"react-dom/server": "ReactDOM",
-		"react-dom/client": "ReactDOM",
-		// We're adding "react/jsx-runtime" here as a global
-		// because we were running into issues with the
-		// react-hotkeys-hook library adding a module import for
-		// "react/jsx-runtime". I'm not sure exactly what the global
-		// value for "react/jsx-runtime" should be, but setting it
-		// to React seems to fix the issue.
-		"react/jsx-runtime": "jsxRuntime",
+		// TODO: if/when packui is removed and ui project moves to using a bundler directly in build.sh
+		// the bundler can be used to generate separate scripts for React* and then the globals
+		// should be added in this map for react, react-dom, react-dom/client & react/jsx-runtime
 	}
 	globalsList := pack.GetGlobalsList(globalsMap)
 
