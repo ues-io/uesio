@@ -27,7 +27,6 @@ func Pack(options *PackOptions) error {
 		"react":            "React",
 		"react-dom":        "ReactDOM",
 		"@uesio/ui":        "uesio",
-		"react-dom/server": "ReactDOMServer",
 		"react-dom/client": "ReactDOMClient",
 		// We're adding "react/jsx-runtime" here as a global for two reasons:
 		//    1. react-hotkeys-hook library has a module import for it

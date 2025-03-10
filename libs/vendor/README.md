@@ -1,13 +1,11 @@
 # vendor
 
-This module generates static NPM vendor dependences, e.g. React, React DOM, and copies them into a /vendor folder within the /dist directory, along with a manifest which can be read by server-side code to know where these vendored assets are located, so that corresponding URLs can be precomputed server-side and used when we are rendering the index.gohtml template.
+This module generates static NPM vendor dependences, e.g. Monaco, and copies them into a /vendor folder within the /dist directory, along with a manifest which can be read by server-side code to know where these vendored assets are located, so that corresponding URLs can be precomputed server-side and used when we are rendering the index.gohtml template.
 
 For example, if you run `nx build vendor`, you should see an output `manifest.json` generated within the `/dist/vendor` folder looking something like this:
 
-// TODO: Adjust/Remove once final approach for global react is determined
-
 ```
-{"react":{"version":"17.0.2","path":"umd/react.development.js"},"react-dom":{"version":"17.0.2","path":"umd/react-dom.development.js"},"monaco-editor":{"version":"0.34.0"}}
+{"monaco-editor":{"version":"0.34.0"}}
 ```
 
 ## Adding a vendor dependency

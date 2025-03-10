@@ -17,21 +17,9 @@ func PackUI(options *PackOptions) error {
 	start := time.Now()
 
 	globalsMap := map[string]string{
-		// TODO: Adjust/Remove once final approach for global react is determined
-		// "react":            "React",
-		// "react-dom":        "ReactDOM",
-		// "react-dom/server": "ReactDOMServer",
-		// "react-dom/client": "ReactDOMClient",
-		// // We're adding "react/jsx-runtime" here as a global for three reasons:
-		// //    1. react-hotkeys-hook library has a module import for it
-		// //    2. floating-ui/react library has a module import for it and uses jsxs
-		// // TODO: It's possible that we may be able to avoid this global and configure build to
-		// // resolve react/jsx-runtime.  The underlying issue relates to the fact that react/jsx-runtime
-		// // paths are hardcoded in React and not exposed as an export.  See:
-		// //    https://github.com/evanw/esbuild/issues/2704
-		// //    https://github.com/evanw/esbuild/issues/2704#issuecomment-1329325044
-		// //    https://github.com/evanw/esbuild/issues/2791
-		// "react/jsx-runtime": "ReactJsxRuntime",
+		// TODO: if/when packui is removed and ui project moves to using a bundler directly in build.sh
+		// the bundler can be used to generate separate scripts for React* and then the globals
+		// should be added in this map for react, react-dom, react-dom/client & react/jsx-runtime
 	}
 	globalsList := pack.GetGlobalsList(globalsMap)
 
