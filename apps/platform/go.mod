@@ -16,8 +16,8 @@ require (
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.4.14
 	github.com/dimchansky/utfbom v1.1.1
-	github.com/dop251/goja v0.0.0-20250307175808-203961f822d6
-	github.com/evanw/esbuild v0.25.0
+	github.com/dop251/goja v0.0.0-20250309171923-bcd7cc6bf64c
+	github.com/evanw/esbuild v0.25.1
 	github.com/fatih/color v1.18.0
 	github.com/felixge/httpsnoop v1.0.4
 	github.com/francoispqt/gojay v1.2.13
