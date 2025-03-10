@@ -202,9 +202,9 @@ interface ListPropertyItemChildrenFunctionOptions {
   index: number
 }
 
-type ListPropertyItemChildrenFunction = (
+type ListPropertyItemChildrenFunction<T = unknown> = (
   options: ListPropertyItemChildrenFunctionOptions,
-) => ReactElement<unknown> | null
+) => ReactElement<T> | null
 
 type ListPropertyActionFunction = (options: ListPropertyActionOptions) => void
 
