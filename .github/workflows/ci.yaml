@@ -72,14 +72,10 @@ jobs:
         run: npm ci
 
       - name: Build and test
-        env:
-          UESIO_DEV: "true" # required to ensure packui gets built
         run: npx nx affected -t build test --configuration=ci --parallel=5 --verbose
 
       - name: Prep for docker image
         id: setDockerSHAs
-        env:
-          UESIO_DEV: "true" # required to ensure packui gets built
         run: |
           # We lint/test/build affected but in order to build image, we need to ensure everything
           # is built.  Build anything that hasn't been built yet (takes advantage of nx cache
