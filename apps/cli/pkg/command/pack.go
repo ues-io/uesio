@@ -76,9 +76,10 @@ func Pack(options *PackOptions) error {
 		basePath := fmt.Sprintf("bundle/componentpacks/%s/", packName)
 		metaFilePath := fmt.Sprintf("%sdist/meta.json", basePath)
 
+		fmt.Printf("Packing %s...\n", packName)
 		err := Build(buildOptions, metaFilePath, options.Watch)
 		if err != nil {
-			return err
+			return fmt.Errorf("Packing %s failed: %w", packName, err)
 		}
 
 		fmt.Println(fmt.Sprintf("Done Packing %s: %v", packName, time.Since(start)))
@@ -101,10 +102,10 @@ func Build(options *api.BuildOptions, metaFilePath string, watch bool) error {
 	}
 	result := api.Build(*options)
 	if result.Errors != nil {
-		for _, err := range result.Errors {
-			fmt.Println(err)
-			fmt.Println(err.Location)
-		}
+		return fmt.Errorf("Build error(s): %v", result.Errors)
+	}
+	if result.Warnings != nil {
+		fmt.Printf("Build warning(s): %v", result.Warnings)
 	}
 
 	if metaFilePath == "" {
