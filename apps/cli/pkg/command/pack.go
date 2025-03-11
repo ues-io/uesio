@@ -105,7 +105,7 @@ func Build(options *api.BuildOptions, metaFilePath string, watch bool) error {
 		return fmt.Errorf("Build error(s): %v", result.Errors)
 	}
 	if result.Warnings != nil {
-		fmt.Printf("Build warning(s): %v", result.Warnings)
+		fmt.Printf("Build warning(s): %v\n", result.Warnings)
 	}
 
 	if metaFilePath == "" {
