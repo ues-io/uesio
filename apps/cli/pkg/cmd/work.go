@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command"
 )
@@ -10,9 +8,10 @@ import (
 func init() {
 
 	workCommand := &cobra.Command{
-		Use:   "work",
-		Short: "uesio work",
-		Run:   work,
+		Use:          "work",
+		Short:        "uesio work",
+		RunE:         work,
+		SilenceUsage: true,
 	}
 	workCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the workspace to be set")
 
@@ -20,10 +19,6 @@ func init() {
 
 }
 
-func work(cmd *cobra.Command, args []string) {
-	err := command.Work(name)
-	if err != nil {
-		fmt.Println("Error: " + err.Error())
-		return
-	}
+func work(cmd *cobra.Command, args []string) error {
+	return command.Work(name)
 }

@@ -27,9 +27,10 @@ import (
 func init() {
 
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "serve",
-		Short: "Start Webserver",
-		Run:   serve,
+		Use:          "serve",
+		Short:        "Start Webserver",
+		RunE:         serve,
+		SilenceUsage: true,
 	})
 
 }
@@ -74,15 +75,14 @@ var (
 // because they are not expected to change with the version, but are truly static, immutable
 const vendorPrefix = "/static/vendor"
 
-func serve(cmd *cobra.Command, args []string) {
+func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
 	r := mux.NewRouter()
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		slog.Error("Failed to obtain working directory")
-		panic("Failed to obtain working directory")
+		return fmt.Errorf("Failed to obtain working directory: %w", err)
 	}
 
 	// If we have BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
@@ -487,4 +487,5 @@ func serve(cmd *cobra.Command, args []string) {
 
 	<-done
 
+	return nil
 }

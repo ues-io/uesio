@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command/bundle"
 )
@@ -17,9 +15,10 @@ func init() {
 	}
 
 	createBundleCommand := &cobra.Command{
-		Use:   "create",
-		Short: "Create a new bundle using the contents of the current workspace",
-		Run:   createBundle,
+		Use:          "create",
+		Short:        "Create a new bundle using the contents of the current workspace",
+		RunE:         createBundle,
+		SilenceUsage: true,
 	}
 	createBundleCommand.Flags().StringVarP(&bundleDescription, "description", "d", "", "Text describing this bundle")
 	createBundleCommand.Flags().StringVarP(&releaseType, "type", "t", "", "The release type, one of ['major','minor','patch','custom']")
@@ -33,10 +32,6 @@ func init() {
 
 }
 
-func createBundle(cmd *cobra.Command, args []string) {
-	err := bundle.CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription)
-	if err != nil {
-		fmt.Println("Error: " + err.Error())
-		return
-	}
+func createBundle(cmd *cobra.Command, args []string) error {
+	return bundle.CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleDescription)
 }

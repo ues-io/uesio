@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -13,8 +11,6 @@ var rootCmd = &cobra.Command{
 }
 
 // Execute is used as entrypoint to the cobra commands
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(-1)
-	}
+func Execute() error {
+	return rootCmd.Execute()
 }

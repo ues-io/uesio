@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"mime"
 	"os"
 
@@ -91,5 +92,9 @@ func init() {
 }
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		slog.Error(err.Error())
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
