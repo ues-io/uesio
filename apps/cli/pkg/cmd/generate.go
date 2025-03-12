@@ -15,18 +15,18 @@ import (
 func init() {
 
 	generateCommand := &cobra.Command{
-		Use:   "generate",
-		Short: "Create new metadata using a guided wizard",
-		Run:   generate,
+		Use:          "generate",
+		Short:        "Create new metadata using a guided wizard",
+		RunE:         generate,
+		SilenceUsage: true,
 	}
 
 	rootCmd.AddCommand(generateCommand)
 
 }
 
-func generate(cmd *cobra.Command, args []string) {
+func generate(cmd *cobra.Command, args []string) error {
 	var generatorName string
-	var err error
 	if len(args) >= 1 {
 		generatorName = args[0]
 	}
@@ -35,16 +35,14 @@ func generate(cmd *cobra.Command, args []string) {
 		generatorName = promptForGenerator()
 	}
 	if generatorName == "" {
-		fmt.Println("no generator provided")
-		return
+		return fmt.Errorf("no generator name provided")
 	}
 
-	if err = command.Generate(generatorName); err != nil {
-		fmt.Println("Error: " + err.Error())
-		return
-	}
+	return command.Generate(generatorName)
 }
 
+// TODO: Improve error handling vs. just returning empty string so
+// something meaningful can be displayed to the user in failure cases
 func promptForGenerator() string {
 	// Make sure we are authed
 	userMergeData, err := auth.Check()

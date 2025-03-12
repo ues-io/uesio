@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -20,9 +21,10 @@ import (
 func init() {
 
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "seed",
-		Short: "Seed Database",
-		Run:   seed,
+		Use:          "seed",
+		Short:        "Seed Database",
+		RunE:         seed,
+		SilenceUsage: true,
 	})
 
 	rootCmd.PersistentFlags().BoolP("ignore-failures", "i", false, "Set to true to ignore seed failures")
@@ -143,7 +145,7 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 	}, session, datasource.NewSaveOptions(connection, nil))
 }
 
-func seed(cmd *cobra.Command, args []string) {
+func seed(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Running seeds")
 
@@ -159,13 +161,11 @@ func seed(cmd *cobra.Command, args []string) {
 	if err != nil {
 		if ignoreSeedFailures {
 			slog.Info("Ignoring seed failures.")
-			return
+			return nil
 		}
-		slog.Error("Seeds failed: " + err.Error())
-		cobra.CheckErr(err)
-		return
+		return fmt.Errorf("Seeds failed: %w", err)
 	}
 
 	slog.Info("Successfully ran seeds")
-
+	return nil
 }
