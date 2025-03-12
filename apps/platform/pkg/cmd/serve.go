@@ -82,7 +82,7 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("Failed to obtain working directory", err)
+		return fmt.Errorf("Failed to obtain working directory: %w", err)
 	}
 
 	// If we have BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
