@@ -65,7 +65,7 @@
     "@nx/js": "20.5.0",
     "@nx/react": "20.5.0",
     "@nx/workspace": "20.5.0",
-    "@orangeopensource/hurl": "^6.0.0",
+    "@orangeopensource/hurl": "^6.0.1",
     "@react-hook/resize-observer": "^2.0.2",
     "@reduxjs/toolkit": "^2.6.1",
     "@swc-node/register": "^1.10.9",
