@@ -364,6 +364,23 @@ const addDefaultPropertyAndSlotValuesTests = [
       title: "We provided our own title",
     },
   },
+  {
+    name: "value provided for props but not slots, however, the props are explicitly set to undefined",
+    inputDefinition: {
+      title: undefined,
+    },
+    componentDef: componentTypeWithSlotAndPropertyDefaults,
+    expected: {
+      header: [
+        {
+          "uesio/io.titlebar": {
+            title: "Merge:  This is a title: ${uesio/core.uniquekey}",
+          },
+        },
+      ],
+      title: "Hello $User{email}!",
+    },
+  },
 ]
 
 describe("addDefaultPropertyAndSlotValues", () => {

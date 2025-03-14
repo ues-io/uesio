@@ -213,8 +213,8 @@ function addDefaultPropertyAndSlotValues(
   if (Object.keys(defaults).length === 0) return def
   // Merge defaults into definition
   return {
-    ...defaults,
     ...def,
+    ...defaults,
   }
 }
 
