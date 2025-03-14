@@ -60,7 +60,7 @@ definition:
                       - uesio/io.titlebar:
                           title: Animal Details
                       - uesio/core.view:
-                          id: detailview
+                          uesio.id: detailview
                           view: view_with_param_condition
                           params:
                             genus: ${uesio/tests.genus}
