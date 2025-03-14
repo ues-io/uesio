@@ -179,9 +179,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
   )
   const { content, properties } = getPropertiesAndContent(props, selectedTab)
 
-  const propSections = component
-    .useShouldFilter(sections, context)
-    ?.map((section) => getPropertyTabForSection(section))
+  const propSections = sections
+    .filter((section) =>
+      component.shouldAll(section.displayConditions, context),
+    )
+    .map((section) => getPropertyTabForSection(section))
 
   return (
     <PropertiesWrapper

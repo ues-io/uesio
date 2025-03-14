@@ -30,11 +30,7 @@ import { hash } from "@twind/core"
 
 const getComponentIdFromProps = (props: BaseProps) => {
   const { componentType, context, definition, path } = props
-  // "props.definition.id" here is TEMPORARY - for backwards compatibility
-  // on components like Table/List/Deck that initially had "id"
-  // Once morandi / timetracker / etc. are migrated to using "uesio.id"
-  // in their metadata, we can remove this affordance.
-  let userDefinedId = definition[COMPONENT_ID] || definition.id
+  let userDefinedId = definition[COMPONENT_ID]
   // Optimization --- IF and only if we KNOW that the id for this component is user-defined (vs the path)
   // then run mergeString() to resolve any merge variables that may be present in the id
   if (userDefinedId) {
