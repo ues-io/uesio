@@ -80,10 +80,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
   const { params, slots = {}, view: localViewDefId } = definition
   const viewDefId = getFullyQualifiedKey(localViewDefId, context.getNamespace())
 
-  // Backwards compatibility for definition.id
-  // TODO: Remove when all instances of this are fixed
-  const uesioId =
-    definition[COMPONENT_ID] || definition.id || (path && hash(path)) || "$root"
+  const uesioId = definition[COMPONENT_ID] || (path && hash(path)) || "$root"
   const viewId = makeViewId(viewDefId, uesioId)
 
   const isSubView = !!path

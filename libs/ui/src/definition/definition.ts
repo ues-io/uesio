@@ -12,7 +12,6 @@ import { SlotDef } from "./component"
 export type BaseDefinition = {
   // "id" here is TEMPORARY - for backwards compatibility on components like Table/List/Deck that initially had "id"
   // Once morandi / timetracker / etc. are migrated to using "uesio.id" in their metadata, we can remove this affordance.
-  id?: string
   "uesio.id"?: string
   "uesio.styleTokens"?: Record<string, string[]>
   "uesio.variant"?: MetadataKey

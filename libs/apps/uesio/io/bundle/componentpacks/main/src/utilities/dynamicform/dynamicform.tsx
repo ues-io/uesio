@@ -1,5 +1,5 @@
-import { api, wire, definition } from "@uesio/ui"
-import { MutableRefObject } from "react"
+import { api, wire, definition, component } from "@uesio/ui"
+import { RefObject } from "react"
 import List from "../../components/list/list"
 import { useDeepCompareEffect } from "react-use"
 
@@ -13,7 +13,7 @@ interface FormProps {
     record: wire.WireRecord,
   ) => void
   initialValue?: wire.PlainWireRecord
-  wireRef?: MutableRefObject<wire.Wire | undefined>
+  wireRef?: RefObject<wire.Wire | undefined>
   events?: wire.WireEvent[]
 }
 
@@ -81,7 +81,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
       definition={{
         mode: "EDIT",
         wire: wireId,
-        id,
+        [component.COMPONENT_ID]: id,
         components:
           content ||
           wire.getFields().map((field) => ({
