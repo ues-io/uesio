@@ -81,7 +81,7 @@ export type Definition =
   | DefinitionMap[]
 
 export type ViewDefinition = {
-  components: DefinitionList | undefined
+  components: DefinitionList | null | undefined
   wires?: WireDefinitionMap | null
   panels?: PanelDefinitionMap | null
   events?: ViewEventsDef
