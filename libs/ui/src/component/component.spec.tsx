@@ -1,5 +1,4 @@
 import { Context } from "../context/context"
-import { BaseDefinition } from "../definition/definition"
 import {
   addDefaultPropertyAndSlotValues,
   resolveDeclarativeComponentDefinition,
@@ -387,7 +386,7 @@ describe("addDefaultPropertyAndSlotValues", () => {
   addDefaultPropertyAndSlotValuesTests.forEach((tc) => {
     test(tc.name, () => {
       const actual = addDefaultPropertyAndSlotValues(
-        tc.inputDefinition as BaseDefinition,
+        tc.inputDefinition,
         tc.componentDef.properties,
         tc.componentDef.slots,
         "",

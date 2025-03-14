@@ -1,7 +1,11 @@
 import { component, definition } from "@uesio/ui"
 import { default as IOGrid } from "../../utilities/grid/grid"
 
-const Grid: definition.UC = (props) => {
+type GridDefinition = {
+  items: definition.DefinitionList | undefined
+}
+
+const Grid: definition.UC<GridDefinition> = (props) => {
   const { definition, context, componentType } = props
 
   return (

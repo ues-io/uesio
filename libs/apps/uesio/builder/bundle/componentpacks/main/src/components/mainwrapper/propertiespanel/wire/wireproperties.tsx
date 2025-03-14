@@ -204,7 +204,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
                 value: "onChange",
                 operator: "EQUALS",
               },
-            ] as component.DisplayCondition[],
+            ],
           },
         ],
       },

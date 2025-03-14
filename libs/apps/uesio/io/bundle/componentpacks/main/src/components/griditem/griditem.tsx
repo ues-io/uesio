@@ -1,10 +1,14 @@
 import { component, styles, definition } from "@uesio/ui"
 
+type GridItemDefinition = {
+  components?: definition.DefinitionList
+}
+
 const StyleDefaults = Object.freeze({
   root: [],
 })
 
-const GridItem: definition.UC = (props) => {
+const GridItem: definition.UC<GridItemDefinition> = (props) => {
   const { definition, context, path, componentType } = props
   if (!definition) return <div />
   const classes = styles.useStyleTokens(StyleDefaults, props)

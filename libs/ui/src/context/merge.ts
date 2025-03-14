@@ -1,5 +1,5 @@
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
-import { PlainFieldValue, PlainWireRecord } from "../bands/wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
@@ -373,12 +373,15 @@ const handlers: Record<MergeType, MergeHandler> = {
     if (!errors?.length) return ""
     return errors[0]
   },
-  Prop: (expression, context) => context.getProp(expression),
+  Prop: (expression, context) => {
+    const frame = context.getPropsFrame()
+    if (!frame) return undefined
+    return frame.data[expression] as FieldValue
+  },
   Region: (expression, context) => {
-    const styleTokens = context.getProp("uesio.styleTokens") as Record<
-      string,
-      PlainFieldValue[]
-    >
+    const frame = context.getPropsFrame()
+    if (!frame) return []
+    const styleTokens = frame.data["uesio.styleTokens"]
     return styleTokens?.[expression] || []
   },
   Slot: (expression, context) => {
@@ -388,7 +391,7 @@ const handlers: Record<MergeType, MergeHandler> = {
       return {}
     }
     const allSlotContents = propsFrame.data
-    const slotContents = allSlotContents[expression]
+    const slotContents = allSlotContents[expression] as FieldValue
     const allSlotDefs = propsFrame.slots
     const slotDef = allSlotDefs?.find((def) => def.name === expression)
     if (!slotDef) {
