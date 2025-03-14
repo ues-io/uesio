@@ -56,37 +56,33 @@ const TabLabels: definition.UtilityComponent<TabsUtilityProps> = (props) => {
 
   return (
     <div ref={target} className={classes.root}>
-      {component
-        .useShouldFilter<TabDefinition>(tabs, context)
-        .map((tab, index) => {
-          currentLabelWidth += sizes.childSizes[index]
-          const isLast = index === tabs.length - 1
-          const isFirst = index === 0
-          const menuWidth = isLast ? 0 : MENU_WIDTH
-          const isVisible =
-            isFirst || currentLabelWidth < sizes.fullWidth - menuWidth
-          if (!isVisible) overflowTabs.push(tab)
-          return (
-            <Button
-              context={context}
-              onClick={() => {
-                setSelectedTab(tab.id)
-              }}
-              key={tab.id}
-              classes={{
-                root: styles.cx(!isVisible && classes.hidden, classes.tab),
-                selected: classes.tabSelected,
-              }}
-              isSelected={tab.id === selectedTab}
-              label={tab.label}
-              icon={
-                tab.icon ? (
-                  <Icon context={context} icon={tab.icon} />
-                ) : undefined
-              }
-            />
-          )
-        })}
+      {component.useShouldFilter(tabs, context).map((tab, index) => {
+        currentLabelWidth += sizes.childSizes[index]
+        const isLast = index === tabs.length - 1
+        const isFirst = index === 0
+        const menuWidth = isLast ? 0 : MENU_WIDTH
+        const isVisible =
+          isFirst || currentLabelWidth < sizes.fullWidth - menuWidth
+        if (!isVisible) overflowTabs.push(tab)
+        return (
+          <Button
+            context={context}
+            onClick={() => {
+              setSelectedTab(tab.id)
+            }}
+            key={tab.id}
+            classes={{
+              root: styles.cx(!isVisible && classes.hidden, classes.tab),
+              selected: classes.tabSelected,
+            }}
+            isSelected={tab.id === selectedTab}
+            label={tab.label}
+            icon={
+              tab.icon ? <Icon context={context} icon={tab.icon} /> : undefined
+            }
+          />
+        )
+      })}
       {!!overflowTabs.length && (
         <div className={classes.menuWrapper}>
           <MenuButton

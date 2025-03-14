@@ -24,7 +24,7 @@ export type ColumnDefinition = {
   label?: string
   components?: definition.DefinitionList
   type?: "" | "custom"
-} & definition.BaseDefinition
+}
 
 const columnTypeProperty: ComponentProperty = {
   name: "type",

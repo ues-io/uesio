@@ -13,7 +13,7 @@ type ParamsFieldDefinition = {
 
 type ViewComponentDefinition = {
   view: string
-} & definition.BaseDefinition
+}
 
 const ParamsField: definition.UC<ParamsFieldDefinition> = (props) => {
   const MapField = component.getUtility("uesio/io.mapfield")

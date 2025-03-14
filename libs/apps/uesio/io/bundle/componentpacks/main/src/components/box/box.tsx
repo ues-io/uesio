@@ -2,6 +2,7 @@ import { component, styles, api, signal, definition } from "@uesio/ui"
 
 type BoxDefinition = {
   signals?: signal.SignalDefinition[]
+  components?: definition.DefinitionList
 }
 
 const StyleDefaults = Object.freeze({

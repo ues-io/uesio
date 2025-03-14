@@ -2,8 +2,8 @@ import { styles, api, definition } from "@uesio/ui"
 
 import { Line, Bar } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
-import { LabelsDefinition } from "../../shared/labels"
-import { aggregate, SeriesDefinition } from "../../shared/aggregate"
+import { aggregate } from "../../shared/aggregate"
+import { ChartDefinition } from "../../shared/definitions"
 
 Chart.register(...registerables)
 
@@ -11,28 +11,6 @@ export type ChartProps = {
   definition: ChartDefinition
   type: "line" | "bar"
 }
-
-type TicksOptions = {
-  count?: number
-}
-
-type ScaleOptions = {
-  beginAtZero?: boolean
-  ticks?: TicksOptions
-  suggestedMax?: number
-}
-
-type ScalesOptions = {
-  y?: ScaleOptions
-  x?: ScaleOptions
-}
-
-export type ChartDefinition = {
-  labels: LabelsDefinition
-  title?: string
-  series: SeriesDefinition[]
-  scales?: ScalesOptions
-} & definition.BaseDefinition
 
 const StyleDefaults = Object.freeze({
   root: [],
