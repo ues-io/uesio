@@ -47,6 +47,7 @@ definition:
         uesio.styleTokens:
           inner:
             - grid-rows-3
+            - px-0
         header:
           - uesio/io.tile:
               uesio.styleTokens:
@@ -106,94 +107,67 @@ definition:
                       - uesio/studio.name
                       - uesio/studio.description
         content:
-          - uesio/io.box:
+          - uesio/io.scrollpanel:
+              uesio.variant: uesio/studio.sidebarinner
               uesio.styleTokens:
                 root:
                   - row-span-2
-              components:
-                - uesio/io.scrollpanel:
-                    uesio.variant: uesio/io.default
-                    header:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.nav
-                          title: My Apps
-                          actions:
-                    content:
-                      - uesio/io.list:
-                          uesio.id: appslist
-                          wire: apps
-                          emptyState:
-                            - uesio/io.emptystate:
-                                subtitle: You haven't created any apps.
-                                icon: web
-                          components:
-                            - uesio/appkit.item:
-                                uesio.styleTokens:
-                                  root:
-                                    - border-r-2
-                                    - border-l-1
-                                    - border-b-2
-                                    - border-t-1
-                                    - border-transparent
-                                  content:
-                                    - overflow-hidden
-                                    - w-0
-                                  actionable:
-                                    - hover:bg-white
-                                    - hover:border-fontcolor-900
-                                  avatar:
-                                    - bg-[${uesio/studio.color}]
-                                title: ${uesio/core.uniquekey}
-                                subtitle: ${uesio/studio.description}
-                                icon: ${uesio/studio.icon}
-                                iconcolor: white
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/${uesio/core.uniquekey}"
-          - uesio/io.box:
-              components:
-                - uesio/io.scrollpanel:
-                    uesio.variant: uesio/io.default
-                    header:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.nav
-                          title: My Organizations
-                          actions:
-                            - uesio/io.button:
-                                icon: add
-                                uesio.id: add-organization
-                                uesio.variant: uesio/appkit.navicon
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newOrg
-                    content:
-                      - uesio/io.list:
-                          uesio.id: orglist
-                          wire: orgs
-                          emptyState:
-                            - uesio/io.emptystate:
-                                subtitle: You aren't part of any organizations.
-                                icon: domain
-                          components:
-                            - uesio/appkit.item:
-                                uesio.styleTokens:
-                                  root:
-                                    - border-r-2
-                                    - border-l-1
-                                    - border-b-2
-                                    - border-t-1
-                                    - border-transparent
-                                  content:
-                                    - overflow-hidden
-                                    - w-0
-                                  actionable:
-                                    - hover:bg-white
-                                    - hover:border-fontcolor-900
-                                title: ${uesio/core.uniquekey}
-                                icon: domain
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "org/info/${uesio/core.uniquekey}"
+              header:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Apps
+                    actions:
+              content:
+                - uesio/io.list:
+                    uesio.id: appslist
+                    wire: apps
+                    emptyState:
+                      - uesio/io.emptystate:
+                          subtitle: You haven't created any apps.
+                          icon: web
+                    components:
+                      - uesio/appkit.item:
+                          uesio.variant: uesio/appkit.actionable
+                          uesio.styleTokens:
+                            avatar:
+                              - bg-[${uesio/studio.color}]
+                          title: ${uesio/core.uniquekey}
+                          subtitle: ${uesio/studio.description}
+                          icon: ${uesio/studio.icon}
+                          iconcolor: white
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/${uesio/core.uniquekey}"
+          - uesio/io.scrollpanel:
+              uesio.variant: uesio/studio.sidebarinner
+              header:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Organizations
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          uesio.id: add-organization
+                          uesio.variant: uesio/appkit.navicon
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newOrg
+              content:
+                - uesio/io.list:
+                    uesio.id: orglist
+                    wire: orgs
+                    emptyState:
+                      - uesio/io.emptystate:
+                          subtitle: You aren't part of any organizations.
+                          icon: domain
+                    components:
+                      - uesio/appkit.item:
+                          uesio.variant: uesio/appkit.actionable
+                          title: ${uesio/core.uniquekey}
+                          icon: domain
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "org/info/${uesio/core.uniquekey}"
         footer:
           - uesio/core.view:
               view: profiletag
