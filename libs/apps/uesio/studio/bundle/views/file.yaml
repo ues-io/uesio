@@ -126,6 +126,9 @@ definition:
                                         components:
                                           - uesio/io.card:
                                               uesio.variant: uesio/appkit.main
+                                              uesio.styleTokens:
+                                                titlebarTitle:
+                                                  - break-all
                                               title: ${path}
                                               subtitle: ${mimetype}
                                               actions:
@@ -135,6 +138,7 @@ definition:
                                                           uesio.styleTokens:
                                                             root:
                                                               - bg-white
+                                                              - w-max
                                                           uesio.variant: uesio/appkit.badge
                                                           text: $FileSize{${filesize}}
                                                           element: div
@@ -173,6 +177,9 @@ definition:
                                       components:
                                         - uesio/io.card:
                                             uesio.variant: uesio/appkit.main
+                                            uesio.styleTokens:
+                                              titlebarTitle:
+                                                - break-all
                                             title: ${uesio/core.path}
                                             subtitle: ${uesio/core.mimetype}
                                             actions:
@@ -182,6 +189,7 @@ definition:
                                                         uesio.styleTokens:
                                                           root:
                                                             - bg-white
+                                                            - w-max
                                                         uesio.variant: uesio/appkit.badge
                                                         text: $FileSize{${uesio/core.contentlength}}
                                                         element: div
