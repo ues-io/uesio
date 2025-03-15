@@ -23,7 +23,6 @@ type Agent struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 	Description    string `yaml:"description" json:"description"`
-	PromptPath     string `yaml:"promptPath" json:"uesio/studio.prompt_path"`
 	ProfileRef     string `yaml:"profile" json:"uesio/studio.profile"`
 }
 
