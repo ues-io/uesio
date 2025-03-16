@@ -2,7 +2,7 @@ const gulp = require("gulp")
 const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
-
+//const isDev = process.env.NODE_ENV === "development" // use "dev" files if/when needed
 ////////////////////////////
 // BEGIN EDITABLE REGION
 
