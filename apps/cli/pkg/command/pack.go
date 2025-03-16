@@ -70,7 +70,31 @@ func Pack(options *PackOptions) error {
 			Sourcemap:         api.SourceMapLinked,
 			// This fixes a bug where the monaco amd loader was polluting
 			// the global define object, causing papaparse to not load correctly.
-			Define: map[string]string{"define.amd": "undefined"}, // TODO: Test/evaluate if this is still required
+
+			// We load monaco-editor via its AMD loader since there is not a stock bundling
+			// solution for monaco-editor esm via esbuild (see https://github.com/microsoft/monaco-editor/issues/4614).
+			// The use of the AMD loader results in polluting the global define object with define.amd which then causes
+			// issues when loading dependencies (e.g., papaparse, ajv, fuzzysort) that do not natively
+			// support ESM (they have UMD wrapper which results in define.amd being detected and AMD
+			// loads being attempted).  To reproduce the issue:
+			//    1. Open a view in "builder" mode directly (if you navigate to the "build" page, ensure you do a hard refresh)
+			//    2. Go to a collection->Manage Data->Import Data
+			// This will fail to load papaparse because define.amd is defined and papaparse has UMD wrapper and will
+			// attempt to use AMD loader.  This failure is VERY specific to the order that things load
+			// so if you simply view a "View" in studio, then go to collections->manage data->import data, the problem will
+			// not occur.  This is because studio bundle which uses papaparse will load because io bundle which loads
+			// monaco-editor so define.amd is not defined yet.  In the "builder" for a view, "io" bundle is loaded first
+			// then when going to import data, studio is loaded but define.amd is defined at that point.
+			//
+			// The solution is to avoid using dependencies that do not fully support ESM but that isn't really possible.
+			// The alternate solution is to load monaco-editor via ESM but esbuild bundling monaco-editor is extremely
+			// fragile.  There is working POC of this at https://github.com/ues-io/uesio/tree/chore/migrate-monaco-editor-to-esm
+			// but its a WIP and has several limitations/issues (see https://github.com/ues-io/uesio/blob/chore/migrate-monaco-editor-to-esm/libs/ui/build.ts#L6).
+			//
+			// For now, we use Define below to ensure that define.amd is always undefined within our bundles
+			// TODO: If/When monaco-editor better supports ESM and/or a reliable plugin for esbuild is made, this can
+			// be removed and monaco-editor loaded via ESM implemented (see https://github.com/microsoft/monaco-editor/issues/4614)
+			Define: map[string]string{"define.amd": "undefined"},
 		}
 
 		basePath := fmt.Sprintf("bundle/componentpacks/%s/", packName)
