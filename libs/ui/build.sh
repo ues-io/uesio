@@ -2,7 +2,8 @@
 
 set -e
 
-node ./build.mjs
+#node ./build.mjs
+node --experimental-strip-types ./build.ts
 mkdir -p ../../dist/ui/types/client
 mkdir -p ../../dist/ui/types/server
 # For editing TypeScript bots in Studio output a file which JUST contains Bot types

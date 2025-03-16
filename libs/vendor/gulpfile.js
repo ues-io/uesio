@@ -7,16 +7,9 @@ const distVendor = "../../dist/vendor"
 // BEGIN EDITABLE REGION
 
 // MODULE NAMES
-const MONACO = "monaco-editor"
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
-  {
-    name: MONACO,
-    module: MONACO,
-    src: "min/vs/**",
-    dest: "min/vs",
-  },
 ]
 
 // END EDITABLE REGION
@@ -45,6 +38,7 @@ function generateVendorManifest(cb) {
     },
     {},
   )
+  fs.mkdirSync(distVendor, { recursive: true })
   fs.writeFile(
     distVendor + "/manifest.json",
     JSON.stringify(vendorManifest),
@@ -70,7 +64,11 @@ const scriptTasks = modules.map(
  */
 const build = gulp.series(
   clean,
-  gulp.parallel.apply(this, scriptTasks),
+  scriptTasks?.length ?
+    gulp.parallel.apply(this, scriptTasks)
+    : function (cb) {
+      cb()
+    },
   generateVendorManifest,
 )
 

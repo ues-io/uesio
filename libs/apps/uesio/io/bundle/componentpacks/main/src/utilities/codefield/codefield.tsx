@@ -1,21 +1,19 @@
 import { component, definition, styles, api, context, util } from "@uesio/ui"
-import Editor, { loader, Monaco } from "@monaco-editor/react"
-import type monaco from "monaco-editor"
+import { type Monaco } from "@monaco-editor/react"
+import { type editor } from "monaco-editor"
+import { monaco_loader } from "@uesio/ui"
+
 import { CodeFieldUtilityProps } from "./types"
 import { useEffect, useMemo, useState } from "react"
 import { useDeepCompareEffect } from "react-use"
 import debounce from "lodash/debounce"
+
+const { monaco, loader, Editor } = monaco_loader
 const { ErrorMessage } = component
 
-const monacoEditorVersion = api.platform.getMonacoEditorVersion()
-const staticAssetsHost = api.platform.getStaticAssetsHost()
 const { getFileText } = api.platform
 
-loader.config({
-  paths: {
-    vs: `${staticAssetsHost}/static/vendor/monaco-editor/${monacoEditorVersion}/min/vs`,
-  },
-})
+loader.config( { monaco })
 
 const preprocessTypeFileURIs = (
   uris: string[] | undefined,
@@ -104,7 +102,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
     if (loadedTypeModelUris.length > 0) {
       // Synchronize our current models with the new models.
       const existingModels = monaco.editor.getModels()
-      const existingModelsById = {} as Record<string, monaco.editor.ITextModel>
+      const existingModelsById = {} as Record<string, editor.ITextModel>
       existingModels.forEach((model) => {
         existingModelsById[model.uri.toString()] = model
       })
@@ -136,7 +134,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
   }
 
   function handleEditorDidMount(
-    editor: monaco.editor.IStandaloneCodeEditor,
+    editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
   ) {
     onMount?.(editor, monaco)

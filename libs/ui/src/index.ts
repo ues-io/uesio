@@ -19,6 +19,7 @@ import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
 import * as param from "./paramexports"
 import { register } from "./component/registry"
+import * as monaco_loader from "./monaco_loader"
 import "./globals"
 
 // Register with the component registry so that these are not explicit dependencies
@@ -42,4 +43,5 @@ export {
   test,
   util,
   wire,
+  monaco_loader,
 }

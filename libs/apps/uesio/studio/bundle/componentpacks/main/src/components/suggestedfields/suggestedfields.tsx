@@ -1,4 +1,5 @@
 import { definition, api, wire, component, context } from "@uesio/ui"
+//import fuzzysort from "fuzzysort" // Uncomment this line and line 44 to see the amd issue with fuzzysort
 
 type ComponentDefinition = {
   collectionWire: string
@@ -39,6 +40,8 @@ const setNumberFieldDecimals = (
   decimals: number,
   inObject: CollectionFieldExtraMetadata,
 ) => (inObject["uesio/studio.number"] = { "uesio/studio.decimals": decimals })
+
+//console.log(fuzzysort.prepare(""))
 
 export const getUesioFieldFromSuggestedField = (
   suggestedField: SuggestedField,
