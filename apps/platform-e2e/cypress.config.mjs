@@ -1,4 +1,4 @@
-import { nxE2EPreset } from "@nx/cypress/plugins/cypress-preset"
+import { nxE2EPreset } from "@nx/cypress/plugins/cypress-preset.js"
 import { defineConfig } from "cypress"
 
 const studioBaseUrl =
@@ -10,7 +10,7 @@ const inCi = process.env.CI === "true"
 
 export default defineConfig({
   e2e: {
-    ...nxE2EPreset(__filename, {
+    ...nxE2EPreset(import.meta.filename, {
       cypressDir: "cypress",
     }),
     baseUrl: studioBaseUrl,

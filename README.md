@@ -60,6 +60,9 @@ Uesio is a **low-code** application development platform.
 
 # Build
 
+> [!NOTE]
+> By default, production builds (e.g., minified) will be created. To create development builds (e.g., not minified), set the environment variable `NODE_ENV` to `development` prior to running any build related commands (e.g., `NODE_ENV=development npm run build-all` or add `NODE_ENV=development` to `.env` file).
+
 - Download and install the npm module dependencies
 
 ```

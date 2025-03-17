@@ -1,6 +1,6 @@
 export default {
   displayName: "studio",
-  preset: "../../../../jest.preset.js",
+  preset: "../../../../jest.preset.cjs",
   transform: {
     "^.+\\.(t|j)sx?$": "@swc/jest",
   },
