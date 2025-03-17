@@ -5,7 +5,7 @@ This module generates static NPM vendor dependences, e.g. Monaco, and copies the
 For example, if you run `nx build vendor`, you should see an output `manifest.json` generated within the `/dist/vendor` folder looking something like this:
 
 ```
-{"monaco-editor":{"version":"0.34.0"}}
+{"monaco-editor":{"version":"0.50.0","dest":"min/vs","preload":false}}
 ```
 
 ## Adding a vendor dependency
