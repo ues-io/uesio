@@ -1,9 +1,8 @@
-const fs = require("fs")
-const Path = require("path")
-const { parseTailwindCss } = require("./tailwind-css-class-parser")
-
+import fs from "node:fs"
+import Path from "node:path"
+import { parseTailwindCss } from "./tailwind-css-class-parser.js"
 const targetPath = Path.join(
-  __dirname,
+  import.meta.dirname,
   "..",
   "bundle",
   "componentpacks",
@@ -29,7 +28,7 @@ if (fs.existsSync(targetPath)) {
   process.exit(0)
 }
 
-return loadTailwindCss(tailwindUrl)
+loadTailwindCss(tailwindUrl)
   .then(parseTailwindCss)
   .then((parsedTokens) => {
     if (!parsedTokens.length > 1000) {

@@ -1,6 +1,7 @@
-const gulp = require("gulp")
-const fs = require("fs")
-const packageLock = require("../../package-lock.json")
+import gulp from "gulp"
+import fs from "node:fs"
+// eslint-disable-next-line @nx/enforce-module-boundaries -- allow reading file outside of project
+import packageLock from "../../package-lock.json" with { type: "json" }
 const distVendor = "../../dist/vendor"
 
 ////////////////////////////
@@ -26,7 +27,7 @@ const modules = [
  * and you can use all packages available on npm, but it must return either a
  * Promise, a Stream or take a callback and call it
  */
-function clean(cb) {
+export function clean(cb) {
   fs.rm(distVendor, { recursive: true, force: true }, cb)
 }
 
@@ -68,19 +69,10 @@ const scriptTasks = modules.map(
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
-const build = gulp.series(
+export const build = gulp.series(
   clean,
   gulp.parallel.apply(this, scriptTasks),
   generateVendorManifest,
 )
 
-/*
- * You can use CommonJS `exports` module notation to declare tasks
- */
-exports.clean = clean
-// exports.scripts = scripts
-exports.build = build
-/*
- * Define default task that can be called by just running `gulp` from cli
- */
-exports.default = build
+export default build
