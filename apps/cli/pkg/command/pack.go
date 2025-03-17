@@ -66,6 +66,7 @@ func Pack(options *PackOptions) error {
 		buildOptions := &api.BuildOptions{
 			EntryPoints:       []string{entryPoint},
 			Bundle:            true,
+			Format:            api.FormatESModule,
 			Outdir:            "bundle/componentpacks",
 			Outbase:           "bundle/componentpacks",
 			AllowOverwrite:    true,
