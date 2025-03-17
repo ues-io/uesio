@@ -7,8 +7,7 @@ set -e
 if [[ -z "${APP_IMAGE}" ]]; then
     # Ensure everything is built with latest code
     echo "Building projects..."
-    # UESIO_DEV set to ensure packui is built
-    UESIO_DEV=true npm run build-all
+    npm run build-all
 
     echo "Building docker image..."
     # use a specific tag to avoid each built image remaining in docker

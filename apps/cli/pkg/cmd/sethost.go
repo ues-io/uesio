@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command"
 )
@@ -10,19 +8,16 @@ import (
 func init() {
 
 	setHostCommand := &cobra.Command{
-		Use:   "sethost",
-		Short: "uesio sethost",
-		Run:   sethost,
+		Use:          "sethost",
+		Short:        "uesio sethost",
+		RunE:         sethost,
+		SilenceUsage: true,
 	}
 
 	rootCmd.AddCommand(setHostCommand)
 
 }
 
-func sethost(cmd *cobra.Command, args []string) {
-	err := command.SetHost()
-	if err != nil {
-		fmt.Println("Error: " + err.Error())
-		return
-	}
+func sethost(cmd *cobra.Command, args []string) error {
+	return command.SetHost()
 }

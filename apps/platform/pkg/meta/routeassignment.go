@@ -43,7 +43,7 @@ func (r *RouteAssignment) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("label", r.Label)
 	enc.AddStringKey("icon", r.Icon)
 	enc.AddStringKey("namespace", r.Namespace)
-	enc.AddStringKey("name", r.Collection+"_"+r.Type)
+	enc.AddStringKey("name", r.Type+"_"+r.Collection)
 	enc.AddStringKey("path", r.Path)
 }
 

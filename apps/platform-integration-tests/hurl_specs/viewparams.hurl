@@ -15,7 +15,7 @@ HTTP 200
 jsonpath "$" count == 2
 jsonpath "$[0].name" == "checkboxvalue"
 jsonpath "$[0].type" == "CHECKBOX"
-jsonpath "$[1].required" == false
+jsonpath "$[0].required" == false
 jsonpath "$[1].name" == "numbervalue"
 jsonpath "$[1].type" == "NUMBER"
 jsonpath "$[1].required" == false
@@ -106,9 +106,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
 [Asserts]
-body == "Invalid Condition, param 'numbervalue' was not provided\n"
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors[0].message" == "Invalid Condition, param 'numbervalue' was not provided"
 
 # Do a route load to verify view param handling is the same
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/view_params?checkboxvalue=true&numbervalue=4

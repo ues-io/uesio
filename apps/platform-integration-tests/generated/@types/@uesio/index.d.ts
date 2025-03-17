@@ -146,10 +146,6 @@ interface HttpApi {
   ) => BotHttpResponse<ResponseBody>
 }
 
-interface SaveOptionsApi {
-  upsert: boolean
-}
-
 interface IntegrationApi {
   getBaseURL(): string | undefined
 }
@@ -821,14 +817,14 @@ export type Definition =
   | DefinitionMap
   | DefinitionValue[]
   | DefinitionMap[]
-export type BaseDefinition = {
+export type BaseDefinition<T = DefinitionMap> = {
   "uesio.id"?: string
   "uesio.styleTokens"?: Record<string, string[]>
   "uesio.variant"?: MetadataKey
   "uesio.classes"?: string
-}
+} & T
 export type BaseProps<T = DefinitionMap> = {
-  definition: T & BaseDefinition
+  definition: BaseDefinition<T>
   path: string
   componentType?: MetadataKey
   context: Context
@@ -924,7 +920,7 @@ export namespace component {
 //
 export namespace definition {
   export type BaseProps<T = DefinitionMap> = {
-    definition: T & BaseDefinition
+    definition: BaseDefinition<T>
     path: string
     componentType?: MetadataKey
     context: Context

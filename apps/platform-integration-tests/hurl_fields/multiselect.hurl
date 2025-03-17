@@ -64,8 +64,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
 [Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to encode []interface {}{1, 2} into binary format for _text (OID 1009): unable to encode 1"
 
 # Operator: HAS_ANY | valueSource: PARAM
 # entry 4
@@ -153,8 +155,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
 [Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to encode []interface {}{1, 2} into binary format for _text (OID 1009): unable to encode 1"
 
 # Operator: HAS_ALL | valueSource: PARAM
 # entry 7

@@ -2,29 +2,26 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/cli/pkg/command"
 	"github.com/thecloudmasters/cli/pkg/command/site"
 	"github.com/thecloudmasters/cli/pkg/config/siteadmin"
 )
 
-func siteUpsert(cmd *cobra.Command, args []string) {
+func siteUpsert(cmd *cobra.Command, args []string) error {
 	spec, _ := cmd.Flags().GetString("spec")
 	file, _ := cmd.Flags().GetString("file")
 	collection, _ := cmd.Flags().GetString("collection")
 
-	err := command.UpsertToSite(&command.UpsertOptions{
+	return command.UpsertToSite(&command.UpsertOptions{
 		SpecFile:   spec,
 		DataFile:   file,
 		Collection: collection,
 	})
-	if err != nil {
-		fmt.Println("Error: " + err.Error())
-		return
-	}
 }
 
-func siteUse(cmd *cobra.Command, args []string) {
+func siteUse(cmd *cobra.Command, args []string) error {
 	siteName, _ := cmd.Flags().GetString("name")
 	newBundleVersion, _ := cmd.Flags().GetString("bundle")
 
@@ -34,21 +31,20 @@ func siteUse(cmd *cobra.Command, args []string) {
 		if err == nil && configSiteName != "" {
 			siteName = configSiteName
 		} else {
-			fmt.Println("site name is required")
-			return
+			return fmt.Errorf("site name is required")
 		}
 	}
 	if newBundleVersion == "" {
-		fmt.Println("bundle is required")
-		return
+		return fmt.Errorf("bundle is required")
 	}
 
 	err := site.UseBundle(siteName, newBundleVersion)
 	if err != nil {
-		fmt.Println("Unable to update site to use the requested bundle: " + err.Error())
-		return
+
+		return fmt.Errorf("Unable to update site to use the requested bundle: %w", err)
 	}
 	fmt.Printf("Successfully updated site %s to use bundle: %s\n", siteName, newBundleVersion)
+	return nil
 }
 
 func init() {
@@ -62,19 +58,21 @@ func init() {
 	// Add sub-commands
 
 	siteUseCommand := &cobra.Command{
-		Use:   "use",
-		Short: "Use a different bundle for a site",
-		Long:  "Switches a site to use a different bundle",
-		Run:   siteUse,
+		Use:          "use",
+		Short:        "Use a different bundle for a site",
+		Long:         "Switches a site to use a different bundle",
+		RunE:         siteUse,
+		SilenceUsage: true,
 	}
 	siteUseCommand.PersistentFlags().StringP("bundle", "b", "", "The bundle to use")
 	siteUseCommand.PersistentFlags().StringP("name", "n", "", "The site name")
 
 	siteUpsertCmd := &cobra.Command{
-		Use:   "upsert",
-		Short: "Upserts data to a site",
-		Long:  "Upserts data from a local directory to a site",
-		Run:   siteUpsert,
+		Use:          "upsert",
+		Short:        "Upserts data to a site",
+		Long:         "Upserts data from a local directory to a site",
+		RunE:         siteUpsert,
+		SilenceUsage: true,
 	}
 	siteUpsertCmd.PersistentFlags().StringP("spec", "s", "", "Filename of upsert specification")
 	siteUpsertCmd.PersistentFlags().StringP("file", "f", "", "Filename of data to upsert")

@@ -31,7 +31,10 @@ Accept: application/json
         }
     ]
 }
-HTTP 400
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].data[*]" isEmpty
+jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type boolean: \"BAD_VALUE\""
 
 # Operator: EQ | valueSource: VALUE | Boolean true
 # entry 3

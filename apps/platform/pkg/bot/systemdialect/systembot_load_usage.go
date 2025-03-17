@@ -52,6 +52,10 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 		return err
 	}
 
+	if newOp.Errors != nil {
+		return (*newOp.Errors)[0]
+	}
+
 	//make sure we pass these back to the original OP
 	op.BatchNumber = newOp.BatchNumber
 	op.HasMoreBatches = newOp.HasMoreBatches

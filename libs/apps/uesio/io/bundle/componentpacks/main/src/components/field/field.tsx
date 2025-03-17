@@ -48,7 +48,7 @@ type FieldDefinition = {
   wrapperVariant: metadata.MetadataKey
   applyChanges?: ApplyChanges
   applyDelay?: number
-} & definition.BaseDefinition
+}
 
 type FieldValueSetter = (value: wire.FieldValue) => void
 

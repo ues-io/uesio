@@ -38,7 +38,7 @@ func getCascadeDeletes(
 		LoadAll: true,
 	}
 
-	_, err := Load([]*wire.LoadOp{loadOp}, session, &LoadOptions{
+	err := LoadWithError(loadOp, session, &LoadOptions{
 		Connection: connection,
 	})
 	if err != nil {

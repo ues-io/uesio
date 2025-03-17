@@ -2,10 +2,7 @@ import { PaletteValue, ThemeState } from "../definition/theme"
 import { BaseProps, UtilityProps } from "../definition/definition"
 
 import * as colors from "./colors"
-import {
-  getDefinitionFromVariant,
-  parseVariantName,
-} from "../component/component"
+import { getVariantDefinition } from "../component/component"
 import { MetadataKey } from "../metadataexports"
 import { extendTailwindMerge } from "tailwind-merge"
 import { Context } from "../context/context"
@@ -24,6 +21,8 @@ import interpolate from "./interpolate"
 import presetAutoprefix from "@twind/preset-autoprefix"
 import presetTailwind from "@twind/preset-tailwind"
 import { isStandardColorName } from "./colors"
+import { parseKey } from "../component/path"
+import { getComponentType } from "../hooks/componentapi"
 
 const processThemeColor = (
   themeFunc: ThemeFunction,
@@ -234,25 +233,6 @@ function useStyleTokens<K extends string>(
   )
 }
 
-function getVariantDefinition(
-  componentType: MetadataKey | undefined,
-  variantKey: MetadataKey | undefined,
-  context: Context,
-) {
-  if (!componentType) return undefined
-
-  const [variantComponentType, variantName] = parseVariantName(
-    variantKey,
-    componentType,
-  )
-
-  if (!variantComponentType || !variantName) return undefined
-
-  const variant = context.getComponentVariant(variantComponentType, variantName)
-  if (!variant) return undefined
-  return getDefinitionFromVariant(variant, context)
-}
-
 function getVariantTokens(
   componentType: MetadataKey | undefined,
   variantKey: MetadataKey | undefined,
@@ -260,6 +240,7 @@ function getVariantTokens(
 ) {
   const variantDefinition = getVariantDefinition(
     componentType,
+    componentType ? getComponentType(componentType) : undefined,
     variantKey,
     context,
   )
@@ -282,6 +263,22 @@ function add(context: Context, value: Parameters<typeof css>[0]) {
   activeStyles.twind(css(value))
 }
 
+// This is a slight hack, but necessary for the moment.
+// There is an assumption that utility components without
+// a variant specified should use a variant called "default"
+// in the namespace of the associated defaultVariantComponentType.
+// See:
+//   https://github.com/ues-io/uesio/issues/4632
+//   https://github.com/ues-io/uesio/issues/4433
+function getDefaultVariant(
+  defaultVariantComponentType?: MetadataKey,
+): MetadataKey | undefined {
+  if (!defaultVariantComponentType) return undefined
+
+  const [namespace] = parseKey(defaultVariantComponentType)
+  return `${namespace}.default`
+}
+
 function useUtilityStyleTokens<K extends string>(
   defaults: Record<K, Class[]>,
   props: UtilityProps,
@@ -289,7 +286,8 @@ function useUtilityStyleTokens<K extends string>(
 ) {
   const variantTokens = getVariantTokens(
     defaultVariantComponentType,
-    props.variant,
+    // TODO: Eliminate call to getDefaultVariant when https://github.com/ues-io/uesio/issues/4632 is addressed
+    props.variant || getDefaultVariant(defaultVariantComponentType),
     props.context,
   )
   const inlineTokens = props.styleTokens

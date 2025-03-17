@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -16,9 +17,10 @@ import (
 
 func init() {
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "migrate",
-		Short: "Run database migrations",
-		Run:   migrate,
+		Use:          "migrate",
+		Short:        "Run database migrations",
+		RunE:         migrate,
+		SilenceUsage: true,
 	})
 }
 
@@ -45,10 +47,12 @@ func parseMigrateOptions(args []string) (*migrations.MigrateOptions, error) {
 	return &opts, nil
 }
 
-func migrate(cmd *cobra.Command, args []string) {
+func migrate(cmd *cobra.Command, args []string) error {
 
 	opts, err := parseMigrateOptions(args)
-	cobra.CheckErr(err)
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
 
@@ -58,11 +62,9 @@ func migrate(cmd *cobra.Command, args []string) {
 		return conn.Migrate(opts)
 	})
 	if err != nil {
-		slog.Error("Migrations failed: " + err.Error())
-		cobra.CheckErr(err)
-		return
+		return fmt.Errorf("Migrations failed: %w", err)
 	}
 
 	slog.Info("Successfully ran migrations")
-
+	return nil
 }

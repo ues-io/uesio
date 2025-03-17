@@ -19,12 +19,12 @@ import get from "lodash/get"
 import { getAncestorPath, parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
-import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../metadata/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeOptions, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
 import { SlotDef } from "../definition/component"
+import { BaseDefinition } from "../definition/definition"
 
 const ERROR = "ERROR",
   COMPONENT = "COMPONENT",
@@ -112,7 +112,7 @@ interface ComponentContext {
 
 interface PropsContext {
   componentType: string
-  data: Record<string, FieldValue>
+  data: BaseDefinition
   path: string
   slots: SlotDef[] | undefined
 }
@@ -496,7 +496,6 @@ class Context {
 
   getParam = (param: string) => this.getParams()?.[param]
 
-  getProp = (prop: string) => this.stack.find(isPropsContextFrame)?.data[prop]
   getPropsFrame = () => this.stack.find(isPropsContextFrame)
 
   getParentComponentDef = (path: string) =>
@@ -521,14 +520,10 @@ class Context {
 
   getCustomSlotLoader = () => this.slotLoader
 
-  getComponentVariant = (
-    componentType: MetadataKey,
-    variantName: MetadataKey,
-  ) => {
-    const [component, variant] = parseVariantName(variantName, componentType)
+  getComponentVariant = (componentType: MetadataKey, variant: MetadataKey) => {
     return componentVariantSelectors.selectById(
       getCurrentState(),
-      `${component}:${variant}`,
+      `${componentType}:${variant}`,
     )
   }
 
@@ -547,10 +542,12 @@ class Context {
   getSelectList = (id: string) =>
     selectListSelectors.selectById(getCurrentState(), id)
 
-  getRouteAssignment = (viewtype = "list", collection = "") =>
+  // Collection default to empty string to handle cases where
+  // there is no collection for the route assignment (e.g., signup)
+  getRouteAssignment = (viewtype: string, collection = "") =>
     routeAssignmentSelectors.selectById(
       getCurrentState(),
-      `${collection}_${viewtype}`,
+      `${viewtype}_${collection}`,
     )
 
   getRouteAssignments = () =>
@@ -724,7 +721,7 @@ class Context {
     })
 
   addPropsFrame = (
-    data: Record<string, FieldValue>,
+    data: BaseDefinition,
     path: string,
     componentType: string,
     slots?: SlotDef[],

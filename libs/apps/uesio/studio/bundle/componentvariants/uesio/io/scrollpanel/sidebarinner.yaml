@@ -1,0 +1,9 @@
+name: sidebarinner
+label: Sidebar Inner
+extends: uesio/io.default
+definition:
+  uesio.styleTokens:
+    header:
+      - px-4
+    inner:
+      - px-4

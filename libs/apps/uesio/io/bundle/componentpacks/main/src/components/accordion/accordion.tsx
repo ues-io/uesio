@@ -82,10 +82,7 @@ const Accordion: definition.UC<AccordionDefinition> = (props) => {
   )
   const selectedIndex = foundIndex === -1 ? 0 : foundIndex
   const selectedItem = indexedItems[selectedIndex]
-  const allVisibleItems = component.useShouldFilter<AccordionItemWithIndex>(
-    indexedItems,
-    context,
-  )
+  const allVisibleItems = component.useShouldFilter(indexedItems, context)
   const shouldDisplaySelectedItem =
     allVisibleItems.findIndex((item) => item.id === selectedItem.id) > -1
   const firstVisibleItemToDisplay = !shouldDisplaySelectedItem

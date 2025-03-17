@@ -29,45 +29,43 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 
 	// fetch uesio/studio.bundlelisting records that are published and uesio approved
 	bundleListings := &wire.Collection{}
-	_, err := datasource.Load([]*wire.LoadOp{
-		{
-			CollectionName: "uesio/studio.bundlelisting",
-			Collection:     bundleListings,
-			Query:          true,
-			Fields: []wire.LoadRequestField{
-				{
-					ID: "uesio/studio.status",
-				},
-				{
-					ID: "uesio/studio.approved",
-				},
-				{
-					ID: "uesio/studio.app",
-					Fields: []wire.LoadRequestField{
-						{
-							ID: "uesio/studio.fullname",
-						},
-						{
-							ID: "uesio/studio.description",
-						},
-						{
-							ID: "uesio/studio.icon",
-						},
-						{
-							ID: "uesio/studio.color",
-						},
+	err := datasource.LoadWithError(&wire.LoadOp{
+		CollectionName: "uesio/studio.bundlelisting",
+		Collection:     bundleListings,
+		Query:          true,
+		Fields: []wire.LoadRequestField{
+			{
+				ID: "uesio/studio.status",
+			},
+			{
+				ID: "uesio/studio.approved",
+			},
+			{
+				ID: "uesio/studio.app",
+				Fields: []wire.LoadRequestField{
+					{
+						ID: "uesio/studio.fullname",
+					},
+					{
+						ID: "uesio/studio.description",
+					},
+					{
+						ID: "uesio/studio.icon",
+					},
+					{
+						ID: "uesio/studio.color",
 					},
 				},
 			},
-			Conditions: []wire.LoadRequestCondition{
-				{
-					Field: "uesio/studio.status",
-					Value: "PUBLISHED",
-				},
-				{
-					Field: "uesio/studio.approved",
-					Value: true,
-				},
+		},
+		Conditions: []wire.LoadRequestCondition{
+			{
+				Field: "uesio/studio.status",
+				Value: "PUBLISHED",
+			},
+			{
+				Field: "uesio/studio.approved",
+				Value: true,
 			},
 		},
 	}, adminSession, nil)

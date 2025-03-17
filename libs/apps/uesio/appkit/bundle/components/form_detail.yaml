@@ -142,10 +142,13 @@ definition:
                     - type: hasNoValue
                       value: $Prop{initials}
                   text: $If{[$Prop{avataricon}][$Prop{avataricon}][$Collection{icon}]}
+                  color: $Prop{avatariconcolor}
                   uesio.variant: uesio/io.icon
         - $Slot{content}
         - uesio/appkit.section_audit_info:
         - uesio/appkit.section_delete:
+            confirm: $Prop{deleteconfirm}
+            signals: $Prop{deletesignals}
 title: Detail Form Component
 discoverable: true
 description: A component for a record detail form.

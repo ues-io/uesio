@@ -64,6 +64,11 @@ definition:
                   title: $Prop{title}
                   subtitle: $Prop{subtitle}
                   uesio.variant: $Prop{titlebarVariant}
+                  uesio.styleTokens:
+                    root:
+                      - $Region{titlebarRoot}
+                    title:
+                      - $Region{titlebarTitle}
                   actions:
                     - $Slot{actions}
                   avatar:

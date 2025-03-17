@@ -5,6 +5,7 @@ definition:
     root:
       - bg-fontcolor-900
       - rounded
-      - py-1.5
-      - px-2
+      - h-8
+      - w-8
+      - p-2
 public: true

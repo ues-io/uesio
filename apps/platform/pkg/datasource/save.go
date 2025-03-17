@@ -17,13 +17,13 @@ type SaveRequestBatch struct {
 }
 
 type SaveRequest struct {
-	Collection string                     `json:"collection"`
-	Wire       string                     `json:"wire"`
-	Changes    meta.Group                 `json:"changes"`
-	Deletes    meta.Group                 `json:"deletes"`
-	Errors     []exceptions.SaveException `json:"errors"`
-	Options    *wire.SaveOptions          `json:"options"`
-	Params     map[string]interface{}     `json:"params"`
+	Collection string                      `json:"collection"`
+	Wire       string                      `json:"wire"`
+	Changes    meta.Group                  `json:"changes"`
+	Deletes    meta.Group                  `json:"deletes"`
+	Errors     []*exceptions.SaveException `json:"errors"`
+	Options    *wire.SaveOptions           `json:"options"`
+	Params     map[string]interface{}      `json:"params"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -182,7 +182,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Check for before save errors here
 	if op.HasErrors() {
-		return &(*op.Errors)[0]
+		return (*op.Errors)[0]
 	}
 
 	// Fetch References again.
@@ -210,7 +210,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	if op.HasErrors() {
 		// if we're ignoring validation errors, and all the errors are validation errors,
 		if op.Options != nil && op.Options.IgnoreValidationErrors {
-			unSkippedErrors := []exceptions.SaveException{}
+			unSkippedErrors := []*exceptions.SaveException{}
 			for _, err := range *op.Errors {
 
 				recordID := err.RecordID
@@ -228,12 +228,12 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 				}
 			}
 			if len(unSkippedErrors) > 0 {
-				return &unSkippedErrors[0]
+				return unSkippedErrors[0]
 			} else {
 				op.Errors = &unSkippedErrors
 			}
 		} else {
-			return &(*op.Errors)[0]
+			return (*op.Errors)[0]
 		}
 	}
 
@@ -275,7 +275,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 	// Check for after save errors here
 	if op.HasErrors() {
-		return &(*op.Errors)[0]
+		return (*op.Errors)[0]
 	}
 
 	return nil
