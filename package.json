@@ -69,7 +69,7 @@
     "@orangeopensource/hurl": "^6.0.1",
     "@react-hook/resize-observer": "^2.0.2",
     "@reduxjs/toolkit": "^2.6.1",
-    "@swc-node/register": "^1.10.9",
+    "@swc-node/register": "^1.10.10",
     "@swc/core": "^1.11.8",
     "@swc/helpers": "^0.5.15",
     "@swc/jest": "^0.2.37",
