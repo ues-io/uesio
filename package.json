@@ -49,7 +49,7 @@
   "files": [],
   "devDependencies": {
     "@dagrejs/dagre": "^1.1.4",
-    "@eslint/json": "^0.10.0",
+    "@eslint/json": "^0.11.0",
     "@floating-ui/react": "^0.27.5",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
