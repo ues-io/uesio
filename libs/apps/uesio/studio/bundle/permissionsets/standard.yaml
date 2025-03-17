@@ -19,6 +19,8 @@ bots:
   uesio/studio.select_plan: true
 views:
   uesio/appkit.user_detail_content: true
+  uesio/studio.agent: true
+  uesio/studio.agents: true
   uesio/studio.app: true
   uesio/studio.app_new: true
   uesio/studio.appsettings: true
@@ -129,6 +131,8 @@ views:
   uesio/studio.userusage: true
   uesio/studio.userusage_inner: true
 routes:
+  uesio/studio.agent: true
+  uesio/studio.agents: true
   uesio/studio.app_new: true
   uesio/studio.appsettings: true
   uesio/studio.authsources: true
@@ -249,6 +253,7 @@ collections:
     read: true # TODO: Remove/adjust once https://github.com/ues-io/uesio/issues/4554 is addressed
   uesio/core.bulkbatch:
     read: true # TODO: Remove/adjust once https://github.com/ues-io/uesio/issues/4554 is addressed
+  uesio/studio.agent: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true

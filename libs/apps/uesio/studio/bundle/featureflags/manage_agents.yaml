@@ -1,0 +1,4 @@
+name: manage_agents
+label: Manage Agents
+type: CHECKBOX
+defaultValue: false

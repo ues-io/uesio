@@ -22,7 +22,7 @@ func NewBaseAgent(namespace, name string) *Agent {
 type Agent struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Description    string `yaml:"description" json:"description"`
+	Description    string `yaml:"description" json:"uesio/studio.description"`
 	ProfileRef     string `yaml:"profile" json:"uesio/studio.profile"`
 }
 
