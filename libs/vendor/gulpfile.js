@@ -2,20 +2,21 @@ const gulp = require("gulp")
 const fs = require("fs")
 const packageLock = require("../../package-lock.json")
 const distVendor = "../../dist/vendor"
-//const isDev = process.env.NODE_ENV === "development" // use "dev" files if/when needed
+const isDev = process.env.NODE_ENV === "development"
 ////////////////////////////
 // BEGIN EDITABLE REGION
 
 // MODULE NAMES
 const MONACO = "monaco-editor"
+const monacoBaseDir = `${isDev ? "dev" : "min"}/vs`
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
   {
     name: MONACO,
     module: MONACO,
-    src: "min/vs/**",
-    dest: "min/vs",
+    src: `${monacoBaseDir}/**`,
+    dest: `${monacoBaseDir}`,
   },
 ]
 
@@ -32,12 +33,13 @@ function clean(cb) {
 
 function generateVendorManifest(cb) {
   const vendorManifest = modules.reduce(
-    (manifestObj, { name, module, path, preload = false, order }) => {
+    (manifestObj, { name, module, path, dest, preload = false, order }) => {
       const { version } = packageLock.packages[`node_modules/${module}`]
       console.info(`Using ${module}@${version}`) // eslint-disable-line no-console -- used during build time for status
       manifestObj[name] = {
         version,
         path,
+        dest,
         preload,
         order,
       }
