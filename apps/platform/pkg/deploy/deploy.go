@@ -54,6 +54,7 @@ var ORDERED_ITEMS = [...]string{
 	"integrationtypes",
 	"integrations",
 	"integrationactions",
+	"agents",
 }
 
 type DeployOptions struct {
