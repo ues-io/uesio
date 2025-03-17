@@ -165,6 +165,12 @@ definition:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.section
                           components:
+                            - uesio/io.titlebar:
+                                uesio.styleTokens:
+                                  root:
+                                    - mb-4
+                                uesio.variant: uesio/appkit.sub
+                                title: System Prompt
                             - uesio/io.list:
                                 uesio.id: agentAttachmentsList
                                 wire: attachments
