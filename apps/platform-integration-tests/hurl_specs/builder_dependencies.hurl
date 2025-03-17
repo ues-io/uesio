@@ -21,12 +21,12 @@ HTTP 200
 [Asserts]
 # Verify that the feature flags are loaded in the view builder
 # Type Checkbox
-jsonpath "$.featureflag[8].name" == "manage_user_access_tokens"
-jsonpath "$.featureflag[8].type" == "CHECKBOX"
-jsonpath "$.featureflag[8].user" == {{user_id}}
+jsonpath "$.featureflag[9].name" == "manage_user_access_tokens"
+jsonpath "$.featureflag[9].type" == "CHECKBOX"
+jsonpath "$.featureflag[9].user" == {{user_id}}
 
 # Type Number
-jsonpath "$.featureflag[9].name" == "max_domains_per_user"
-jsonpath "$.featureflag[9].type" == "NUMBER"
-jsonpath "$.featureflag[9].value" >= 0
-jsonpath "$.featureflag[9].user" == {{user_id}}
+jsonpath "$.featureflag[10].name" == "max_domains_per_user"
+jsonpath "$.featureflag[10].type" == "NUMBER"
+jsonpath "$.featureflag[10].value" >= 0
+jsonpath "$.featureflag[10].user" == {{user_id}}
