@@ -197,7 +197,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-001"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 9
@@ -224,7 +224,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-001"
 
 # Operator: IN | valueSource: VALUE
 # entry 10
@@ -252,8 +252,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" contains "ID-002"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 11
@@ -328,9 +328,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-003"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 13
@@ -361,9 +361,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" includes "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" contains "ID-003"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 14
@@ -404,7 +404,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
+jsonpath "$.wires[1].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-001"
 
 # Operator: NOT_IN | valueSource: PARAM
 ## entry 15
@@ -437,8 +437,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']['uesio/core.uniquekey']" not contains "ID-002"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 16
@@ -462,7 +462,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']" includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']" contains null
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
@@ -487,4 +487,4 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.reference']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.reference']" not contains null

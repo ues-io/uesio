@@ -73,8 +73,8 @@ main.tenant = $2 AND
 main.fields->'uesio/tests.number' = $3
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains null
 
 # Operator: EQ | valueSource: VALUE | value as string
 # NOTE this test depends on postgresql string to number conversion
@@ -114,8 +114,8 @@ main.tenant = $2 AND
 main.fields->'uesio/tests.number' = $3
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains null
 
 
 # Operator: EQ | valueSource: PARAM
@@ -144,7 +144,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 6
@@ -154,6 +154,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.number"}],            
             "query":true,
             "conditions": [
                 {
@@ -168,7 +169,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 7
@@ -196,7 +197,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
 
 # Operator: GT | valueSource: VALUE
 # entry 8
@@ -221,8 +222,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 2
 
 # Operator: GT | valueSource: PARAM
 # entry 9
@@ -250,8 +251,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 2
 
 # Operator: LT | valueSource: VALUE
 # entry 10
@@ -276,9 +277,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: LT | valueSource: PARAM
 # entry 11
@@ -306,9 +307,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: GTE | valueSource: VALUE
 # entry 12
@@ -333,9 +334,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 3
 # Operator: GTE | valueSource: PARAM
 # entry 13
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -362,9 +363,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 3
 
 # Operator: LTE | valueSource: VALUE
 # entry 14
@@ -389,9 +390,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: LTE | valueSource: PARAM
 # entry 15
@@ -419,9 +420,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: IN | valueSource: VALUE
 # entry 16
@@ -449,8 +450,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
 
 # Operator: IN | valueSource: LOOKUP
 # entry 17
@@ -528,8 +529,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 19
@@ -556,8 +557,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 2
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 20
@@ -628,9 +629,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 22
@@ -653,9 +654,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes null
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-008"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-009"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 23
@@ -678,9 +679,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-008"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-008"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-009"
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 24
@@ -707,8 +708,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 3
 
 # Operator: BETWEEN | valueSource: VALUE | inclusiveStart but and inclusiveEnd
 # entry 25
@@ -736,9 +737,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 3
 
 
 # Operator: BETWEEN | valueSource: VALUE | inclusiveStart but not inclusiveEnd
@@ -767,9 +768,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 3
 
 # Operator: BETWEEN | valueSource: VALUE | not inclusiveStart but inclusiveEnd
 # entry 27
@@ -797,6 +798,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" not includes 1
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 2
-jsonpath "$.wires[0].data[*]['uesio/tests.number']" includes 3
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" not contains 1
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 2
+jsonpath "$.wires[0].data[*]['uesio/tests.number']" contains 3
