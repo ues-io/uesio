@@ -3,10 +3,5 @@
     "noEmit": true
   },
   "extends": "./tsconfig.base.json",
-  "include": [
-    "eslint.config.cjs",
-    "eslint.config.mjs",
-    "jest.config.ts",
-    "jest.preset.js"
-  ]
+  "include": ["eslint.config.mjs", "jest.config.ts", "jest.preset.cjs"]
 }

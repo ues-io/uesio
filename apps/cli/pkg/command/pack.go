@@ -51,11 +51,22 @@ func Pack(options *PackOptions) error {
 		return nil
 	}
 
+	// NOTE - if NODE_ENV is undefined, esbuild will set NODE_ENV to "production" when all minify options
+	// are true, otherwise set it to "development".  If NODE_ENV is specifically set to development prior
+	// to calling esbuild, we do not want to minify.
+	isDev := os.Getenv("NODE_ENV") == "development"
+	minify := !isDev
+	var logLevel api.LogLevel = api.LogLevelWarning // defaults to "silent" if not set
+	if isDev {
+		logLevel = api.LogLevelDebug
+	}
+
 	for packName, entryPoint := range entryPoints {
 
 		buildOptions := &api.BuildOptions{
 			EntryPoints:       []string{entryPoint},
 			Bundle:            true,
+			Format:            api.FormatESModule,
 			Outdir:            "bundle/componentpacks",
 			Outbase:           "bundle/componentpacks",
 			AllowOverwrite:    true,
@@ -63,9 +74,10 @@ func Pack(options *PackOptions) error {
 			Write:             true,
 			Plugins:           []api.Plugin{pack.GetGlobalsPlugin(globalsMap)},
 			TsconfigRaw:       "{}",
-			MinifyWhitespace:  true,
-			MinifyIdentifiers: true,
-			MinifySyntax:      true,
+			MinifyWhitespace:  minify,
+			MinifyIdentifiers: minify,
+			MinifySyntax:      minify,
+			LogLevel:          logLevel,
 			Metafile:          true,
 			Sourcemap:         api.SourceMapLinked,
 			// This fixes a bug where the monaco amd loader was polluting

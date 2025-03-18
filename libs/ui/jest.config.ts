@@ -1,6 +1,6 @@
 export default {
   displayName: "ui",
-  preset: "../../jest.preset.js",
+  preset: "../../jest.preset.cjs",
   clearMocks: true,
   transform: {
     "^.+\\.(t|j)sx?$": "@swc/jest",

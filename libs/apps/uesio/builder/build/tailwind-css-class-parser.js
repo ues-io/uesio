@@ -1,4 +1,4 @@
-const csstree = require("css-tree")
+import * as csstree from "css-tree"
 
 const walk = (tree, prefix, items = []) => {
   for (const child of tree.children) {
@@ -89,6 +89,4 @@ const parseTailwindCss = (css) => {
   })
 }
 
-module.exports = {
-  parseTailwindCss,
-}
+export { parseTailwindCss }

@@ -18,6 +18,7 @@ type vendorScript struct {
 	Version string `json:"version"`
 	Preload bool   `json:"preload"`
 	Order   int    `json:"order"`
+	Dest    string `json:"dest"`
 }
 
 var vendorDistDir string
@@ -64,7 +65,7 @@ func init() {
 
 	for scriptModule, scriptManifest := range vendorManifest {
 		if scriptModule == "monaco-editor" {
-			monacoEditorVersion = scriptManifest.Version
+			monacoEditorVersion = fmt.Sprintf("%s/%s", scriptManifest.Version, scriptManifest.Dest)
 		}
 		if !scriptManifest.Preload || scriptManifest.Path == "" {
 			continue
@@ -90,6 +91,8 @@ func init() {
 	}
 }
 
+// returns relative path to root folder for the monaco-editor version used
+// e.g. 0.50.0/min/vs or 0.50.0/dev/vs
 func GetMonacoEditorVersion() string {
 	return monacoEditorVersion
 }

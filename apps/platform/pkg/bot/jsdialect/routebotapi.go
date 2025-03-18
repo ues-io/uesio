@@ -185,6 +185,10 @@ func (rba *RouteBotAPI) CallBot(botKey string, params map[string]interface{}) (i
 	return botCall(botKey, params, rba.session, rba.connection)
 }
 
+func (rba *RouteBotAPI) GetHostUrl() (string, error) {
+	return getHostUrl(rba.session, rba.connection)
+}
+
 func (rba *RouteBotAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValue(configValueKey, rba.session)
 }

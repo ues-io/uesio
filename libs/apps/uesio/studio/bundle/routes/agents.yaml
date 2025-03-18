@@ -1,0 +1,5 @@
+name: agents
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/agents
+view: agents
+theme: default
+title: Agents
