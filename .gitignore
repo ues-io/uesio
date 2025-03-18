@@ -79,6 +79,10 @@ queries/results
 .nx/cache
 .nx/workspace-data
 
+# Go
+# See comment in ./go.work regarding why go.work.sum is ignored
+go.work.sum
+
 # CI workflows cache go which creates a go-build-cache directory that contains packages that contain package.json files
 # so whenever nx is run, it "thinks" they are "projects" in the nx workspace and then fails to parse them (e.g., they
 # do not have a "name" property).  The below could be included in a .nxignore file since the problem is nx specific,
