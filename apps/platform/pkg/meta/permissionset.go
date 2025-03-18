@@ -11,7 +11,7 @@ import (
 func NewPermissionSet(key string) (*PermissionSet, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for PermissionSet")
+		return nil, errors.New("Bad Key for PermissionSet: " + key)
 	}
 	return NewBasePermissionSet(namespace, name), nil
 }

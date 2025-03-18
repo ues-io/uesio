@@ -9,7 +9,7 @@ import (
 func NewProfile(key string) (*Profile, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Profile")
+		return nil, errors.New("Bad Key for Profile: " + key)
 	}
 	return NewBaseProfile(namespace, name), nil
 }
