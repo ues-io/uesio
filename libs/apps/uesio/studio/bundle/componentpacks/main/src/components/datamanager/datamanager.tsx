@@ -37,7 +37,7 @@ const getWireDefinition = (
   return {
     collection: collectionKey,
     fields: Object.fromEntries(
-      collectionMetadata.getFieldIds().map((f) => [f, {}]),
+      getLoadableFields(collectionMetadata).map((f) => [f.getId(), {}]),
     ),
     order: [
       {
@@ -46,7 +46,7 @@ const getWireDefinition = (
       },
     ],
     batchsize: 50,
-  } as wire.WireDefinition
+  }
 }
 
 type UserOptions = {
@@ -57,6 +57,15 @@ type ColumnDefinition = {
   field: string
   user?: UserOptions
   width?: string
+}
+
+const getLoadableFields = (
+  collectionMetadata: collection.Collection | undefined,
+) => {
+  if (!collectionMetadata) return []
+  return collectionMetadata
+    .getSearchableFields()
+    .filter((f) => f.getType() !== "LONGTEXT")
 }
 
 const getColumns = (
@@ -70,7 +79,7 @@ const getColumns = (
   // 5. Owner
   // 6. Created By, Updated By
   if (!collectionMetadata) return []
-  const keyFields = [] as ColumnDefinition[]
+  const keyFields: ColumnDefinition[] = []
   const keyFieldSet = new Set()
   keyFieldSet.add(ID_FIELD)
   keyFieldSet.add(OWNER_FIELD)
@@ -98,9 +107,8 @@ const getColumns = (
       }
     })
   }
-  collectionMetadata
-    .getSearchableFields()
-    .filter((f) => f.getType() !== "LONGTEXT" && !keyFieldSet.has(f.getId()))
+  getLoadableFields(collectionMetadata)
+    .filter((f) => !keyFieldSet.has(f.getId()))
     .forEach((f) => {
       const id = f.getId()
       keyFields.push({
@@ -151,7 +159,7 @@ const getSearchFieldIds = (
   if (!collectionMetadata) {
     return [UNIQUE_KEY_FIELD]
   }
-  return collectionMetadata.getSearchableFields().map((f) => f.getId())
+  return getLoadableFields(collectionMetadata).map((f) => f.getId())
 }
 
 const DataManager: FunctionComponent<Props> = (props) => {
@@ -165,7 +173,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
     },
   } = props
 
-  const collectionKey = context.mergeString(collectionId) as wire.CollectionKey
+  const collectionKey = context.mergeString(collectionId)
   const collectionMetadata = api.collection.useCollection(
     context,
     collectionKey,
