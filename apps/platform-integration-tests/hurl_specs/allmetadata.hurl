@@ -366,12 +366,12 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 5
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/appkit.resend"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_allowed"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.secret_access_forbidden"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_api_key_credentials"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/appkit.resend"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.secret_access_allowed"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.secret_access_forbidden"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.test_api_key_credentials"
 jsonpath "$.wires[0].data[*]['uesio/studio.label']" != ""
-jsonpath "$.wires[0].data[*]['uesio/studio.label']" includes "Test API Key Credentials"
+jsonpath "$.wires[0].data[*]['uesio/studio.label']" contains "Test API Key Credentials"
 
 POST https://{{host}}:{{port}}/site/wires/load
 Accept: application/json
@@ -419,7 +419,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 1
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "uesio/tests.test_oauth_credentials"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.test_oauth_credentials"
 
 # Test pagination on a query for views in the workspace
 POST https://{{host}}:{{port}}/site/wires/load

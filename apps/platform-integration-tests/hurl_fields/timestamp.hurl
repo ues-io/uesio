@@ -163,6 +163,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
+            "fields": [{"id": "uesio/tests.timestamp"}],            
             "query":true,
             "conditions": [
                 {
@@ -178,7 +179,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 8
@@ -205,7 +206,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
 
 # Operator: GT | valueSource: VALUE
 # entry 9
@@ -230,8 +231,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1012611720
 
 # Operator: GT | valueSource: PARAM
 # entry 10
@@ -258,8 +259,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1012611720
 
 # Operator: LT | valueSource: VALUE
 # entry 11
@@ -284,9 +285,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: LT | valueSource: PARAM
 # entry 12
@@ -313,9 +314,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: GTE | valueSource: VALUE
 # entry 13
@@ -340,9 +341,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: GTE | valueSource: PARAM
 # entry 14
@@ -369,9 +370,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: LTE | valueSource: VALUE
 # entry 15
@@ -396,9 +397,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: LTE | valueSource: PARAM
 # entry 16
@@ -425,9 +426,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: IN | valueSource: VALUE
 # entry 17
@@ -455,8 +456,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: IN | valueSource: LOOKUP
 # entry 18
@@ -531,8 +532,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 20
@@ -559,8 +560,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1081044244
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1081044244
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 21
@@ -628,9 +629,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1046656980
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes 1081044244
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1081044244
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 23
@@ -654,9 +655,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-010"
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains null
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 24
@@ -681,9 +682,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-010"
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-010"
 
 
 # Operator: BETWEEN | valueSource: VALUE
@@ -711,8 +712,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 26
@@ -741,6 +742,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 978310860
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1012611720
-jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" includes 1046656980
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 978310860
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1012611720
+jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980

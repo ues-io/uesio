@@ -114,7 +114,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "text 1"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "text 1"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 6
@@ -143,7 +143,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 1"
 
 # Operator: STARTS_WITH | valueSource: VALUE
 # entry 7
@@ -169,10 +169,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 2"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 3"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes ""
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 3"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains ""
 
 # Operator: STARTS_WITH | valueSource: VALUE | Bad Value
 # NOTE Postgresql uses ILIKE to query the data matching 1 --> no data
@@ -242,10 +242,10 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 2"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 3"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes ""
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 3"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains ""
 
 # Operator: IN | valueSource: VALUE
 # entry 10
@@ -272,8 +272,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 11
@@ -349,8 +349,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 13
@@ -377,8 +377,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 2"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 14
@@ -419,7 +419,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" not includes "text 1"
+jsonpath "$.wires[1].data[*]['uesio/tests.text']" not contains "text 1"
 
 # Operator: NOT_IN | valueSource: PARAM
 # entry 15
@@ -454,9 +454,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 1"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 2"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes "text 3"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 1"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 2"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 3"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 16
@@ -480,9 +480,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-006"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains ""
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 17
@@ -506,6 +506,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" not includes ""
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-006"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains ""
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-005"

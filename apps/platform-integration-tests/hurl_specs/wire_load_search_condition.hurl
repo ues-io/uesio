@@ -46,4 +46,4 @@ main.tenant = $2 AND
 ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 1
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-004"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-004"

@@ -13,14 +13,14 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/app/uesio/tests/tools/by
 HTTP 200
 [Asserts]
 jsonpath "$" count == 3
-jsonpath "$[*].category" includes "Hand"
-jsonpath "$[*].category" includes "Machine"
+jsonpath "$[*].category" contains "Hand"
+jsonpath "$[*].category" contains "Machine"
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/app/uesio/tests/tools/by-brand/skil
 HTTP 200
 [Asserts]
 jsonpath "$" count == 1
-jsonpath "$[*].category" includes "Power"
+jsonpath "$[*].category" contains "Power"
 
 # Invoke without a required parameter
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/app/uesio/tests/api/tools

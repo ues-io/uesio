@@ -116,5 +116,5 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.wire[0].data[*]" count == 1
-jsonpath "$.dependencies.wire[0].data[*]['uesio/tests.name']" includes "ID-004"
+jsonpath "$.dependencies.wire[0].data[*]['uesio/tests.name']" contains "ID-004"
 

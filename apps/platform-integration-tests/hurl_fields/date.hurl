@@ -113,7 +113,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 6
@@ -142,7 +142,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
 
 # Operator: GT | valueSource: VALUE
 # entry 7
@@ -167,9 +167,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-15"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-15"
 
 # Operator: GT | valueSource: PARAM
 # entry 8
@@ -198,9 +198,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-15"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-15"
 
 # Operator: LT | valueSource: VALUE
 # entry 9
@@ -225,9 +225,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: LT | valueSource: PARAM
 # entry 10
@@ -256,9 +256,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: GTE | valueSource: VALUE
 # entry 11
@@ -283,9 +283,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-13"
 
 # Operator: GTE | valueSource: PARAM
 # entry 12
@@ -314,9 +314,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-13"
 
 # Operator: LTE | valueSource: VALUE
 # entry 13
@@ -341,9 +341,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: LTE | valueSource: PARAM
 # entry 14
@@ -372,9 +372,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: IN | valueSource: VALUE
 # entry 15
@@ -402,8 +402,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 16
@@ -482,8 +482,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 18
@@ -510,8 +510,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-12"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 19
@@ -579,9 +579,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 21
@@ -605,8 +605,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-008"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-008"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-009"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 22
@@ -631,8 +631,8 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]['uesio/tests.date']" exists
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-008"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-009"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-008"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-009"
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 23
@@ -659,8 +659,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-13"
 
 # Operator: BETWEEN | valueSource: VALUE | inclusiveStart and inclusiveEnd
 # entry 25
@@ -688,9 +688,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-13"
 
 # Operator: BETWEEN | valueSource: VALUE | inclusiveStart but not inclusiveEnd
 # entry 26
@@ -718,9 +718,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-13"
 
 # Operator: BETWEEN | valueSource: VALUE | not inclusiveStart but inclusiveEnd
 # entry 27
@@ -748,6 +748,6 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" not includes "2023-05-10"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-12"
-jsonpath "$.wires[0].data[*]['uesio/tests.date']" includes "2023-05-13"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" not contains "2023-05-10"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-12"
+jsonpath "$.wires[0].data[*]['uesio/tests.date']" contains "2023-05-13"

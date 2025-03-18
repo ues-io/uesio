@@ -18,13 +18,13 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "uesio.owner"
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "uesio.namedpermission"
-jsonpath "$.wires[0].data[*]['uesio/studio.name']" includes "uesio.installed"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/studio.workspace_admin"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/io"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/builder"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/core"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" contains "uesio.owner"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" contains "uesio.namedpermission"
+jsonpath "$.wires[0].data[*]['uesio/studio.name']" contains "uesio.installed"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/studio.workspace_admin"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/io"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/builder"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/core"
 
 # Test a wire load with a search condition
 POST https://{{host}}:{{port}}/site/wires/load
@@ -45,5 +45,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/studio.workspace_admin"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" not includes "uesio/io"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/studio.workspace_admin"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" not contains "uesio/io"
