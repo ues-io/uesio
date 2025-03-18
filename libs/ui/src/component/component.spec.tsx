@@ -1,8 +1,16 @@
 import { Context } from "../context/context"
+import { create, dispatch } from "../store/store"
 import {
   addDefaultPropertyAndSlotValues,
   resolveDeclarativeComponentDefinition,
+  mergeContextVariants,
 } from "./component"
+
+import { setMany as setComponentVariant } from "../bands/componentvariant"
+import { ComponentVariant } from "../definition/componentvariant"
+import { DefinitionMap } from "../definition/definition"
+import { MetadataKey } from "../metadata/types"
+import { Component } from "../definition/component"
 
 const viewName = "uesio/core.foo"
 const viewDef = `
@@ -391,6 +399,136 @@ describe("addDefaultPropertyAndSlotValues", () => {
         tc.componentDef.slots,
         "",
         "",
+        new Context(),
+      )
+      expect(actual).toEqual(tc.expected)
+    })
+  })
+})
+
+type MergeContextVariantsTestCase = {
+  name: string
+  inputDefinition: DefinitionMap | undefined
+  componentType: MetadataKey
+  componentDef: Component | undefined
+  variants: ComponentVariant[]
+  expected: DefinitionMap | undefined
+}
+
+const simpleReactComponentDef = {
+  type: "REACT" as const,
+  namespace: "uesio/tests" as const,
+  name: "simple",
+  properties: [],
+}
+
+const simpleVariant: ComponentVariant = {
+  namespace: "uesio/tests",
+  name: "main",
+  label: "Main",
+  component: "uesio/tests.simple",
+  definition: {
+    foo: "bar",
+    "uesio.styleTokens": {
+      root: ["m-5"],
+    },
+  },
+}
+
+const mergeContextVariantsTests: MergeContextVariantsTestCase[] = [
+  {
+    name: "sanity",
+    inputDefinition: {},
+    componentType: "uesio/tests.simple",
+    componentDef: simpleReactComponentDef,
+    variants: [],
+    expected: {},
+  },
+  {
+    name: "no merge if no default",
+    inputDefinition: {},
+    componentType: "uesio/tests.simple",
+    componentDef: simpleReactComponentDef,
+    variants: [simpleVariant],
+    expected: {},
+  },
+  {
+    name: "no merge if no default and missing componentDef",
+    inputDefinition: {},
+    componentType: "uesio/tests.simple",
+    componentDef: undefined,
+    variants: [simpleVariant],
+    expected: {},
+  },
+  {
+    name: "add default if exists",
+    inputDefinition: {},
+    componentType: "uesio/tests.simple",
+    componentDef: {
+      ...simpleReactComponentDef,
+      defaultVariant: "uesio/tests.main",
+    },
+    variants: [simpleVariant],
+    expected: {
+      "uesio.variant": "uesio/tests.main",
+      foo: "bar",
+    },
+  },
+  {
+    name: "add default if exists - existing props win",
+    inputDefinition: {
+      foo: "woo",
+    },
+    componentType: "uesio/tests.simple",
+    componentDef: {
+      ...simpleReactComponentDef,
+      defaultVariant: "uesio/tests.main",
+    },
+    variants: [simpleVariant],
+    expected: {
+      "uesio.variant": "uesio/tests.main",
+      foo: "woo",
+    },
+  },
+  {
+    name: "simple variant merge",
+    inputDefinition: {
+      "uesio.variant": "uesio/tests.main",
+    },
+    componentType: "uesio/tests.simple",
+    componentDef: simpleReactComponentDef,
+    variants: [simpleVariant],
+    expected: {
+      "uesio.variant": "uesio/tests.main",
+      foo: "bar",
+    },
+  },
+  {
+    name: "simple variant merge - no componentDef",
+    inputDefinition: {
+      "uesio.variant": "uesio/tests.main",
+    },
+    componentType: "uesio/tests.simple",
+    componentDef: undefined,
+    variants: [simpleVariant],
+    expected: {
+      "uesio.variant": "uesio/tests.main",
+      foo: "bar",
+    },
+  },
+]
+
+describe("mergeContextVariants", () => {
+  mergeContextVariantsTests.forEach((tc) => {
+    test(tc.name, () => {
+      create({})
+      if (tc.variants) {
+        dispatch(setComponentVariant(tc.variants))
+      }
+      const actual = mergeContextVariants(
+        tc.inputDefinition,
+        tc.componentType,
+        tc.componentDef,
         new Context(),
       )
       expect(actual).toEqual(tc.expected)
