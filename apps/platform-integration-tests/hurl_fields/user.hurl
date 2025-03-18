@@ -183,6 +183,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-001"
 # no data if I select some records without a user.
 # Hopefully this will get fixed in hurl and we'll be able to remove the condition
 # TODO: Update 2025.03.17 - This is still an issue in hurl 6.1.0
+# See https://github.com/Orange-OpenSource/hurl/issues/3869
 
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 {
@@ -223,6 +224,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not contains 
 # no data if I select some records without a user.
 # Hopefully this will get fixed in hurl and we'll be able to remove the condition
 # TODO: Update 2025.03.17 - This is still an issue in hurl 6.1.0
+# See https://github.com/Orange-OpenSource/hurl/issues/3869
 
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
 {
