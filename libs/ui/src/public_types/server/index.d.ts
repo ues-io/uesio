@@ -553,6 +553,7 @@ interface RouteBotApi {
   getNamespace: () => string
   // Returns the name of the Bot, e.g "add_numbers"
   getName: () => string
+  getHostUrl: () => string
 
   /**
    * Returns the resolved value for any config value available in this app.

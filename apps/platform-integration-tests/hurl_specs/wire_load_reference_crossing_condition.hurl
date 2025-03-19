@@ -190,10 +190,10 @@ subquery.fields->>'uesio/core.username' = $7)))) AND
 main.fields->>'uesio/tests.text' is distinct from $8
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 4"
-jsonpath "$.wires[0].data[*]['uesio/tests.text']" includes "text 5"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-004"
-jsonpath "$.wires[0].data[*]['uesio/tests.name']" includes "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 4"
+jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 5"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-004"
+jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-005"
 
 # Test a wire load with a single reference-crossing condition with a param
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

@@ -116,7 +116,7 @@ main.tenant = $2 AND
 array_position($3,main.fields->>'uesio/tests.text') IS NULL
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" not includes "text 1"
+jsonpath "$.wires[1].data[*]['uesio/tests.text']" not contains "text 1"
 
 # IN Operator without values
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
@@ -224,4 +224,4 @@ main.tenant = $2 AND
 array_position($3,main.fields->>'uesio/tests.text') IS NULL
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[1].data[*]['uesio/tests.text']" includes "text 1"
+jsonpath "$.wires[1].data[*]['uesio/tests.text']" contains "text 1"

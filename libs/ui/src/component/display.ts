@@ -551,7 +551,9 @@ export const getWiresForConditions = (
   return Array.from(uniqueWires.values())
 }
 
-const useShouldFilter = <T extends BaseDefinition>(
+const useShouldFilter = <
+  T extends Pick<BaseDefinition, typeof DISPLAY_CONDITIONS>,
+>(
   items: T[] | undefined = [],
   context: Context,
 ) => {

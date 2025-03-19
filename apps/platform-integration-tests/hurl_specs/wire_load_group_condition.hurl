@@ -56,9 +56,9 @@ subquery.fields->'uesio/tests.total_population' > $6)))
 ORDER BY main.id asc
 LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 3
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "Kupker:Alain"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "McCreary:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "Kupker:Alain"
 
 # Test a wire load with a group condition (and)
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

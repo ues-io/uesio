@@ -73,9 +73,9 @@ main.tenant = $2 AND
 (main.fields->>'uesio/tests.checkbox')::boolean = $3
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains false
 
 # Operator: EQ | valueSource: VALUE | String "false"
 # NOTE this test depends on postgresql boolean conversion
@@ -115,9 +115,9 @@ main.tenant = $2 AND
 (main.fields->>'uesio/tests.checkbox')::boolean = $3
 ORDER BY main.id asc
 LIMIT 501```
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
 
 
 # Operator: EQ | valueSource: PARAM
@@ -146,9 +146,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains false
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 6
@@ -173,9 +173,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 7
@@ -203,9 +203,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains null
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 8
@@ -228,11 +228,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes null
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes true
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes false
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains null
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains false
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-006"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 9
@@ -255,8 +255,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes true
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" includes false
-jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not includes null
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-006"
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains true
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains false
+jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-006"

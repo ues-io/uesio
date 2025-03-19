@@ -63,6 +63,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.work
+          # Maintaining go.work.sum even though not in repo in case its added back - don't want to overlookg re-adding it
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum
@@ -112,6 +113,7 @@ jobs:
         with:
           path: |
             go-build-cache
+          # Maintaining go.work.sum even though not in repo in case its added back - don't want to overlookg re-adding it
           key: ${{ runner.os }}-docker-cache-${{ hashFiles('apps/**/go.sum', 'go.work.sum') }}
 
       - name: Inject cache into docker
@@ -198,6 +200,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.work
+          # Maintaining go.work.sum even though not in repo in case its added back - don't want to overlookg re-adding it
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum

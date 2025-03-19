@@ -117,7 +117,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-001"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 6
@@ -145,7 +145,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-001"
 
 # Operator: IN | valueSource: VALUE
 # entry 7
@@ -172,8 +172,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" contains "ID-002"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 8
@@ -252,8 +252,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" contains "ID-002"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 10
@@ -280,8 +280,8 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-002"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 11
@@ -356,9 +356,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not includes "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/tests.autonumber']" not contains "ID-003"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 13

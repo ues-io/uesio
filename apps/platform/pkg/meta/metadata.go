@@ -297,6 +297,7 @@ var METADATA_NAME_MAP = map[string]string{
 }
 
 var bundleableGroupMap = map[string]BundleableFactory{
+	(&AgentCollection{}).GetBundleFolderName():                func() BundleableGroup { return &AgentCollection{} },
 	(&SecretCollection{}).GetBundleFolderName():               func() BundleableGroup { return &SecretCollection{} },
 	(&ProfileCollection{}).GetBundleFolderName():              func() BundleableGroup { return &ProfileCollection{} },
 	(&PermissionSetCollection{}).GetBundleFolderName():        func() BundleableGroup { return &PermissionSetCollection{} },

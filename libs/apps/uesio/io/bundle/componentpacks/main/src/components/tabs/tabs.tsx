@@ -45,7 +45,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
   const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
   const selectedIndex = foundIndex === -1 ? 0 : foundIndex
   const selectedTab = tabs[selectedIndex]
-  const allVisibleTabs = component.useShouldFilter<TabDefinition>(tabs, context)
+  const allVisibleTabs = component.useShouldFilter(tabs, context)
   const shouldDisplaySelectedTab =
     allVisibleTabs.findIndex((tab) => tab.id === selectedTab.id) > -1
   useEffect(() => {

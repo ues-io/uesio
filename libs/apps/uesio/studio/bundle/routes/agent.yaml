@@ -1,0 +1,5 @@
+name: agent
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/agents/{namespace:\w*\/\w*}/{agentname}
+view: agent
+theme: default
+title: "Agent: $Param{agentname}"

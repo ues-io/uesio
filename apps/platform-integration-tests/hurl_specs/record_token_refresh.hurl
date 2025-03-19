@@ -175,8 +175,8 @@ HTTP 200
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[1]['uesio/studio.recordid']" == "{{account_id}}"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio.owner:{{uesio_user_id}}"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/tests.accountmember:{{account_id}}"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio.owner:{{uesio_user_id}}"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/tests.accountmember:{{account_id}}"
 
 # Remove record challenge tokens from the account object
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/recordchallengetoken?uesio/studio.collection=eq.uesio%2Ftests.account
@@ -379,8 +379,8 @@ HTTP 200
 jsonpath "$.wires[0].data" count == 2
 jsonpath "$.wires[0].data[0]['uesio/studio.recordid']" == "{{account_id}}"
 jsonpath "$.wires[0].data[1]['uesio/studio.recordid']" == "{{account_id}}"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio.owner:{{uesio_user_id}}"
-jsonpath "$.wires[0].data[*]['uesio/studio.token']" includes "uesio/tests.accountmember:{{account_id}}"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio.owner:{{uesio_user_id}}"
+jsonpath "$.wires[0].data[*]['uesio/studio.token']" contains "uesio/tests.accountmember:{{account_id}}"
 
 # We're back! ben can now see evil corp
 POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load

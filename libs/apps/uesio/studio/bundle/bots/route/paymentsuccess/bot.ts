@@ -83,5 +83,7 @@ export default function paymentsuccess(bot: RouteBotApi) {
     ] as unknown as WireRecord[])
   }
 
-  bot.response.redirectToURL("https://studio.uesio-dev.com:3000/user/usage")
+  const host = bot.getHostUrl()
+
+  bot.response.redirectToURL(`${host}/user/usage`)
 }

@@ -1,0 +1,17 @@
+name: actionable
+label: Actionable Item
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - border-r-2
+      - border-l-1
+      - border-b-2
+      - border-t-1
+      - border-transparent
+    content:
+      - overflow-hidden
+      - w-0
+    actionable:
+      - hover:bg-white
+      - hover:border-fontcolor-900

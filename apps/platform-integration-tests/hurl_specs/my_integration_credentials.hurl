@@ -73,7 +73,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data" count == 2
 # When we don't have an existing record, we just use the integration name as the id
-jsonpath "$.wires[0].data[*]['uesio/core.integration']" includes "uesio/tests.oauth2_authorization_code_1"
-jsonpath "$.wires[0].data[*]['uesio/core.integration']" includes "uesio/tests.oauth2_authorization_code_2"
+jsonpath "$.wires[0].data[*]['uesio/core.integration']" contains "uesio/tests.oauth2_authorization_code_1"
+jsonpath "$.wires[0].data[*]['uesio/core.integration']" contains "uesio/tests.oauth2_authorization_code_2"
 jsonpath "$.wires[0].data[0]['uesio/core.user']" == "{{user_id}}"
 jsonpath "$.wires[0].data[1]['uesio/core.user']" == "{{user_id}}"

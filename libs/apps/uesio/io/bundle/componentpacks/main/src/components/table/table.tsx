@@ -70,7 +70,8 @@ type ColumnDefinition = {
   readonly?: boolean
   components: definition.DefinitionList
   [component.COMPONENT_CONTEXT]?: definition.DefinitionMap
-} & definition.BaseDefinition
+  [component.DISPLAY_CONDITIONS]?: component.DisplayCondition[]
+}
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 

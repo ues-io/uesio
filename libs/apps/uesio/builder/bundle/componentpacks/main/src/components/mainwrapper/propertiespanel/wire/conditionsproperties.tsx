@@ -254,11 +254,7 @@ const getItemPropertiesFunction =
   (itemState: wire.PlainWireRecord): ComponentProperty[] => {
     const fieldMetadata =
       itemState.field && wireName
-        ? getFieldMetadata(
-            context,
-            wireName as string,
-            itemState.field as string,
-          )
+        ? getFieldMetadata(context, wireName, itemState.field as string)
         : undefined
 
     const fieldDisplayType = fieldMetadata?.getType() || undefined

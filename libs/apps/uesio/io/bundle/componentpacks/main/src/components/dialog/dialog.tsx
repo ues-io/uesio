@@ -8,8 +8,8 @@ type DialogDefinition = {
   height?: string
   id?: string
   afterClose?: signal.SignalDefinition[]
-  actions?: definition.DefinitionList[]
-  components?: definition.DefinitionList[]
+  actions?: definition.DefinitionList
+  components?: definition.DefinitionList
   closeOnOutsideClick?: boolean
   closed?: boolean
 }
@@ -35,9 +35,9 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
       onClose={onClose}
       context={context}
       closed={definition.closed}
-      width={definition.width as string}
-      height={definition.height as string}
-      title={definition.title as string}
+      width={definition.width}
+      height={definition.height}
+      title={definition.title}
       closeOnOutsideClick={definition.closeOnOutsideClick}
       actions={
         definition.actions && (

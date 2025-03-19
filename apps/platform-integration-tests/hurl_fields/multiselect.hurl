@@ -36,9 +36,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-003"
 
 # Operator: HAS_ANY | valueSource: VALUE | Bad Value | as number
 # entry 3
@@ -99,9 +99,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-003"
 
 # Operator: HAS_ALL | valueSource: VALUE | as string
 # entry 5
@@ -213,12 +213,12 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-003"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-004"
-jsonpath "$.wires[0].data[*]['uesio/tests.multiselect']" includes null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-004"
+jsonpath "$.wires[0].data[*]['uesio/tests.multiselect']" contains null
 
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
@@ -242,9 +242,9 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-001"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-002"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-003"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "ID-004"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not includes "ID-005"
-jsonpath "$.wires[0].data[*]['uesio/tests.multiselect']" not includes null
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-001"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-002"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-003"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-004"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-005"
+jsonpath "$.wires[0].data[*]['uesio/tests.multiselect']" not contains null

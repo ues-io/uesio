@@ -9,7 +9,7 @@ import (
 func NewFileSource(key string) (*FileSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for FileSource")
+		return nil, errors.New("Bad Key for FileSource: " + key)
 	}
 	return NewBaseFileSource(namespace, name), nil
 }

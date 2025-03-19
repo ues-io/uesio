@@ -93,7 +93,7 @@ function getDefinitionFromVariant(
 function mergeContextVariants(
   definition: DefinitionMap | undefined,
   componentType: MetadataKey,
-  componentTypeDef: ComponentDef,
+  componentTypeDef: ComponentDef | undefined,
   context: Context,
 ): DefinitionMap | undefined {
   if (!definition) return definition
@@ -107,7 +107,6 @@ function mergeContextVariants(
       [component.STYLE_VARIANT]: variantName,
     }
   }
-  if (!componentTypeDef) return definition
   const variantDefinition = getVariantDefinition(
     componentType,
     componentTypeDef,
@@ -116,7 +115,7 @@ function mergeContextVariants(
   )
   if (!variantDefinition) return definition
   return mergeDefinitionMaps(
-    componentTypeDef.type === Declarative
+    componentTypeDef?.type === Declarative
       ? variantDefinition
       : removeStylesNode(variantDefinition),
     definition,
@@ -179,7 +178,7 @@ function addDefaultPropertyAndSlotValues(
     slotsWithDefaults && slotsWithDefaults.length > 0
   // Shortcut - if we have no defaults, we are done
   if (!havePropsWithDefaults && !haveSlotsWithDefaults) return def
-  const defaults = {} as DefinitionMap
+  const defaults: DefinitionMap = {}
   if (havePropsWithDefaults) {
     propsWithDefaults.forEach((prop: ComponentProperty) => {
       const { defaultValue, name } = prop
@@ -191,12 +190,7 @@ function addDefaultPropertyAndSlotValues(
   }
 
   if (haveSlotsWithDefaults) {
-    context = context.addPropsFrame(
-      def as Record<string, FieldValue>,
-      path,
-      componentType,
-      slots,
-    )
+    context = context.addPropsFrame(def, path, componentType, slots)
     slotsWithDefaults.forEach((slot: SlotDef) => {
       const { defaultContent, name } = slot
       if (typeof def[name] === "undefined" || def[name] === null) {
@@ -332,6 +326,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 
 export {
   addDefaultPropertyAndSlotValues,
+  mergeContextVariants,
   Component,
   DECLARATIVE_COMPONENT,
   getVariantDefinition,

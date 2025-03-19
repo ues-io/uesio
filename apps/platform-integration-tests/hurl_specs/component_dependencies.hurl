@@ -76,9 +76,9 @@ jsonpath "$.dependencies.viewdef[0].definition.panels.panel1['title']" == "My Pa
 jsonpath "$.dependencies.viewdef[0].definition.panels.panel1.actions[0]['uesio/io.button']['uesio.variant']" == "uesio/io.primary"
 jsonpath "$.dependencies.componentvariant[2].component" == "uesio/io.button"
 # verify that variants are loaded
-jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.button"
-jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.dialog"
-jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.table"
+jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.button"
+jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.dialog"
+jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.table"
 
 # Fetch component pack dependencies - via workspace router - for a View with a declarative component,
 # to verify that dependent component packs are loaded
@@ -133,8 +133,8 @@ HTTP 200
 # and this variant has a definition with a gridVariant property,
 # we should load the corresponding "uesio/io.grid" component variant,
 # along with its dependencies
-jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[*].component" includes "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.grid"
 jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"
 jsonpath "$.dependencies.componentvariant[4].name" == "three_column_grid"
 jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"

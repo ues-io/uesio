@@ -1,21 +1,23 @@
-const gulp = require("gulp")
-const fs = require("fs")
-const packageLock = require("../../package-lock.json")
+import gulp from "gulp"
+import fs from "node:fs"
+// eslint-disable-next-line @nx/enforce-module-boundaries -- allow reading file outside of project
+import packageLock from "../../package-lock.json" with { type: "json" }
 const distVendor = "../../dist/vendor"
-
+const isDev = process.env.NODE_ENV === "development"
 ////////////////////////////
 // BEGIN EDITABLE REGION
 
 // MODULE NAMES
 const MONACO = "monaco-editor"
+const monacoBaseDir = `${isDev ? "dev" : "min"}/vs`
 
 // NOTE: Modules are loaded in the sequence of this array
 const modules = [
   {
     name: MONACO,
     module: MONACO,
-    src: "min/vs/**",
-    dest: "min/vs",
+    src: `${monacoBaseDir}/**`,
+    dest: `${monacoBaseDir}`,
   },
 ]
 
@@ -26,18 +28,19 @@ const modules = [
  * and you can use all packages available on npm, but it must return either a
  * Promise, a Stream or take a callback and call it
  */
-function clean(cb) {
+export function clean(cb) {
   fs.rm(distVendor, { recursive: true, force: true }, cb)
 }
 
 function generateVendorManifest(cb) {
   const vendorManifest = modules.reduce(
-    (manifestObj, { name, module, path, preload = false, order }) => {
+    (manifestObj, { name, module, path, dest, preload = false, order }) => {
       const { version } = packageLock.packages[`node_modules/${module}`]
       console.info(`Using ${module}@${version}`) // eslint-disable-line no-console -- used during build time for status
       manifestObj[name] = {
         version,
         path,
+        dest,
         preload,
         order,
       }
@@ -68,19 +71,10 @@ const scriptTasks = modules.map(
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
-const build = gulp.series(
+export const build = gulp.series(
   clean,
   gulp.parallel.apply(this, scriptTasks),
   generateVendorManifest,
 )
 
-/*
- * You can use CommonJS `exports` module notation to declare tasks
- */
-exports.clean = clean
-// exports.scripts = scripts
-exports.build = build
-/*
- * Define default task that can be called by just running `gulp` from cli
- */
-exports.default = build
+export default build

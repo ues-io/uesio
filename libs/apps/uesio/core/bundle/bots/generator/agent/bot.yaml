@@ -1,0 +1,21 @@
+name: agent
+dialect: JAVASCRIPT
+label: Agent
+type: GENERATOR
+params:
+  - name: name
+    prompt: Bot Name
+    type: METADATANAME
+    required: true
+  - name: label
+    prompt: Label
+    type: TEXT
+    required: true
+  - name: description
+    prompt: Description
+    type: TEXT
+  - name: prompt
+    prompt: System Prompt
+    type: LONGTEXT
+    required: true
+public: true

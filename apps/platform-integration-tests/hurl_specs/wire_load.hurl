@@ -124,8 +124,8 @@ LIMIT 501```
 jsonpath "$.wires[0].conditions[0].id" == "mycoolid"
 jsonpath "$.wires[0].conditions[0].value" == "$Param{myparam}"
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 2
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "MacAughtrie:Jerrine"
-jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" includes "McCreary:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "MacAughtrie:Jerrine"
+jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "McCreary:Jerrine"
 jsonpath "$.wires[0].params" not exists # params should not be sent back to us
 
 # Test a wire load with a condition on the unique key field

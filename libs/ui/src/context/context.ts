@@ -24,6 +24,7 @@ import { SiteState } from "../bands/site"
 import { handlers, MergeOptions, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
 import { SlotDef } from "../definition/component"
+import { BaseDefinition } from "../definition/definition"
 
 const ERROR = "ERROR",
   COMPONENT = "COMPONENT",
@@ -111,7 +112,7 @@ interface ComponentContext {
 
 interface PropsContext {
   componentType: string
-  data: Record<string, FieldValue>
+  data: BaseDefinition
   path: string
   slots: SlotDef[] | undefined
 }
@@ -495,7 +496,6 @@ class Context {
 
   getParam = (param: string) => this.getParams()?.[param]
 
-  getProp = (prop: string) => this.stack.find(isPropsContextFrame)?.data[prop]
   getPropsFrame = () => this.stack.find(isPropsContextFrame)
 
   getParentComponentDef = (path: string) =>
@@ -721,7 +721,7 @@ class Context {
     })
 
   addPropsFrame = (
-    data: Record<string, FieldValue>,
+    data: BaseDefinition,
     path: string,
     componentType: string,
     slots?: SlotDef[],
