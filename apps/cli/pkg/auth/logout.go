@@ -21,7 +21,6 @@ func Logout() (*UserMergeData, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
 
 	userResponse := &LoginResponse{}

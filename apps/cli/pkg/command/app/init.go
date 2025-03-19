@@ -157,12 +157,12 @@ func AppInit() error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Post(generateURL, payloadBytes, sessid, nil)
+	resp, err := call.PostBytes(generateURL, payloadBytes, sessid, nil)
 	if err != nil {
 		return err
 	}
 
-	err = zip.Unzip(resp.Body, "")
+	err = zip.Unzip(resp, "")
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
+const (
+	TRAILER_UESIO_STATUS_CODE_KEY     = "X-UESIO-STATUS-CODE"
+	TRAILER_UESIO_STATUS_MESSAGE_KEY  = "X-UESIO-STATUS-MESSAGE"
+	TRAILER_UESIO_STATUS_CODE_SUCCESS = "0"
+)
+
 // HandleError is a utility for returning an appropriate HTTP response code and error message
 // based on a Go error, which is aware of the different Uesio exception classes defined
 // in the types/exceptions package.
