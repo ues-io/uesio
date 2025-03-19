@@ -64,16 +64,8 @@ func extract(zf *zip.File, dest string) error {
 	return nil
 }
 
-func Unzip(data io.ReadCloser, dest string) error {
-
-	// Unfortunately, we have to read the whole thing into memory
-	bodybytes, err := io.ReadAll(data)
-	if err != nil {
-		return err
-	}
-	defer data.Close()
-
-	zipReader, err := zip.NewReader(bytes.NewReader(bodybytes), int64(len(bodybytes)))
+func Unzip(data []byte, dest string) error {
+	zipReader, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 	if err != nil {
 		return err
 	}

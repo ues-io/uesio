@@ -46,10 +46,9 @@ func Deploy() error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	fmt.Println("Deploy Success")
-
-	defer resp.Body.Close()
 
 	return nil
 }

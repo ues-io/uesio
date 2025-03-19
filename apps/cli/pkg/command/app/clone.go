@@ -93,12 +93,12 @@ func AppClone(targetDir string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.Post(generateURL, payloadBytes, sessionId, nil)
+	resp, err := call.PostBytes(generateURL, payloadBytes, sessionId, nil)
 	if err != nil {
 		return err
 	}
 
-	if err = zip.Unzip(resp.Body, targetDir); err != nil {
+	if err = zip.Unzip(resp, targetDir); err != nil {
 		return err
 	}
 
@@ -106,6 +106,9 @@ func AppClone(targetDir string) error {
 		return err
 	}
 
+	// TODO: Emit message for user to npm install after reviewing any potential changes
+	// also consider not init'ing during a clone or "detecting" if we have the package.json, etc.
+	// and only initing otherwise....
 	if err = installDeps(targetDir); err != nil {
 		return err
 	}

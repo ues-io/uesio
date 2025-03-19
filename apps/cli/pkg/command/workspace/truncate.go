@@ -43,10 +43,9 @@ func Truncate() error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	fmt.Printf("Successfully deleted all data from all collections in workspace %s\n", workspace)
-
-	defer resp.Body.Close()
 
 	return nil
 }

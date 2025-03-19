@@ -64,6 +64,7 @@ func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecReque
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	batchResponse := &bulk.BatchResponse{}
 
@@ -74,9 +75,7 @@ func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecReque
 
 	fmt.Println("Upsert Success: " + resp.Status)
 
-	defer resp.Body.Close()
 	return batchResponse, nil
-
 }
 
 func getSpec(options *UpsertOptions) (*meta.JobSpecRequest, error) {

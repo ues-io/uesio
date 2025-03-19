@@ -30,12 +30,15 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 	fileName := strings.ReplaceAll(fmt.Sprintf("uesio_retrieve_%s_%s_%s", appName, versionName, time.Now().Format(time.RFC3339)), ":", "_")
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", fileName))
+	ctlutil.AddTrailingStatus(w)
 
 	if err := bs.GetBundleZip(w, &bundlestore.BundleZipOptions{
 		// Only include generated types if we're in a workspace context
 		IncludeGeneratedTypes: session.GetWorkspaceSession() != nil,
 	}); err != nil {
-		ctlutil.HandleError(w, err)
+		// Note - We are streaming result so Http StatusCode will have been set to 200 after
+		// the first Write so we implement custom approach to detecting failure on client
+		ctlutil.HandleTrailingError(w, err)
 		return
 	}
 }
