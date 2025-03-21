@@ -168,27 +168,23 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 		},
 		Type: "LOAD",
 	}
+
+	// Try to load SYSTEM bot first because we never want to allow non-SYSTEM bot to override a SYSTEM bot
+	systemDialect, err := bot.GetBotDialect("SYSTEM")
+	if err != nil {
+		return err
+	}
+	err = systemDialect.LoadBot(loadBot, op, connection, session)
+	if err != nil && !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
+		return err
+	} else if err == nil {
+		return nil
+	}
+
 	// TODO: Figure out why connection has to be nil
 	err = bundle.Load(loadBot, nil, session, nil)
-	// See if there is a SYSTEM bot instead
-	// TODO: Reverse the order of attempting loads, loading system first since
-	// we do not want to override a system bot and only attempt to load
-	// standard bot if system bot is not found, fail fast if any other error
-	// trying to load system bot
 	if err != nil {
-		systemDialect, err2 := bot.GetBotDialect("SYSTEM")
-		if err2 != nil {
-			return err2
-		}
-		// Try running a Load bot using the System dialect.
-		err = systemDialect.LoadBot(loadBot, op, connection, session)
-		if err != nil {
-			if exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
-				return exceptions.NewNotFoundException("could not find requested LOAD bot: " + botName)
-			}
-			return err
-		}
-		return nil
+		return err
 	}
 	// We found a custom LOAD bot, so check to see if it has a valid dialect.
 	dialect, err := bot.GetBotDialect(loadBot.Dialect)
@@ -198,7 +194,6 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 
 	// Finally - run the load bot!
 	return dialect.LoadBot(loadBot, op, connection, session)
-
 }
 
 func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
