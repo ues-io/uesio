@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -229,8 +230,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	var route *meta.Route
 	if redirect {
 		showButton := "false"
-		switch incomingErr.(type) {
-		case *exceptions.UnauthorizedException, *exceptions.ForbiddenException:
+		if exceptions.IsType[*exceptions.UnauthorizedException](incomingErr) || exceptions.IsType[*exceptions.ForbiddenException](incomingErr) {
 			showButton = "true"
 		}
 		route = getNotFoundRoute(path, namespace, incomingErr.Error(), showButton)
@@ -285,7 +285,8 @@ func getErrorResponse(err error, statusCode int) *errorResponse {
 		Status: strings.Replace(http.StatusText(statusCode), fmt.Sprintf("%d", statusCode), "", 1),
 		Error:  err.Error(),
 	}
-	if paramException, ok := err.(*exceptions.InvalidParamException); ok && paramException.Details != "" {
+	var paramException *exceptions.InvalidParamException
+	if errors.As(err, &paramException) && paramException.Details != "" {
 		resp.Details = paramException.Details
 	}
 	return resp

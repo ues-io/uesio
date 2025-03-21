@@ -139,10 +139,10 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.Integratio
 	}
 
 	// Otherwise, we may need to reauthenticate
-	switch typedErr := err.(type) {
-	case *url.Error:
-		switch innerErr := typedErr.Err.(type) {
-		case *oauth2.RetrieveError:
+	var urlError *url.Error
+	if errors.As(err, &urlError) {
+		var retrieveErr *oauth2.RetrieveError
+		if errors.As(urlError.Err, &retrieveErr) {
 			// This usually means that the refresh token is invalid, expired, or can't be obtained.
 			// Delete it, or at least attempt to
 			if isAuthCodeFlow {
@@ -151,7 +151,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.Integratio
 					slog.Error("unable to delete integration credential record: " + deleteErr.Error())
 				}
 			}
-			return nil, exceptions.NewUnauthorizedException(innerErr.Error())
+			return nil, exceptions.NewUnauthorizedException(retrieveErr.Error())
 		}
 	}
 	return nil, exceptions.NewUnauthorizedException("Authentication failed: " + err.Error())

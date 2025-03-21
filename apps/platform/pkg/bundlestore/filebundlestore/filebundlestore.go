@@ -89,7 +89,7 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	buf := &bytes.Buffer{}
 	fileMetadata, err := b.download(buf, filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
-		return exceptions.NewNotFoundException(fmt.Sprintf("Metadata item: %s of type: %s does not exist", key, collectionName))
+		return fmt.Errorf("unable to download metadata item '%s' of type '%s': %w", key, collectionName, err)
 	}
 	fakeNamespaceUser := &meta.User{
 		BuiltIn: meta.BuiltIn{
@@ -138,11 +138,8 @@ func (b *FileBundleStoreConnection) GetManyItems(items []meta.BundleableItem, op
 	for _, item := range items {
 		err := b.GetItem(item, nil)
 		if err != nil {
-			if options.AllowMissingItems {
-				switch err.(type) {
-				case *exceptions.ForbiddenException:
-					continue
-				}
+			if options.AllowMissingItems && exceptions.IsType[*exceptions.ForbiddenException](err) {
+				continue
 			}
 			return err
 		}
@@ -169,14 +166,12 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 			continue
 		}
 
-		// TODO: Shouldn't we return these errors?
+		// Ignoring forbidden since its a valid situation that a user does not have access
 		if err = b.GetItem(retrievedItem, nil); err != nil {
-			switch err.(type) {
-			case *exceptions.NotFoundException, *exceptions.ForbiddenException:
+			if exceptions.IsType[*exceptions.ForbiddenException](err) {
 				continue
-			default:
-				return err
 			}
+			return err
 		}
 
 		// Check to see if the item meets bundle conditions

@@ -23,9 +23,8 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if err := datasource.Save(saveRequestBatch.Wires, session); err != nil {
-		_, ok := err.(*exceptions.SaveException)
 		// If the error is a save error still respond
-		if ok {
+		if exceptions.IsType[*exceptions.SaveException](err) {
 			filejson.RespondJSON(w, r, &saveRequestBatch)
 			return
 		}

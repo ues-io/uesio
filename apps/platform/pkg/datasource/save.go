@@ -328,7 +328,7 @@ func SaveOps(batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire
 			err2 := runDynamicCollectionSaveBots(op, connection, session)
 			if err2 != nil {
 				// If this error is already in the save op, don't add it again
-				if _, isSaveException := err2.(*exceptions.SaveException); isSaveException {
+				if exceptions.IsType[*exceptions.SaveException](err2) {
 					return err2
 				} else {
 					return HandleErrorAndAddToSaveOp(op, err2)

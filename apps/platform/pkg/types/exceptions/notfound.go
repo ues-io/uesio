@@ -12,6 +12,5 @@ func (e *NotFoundException) Error() string {
 }
 
 func IsNotFoundException(err error) bool {
-	_, isNotFound := err.(*NotFoundException)
-	return isNotFound
+	return IsType[*NotFoundException](err)
 }

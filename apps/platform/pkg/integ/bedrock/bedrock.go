@@ -2,12 +2,12 @@ package bedrock
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws/transport/http"
+	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 	brtypes "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
-	"github.com/aws/smithy-go"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -152,18 +152,23 @@ func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions,
 }
 
 func handleBedrockError(err error) error {
-	switch typedErr := err.(type) {
-	case *smithy.OperationError:
-		return handleBedrockError(typedErr.Unwrap())
-	case *http.ResponseError:
-		return handleBedrockError(typedErr.Unwrap())
-	case *smithy.GenericAPIError:
-		switch typedErr.ErrorCode() {
-		case "ExpiredTokenException":
-			return exceptions.NewUnauthorizedException(typedErr.ErrorMessage())
-		}
-	case *brtypes.ValidationException:
-		return exceptions.NewBadRequestException(typedErr.ErrorMessage())
+	var validationErr *brtypes.ValidationException
+	if errors.As(err, &validationErr) {
+		return exceptions.NewBadRequestException(validationErr.ErrorMessage())
 	}
+
+	// the REST API docs and golang sdk docs differ on types of errors & http status
+	// codes, some indicating things like "unauthorized" will return a 400 which
+	// doesn't make sense.  There are a number of reasons/ways for what should be a
+	// 401/403 and given the inconsistencies and limitations of the aws docs, there is no
+	// way to be 100% certain what they all are. The prior code here would only check
+	// for an error code of "ExpiredTokenException" but I do not even see that code
+	// mentioned in any of the bedrock docs. For now, taking the conventional method
+	// of checking for a 401/403
+	var respErr *awshttp.ResponseError
+	if errors.As(err, &respErr) && (respErr.HTTPStatusCode() == http.StatusUnauthorized || respErr.HTTPStatusCode() == http.StatusForbidden) {
+		return exceptions.NewUnauthorizedException(respErr.Error())
+	}
+
 	return exceptions.NewBadRequestException(err.Error())
 }
