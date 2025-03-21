@@ -17,7 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
@@ -68,7 +67,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 	buf := &bytes.Buffer{}
 	fileMetadata, err := bundle.GetItemAttachment(buf, file, path, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewNotFoundException("file not found at path: "+path))
+		ctlutil.HandleError(w, err)
 		return
 	}
 
