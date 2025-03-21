@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -77,22 +76,30 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) error {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
 	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
-	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
-	// we need to load it so that we have that metadata available.
+	// If the pack has not been requested yet we need to load it so that we have that metadata available.
 	if alreadyRequested {
-		if existingPack, ok := existingItem.(*meta.ComponentPack); ok {
+		// TODO: This check likely isn't necessary but maintaining from prior code
+		// that would perform it and then load the pack if the item wasn't a component
+		// pack.  The item should NEVER not be a component pack here.  This can
+		// likely be removed in future assuming no issues arise.
+		if existingPack, ok := existingItem.(*meta.ComponentPack); !ok {
+			return fmt.Errorf("unexpected item found for component pack: '%s.%s'", packNamespace, packName)
+		} else {
 			pack = existingPack
 		}
-	}
-	if pack.UpdatedAt == 0 {
+	} else {
 		if err := bundle.Load(pack, nil, session, nil); err != nil {
 			return err
 		}
-		// Bundle loads should always set UpdatedAt so this value is never expected to be zero
-		// TODO: Refactor to use existing pack if we have one, do not need to further check
-		// UpdatedAt and could consider returning error if UpdatedAt == 0.
+		// TODO: This check can be eventually removed.  It's intended to cover legacy code that
+		// would allow UpdatedAt to be zero since previously some bundlestores did not provide a
+		// value and when detected, we would set UpdatedAt to current time.  Bundlestores are now
+		// required to provide a non-zero UpdatedAt since it is needed for caching purposes to ensure
+		// we don't have multiple copies of the same bundle in the cache and to be able to detect
+		// changes to a bundle.  This check can be removed at some point once we confirm the change
+		// in logic does not introduce any issues (which is shouldn't).
 		if pack.UpdatedAt == 0 {
-			pack.UpdatedAt = time.Now().Unix()
+			return fmt.Errorf("bundlestore did not provide a value for UpdatedAt for component pack: '%s.%s'", packNamespace, packName)
 		}
 	}
 	if session.GetWorkspace() == nil {
