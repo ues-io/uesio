@@ -70,6 +70,10 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	fullCollectionName := item.GetCollectionName()
 	collectionName := item.GetBundleFolderName()
 
+	// TODO: Need to revisit consistency and approach to differentiating between not having permission and not
+	// being found for both authenticated and unauthenticated users.  localstorebundle will return a 404
+	// when not found vs. here we're a 403 is returned even for resource that does not actually exist.  Pros/Cons
+	// to several different approaches that could be taken but need to be consistent for same/similar operations.
 	hasPermission := b.Permissions.HasPermission(item.GetPermChecker())
 	if !hasPermission {
 		message := fmt.Sprintf("No Permission to metadata item: %s : %s", item.GetCollectionName(), key)

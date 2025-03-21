@@ -158,3 +158,15 @@ GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userf
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
+
+# Verify 500 when invalid userfileid format
+GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid=my-bad-id
+HTTP 500
+
+# Verify 404 when file not found
+GET https://{{host}}:{{port}}/site/userfiles/download?userfileid=472df010-e3df-48d0-9cb6-7b28022ab045&version=1734112100
+HTTP 404
+
+# Verify 500 when invalid userfileid format
+GET https://{{host}}:{{port}}/site/userfiles/download?userfileid=my-bad-id&version=1734112100
+HTTP 500
