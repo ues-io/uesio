@@ -69,7 +69,7 @@ POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/bots/call/uesio/tests/a
 {}
 HTTP 404
 [Asserts]
-body == "listener bot not found: uesio/tests.achieve_world_peace\n"
+body startsWith "unable to load listener bot 'uesio/tests.achieve_world_peace'"
 
 # Test invoking a bot as a site guest user - should succeed because access is granted
 POST https://tests.{{domain}}:{{port}}/site/bots/call/uesio/tests/add_numbers

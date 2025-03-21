@@ -135,15 +135,15 @@ HTTP 200
 # along with its dependencies
 jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.deck"
 jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[4].name" == "three_column_grid"
-jsonpath "$.dependencies.componentvariant[4].component" == "uesio/io.deck"
-jsonpath "$.dependencies.componentvariant[4].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
-jsonpath "$.dependencies.componentvariant[5].name" == "one_column"
-jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[6].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[5].name" == "three_column_grid"
+jsonpath "$.dependencies.componentvariant[5].component" == "uesio/io.deck"
+jsonpath "$.dependencies.componentvariant[5].definition.gridVariant" == "uesio/io.grid:uesio/io.three_columns"
+jsonpath "$.dependencies.componentvariant[6].name" == "one_column"
 jsonpath "$.dependencies.componentvariant[6].component" == "uesio/io.grid"
-jsonpath "$.dependencies.componentvariant[6].extends" == "uesio/io.one_column"
+jsonpath "$.dependencies.componentvariant[7].name" == "three_columns"
+jsonpath "$.dependencies.componentvariant[7].component" == "uesio/io.grid"
+jsonpath "$.dependencies.componentvariant[7].extends" == "uesio/io.one_column"
 
 GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
 HTTP 200
