@@ -1,23 +1,49 @@
 package exceptions
 
 import (
+	"errors"
 	"net/http"
 )
 
 // GetStatusCodeForError returns an HTTP status code appropriate for the error type,
 // defaulting to 500 Internal Server Error for generic ctlutil
 func GetStatusCodeForError(err error) int {
-	switch err.(type) {
-	case *UnauthorizedException:
+	if IsType[*UnauthorizedException](err) {
 		return http.StatusUnauthorized
-	case *BadRequestException, *InvalidParamException, *ExecutionException:
+	}
+
+	if IsType[*BadRequestException](err) {
 		return http.StatusBadRequest
-	case *NotFoundException, *SystemBotNotFoundException:
+	}
+
+	if IsType[*InvalidParamException](err) {
+		return http.StatusBadRequest
+	}
+
+	if IsType[*ExecutionException](err) {
+		return http.StatusBadRequest
+	}
+
+	if IsType[*NotFoundException](err) {
 		return http.StatusNotFound
-	case *ForbiddenException:
+	}
+
+	if IsType[*SystemBotNotFoundException](err) {
+		return http.StatusNotFound
+	}
+
+	if IsType[*ForbiddenException](err) {
 		return http.StatusForbidden
-	case *DuplicateException:
+	}
+
+	if IsType[*DuplicateException](err) {
 		return http.StatusConflict
 	}
+
 	return http.StatusInternalServerError
+}
+
+func IsType[K error](err error) bool {
+	var e K
+	return errors.As(err, &e)
 }

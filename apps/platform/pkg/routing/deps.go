@@ -44,7 +44,7 @@ func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 
 	err = bundle.Load(subViewDep, nil, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load SubView: " + key + " : " + err.Error())
+		return nil, fmt.Errorf("unable to load SubView '%s': %w", key, err)
 	}
 	return subViewDep, nil
 }
@@ -58,7 +58,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 
 	err = bundle.Load(variantDep, nil, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
+		return nil, fmt.Errorf("unable to load variant '%s': %w", key, err)
 	}
 	return variantDep, nil
 }
@@ -74,7 +74,7 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 	return "", errors.New("Invalid Variant Key: " + fullName)
 }
 
-func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) {
+func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) error {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
 	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
 	// If the pack has not been requested yet and/or we don't have its UpdatedAt field present,
@@ -85,7 +85,13 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 		}
 	}
 	if pack.UpdatedAt == 0 {
-		if err := bundle.Load(pack, nil, session, nil); err != nil || pack.UpdatedAt == 0 {
+		if err := bundle.Load(pack, nil, session, nil); err != nil {
+			return err
+		}
+		// Bundle loads should always set UpdatedAt so this value is never expected to be zero
+		// TODO: Refactor to use existing pack if we have one, do not need to further check
+		// UpdatedAt and could consider returning error if UpdatedAt == 0.
+		if pack.UpdatedAt == 0 {
 			pack.UpdatedAt = time.Now().Unix()
 		}
 	}
@@ -96,6 +102,8 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 	if !alreadyRequested {
 		deps.ComponentPack.AddItem(pack)
 	}
+
+	return nil
 }
 
 func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, session *sess.Session) error {

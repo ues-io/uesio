@@ -30,8 +30,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 	}
 
 	modifiedRoute, err := systemDialect.RouteBot(routeBot, route, request, connection, session)
-	_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
-	if !isNotFoundError {
+	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
 		return modifiedRoute, err
@@ -54,7 +53,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 
 	routeBot = meta.NewRouteBot(botNamespace, botName)
 	if err = bundleLoader(routeBot); err != nil {
-		return nil, exceptions.NewNotFoundException("route bot not found: " + routeBot.GetKey())
+		return nil, fmt.Errorf("unable to load route '%s': %w", routeBot.GetKey(), err)
 	}
 	// route.Params will contain the composite of path and query string parameters
 	if err = routeBot.ValidateParams(route.Params, bundleLoader); err != nil {
@@ -172,6 +171,10 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 	// TODO: Figure out why connection has to be nil
 	err = bundle.Load(loadBot, nil, session, nil)
 	// See if there is a SYSTEM bot instead
+	// TODO: Reverse the order of attempting loads, loading system first since
+	// we do not want to override a system bot and only attempt to load
+	// standard bot if system bot is not found, fail fast if any other error
+	// trying to load system bot
 	if err != nil {
 		systemDialect, err2 := bot.GetBotDialect("SYSTEM")
 		if err2 != nil {
@@ -180,8 +183,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 		// Try running a Load bot using the System dialect.
 		err = systemDialect.LoadBot(loadBot, op, connection, session)
 		if err != nil {
-			_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
-			if isNotFoundError {
+			if exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 				return exceptions.NewNotFoundException("could not find requested LOAD bot: " + botName)
 			}
 			return err
@@ -216,7 +218,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 	// TODO: Figure out why connection has to be nil
 	err = bundle.Load(saveBot, nil, session, nil)
 	if err != nil {
-		return exceptions.NewNotFoundException("could not find requested SAVE bot: " + botName)
+		return fmt.Errorf("unable to load requested SAVE bot '%s': %w", botName, err)
 	}
 	dialect, err := bot.GetBotDialect(saveBot.Dialect)
 	if err != nil {
@@ -283,7 +285,7 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 	}
 
 	if err := bundleLoader(robot); err != nil {
-		return nil, exceptions.NewNotFoundException("generator not found: " + fmt.Sprintf("%s.%s", namespace, name))
+		return nil, fmt.Errorf("unable to load generator '%s.%s': %w", namespace, name, err)
 	}
 	if err := robot.ValidateParams(params, bundleLoader); err != nil {
 		return nil, err
@@ -335,8 +337,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	}
 
 	systemBotResults, err := systemDialect.CallBot(systemListenerBot, params, connection, session)
-	_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
-	if !isNotFoundError {
+	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
 		return systemBotResults, err
@@ -344,7 +345,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 	robot := meta.NewListenerBot(namespace, name)
 	if err = bundleLoader(robot); err != nil {
-		return nil, exceptions.NewNotFoundException("listener bot not found: " + fmt.Sprintf("%s.%s", namespace, name))
+		return nil, fmt.Errorf("unable to load listener bot '%s.%s': %w", namespace, name, err)
 	}
 
 	if err = robot.ValidateParams(params, bundleLoader); err != nil {
@@ -413,8 +414,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 	}
 
 	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, ic, action.Name, params)
-	_, isNotFoundError := err.(*exceptions.SystemBotNotFoundException)
-	if !isNotFoundError {
+	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
 		return systemBotResults, err
@@ -436,7 +436,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 	}
 	robot := meta.NewRunActionBot(botNamespace, botName)
 	if err = bundleLoader(robot); err != nil {
-		return nil, exceptions.NewNotFoundException("integration run action bot not found: " + actionBot)
+		return nil, fmt.Errorf("unable to load run action bot '%s': %w", actionBot, err)
 	}
 
 	if err = meta.ValidateParams(action.Params, params, bundleLoader); err != nil {

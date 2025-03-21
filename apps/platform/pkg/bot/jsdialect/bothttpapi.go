@@ -180,12 +180,10 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	// Perform the request using the selected authentication paradigm
 	httpResp, err := api.makeRequest(httpReq, NewBotHttpAuth(api.ic))
 	if err != nil {
-		switch err.(type) {
-		case *exceptions.UnauthorizedException:
+		if exceptions.IsType[*exceptions.UnauthorizedException](err) {
 			return Unauthorized(err.Error())
-		default:
-			return ServerError(err)
 		}
+		return ServerError(err)
 	}
 
 	defer httpResp.Body.Close()
