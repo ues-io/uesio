@@ -91,15 +91,15 @@ func RetrieveBundleForAppWorkspace(appName, workspaceName, outputDir string) err
 		return err
 	}
 
-	resp, err := call.Request(&call.RequestSpec{
+	resp, err := call.RequestResult(&call.RequestSpec{
 		Method:     http.MethodGet,
 		Url:        url,
 		SessionId:  sessionId,
 		AppContext: context.NewWorkspaceContext(appName, workspaceName),
-	})
+	}, call.ByteResultReader)
 	if err != nil {
 		return err
 	}
 
-	return zip.Unzip(resp.Body, outputDir)
+	return zip.Unzip(resp, outputDir)
 }

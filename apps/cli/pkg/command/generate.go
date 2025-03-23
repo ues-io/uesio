@@ -75,7 +75,7 @@ func Generate(key string) error {
 	if err = json.NewEncoder(payloadBytes).Encode(&answers); err != nil {
 		return err
 	}
-	if resp, err := call.Request(&call.RequestSpec{
+	if resp, err := call.RequestResult(&call.RequestSpec{
 		Method:     http.MethodPost,
 		Url:        generateURL,
 		SessionId:  sessionId,
@@ -84,10 +84,10 @@ func Generate(key string) error {
 		AdditionalHeaders: map[string]string{
 			"Accept": "application/zip",
 		},
-	}); err != nil {
+	}, call.ByteResultReader); err != nil {
 		return err
 	} else {
-		if err = zip.Unzip(resp.Body, "bundle"); err != nil {
+		if err = zip.Unzip(resp, "bundle"); err != nil {
 			return err
 		}
 	}
@@ -112,6 +112,8 @@ func GenerateAppTypeDefinitions(app, workspace, sessionId string, appContext *co
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
+
 	filePath := filepath.Join("generated", "@types", "@uesio", "app.d.ts")
 	outFile, err := os.Create(filePath)
 	if err != nil {

@@ -20,7 +20,7 @@ func GetIntegration(integrationID string, session *sess.Session, connection wire
 		return nil, err
 	}
 	if err = bundle.Load(integrationInstance, nil, session, connection); err != nil {
-		return nil, exceptions.NewNotFoundException("could not find Integration: " + integrationID)
+		return nil, fmt.Errorf("unable to load integration '%s': %w", integrationID, err)
 	}
 	return integrationInstance, nil
 }
@@ -32,7 +32,7 @@ func GetIntegrationType(integrationTypeName string, session *sess.Session, conne
 		return nil, err
 	}
 	if err = bundle.Load(integrationType, nil, session, connection); err != nil {
-		return nil, exceptions.NewNotFoundException("could not find Integration Type: " + integrationTypeName)
+		return nil, fmt.Errorf("unable to load integration type '%s': %w", integrationTypeName, err)
 	}
 	return integrationType, nil
 }
@@ -45,7 +45,7 @@ func GetIntegrationAction(integrationType, actionKey string, session *sess.Sessi
 		return nil, exceptions.NewNotFoundException("could not find integration action: " + actionKey)
 	}
 	if err = bundle.Load(action, nil, session, connection); err != nil {
-		return nil, exceptions.NewNotFoundException("could not find integration action: " + actionKey)
+		return nil, fmt.Errorf("unable to load integration action '%s': %w", actionKey, err)
 	}
 	return action, nil
 }

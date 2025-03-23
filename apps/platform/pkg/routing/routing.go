@@ -177,7 +177,7 @@ func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.S
 	// TODO: connection should not have to be nil
 	err := bundle.Load(route, nil, session, nil)
 	if err != nil || route == nil {
-		return nil, exceptions.NewNotFoundException("route not found: " + fmt.Sprintf("%s.%s", namespace, routeName))
+		return nil, fmt.Errorf("unable to load route '%s.%s': %w", namespace, routeName, err)
 	}
 	if route.Params == nil {
 		route.Params = map[string]interface{}{}

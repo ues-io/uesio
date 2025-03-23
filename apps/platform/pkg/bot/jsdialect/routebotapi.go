@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -9,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/bots"
-	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -124,7 +124,7 @@ func HandleBotResponse(api *RouteBotAPI) (finalRoute *meta.Route, err error) {
 			return nil, err
 		}
 		if err = bundle.Load(route, nil, api.session, api.connection); err != nil {
-			return nil, exceptions.NewNotFoundException("could not find requested redirect route: " + localizedRouteKey)
+			return nil, fmt.Errorf("unable to load redirect route for key '%s': %w", localizedRouteKey, err)
 		}
 		finalRoute = route
 	}

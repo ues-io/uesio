@@ -405,10 +405,9 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 	for collectionKey, collection := range mr.Collections {
 		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
 		if err != nil {
-			switch err.(type) {
 			// Not having access to a collection is not the end of the world.
 			// Just don't get the metadata for it and continue.
-			case *exceptions.ForbiddenException:
+			if exceptions.IsType[*exceptions.ForbiddenException](err) {
 				continue
 			}
 			return err
@@ -440,10 +439,9 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 
 			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
-				switch err.(type) {
 				// Not having access to a field is not the end of the world.
 				// Just don't get the metadata for it and continue.
-				case *exceptions.ForbiddenException:
+				if exceptions.IsType[*exceptions.ForbiddenException](err) {
 					continue
 				}
 				return err

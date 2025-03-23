@@ -22,7 +22,7 @@ definition:
   - uesio/io.dynamicpanel:
       uesio.id: menutoggle
       uesio.type: uesio/io.sidepanelplain
-      uesio.variant: uesio/io.topleft
+      uesio.variant: uesio/io.sidepanel:uesio/io.topleft
       components:
         - uesio/io.scrollpanel:
             uesio.variant: $Prop{scrollpanelVariant}

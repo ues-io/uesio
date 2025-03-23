@@ -16,7 +16,8 @@ const modules = [
   {
     name: MONACO,
     module: MONACO,
-    src: `${monacoBaseDir}/**`,
+    base: `../../node_modules/${MONACO}`,
+    src: [`${monacoBaseDir}/**`, ...(isDev ? [] : ["min-maps/vs/**"])],
     dest: `${monacoBaseDir}`,
   },
 ]
@@ -56,14 +57,18 @@ function generateVendorManifest(cb) {
 }
 
 const scriptTasks = modules.map(
-  ({ src, dest, path, base = "../../node_modules", module, name }) => {
+  ({ src = "", dest, path, base, module, name }) => {
     const { version } = packageLock.packages[`node_modules/${module}`]
-    const gulpSrc = [base, module, src, path].filter((x) => !!x).join("/")
-    const gulpDest = [distVendor, name, version, dest]
+    const root = !base ? `../../node_modules/${module}` : base
+    src = typeof src === "string" ? [src] : src
+    const gulpSrc = src.map((s) => [root, s, path].filter((x) => !!x).join("/"))
+    const gulpDest = [distVendor, name, version, base ? "" : dest]
       .filter((x) => !!x)
       .join("/")
     return function () {
-      return gulp.src(gulpSrc, { encoding: false }).pipe(gulp.dest(gulpDest))
+      return gulp
+        .src(gulpSrc, { base: base, encoding: false })
+        .pipe(gulp.dest(gulpDest))
     }
   },
 )

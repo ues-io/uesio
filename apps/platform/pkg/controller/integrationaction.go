@@ -84,6 +84,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 			}
 			// Write a special response body that the client can interpret
 			// as an error by the client while reading chunks
+			// TODO: Consider using HTTP Trailers instead
 			w.Write([]byte("-----ERROR-----" + errMessage + "-----ENDERROR-----"))
 			w.WriteHeader(statusCode)
 		}

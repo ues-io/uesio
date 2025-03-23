@@ -3,6 +3,7 @@ package localfiles
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -111,7 +113,11 @@ func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	outFile, err := os.Open(fullPath)
 	if err != nil {
-		return nil, errors.New("unable to read file at path: " + path)
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, exceptions.NewNotFoundException("file not found at path: " + path)
+		} else {
+			return nil, fmt.Errorf("unable to read file at path '%s': %w", path, err)
+		}
 	}
 	fileInfo, err := outFile.Stat()
 	if err != nil {
