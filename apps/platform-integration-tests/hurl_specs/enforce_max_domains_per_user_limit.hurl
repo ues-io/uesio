@@ -49,7 +49,9 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 # This ensures that we are ONLY enforcing the limit on new domains, not existing ones.
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/sitedomain?uesio/core.uniquekey=eq.test123:subdomain
 x-uesio-app: uesio/tests
-HTTP 204
+HTTP *
+[Asserts]
+status toString matches /^(204|404)$/
 
 # Create a domain - should fail, since there are a lot of built in domains for uesio user already
 POST https://{{host}}:{{port}}/site/wires/save

@@ -1,7 +1,6 @@
 package app
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
@@ -28,19 +27,10 @@ func Delete(appFullName string) error {
 		}
 		appFullName = app.FullName
 	}
-
-	// Verify that the requested app exists
-	appExists := wire.DoesAppExist(appFullName)
-	if !appExists {
-		return errors.New("the requested app does not exist: " + appFullName)
-	}
-
 	// Delete the app
-	success, err := wire.DeleteApp(appFullName)
+	err = wire.DeleteApp(appFullName)
 	if err != nil {
 		return fmt.Errorf("unable to delete app %s: %s", appFullName, err.Error())
-	} else if success == false {
-		return errors.New("app deletion failed for unknown reason")
 	}
 
 	fmt.Printf("Successfully deleted app %s\n", appFullName)

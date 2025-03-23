@@ -20,7 +20,9 @@ HTTP 200
 
 # Delete all existing api tokens
 DELETE https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/api/v1/collection/uesio/core/loginmethod?uesio/core.api_key_name=eq.myapikey
-HTTP 204
+HTTP *
+[Asserts]
+status toString matches /^(204|404)$/
 
 # Try to create an api token as the owner of the app
 POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/bots/call/uesio/core/createapikey

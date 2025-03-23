@@ -43,16 +43,24 @@ func Insert(collectionName string, changes []map[string]interface{}, appContext 
 	}, appContext)
 }
 
-func DeleteOne(collectionName, idField, idValue string, appContext *context.AppContext) (bool, error) {
+func DeleteOne(collectionName, idField, idValue string, appContext *context.AppContext) error {
 	sessionId, err := config.GetSessionID()
 	if err != nil {
-		return false, err
+		return err
 	}
 	deleteUri := fmt.Sprintf("site/api/v1/collection/%s?%s=eq.%s", strings.ReplaceAll(collectionName, ".", "/"), idField, idValue)
-	if statusCode, err := call.Delete(deleteUri, sessionId, appContext); err != nil || statusCode != http.StatusNoContent {
-		return false, err
+	statusCode, err := call.Delete(deleteUri, sessionId, appContext)
+	if err != nil {
+		return err
 	}
-	return true, nil
+	switch statusCode {
+	case http.StatusNoContent:
+		return nil
+	case http.StatusNotFound:
+		return fmt.Errorf("the requested resource %s does not exist", idValue)
+	default:
+		return fmt.Errorf("unexpected status code: %d", statusCode)
+	}
 }
 
 func Save(collectionName string, changes []map[string]interface{}, saveOptions SaveOptions, appContext *context.AppContext) ([]map[string]interface{}, error) {

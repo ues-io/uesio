@@ -51,7 +51,7 @@ func Request(r *RequestSpec) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode >= 400 && resp.StatusCode != http.StatusNotFound {
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err

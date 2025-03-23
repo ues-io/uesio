@@ -171,25 +171,6 @@ func GetMockUsers() (wire.Collection, error) {
 
 }
 
-func DeleteApp(appFullName string) (bool, error) {
+func DeleteApp(appFullName string) error {
 	return DeleteOne("uesio/studio.app", "uesio/core.uniquekey", appFullName, context.NewAppContext(appFullName))
-}
-
-func DoesAppExist(appFullName string) bool {
-	_, err := LoadOne(
-		"uesio/studio.app",
-		&LoadOptions{
-			Fields: appRequestFields,
-			Conditions: []wire.LoadRequestCondition{
-				{
-					Field:    "uesio/core.uniquekey",
-					RawValue: appFullName,
-				},
-			},
-		},
-	)
-	if err != nil {
-		return false
-	}
-	return true
 }
