@@ -97,12 +97,6 @@ func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, err
 		anthropicBeta = []string{"computer-use-2024-10-22"}
 	}
 
-	/*
-				GoError: Malformed input request: #: subject must not be valid against schema
-				{"required":["messages"]}#/anthropic_beta: expected type: JSONArray, found: Null#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: is not a valid enum value#/tools/0/type: #/tools/0: required key [display_height_px] not found#/tools/0: required key [display_width_px] not found#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: create_website is not a valid enum value#/tools/0/name: #/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0/type: expected: null, found: String#/tools/0/type: #/tools/0/type: is not a valid enum value, please reformat your input and try again. at reflect.methodValueCall (native)
-		    GoError: Malformed input request: #: subject must not be valid against schema {"required":["messages"]}#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: is not a valid enum value#/tools/0/type: #/tools/0: required key [display_height_px] not found#/tools/0: required key [display_width_px] not found#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0/type: expected: null, found: String#/tools/0/type: #/tools/0/type: is not a valid enum value, please reformat your input and try again. at reflect.methodValueCall (native)
-	*/
-
 	return json.Marshal(AnthropicMessagesInput{
 		Messages:         messages,
 		AnthropicVersion: "bedrock-2023-05-31",
