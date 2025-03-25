@@ -22,7 +22,6 @@ import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
 import { ComponentPackState } from "../../definition/componentpack"
 
-
 const extractComponentIdFromViewId = (viewId: string) =>
   viewId.split("(")[1].slice(0, -1)
 
