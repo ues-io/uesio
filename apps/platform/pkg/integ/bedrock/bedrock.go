@@ -37,9 +37,10 @@ type ToolChoice struct {
 }
 
 type Tool struct {
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	InputSchema *InputSchema `json:"input_schema"`
+	Type        string       `json:"type,omitempty"`
+	Name        string       `json:"name,omitempty"`
+	Description string       `json:"description,omitempty"`
+	InputSchema *InputSchema `json:"input_schema,omitempty"`
 }
 
 type InputSchema struct {
@@ -79,14 +80,15 @@ type ModelHandler interface {
 	GetBody(options *InvokeModelOptions) ([]byte, error)
 	GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error)
 	HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error)
-	GetClientOptions(o *bedrockruntime.Options)
+	GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options)
 }
 
 var modelHandlers = map[string]ModelHandler{
-	"anthropic.claude-3-haiku-20240307-v1:0":  claudeModelHandler,
-	"anthropic.claude-3-sonnet-20240229-v1:0": claudeModelHandler,
-	"anthropic.claude-3-opus-20240229-v1:0":   claudeModelHandler,
-	"stability.stable-image-ultra-v1:0":       stabilityModelHandler,
+	"anthropic.claude-3-haiku-20240307-v1:0":    claudeModelHandler,
+	"anthropic.claude-3-sonnet-20240229-v1:0":   claudeModelHandler,
+	"anthropic.claude-3-5-sonnet-20241022-v2:0": claudeModelHandler,
+	"anthropic.claude-3-opus-20240229-v1:0":     claudeModelHandler,
+	"stability.stable-image-ultra-v1:0":         stabilityModelHandler,
 }
 
 // RunAction implements the system bot interface

@@ -13,7 +13,7 @@ type MessagesModelUsage struct {
 }
 
 type MessagesContent struct {
-	Type  string         `json:"type" bot:"type"`
+	Type  string         `json:"type" bot:"type,omitempty"`
 	Text  string         `json:"text,omitempty" bot:"text,omitempty"`
 	Name  string         `json:"name,omitempty" bot:"name,omitempty"`
 	Input map[string]any `json:"input,omitempty" bot:"input,omitempty"`
@@ -26,13 +26,30 @@ type MessagesModelOutput struct {
 }
 
 type AnthropicMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role string `json:"role"`
+	// Content could be a string or it could be an object
+	// Using "any" for now. We could make a special type with a custom
+	// unmarshaller, but I'm not sure if it's worth it for now.
+	// {
+	//   "type": "text",
+	//   "text": "My text content."
+	// },
+	// {
+	//     "type": "tool_use",
+	//     "id": "my_tool_use_id",
+	//     "name": "str_replace_editor",
+	//     "input": {
+	//         "command": "view",
+	//         "path": "ben.yaml"
+	//     }
+	// }
+	Content any `json:"content"`
 }
 
 type AnthropicMessagesInput struct {
 	Messages         []AnthropicMessage `json:"messages"`
 	AnthropicVersion string             `json:"anthropic_version"`
+	AnthropicBeta    []string           `json:"anthropic_beta"`
 	MaxTokens        int                `json:"max_tokens"`
 	Temperature      float64            `json:"temperature,omitempty"`
 	TopK             int                `json:"top_k,omitempty"`
@@ -48,7 +65,17 @@ type ClaudeModelHandler struct {
 
 var claudeModelHandler = &ClaudeModelHandler{}
 
-func (cmh *ClaudeModelHandler) GetClientOptions(o *bedrockruntime.Options) {}
+func (cmh *ClaudeModelHandler) GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options) {
+
+	// Force claude 3.5 v2 to use the us west model
+	if *input.ModelId == "anthropic.claude-3-5-sonnet-20241022-v2:0" {
+		return func(o *bedrockruntime.Options) {
+			o.Region = "us-west-2"
+		}
+	}
+
+	return func(o *bedrockruntime.Options) {}
+}
 
 func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, error) {
 	messages := []AnthropicMessage{}
@@ -64,9 +91,22 @@ func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, err
 		})
 	}
 
+	anthropicBeta := []string{}
+	// Add the antropic beta flag
+	if options.Model == "anthropic.claude-3-5-sonnet-20241022-v2:0" {
+		anthropicBeta = []string{"computer-use-2024-10-22"}
+	}
+
+	/*
+				GoError: Malformed input request: #: subject must not be valid against schema
+				{"required":["messages"]}#/anthropic_beta: expected type: JSONArray, found: Null#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: is not a valid enum value#/tools/0/type: #/tools/0: required key [display_height_px] not found#/tools/0: required key [display_width_px] not found#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: create_website is not a valid enum value#/tools/0/name: #/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0/type: expected: null, found: String#/tools/0/type: #/tools/0/type: is not a valid enum value, please reformat your input and try again. at reflect.methodValueCall (native)
+		    GoError: Malformed input request: #: subject must not be valid against schema {"required":["messages"]}#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: is not a valid enum value#/tools/0/type: #/tools/0: required key [display_height_px] not found#/tools/0: required key [display_width_px] not found#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0: extraneous key [input_schema] is not permitted#/tools/0: extraneous key [description] is not permitted#/tools/0/name: #/tools/0/name: create_website is not a valid enum value#/tools/0/type: #/tools/0/type: is not a valid enum value#/tools/0/type: expected: null, found: String#/tools/0/type: #/tools/0/type: is not a valid enum value, please reformat your input and try again. at reflect.methodValueCall (native)
+	*/
+
 	return json.Marshal(AnthropicMessagesInput{
 		Messages:         messages,
 		AnthropicVersion: "bedrock-2023-05-31",
+		AnthropicBeta:    anthropicBeta,
 		MaxTokens:        options.MaxTokensToSample,
 		Temperature:      options.Temperature,
 		TopK:             options.TopK,

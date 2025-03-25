@@ -23,8 +23,11 @@ type StabilityModelHandler struct {
 
 var stabilityModelHandler = &StabilityModelHandler{}
 
-func (smh *StabilityModelHandler) GetClientOptions(o *bedrockruntime.Options) {
-	o.Region = "us-west-2"
+func (smh *StabilityModelHandler) GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options) {
+	return func(o *bedrockruntime.Options) {
+		// The stability models only work in the us-west-2 region
+		o.Region = "us-west-2"
+	}
 }
 
 func (smh *StabilityModelHandler) GetBody(options *InvokeModelOptions) ([]byte, error) {
