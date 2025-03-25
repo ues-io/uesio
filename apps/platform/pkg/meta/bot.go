@@ -481,7 +481,7 @@ func ValidateParams(params BotParams, paramValues map[string]interface{}, bundle
 		case "METADATANAME":
 			ok := IsValidMetadataName(fmt.Sprintf("%v", paramValue))
 			if !ok {
-				return exceptions.NewInvalidParamException("param failed metadata validation, no capital letters or special characters allowed", param.Name)
+				return exceptions.NewInvalidParamException("param failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9", param.Name)
 			}
 		}
 	}

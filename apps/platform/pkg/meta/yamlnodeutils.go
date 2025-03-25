@@ -184,7 +184,7 @@ func validateMetadataName(name string, expectedName string) error {
 		return exceptions.NewBadRequestException(fmt.Sprintf("Metadata name does not match filename: %s, %s", name, expectedName))
 	}
 	if !IsValidMetadataName(name) {
-		return exceptions.NewBadRequestException(fmt.Sprintf("Failed metadata validation, no capital letters or special characters allowed: %s", name))
+		return exceptions.NewBadRequestException(fmt.Sprintf("Failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9: %s", name))
 	}
 	return nil
 }
