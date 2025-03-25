@@ -83,12 +83,18 @@ type ModelHandler interface {
 	GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options)
 }
 
+const CLAUDE_3_HAIKU_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+const CLAUDE_3_SONNET_MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
+const CLAUDE_3_5_SONNET_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+const CLAUDE_3_OPUS_MODEL_ID = "anthropic.claude-3-opus-20240229-v1:0"
+const STABILITY_IMAGE_ULTRA_MODEL_ID = "stability.stable-image-ultra-v1:0"
+
 var modelHandlers = map[string]ModelHandler{
-	"anthropic.claude-3-haiku-20240307-v1:0":    claudeModelHandler,
-	"anthropic.claude-3-sonnet-20240229-v1:0":   claudeModelHandler,
-	"anthropic.claude-3-5-sonnet-20241022-v2:0": claudeModelHandler,
-	"anthropic.claude-3-opus-20240229-v1:0":     claudeModelHandler,
-	"stability.stable-image-ultra-v1:0":         stabilityModelHandler,
+	CLAUDE_3_HAIKU_MODEL_ID:        claudeModelHandler,
+	CLAUDE_3_SONNET_MODEL_ID:       claudeModelHandler,
+	CLAUDE_3_5_SONNET_MODEL_ID:     claudeModelHandler,
+	CLAUDE_3_OPUS_MODEL_ID:         claudeModelHandler,
+	STABILITY_IMAGE_ULTRA_MODEL_ID: stabilityModelHandler,
 }
 
 // RunAction implements the system bot interface

@@ -25,7 +25,9 @@ var stabilityModelHandler = &StabilityModelHandler{}
 
 func (smh *StabilityModelHandler) GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options) {
 	return func(o *bedrockruntime.Options) {
-		// The stability models only work in the us-west-2 region
+		// TODO: The stability models are currently only supported on us-west-2
+		// see: https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html
+		// If there becomes broader support for this model on other regions, we can remove this.
 		o.Region = "us-west-2"
 	}
 }
