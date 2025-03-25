@@ -18,7 +18,7 @@ definition:
                   uesio.id: new-app-description
             note:
               - uesio/appkit.note:
-                  text: "Note: Your app name can only contain lowercase characters a-z, the underscore character and the numerals 0-9. The app description is optional."                                             
+                  text: "Note: Your app name can only contain lowercase characters a-z, the underscore character and the numerals 0-9. The app description is optional."
 title: App Name and Description
 discoverable: false
 description: App Name and Description
