@@ -13,6 +13,7 @@ import panelSignals from "../bands/panel/signals"
 import toolsSignals from "../bands/tools/signals"
 import notificationSignals from "../bands/notification/signals"
 import oauth2Signals from "../bands/oauth2/signals"
+import viewSignals from "../bands/view/signals"
 import contextSignals from "../context/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
@@ -34,6 +35,7 @@ const registry: Record<string, SignalDescriptor> = {
   ...notificationSignals,
   ...contextSignals,
   ...oauth2Signals,
+  ...viewSignals,
 }
 
 const run = (signal: SignalDefinition, context: Context) => {
