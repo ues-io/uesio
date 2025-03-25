@@ -365,6 +365,9 @@ const getMetadataId = (path: FullPath) =>
 const useContent = (context: ctx.Context, path: FullPath) =>
   useBuilderExternalState<string>(context, getMetadataId(path))
 
+const getContent = (context: ctx.Context, path: FullPath) =>
+  getBuilderExternalState<string>(context, getMetadataId(path))
+
 const setContent = (context: ctx.Context, path: FullPath, value: string) => {
   setMetadataValue(context, path, parse(value), value)
 }
@@ -483,6 +486,7 @@ export {
   changeKey,
   useContent,
   setContent,
+  getContent,
   useDefinition,
   useHasChanges,
   save,
