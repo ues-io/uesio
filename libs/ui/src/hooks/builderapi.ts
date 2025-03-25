@@ -49,4 +49,19 @@ const getBuilderDeps = async (context: Context) => {
   return
 }
 
-export { useMetadataList, useAvailableNamespaces, getBuilderDeps }
+const loadBuilderDeps = async (context: Context) => {
+  const response = await platform.getViewDeps(context)
+
+  await loadScripts(response.componentpack, context)
+
+  dispatchRouteDeps(response)
+
+  return
+}
+
+export {
+  useMetadataList,
+  useAvailableNamespaces,
+  getBuilderDeps,
+  loadBuilderDeps,
+}

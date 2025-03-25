@@ -18,7 +18,7 @@ import {
   resolveDeclarativeComponentDefinition,
 } from "../component/component"
 import { useEffect } from "react"
-import { getBuilderDeps } from "../hooks/builderapi"
+import { loadBuilderDeps } from "../hooks/builderapi"
 import Wires from "./wires"
 import { memoizedAsync } from "../platform/memoizedAsync"
 
@@ -101,7 +101,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
     if (viewDefId && !viewDef) {
       memoizedAsync(
         async () => {
-          await getBuilderDeps(viewContext)
+          await loadBuilderDeps(viewContext)
           // must return something to ensure memoizedAsync properly handles subsequent success outcomes
           return viewDefId
         },

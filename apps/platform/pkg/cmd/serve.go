@@ -305,6 +305,8 @@ func serve(cmd *cobra.Command, args []string) error {
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
 	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
+	sr.HandleFunc("/metadata/view/"+itemParam, controller.ViewMetadata).Methods(http.MethodGet)
+	wr.HandleFunc("/metadata/view/"+itemParam, controller.ViewMetadata).Methods(http.MethodGet)
 	wr.HandleFunc("/data/truncate", controller.Truncate).Methods(http.MethodPost)
 
 	// List All Available Namespaces

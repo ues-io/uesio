@@ -428,6 +428,19 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 	return nil
 }
 
+func GetViewDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
+	viewKey := viewNamespace + "." + viewName
+	view, err := loadViewDef(viewKey, session)
+	if err != nil {
+		return err
+	}
+
+	deps.ViewDef.AddItem(view)
+
+	return processView(viewKey, "", deps, nil, nil, session)
+
+}
+
 func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
