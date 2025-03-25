@@ -128,11 +128,6 @@ func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreat
 	if err != nil {
 		return err
 	}
-	// Add package.json to generated directory so that TS will know where to find the types
-	err = copyFileIntoZip(create, filepath.Join(wd, clientTypesSrc, "package.json"), path.Join(GeneratedDir, uesioTypesDir, "package.json"))
-	if err != nil {
-		return err
-	}
 	// Generate app specific type definitions
 	f, err := create(path.Join(GeneratedDir, uesioTypesDir, "app.d.ts"))
 	defer f.Close()
