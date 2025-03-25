@@ -22,11 +22,16 @@ import { transformServerWire } from "../wire/transform"
 import { getKey } from "../../metadata/metadata"
 import { ComponentPackState } from "../../definition/componentpack"
 
+const extractComponentIdFromViewId = (viewId: string) =>
+  viewId.split("(")[1].slice(0, -1)
+
+const extractViewDefFromViewId = (viewId: string) => viewId.split("(")[0]
+
 const attachDefToWires = (wires?: ServerWire[], viewdefs?: ViewMetadata[]) => {
   if (!wires || !viewdefs) return [] as PlainWire[]
   return wires.map((wire) => {
-    const viewId = wire.view.split("(")[0]
-    const wireDef = viewdefs.find((viewdef) => getKey(viewdef) === viewId)
+    const viewDefId = extractViewDefFromViewId(wire.view)
+    const wireDef = viewdefs.find((viewdef) => getKey(viewdef) === viewDefId)
       ?.definition.wires?.[wire.name]
     if (!wireDef)
       throw new Error(
@@ -86,4 +91,9 @@ const getPackUrlsForDeps = (
   })
 }
 
-export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }
+export {
+  dispatchRouteDeps,
+  getPackUrlsForDeps,
+  attachDefToWires,
+  extractComponentIdFromViewId,
+}

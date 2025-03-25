@@ -12,7 +12,7 @@ func validateMetadataName(field *wire.FieldMetadata) ValidationFunc {
 	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
-			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9")
 		}
 		return nil
 	}

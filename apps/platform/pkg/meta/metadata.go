@@ -423,7 +423,8 @@ func Copy(to, from interface{}) error {
 	return reprint.FromTo(from, to)
 }
 
-var validMetaRegex, _ = regexp.Compile("^[a-z0-9_-]+$")
+// Keep in sync with serve.go getNSParam, etc.
+var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")
 
 func IsValidMetadataName(name string) bool {
 	return validMetaRegex.MatchString(name)
