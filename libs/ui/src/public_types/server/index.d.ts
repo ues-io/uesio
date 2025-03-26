@@ -219,6 +219,7 @@ interface ListenerBotApi<T = Record<string, BotParamValue>> {
   getNamespace: () => string
   // Returns the name of the Bot, e.g "add_numbers"
   getName: () => string
+  getHostUrl: () => string  
   copyFile: (
     sourceFileKey: string,
     sourcePath: string,
