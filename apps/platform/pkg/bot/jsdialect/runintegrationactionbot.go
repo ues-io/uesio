@@ -57,7 +57,9 @@ func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {
 	if b.integrationConnection == nil || b.integrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(b.integrationConnection.GetIntegration())
+	return &IntegrationMetadata{
+		connection: b.integrationConnection,
+	}
 }
 
 func (b *RunIntegrationActionBotAPI) GetSession() *SessionAPI {
