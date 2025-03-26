@@ -56,8 +56,6 @@ func DeleteOne(collectionName, idField, idValue string, appContext *context.AppC
 	switch statusCode {
 	case http.StatusNoContent:
 		return nil
-	case http.StatusNotFound:
-		return fmt.Errorf("the requested resource %s does not exist", idValue)
 	default:
 		return fmt.Errorf("unexpected status code: %d", statusCode)
 	}
