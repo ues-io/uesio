@@ -238,6 +238,13 @@ func processViewWires(view *meta.View, viewInstanceID string, deps *preload.Prel
 
 	wireData := map[string]meta.Group{}
 
+	// If we already removed our collection or wire dependency bucket,
+	// that means we don't care about wire data and don't want to
+	// process it here.
+	if deps.Collection == nil || deps.Wire == nil {
+		return wireData, nil
+	}
+
 	if viewInstanceID != "" && wires != nil && wires.Kind == yaml.MappingNode {
 		var ops []*wire.LoadOp
 
@@ -348,9 +355,9 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 		}
 
 		viewID := meta.GetNodeValueAsString(viewCompDef, "uesio.id")
-		// Backwards compatibility until we can get Morandi/TimeTracker migrated to using "uesio.id" consistently
-		if viewID == "" {
-			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
+
+		if params == nil {
+			viewID = ""
 		}
 
 		subParams, slotMapNode, err := getSubParams(viewCompDef, params, wireData, session)

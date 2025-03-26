@@ -45,8 +45,6 @@ const getBuilderDeps = async (context: Context) => {
   await loadScripts(response.componentpack, context)
 
   dispatchRouteDeps(response)
-
-  return
 }
 
 const loadBuilderDeps = async (context: Context) => {
@@ -55,8 +53,6 @@ const loadBuilderDeps = async (context: Context) => {
   await loadScripts(response.componentpack, context)
 
   dispatchRouteDeps(response)
-
-  return
 }
 
 export {
