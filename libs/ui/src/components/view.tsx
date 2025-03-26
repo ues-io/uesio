@@ -10,7 +10,6 @@ import { DefinitionMap, UC } from "../definition/definition"
 import PanelArea from "../utilities/panelarea"
 import { COMPONENT_ID } from "../componentexports"
 import { getFullyQualifiedKey } from "../bands/collection/class"
-import { hash } from "@twind/core"
 
 import { FieldValue } from "../bands/wirerecord/types"
 import {
@@ -68,7 +67,12 @@ const ViewArea: UC<ViewComponentDefinition> = ({
   path,
 }) => (
   <>
-    <View context={context} definition={definition} path={path} />
+    <View
+      context={context}
+      definition={definition}
+      path={path}
+      componentType={ViewComponentId}
+    />
     <PanelArea context={context} />
   </>
 )
@@ -80,8 +84,7 @@ const View: UC<ViewComponentDefinition> = (props) => {
   const { params, slots = {}, view: localViewDefId } = definition
   const viewDefId = getFullyQualifiedKey(localViewDefId, context.getNamespace())
 
-  const uesioId = definition[COMPONENT_ID] || (path && hash(path)) || "$root"
-  const viewId = makeViewId(viewDefId, uesioId)
+  const viewId = makeViewId(context, viewDefId, definition[COMPONENT_ID], path)
 
   const isSubView = !!path
 

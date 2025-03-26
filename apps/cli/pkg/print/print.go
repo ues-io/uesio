@@ -2,6 +2,7 @@ package print
 
 import (
 	"fmt"
+
 	"github.com/thecloudmasters/cli/pkg/auth"
 )
 
@@ -10,12 +11,16 @@ func PrintUserSummary(user *auth.UserMergeData) string {
 }
 
 func PrintUser(user *auth.UserMergeData) {
+	if user == nil {
+		fmt.Println("No user set")
+		return
+	}
 	fmt.Println(PrintUserSummary(user))
 }
 
 func PrintHost(host string) {
 	if host == "" {
-		fmt.Println("No Host Set")
+		fmt.Println("No host set")
 		return
 	}
 	fmt.Println("Host: " + host)

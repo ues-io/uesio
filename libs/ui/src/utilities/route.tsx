@@ -120,7 +120,7 @@ const Route: UtilityComponent = (props) => {
     route,
     viewDef: viewId,
     theme,
-    view: makeViewId(viewId, "$root"),
+    view: makeViewId(props.context, viewId),
   })
 
   setupStyles(routeContext)

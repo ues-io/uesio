@@ -23,8 +23,13 @@ type StabilityModelHandler struct {
 
 var stabilityModelHandler = &StabilityModelHandler{}
 
-func (smh *StabilityModelHandler) GetClientOptions(o *bedrockruntime.Options) {
-	o.Region = "us-west-2"
+func (smh *StabilityModelHandler) GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options) {
+	return func(o *bedrockruntime.Options) {
+		// TODO: The stability models are currently only supported on us-west-2
+		// see: https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html
+		// If there becomes broader support for this model on other regions, we can remove this.
+		o.Region = "us-west-2"
+	}
 }
 
 func (smh *StabilityModelHandler) GetBody(options *InvokeModelOptions) ([]byte, error) {
