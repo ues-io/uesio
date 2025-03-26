@@ -242,11 +242,6 @@ func runUesioExternalLoadBot(op *wire.LoadOp, connection wire.Connection, sessio
 
 	site, err := auth.GetSiteFromHost(parsedBaseUrl.Host)
 	if err != nil {
-		// This is a hack to prevent the page from bombing if we don't have a site for these collections.
-		// We can remove this once we have better error handling for individual wires in a route dependencies load.
-		if op.CollectionName == "uesio/studio.blogentry" || op.CollectionName == "uesio/studio.recentdoc" {
-			return nil
-		}
 		return differentHostLoad(op, session)
 	}
 
