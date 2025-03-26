@@ -12,7 +12,7 @@ func Check() (*UserMergeData, error) {
 		return nil, err
 	}
 
-	// If there's no current session id stored, no need to make check call - test
+	// If there's no current session id stored, no need to make check call
 	if sessid == "" {
 		return nil, nil
 	}
