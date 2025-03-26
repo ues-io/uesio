@@ -30,7 +30,7 @@ func Delete(appFullName string) error {
 	// Delete the app
 	err = wire.DeleteApp(appFullName)
 	if err != nil {
-		return fmt.Errorf("unable to delete app %s: %s", appFullName, err.Error())
+		return fmt.Errorf("unable to delete app %s: %w", appFullName, err)
 	}
 
 	fmt.Printf("Successfully deleted app %s\n", appFullName)

@@ -35,7 +35,7 @@ func Delete(workspaceName string) error {
 	// Delete the workspace
 	err = wire.DeleteWorkspace(appObject.FullName, workspaceName)
 	if err != nil {
-		return fmt.Errorf("unable to delete workspace %s: %s", workspaceName, err.Error())
+		return fmt.Errorf("unable to delete workspace %s: %w", workspaceName, err)
 	}
 	fmt.Printf("Successfully deleted workspace %s\n", workspaceName)
 

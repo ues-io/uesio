@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
 type RequestSpec struct {
@@ -51,17 +52,26 @@ func Request(r *RequestSpec) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode >= 400 && resp.StatusCode != http.StatusNotFound {
+	if resp.StatusCode >= 400 {
+		defer resp.Body.Close()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
-		resp.Body.Close()
-		return nil, errors.New(string(data))
+
+		switch resp.StatusCode {
+		case http.StatusNotFound:
+			return nil, exceptions.NewNotFoundException("resource not found")
+		case http.StatusForbidden, http.StatusUnauthorized:
+			return nil, exceptions.NewForbiddenException("permission denied")
+		default:
+			return nil, fmt.Errorf("request to %v failed with status code %v: '%v'", resp.Request.URL, resp.StatusCode, string(data))
+		}
 	}
 	// Check for a Location header, indicating we need to redirect.
 	// This likely represents an error, such as the user being logged out
 	if locationHeader := resp.Header.Get("Location"); strings.Contains(locationHeader, "/login") {
+		defer resp.Body.Close()
 		return nil, errors.New("unable to access the requested resource, please run `uesio status` to verify that you are logged in as a user with access to this app")
 	}
 	return resp, nil
