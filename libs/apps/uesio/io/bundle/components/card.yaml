@@ -9,6 +9,7 @@ slots:
   - name: avatar
 description: A Card component
 discoverable: true
+defaultVariant: uesio/io.default
 properties:
   - name: title
     label: Title
@@ -22,12 +23,14 @@ properties:
     metadata:
       type: COMPONENTVARIANT
       grouping: uesio/io.tile
+    defaultValue: uesio/io.default
   - name: scrollpanelVariant
     label: Scrollpanel Variant
     type: METADATA
     metadata:
       type: COMPONENTVARIANT
       grouping: uesio/io.scrollpanel
+    defaultValue: uesio/io.default
   - name: titlebarVariant
     label: Title Bar Variant
     type: METADATA
@@ -40,8 +43,9 @@ sections:
     properties:
       - title
       - subtitle
-      - scrollpanelVariant
+  - type: STYLES
   - type: DISPLAY
+  - type: SIGNALS
 definition:
   - uesio/io.tile:
       uesio.variant: $Prop{tileVariant}
@@ -50,6 +54,12 @@ definition:
       uesio.styleTokens:
         root:
           - $Region{tile}
+        content:
+          - $Region{tileContent}
+        selected:
+          - $Region{tileSelected}
+        actionable:
+          - $Region{tileActionable}
       signals: $Prop{signals}
       content:
         - uesio/io.scrollpanel:
@@ -57,6 +67,10 @@ definition:
             uesio.styleTokens:
               root:
                 - $Region{panel}
+              header:
+                - $Region{panelHeader}
+              footer:
+                - $Region{panelFooter}
               inner:
                 - $Region{panelInner}
             header:
@@ -73,7 +87,37 @@ definition:
                     - $Slot{actions}
                   avatar:
                     - $Slot{avatar}
+                  uesio.styleTokens:
+                    root:
+                      - $Region{title}
+                    content:
+                      - $Region{titleContent}
+                    title:
+                      - $Region{titleText}
+                    subtitle:
+                      - $Region{titleSubtitle}
+                    actions:
+                      - $Region{titleActions}
+                    avatar:
+                      - $Region{titleAvatar}
             content:
               - $Slot{content}
             footer:
               - $Slot{footer}
+defaultDefinition:
+  uesio.variant: uesio/io.default
+styleRegions:
+  tile:
+  tileContent:
+  tileSelected:
+  tileActionable:
+  panel:
+  panelHeader:
+  panelFooter:
+  panelInner:
+  title:
+  titleContent:
+  titleText:
+  titleSubtitle:
+  titleActions:
+  titleAvatar:
