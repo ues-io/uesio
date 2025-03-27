@@ -113,7 +113,9 @@ func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
 	if lb.integrationConnection == nil || lb.integrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(lb.integrationConnection.GetIntegration())
+	return &IntegrationMetadata{
+		connection: lb.integrationConnection,
+	}
 }
 
 func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {

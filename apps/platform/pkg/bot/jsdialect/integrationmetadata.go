@@ -1,9 +1,14 @@
 package jsdialect
 
-import "github.com/thecloudmasters/uesio/pkg/meta"
+import (
+	botutils "github.com/thecloudmasters/uesio/pkg/bot/utils"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+)
 
-type IntegrationMetadata meta.Integration
+type IntegrationMetadata struct {
+	connection *wire.IntegrationConnection
+}
 
-func (im *IntegrationMetadata) GetBaseURL() string {
-	return im.BaseURL
+func (im *IntegrationMetadata) GetBaseURL() (string, error) {
+	return botutils.GetBaseURL(im.connection, im.connection.GetSession())
 }

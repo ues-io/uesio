@@ -75,7 +75,9 @@ func (sba *SaveBotAPI) GetIntegration() *IntegrationMetadata {
 	if sba.integrationConnection == nil || sba.integrationConnection.GetIntegration() == nil {
 		return nil
 	}
-	return (*IntegrationMetadata)(sba.integrationConnection.GetIntegration())
+	return &IntegrationMetadata{
+		connection: sba.integrationConnection,
+	}
 }
 func (sb *SaveBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectionMetadata, error) {
 	metadata, err := sb.saveOp.GetMetadata()
