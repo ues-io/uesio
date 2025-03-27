@@ -65,7 +65,7 @@ func CreateNewWorkspace(appId, workspaceName string) (map[string]interface{}, er
 	return response[0], nil
 }
 
-func DeleteWorkspace(appFullName, workspaceName string) (bool, error) {
+func DeleteWorkspace(appFullName, workspaceName string) error {
 	workspaceUniqueKey := fmt.Sprintf("%s:%s", appFullName, workspaceName)
 	return DeleteOne("uesio/studio.workspace", "uesio/core.uniquekey", workspaceUniqueKey, context.NewWorkspaceContext(appFullName, workspaceName))
 }

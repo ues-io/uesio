@@ -11,11 +11,15 @@ user_id: jsonpath "$.user.id"
 # Delete the test site if it already exists
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/site?uesio/studio.name=eq.testsite
 x-uesio-app: uesio/tests
-HTTP 204
+HTTP *
+[Asserts]
+status toString matches /^(204|404)$/
 
 # Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
-HTTP 204
+HTTP *
+[Asserts]
+status toString matches /^(204|404)$/
 
 # Verify that workspaces are cascade deleted
 POST https://{{host}}:{{port}}/site/wires/load

@@ -171,6 +171,6 @@ func GetMockUsers() (wire.Collection, error) {
 
 }
 
-func DeleteApp(appFullName string) (bool, error) {
+func DeleteApp(appFullName string) error {
 	return DeleteOne("uesio/studio.app", "uesio/core.uniquekey", appFullName, context.NewAppContext(appFullName))
 }
