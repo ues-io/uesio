@@ -10,7 +10,9 @@ POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
 
 # Delete the sample ORG user if it exists
 DELETE https://{{host}}:{{port}}/site/api/v1/collection/uesio/core/user?uesio/core.username=eq.testorguser
-HTTP 204
+HTTP *
+[Asserts]
+status toString matches /^(204|404)$/
 
 # Create a new sample ORG user
 POST https://{{host}}:{{port}}/site/wires/save

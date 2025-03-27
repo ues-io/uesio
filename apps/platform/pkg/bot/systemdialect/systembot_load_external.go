@@ -1,17 +1,15 @@
 package systemdialect
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
+	botutils "github.com/thecloudmasters/uesio/pkg/bot/utils"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -30,7 +28,7 @@ func differentHostLoad(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	baseUrl, err := getBaseUrl(integrationConnection, session)
+	baseUrl, err := botutils.GetBaseURL(integrationConnection, session)
 	if err != nil {
 		return err
 	}
@@ -208,29 +206,13 @@ func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, 
 
 }
 
-func getBaseUrl(integrationConnection *wire.IntegrationConnection, session *sess.Session) (string, error) {
-	integration := integrationConnection.GetIntegration()
-	if integration == nil {
-		return "", errors.New("not integration provided by integration connection")
-	}
-	template, err := templating.NewWithFuncs(integration.BaseURL, templating.ForceErrorFunc, merge.ServerMergeFuncs)
-	if err != nil {
-		return "", err
-	}
-
-	return templating.Execute(template, merge.ServerMergeData{
-		Session: session,
-	})
-
-}
-
 func runUesioExternalLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
 	}
 
-	baseUrl, err := getBaseUrl(integrationConnection, session)
+	baseUrl, err := botutils.GetBaseURL(integrationConnection, session)
 	if err != nil {
 		return err
 	}

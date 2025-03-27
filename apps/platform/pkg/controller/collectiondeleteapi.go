@@ -128,12 +128,10 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 			ctlutil.HandleError(w, exceptions.NewBadRequestException("Delete failed: "+err.Error()))
 			return
 		}
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
 	}
-
-	// TODO: optionally respond with a representation of the deleted content
-	w.WriteHeader(204)
-	//filejson.RespondJSON(w, r, op.Collection)
-
 }
 
 func getWireParamsFromRequestHeaders(r *http.Request) map[string]interface{} {
