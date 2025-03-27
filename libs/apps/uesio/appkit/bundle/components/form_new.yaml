@@ -48,6 +48,9 @@ definition:
                         hotkey: "meta+s"
                         uesio.variant: uesio/appkit.primary
                     - uesio/io.button:
+                        uesio.display:
+                          - type: hasNoValue
+                            value: $Prop{hideResetButton}
                         signals:
                           - signal: wire/RESET
                             wire: $Prop{wire}
@@ -57,7 +60,16 @@ definition:
 title: New Record Form
 discoverable: true
 description: A component for a record create form.
+properties:
+  - name: hideNewButton
+    label: Hide New Button
+    type: CHECKBOX
+  - name: hideResetButton
+    label: Hide Reset Button
+    type: CHECKBOX
 sections:
   - type: HOME
     properties:
+      - hideNewButton
+      - hideResetButton
   - type: DISPLAY
