@@ -64,16 +64,25 @@ func Pack(options *PackOptions) error {
 	for packName, entryPoint := range entryPoints {
 
 		buildOptions := &api.BuildOptions{
-			EntryPoints:       []string{entryPoint},
-			Bundle:            true,
-			Format:            api.FormatESModule,
-			Outdir:            "bundle/componentpacks",
-			Outbase:           "bundle/componentpacks",
-			AllowOverwrite:    true,
-			External:          pack.GetGlobalsList(globalsMap),
-			Write:             true,
-			Plugins:           []api.Plugin{pack.GetGlobalsPlugin(globalsMap)},
+			EntryPoints:    []string{entryPoint},
+			Bundle:         true,
+			Format:         api.FormatESModule,
+			Outdir:         "bundle/componentpacks",
+			Outbase:        "bundle/componentpacks",
+			AllowOverwrite: true,
+			External:       pack.GetGlobalsList(globalsMap),
+			Write:          true,
+			Plugins:        []api.Plugin{pack.GetGlobalsPlugin(globalsMap)},
+			// TODO: tsconfigRaw will override use of tsconfig.json.  For backwards compat, leaving this as-is for now
+			// but this should likely change to using tsconfig.json here or explicitly providing a configuration
+			// to esbuild.  This configuration matches what is done in ui/build.mjs so that the ui package
+			// and component packs are built with identical configuration.  Since pack is used by outside developers
+			// to build their packs, there is something to be said for controlling tsconfig options for all component
+			// packs.  As we potentially move to component development in studio, building packs will likely be
+			// done on the server so having all packs built by server makes some sense.  Prior to changing the approach
+			// on tsconfigRaw, a long term plan/solution should be considered.
 			TsconfigRaw:       "{}",
+			JSX:               api.JSXAutomatic,
 			MinifyWhitespace:  minify,
 			MinifyIdentifiers: minify,
 			MinifySyntax:      minify,
