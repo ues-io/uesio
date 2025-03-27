@@ -667,6 +667,13 @@ const platform = {
     const [namespace, name] = parseKey(viewId)
     return getJSON(context, `${prefix}/metadata/builder/${namespace}/${name}`)
   },
+  getViewDeps: async (context: Context): Promise<Dependencies> => {
+    const prefix = getPrefix(context)
+    const viewId = context.getViewDefId()
+    if (!viewId) throw new Error("No View Context Provided")
+    const [namespace, name] = parseKey(viewId)
+    return getJSON(context, `${prefix}/metadata/view/${namespace}/${name}`)
+  },
   getStaticAssetAsJSON: async <T>(context: Context, path: string): Promise<T> =>
     memoizedGetJSON<T>(
       context,
