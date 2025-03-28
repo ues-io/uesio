@@ -3,13 +3,13 @@
 ###################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test try to INSERT missing a required field on changes
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -32,7 +32,7 @@ jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 # Test try to INSERT required field as empty string
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -57,7 +57,7 @@ jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 
 # Get a record to test the UPDATES
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -89,7 +89,7 @@ HTTP 200
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test try to UPDATE nulling required field on changes
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -114,7 +114,7 @@ jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 # Test try to UPDATE nulling with empty string a required field on changes
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [

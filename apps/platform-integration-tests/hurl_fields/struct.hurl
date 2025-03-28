@@ -4,14 +4,14 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Operator: BETWEEN | valueSource: VALUE | subfield "age"
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -38,7 +38,7 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: EQ | valueSource: VALUE | subfield "firstname"
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -62,7 +62,7 @@ HTTP 200
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "ID-002"
 
 # Operator: IS_BLANK | valueSource: VALUE | field: struct
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -90,7 +90,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.name']" == "ID-004" # first non-blank
 jsonpath "$.wires[0].data[1]['uesio/tests.name']" == "ID-005" # second non-blank
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE | field: struct
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

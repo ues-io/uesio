@@ -5,7 +5,7 @@
 
 # Object level security -- we should NOT be able to query wire_condition
 # because the public profile has no access to it
-POST https://tests.{{domain}}:{{port}}/site/wires/load
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -28,7 +28,7 @@ jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not 
 
 # Object level security -- we SHOULD be able to query the animal collection
 # because the public profile DOES have access to it
-POST https://tests.{{domain}}:{{port}}/site/wires/load
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -57,7 +57,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Abrahan"
 
 # Object security in routes - we SHOULD be able to query the animal collection via a route load
 # for a route with a wire on our requested collection
-GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/publicanimalslist
+GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/tests/publicanimalslist
 Accept: application/json
 HTTP 200
 [Asserts]
@@ -81,7 +81,7 @@ LIMIT 3```
 # Object level security -- SAVE -- EDIT
 # We should NOT be able to EDIT animal records
 # because the public profile does not have permission to edit them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -107,7 +107,7 @@ body contains "Profile uesio/tests.public does not have edit access to the uesio
 # Object level security -- SAVE -- DELETE
 # We should NOT be able to DELETE animal records
 # because the public profile does not have permission to delete them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -129,7 +129,7 @@ body contains "Profile uesio/tests.public does not have delete access to the ues
 # Object level security -- SAVE -- CREATE
 # We SHOULD be able to CREATE animal records
 # because the public profile DOES have permission to create them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 [Options]
 variable: genus="Choloepus {{unix_epoch_seconds}}"
 variable: species="Didactylus {{unix_epoch_seconds}}"
@@ -157,7 +157,7 @@ jsonpath "$.wires[0].changes[*]['uesio/core.uniquekey']" nth 0 == "{{genus}}:{{s
 # Object level security -- SAVE -- CREATE
 # We should NOT be able to CREATE wire_condition records
 # because the public profile does not have permission to create them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -180,7 +180,7 @@ body contains "Profile uesio/tests.public does not have create access to the ues
 # FIELD level security -- SAVE -- CREATE
 # We should NOT be able to CREATE animal records
 # if we are populating fields which we do not have access to
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -205,7 +205,7 @@ jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not 
 
 # Object level security -- we SHOULD be able to query the tool collection
 # because the public profile DOES have VIEWALL access to it
-POST https://tests.{{domain}}:{{port}}/site/wires/load
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -235,7 +235,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.category']" == "Power"
 # Object level security -- SAVE -- EDIT -- MODIFYALL
 # We should NOT be able to EDIT tool records
 # because the public profile does not have permission to edit them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -260,7 +260,7 @@ body contains "Profile uesio/tests.public does not have edit access to the uesio
 # Object level security -- SAVE -- DELETE -- MODIFYALL
 # We should NOT be able to DELETE tool records
 # because the public profile does not have permission to delete them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -282,7 +282,7 @@ body contains "Profile uesio/tests.public does not have delete access to the ues
 # Object level security -- SAVE -- CREATE
 # We SHOULD NOT be able to CREATE tool records
 # because the public profile DOES NOT have permission to create them
-POST https://tests.{{domain}}:{{port}}/site/wires/save
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 [Options]
 variable: brand="brand {{unix_epoch_seconds}}"
 variable: category="category {{unix_epoch_seconds}}"
@@ -306,7 +306,7 @@ HTTP 403
 body contains "Profile uesio/tests.public does not have create access to the uesio/tests.tool collection."
 
 # Log into the studio as uesio
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -315,7 +315,7 @@ HTTP 200
 uesio_user_id: jsonpath "$.user.id"
 
 # Get the workspace id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -338,14 +338,14 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:dev"
 workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Log into the studio as ben
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 HTTP 200
 
 # Add an impersonation record to use the rep profile
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.rep"
@@ -355,7 +355,7 @@ HTTP 200
 # Object level security -- SAVE -- CREATE
 # We SHOULD be able to CREATE tool records
 # because ben user impersoning with rep profile have permission to create them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 [Options]
 variable: brand="brand_{{unix_epoch_seconds}}"
@@ -383,7 +383,7 @@ jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
 
 # Object level security -- we SHOULD be able to query the tool collection
 # because ben user impersoning with rep profile DOES have MODIFYALL access to it
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -417,7 +417,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.type']" == "Drill"
 # Object level security -- SAVE -- EDIT -- MODIFYALL
 # We should be able to EDIT tool records
 # because ben user impersoning with rep profile have permission to edit them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -442,7 +442,7 @@ jsonpath "$.wires[0].errors" == null
 # Object level security -- SAVE -- DELETE -- MODIFYALL
 # We should be able to DELETE tool records
 # because ben user impersoning with rep profile have permission to delete them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -462,7 +462,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Remove impersonation record to reset to orignal state
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": ""

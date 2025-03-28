@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test inserting, updating, and deleting dummy records
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [

@@ -4,7 +4,7 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -12,7 +12,7 @@ HTTP 200
 
 # Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -38,7 +38,7 @@ jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to 
 
 # Operator: EQ | valueSource: VALUE | value as string
 # entry 3
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -63,7 +63,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 1"
 
 # Operator: EQ | valueSource: PARAM
 # entry 4
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -92,7 +92,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 1"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -118,7 +118,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "text 1"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -147,7 +147,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 1"
 
 # Operator: STARTS_WITH | valueSource: VALUE
 # entry 7
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -177,7 +177,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains ""
 # Operator: STARTS_WITH | valueSource: VALUE | Bad Value
 # NOTE Postgresql uses ILIKE to query the data matching 1 --> no data
 # entry 8
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -217,7 +217,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 
 # Operator: STARTS_WITH | valueSource: PARAM
 # entry 9
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -249,7 +249,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains ""
 
 # Operator: IN | valueSource: VALUE
 # entry 10
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -277,7 +277,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 11
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -320,7 +320,7 @@ jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -354,7 +354,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains "text 2"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 13
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -382,7 +382,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 2"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 14
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -423,7 +423,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.text']" not contains "text 1"
 
 # Operator: NOT_IN | valueSource: PARAM
 # entry 15
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -460,7 +460,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" not contains "text 3"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 16
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -486,7 +486,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.text']" contains ""
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 17
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

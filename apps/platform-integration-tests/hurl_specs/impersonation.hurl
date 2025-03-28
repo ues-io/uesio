@@ -1,11 +1,11 @@
 # Log into the studio as uesio
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the workspace id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -29,7 +29,7 @@ workspace_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 
 # Workspace users can access everything by default
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -50,13 +50,13 @@ HTTP 200
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "Evil Corp"
 
 # Log into the studio as ben
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 
 # Add an impersonation record to use the rep profile
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.rep"
@@ -64,7 +64,7 @@ POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 HTTP 200
 
 # Now that I'm impersonating with the rep profile, I can't see the evil corp.
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -86,7 +86,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 
 # Now that I'm impersonating with the rep profile, I don't have object
 # level access to the accountteammeber collection.
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -102,7 +102,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.rep does not have read access to the uesio/tests.accountteammember collection."
 
 # Verify that I can still load routes and their dependencies
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.wire[0].name" == "animals"
@@ -116,7 +116,7 @@ jsonpath "$.dependencies.wire[0].loadAll" == false
 jsonpath "$.dependencies.wire[0].data[*]['uesio/core.id']" count == 10
 
 # Switch to impersonating the public profile
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.public"
@@ -124,7 +124,7 @@ POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
 HTTP 200
 
 # Now that I'm impersonating with the public profile, I can't load accounts
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -147,7 +147,7 @@ jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not 
 
 
 # But I should be able to see animal records
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -177,7 +177,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 
 # Remove impersonation record to reset to orignal state
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": ""

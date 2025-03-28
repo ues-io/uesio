@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test a wire load with no novaluebehavor property on the condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -33,7 +33,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 jsonpath "$.wires[0].errors[0].message" == "Invalid Condition, param 'genus' was not provided"
 
 # Test again a wire load with novaluebehavor property set to deactivate on the condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -76,7 +76,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" count == 1
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Blazewski:Aaron"
 
 # Test again a wire load with novaluebehavor property set to noquery on the condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

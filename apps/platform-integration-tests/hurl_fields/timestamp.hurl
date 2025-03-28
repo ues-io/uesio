@@ -4,7 +4,7 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -12,7 +12,7 @@ HTTP 200
 
 # Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -39,7 +39,7 @@ jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type bigint
 
 # Operator: EQ | valueSource: VALUE | value as string
 # entry 3
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -78,7 +78,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 # Operator: EQ | valueSource: VALUE | Bad Value value as string (ISO-8601 UTC datetime)
 # entry 4
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -104,7 +104,7 @@ jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type bigint
 
 # Operator: EQ | valueSource: VALUE | value as number (unix timestamp)
 # entry 5
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -130,7 +130,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 # Operator: EQ | valueSource: PARAM
 # entry 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -157,7 +157,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.timestamp']" == 978310860
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 7
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -183,7 +183,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 8
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -210,7 +210,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 978310860
 
 # Operator: GT | valueSource: VALUE
 # entry 9
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -236,7 +236,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1012611720
 
 # Operator: GT | valueSource: PARAM
 # entry 10
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -264,7 +264,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1012611720
 
 # Operator: LT | valueSource: VALUE
 # entry 11
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -291,7 +291,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: LT | valueSource: PARAM
 # entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -320,7 +320,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: GTE | valueSource: VALUE
 # entry 13
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -347,7 +347,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: GTE | valueSource: PARAM
 # entry 14
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -376,7 +376,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: LTE | valueSource: VALUE
 # entry 15
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -403,7 +403,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: LTE | valueSource: PARAM
 # entry 16
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -432,7 +432,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1046656980
 
 # Operator: IN | valueSource: VALUE
 # entry 17
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -461,7 +461,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: IN | valueSource: LOOKUP
 # entry 18
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -503,7 +503,7 @@ jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 19
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -537,7 +537,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 20
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -565,7 +565,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1081044244
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 21
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -598,7 +598,7 @@ jsonpath "$.wires[1].data[*]" isEmpty
 
 # Operator: NOT_IN | valueSource: PARAM
 ## entry 22
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -635,7 +635,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" not contains 1081044244
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 23
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -661,7 +661,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains null
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 24
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -689,7 +689,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "ID-010"
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 25
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -717,7 +717,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.timestamp']" contains 1046656980
 
 # Operator: BETWEEN | valueSource: VALUE
 # entry 26
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

@@ -4,13 +4,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test that wire collection field dependencies are accumulated into a union of all fields
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -57,7 +57,7 @@ jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.id'].label" == 
 jsonpath "$.collections['uesio/tests.animal'].fields['uesio/core.uniquekey'].label" == "Unique Key"
 
 # Verify that wire collection dependencies are merged into a union, even across sub-view wire loads
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/wire_collection_deps_multiple_views
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/wire_collection_deps_multiple_views
 HTTP 200
 [Asserts]
 # unique key and id fields will be automatically added by Uesio, to the unique fields requested across the two wires,

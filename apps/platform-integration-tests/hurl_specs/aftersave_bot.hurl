@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Try to insert a zebra
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -32,7 +32,7 @@ jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "No Zebras Allowed!"
 
 # Verify that no zebras were created
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -66,7 +66,7 @@ jsonpath "$.wires[0].errors" not exists
 
 # Try to insert a axolotl and check if the aftersave bot increased the population to 10
 # and the before save decrease in 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [

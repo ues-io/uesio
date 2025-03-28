@@ -3,7 +3,7 @@
 ###########################################################################
 
 # Fetch published, approved bundle listtings
-GET https://{{host}}:{{port}}/site/bundles/v1/list
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bundles/v1/list
 Accept: application/json
 HTTP 200
 [Asserts]
@@ -16,7 +16,7 @@ jsonpath "$[*].description" exists
 jsonpath "$[*].color" exists
 
 # Get published versions for the tests/app bundle
-GET https://{{host}}:{{port}}/site/bundles/v1/versions/uesio/tests/list
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bundles/v1/versions/uesio/tests/list
 Accept: application/json
 HTTP 200
 [Asserts]

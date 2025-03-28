@@ -3,21 +3,21 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 
 
 # Run the usage job so that we're sure to have usage data available
-POST https://{{host}}:{{port}}/site/worker/usage
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/worker/usage
 Accept: application/json
 HTTP 200
 [Asserts]
 body == "Usage Worker Success"
 
 # load usage for the Studio prod site
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/load
 Accept: application/json
 [Options]
 {
@@ -56,7 +56,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.total']" >= 1
 jsonpath "$.wires[0].collection" == "uesio/core.usage"
 
 # Load with different conditions
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/load
 Accept: application/json
 [Options]
 {

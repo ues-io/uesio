@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the workspace id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -32,7 +32,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:dev"
 workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Insert a new bot
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -64,7 +64,7 @@ jsonpath "$.wires[0].errors" == null
 newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Delete the bot
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -89,7 +89,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # The bot must not have any attachments.
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [

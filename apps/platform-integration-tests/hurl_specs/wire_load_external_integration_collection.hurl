@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test a wire load with no conditions
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -35,7 +35,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.priority']" == 1
 jsonpath "$.wires[0].data[0]['uesio/tests.subject']" == "Alpha"
 
 # Test a wire load with VALUE conditions
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -79,7 +79,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.subject']" == "Gamma"
 # Test a wire load with conditions of valueSource: PARAM
 # Verify that the resolved values are provided to the Bot conditions,
 # NOT the raw values (which would be useless).
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

@@ -8,13 +8,13 @@
 # verify col1 is and col2 is col2
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # GET an account and contact uuid
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -38,7 +38,7 @@ CON-UUID: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 CON-LASTNAME: jsonpath "$.wires[1].data[0]['uesio/tests.lastname']"
 
 # insert a cat owned by the account
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -68,7 +68,7 @@ jsonpath "$.wires[0].errors" == null
 CAT-ACC-UUID: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Get the cat owned by account record and check the multicollection
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -103,7 +103,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.collection']" == 
 jsonpath "$.wires[0].data[0]['uesio/tests.keeper']['uesio/core.id']" == "{{ACC-UUID}}"
 
 # insert a pig owned by the contact
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -133,7 +133,7 @@ jsonpath "$.wires[0].errors" == null
 PIG-CON-UUID: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Get the pig owned by contant record and check the multicollection
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

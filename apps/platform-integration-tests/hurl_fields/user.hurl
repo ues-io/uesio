@@ -4,7 +4,7 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -12,7 +12,7 @@ HTTP 200
 
 # Capture UUID for Users
 # entry 2
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 {
     "wires": [
         {
@@ -62,7 +62,7 @@ ID012-UUID: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # create 2 new records with uesio/tests.name = "ID-011" / "ID-012" and user with uesio/core.id == ID011-UUID / ID012-UUID
 # entry 3
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 {
    "wires":[
       {
@@ -97,7 +97,7 @@ HTTP 200
 
 # Operator: EQ | valueSource: VALUE | Bad Value
 # entry 4
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -122,7 +122,7 @@ jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to 
 
 # Operator: EQ | valueSource: VALUE | ID011-UUID
 # entry 5
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -148,7 +148,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-001"
 
 # Operator: EQ | valueSource: PARAM | ID011-UUID
 # entry 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -175,7 +175,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-001"
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 7
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -202,7 +202,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not contains 
 
 # Operator: NOT_EQ | valueSource: VALUE | ID011-UUID
 # entry 8
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -230,7 +230,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" not contains 
 
 # Operator: IN | valueSource: VALUE | ID011-UUID & ID012-UUID
 # entry 9
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -262,7 +262,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-012"
 
 # Operator: IN | valueSource: PARAM | ID011-UUID & ID012-UUID
 # entry 10
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -298,7 +298,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-012"
 
 # Operator: IN | valueSource: LOOKUP | ID011-UUID
 # entry 11
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -340,7 +340,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.name']" contains "ID-011"
 
 # Operator: NOT_IN | valueSource: VALUE | ID011-UUID & ID012-UUID
 # entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -373,7 +373,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-012"
 
 # Operator: NOT_IN | valueSource: VALUE | ID011-UUID & ID012-UUID
 # entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -399,7 +399,7 @@ jsonpath "$.wires[0].data" count == 10
 
 # Operator: NOT_IN | valueSource: PARAM | ID011-UUID & ID012-UUID
 # entry 13
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -434,7 +434,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-012"
 
 # Operator: NOT_IN | valueSource: LOOKUP | ID011-UUID
 # entry 14
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 {
    "wires":[
       {
@@ -482,7 +482,7 @@ jsonpath "$.wires[1].data[*]['uesio/tests.name']" contains "ID-012"
 
 # Operator: IS_BLANK
 # entry 15
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -507,7 +507,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.user']['uesio/core.id']" isEmpty
 
 # Operator: IS_NOT_BLANK
 # entry 16
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 
 # Test a simple insert into the bundle collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -40,7 +40,7 @@ jsonpath "$.wires[0].errors" == null
 newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Verify that the unique key is built using the metdadata of the number fields
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -78,7 +78,7 @@ jsonpath "$.wires[0].data[0]['uesio/studio.patch']" == 2
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:5:1:2"
 
 # Clean up the bundle we just created
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [

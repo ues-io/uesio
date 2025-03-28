@@ -4,7 +4,7 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -16,7 +16,7 @@ session_id: cookie "sessid"
 # we need to populate the session id secret with our current session id,
 # since we don't have Uesio API Keys, the only way to access Uesio is with a sessid cookie,
 # so we have to recreate that.
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -36,7 +36,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Test a wire load on the weather forecast with API KEY auth
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

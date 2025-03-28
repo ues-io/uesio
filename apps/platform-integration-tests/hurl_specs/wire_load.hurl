@@ -3,14 +3,14 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 
 # Test a wire load with no conditions
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -41,7 +41,7 @@ jsonpath "$.wires[0].data" count == 2
 jsonpath "$.collections" not exists
 
 # Test a wire load with a simple condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -86,7 +86,7 @@ jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 jsonpath "$.wires[0].order" not exists # Order should not be sent back to us
 
 # Test a wire load with a param merge condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -129,7 +129,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "McCreary:Jerrine
 jsonpath "$.wires[0].params" not exists # params should not be sent back to us
 
 # Test a wire load with a condition on the unique key field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -172,7 +172,7 @@ jsonpath "$.wires[0].fields" not exists # Fields should not be sent back to us
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test a wire load with a condition on the core id field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -219,7 +219,7 @@ jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.genus']['name'
 jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.species']['name']" == "species"
 
 # Verify that wire properties from a view are processed correctly
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/simple_wire_load
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.wire" count == 1
@@ -234,7 +234,7 @@ jsonpath "$.dependencies.wire[0].loadAll" == false
 jsonpath "$.dependencies.wire[0].data[*]['uesio/core.id']" count == 10
 
 # Wire load with IN condition and values
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -278,7 +278,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "MacAughtrie:Jerrine"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "McCreary:Jerrine"
 
 # Wire load with NOT IN condition and values
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -325,7 +325,7 @@ LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Soitoux:Franklin"
 
 # Wire load with ORDER fields not otherwise requested in Field / Condition metadata
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -376,7 +376,7 @@ jsonpath "$.collections['uesio/tests.animal'].fields['uesio/tests.total_populati
 
 
 # Test two wire loads one should return en error the other should load normally
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

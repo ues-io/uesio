@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get a record
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -41,7 +41,7 @@ HTTP 200
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test a simple update
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -67,7 +67,7 @@ jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" == "Genie"
 jsonpath "$.wires[0].errors" == null
 
 # Now see if the update worked
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -101,7 +101,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Frog"
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Genie:Frog"
 
 # Test a simple delete
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -122,7 +122,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Test a simple insert
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -149,7 +149,7 @@ jsonpath "$.wires[0].errors" == null
 newid: jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0
 
 # Now see if the insert worked
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -183,7 +183,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.species']" == "Alain"
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "Kupker:Alain"
 
 # Test a simple insert with missing required field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [

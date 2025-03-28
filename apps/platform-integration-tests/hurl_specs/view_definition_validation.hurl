@@ -3,13 +3,13 @@
 ###################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the dev workspace id so we can test saving a view in a workspace
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -70,7 +70,7 @@ app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
 workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # Create a view with valid YAML
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 [Options]
 variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
@@ -98,7 +98,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create a view with invalid YAML
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -124,7 +124,7 @@ jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schema validation: [1] wires.users.batchsize: Invalid type. Expected: number, given: string [2] wires.users: Additional property collectio is not allowed [3] wires.users: collection is required"
 
 # Create a view with a valid ViewOnly wire
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 [Options]
 variable: viewonlywiretest="viewonlywiretest_{{unix_epoch_seconds}}"
@@ -151,7 +151,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create a view with an invalid ViewOnly wire
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [

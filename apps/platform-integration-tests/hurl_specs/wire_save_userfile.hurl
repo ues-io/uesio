@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the id of an animal record
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -39,7 +39,7 @@ jsonpath "$.wires[0].errors" not exists
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Now upload an attachment to this animal using wires
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -67,13 +67,13 @@ jsonpath "$.wires[0].errors" == null
 attachmentid: jsonpath "$.wires[0].changes['temp1']['uesio/core.id']"
 
 # Verify that the download fails because it was inserted without data
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 500
 [Asserts]
 body startsWith "Internal Server Error"
 
 # Now update the file with some data
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -97,13 +97,13 @@ jsonpath "$.wires[0].changes['temp1']['uesio/core.data']" == "This is some text 
 jsonpath "$.wires[0].errors" == null
 
 # Verify that the download works now
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 200
 [Asserts]
 body == "This is some text data"
 
 # Now update the file again
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -126,13 +126,13 @@ jsonpath "$.wires[0].changes['temp1']['uesio/core.data']" == "This is some text 
 jsonpath "$.wires[0].errors" == null
 
 # Verify that the download works now
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 200
 [Asserts]
 body == "This is some text data that changed"
 
 # Now test an insert with data
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -160,39 +160,39 @@ jsonpath "$.wires[0].errors" == null
 attachmentid2: jsonpath "$.wires[0].changes['temp1']['uesio/core.id']"
 
 # Verify that the download works
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid2}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid2}}
 HTTP 200
 [Asserts]
 body == "Even more text data"
 
 # Now delete the files
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid}}
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid}}
 Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
 # Now delete the files
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid2}}
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid2}}
 Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
 # Verify that the files are gone
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
 
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid2}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid2}}
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid2}}"
 
 
 # Now upload an attachment connected to a file field, but invalid field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/upload
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/upload
 Accept: application/json
 [MultipartFormData]
 details: {"name":"description.txt","collectionID":"uesio/tests.animal","recordID":"{{idvalue}}","fieldID":"uesio/tests.invalidfield"}
@@ -202,7 +202,7 @@ HTTP 500
 body startsWith "Internal Server Error"
 
 # Now upload an attachment connected to a file field, but it is valid
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/upload
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/upload
 Accept: application/json
 [MultipartFormData]
 details: {"name":"description.txt","collectionID":"uesio/tests.animal","recordID":"{{idvalue}}","fieldID":"uesio/tests.description_file"}
@@ -222,26 +222,26 @@ jsonpath "$.['uesio/core.contentlength']" == 35
 attachmentid3: jsonpath "$.['uesio/core.id']"
 
 # Verify that the download works
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid3}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid3}}
 HTTP 200
 [Asserts]
 body == "another description of this animal."
 
 # Now delete the file
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid3}}
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid3}}
 Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
 # Verify that the file is gone
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid3}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid3}}
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid3}}"
 
 # Now test an insert with data and invalid field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -267,7 +267,7 @@ jsonpath "$.wires[0].errors" count == 1
 jsonpath "$.wires[0].errors[0].message" == "No metadata provided for field: uesio/tests.invalidfield in collection: animal"
 
 # Now test with a valid field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -298,7 +298,7 @@ jsonpath "$.wires[0].errors" == null
 attachmentid4: jsonpath "$.wires[0].changes['temp1']['uesio/core.id']"
 
 # Now query the field and make sure it's there
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -335,20 +335,20 @@ jsonpath "$.wires[0].data[0]['uesio/tests.description_file']['uesio/core.uniquek
 
 
 # Now delete the file
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid4}}
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid4}}
 Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
 # Verify that the file is gone
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid4}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid4}}
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid4}}"
 
 # Now query the field and make sure it's gone
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

@@ -3,14 +3,14 @@
 ##################################################################
 
 # Log into the studio as ben
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 HTTP 200
 
 # Get the workspace id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -33,7 +33,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:dev"
 workspace_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Add an impersonation record to use the rep profile
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.rep"
@@ -44,7 +44,7 @@ HTTP 200
 # Pss. OWNER field it's auto populated on creation, you still need the access.
 # We SHOULD be able to CREATE tool records
 # because ben user impersoning with rep profile have permission to create them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 [Options]
 variable: brand="brand_{{unix_epoch_seconds}}"
@@ -73,7 +73,7 @@ jsonpath "$.wires[0].changes[*]['uesio/core.id']" nth 0 != null
 # It is possible to read the owner field of an unprotected collection.
 # because ben user impersoning with rep profile DOES have MODIFYALL access to it
 # check if the owner is BEN
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -109,7 +109,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.owner']['uesio/core.uniquekey']" == "be
 # It is possible to update the owner field of an unprotected collection.
 # We should be able to EDIT tool records
 # because ben user impersoning with rep profile have permission to edit them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Content-Type: application/json
 {
     "wires": [
@@ -137,7 +137,7 @@ jsonpath "$.wires[0].errors" == null
 # It is possible to read the owner field of an unprotected collection.
 # because ben user impersoning with rep profile DOES have MODIFYALL access to it
 # Make sure the new owner is ABEL
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -166,7 +166,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.owner']['uesio/core.uniquekey']" == "ab
 
 
 # Add an impersonation record to use the owner_locked profile
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/setworkspaceuser
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser
 {
     "workspaceid": "{{workspace_id}}",
     "profile": "uesio/tests.owner_locked"
@@ -176,7 +176,7 @@ HTTP 200
 # It is possible to read the owner field of an protected collection.
 # because ben user impersoning with owner_locked profile DOES have MODIFYALL access to it 
 # and read access to the owner field, the owner should still be abel
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -205,7 +205,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.owner']['uesio/core.uniquekey']" == "ab
 
 # It is not possible to update the owner field of an protected collection.
 # because ben user impersoning with owner_locked profile do not have permission to edit them
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Content-Type: application/json
 {
     "wires": [

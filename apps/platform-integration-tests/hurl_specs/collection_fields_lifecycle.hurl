@@ -3,13 +3,13 @@
 ###################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the dev workspace id so we can test saving collections/fields
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -70,7 +70,7 @@ app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
 workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # Create a collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -96,7 +96,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create fields associated with the collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -144,7 +144,7 @@ jsonpath "$.wires[0].changes['temp2']['uesio/studio.number']['uesio/studio.decim
 field_id: jsonpath "$.wires[0].changes['temp3']['uesio/core.id']"
 
 # Make an update to the reference field
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -169,7 +169,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create a route assignment associated with the collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -200,7 +200,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create a record challenge token associated with the collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -226,7 +226,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Verify the collection and related entities were saved successfully
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "includeMetadata": true,
@@ -392,7 +392,7 @@ jsonpath "$.collections['uesio/studio.field'].name" == "field"
 collection_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Test the studio recentmetadata collection
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -414,7 +414,7 @@ jsonpath "$.wires[0].data[*]['uesio/studio.name']" != ""
 jsonpath "$.wires[0].data[*]['uesio/studio.label']" != ""
 
 # Delete the collection
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -438,7 +438,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Verify that the collection, and its dependencies, were deleted successfully
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [

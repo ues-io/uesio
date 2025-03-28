@@ -11,6 +11,9 @@ export HURL_num_aikit_collections=2
 export HURL_num_appkit_collections=1
 # this number should be the sum of the above two variables
 export HURL_num_core_and_tests_collections=$(($HURL_num_public_core_collections + $HURL_num_tests_collections + $HURL_num_aikit_collections + $HURL_num_appkit_collections))
+export HURL_site_scheme=$UESIO_TEST_SCHEME
+export HURL_site_primary_domain=$UESIO_TEST_DOMAIN
+export HURL_site_port=$UESIO_TEST_PORT
 
 # Initialize the sample app and seed test data
 bash "scripts/tests/init-common.sh"
@@ -23,15 +26,15 @@ cd apps/platform-integration-tests
 # sequential execution via --jobs flag but this should be investigated and, assuming possible depending on root cause, changed to not limit parallel execution.
 # See https://github.com/ues-io/uesio/issues/4457
 # Run specs
-npx hurl --jobs 1 --error-format long -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT --test hurl_specs/*.hurl
+npx hurl --jobs 1 --error-format long -k --test hurl_specs/*.hurl
 # Run field condition tests
-npx hurl --jobs 1 --error-format long -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT --test hurl_fields/*.hurl
+npx hurl --jobs 1 --error-format long -k --test hurl_fields/*.hurl
 
 # FYI if you want to view the output of the request made by a specific hurl spec,
 # you can comment out the assertions of the last hurl request made in a hurl file, and then run the spec
 # without the "--test" flag, like this
-# npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT hurl_specs/wire_collection_dependencies.hurl
+# npx hurl --very-verbose -k --variable site_scheme=https --variable site_primary_domain=uesio-dev.com --variable site_port=3000 hurl_specs/wire_collection_dependencies.hurl
 
-npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT --test hurl_specs_single_run/perf_stats.hurl
+npx hurl --very-verbose -k --test hurl_specs_single_run/perf_stats.hurl
 
 cd - >> /dev/null
