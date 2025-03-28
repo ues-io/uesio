@@ -131,8 +131,8 @@ body contains "Profile uesio/tests.public does not have delete access to the ues
 # because the public profile DOES have permission to create them
 POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 [Options]
-variable: genus="Choloepus {{unix_epoch_seconds}}"
-variable: species="Didactylus {{unix_epoch_seconds}}"
+variable: genus="Choloepus {{newUuid}}"
+variable: species="Didactylus {{newUuid}}"
 {
     "wires": [
         {
@@ -284,8 +284,8 @@ body contains "Profile uesio/tests.public does not have delete access to the ues
 # because the public profile DOES NOT have permission to create them
 POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/wires/save
 [Options]
-variable: brand="brand {{unix_epoch_seconds}}"
-variable: category="category {{unix_epoch_seconds}}"
+variable: brand="brand {{newUuid}}"
+variable: category="category {{newUuid}}"
 {
     "wires": [
         {
@@ -358,8 +358,8 @@ HTTP 200
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 [Options]
-variable: brand="brand_{{unix_epoch_seconds}}"
-variable: category="category_{{unix_epoch_seconds}}"
+variable: brand="brand_{{newUuid}}"
+variable: category="category_{{newUuid}}"
 {
     "wires": [
         {

@@ -73,7 +73,14 @@ workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 [Options]
-variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
+# This was previously using {{unix_epoch_seconds}} to create random value, however hurl does not currently have a way
+# to randomly generate data that satisfies our validation of letter/digit/underscore only.  For these tests, we do not
+# need random data since all of our tests require that the tests-init script be run to create the data before every
+# execution anyway.  The benefit of having view_suffix be random is that it would allow this individual file to execute
+# on its own without having to re-run tests-init every time, however the way all these tests are written, they don't
+# lend themselves to that execution style anyway.  For now, changing to fixed value but could potentially revisit if/when
+# hurl extends its built-in function support for random data (see https://github.com/Orange-OpenSource/hurl/issues/3720)
+variable: view_suffix="123456789"
 {
     "wires": [
         {
@@ -82,7 +89,7 @@ variable: validyamlview="validyamlview_{{unix_epoch_seconds}}"
             "changes": {
                 "temp1": {
                     "uesio/studio.definition": "  wires:\n    users:\n        collection: uesio/core.user\n        fields:\n            uesio/core.id:\n            uesio/core.firstname:\n            uesio/core.lastname: {}\n        conditions:\n            - field: uesio/core.firstname\n              value: Sally\n            - field: uesio/core.lastname\n              valueSource: VALUE\n              operator: NOT_EQ\n              value: Jones\n        batchsize: 100\n  components:\n",
-                    "uesio/studio.name": "{{validyamlview}}"
+                    "uesio/studio.name": "validyamlview_{{view_suffix}}"
                 }
             },
             "params": {
@@ -108,7 +115,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/studio.definition": "wires:\n  users:\n    collectio: uesio/core.user\n    fields:\n      uesio/core.id:\n      uesio/core.firstname:\n      uesio/core.lastname: {}\n    batchsize: this is not a valid number\ncomponents:\n",
-                    "uesio/studio.name":"invalidyamlview_{{unix_epoch_seconds}}"
+                    "uesio/studio.name":"invalidyamlview_{{view_suffix}}"
                 }
             },
             "params": {
@@ -126,8 +133,6 @@ jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schem
 # Create a view with a valid ViewOnly wire
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
-[Options]
-variable: viewonlywiretest="viewonlywiretest_{{unix_epoch_seconds}}"
 {
     "wires": [
         {
@@ -136,7 +141,7 @@ variable: viewonlywiretest="viewonlywiretest_{{unix_epoch_seconds}}"
             "changes":{
                 "temp1":{
                     "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: NUMBER\n        label: Foo\n        number:\n          decimals: 2\ncomponents:\n",
-                    "uesio/studio.name":"{{viewonlywiretest}}"
+                    "uesio/studio.name":"viewonlywiretest_{{view_suffix}}"
                 }
             },
             "params": {
@@ -161,7 +166,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/studio.definition": "wires:\n  users:\n    viewOnly: true\n    fields:\n      foo:\n        type: BAR\n        required: no\n        number:\n          some: thing\ncomponents:\n",
-                    "uesio/studio.name":"invalidviewonlywire_{{unix_epoch_seconds}}"
+                    "uesio/studio.name":"invalidviewonlywire_{{view_suffix}}"
                 }
             },
             "params": {
