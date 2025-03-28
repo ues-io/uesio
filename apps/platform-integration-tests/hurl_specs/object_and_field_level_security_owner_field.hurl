@@ -47,8 +47,8 @@ HTTP 200
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 [Options]
-variable: brand="brand_{{unix_epoch_seconds}}"
-variable: category="category_{{unix_epoch_seconds}}"
+variable: brand="brand_{{newUuid}}"
+variable: category="category_{{newUuid}}"
 {
     "wires": [
         {

@@ -169,7 +169,11 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == {{num_common_fields}}
+# this number should be the number of common fields
+# TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
+# data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
+# explicit/more meaningful. 
+jsonpath "$.wires[0].data" count == 8
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.collection"
 jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
 jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"

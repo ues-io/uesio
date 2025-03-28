@@ -25,7 +25,11 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/ues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == {{num_core_and_tests_collections}}
+# this number should be the sum of the number of collections in core, tests, aikit & appkit
+# TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
+# data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
+# explicit/more meaningful or remove.
+jsonpath "$[*]" count == 28
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -39,7 +43,11 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/ues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == {{num_tests_collections}}
+# this number should be the number of collections in tests
+# TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
+# data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
+# explicit/more meaningful or remove.
+jsonpath "$[*]" count == 11
 # Spot check a uesio/tests collection
 jsonpath "$['uesio/tests.animal'].key" == "uesio/tests.animal"
 jsonpath "$['uesio/tests.animal'].namespace" == "uesio/tests"
@@ -49,7 +57,11 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/ues
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == {{num_public_core_collections}}
+# this number should be the number of collections in core
+# TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
+# data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
+# explicit/more meaningful or remove.
+jsonpath "$[*]" count == 14
 # Spot check a uesio/core collection
 jsonpath "$['uesio/core.user'].key" == "uesio/core.user"
 jsonpath "$['uesio/core.user'].namespace" == "uesio/core"

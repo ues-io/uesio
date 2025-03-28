@@ -10,7 +10,6 @@ describe("Uesio Sanity Smoke Tests", () => {
   const namespace = getAppNamespace(appName)
   const workspaceName = "test"
   const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
-  const NUM_COMMON_FIELDS = 8
 
   // This test is too flaky to be run in CI
   // TODO: Investigate why this doesn't work well in CI
@@ -155,7 +154,10 @@ describe("Uesio Sanity Smoke Tests", () => {
       // Initially there should be no fields
       cy.get('table[id$="commonFields"]>tbody')
         .children("tr")
-        .should("have.length", NUM_COMMON_FIELDS)
+        // TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
+        // data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
+        // explicit/more meaningful, for example assert that the specific fields we expect to be there are there.
+        .should("have.length", 8)
     })
   })
 
