@@ -1,4 +1,4 @@
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -10,11 +10,11 @@ session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
 # Reset performance stats
-POST https://{{host}}:{{port}}/site/perf/stats/reset
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/perf/stats/reset
 HTTP 204
 
 # Create the tests app
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -43,7 +43,7 @@ app_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 jsonpath "$.wires[0].errors" == null
 
 # Create tests team
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -67,7 +67,7 @@ jsonpath "$.wires[0].errors" == null
 team_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 
 # Get ben's and Wessel id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 {
     "wires": [
         {
@@ -99,7 +99,7 @@ ben_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 wessel_id: jsonpath "$.wires[0].data[1]['uesio/core.id']"
 
 # Put ben & wessel on the team
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -137,7 +137,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Create dev workspace
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -161,7 +161,7 @@ workspace_id: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 jsonpath "$.wires[0].errors" == null
 
 # Set the google auth source config client id value for the workspace
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -182,7 +182,7 @@ jsonpath "$.wires[0].errors" == null
 
 # Create a sample metadata item within the workspace,
 # to verify that when we do a deploy, the value is overridden and the workspace bundle cache is invalidated
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -212,14 +212,14 @@ jsonpath "$.wires[0].changes['1']['uesio/studio.name']" == "cacheinvalidationtes
 
 # Now, access the deps route for previewing that view,
 # so that we force the view to be loaded into the workspace bundle cache
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/cacheinvalidationtest
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/cacheinvalidationtest
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.viewdef[0].definition.wires" == null
 jsonpath "$.dependencies.wire" count == 0
 
 # Create truncatetests workspace
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {

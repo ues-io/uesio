@@ -3,6 +3,10 @@
 set -e
 shopt -s expand_aliases
 
+export HURL_site_scheme=$UESIO_TEST_SCHEME
+export HURL_site_primary_domain=$UESIO_TEST_DOMAIN
+export HURL_site_port=$UESIO_TEST_PORT
+
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST=$UESIO_TEST_APP_URL
@@ -19,9 +23,9 @@ uesio sethost
 uesio login
 
 echo "Deleting tests app if it exists..."
-npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/delete_app.hurl
+npx hurl -k --error-format long --no-output hurl_seeds/delete_app.hurl
 echo "Creating the tests app and dev workspace..."
-npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/create_app_and_workspace.hurl
+npx hurl -k --error-format long --no-output hurl_seeds/create_app_and_workspace.hurl
 
 # truncatetests workspace
 echo "Changing to truncatetests workspace..."
@@ -45,12 +49,12 @@ uesio upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 uesio upsert -f seed_data/tools.csv -s seed_data/tools_import.spec.json
 
 # Populate secrets and config values for the dev workspace
-npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/populate_secrets_and_config_values.hurl
+npx hurl -k --error-format long --no-output hurl_seeds/populate_secrets_and_config_values.hurl
 
 echo "Successfully upserted seed data into our workspace. Creating a test site, domain, and bundle..."
 
 # Now that we have deployed our metadata to the workspace, we can create a bundle, site, and domain which uses its metadata
-npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN hurl_seeds/site_domain_bundle.hurl
+npx hurl -k --error-format long --no-output hurl_seeds/site_domain_bundle.hurl
 
 echo "Seeding data into our test site..."
 uesio siteadmin -n=testsite

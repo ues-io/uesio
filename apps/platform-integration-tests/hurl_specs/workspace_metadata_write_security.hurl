@@ -3,14 +3,14 @@
 ###########################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Get the dev workspace id so we can test saving metadata as a user without write access
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -71,13 +71,13 @@ app_fullname: jsonpath "$.wires[0].data[0]['uesio/studio.fullname']"
 workspace_id: jsonpath "$.wires[1].data[0]['uesio/core.id']"
 
 # Login as baxter, who should not have write access to this workspace, and try to modify metadata
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "baxter"
 }
 HTTP 200
 
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {

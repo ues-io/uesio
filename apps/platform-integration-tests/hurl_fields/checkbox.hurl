@@ -4,7 +4,7 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -12,7 +12,7 @@ HTTP 200
 
 # Operator: EQ | valueSource: VALUE | Bad Value
 # entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -38,7 +38,7 @@ jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type boolea
 
 # Operator: EQ | valueSource: VALUE | Boolean true
 # entry 3
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -80,7 +80,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains false
 # Operator: EQ | valueSource: VALUE | String "false"
 # NOTE this test depends on postgresql boolean conversion
 # entry 4
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -122,7 +122,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
 
 # Operator: EQ | valueSource: PARAM
 # entry 5
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -152,7 +152,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains false
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -179,7 +179,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" not contains true
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 7
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -209,7 +209,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.checkbox']" contains null
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 8
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -236,7 +236,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-006"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 9
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

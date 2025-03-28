@@ -4,7 +4,7 @@
 # within grid items and tabs
 ######################################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -16,7 +16,7 @@ session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
 # Fetch builder dependencies - via workspace router - for Display conditions
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/metadata/builder/uesio/tests/display_conditions
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/metadata/builder/uesio/tests/display_conditions
 HTTP 200
 [Asserts]
 # Verify that the feature flags are loaded in the view builder

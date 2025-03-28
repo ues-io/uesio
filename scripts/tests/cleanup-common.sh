@@ -3,6 +3,10 @@
 set -e
 shopt -s expand_aliases
 
+export HURL_site_scheme=$UESIO_TEST_SCHEME
+export HURL_site_primary_domain=$UESIO_TEST_DOMAIN
+export HURL_site_port=$UESIO_TEST_PORT
+
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
 export UESIO_CLI_USERNAME=uesio
 export UESIO_CLI_HOST=$UESIO_TEST_APP_URL
@@ -32,7 +36,7 @@ echo "dev workspace should be clear"
 cd - >> /dev/null
 
 # Run specs
-npx hurl -k --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
+npx hurl -k --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
 # Delete the workspaces
 cd apps/platform-integration-tests
@@ -43,4 +47,4 @@ cd - >> /dev/null
 
 # Remove anything that remains
 echo "Deleting tests app..."
-npx hurl -k --error-format long --no-output --variable host=$UESIO_TEST_HOST_NAME --variable port=$UESIO_TEST_PORT --variable domain=$UESIO_TEST_DOMAIN apps/platform-integration-tests/hurl_seeds/delete_app.hurl
+npx hurl -k --error-format long --no-output apps/platform-integration-tests/hurl_seeds/delete_app.hurl

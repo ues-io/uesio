@@ -3,13 +3,13 @@
 #############################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test fetching metadata for params of a Route that serves a View
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/params/uesio/tests/animal_details
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/params/uesio/tests/animal_details
 HTTP 200
 [Asserts]
 jsonpath "$" count == 1
@@ -18,7 +18,7 @@ jsonpath "$[0].type" == "RECORD"
 jsonpath "$[0].required" == true
 
 # Test fetching metadata for params of a Route that runs a bot
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/params/uesio/tests/tools_api_query_params
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/params/uesio/tests/tools_api_query_params
 HTTP 200
 [Asserts]
 jsonpath "$" count == 4

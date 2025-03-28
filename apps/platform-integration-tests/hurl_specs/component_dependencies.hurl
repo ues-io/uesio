@@ -4,7 +4,7 @@
 # within grid items and tabs
 ######################################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -16,7 +16,7 @@ session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
 # Fetch component pack dependencies - via workspace router - for Grid with nested Tabs
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_grid_and_tabs
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_grid_and_tabs
 HTTP 200
 [Asserts]
 # Verify that the chart pack is loaded, to verify parsing of grid item and tabs dependencies
@@ -47,7 +47,7 @@ jsonpath "$.dependencies.viewdef[0].definition.components[2]['uesio/io.button'][
 jsonpath "$.dependencies.componentvariant[3].component" == "uesio/io.button"
 
 # Fetch component pack dependencies - via workspace router - for a Group with nested chart
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group
 HTTP 200
 [Asserts]
 # Verify that the chart pack is loaded, to verify parsing of group component dependencies
@@ -55,7 +55,7 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 
 # Fetch component pack dependencies - via workspace router - for a Table component with nested chart
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_table_columns
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_table_columns
 HTTP 200
 [Asserts]
 # Verify that the chart pack is loaded, to verify parsing of table column component dependencies
@@ -63,7 +63,7 @@ jsonpath "$.dependencies.componentpack[0].name" == "main"
 jsonpath "$.dependencies.componentpack[1].name" == "chart"
 
 # Fetch component pack dependencies - via workspace router - for a Panel with nested chart
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_panel
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_panel
 HTTP 200
 [Asserts]
 # Verify that the chart pack is loaded, to verify parsing of Panel component dependencies
@@ -82,7 +82,7 @@ jsonpath "$.dependencies.componentvariant[*].component" contains "uesio/io.table
 
 # Fetch component pack dependencies - via workspace router - for a View with a declarative component,
 # to verify that dependent component packs are loaded
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative1
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative1
 HTTP 200
 [Asserts]
 # Verify that the io pack is loaded
@@ -102,7 +102,7 @@ jsonpath "$.dependencies.componenttype[7].properties[1].name" == "subtitle"
 jsonpath "$.dependencies.componenttype[7].properties[1].defaultValue" == "This is a subtitle"
 jsonpath "$.dependencies.componenttype[7].title" not exists # no builder metadata should be loaded
 
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative2
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative2
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.componentpack[0].name" == "main"
@@ -126,7 +126,7 @@ jsonpath "$.dependencies.componenttype[12].slots[1].defaultContent" not exists
 
 # Test that components with variant properties, and variants with definitions containing variant properties,
 # are propertly parsed to load these variants
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/variant_definition_dependencies
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/variant_definition_dependencies
 HTTP 200
 [Asserts]
 # Because we specify "uesio/io.three_column_grid" as the DECK variant,
@@ -145,7 +145,7 @@ jsonpath "$.dependencies.componentvariant[7].name" == "three_columns"
 jsonpath "$.dependencies.componentvariant[7].component" == "uesio/io.grid"
 jsonpath "$.dependencies.componentvariant[7].extends" == "uesio/io.one_column"
 
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/declarative_default_variant
 HTTP 200
 [Asserts]
 # Because we have a default variant we should load it in

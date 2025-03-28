@@ -559,7 +559,7 @@ To run API integration tests locally against your running Uesio container, use `
 The easiest way to run a single Integration Test is to go into the `scripts/tests/start-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here and then run `npm run tests-integration`:
 
 ```
-# npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
+# npx hurl --very-verbose -k --variable site_scheme=https --variable site_primary_domain=uesio-dev.com --variable site_port=3000 apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
 ```
 
 You could run the individual test from the CLI, but you would have to make sure that you have the test app created and the right environment variables set up. If you would like to run via the CLI:
@@ -567,7 +567,7 @@ You could run the individual test from the CLI, but you would have to make sure 
 ```bash
 npm run tests-init # initialize test app/workspace/site/data/etc.
 source scripts/tests/setup-env.sh # setup environment variables used in tests
-npx hurl --very-verbose -k --variable host=$UESIO_TEST_HOST_NAME --variable domain=$UESIO_TEST_DOMAIN --variable port=$UESIO_TEST_PORT apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
+npx hurl --very-verbose -k --variable site_scheme=https --variable site_primary_domain=uesio-dev.com --variable site_port=3000 apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
 ```
 
 # Continous integration (CI)

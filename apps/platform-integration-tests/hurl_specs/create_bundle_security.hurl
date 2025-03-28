@@ -2,14 +2,14 @@
 # Tests security on the create bundle bot
 #########################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Retrieve the tests app and admins team ids
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 {
     "wires": [
         {
@@ -51,7 +51,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests"
 jsonpath "$.wires[1].data[0]['uesio/studio.name']" == "admins"
 
 # Log in as abel, who should NOT have access to create bundles on the tests app
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "abel"
 }
@@ -60,7 +60,7 @@ HTTP 200
 abelId: jsonpath "$.user.id"
 
 # try to create a bundle - should fail
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/createbundle
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createbundle
 {
     "type": "patch",
     "description": "THIS SHOULD FAIL",
@@ -72,7 +72,7 @@ HTTP 403
 body == "you do not have permission to create bundles for app uesio/tests\n"
 
 # have abel try to add himself to the admins team
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -99,13 +99,13 @@ HTTP 200
 jsonpath "$.wires[0].errors" count == 1
 
 # now, as Uesio, grant Abel access to the tests app as a maintainer
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -133,13 +133,13 @@ jsonpath "$.wires[0].errors" == null
 [Captures]
 newTeamMemberId: jsonpath "$.wires[0].changes['1']['uesio/core.id']"
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "abel"
 }
 
 # now Abel should be able to create a bundle
-POST https://studio.uesio-dev.com:3000/site/bots/call/uesio/studio/createbundle
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createbundle
 {
     "type": "patch",
     "description": "bundle created by abel",
@@ -155,7 +155,7 @@ jsonpath "$.params.patch" >= 2
 jsonpath "$.success" == true
 
 # Remove abel from the team
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {

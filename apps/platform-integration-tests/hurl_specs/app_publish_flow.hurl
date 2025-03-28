@@ -4,14 +4,14 @@
 ###########################################################################
 
 # Log into the studio as uesio the owner of the test app
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Get the dev workspace id so we can test saving collections/fields
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -43,7 +43,7 @@ jsonpath "$.wires[0].data[0]['uesio/studio.fullname']" == "uesio/tests"
 app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # 1 step create a new bundlelisting with status OPEN
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -73,7 +73,7 @@ jsonpath "$.wires[0].errors" == null
 tests_app_bundlelisting_id: jsonpath "$.wires[0].changes['temp1']['uesio/core.id']"
 
 # 2 step add a new license template
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -101,7 +101,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # 3 step Send it for review
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -126,14 +126,14 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 #Login as Abel he has access to the studio site
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "abel"
 }
 
 #Site admin 
 # 4 step Start the review
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/save
 {
   "wires": [
     {
@@ -160,7 +160,7 @@ jsonpath "$.wires[0].errors" == null
 
 #Site admin 
 # 5 step Approve the app
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/save
 {
   "wires": [
     {
@@ -187,14 +187,14 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Log into the studio as uesio the owner of the test app
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # 6 step Make it public & publish it
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -233,7 +233,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # 7 step get a the 0.0.1 bundle for the tests app and make it public 
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -274,7 +274,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests:0:0:1"
 bundle_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # 7.1 step make it public 
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [

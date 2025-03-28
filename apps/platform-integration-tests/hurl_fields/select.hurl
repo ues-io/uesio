@@ -4,7 +4,7 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -12,7 +12,7 @@ HTTP 200
 
 # Test a wire load with no conditions on wire with collection wire_condition
 # entry 2
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 
 {
@@ -44,7 +44,7 @@ jsonpath "$.wires[0].data" count == 2
 
 # Operator: EQ | valueSource: VALUE
 # entry 3
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -69,7 +69,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.select']" == "one"
 
 # Operator: EQ | valueSource: PARAM
 # entry 4
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -97,7 +97,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.select']" == "one"
 
 # Operator: NOT_EQ | valueSource: VALUE
 # entry 5
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -121,7 +121,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" not contains "one"
 
 # Operator: NOT_EQ | valueSource: PARAM
 # entry 6
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -149,7 +149,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.select']" not contains "one"
 
 # Operator: IN | valueSource: VALUE
 # entry 7
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -177,7 +177,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.select']" contains "two"
 
 # Operator: IN | valueSource: LOOKUP
 # entry 8
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -220,7 +220,7 @@ jsonpath "$.wires[1].data[0]['uesio/core.uniquekey']" == "ID-001"
 
 # Operator: IN | valueSource: PARAM
 # entry 9
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -253,7 +253,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.select']" contains "two"
 
 # Operator: NOT_IN | valueSource: VALUE
 # entry 10
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -282,7 +282,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.select']" not contains "two"
 
 # Operator: NOT_IN | valueSource: LOOKUP
 # entry 11
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -323,7 +323,7 @@ jsonpath "$.wires[1].data[*]" isEmpty
 
 # Operator: NOT_IN | valueSource: PARAM
 # entry 12
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -359,7 +359,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.select']" not contains "three"
 
 # Operator: IS_BLANK | valueSource: VALUE
 # entry 13
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -384,7 +384,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "ID-010"
 
 # Operator: IS_NOT_BLANK | valueSource: VALUE
 # entry 14
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

@@ -1,6 +1,6 @@
 # Verify that if self-signup on a signup method is NOT enabled,
 # an error is returned when you attempt to sign up for a new account.
-POST https://tests.{{domain}}:{{port}}/site/auth/uesio/tests/noselfsignup/signup
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/tests/noselfsignup/signup
 {
     "username": "test_signup_user_{{unix_epoch_seconds}}",
     "password": "1479182734abcdEFGHJ%(",
@@ -14,7 +14,7 @@ body == "this site does not support self-signup\n"
 
 # Test creating a new user in the tests site using the "tester" signup method
 
-POST https://tests.{{domain}}:{{port}}/site/auth/uesio/tests/tester/signup
+POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/tests/tester/signup
 {
     "username": "test_signup_user_{{unix_epoch_seconds}}",
     "password": "1479182734abcdEFGHJ%(",
@@ -24,7 +24,7 @@ POST https://tests.{{domain}}:{{port}}/site/auth/uesio/tests/tester/signup
 }
 HTTP 200
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -32,7 +32,7 @@ HTTP 200
 
 # Verify that an "email" was sent by checking that an email_log was generated,
 # and extract out the verification code, so that we can confirm the signup
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/load
 {
     "wires": [
         {
@@ -106,7 +106,7 @@ jsonpath "$.wires[1].data[0]['uesio/core.firstname']" == "Test"
 jsonpath "$.wires[1].data[0]['uesio/core.lastname']" == "User"
 
 # Confirm the signup using the verification code
-GET https://tests.{{domain}}:{{port}}/site/auth/uesio/tests/tester/signup/confirm?code={{verification_code}}&username=test_signup_user_{{unix_epoch_seconds}}
+GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/tests/tester/signup/confirm?code={{verification_code}}&username=test_signup_user_{{unix_epoch_seconds}}
 HTTP 302
 [Asserts]
 header "Location" == "/"

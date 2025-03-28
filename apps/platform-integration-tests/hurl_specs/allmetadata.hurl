@@ -3,13 +3,13 @@
 ###########################################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get a list of all fields available to our workspace for the animal collection
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -68,7 +68,7 @@ jsonpath "$.collections['uesio/studio.field'].updateable" == false
 jsonpath "$.collections['uesio/studio.field'].deleteable" == false
 
 # Test a multi-value condition on the grouping field
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -127,7 +127,7 @@ jsonpath "$.wires[0].data[3]['uesio/studio.name']" == "decrease_population"
 jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "beforesave:uesio/tests.animal:uesio/tests.decrease_population"
 
 # Get a list of common fields available to our workspace for the animal collection
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -180,7 +180,7 @@ jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:ues
 jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
 
 # Get a list of all secrets available to our workspace
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -227,7 +227,7 @@ jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.test_oauth
 jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.test_session_id"
 
 # Test conditions on uesio/studio.item/grouping that have a ValueSource of LOOKUP from a previous wire
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -317,7 +317,7 @@ jsonpath "$.collections['uesio/studio.collection'].updateable" == true
 jsonpath "$.collections['uesio/studio.collection'].deleteable" == true
 
 # Test conditions on Credential by type, to verify that we can do per-item Bundleable Item filtering
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -373,7 +373,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.test
 jsonpath "$.wires[0].data[*]['uesio/studio.label']" != ""
 jsonpath "$.wires[0].data[*]['uesio/studio.label']" contains "Test API Key Credentials"
 
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -422,7 +422,7 @@ jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" contains "uesio/tests.test_oauth_credentials"
 
 # Test pagination on a query for views in the workspace
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -465,7 +465,7 @@ jsonpath "$.wires[0].batchnumber" == 0
 jsonpath "$.wires[0].batchsize" == 5
 jsonpath "$.wires[0].more" == true
 
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -509,7 +509,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.id']" != {{last-batch-id}}
 
 # Do a query that loads all routes, to test that the "more" (HasMoreBatches) property
 # is properly set to false when there are no more records available
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -547,7 +547,7 @@ total-routes: jsonpath "$.wires[0].data" count
 [Asserts]
 jsonpath "$.wires[0].data" count > 0
 
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -589,14 +589,14 @@ jsonpath "$.wires[0].batchnumber" == 0
 jsonpath "$.wires[0].more" == false
 
 #Login as Ben he has access to the studio site
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "ben"
 }
 
 #Site admin all metadata in studio context
 #make sure we can read data as the siteadmin for the studio site
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/load
 Accept: application/json
 {
     "wires": [
@@ -650,7 +650,7 @@ jsonpath "$.wires[0].more" == true
 
 #Site admin all metadata in studio context
 #Change the label of one bot to make sure we got write access
-POST https://{{host}}:{{port}}/siteadmin/uesio/studio/prod/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/save
 {
   "wires": [
     {
@@ -679,7 +679,7 @@ jsonpath "$.wires[0].changes['1']['uesio/core.id']" == "{{last-bot-id}}"
 jsonpath "$.wires[0].errors" == null
 
 # Fetch the bot using workspace mode to make sure the label was changed and cache invalidated
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [

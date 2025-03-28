@@ -4,14 +4,14 @@
 
 # Test as a logged-in user so that we don't get redirected to the login page
 # entry 1
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Formula field returntype checkbox formula greater than number
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -40,7 +40,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" == "ID-001"
 jsonpath "$.wires[0].data[0]['uesio/tests.formula_checkbox_gt_number']" == false
 
 # Formula field returntype checkbox formula greater than number
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -69,7 +69,7 @@ jsonpath "$.wires[0].data[0]['uesio/tests.autonumber']" == "ID-006"
 jsonpath "$.wires[0].data[0]['uesio/tests.formula_checkbox_gt_number']" == true
 
 # Formula field returntype checkbox formula greater than number (without field dependencies provided)
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

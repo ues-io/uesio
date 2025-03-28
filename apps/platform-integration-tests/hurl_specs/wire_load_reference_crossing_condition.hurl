@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test a wire load with a single reference-crossing condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -61,7 +61,7 @@ LIMIT 501```
 jsonpath "$.wires[0].data[0]['uesio/tests.text']" == "text 2"
 
 # Test a wire load with a reference-crossing condition on multiple standard reference fields
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -135,7 +135,7 @@ LIMIT 501```
 jsonpath "$.wires[0].data[*]['uesio/tests.text']" count == 5
 
 # Test a wire load with a 2-deep reference-crossing condition
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -196,7 +196,7 @@ jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-004"
 jsonpath "$.wires[0].data[*]['uesio/tests.name']" contains "ID-005"
 
 # Test a wire load with a single reference-crossing condition with a param
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [

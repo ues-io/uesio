@@ -3,13 +3,13 @@
 #########################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Test fetching metadata for the view's params
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/views/params/uesio/tests/view_params
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/views/params/uesio/tests/view_params
 HTTP 200
 [Asserts]
 jsonpath "$" count == 2
@@ -21,7 +21,7 @@ jsonpath "$[1].type" == "NUMBER"
 jsonpath "$[1].required" == false
 
 # Test loading a wire with NUMBER and CHECKBOX param types
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -67,7 +67,7 @@ jsonpath "$.wires[0].data" count == 1
 jsonpath "$.wires[0].data[0]['uesio/tests.name']" == "ID-004"
 
 # Test loading a wire without one of the parameters
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -112,7 +112,7 @@ jsonpath "$.wires[0].data[*]" isEmpty
 jsonpath "$.wires[0].errors[0].message" == "Invalid Condition, param 'numbervalue' was not provided"
 
 # Do a route load to verify view param handling is the same
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/view_params?checkboxvalue=true&numbervalue=4
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/view_params?checkboxvalue=true&numbervalue=4
 HTTP 200
 [Asserts]
 jsonpath "$.dependencies.wire[0].data[*]" count == 1

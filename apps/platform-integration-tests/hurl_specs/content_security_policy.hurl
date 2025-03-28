@@ -4,7 +4,7 @@
 ##############################################################################
 
 # Login to get a session
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -14,7 +14,7 @@ HTTP 200
 session_id: cookie "sessid"
 
 # Access any route requesting HTML, to verify that the CSP is set
-GET https://{{host}}:{{port}}/home
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/home
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Cookie: sessid={{session_id}}
 HTTP 200

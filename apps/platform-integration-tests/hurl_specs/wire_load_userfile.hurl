@@ -3,13 +3,13 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Get the id of an animal record
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -39,7 +39,7 @@ jsonpath "$.wires[0].errors" not exists
 idvalue: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Now upload an attachment to this animal
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/upload
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/upload
 Accept: application/json
 [MultipartFormData]
 details: {"name":"description.txt","collectionID":"uesio/tests.animal","recordID":"{{idvalue}}"}
@@ -60,13 +60,13 @@ jsonpath "$.['uesio/core.contentlength']" == 20
 attachmentid: jsonpath "$.['uesio/core.id']"
 
 # Verify that the download works
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 200
 [Asserts]
 body == "this animal is cool."
 
 # Load the attachment record without the data field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -104,7 +104,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.id']" == "{{attachmentid}}"
 jsonpath "$.wires[0].data[0]['uesio/core.data']" not exists
 
 # Load the attachment record with the data field
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
 {
     "wires": [
@@ -147,28 +147,28 @@ jsonpath "$.wires[0].data[0]['uesio/core.id']" == "{{attachmentid}}"
 jsonpath "$.wires[0].data[0]['uesio/core.data']" == "this animal is cool."
 
 # Now delete the file
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid}}
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/delete/{{attachmentid}}
 Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.success" == true
 
 # Verify that the file is gone
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
 
 # TODO: This should be a 400 not 500, need to refactor how we handle errors on loads https://github.com/ues-io/uesio/blob/7f4b77089be0b0cd6525d13ea83fa4fd8ae10944/apps/platform/pkg/datasource/load.go#L76
 # Verify 500 when invalid userfileid format
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/userfiles/download?userfileid=my-bad-id
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid=my-bad-id
 HTTP 500
 
 # Verify 404 when file not found
-GET https://{{host}}:{{port}}/site/userfiles/download?userfileid=472df010-e3df-48d0-9cb6-7b28022ab045&version=1734112100
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/userfiles/download?userfileid=472df010-e3df-48d0-9cb6-7b28022ab045&version=1734112100
 HTTP 404
 
 # TODO: This should be a 400 not 500, need to refactor how we handle errors on loads https://github.com/ues-io/uesio/blob/7f4b77089be0b0cd6525d13ea83fa4fd8ae10944/apps/platform/pkg/datasource/load.go#L76
 # Verify 500 when invalid userfileid format
-GET https://{{host}}:{{port}}/site/userfiles/download?userfileid=my-bad-id&version=1734112100
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/userfiles/download?userfileid=my-bad-id&version=1734112100
 HTTP 500

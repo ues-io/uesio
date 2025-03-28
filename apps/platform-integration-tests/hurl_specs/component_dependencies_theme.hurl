@@ -2,13 +2,13 @@
 # Tests theme dependencies for a route
 ######################################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Route with a theme
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is the one specified in the route
@@ -21,7 +21,7 @@ jsonpath "$.dependencies.theme[1].name" == "christmas"
 jsonpath "$.dependencies.theme[1].namespace" == "uesio/tests"
 
 # Route without a theme (no app default theme specified)
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is uesio/core.default
@@ -34,7 +34,7 @@ jsonpath "$.dependencies.theme[1].name" == "default"
 jsonpath "$.dependencies.theme[1].namespace" == "uesio/core"
 
 # Get the workspace id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -57,7 +57,7 @@ jsonpath "$.wires[0].data[*]['uesio/core.uniquekey']" nth 0 == "uesio/tests:dev"
 workspace_id: jsonpath "$.wires[0].data[*]['uesio/core.id']" nth 0
 
 # Set the a default theme for this workspace
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -82,7 +82,7 @@ jsonpath "$.wires[0].errors" == null
 
 # Check again the route without a theme to see if it has the theme we just set
 # Route without a theme (app default theme specified)
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_theme_no_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is uesio/tests.default
@@ -95,7 +95,7 @@ jsonpath "$.dependencies.theme[1].namespace" == "uesio/tests"
 
 
 # Remove the a default theme for this workspace
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 Accept: application/json
 {
     "wires": [
@@ -118,7 +118,7 @@ jsonpath "$.wires[0].changes['temp1']['uesio/studio.defaulttheme']" == ""
 jsonpath "$.wires[0].errors" == null
 
 # Route with a theme for a SITE
-GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/dependencies_theme
+GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/tests/dependencies_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is the one specified in the route
@@ -128,7 +128,7 @@ jsonpath "$.dependencies.theme[0].name" == "christmas"
 jsonpath "$.dependencies.theme[0].namespace" == "uesio/tests"
 
 # Route without a theme on a SITE (no app default theme specified, since we removed the default theme for the app)
-GET https://tests.{{domain}}:{{port}}/site/routes/path/uesio/tests/dependencies_theme_no_theme
+GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/tests/dependencies_theme_no_theme
 HTTP 200
 [Asserts]
 # Verify that the theme is uesio/core.default

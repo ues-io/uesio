@@ -2,7 +2,7 @@
 # Tests loading the my_integration_credentials collection
 ###########################################################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -10,7 +10,7 @@ HTTP 200
 [Captures]
 user_id: jsonpath "$.user.id"
 
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [
@@ -43,7 +43,7 @@ jsonpath "$.wires[0].data[0]['uesio/core.hasaccesstoken']" == false
 jsonpath "$.wires[0].data[0]['uesio/core.hasrefreshtoken']" == false
 
 # Load multiple desired integrations
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 Accept: application/json
 {
     "wires": [

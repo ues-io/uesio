@@ -3,14 +3,14 @@
 ######################################################
 
 # Test as a logged-in user so that we don't get redirected to the login page
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 HTTP 200
 
 # Should successfully create site when no password is specified
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createsite
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createsite
 {
   		"firstname": "createsite",
 			"lastname": "user",
@@ -28,7 +28,7 @@ HTTP 200
 jsonpath "$.success" == true
 
 # Should successfully create site when password is specified
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createsite
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createsite
 [Options]
 variable: example_valid_password=aA$09999
 {
@@ -49,13 +49,13 @@ HTTP 200
 jsonpath "$.success" == true
 
 # Should fail when payload empty
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createsite
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createsite
 {
 }
 HTTP 400
 
 # Should successfully create site when password does not meet min requirements
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createsite
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createsite
 [Options]
 variable: example_weak_password=a
 {

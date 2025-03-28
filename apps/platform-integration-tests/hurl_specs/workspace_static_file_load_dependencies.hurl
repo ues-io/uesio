@@ -3,7 +3,7 @@
 # in the associated app, so that we ensure we don't serve stale files
 ########################################################################
 
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
@@ -15,7 +15,7 @@ session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
 # Fetch the route via workspace router
-GET https://{{host}}:{{port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/workspace_static_file_dependencies
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/workspace_static_file_dependencies
 HTTP 200
 [Asserts]
 # Verify that the chart pack is loaded, to verify parsing of grid item and tabs dependencies

@@ -13,7 +13,7 @@ export default function call_http_api(bot: ListenerBotApi) {
   // Call the bot HTTP API
   const response = bot.http.request({
     method: "POST",
-    url: "https://studio.uesio-dev.com:3000/workspace/uesio/tests/dev/bots/call/uesio/tests/add_numbers",
+    url: `${bot.getHostUrl()}/workspace/uesio/tests/dev/bots/call/uesio/tests/add_numbers`,
     body: JSON.stringify({
       a,
       b,

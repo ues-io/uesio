@@ -1,10 +1,10 @@
-POST https://{{host}}:{{port}}/site/auth/uesio/core/mock/login
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/mock/login
 {
     "token": "uesio"
 }
 
 # Retrieve the tests app id
-POST https://{{host}}:{{port}}/site/wires/load
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
 {
     "wires": [
         {
@@ -26,7 +26,7 @@ HTTP 200
 app_id: jsonpath "$.wires[0].data[0]['uesio/core.id']"
 
 # Create a bundle, so that we can create a site
-POST https://{{host}}:{{port}}/site/bots/call/uesio/studio/createbundle
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createbundle
 {
     "type": "patch",
     "description": "test bundle",
@@ -44,7 +44,7 @@ jsonpath "$.error" == ""
 jsonpath "$.params.description" == "test bundle"
 
 # Create a workspace using that bundle
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -70,7 +70,7 @@ jsonpath "$.wires[0].errors" == null
 jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:quickstart"
 
 # Create a site using that bundle
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -96,7 +96,7 @@ jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "uesio/tests:tests
 jsonpath "$.wires[0].errors" == null
 
 # Create a site domain, so that we can test accessing the site
-POST https://{{host}}:{{port}}/site/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
 {
     "wires": [
         {
@@ -120,7 +120,7 @@ jsonpath "$.wires[0].changes['1']['uesio/core.uniquekey']" == "tests:subdomain"
 jsonpath "$.wires[0].errors" == null
 
 # Set the studio APIs config value for the workspace
-POST https://{{host}}:{{port}}/workspace/uesio/tests/dev/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
 Accept: application/json
 {
     "wires": [
@@ -129,7 +129,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/core.id":"uesio/tests.studio_apis_url",
-                    "uesio/core.value":"https://{{host}}:{{port}}/workspace/uesio/tests/dev"
+                    "uesio/core.value":"{{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev"
                 }
             }
         }
@@ -140,7 +140,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Set the studio APIs config value for the site
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/save
 Accept: application/json
 {
     "wires": [
@@ -149,7 +149,7 @@ Accept: application/json
             "changes":{
                 "temp1":{
                     "uesio/core.id":"uesio/tests.studio_apis_url",
-                    "uesio/core.value":"https://tests.{{domain}}:{{port}}/site"
+                    "uesio/core.value":"{{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site"
                 }
             }
         }
@@ -160,7 +160,7 @@ HTTP 200
 jsonpath "$.wires[0].errors" == null
 
 # Set the Resend API key secret for the site
-POST https://{{host}}:{{port}}/siteadmin/uesio/tests/testsite/wires/save
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/save
 Accept: application/json
 {
     "wires": [
