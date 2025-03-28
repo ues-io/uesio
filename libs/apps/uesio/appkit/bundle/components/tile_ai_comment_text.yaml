@@ -1,0 +1,21 @@
+name: tile_ai_comment_text
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/appkit.tile_ai_comment_text_user:
+      uesio.display:
+        - type: fieldValue
+          field: author
+          value: USER
+  - uesio/appkit.tile_ai_comment_text_assistant:
+      uesio.display:
+        - type: fieldValue
+          field: author
+          value: ASSISTANT
+title: AI Comment Tile Component Text
+discoverable: true
+description: A comment tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

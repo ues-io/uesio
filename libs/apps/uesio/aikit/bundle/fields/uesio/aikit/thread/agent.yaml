@@ -1,0 +1,5 @@
+name: agent
+label: Agent
+type: METADATA
+metadata:
+  type: AGENT

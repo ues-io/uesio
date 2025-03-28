@@ -13,6 +13,9 @@ export default function summarize_thread(bot: ListenerBotApi) {
       {
         id: "uesio/aikit.type",
       },
+      {
+        id: "uesio/aikit.author",
+      },
     ],
     conditions: [
       {
@@ -26,7 +29,7 @@ export default function summarize_thread(bot: ListenerBotApi) {
   // Loop over the messages and put them in the right format
   const messages = messagesResult
     .map((message) => ({
-      role: message["uesio/aikit.type"] === "USER" ? "user" : "assistant",
+      role: message["uesio/aikit.author"] === "USER" ? "user" : "assistant",
       content: message["uesio/aikit.content"],
     }))
     .concat({

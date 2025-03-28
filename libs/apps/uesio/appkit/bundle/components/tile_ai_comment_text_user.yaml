@@ -1,0 +1,20 @@
+name: tile_ai_comment_text_user
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/appkit.tile_thread_item:
+      uesio.styleTokens:
+        wrapper:
+          - bg-slate-100
+          - rounded-bl-none
+      title: ${content}
+      timestamp: $Time{uesio/core.createdat}
+      avatarText: ${uesio/core.createdby->uesio/core.initials}
+      avatarImage: $UserFile{uesio/core.createdby->uesio/core.picture}
+title: AI Comment Tile Component Text User
+discoverable: true
+description: A comment tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

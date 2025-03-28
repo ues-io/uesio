@@ -1,8 +1,0 @@
-name: commentitemreverse
-label: Comment Item Reverse
-public: true
-extends: uesio/appkit.commentitem
-definition:
-  uesio.styleTokens:
-    subtitle:
-      - text-right

@@ -3,5 +3,6 @@ permissionSets:
   - uesio/studio.standard
   - uesio/studio.public
   - uesio/appkit.public
+  - uesio/aikit.agent_user
   - uesio/core.public
 label: Studio Standard User

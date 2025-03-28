@@ -20,6 +20,7 @@ definition:
         uesio/aikit.content:
         uesio/aikit.thread:
         uesio/aikit.type:
+        uesio/aikit.author:
         uesio/core.createdat:
         uesio/core.createdby:
           fields:
@@ -34,6 +35,8 @@ definition:
           value: ""
       defaults:
         - field: uesio/aikit.type
+          value: text
+        - field: uesio/aikit.author
           value: USER
       init:
         query: false

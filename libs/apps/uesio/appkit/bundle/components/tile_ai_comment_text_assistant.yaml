@@ -1,0 +1,28 @@
+name: tile_ai_comment_text_assistant
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/appkit.tile_thread_item:
+      uesio.styleTokens:
+        root:
+          - flex-row-reverse
+        wrapper:
+          - bg-blue-100
+          - rounded-br-none
+        avatar:
+          - bg-no-repeat
+          - "[background-size:50%]"
+          - bg-slate-100
+        timestamp:
+          - text-right
+      title: ${content}
+      timestamp: $Time{uesio/core.createdat}
+      avatarText: AI
+      avatarImage: $File{uesio/aikit.anthropic}
+title: AI Comment Tile Component Text Assistant
+discoverable: true
+description: A comment tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

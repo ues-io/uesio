@@ -2,48 +2,27 @@ name: tile_ai_comment
 category: LAYOUT
 type: DECLARATIVE
 definition:
-  - uesio/io.tile:
+  - uesio/appkit.tile_ai_comment_text:
       uesio.display:
         - type: fieldValue
           field: type
-          value: USER
-      uesio.variant: uesio/appkit.commentitem
-      content:
-        - uesio/io.titlebar:
-            uesio.variant: uesio/appkit.commentitem
-            title: ${content}
-            subtitle: $Time{uesio/core.createdat}
-      avatar:
-        - uesio/io.avatar:
-            uesio.context:
-              workspace:
-                name:
-                app:
-            text: ${uesio/core.createdby->uesio/core.initials}
-            image: $UserFile{uesio/core.createdby->uesio/core.picture}
-  - uesio/io.tile:
+          value: text
+  - uesio/appkit.tile_ai_comment_tool_use:
       uesio.display:
         - type: fieldValue
-          field: type
+          field: author
           value: ASSISTANT
-      uesio.variant: uesio/appkit.commentitemreverse
-      content:
-        - uesio/io.titlebar:
-            uesio.variant: uesio/appkit.commentitemreverse
-            uesio.styleTokens:
-              title:
-                - bg-blue-100
-            title: ${content}
-            subtitle: $Time{uesio/core.createdat}
-      avatar:
-        - uesio/io.avatar:
-            text: AI
-            image: $File{uesio/aikit.anthropic}
-            uesio.styleTokens:
-              root:
-                - bg-no-repeat
-                - "[background-size:50%]"
-                - bg-slate-100
+        - type: fieldValue
+          field: type
+          value: tool_use
+  - uesio/appkit.tile_ai_comment_tool_result:
+      uesio.display:
+        - type: fieldValue
+          field: author
+          value: USER
+        - type: fieldValue
+          field: type
+          value: tool_result
 title: AI Comment Tile Component
 discoverable: true
 description: A comment tile

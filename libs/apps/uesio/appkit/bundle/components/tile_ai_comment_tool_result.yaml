@@ -1,0 +1,20 @@
+name: tile_ai_comment_tool_result
+type: DECLARATIVE
+definition:
+  - uesio/appkit.tile_thread_item:
+      uesio.styleTokens:
+        wrapper:
+          - bg-pink-100
+        content:
+          - border-pink-200
+          - bg-pink-50
+      title: "Tool Result: ${tool_name}"
+      content: ${content}
+      timestamp: $Time{uesio/core.createdat}
+title: AI Comment Tile Component Tool Result
+discoverable: true
+description: A comment tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

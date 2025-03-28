@@ -15,6 +15,9 @@ export default function ai_chat(bot: ListenerBotApi) {
       {
         id: "uesio/aikit.type",
       },
+      {
+        id: "uesio/aikit.author",
+      },
     ],
     conditions: [
       {
@@ -28,7 +31,7 @@ export default function ai_chat(bot: ListenerBotApi) {
   // Loop over the messages and put them in the right format
   const messages = messagesResult
     .map((message) => ({
-      role: message["uesio/aikit.type"] === "USER" ? "user" : "assistant",
+      role: message["uesio/aikit.author"] === "USER" ? "user" : "assistant",
       content: message["uesio/aikit.content"],
     }))
     .concat({
@@ -57,14 +60,16 @@ export default function ai_chat(bot: ListenerBotApi) {
   bot.save("uesio/aikit.thread_item", [
     {
       "uesio/aikit.content": input,
-      "uesio/aikit.type": "USER",
+      "uesio/aikit.type": "text",
+      "uesio/aikit.author": "USER",
       "uesio/aikit.thread": {
         "uesio/core.id": thread,
       },
     },
     {
       "uesio/aikit.content": result[0].text,
-      "uesio/aikit.type": "ASSISTANT",
+      "uesio/aikit.type": "text",
+      "uesio/aikit.author": "ASSISTANT",
       "uesio/aikit.thread": {
         "uesio/core.id": thread,
       },
