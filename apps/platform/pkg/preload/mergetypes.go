@@ -55,6 +55,7 @@ type SiteMergeData struct {
 	Version      string                      `json:"version"`
 	Domain       string                      `json:"domain"`
 	Subdomain    string                      `json:"subdomain"`
+	Scheme       string                      `json:"scheme"`
 	Title        string                      `json:"title"`
 	EnableSEO    bool                        `json:"-"`
 	Dependencies meta.BundleDefDependencyMap `json:"dependencies"`

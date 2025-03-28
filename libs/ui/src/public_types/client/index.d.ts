@@ -6,6 +6,7 @@ type FieldMode = "READ" | "EDIT"
 type SiteState = {
   name: string
   app: string
+  scheme: string
   domain: string
   subdomain: string
   version: string

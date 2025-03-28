@@ -48,4 +48,4 @@ definition:
             file: uesio/core.logo
             signals:
               - signal: "route/REDIRECT"
-                path: "https://$Site{domain}"
+                path: "$Site{scheme}://$Site{domain}"

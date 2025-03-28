@@ -7,10 +7,11 @@ type Site struct {
 	App       *App       `json:"uesio/studio.app"`
 	bundleDef *BundleDef `json:"-"`
 	host      string     `json:"-"`
-	Domain    string
-	Subdomain string
-	Title     string `json:"uesio/studio.title"`
-	EnableSEO bool   `json:"uesio/studio.enable_seo"`
+	Domain    string     `json:"-"`
+	Subdomain string     `json:"-"`
+	Scheme    string     `json:"-"`
+	Title     string     `json:"uesio/studio.title"`
+	EnableSEO bool       `json:"uesio/studio.enable_seo"`
 }
 
 func (s *Site) GetFullName() string {

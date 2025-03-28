@@ -60,6 +60,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 
 	siteadmin.Domain = site.Domain
 	siteadmin.Subdomain = site.Subdomain
+	siteadmin.Scheme = site.Scheme
 
 	if siteadmin.Bundle == nil {
 		return errors.New("no Bundle found for site to administer")

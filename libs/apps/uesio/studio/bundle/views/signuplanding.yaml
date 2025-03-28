@@ -12,7 +12,7 @@ definition:
               file: uesio/core.logo
               signals:
                 - signal: "route/REDIRECT"
-                  path: "https://$Site{domain}"
+                  path: "$Site{scheme}://$Site{domain}"
           - uesio/io.box:
               components:
                 - uesio/io.text:
@@ -54,7 +54,7 @@ definition:
                               - justify-center
                           items:
                             - uesio/io.text:
-                                text: "https://$Site{subdomain}.$Site{domain}"
+                                text: "$Site{scheme}://$Site{subdomain}.$Site{domain}"
                                 element: div
                                 uesio.styleTokens:
                                   root:

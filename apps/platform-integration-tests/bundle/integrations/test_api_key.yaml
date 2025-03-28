@@ -2,4 +2,4 @@ name: test_api_key
 type: api_key_tester
 authentication: API_KEY
 credentials: test_api_key_credentials
-baseUrl: https://studio.$Site{domain}
+baseUrl: $Site{scheme}://studio.$Site{domain}

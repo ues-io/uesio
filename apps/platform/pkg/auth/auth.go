@@ -17,6 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -137,6 +138,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 
 	site.Domain = domain
 	site.Subdomain = subdomain
+	site.Scheme = tls.ServeAppDefaultScheme()
 
 	bundleDef, err := bundle.GetSiteBundleDef(context.Background(), site, nil)
 	if err != nil {

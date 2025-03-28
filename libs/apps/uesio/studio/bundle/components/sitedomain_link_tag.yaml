@@ -12,13 +12,13 @@ definition:
           - w-max
       signals:
         - signal: "route/REDIRECT"
-          path: "https://${uesio/studio.domain}"
+          path: "$Site{scheme}://${uesio/studio.domain}"
           newtab: true
           uesio.conditions:
             - field: uesio/studio.type
               value: domain
         - signal: "route/REDIRECT"
-          path: "https://${uesio/studio.domain}.$Site{domain}"
+          path: "$Site{scheme}://${uesio/studio.domain}.$Site{domain}"
           newtab: true
           uesio.conditions:
             - field: uesio/studio.type
@@ -37,7 +37,7 @@ definition:
                     - type: fieldValue
                       field: uesio/studio.type
                       value: subdomain
-                  text: https://${uesio/studio.domain}.$Site{domain}
+                  text: $Site{scheme}://${uesio/studio.domain}.$Site{domain}
               - uesio/io.text:
                   uesio.variant: uesio/appkit.badge
                   uesio.styleTokens:
@@ -49,7 +49,7 @@ definition:
                     - type: fieldValue
                       field: uesio/studio.type
                       value: domain
-                  text: https://${uesio/studio.domain}
+                  text: $Site{scheme}://${uesio/studio.domain}
               - uesio/io.text:
                   uesio.variant: uesio/io.icon
                   text: open_in_new
