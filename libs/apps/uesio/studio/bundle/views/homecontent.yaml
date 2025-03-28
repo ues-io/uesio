@@ -130,7 +130,7 @@ definition:
                                             element: div
                                       signals:
                                         - signal: "route/REDIRECT"
-                                          path: "https://$Site{domain}/news/${uesio/studio.slug}"
+                                          path: "$Site{scheme}://$Site{domain}/news/${uesio/studio.slug}"
                                           newtab: true
                                       avatar:
                                         - uesio/io.text:
@@ -164,7 +164,7 @@ definition:
                                             element: div
                                       signals:
                                         - signal: "route/REDIRECT"
-                                          path: "https://docs.$Site{domain}/${uesio/studio.slug}"
+                                          path: "$Site{scheme}://docs.$Site{domain}/${uesio/studio.slug}"
                                           newtab: true
                                       avatar:
                                         - uesio/io.text:

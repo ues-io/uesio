@@ -262,6 +262,7 @@ func GetSiteMergeData(site *meta.Site) *preload.SiteMergeData {
 		App:          site.GetAppFullName(),
 		Subdomain:    site.Subdomain,
 		Domain:       site.Domain,
+		Scheme:       site.Scheme,
 		Version:      site.Bundle.GetVersionString(),
 		Title:        site.Title,
 		EnableSEO:    site.EnableSEO,

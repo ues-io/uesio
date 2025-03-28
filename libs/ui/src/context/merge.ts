@@ -354,13 +354,16 @@ const handlers: Record<MergeType, MergeHandler> = {
   },
   Site: (expression, context) => {
     const site = context.getSite()
+    if (!site) {
+      return ""
+    }
     if (expression === "url") {
-      return `https://${site?.subdomain ? site.subdomain + "." : ""}${
-        site?.domain
+      return `${site.scheme}://${site.subdomain ? site.subdomain + "." : ""}${
+        site.domain
       }`
     }
     if (expression === "dependencies") return ""
-    return site?.[expression as keyof Omit<SiteState, "dependencies">] || ""
+    return site[expression as keyof Omit<SiteState, "dependencies">] || ""
   },
   StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
   Label: (expression, context) => {
