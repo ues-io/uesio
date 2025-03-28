@@ -1,4 +1,4 @@
 name: docssite
 label: Docs Site
 type: uesio/core.uesio
-baseUrl: https://docs.$Site{domain}
+baseUrl: $Site{scheme}://docs.$Site{domain}

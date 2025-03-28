@@ -59,6 +59,8 @@ var SiteMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 		return siteInfo.Title, nil
 	case "name":
 		return siteInfo.Name, nil
+	case "scheme":
+		return siteInfo.Scheme, nil
 	case "domain":
 		return siteInfo.Domain, nil
 	case "subdomain":
