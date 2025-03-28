@@ -1,0 +1,83 @@
+name: tile_thread_item
+type: DECLARATIVE
+definition:
+  - uesio/io.tile:
+      uesio.variant: uesio/appkit.item
+      uesio.styleTokens:
+        root:
+          - hover:bg-transparent
+          - gap-2
+          - $Region{root}
+        avatar:
+          - self-end
+          - mb-1.5
+      content:
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - grid
+                - p-3
+                - rounded
+                - gap-2
+                - font-light
+                - $Region{wrapper}
+            components:
+              - uesio/io.text:
+                  uesio.styleTokens:
+                    root:
+                      - $Region{title}
+                  text: $Prop{title}
+                  element: div
+              - uesio/io.text:
+                  uesio.display:
+                    - type: hasValue
+                      value: $Prop{content}
+                  uesio.styleTokens:
+                    root:
+                      - whitespace-pre
+                      - text-xs
+                      - font-mono
+                      - text-black/70
+                      - overflow-auto
+                      - max-h-[80px]
+                      - border
+                      - p-2
+                      - rounded
+                      - $Region{content}
+                  text: $Prop{content}
+                  element: div
+        - uesio/io.text:
+            text: $Prop{timestamp}
+            element: div
+            uesio.styleTokens:
+              root:
+                - text-slate-400
+                - text-[8pt]
+                - font-light
+                - $Region{timestamp}
+      avatar:
+        - uesio/io.avatar:
+            uesio.styleTokens:
+              root:
+                - $Region{avatar}
+            uesio.display:
+              - type: group
+                conjunction: OR
+                conditions:
+                  - type: hasValue
+                    value: $Prop{avatarText}
+                  - type: hasValue
+                    value: $Prop{avatarImage}
+            uesio.context:
+              workspace:
+                name:
+                app:
+            text: $Prop{avatarText}
+            image: $Prop{avatarImage}
+title: Thread Item tile
+discoverable: false
+description: A comment tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY

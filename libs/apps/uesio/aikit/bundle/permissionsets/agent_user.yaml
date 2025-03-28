@@ -1,0 +1,7 @@
+name: agent_user
+files:
+  uesio/aikit.anthropic: true
+collections:
+  uesio/aikit.thread: true
+  uesio/aikit.thread_item: true
+public: true
