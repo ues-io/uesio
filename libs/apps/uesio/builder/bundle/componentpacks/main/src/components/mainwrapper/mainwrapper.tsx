@@ -8,6 +8,7 @@ import {
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import IndexPanel from "./indexpanel"
+import ChatPanel from "./chatpanel"
 import { SlotBuilderComponentId } from "../../utilities/slotbuilder/slotbuilder"
 import CodePanel from "./codepanel"
 import { toggleBuildMode } from "../../helpers/buildmode"
@@ -25,7 +26,8 @@ const StyleDefaults = Object.freeze({
     "border-panel_divider_color",
     "bg-panel_divider_color",
   ],
-  rightpanel: ["col-end-[-2]", "border-r-8", "border-panel_divider_color"],
+  leftpanel2: ["col-end-[-2]", "border-r-8", "border-panel_divider_color"],
+  rightpanel: ["col-end-3", "border-l-8", "border-panel_divider_color"],
   canvaswrap: ["grid-rows-1", "auto-rows-auto", "col-end-[-1]"],
   canvaswrapinner: ["relative", "grid", "grid-rows-1", "grid-cols-1"],
 })
@@ -98,6 +100,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
 
   const [showCode] = useBuilderState<boolean>(context, "codepanel")
   const [showIndex] = useBuilderState<boolean>(context, "indexpanel")
+  const [showChat] = useBuilderState<boolean>(context, "chatpanel")
 
   if (!buildMode) {
     return (
@@ -122,7 +125,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
           <ViewInfoPanel context={builderContext} />
         </Grid>
         {showIndex && (
-          <Grid context={context} className={classes.rightpanel}>
+          <Grid context={context} className={classes.leftpanel2}>
             <IndexPanel context={builderContext} />
           </Grid>
         )}
@@ -146,6 +149,11 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
             </AdjustableHeightArea>
           )}
         </Grid>
+        {showChat && (
+          <Grid context={context} className={classes.rightpanel}>
+            <ChatPanel context={builderContext.deleteWorkspace()} />
+          </Grid>
+        )}
       </Grid>
     </ThemeWrapper>
   )
@@ -159,6 +167,10 @@ MainWrapper.signals = {
   TOGGLE_INDEX: {
     dispatcher: (state) => !state,
     target: "indexpanel",
+  },
+  TOGGLE_CHAT: {
+    dispatcher: (state) => !state,
+    target: "chatpanel",
   },
   SET_DIMENSIONS: {
     dispatcher: (state, payload) => [payload.width, payload.height],

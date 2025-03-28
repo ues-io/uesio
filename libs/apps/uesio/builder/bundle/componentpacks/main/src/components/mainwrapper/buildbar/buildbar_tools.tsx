@@ -53,6 +53,10 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
       id: "index",
       label: "Index Panel",
     },
+    {
+      id: "chat",
+      label: "Chat Panel",
+    },
   ]
 
   const baseContext = context.removeViewFrame(1)
@@ -79,6 +83,17 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
     baseContext,
   )
 
+  const toggleChat = api.signal.getHandler(
+    [
+      {
+        signal: "component/CALL",
+        component: "uesio/builder.mainwrapper",
+        componentsignal: "TOGGLE_CHAT",
+      },
+    ],
+    baseContext,
+  )
+
   hooks.useHotKeyCallback("meta+y", () => {
     toggleCode?.()
   })
@@ -89,6 +104,7 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
 
   const isShowingCode = getBuilderState<boolean>(context, "codepanel")
   const isShowingIndex = getBuilderState<boolean>(context, "indexpanel")
+  const isShowingChat = getBuilderState<boolean>(context, "chatpanel")
 
   const selectedItems: string[] = []
   if (isShowingCode) {
@@ -97,6 +113,9 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
   if (isShowingIndex) {
     selectedItems.push("index")
   }
+  if (isShowingChat) {
+    selectedItems.push("chat")
+  }
 
   return (
     <div className={classes.toolbar}>
@@ -104,6 +123,7 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
         onSelect={(option: ViewOption) => {
           if (option.id === "index") toggleIndex?.()
           if (option.id === "code") toggleCode?.()
+          if (option.id === "chat") toggleChat?.()
         }}
         getItemKey={(option: ViewOption) => option.id}
         itemRenderer={(option: ViewOption) => (
