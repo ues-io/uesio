@@ -71,19 +71,24 @@ definition:
                     avataricon: web
                     subtitle: ${uesio/studio.user->uniquekey}/${uesio/studio.name}
                     hideNewButton: true
-                    extra_actions:
-                      - uesio/io.button:
-                          text: Create $Collection{label}
-                          hotkey: "meta+s"
-                          uesio.variant: uesio/appkit.primary
-                          uesio.id: save-new-app
-                          pendingText: "Creating App ..."
-                          signals:
-                            - signal: wire/SAVE
-                              wires:
-                                - app
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/core.uniquekey}
+                    # TODO: Temporary solution for ensuring that user views all options on create app
+                    # page until the UX can be improved via a wizard component that requires development.
+                    # Hiding the New and Reset button and adding buttons to the bottom of the page.
+                    # see https://github.com/ues-io/uesio/issues/4695
+                    hideResetButton: true
+                    # extra_actions:
+                    #   - uesio/io.button:
+                    #       text: Create $Collection{label}
+                    #       hotkey: "meta+s"
+                    #       uesio.variant: uesio/appkit.primary
+                    #       uesio.id: save-new-app
+                    #       pendingText: "Creating App ..."
+                    #       signals:
+                    #         - signal: wire/SAVE
+                    #           wires:
+                    #             - app
+                    #         - signal: "route/NAVIGATE"
+                    #           path: app/${uesio/core.uniquekey}
                     content:
                       - uesio/studio.section_app_name_desc:
                       - uesio/studio.section_app_owner:
@@ -156,3 +161,30 @@ definition:
                                         - uesio/studio.generatorstarter:
                                             appWire: app
                                             starterTemplate: ${uesio/studio.starter_template}
+
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          uesio.styleTokens:
+                            root:
+                              - flex
+                              - justify-end
+                              - gap-2
+                          components:
+                            - uesio/io.button:
+                                text: Create $Collection{label}
+                                hotkey: "meta+s"
+                                uesio.variant: uesio/appkit.primary
+                                uesio.id: save-new-app
+                                pendingText: "Creating App ..."
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - app
+                                  - signal: "route/NAVIGATE"
+                                    path: app/${uesio/core.uniquekey}
+                            - uesio/io.button:
+                                signals:
+                                  - signal: wire/RESET
+                                    wire: app
+                                text: Start Over
+                                uesio.variant: uesio/appkit.secondary
