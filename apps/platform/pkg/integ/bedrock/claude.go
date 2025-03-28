@@ -16,6 +16,7 @@ type MessagesContent struct {
 	Type  string         `json:"type" bot:"type,omitempty"`
 	Text  string         `json:"text,omitempty" bot:"text,omitempty"`
 	Name  string         `json:"name,omitempty" bot:"name,omitempty"`
+	ID    string         `json:"id,omitempty" bot:"id,omitempty"`
 	Input map[string]any `json:"input,omitempty" bot:"input,omitempty"`
 }
 

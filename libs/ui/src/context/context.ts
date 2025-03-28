@@ -874,12 +874,16 @@ class Context {
       (f) => isSignalOutputContextFrame(f) && f.label === label,
     ) as SignalOutputContextFrame | undefined
 
-  getSignalOutputData = (label: string) => this.getSignalOutputs(label)?.data
+  getSignalOutputData = <T = unknown>(label: string) =>
+    this.getSignalOutputs(label)?.data as T | undefined
 
   getComponentData = (componentType: string) =>
     this.stack.find(
       (f) => isComponentContextFrame(f) && f.componentType === componentType,
     ) as ComponentContextFrame
+
+  getComponentDataValue = <T = unknown>(componentType: string, label: string) =>
+    this.getComponentData(componentType)?.data[label] as T | undefined
 
   getRecordFrame = (wireId: string) =>
     this.stack.find(
