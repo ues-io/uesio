@@ -2,7 +2,6 @@ import { definition, styles, api } from "@uesio/ui"
 import { useRef } from "react"
 
 const StyleDefaults = Object.freeze({
-  root: ["grid"],
   handle: [
     "cursor-ns-resize",
     "h-2",
@@ -55,9 +54,9 @@ const AdjustableHeightArea: definition.UtilityComponent<Props> = (props) => {
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
   return (
-    <div className={classes.root} style={{ height: `${height}px` }}>
+    <div>
       <div onMouseDown={handleMouseDown} className={classes.handle} />
-      {props.children}
+      <div style={{ height: `${height}px` }}>{props.children}</div>
     </div>
   )
 }
