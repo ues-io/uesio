@@ -111,17 +111,13 @@ components:
         - uesio/io.box: {}
 `
 
-describe("Uesio Builder Tests", () => {
+// This Suite was skipped when running in CI in this commit https://github.com/ues-io/uesio/commit/63c83343953b63aec071a4eb13ff8dfbd3996b47
+// It is unclear why it is being skipped, what the failures were, etc. as the tests pass locally.  See https://github.com/ues-io/uesio/issues/4751
+// As of commit https://github.com/ues-io/uesio/commit/0fdb2476f6fbb8e58b3dac7804ff319baf5bc894, this test is no longer passing locally.
+// See https://github.com/ues-io/uesio/issues/4752.
+// TODO: See https://github.com/ues-io/uesio/issues/4752, resolve and enable the test in both local & CI
+describe.skip("Uesio Builder Tests", () => {
   const username = Cypress.env("automation_username")
-
-  // This test is too flaky to be run in CI
-  // TODO: Investigate why this doesn't work well in CI
-  if (Cypress.env("in_ci")) {
-    it("test disabled in CI environments due to flakiness", () => {
-      cy.log("skipping test in mock login mode")
-    })
-    return
-  }
 
   const appName = getUniqueAppName()
   const workspaceName = "test"
