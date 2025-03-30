@@ -528,7 +528,7 @@ To run the various test suites, there are a number of commands available:
 To run just an individual E2E or Integration test, see the sections below.
 
 > [!NOTE]
-> You must manually run `npm run tests-init` in order to run individual tests. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server so that mock logins can be used.
+> You must manually run `npm run tests-init` in order to run individual tests unless otherwise specified below. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server so that mock logins can be used.
 
 ### E2E testing with Cypress
 
@@ -558,7 +558,7 @@ npx nx run platform-e2e:run-test --spec apps/platform-e2e/cypress/e2e/builder.cy
 
 We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
 
-If you're running Uesio locally,, you can use `npm run tests-integration` to run all of the integration tests.
+If you're running Uesio locally, you can use `npm run tests-integration` to run all of the integration tests.
 
 #### Running a single Integration Test
 
@@ -568,7 +568,7 @@ If you want to run a single integration test, you can use `npx nx run platform-i
 npx nx run platform-integration-tests:integration --very-verbose hurl_specs/allmetadata.hurl
 ```
 
-If you want to run a single test and avoid having to run `npm run tests-init` prior to each test run, you can use `npx nx run platform-integration-tests:run-test --spec <path to spec> <...other cypress options>`, e.g.,
+If you want to run a single test and avoid having to run `npm run tests-init` prior to each test run, you can use `npx nx run platform-integration-tests:run-test <...other hurl options> <path to testfile>`, e.g.,
 
 ```bash
 npx nx run platform-e2e:run-test --very-verbose hurl_specs/allmetadata.hurl
