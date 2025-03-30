@@ -36,6 +36,9 @@
     "e2e": {
       "cache": true
     },
+    "integration": {
+      "cache": true
+    },
     "typecheck": {
       "cache": true
     },

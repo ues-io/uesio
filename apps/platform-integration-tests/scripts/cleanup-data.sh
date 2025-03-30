@@ -3,23 +3,14 @@
 set -e
 shopt -s expand_aliases
 
-export HURL_site_scheme=$UESIO_TEST_SCHEME
-export HURL_site_primary_domain=$UESIO_TEST_DOMAIN
-export HURL_site_port=$UESIO_TEST_PORT
-
-export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
-export UESIO_CLI_USERNAME=uesio
-export UESIO_CLI_HOST=$UESIO_TEST_APP_URL
+source ./scripts/setup-env.sh
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-alias uesio="$SCRIPT_DIR/../../dist/cli/uesio"
-
-#Navigate
-cd apps/platform-integration-tests
+alias uesio="$SCRIPT_DIR/../../../dist/cli/uesio"
 
 echo "Logging in to Studio as uesio user..."
-uesio logout
 uesio sethost
+uesio logout
 uesio login
 
 # Truncate dev workspace
@@ -32,19 +23,14 @@ uesio work -n dev
 uesio workspace truncate
 echo "dev workspace should be clear"
 
-#Navigate back
-cd - >> /dev/null
-
 # Run specs
-npx hurl -k --test apps/platform-integration-tests/hurl_specs_single_run/truncate_tenant_data_cli.hurl
+npx hurl -k --error-format long --no-output hurl_specs_single_run/truncate_tenant_data_cli.hurl
 
 # Delete the workspaces
-cd apps/platform-integration-tests
 uesio workspace delete -n truncatetests
 uesio workspace delete -n dev
 uesio workspace delete -n quickstart
-cd - >> /dev/null
 
 # Remove anything that remains
 echo "Deleting tests app..."
-npx hurl -k --error-format long --no-output apps/platform-integration-tests/hurl_seeds/delete_app.hurl
+npx hurl -k --error-format long --no-output hurl_seeds/delete_app.hurl

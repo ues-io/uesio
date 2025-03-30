@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/platform-e2e/src",
   "projectType": "application",
-  "implicitDependencies": ["platform"],
+  "implicitDependencies": ["platform", "tag:type:platform-dep"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
@@ -13,6 +13,29 @@
           "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
         "cwd": "apps/platform-e2e"
+      }
+    },
+    "run-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx nx run platform-e2e:test-e2e"],
+        "cwd": "apps/platform-integration-tests"
+      }
+    },
+    "test-e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run platform-integration-tests:setup-data",
+          {
+            "command": "npx nx run platform-e2e:e2e",
+            "forwardAllArgs": true
+          },
+          "npx nx run platform-integration-tests:cleanup-data"
+        ],
+        "forwardAllArgs": false,
+        "cwd": "apps/platform-integration-tests",
+        "parallel": false
       }
     }
   }
