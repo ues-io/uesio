@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/platform-integration-tests",
   "projectType": "application",
-  "implicitDependencies": ["platform"],
+  "implicitDependencies": ["platform", "tag:type:platform-dep"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
@@ -14,6 +14,60 @@
         "commands": [
           "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
+        "cwd": "apps/platform-integration-tests"
+      }
+    },
+    "integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [". ./scripts/setup-env.sh && npx hurl --jobs 1 -k"],
+        "cwd": "apps/platform-integration-tests"
+      }
+    },
+    "run-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run platform-integration-tests:setup-data",
+          {
+            "command": "npx nx run platform-integration-tests:integration",
+            "forwardAllArgs": true
+          },
+          "npx nx run platform-integration-tests:cleanup-data"
+        ],
+        "forwardAllArgs": false,
+        "cwd": "apps/platform-integration-tests",
+        "parallel": false
+      }
+    },
+    "test-integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run platform-integration-tests:setup-data",
+          {
+            "command": "npx nx run platform-integration-tests:integration --test --error-format long \"hurl_specs/*.hurl\" \"hurl_fields/*.hurl\"",
+            "forwardAllArgs": true
+          },
+          "npx nx run platform-integration-tests:integration --test --very-verbose hurl_specs_single_run/perf_stats.hurl",
+          "npx nx run platform-integration-tests:cleanup-data"
+        ],
+        "cwd": "apps/platform-integration-tests",
+        "forwardAllArgs": false,
+        "parallel": false
+      }
+    },
+    "setup-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["bash ./scripts/setup-data.sh"],
+        "cwd": "apps/platform-integration-tests"
+      }
+    },
+    "cleanup-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["bash ./scripts/cleanup-data.sh"],
         "cwd": "apps/platform-integration-tests"
       }
     }
