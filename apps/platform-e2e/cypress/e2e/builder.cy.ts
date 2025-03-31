@@ -113,10 +113,14 @@ components:
 
 // This Suite was skipped when running in CI in this commit https://github.com/ues-io/uesio/commit/63c83343953b63aec071a4eb13ff8dfbd3996b47
 // It is unclear why it is being skipped, what the failures were, etc. as the tests pass locally.  See https://github.com/ues-io/uesio/issues/4751
-// As of commit https://github.com/ues-io/uesio/commit/0fdb2476f6fbb8e58b3dac7804ff319baf5bc894, this test is no longer passing locally.
-// See https://github.com/ues-io/uesio/issues/4752.
-// TODO: See https://github.com/ues-io/uesio/issues/4752, resolve and enable the test in both local & CI
-describe.skip("Uesio Builder Tests", () => {
+// For now, improving how it is skipped so that it is clearly visible in the logs that it is being skipped.
+// Previously, a test was conditionally executed that logged a message saying a skip was occuring and then return
+// so that no further tests would execute in the suite.  However, this approach emitted a standard log message which
+// required that the logs were CLOSELY inspected to know that the tests were being skipped.  The approach below will
+// ensure any tests in the suite are marked pending and appear in the test summary to increase visibility to skipped tests.
+// TODO: See https://github.com/ues-io/uesio/issues/4751, resolve and enable the test in both local & CI
+const conditionalDescribe = Cypress.env("in_ci") ? describe.skip : describe
+conditionalDescribe("Uesio Route Sanity Tests", () => {
   const username = Cypress.env("automation_username")
 
   const appName = getUniqueAppName()
