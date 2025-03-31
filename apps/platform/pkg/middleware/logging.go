@@ -17,11 +17,11 @@ import (
 // To minimize noise from per-request logs, we treat all 2xx/3xx
 // request logs as DEBUG, so they will not be recorded.
 // Only 4xx/5xx requests will be logged.
-// Set LOG_LEVEL=-4 to log literally EVERYTHING.
+// Set UESIO_LOG_LEVEL=-4 to log literally EVERYTHING.
 var minLogLevel slog.Level
 
 func init() {
-	if val, isSet := os.LookupEnv("LOG_LEVEL"); isSet {
+	if val, isSet := os.LookupEnv("UESIO_LOG_LEVEL"); isSet {
 		if levelVar, err := strconv.Atoi(val); err == nil {
 			minLogLevel = (slog.Level)(levelVar)
 		}

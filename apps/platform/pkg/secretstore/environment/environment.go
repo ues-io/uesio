@@ -13,12 +13,12 @@ type SecretStore struct {
 }
 
 var secretValues = map[string]string{
-	"uesio/core.aws_access_key_id":      os.Getenv("AWS_ACCESS_KEY_ID"),
-	"uesio/core.aws_secret_access_key":  os.Getenv("AWS_SECRET_ACCESS_KEY"),
-	"uesio/core.aws_session_token":      os.Getenv("AWS_SESSION_TOKEN"),
-	"uesio/aikit.aws_access_key_id":     os.Getenv("AWS_ACCESS_KEY_ID"),
-	"uesio/aikit.aws_secret_access_key": os.Getenv("AWS_SECRET_ACCESS_KEY"),
-	"uesio/aikit.aws_session_token":     os.Getenv("AWS_SESSION_TOKEN"),
+	"uesio/core.aws_access_key_id":      os.Getenv("UESIO_AWS_ACCESS_KEY_ID"),
+	"uesio/core.aws_secret_access_key":  os.Getenv("UESIO_AWS_SECRET_ACCESS_KEY"),
+	"uesio/core.aws_session_token":      os.Getenv("UESIO_AWS_SESSION_TOKEN"),
+	"uesio/aikit.aws_access_key_id":     os.Getenv("UESIO_AWS_ACCESS_KEY_ID"),
+	"uesio/aikit.aws_secret_access_key": os.Getenv("UESIO_AWS_SECRET_ACCESS_KEY"),
+	"uesio/aikit.aws_session_token":     os.Getenv("UESIO_AWS_SESSION_TOKEN"),
 	"uesio/core.db_user":                os.Getenv("UESIO_DB_USER"),
 	"uesio/core.db_password":            os.Getenv("UESIO_DB_PASSWORD"),
 	"uesio/core.db_database":            os.Getenv("UESIO_DB_DATABASE"),

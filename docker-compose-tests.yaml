@@ -23,13 +23,10 @@ services:
       redis:
         condition: service_started
     ports:
-      # TODO: PORT variable should change to have UESIO prefix
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${UESIO_PORT:-3000}:${UESIO_PORT:-3000}"
     environment:
-      # TODO: REDIS_HOST variable should change to have UESIO prefix
-      REDIS_HOST: redis
-      # TODO: REDIS_PORT variable should change to have UESIO prefix
-      REDIS_PORT: 6379
+      UESIO_REDIS_HOST: redis
+      UESIO_REDIS_PORT: 6379
       UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
       UESIO_CACHE_SITE_BUNDLES: "true"
       UESIO_DB_DATABASE: pgtest
@@ -44,17 +41,16 @@ services:
       UESIO_SESSION_STORE: redis
       UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
       UESIO_MOCK_AUTH: "${UESIO_MOCK_AUTH:-true}"
+      # TODO: should default to false (localhost refactor)
       UESIO_USE_HTTPS: "${UESIO_USE_HTTPS:-true}"
       UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES:-false}"
       UESIO_DEBUG_SQL: "${UESIO_DEBUG_SQL:-true}"
-      # TODO: PORT variable should change to have UESIO prefix
-      PORT: "${PORT:-3000}"
-      # TODO: HOST variable should change to have UESIO prefix
-      HOST: "${HOST-}"
+      UESIO_PORT: "${PORT:-3000}"
+      UESIO_HOST: "${HOST-}"
       UESIO_DEV: ${UESIO_DEV:-true}
+      # TODO: should default to localhost (localhost refactor)
       UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN:-uesio-dev.com}"
-      # TODO: LOG_LEVEL variable should change to have UESIO prefix
-      LOG_LEVEL: "${LOG_LEVEL--4}"
+      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL--4}"
     volumes:
       - ./apps/platform/ssl:/ssl
     command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"

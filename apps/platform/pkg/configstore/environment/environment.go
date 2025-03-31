@@ -30,14 +30,16 @@ func GetEnvWithDefault(key, defaultValue string) string {
 }
 
 var configValues = map[string]string{
-	"uesio/core.mock_auth":                        os.Getenv("UESIO_MOCK_AUTH"),
-	"uesio/core.platform_filesource_type":         GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_TYPE", "uesio.s3"),
+	"uesio/core.mock_auth": os.Getenv("UESIO_MOCK_AUTH"),
+	// TODO: Change default to uesio.local (localhost refactor)
+	"uesio/core.platform_filesource_type": GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_TYPE", "uesio.s3"),
+	// TODO: Change default to uesio.local (localhost refactor)
 	"uesio/core.platform_bundlestore_type":        GetEnvWithDefault("UESIO_PLATFORM_BUNDLESTORE_TYPE", "uesio.s3"),
 	"uesio/core.platform_filesource_credentials":  GetEnvWithDefault("UESIO_PLATFORM_FILESOURCE_CREDENTIALS", "uesio/core.aws"),
 	"uesio/core.platform_bundlestore_credentials": GetEnvWithDefault("UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS", "uesio/core.aws"),
-	"uesio/core.aws_region":                       os.Getenv("AWS_REGION"),
-	"uesio/core.aws_endpoint":                     os.Getenv("AWS_ENDPOINT"),
-	"uesio/aikit.aws_region":                      os.Getenv("AWS_REGION"),
+	"uesio/core.aws_region":                       os.Getenv("UESIO_AWS_REGION"),
+	"uesio/core.aws_endpoint":                     os.Getenv("UESIO_AWS_ENDPOINT"),
+	"uesio/aikit.aws_region":                      os.Getenv("UESIO_AWS_REGION"),
 	"uesio/core.userfiles_bucket_name":            GetEnvWithDefault("UESIO_USERFILES_BUCKET_NAME", "uesio-userfiles"),
 	"uesio/core.db_host":                          GetRequiredEnv("UESIO_DB_HOST"),
 	"uesio/core.db_port":                          GetEnvWithDefault("UESIO_DB_PORT", "5432"),

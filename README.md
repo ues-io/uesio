@@ -262,10 +262,16 @@ The following environment variables can optionally be configured in your Shell (
     <td>true / false</td>
   </tr>
   <tr>
-    <td>HOST</td>
+    <td>UESIO_HOST</td>
     <td>Host to use for HTTP server</td>
     <td>""</td>
     <td>Set to "localhost" for local development</td>
+  </tr>
+  <tr>
+    <td>UESIO_PORT</td>
+    <td>Port to use for HTTP server</td>
+    <td>3000</td>
+    <td></td>
   </tr>
   <tr>
     <td>UESIO_PRIMARY_DOMAIN</td>
@@ -282,13 +288,13 @@ The following environment variables can optionally be configured in your Shell (
   <tr>
     <td>UESIO_USERFILES_BUCKET_NAME</td>
     <td>The Bucket in AWS / local folder where user-uploaded files will be stored.</td>
-    <td>""</td>
+    <td>uesio-userfiles</td>
     <td></td>
   </tr>
   <tr>
     <td>UESIO_BUNDLES_BUCKET_NAME</td>
     <td>The Bucket in AWS / local folder where bundles will be stored.</td>
-    <td>""</td>
+    <td>uesio-bundles</td>
     <td></td>
   </tr>
   <tr>
@@ -306,7 +312,7 @@ The following environment variables can optionally be configured in your Shell (
   <tr>
     <td>UESIO_PLATFORM_FILESOURCE_TYPE</td>
     <td>Controls where user-uploaded files are stored</td>
-    <td>uesio.local</td>
+    <td>uesio.s3</td>
     <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
   </tr>
   <tr>
@@ -318,7 +324,7 @@ The following environment variables can optionally be configured in your Shell (
   <tr>
     <td>UESIO_PLATFORM_BUNDLESTORE_TYPE</td>
     <td>Controls where Uesio bundles are stored</td>
-    <td>uesio.local</td>
+    <td>uesio.s3</td>
     <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
   </tr>
   <tr>
@@ -382,37 +388,37 @@ The following environment variables can optionally be configured in your Shell (
     <td>redis, memory</td>
   </tr>
   <tr>
-    <td>REDIS_HOST</td>
+    <td>UESIO_REDIS_HOST</td>
     <td>The host to connect to Redis</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td>REDIS_PORT</td>
+    <td>UESIO_REDIS_PORT</td>
     <td>The port to connect to Redis</td>
     <td>6739</td>
     <td></td>
   </tr>
   <tr>
-    <td>REDIS_USER</td>
+    <td>UESIO_REDIS_USER</td>
     <td>The Redis Username (If Necessary)</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td>REDIS_PASSWORD</td>
+    <td>UESIO_REDIS_PASSWORD</td>
     <td>The Redis Password (If Necessary)</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td>REDIS_TTL</td>
+    <td>UESIO_REDIS_TTL</td>
     <td>Redis TTL Seconds</td>
     <td>86400</td>
     <td>Default is one day.</td>
   </tr>
   <tr>
-    <td>REDIS_TLS</td>
+    <td>UESIO_REDIS_TLS</td>
     <td>Whether or not to use TLS Mode</td>
     <td>false</td>
     <td>true or false</td>
@@ -452,6 +458,126 @@ The following environment variables can optionally be configured in your Shell (
     <td></td>
     <td>disable</td>
     <td>disable, allow, prefer, require, etc.</td>
+  </tr>
+  <tr>
+    <td>UESIO_LOG_LEVEL</td>
+    <td>Logging level</td>
+    <td>0</td>
+    <td>-4 (Debug), 0 (Info), 4 (Warn), 8 (Error)</td>
+  </tr>
+  <tr>
+    <td>UESIO_BUILD_VERSION</td>
+    <td>Used in urls served for cache busting</td>
+    <td>Empty string in development mode / Docker image contains the version image was built with</td>
+    <td>There is typically no need to provide this, see <a href="docs/http_caching.md">http caching docs</a>.</td>
+  </tr>
+  <tr>
+    <td>UESIO_CACHE_SITE_BUNDLES</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>  
+  <tr>
+    <td>UESIO_AWS_ACCESS_KEY_ID</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_AWS_SECRET_ACCESS_KEY</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_AWS_SESSION_TOKEN</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_AWS_ACCESS_KEY_ID</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_AWS_SECRET_ACCESS_KEY</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>  
+  <tr>
+    <td>UESIO_AWS_SESSION_TOKEN</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_AWS_REGION</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_AWS_ENDPOINT</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_USAGE_HANDLER</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>UESIO_CLI_USERNAME</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_CLI_PASSWORD</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_CLI_LOGIN_METHOD</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_CLI_HOST</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_CACHE_BOT_PROGRAMS</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_WORKSPACE_CACHE_INVALIDATION_ITEMS_CHUNK</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_CACHE_WORKSPACE_BUNDLES</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr> 
+  <tr>
+    <td>UESIO_BUNDLE_STORE_DOMAIN</td>
+    <td></td>
+    <td></td>
+    <td></td>
   </tr>
 </table>
 

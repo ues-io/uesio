@@ -116,13 +116,12 @@ func init() {
 		return
 	}
 
-	// TODO: REDIS variables should change to have UESIO prefix
-	redisHost := os.Getenv("REDIS_HOST")
-	redisPort := os.Getenv("REDIS_PORT")
-	redisUser := os.Getenv("REDIS_USER")
-	redisPassword := os.Getenv("REDIS_PASSWORD")
-	redisTLS := os.Getenv("REDIS_TLS")
-	redisTTLSecondsValue := os.Getenv("REDIS_TTL")
+	redisHost := os.Getenv("UESIO_REDIS_HOST")
+	redisPort := os.Getenv("UESIO_REDIS_PORT")
+	redisUser := os.Getenv("UESIO_REDIS_USER")
+	redisPassword := os.Getenv("UESIO_REDIS_PASSWORD")
+	redisTLS := os.Getenv("UESIO_REDIS_TLS")
+	redisTTLSecondsValue := os.Getenv("UESIO_REDIS_TTL")
 	if redisPort == "" {
 		redisPort = "6379"
 	}
