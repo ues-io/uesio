@@ -525,10 +525,10 @@ To run the various test suites, there are a number of commands available:
 9. `npm run tests-cypress-run`
    - Runs the cypress in headless mode, helpful when you want to run individual tests. See [E2E testing with cypress](#e2e-testing-with-cypress) for details.
 
-TO run just an individual E2E or Integration test, see the sections below.
+To run just an individual E2E or Integration test, see the sections below.
 
 > [!NOTE]
-> You must manually run `npm run tests-init` in order to run individual tests. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server and for each test so that mock logins can be used.
+> You must manually run `npm run tests-init` in order to run individual tests unless otherwise specified below. Depending on the test, you may need to re-run this script prior to every test execution. Additionally, ensure that `UESIO_DEV=true` environment variable is set prior to starting the server so that mock logins can be used.
 
 ### E2E testing with Cypress
 
@@ -536,38 +536,42 @@ We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio a
 
 E2E tests are the most expensive and most brittle, and as such should be used sparingly.
 
-If you're running Uesio locally, you can use `npm run tests-cypress-open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run all the tests in a headless runner. Note that when running using the visual UI or when running individual tests as per the below, you must have the `UESIO_DEV=true` environment variable set and have run `npm run tests-init`.
+If you're running Uesio locally, you can use `npm run tests-cypress-open` to launch Cypress' visual UI for running tests, or `npm run tests-e2e` to just run all the tests in a headless runner. Note that when running using the visual UI you must first manually run `npm run tests-init`.
 
 #### Running a single E2E spec
 
 If you want to _visually_ run a single spec, use the Cypress visual UI and then select the individual spec.
 
-Or, use `npm run tests-cypress-run -- --spec <path to spec>` to run a specific file in a headless Electron instance, e.g.
+Or, use `npm run tests-cypress-run -- --spec <path to spec> <...other cypress options>` to run a specific file in a headless Electron instance, e.g.,
 
 ```bash
-npx run tests-cypress-run -- --spec apps/platform-e2e/cypress/e2e/builder.cy.ts
+npx run tests-cypress-run -- --spec apps/platform-e2e/cypress/e2e/builder.cy.ts --browser chrome
+```
+
+If you want to run a single spec in headless mode and avoid having to run `npm run tests-init` prior to each test run, you can use `npx nx run platform-e2e:run-test --spec <path to spec> <...other cypress options>`, e.g.,
+
+```bash
+npx nx run platform-e2e:run-test --spec apps/platform-e2e/cypress/e2e/builder.cy.ts --browser chrome
 ```
 
 ### Integration / API testing with Hurl
 
 We use [Hurl](https://hurl.dev/) for running integration tests against Uesio APIs, and for performing load testing against APIs. Hurl provides a powerful text-based abstraction over `curl` suitable for defining suites of HTTP requests and assertions to make upon the responses.
 
-To run API integration tests locally against your running Uesio container, use `npm run tests-integration`
+If you're running Uesio locally, you can use `npm run tests-integration` to run all of the integration tests.
 
 #### Running a single Integration Test
 
-The easiest way to run a single Integration Test is to go into the `scripts/tests/start-integration-tests.sh` file and comment out the lines where we run all tests, and uncomment the lines here and then run `npm run tests-integration`:
-
-```
-# npx hurl --very-verbose -k --variable site_scheme=https --variable site_primary_domain=uesio-dev.com --variable site_port=3000 apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
-```
-
-You could run the individual test from the CLI, but you would have to make sure that you have the test app created and the right environment variables set up. If you would like to run via the CLI:
+If you want to run a single integration test, you can use `npx nx run platform-integration-tests:integration <...other hurl options> <path to testfile>`, e.g.,
 
 ```bash
-npm run tests-init # initialize test app/workspace/site/data/etc.
-source scripts/tests/setup-env.sh # setup environment variables used in tests
-npx hurl --very-verbose -k --variable site_scheme=https --variable site_primary_domain=uesio-dev.com --variable site_port=3000 apps/platform-integration-tests/hurl_specs/wire_collection_dependencies.hurl
+npx nx run platform-integration-tests:integration --very-verbose hurl_specs/allmetadata.hurl
+```
+
+If you want to run a single test and avoid having to run `npm run tests-init` prior to each test run, you can use `npx nx run platform-integration-tests:run-test <...other hurl options> <path to testfile>`, e.g.,
+
+```bash
+npx nx run platform-e2e:run-test --very-verbose hurl_specs/allmetadata.hurl
 ```
 
 # Continous integration (CI)

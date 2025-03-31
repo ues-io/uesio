@@ -116,6 +116,7 @@ func init() {
 		return
 	}
 
+	// TODO: REDIS variables should change to have UESIO prefix
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
 	redisUser := os.Getenv("REDIS_USER")

@@ -3,23 +3,16 @@
 set -e
 shopt -s expand_aliases
 
-export HURL_site_scheme=$UESIO_TEST_SCHEME
-export HURL_site_primary_domain=$UESIO_TEST_DOMAIN
-export HURL_site_port=$UESIO_TEST_PORT
-
-export UESIO_CLI_LOGIN_METHOD=uesio/core.mock
-export UESIO_CLI_USERNAME=uesio
-export UESIO_CLI_HOST=$UESIO_TEST_APP_URL
+source ./scripts/setup-env.sh
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-alias uesio="$SCRIPT_DIR/../../dist/cli/uesio"
+alias uesio="$SCRIPT_DIR/../../../dist/cli/uesio"
 
 # Deploy the sample app using Uesio
-cd apps/platform-integration-tests
 
 echo "Logging in to Studio as uesio user..."
-uesio logout
 uesio sethost
+uesio logout
 uesio login
 
 echo "Deleting tests app if it exists..."
@@ -65,5 +58,3 @@ uesio site upsert -f seed_data/accounts.csv -s seed_data/accounts_import.spec.js
 uesio site upsert -f seed_data/contacts.csv -s seed_data/contacts_import.spec.json
 uesio site upsert -f seed_data/accountteammembers.csv -s seed_data/accountteammembers_import.spec.json
 uesio site upsert -f seed_data/tools.csv -s seed_data/tools_import.spec.json
-
-cd - >> /dev/null
