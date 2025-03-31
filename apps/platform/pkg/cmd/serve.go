@@ -86,6 +86,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	}
 
 	// If we have BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
+	// TODO: BUILD_VERSION variable should change to have UESIO prefix
 	version := os.Getenv("BUILD_VERSION")
 	cacheSiteBundles := os.Getenv("UESIO_CACHE_SITE_BUNDLES")
 	cacheStaticAssets := false
@@ -422,12 +423,14 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Special handling for local routes
 	lr.HandleFunc("/{route:.*}", controller.ServeLocalRoute)
 
+	// TODO: PORT variable should change to have UESIO prefix
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
 	}
 	// Host can be blank by default, but in local development it should be set to "localhost"
 	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
+	//TODO: HOST variable should change to have UESIO prefix
 	host := os.Getenv("HOST")
 	serveAddr := host + ":" + port
 

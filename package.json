@@ -22,7 +22,7 @@
     "tests-init": "nx run platform-integration-tests:setup-data",
     "tests-integration": "nx run-many -t test-integration",
     "tests-all": "nx run-many -t test && nx run-many -t test-integration test-e2e --parallel=1",
-    "tests-docker": "bash scripts/run-docker-tests.sh",
+    "tests-docker": "nx exec -- bash ./scripts/run-docker-tests.sh",
     "tests-cypress-open": "nx run platform-e2e:open-cypress",
     "tests-cypress-run": "nx run platform-e2e:e2e",
     "format": "nx format:write",
@@ -46,6 +46,11 @@
     "watch-all": "npm run build-all && nx watch --all -- nx run-many -t build -p \\$NX_PROJECT_NAME",
     "watch-platform-deps": "nx run platform:watch-deps",
     "watch-dev": "nx run platform:serve:watch"
+  },
+  "nx": {
+    "includedScripts": [
+      "tests-docker"
+    ]
   },
   "files": [],
   "devDependencies": {
