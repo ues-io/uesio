@@ -47,7 +47,11 @@
     "watch-platform-deps": "nx run platform:watch-deps",
     "watch-dev": "nx run platform:serve:watch"
   },
-  "nx": {},
+  "nx": {
+    "includedScripts": [
+      "tests-docker"
+    ]
+  },
   "files": [],
   "devDependencies": {
     "@dagrejs/dagre": "^1.1.4",
