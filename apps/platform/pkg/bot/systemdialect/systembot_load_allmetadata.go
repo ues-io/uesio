@@ -53,6 +53,17 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 
 	studioMetadata := &wire.MetadataCache{}
 
+	itemCondition := extractConditionByField(newOp.Conditions, "uesio/core.uniquekey")
+
+	if itemCondition != nil {
+		newOp.Conditions = []wire.LoadRequestCondition{
+			{
+				Field: "uesio/studio.item",
+				Value: itemCondition.Value,
+			},
+		}
+	}
+
 	err := datasource.GetMetadataForLoad(newOp, studioMetadata, nil, sess.GetStudioAnonSession(session.Context()), connection)
 	if err != nil {
 		return err
