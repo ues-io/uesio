@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strconv"
 
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -92,10 +93,16 @@ func (c *NamespaceSwapCollection) Len() int {
 }
 
 func (c *NamespaceSwapCollection) SwapNS(value string) string {
+	if datasource.IsBuiltinField(value) {
+		return value
+	}
 	return meta.SwapKeyNamespace(value, c.original, c.modified)
 }
 
 func (c *NamespaceSwapCollection) SwapNSBack(value string) string {
+	if datasource.IsBuiltinField(value) {
+		return value
+	}
 	return meta.SwapKeyNamespace(value, c.modified, c.original)
 }
 
