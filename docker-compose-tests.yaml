@@ -50,7 +50,7 @@ services:
       UESIO_DEV: ${UESIO_DEV:-true}
       # TODO: should default to localhost (localhost refactor)
       UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN:-uesio-dev.com}"
-      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL--4}"
+      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL-}"
     volumes:
       - ./apps/platform/ssl:/ssl
     command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"
