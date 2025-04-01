@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { getAppBasePath } from "./paths"
+import { getAppBasePath, getWorkspaceBasePath } from "./paths"
 
 const baseUrl = Cypress.config().baseUrl
 const useMockLogin = Cypress.env("use_mock_login")
@@ -203,17 +203,32 @@ Cypress.Commands.add("visitRoute", (route: string) => {
   cy.url().should("include", route)
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO Per flaky comment below, not using appName currently
 function createWorkspaceInApp(workspaceName: string, appName: string) {
   cy.clickButton("uesio/io.button:add-workspace")
   cy.typeInInput("workspace-name", workspaceName)
   cy.clickButton("uesio/io.button:save-new-workspace")
-  // This is incredibly flaky, not sure why, but going to lighten the assertion
+  // TODO: There was originally an assertion here:
   // cy.url().should(
   // 	"eq",
   // 	Cypress.config().baseUrl + getWorkspaceBasePath(appName, workspaceName)
   // )
-  cy.url().should("include", `workspace/${workspaceName}`)
+  // That was commented out with a comment that the assertion was "incredibly flaky" although not sure why
+  // nor any details on what was flaky. In its place was the assertion:
+  // cy.url().should("include", `workspace/${workspaceName}`)
+  // which does not appear to really be any different from an assertion perspective other than the base url
+  // part.  Unfortunately, there isn't much to go on in terms of what errors/issues existed and I'm unable to
+  // reproduce an issue with the original assertion currently.  The only possible reasons I can think of are:
+  //     1. the baseUrl property in the config ended with a / in which case the string concat could have a // and fail eq test
+  //     2. creating the workspace took longer than the default 4 second timeout
+  //     3. there were name conflicts in the workspace name
+  // Since I'm unable to reproduce this currently, putting back the original assertion minus the baseUrl since
+  // it's not really needed. If the problem is the 4 second issue, then a longer timeout can be
+  // specified, see https://docs.cypress.io/api/commands/location#Arguments.  If the problem is something else,
+  // it should be investigated and resolved or at least provide further details here so eventually it can be fixed.
+  cy.location("pathname").should(
+    "eq",
+    getWorkspaceBasePath(appName, workspaceName),
+  )
 }
 
 function createApp(appName: string) {
@@ -221,9 +236,23 @@ function createApp(appName: string) {
   cy.typeInInput("new-app-name", appName)
   cy.typeInTextArea("new-app-description", "E2E Test App")
   cy.clickButton("save-new-app")
-  // This is incredibly flaky, not sure what the issue is, but going to lighten the assertion
+  // TODO: There was originally an assertion here:
   // cy.url().should("eq", Cypress.config().baseUrl + getAppBasePath(appName))
-  cy.url().should("include", getAppBasePath(""))
+  // That was commented out with a comment that the assertion was "incredibly flaky" although not sure why
+  // nor any details on what was flaky. In its place was the assertion:
+  // cy.url().should("include", getAppBasePath(""))
+  // which does not appear to really be any different from an assertion perspective other than the base url
+  // part.  Unfortunately, there isn't much to go on in terms of what errors/issues existed and I'm unable to
+  // reproduce an issue with the original assertion currently.  The only possible reasons I can think of are:
+  //     1. the baseUrl property in the config ended with a / in which case the string concat could have a // and fail eq test
+  //     2. creating the app took longer than the default 4 second timeout
+  //     3. there were name conflicts in the app name
+  //     4. there is an issue with the password generator that would cause user creation to fail - see https://github.com/ues-io/uesio/issues/4768
+  // Since I'm unable to reproduce this currently (other than the password generation issue), putting back the original assertion
+  // minus the baseUrl since it's not really needed. If the problem is the 4 second issue, then a longer timeout can be
+  // specified, see https://docs.cypress.io/api/commands/location#Arguments.  If the problem is something else,
+  // it should be investigated and resolved or at least provide further details here so eventually it can be fixed.
+  cy.location("pathname").should("eq", getAppBasePath(appName))
 }
 
 const login = () => {
