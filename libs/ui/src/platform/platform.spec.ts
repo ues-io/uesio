@@ -93,7 +93,7 @@ const getSiteBundleAssetVersionTests = [
     expected: UesioAppVersion,
   },
   {
-    name: "[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no BUILD_VERSION (local dev)",
+    name: "[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no UESIO_BUILD_VERSION (local dev)",
     namespace: "uesio/io",
     site: {
       app: "uesio/studio",

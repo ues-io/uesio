@@ -180,7 +180,7 @@ func TestGetPackUrl_Site(t *testing.T) {
 			fmt.Sprintf("/site/componentpacks/uesio/io%s/main/runtime.js", UesioAppVersion),
 		},
 		{
-			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no BUILD_VERSION (local dev)",
+			"[system app] prefer the pack modstamp if the request is for a system namespace bundle but we have no UESIO_BUILD_VERSION (local dev)",
 			"uesio/io.main",
 			&preload.SiteMergeData{
 				App:     "uesio/studio",

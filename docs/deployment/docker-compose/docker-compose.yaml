@@ -27,8 +27,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      UESIO_REDIS_HOST: redis
+      UESIO_REDIS_PORT: 6379
       UESIO_DB_DATABASE: pgtest
       UESIO_DB_HOST: db
       UESIO_DB_USER: postgres
@@ -41,7 +41,7 @@ services:
       UESIO_SESSION_STORE: redis
       UESIO_USERFILES_BUCKET_NAME: "uesio-userfiles"
       UESIO_BUNDLES_BUCKET_NAME: "uesio-bundles"
-      PORT: 3000
+      UESIO_PORT: 3000
       UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
       UESIO_MOCK_AUTH: "true"
       UESIO_MOCK_AUTH_USERNAMES: "uesio"

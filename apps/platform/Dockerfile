@@ -19,8 +19,7 @@ COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
 
 ARG BUILD_VERSION
-# TODO: BUILD_VERSION variable should change to have UESIO prefix
-ENV BUILD_VERSION=${BUILD_VERSION}
+ENV UESIO_BUILD_VERSION=${BUILD_VERSION}
 LABEL build_version=${BUILD_VERSION}
 
 EXPOSE 3000

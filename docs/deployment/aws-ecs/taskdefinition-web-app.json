@@ -28,7 +28,7 @@
           "value": "uesio-bundles"
         },
         {
-          "name": "REDIS_HOST",
+          "name": "UESIO_REDIS_HOST",
           "value": "123345678.abcdefg.ng.0001.use1.cache.amazonaws.com"
         },
         {
