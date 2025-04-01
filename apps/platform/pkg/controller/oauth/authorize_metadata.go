@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -25,7 +26,7 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 			"invalid integration: %s", err.Error())))
 		return
 	}
-	conf, err := oauth.GetConfig(integrationConnection.GetCredentials(), fmt.Sprintf("https://%s", r.Host))
+	conf, err := oauth.GetConfig(integrationConnection.GetCredentials(), fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host))
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewForbiddenException(fmt.Sprintf(
 			"invalid integration configuration: %s", err.Error())))

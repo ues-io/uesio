@@ -15,6 +15,7 @@ import (
 	oauth "github.com/thecloudmasters/uesio/pkg/oauth2"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -68,7 +69,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	host := fmt.Sprintf("https://%s", r.Host)
+	host := fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host)
 	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(s.Context(), integrationConnection.GetCredentials(), host, authCode, state)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 )
 
 type ServerMergeData struct {
@@ -66,11 +67,11 @@ var SiteMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 	case "subdomain":
 		return siteInfo.Subdomain, nil
 	case "url":
-		url := "https://"
+		var subdomain string
 		if siteInfo.Subdomain != "" {
-			url += siteInfo.Subdomain + "."
+			subdomain = siteInfo.Subdomain + "."
 		}
-		return url + siteInfo.Domain, nil
+		return tls.ServeAppDefaultScheme() + "://" + subdomain + siteInfo.Domain, nil
 	}
 	return nil, nil
 }

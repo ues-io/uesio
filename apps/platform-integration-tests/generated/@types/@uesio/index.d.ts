@@ -107,6 +107,8 @@ interface SiteApi {
   getDomain: () => string
   // Return the subdomain of the site
   getSubDomain: () => string
+  // Return the scheme of the site
+  getScheme: () => string  
 }
 interface WorkspaceApi {
   // Return the name of the workspace

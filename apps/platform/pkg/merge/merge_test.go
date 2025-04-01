@@ -10,6 +10,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -162,7 +163,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 				Session: studioSession,
 			},
 			"url",
-			"https://www.acme.com",
+			tls.ServeAppDefaultScheme() + "://www.acme.com",
 			nil,
 		},
 		{
@@ -172,7 +173,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 				Session: studioSessionWithoutSubdomain,
 			},
 			"url",
-			"https://acme.com",
+			tls.ServeAppDefaultScheme() + "://acme.com",
 			nil,
 		},
 		{
