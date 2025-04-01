@@ -1,5 +1,5 @@
 name: external_bundle_store_base_url
 managedBy: app
 store: environment
-defaultValue: https://studio.ues.io/site/bundles/v1
+defaultValue: https://studio.ues.io
 public: true

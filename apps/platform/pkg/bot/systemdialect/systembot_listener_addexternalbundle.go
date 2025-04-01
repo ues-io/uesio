@@ -49,7 +49,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, err
 	}
 
-	url, err := url.JoinPath(bundleStoreBaseUrl, "retrieve", appID, version)
+	url, err := url.JoinPath(bundleStoreBaseUrl, "site/bundles/v1/retrieve", appID, version)
 	if err != nil {
 		return nil, err
 	}

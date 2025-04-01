@@ -23,7 +23,7 @@ export default function loadexternalbundleversion(bot: LoadBotApi) {
     return
   }
 
-  const url = new URL(`versions/${bundleVersionValue}/list`, bundleStoreBaseUrl)
+  const url = new URL(`site/bundles/v1/versions/${bundleVersionValue}/list`, bundleStoreBaseUrl)
 
   const response = bot.http.request({
     method: "GET",

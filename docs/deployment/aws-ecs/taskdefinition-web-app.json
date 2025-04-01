@@ -17,7 +17,7 @@
       "environment": [
         {
           "name": "UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL",
-          "value": "https://studio.ues.io/site/bundles/v1"
+          "value": "https://studio.ues.io"
         },
         {
           "name": "UESIO_PRIMARY_DOMAIN",
