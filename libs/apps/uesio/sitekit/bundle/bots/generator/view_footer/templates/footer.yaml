@@ -10,10 +10,8 @@ components:
                   filepath: ${logoFilePath}
                   height: 44
                   signals:
-                    - signal: route/REDIRECT
-                      namespace: uesio/core
-                      path: https://ues.io
-                      newtab: true
+                    - signal: "route/NAVIGATE"
+                      path: "home"
               - uesio/io.grid:
                   uesio.variant: uesio/sitekit.footer_linkwrapper
                   items: ${categoriesYaml}

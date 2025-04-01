@@ -14,6 +14,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -32,7 +33,7 @@ type TokenEndpointResponse struct {
 
 func TestAuthorizationCodeFlow(t *testing.T) {
 
-	host := "https://studio.ues.io"
+	host := tls.ServeAppDefaultScheme() + "://studio.ues.io"
 	sampleAuthCode := "authcode1234"
 
 	var serveResponseBody string
@@ -69,7 +70,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 		"authUrl":      server.URL + "/oauth2/authorize",
 	}
 
-	redirectUri := "https://studio.ues.io/site/oauth2/callback"
+	redirectUri := tls.ServeAppDefaultScheme() + "://studio.ues.io/site/oauth2/callback"
 
 	conf := &oauth2.Config{
 		ClientID:     "testclientid",

@@ -38,6 +38,10 @@ func (s *SiteAPI) GetSubDomain() string {
 	return s.site.Subdomain
 }
 
+func (s *SiteAPI) GetScheme() string {
+	return s.site.Scheme
+}
+
 type WorkspaceAPI struct {
 	workspace *meta.Workspace
 }

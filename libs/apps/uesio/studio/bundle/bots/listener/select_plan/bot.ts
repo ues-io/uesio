@@ -29,7 +29,8 @@ export default function select_plan(bot: ListenerBotApi) {
   const user = bot.getUser()
   const domain = bot.getSession().getSite().getDomain()
   const subdomain = bot.getSession().getSite().getSubDomain()
-  const host = `https://${subdomain}.${domain}`
+  const scheme = bot.getSession().getSite().getScheme()
+  const host = `${scheme}://${subdomain}.${domain}`
   const STRIPE_INTEGRATION = "uesio/stripe.stripe"
   const searchResult = bot.runIntegrationAction(
     STRIPE_INTEGRATION,

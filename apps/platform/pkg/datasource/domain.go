@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -41,7 +42,7 @@ func QueryDomainFromSite(siteID string, connection wire.Connection) (*meta.SiteD
 
 func GetHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
 	if domain.Type == "subdomain" {
-		return fmt.Sprintf("https://%s.%s", domain.Domain, site.Domain)
+		return fmt.Sprintf("%s://%s.%s", tls.ServeAppDefaultScheme(), domain.Domain, site.Domain)
 	}
-	return fmt.Sprintf("https://%s", domain.Domain)
+	return fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), domain.Domain)
 }

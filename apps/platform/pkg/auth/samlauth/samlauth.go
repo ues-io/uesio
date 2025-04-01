@@ -19,6 +19,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	uesiotls "github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -117,7 +118,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 		return nil, err
 	}
 
-	rootURLString := "https://" + requestURL
+	rootURLString := uesiotls.ServeAppDefaultScheme() + "://" + requestURL
 	contextPrefix := c.session.GetContextURLPrefix()
 	acsURLString := contextPrefix + "/auth/" + c.authSource.Namespace + "/" + c.authSource.Name + "/login"
 
