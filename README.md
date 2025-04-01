@@ -574,7 +574,7 @@ The following environment variables can optionally be configured in your Shell (
     <td></td>
   </tr> 
   <tr>
-    <td>UESIO_BUNDLE_STORE_DOMAIN</td>
+    <td>UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL</td>
     <td></td>
     <td></td>
     <td></td>
