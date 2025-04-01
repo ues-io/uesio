@@ -1,0 +1,5 @@
+name: agent
+type: DYNAMIC
+label: Agent
+pluralLabel: Agents
+public: true

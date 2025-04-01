@@ -1,5 +1,0 @@
-name: bundle_store_domain
-managedBy: app
-store: environment
-defaultValue: ues.io
-public: true

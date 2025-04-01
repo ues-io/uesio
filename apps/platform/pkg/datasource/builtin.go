@@ -143,3 +143,8 @@ func GetBuiltinField(key string, collectionKey string) (meta.Field, bool) {
 	field.CollectionRef = collectionKey
 	return field, true
 }
+
+func IsBuiltinField(key string) bool {
+	_, ok := BUILTIN_FIELDS_MAP[key]
+	return ok
+}

@@ -10,12 +10,14 @@ type ApiResponse = {
 export default function loadexternalbundlelisting(bot: LoadBotApi) {
   const { conditions } = bot.loadRequest
 
-  const bundleStoreDomain = bot.getConfigValue("uesio/core.bundle_store_domain")
-  const url = "https://studio." + bundleStoreDomain + "/site/bundles/v1/list"
+  const bundleStoreBaseUrl = bot.getConfigValue(
+    "uesio/studio.external_bundle_store_base_url",
+  )
+  const url = new URL("site/bundles/v1/list", bundleStoreBaseUrl)
 
   const response = bot.http.request({
     method: "GET",
-    url,
+    url: url.href,
   })
 
   let apiResponse = response.body as unknown as ApiResponse[]

@@ -8,7 +8,9 @@ type ApiResponse = {
 export default function loadexternalbundleversion(bot: LoadBotApi) {
   const { conditions } = bot.loadRequest
 
-  const bundleStoreDomain = bot.getConfigValue("uesio/core.bundle_store_domain")
+  const bundleStoreBaseUrl = bot.getConfigValue(
+    "uesio/studio.external_bundle_store_base_url",
+  )
 
   const externalBundleVersionUniquekey = conditions?.find(
     (condition) => condition.id === "externalBundleVersionUniquekey",
@@ -23,16 +25,14 @@ export default function loadexternalbundleversion(bot: LoadBotApi) {
     return
   }
 
-  const url =
-    "https://studio." +
-    bundleStoreDomain +
-    "/site/bundles/v1/versions/" +
-    bundleVersionValue +
-    "/list"
+  const url = new URL(
+    `site/bundles/v1/versions/${bundleVersionValue}/list`,
+    bundleStoreBaseUrl,
+  )
 
   const response = bot.http.request({
     method: "GET",
-    url,
+    url: url.href,
   })
   const apiResponse = response.body as unknown as ApiResponse[]
   apiResponse.forEach((record) =>

@@ -2,9 +2,9 @@ package systemdialect
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -39,7 +39,7 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to install bundles")
 	}
 
-	bundleStoreDomain, err := configstore.GetValue("uesio/core.bundle_store_domain", session)
+	bundleStoreBaseUrl, err := configstore.GetValue("uesio/studio.external_bundle_store_base_url", session)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,10 @@ func runAddExternalBundleListenerBot(params map[string]interface{}, connection w
 		return nil, err
 	}
 
-	url := fmt.Sprintf("https://studio.%s/site/bundles/v1/retrieve/%s/%s", bundleStoreDomain, appID, version)
+	url, err := url.JoinPath(bundleStoreBaseUrl, "site/bundles/v1/retrieve", appID, version)
+	if err != nil {
+		return nil, err
+	}
 
 	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

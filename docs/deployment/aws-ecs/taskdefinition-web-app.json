@@ -16,8 +16,8 @@
       "essential": true,
       "environment": [
         {
-          "name": "UESIO_BUNDLE_STORE_DOMAIN",
-          "value": "ues.io"
+          "name": "UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL",
+          "value": "https://studio.ues.io"
         },
         {
           "name": "UESIO_PRIMARY_DOMAIN",
