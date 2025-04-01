@@ -248,7 +248,7 @@ function createApp(appName: string) {
   //     2. creating the app took longer than the default 4 second timeout
   //     3. there were name conflicts in the app name
   //     4. there is an issue with the password generator that would cause user creation to fail - see https://github.com/ues-io/uesio/issues/4768
-  // Since I'm unable to reproduce this currently (other than the password generation issue), putting back the original assertion 
+  // Since I'm unable to reproduce this currently (other than the password generation issue), putting back the original assertion
   // minus the baseUrl since it's not really needed. If the problem is the 4 second issue, then a longer timeout can be
   // specified, see https://docs.cypress.io/api/commands/location#Arguments.  If the problem is something else,
   // it should be investigated and resolved or at least provide further details here so eventually it can be fixed.
