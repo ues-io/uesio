@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 )
 
 type StabilityRequest struct {
@@ -39,6 +41,32 @@ func (smh *StabilityModelHandler) GetBody(options *InvokeModelOptions) ([]byte, 
 	})
 }
 
+func (smh *StabilityModelHandler) Invoke(connection *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error) {
+	body, err := smh.GetBody(options)
+	if err != nil {
+		return "", 0, 0, err
+	}
+
+	input := &bedrockruntime.InvokeModelInput{
+		ModelId:     aws.String(options.Model),
+		Body:        body,
+		ContentType: aws.String("application/json"),
+		Accept:      aws.String("application/json"),
+	}
+
+	output, err := connection.client.InvokeModel(connection.session.Context(), input, smh.GetClientOptions(input))
+	if err != nil {
+		return "", 0, 0, err
+	}
+
+	return smh.GetInvokeResult(output.Body)
+
+}
+
+func (utmh *StabilityModelHandler) Stream(connection *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error) {
+	return nil, errors.New("streaming is not supported for the stability model handler")
+}
+
 func (smh *StabilityModelHandler) GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error) {
 
 	var response StabilityResponse
@@ -48,9 +76,4 @@ func (smh *StabilityModelHandler) GetInvokeResult(body []byte) (result any, inpu
 
 	return response.Images[0], 0, 0, nil
 
-}
-
-func (mh *StabilityModelHandler) HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error) {
-
-	return nil, 0, 0, true, errors.New("Streaming not supported")
 }
