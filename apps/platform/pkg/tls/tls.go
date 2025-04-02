@@ -21,7 +21,7 @@ func ServeAppDefaultScheme() string {
 	// special case for serving platform via http in dev mode.
 	// An alternative to this approach is to add env variable
 	// e.g., UESIO_DEFAULT_SCHEME with the default being https.
-	if env.InDevMode() && !ServeAppWithTLS() {
+	if env.IsLocalhost() && !ServeAppWithTLS() {
 		return "http"
 	}
 

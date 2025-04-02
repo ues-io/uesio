@@ -11,7 +11,7 @@
 set -e
 
 # TODO: should default to localhost and http (localhost refactor)
-TEST_APP_URL=$([ "${UESIO_USE_HTTPS:-true}" = "true" ] && echo "https" || echo "http")://${UESIO_PRIMARY_DOMAIN:-uesio-dev.com}:${UESIO_PORT:-3000}
+TEST_APP_URL=$([ "${UESIO_USE_HTTPS}" = "true" ] && echo "https" || echo "http")://${UESIO_PRIMARY_DOMAIN:-localhost}:${UESIO_PORT:-3000}
 
 # Ensure that we have a Uesio docker image to run
 # In CI, we should have the image built already but locally we want to re-build on every run

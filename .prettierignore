@@ -9,6 +9,8 @@
 /apps/platform/localbundlestore
 /apps/platform/uesiobundlestore-dev
 /apps/platform/uesiofiles-dev
+/apps/platform/uesio-userfiles
+/apps/platform/uesio-bundles
 /pgdata
 /.vscode
 package-lock.json

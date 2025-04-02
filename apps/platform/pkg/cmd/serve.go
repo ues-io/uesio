@@ -92,7 +92,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	staticAssetsPath := ""
 	if version != "" {
 		staticAssetsPath = "/" + version
-	} else if cacheSiteBundles == "true" {
+	} else if cacheSiteBundles != "false" {
 		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
 	}
 	if staticAssetsPath != "" {
