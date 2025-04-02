@@ -1,10 +1,19 @@
 package bedrock
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	brtypes "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
+	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 type MessagesModelUsage struct {
@@ -116,6 +125,96 @@ func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, err
 		Tools:            options.Tools,
 		ToolChoice:       options.ToolChoice,
 	})
+}
+
+func (cmh *ClaudeModelHandler) Invoke(connection *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error) {
+	body, err := cmh.GetBody(options)
+	if err != nil {
+		return "", 0, 0, err
+	}
+
+	input := &bedrockruntime.InvokeModelInput{
+		ModelId:     aws.String(options.Model),
+		Body:        body,
+		ContentType: aws.String("application/json"),
+		Accept:      aws.String("application/json"),
+	}
+
+	output, err := connection.client.InvokeModel(connection.session.Context(), input, cmh.GetClientOptions(input))
+	if err != nil {
+		return "", 0, 0, err
+	}
+
+	return cmh.GetInvokeResult(output.Body)
+}
+
+func (cmh *ClaudeModelHandler) Stream(connection *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error) {
+	body, err := cmh.GetBody(options)
+	if err != nil {
+		return nil, err
+	}
+
+	input := &bedrockruntime.InvokeModelWithResponseStreamInput{
+		ModelId:     aws.String(options.Model),
+		Body:        body,
+		ContentType: aws.String("application/json"),
+		Accept:      aws.String("*/*"),
+	}
+
+	output, err := connection.client.InvokeModelWithResponseStream(connection.session.Context(), input)
+	if err != nil {
+		return nil, handleBedrockError(err)
+	}
+	reader := output.GetStream().Reader
+	eventsChannel := reader.Events()
+	outputStream := integ.NewStream()
+
+	sigTerm := make(chan os.Signal, 1)
+	signal.Notify(sigTerm, syscall.SIGINT, syscall.SIGTERM)
+
+	go (func(ctx context.Context) {
+		defer close(outputStream.Chunk())
+		defer close(outputStream.Err())
+		defer close(outputStream.Done())
+		defer reader.Close()
+	outer:
+		for {
+			select {
+			case e := <-eventsChannel:
+				switch event := e.(type) {
+				case *brtypes.ResponseStreamMemberChunk:
+					result, inputTokens, outputTokens, isDone, err := cmh.HandleStreamChunk(event.Value.Bytes)
+					if err != nil {
+						outputStream.Err() <- err
+						break outer
+					}
+					if result != nil {
+						outputStream.Chunk() <- result
+					}
+					if inputTokens > 0 {
+						usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", connection.integration.GetKey(), inputTokens, connection.session)
+					}
+					if outputTokens > 0 {
+						usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", connection.integration.GetKey(), outputTokens, connection.session)
+					}
+					if isDone {
+						outputStream.Done() <- 0
+						break outer
+					}
+				}
+			case <-ctx.Done():
+				outputStream.Err() <- errors.New("request cancelled")
+				break outer
+			}
+			if reader != nil && reader.Err() != nil {
+				outputStream.Err() <- exceptions.NewBadRequestException(reader.Err().Error())
+				break outer
+			}
+		}
+	})(connection.session.Context())
+
+	return outputStream, nil
+
 }
 
 func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error) {
