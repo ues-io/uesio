@@ -114,6 +114,8 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	}
 
 	switch bot.GetKey() {
+	case "listener:uesio/aikit.runagent":
+		botFunction = runAgentListenerBot
 	case "listener:uesio/studio.createbundle":
 		botFunction = runCreateBundleListenerBot
 	case "listener:uesio/studio.createsite":
