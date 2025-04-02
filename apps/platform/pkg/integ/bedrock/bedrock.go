@@ -11,6 +11,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -23,12 +24,12 @@ type InvokeModelOptions struct {
 	System            string             `json:"system"`
 	Model             string             `json:"model"`
 	MaxTokensToSample int                `json:"max_tokens_to_sample"`
-	Temperature       float64            `json:"temperature"`
-	TopK              int                `json:"top_k"`
-	TopP              float64            `json:"top_p"`
+	Temperature       float64            `json:"temperature,omitempty"`
+	TopK              int                `json:"top_k,omitempty"`
+	TopP              float64            `json:"top_p,omitempty"`
 	Tools             []Tool             `json:"tools,omitempty"`
 	ToolChoice        *ToolChoice        `json:"tool_choice,omitempty"`
-	AspectRatio       string             `json:"aspect_ratio"`
+	AspectRatio       string             `json:"aspect_ratio,omitempty"`
 }
 
 type ToolChoice struct {
@@ -51,7 +52,7 @@ type InputSchema struct {
 	Description string                 `json:"description,omitempty"`
 }
 
-func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
+func getBedrockConnection(ic *wire.IntegrationConnection) (*Connection, error) {
 
 	cfg, err := creds.GetAWSConfig(ic.Context(), ic.GetCredentials())
 	if err != nil {
@@ -60,7 +61,7 @@ func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
 
 	client := bedrockruntime.NewFromConfig(cfg)
 
-	return &connection{
+	return &Connection{
 		session:     ic.GetSession(),
 		integration: ic.GetIntegration(),
 		credentials: ic.GetCredentials(),
@@ -69,7 +70,7 @@ func getBedrockConnection(ic *wire.IntegrationConnection) (*connection, error) {
 
 }
 
-type connection struct {
+type Connection struct {
 	session     *sess.Session
 	integration *meta.Integration
 	credentials *wire.Credentials
@@ -77,10 +78,8 @@ type connection struct {
 }
 
 type ModelHandler interface {
-	GetBody(options *InvokeModelOptions) ([]byte, error)
-	GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error)
-	HandleStreamChunk(chunk []byte) (result []byte, inputTokens, outputTokens int64, isDone bool, err error)
-	GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options)
+	Invoke(c *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error)
+	Stream(c *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error)
 }
 
 const CLAUDE_3_HAIKU_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
@@ -88,8 +87,10 @@ const CLAUDE_3_SONNET_MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
 const CLAUDE_3_5_SONNET_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
 const CLAUDE_3_OPUS_MODEL_ID = "anthropic.claude-3-opus-20240229-v1:0"
 const STABILITY_IMAGE_ULTRA_MODEL_ID = "stability.stable-image-ultra-v1:0"
+const UESIO_TEST_MODEL_ID = "uesio.test-simple-responder"
 
 var modelHandlers = map[string]ModelHandler{
+	UESIO_TEST_MODEL_ID:            uesioTestModelHandler,
 	CLAUDE_3_HAIKU_MODEL_ID:        claudeModelHandler,
 	CLAUDE_3_SONNET_MODEL_ID:       claudeModelHandler,
 	CLAUDE_3_5_SONNET_MODEL_ID:     claudeModelHandler,
@@ -134,26 +135,6 @@ func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions,
 		if options.MaxTokensToSample > MAX_TOKENS_TO_SAMPLE {
 			options.MaxTokensToSample = MAX_TOKENS_TO_SAMPLE
 		}
-	}
-
-	if options.Temperature == 0 {
-		options.Temperature = 0.5
-	}
-
-	if options.Temperature < 0 {
-		options.Temperature = 0
-	}
-
-	if options.Temperature > 1 {
-		options.Temperature = 1
-	}
-
-	if options.TopP == 0 {
-		options.TopP = 0.999
-	}
-
-	if options.TopK == 0 {
-		options.TopK = 250
 	}
 
 	return options, nil

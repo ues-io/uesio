@@ -122,6 +122,9 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+	case string:
+		w.Header().Set("content-type", "text/plain")
+		fmt.Fprint(w, result)
 	default:
 		// Send the response to the client as JSON
 		filejson.RespondJSON(w, r, result)
