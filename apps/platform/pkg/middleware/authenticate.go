@@ -55,7 +55,9 @@ func Authenticate(next http.Handler) http.Handler {
 
 		user, err := auth.GetUserFromBrowserSession(browserSession, site)
 		if err != nil {
-			session.Remove(browserSession, w)
+			if browserSession != nil {
+				session.Remove(browserSession, w)
+			}
 			publicSession, err := auth.GetPublicSession(site, nil)
 			if err != nil {
 				http.Error(w, "Failed to create public session: "+err.Error(), http.StatusInternalServerError)
