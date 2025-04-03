@@ -1,0 +1,11 @@
+name: tools
+type: LIST
+label: Tools
+subfields:
+  - name: name
+    label: Name
+    type: TEXT
+  - name: type
+    label: Type
+    type: TEXT
+subtype: STRUCT
