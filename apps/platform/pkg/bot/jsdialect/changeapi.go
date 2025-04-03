@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -55,9 +57,9 @@ func (c *ChangeAPI) SetAll(record map[string]interface{}) {
 }
 
 func (c *ChangeAPI) AddError(message string) {
-	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, "", message))
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, "", errors.New(message)))
 }
 
 func (c *ChangeAPI) AddFieldError(message string, field string) {
-	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, field, message))
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, field, errors.New(message)))
 }

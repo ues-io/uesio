@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -32,7 +33,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 
 	metadataResponse := wire.MetadataCache{}
 	if err := collections.Load(&metadataResponse, session, nil); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("unable to load collection metadata: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("unable to load collection metadata: %w", err.Error())))
 		return
 	}
 

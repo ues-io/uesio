@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -27,7 +28,7 @@ func ViewMetadata(w http.ResponseWriter, r *http.Request) {
 	deps.Collection = nil
 
 	if err := routing.GetViewDependencies(namespace, name, deps, session); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Builder Metadata: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("Failed Getting Builder Metadata: %w", err)))
 		return
 	}
 

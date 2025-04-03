@@ -16,13 +16,15 @@ func TranslatePGError(err error) error {
 		switch pgErr.Code {
 		case "22P02":
 			// invalid input syntax
-			return exceptions.NewBadRequestException(pgErr.Message)
+			// We're intentionally hiding the details of the error
+			// for example: pgErr.Severity and pgErr.Code
+			return exceptions.NewBadRequestException(errors.New(pgErr.Message))
 		}
 	}
 
 	msg := err.Error()
 	if strings.Contains(msg, "failed to encode") || strings.Contains(msg, "failed to decode") {
-		return exceptions.NewBadRequestException(msg)
+		return exceptions.NewBadRequestException(err)
 	}
 	return err
 }

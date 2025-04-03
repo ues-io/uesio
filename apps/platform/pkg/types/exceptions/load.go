@@ -1,13 +1,6 @@
 package exceptions
 
-func NewLoadException(message string) *LoadException {
-	return &LoadException{
-		Message: message,
-		error:   NewBadRequestException(message),
-	}
-}
-
-func NewLoadExceptionForError(error error) *LoadException {
+func NewLoadException(error error) *LoadException {
 	return &LoadException{
 		Message: error.Error(),
 		error:   error,
@@ -25,11 +18,4 @@ func (se *LoadException) Error() string {
 		message = se.error.Error()
 	}
 	return message
-}
-
-func (se *LoadException) GoError() error {
-	if se.error != nil {
-		return se.error
-	}
-	return NewBadRequestException(se.Error())
 }

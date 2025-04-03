@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -31,7 +33,7 @@ func NewBeforeSaveAPI(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection
 }
 
 func (bs *BeforeSaveAPI) AddError(message string) {
-	bs.op.AddError(exceptions.NewSaveException("", "", message))
+	bs.op.AddError(exceptions.NewSaveException("", "", errors.New(message)))
 }
 
 func (bs *BeforeSaveAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {

@@ -34,7 +34,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("action parameter is required")))
 		return
 	}
 
@@ -47,7 +47,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("Unable to obtain platform connection: %w", err))
 		return
 	}
 
@@ -144,7 +144,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("action parameter is required")))
 		return
 	}
 

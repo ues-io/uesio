@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -130,7 +131,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return exceptions.NewBadRequestException("tried to add blank collection")
+		return exceptions.NewBadRequestException(errors.New("tried to add blank collection"))
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}

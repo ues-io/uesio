@@ -133,7 +133,7 @@ func processConditions(
 				if condition.NoValueBehavior == "DEACTIVATE" {
 					continue
 				}
-				return nil, exceptions.NewBadRequestException("Invalid Condition, param '" + condition.Param + "' was not provided")
+				return nil, exceptions.NewBadRequestException(fmt.Errorf("Invalid Condition, param '%s' was not provided", condition.Param))
 			}
 			condition.Value = value
 		}
@@ -143,7 +143,7 @@ func processConditions(
 			for _, param := range condition.Params {
 				value, ok := op.Params[param]
 				if !ok {
-					return nil, exceptions.NewBadRequestException("Invalid Condition, param: '" + param + "' was not provided")
+					return nil, exceptions.NewBadRequestException(fmt.Errorf("Invalid Condition, param: '%s' was not provided", param))
 				}
 				values = append(values, value)
 			}
@@ -166,14 +166,14 @@ func processConditions(
 			}
 
 			if lookupOp == nil {
-				return nil, exceptions.NewBadRequestException("Could not find lookup wire: " + condition.LookupWire)
+				return nil, exceptions.NewBadRequestException(fmt.Errorf("Could not find lookup wire: %s", condition.LookupWire))
 			}
 
 			values := make([]interface{}, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
-					return exceptions.NewBadRequestException("could not get value of specific Lookup field from record: " + condition.LookupField)
+					return exceptions.NewBadRequestException(fmt.Errorf("could not get value of specific Lookup field from record: %s", condition.LookupField))
 				}
 				values = append(values, value)
 				return nil
@@ -189,7 +189,7 @@ func processConditions(
 				condition.Operator = "IN"
 			}
 			if !(condition.Operator == "IN" || condition.Operator == "NOT_IN") {
-				return nil, exceptions.NewBadRequestException("Invalid operator for lookup condition, must be one of [IN, NOT_IN]: " + condition.Operator)
+				return nil, exceptions.NewBadRequestException(fmt.Errorf("Invalid operator for lookup condition, must be one of [IN, NOT_IN]: %s", condition.Operator))
 			}
 		}
 		useConditions = append(useConditions, condition)

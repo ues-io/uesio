@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -16,7 +17,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
 	var saveRequestBatch datasource.SaveRequestBatch
 	if err := json.NewDecoder(r.Body).Decode(&saveRequestBatch); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid save request: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("invalid save request: %w", err)))
 		return
 	}
 

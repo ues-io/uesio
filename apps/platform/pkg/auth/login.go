@@ -108,7 +108,7 @@ func ResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user 
 func GetUserFromFederationID(authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
 
 	if session.GetWorkspace() != nil {
-		return nil, nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces")
+		return nil, nil, exceptions.NewBadRequestException(errors.New("Login isn't currently supported for workspaces"))
 	}
 
 	adminSession := sess.GetAnonSessionFrom(session)

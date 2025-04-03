@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -52,7 +53,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	err := datasource.LoadWithError(op, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Load Failed: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("Load Failed: %w", err)))
 		return
 	}
 

@@ -22,7 +22,7 @@ func ValidateEmailField(field *wire.FieldMetadata) ValidationFunc {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Errorf("%s is not a valid email address", field.Label))
 			}
 		}
 		return nil
