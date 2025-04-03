@@ -31,7 +31,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, err
 	}
 
-	modelID := param.GetOptionalString(params, "model", "anthropic.claude-3-5-sonnet-20241022-v2:0")
+	modelID := param.GetOptionalString(params, "model", bedrock.CLAUDE_3_5_SONNET_MODEL_ID)
 
 	hiddenInputPrefix := param.GetOptionalString(params, "hiddenInputPrefix", "")
 
