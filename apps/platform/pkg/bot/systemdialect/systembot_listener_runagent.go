@@ -102,8 +102,6 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 
 	err = saveNewMessages(userInput, resultMessages, threadID, connection, session)
 	if err != nil {
-		// TODO: Just wrapping the error in bad request for now.
-		// We could handle this better.
 		return nil, exceptions.NewBadRequestException("", err)
 	}
 
