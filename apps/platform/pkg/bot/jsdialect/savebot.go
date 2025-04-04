@@ -1,8 +1,6 @@
 package jsdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -105,7 +103,7 @@ func (sba *SaveBotAPI) GetUser() *UserAPI {
 }
 
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
-	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, errors.New(message)))
+	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, message, nil))
 }
 
 func (sba *SaveBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

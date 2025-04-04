@@ -1,8 +1,6 @@
 package systemdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -78,7 +76,7 @@ func requireValue(change *wire.ChangeItem, fieldName string) (string, error) {
 				msg = "unable to update existing record of collection " + change.Metadata.GetFullName() + " with key " + change.RecordKey + ": " + msg
 			}
 		}
-		return "", exceptions.NewSaveException(change.RecordKey, fieldName, errors.New(msg))
+		return "", exceptions.NewSaveException(change.RecordKey, fieldName, msg, nil)
 	}
 
 	return value, nil

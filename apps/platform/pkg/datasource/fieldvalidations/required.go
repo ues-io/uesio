@@ -15,7 +15,7 @@ func ValidateRequiredField(field *wire.FieldMetadata) ValidationFunc {
 		isMissingInsert := change.IsNew && (valueIsUndefined || valueIsEmpty)
 		isMissingUpdate := !change.IsNew && !valueIsUndefined && valueIsEmpty
 		if isMissingInsert || isMissingUpdate {
-			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Errorf("Field: %s is required", field.Label))
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf("Field: %s is required", field.Label), nil)
 		}
 		return nil
 	}

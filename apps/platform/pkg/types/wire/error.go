@@ -23,8 +23,8 @@ func NewGenericSaveException(err error) *exceptions.SaveException {
 			// Key (tenant, collection, uniquekey)=(site:uesio/studio:prod, uesio/studio.bundledependency, uesio/tests:dev:uesio/builder) already exists.
 			parts := strings.Split(strings.TrimSuffix(strings.Trim(pgError.Detail, uesioUniqueKeyDupDetailPrefix), uesioUniqueKeyDupDetailSuffix), ", ")
 			recordID := parts[2]
-			return exceptions.NewSaveException(recordID, commonfields.UniqueKey, fmt.Errorf(formattedUesioDupError, parts[1], recordID))
+			return exceptions.NewSaveException(recordID, commonfields.UniqueKey, fmt.Sprintf(formattedUesioDupError, parts[1], recordID), nil)
 		}
 	}
-	return exceptions.NewSaveException("", "", err)
+	return exceptions.NewSaveException("", "", "", err)
 }

@@ -1,21 +1,21 @@
 package exceptions
 
-func NewLoadException(error error) *LoadException {
-	return &LoadException{
-		Message: error.Error(),
-		error:   error,
-	}
+func NewLoadException(message string, err error) *LoadException {
+	// We put the formatted message in here so that
+	// Marshalling works out of the box.
+	// The other option is a custom marshaller
+	return &LoadException{printErr("", message, err), err}
 }
 
 type LoadException struct {
 	Message string `json:"message"`
-	error   error
+	err     error
 }
 
-func (se *LoadException) Error() string {
-	message := se.Message
-	if se.error != nil {
-		message = se.error.Error()
-	}
-	return message
+func (e *LoadException) Error() string {
+	return e.Message
+}
+
+func (e *LoadException) Unwrap() error {
+	return e.err
 }

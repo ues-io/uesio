@@ -18,7 +18,7 @@ func ValidateNumberField(field *wire.FieldMetadata) ValidationFunc {
 		_, isInt := val.(int)
 		if err == nil && !isFloat && !isInt64 && !isInt {
 			return exceptions.NewSaveException(
-				change.RecordKey, field.GetFullName(), fmt.Errorf("Field: %s is not a valid number", field.Label))
+				change.RecordKey, field.GetFullName(), fmt.Sprintf("Field: %s is not a valid number", field.Label), nil)
 		}
 		return nil
 	}
