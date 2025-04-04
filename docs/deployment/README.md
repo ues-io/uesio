@@ -6,7 +6,7 @@ The Uesio app is distributed via a single Docker image, which you can pull and r
 docker pull ghcr.io/ues-io/uesio:latest
 ```
 
-For local testing, just running the web app's `serve` command should be fine.
+For local testing, just running `npm run start` should be fine.
 
 In Production, you may also want to run the Uesio `worker` command as a separate process. This handles asynchronous work, such as Uesio usage data aggregation, but in the future other asynchronous tasks may be added to this as well.
 
@@ -16,7 +16,7 @@ To run the app locally with Docker Compose, simply run the following:
 
 ```
 npm run in-docker
-open http://localhost:3000
+open http://studio.localhost:3000
 ```
 
 ## Run in Production
