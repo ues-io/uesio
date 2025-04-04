@@ -21,13 +21,13 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 
 	appID, ok := vars["app"]
 	if !ok {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle missing required parameter app"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle missing required parameter app", nil))
 		return
 	}
 
 	version, ok := vars["version"]
 	if !ok {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle missing required parameter version"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle missing required parameter version", nil))
 		return
 	}
 
@@ -39,7 +39,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 		Context:    session.Context(),
 	})
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle", err))
 		return
 	}
 
@@ -53,7 +53,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// Note - We are streaming result so Http StatusCode will have been set to 200 after
 		// the first Write so we implement custom approach to detecting failure on client
-		ctlutil.HandleTrailingError(w, exceptions.NewBadRequestException("Failed Getting Bundle: "+err.Error()))
+		ctlutil.HandleTrailingError(w, exceptions.NewBadRequestException("Failed Getting Bundle", err))
 		return
 	}
 }

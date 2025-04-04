@@ -137,7 +137,7 @@ func TestCollectionUnmarshal(t *testing.T) {
 			"somecollection_badname.yaml",
 			"my/namespace",
 			nil,
-			exceptions.NewBadRequestException("Metadata name does not match filename: somecollection, somecollection_badname"),
+			exceptions.NewBadRequestException("Metadata name does not match filename: somecollection, somecollection_badname", nil),
 		},
 	}
 

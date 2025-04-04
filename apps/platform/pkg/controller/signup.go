@@ -2,7 +2,7 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -26,19 +26,19 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body", nil))
 		return
 	}
 
 	systemSession, err := auth.GetSystemSession(session.Context(), site, nil)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Signup failed: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 

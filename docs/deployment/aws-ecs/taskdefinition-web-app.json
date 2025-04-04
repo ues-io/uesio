@@ -24,15 +24,35 @@
           "value": "your.domain"
         },
         {
-          "name": "UESIO_BUNDLES_BUCKET_NAME",
-          "value": "uesio-bundles"
+          "name": "UESIO_REDIS_HOST",
+          "value": "your.redis.host"
         },
         {
-          "name": "UESIO_REDIS_HOST",
-          "value": "123345678.abcdefg.ng.0001.use1.cache.amazonaws.com"
+          "name": "UESIO_PLATFORM_BUNDLESTORE_TYPE",
+          "value": "uesio.aws"
+        },
+        {
+          "name": "UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS",
+          "value": "uesio/core.aws"
+        },
+        {
+          "name": "UESIO_PLATFORM_FILESOURCE_TYPE",
+          "value": "uesio.aws"
+        },
+        {
+          "name": "UESIO_PLATFORM_FILESOURCE_CREDENTIALS",
+          "value": "uesio/core.aws"
         },
         {
           "name": "UESIO_SESSION_STORE",
+          "value": "redis"
+        },
+        {
+          "name": "UESIO_PLATFORM_CACHE",
+          "value": "redis"
+        },
+        {
+          "name": "UESIO_USAGE_HANDLER",
           "value": "redis"
         },
         {
@@ -44,26 +64,18 @@
           "value": "postgresio"
         },
         {
-          "name": "UESIO_USERFILES_BUCKET_NAME",
-          "value": "uesio-userfiles"
-        },
-        {
           "name": "UESIO_DB_HOST",
-          "value": "your.db.url"
+          "value": "your.postgres.host"
         }
       ],
       "secrets": [
         {
           "name": "UESIO_DB_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:db_password::"
-        },
-        {
-          "name": "UESIO_SECRET_UESIO_CORE_OPENAIKEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:openai_api_key::"
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:/uesio/secrets:db_password::"
         },
         {
           "name": "UESIO_SECRET_UESIO_APPKIT_RESEND_KEY",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:/uesio/secrets:resend_api_key::"
+          "valueFrom": "arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:/uesio/secrets:resend_api_key::"
         }
       ],
       "mountPoints": [],
@@ -72,7 +84,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "uesio-logs",
-          "awslogs-region": "us-east-1",
+          "awslogs-region": "YOUR_REGION",
           "awslogs-stream-prefix": "uesio"
         }
       }

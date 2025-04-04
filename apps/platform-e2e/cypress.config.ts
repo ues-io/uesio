@@ -1,16 +1,8 @@
 import { nxE2EPreset } from "@nx/cypress/plugins/cypress-preset.js"
 import { defineConfig } from "cypress"
 
-// legacy behavior default to https if not set or empty
-// TODO: should default to http (localhost refactor)
-const scheme =
-  !process.env.UESIO_USE_HTTPS || process.env.UESIO_USE_HTTPS === "true"
-    ? "https"
-    : "http"
-// legacy behavior default to uesio-dev.com if not set or empty
-// TODO: should default to localhost (localhost refactor)
-const primaryDomain = process.env.UESIO_PRIMARY_DOMAIN || "uesio-dev.com"
-// legacy behavior default to 3000 if not set or empty
+const scheme = process.env.UESIO_USE_HTTPS === "true" ? "https" : "http"
+const primaryDomain = process.env.UESIO_PRIMARY_DOMAIN || "localhost"
 const port = process.env.UESIO_PORT || "3000"
 const studioBaseUrl = `${scheme}://studio.${primaryDomain}:${port}`
 const automationUsername = process.env.UESIO_AUTOMATION_USERNAME || "uesio"

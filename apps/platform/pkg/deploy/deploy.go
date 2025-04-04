@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"path"
@@ -227,7 +228,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				if exceptions.GetStatusCodeForError(err) < 500 {
 					return err
 				}
-				return exceptions.NewBadRequestException("Unable to read file '" + collectionItem.GetKey() + "': " + err.Error())
+				return exceptions.NewBadRequestException(fmt.Sprintf("Unable to read file '%s'", collectionItem.GetKey()), err)
 			}
 			continue
 		}

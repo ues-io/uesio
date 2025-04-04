@@ -73,10 +73,6 @@ func LoadWithError(op *wire.LoadOp, session *sess.Session, options *LoadOptions)
 	}
 
 	if op.Errors != nil {
-		// TODO: Using [0] results in losing the original error in some cases which results in not always returning
-		// an appropriate HTTP status code.  For example, the following url which has an invalid format for userfileid
-		// param encounters HTTP 500 when it should be HTTP 400
-		// https://studio.uesio-dev.com:3000/site/userfiles/download?userfileid=my-bad-id&version=1734112100
 		return (*op.Errors)[0]
 	}
 	return nil
@@ -107,7 +103,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 		err := getOpMetadata(op, ops, metadataResponse, session, connection)
 		if err != nil {
-			op.AddError(exceptions.NewLoadExceptionForError(err))
+			op.AddError(exceptions.NewLoadException("", err))
 			continue
 		}
 
@@ -119,7 +115,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
-			op.AddError(exceptions.NewLoadExceptionForError(err))
+			op.AddError(exceptions.NewLoadException("", err))
 			continue
 		}
 		if opNeedsRecordLevelAccessCheck(op, collectionMetadata, userPerms, session) {
@@ -139,7 +135,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	for _, op := range opsToQuery {
 		err := queryOp(op, opsToQuery, metadataResponse, session, connection)
 		if err != nil {
-			op.AddError(exceptions.NewLoadExceptionForError(err))
+			op.AddError(exceptions.NewLoadException("", err))
 			continue
 		}
 	}

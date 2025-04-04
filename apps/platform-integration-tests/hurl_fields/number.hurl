@@ -34,7 +34,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type json"
+jsonpath "$.wires[0].errors[0].message" contains "invalid input syntax for type json"
 
 # Operator: EQ | valueSource: VALUE | value as number
 # entry 3
@@ -154,7 +154,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.number"}],            
+            "fields": [{"id": "uesio/tests.number"}],
             "query":true,
             "conditions": [
                 {

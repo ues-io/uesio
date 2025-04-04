@@ -51,6 +51,14 @@ func (op *SaveOp) HasErrors() bool {
 	return len(*op.Errors) > 0
 }
 
+func (op *SaveOp) GetErrorStrings() []string {
+	errorStrings := make([]string, len(*op.Errors))
+	for i, saveError := range *op.Errors {
+		errorStrings[i] = saveError.Error()
+	}
+	return errorStrings
+}
+
 func (op *SaveOp) LoopInserts(changeFunc func(change *ChangeItem) error) error {
 	if op.Inserts != nil {
 		for i := range op.Inserts {

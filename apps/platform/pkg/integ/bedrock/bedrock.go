@@ -145,7 +145,7 @@ func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions,
 func handleBedrockError(err error) error {
 	var validationErr *brtypes.ValidationException
 	if errors.As(err, &validationErr) {
-		return exceptions.NewBadRequestException(validationErr.ErrorMessage())
+		return exceptions.NewBadRequestException("", validationErr)
 	}
 
 	// the REST API docs and golang sdk docs differ on types of errors & http status
@@ -161,5 +161,5 @@ func handleBedrockError(err error) error {
 		return exceptions.NewUnauthorizedException(respErr.Error())
 	}
 
-	return exceptions.NewBadRequestException(err.Error())
+	return exceptions.NewBadRequestException("", err)
 }

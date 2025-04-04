@@ -19,6 +19,10 @@ func InDevMode() bool {
 	return devMode
 }
 
+func IsLocalhost() bool {
+	return GetPrimaryDomain() == "localhost"
+}
+
 // SetDevMode alters the dev mode flag for testing purposes.
 // This should be reset by any unit tests using ResetDevMode()
 func SetDevMode(val bool) (originalVal bool) {

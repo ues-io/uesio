@@ -10,13 +10,14 @@ C = US
 ST = Tennessee
 L = Chattanooga
 O = Uesio
-emailAddress = ben@uesio.com
-CN = uesio-dev.com
+CN = localhost
 
 [v3_req]
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = *.dev.uesio
-DNS.2 = *.uesio-dev.com
-DNS.3 = uesio-dev.com
+DNS.1 = localhost
+DNS.2 = *.localhost
+DNS.3 = [::1]
+IP.1=127.0.0.1
+IP.2=fe80::1

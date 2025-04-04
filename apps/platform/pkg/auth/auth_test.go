@@ -9,7 +9,7 @@ import (
 
 func TestParseHost(t *testing.T) {
 
-	env.SetPrimaryDomain("ues.io")
+	defaultPrimaryDomain := "ues.io"
 
 	type testCase struct {
 		name                string
@@ -18,6 +18,7 @@ func TestParseHost(t *testing.T) {
 		expected_domainType string
 		expected_domain     string
 		expected_subdomain  string
+		primary_domain      string
 	}
 
 	var tests = []testCase{
@@ -28,6 +29,7 @@ func TestParseHost(t *testing.T) {
 			"subdomain",
 			"ues.io:3000",
 			"studio",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario B",
@@ -36,6 +38,7 @@ func TestParseHost(t *testing.T) {
 			"domain",
 			"uesio-dev.com:3000",
 			"",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario C",
@@ -44,6 +47,7 @@ func TestParseHost(t *testing.T) {
 			"domain",
 			"www.thecloudmasters.com:3000",
 			"",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario D",
@@ -52,6 +56,7 @@ func TestParseHost(t *testing.T) {
 			"subdomain",
 			"ues.io",
 			"studio",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario E",
@@ -60,6 +65,7 @@ func TestParseHost(t *testing.T) {
 			"domain",
 			"uesio-dev.com",
 			"",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario F",
@@ -68,6 +74,7 @@ func TestParseHost(t *testing.T) {
 			"domain",
 			"www.thecloudmasters.com",
 			"",
+			defaultPrimaryDomain,
 		},
 		{
 			"Scenario G",
@@ -76,12 +83,51 @@ func TestParseHost(t *testing.T) {
 			"domain",
 			"www.hello.site.com",
 			"",
+			defaultPrimaryDomain,
+		},
+		{
+			"Scenario I",
+			"Scenario with multi-segment subdomain and non-localhost",
+			"foo.bar.ues.io",
+			"subdomain",
+			"ues.io",
+			"foo.bar",
+			defaultPrimaryDomain,
+		},
+		{
+			"Scenario J",
+			"Scenario with localhost domain",
+			"localhost",
+			"domain",
+			"localhost",
+			"",
+			"localhost",
+		},
+		{
+			"Scenario K",
+			"Scenario with subdomain & localhost",
+			"studio.localhost",
+			"subdomain",
+			"localhost",
+			"studio",
+			"localhost",
+		},
+		{
+			"Scenario L",
+			"Scenario with multi-segment subdomain & localhost",
+			"foo.bar.localhost",
+			"subdomain",
+			"localhost",
+			"foo.bar",
+			"localhost",
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run("it should "+tc.description, func(t *testing.T) {
-			domainType, domain, subdomain, _ := parseHost(tc.host)
+			env.SetPrimaryDomain(tc.primary_domain)
+			domainType, domain, subdomain, _, err := parseHost(tc.host)
+			assert.Nil(t, err)
 			assert.Equal(t, domainType, tc.expected_domainType)
 			assert.Equal(t, domain, tc.expected_domain)
 			assert.Equal(t, subdomain, tc.expected_subdomain)

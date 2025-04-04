@@ -539,7 +539,7 @@ func getParamDef(p *BotParam) (typeOutput, importOutput string, err error) {
 	}
 	typeOutput, importOutput, err = getTSTypeNameForParam(p)
 	if err != nil {
-		return "", "", exceptions.NewBadRequestException("Could not generate type for parameter: " + p.Name + ": " + err.Error())
+		return "", "", exceptions.NewBadRequestException(fmt.Sprintf("Could not generate type for parameter: %s", p.Name), err)
 	}
 	// example: "foo: string", "bar?: number", "baz: CustomType"
 	typeOutput = p.Name + joiner + typeOutput
@@ -554,7 +554,7 @@ func (b *Bot) GenerateTypeDefinitions() (string, error) {
 		return "", nil
 	}
 	if b.Name == "" || b.Namespace == "" {
-		return "", exceptions.NewBadRequestException("Bot name and namespace must be provided to generate types")
+		return "", exceptions.NewBadRequestException("Bot name and namespace must be provided to generate types", nil)
 	}
 	if b.Params == nil {
 		return "", nil
