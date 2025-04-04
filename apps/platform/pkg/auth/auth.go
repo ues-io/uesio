@@ -25,7 +25,11 @@ import (
 
 func init() {
 	session.Global.Close()
-	allowInsecureCookies := os.Getenv("UESIO_ALLOW_INSECURE_COOKIES")
+	// The localhost check here is only necessary because hurl doesn't handle secure cookies against localhost by default like browsers, curl, etc.
+	// do. If/When they treat "localhost" as a secure connection the localhost condition can be removed.
+	// TODO: File an issue with hurl regarding this.  libcurl is returning the cookie to them, its in the response, but they are not carrying it
+	// forward to subsequent requests.
+	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.GetPrimaryDomain() == "localhost" || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
 	storageType := os.Getenv("UESIO_SESSION_STORE")
 
 	var store session.Store
@@ -40,7 +44,7 @@ func init() {
 	}
 
 	options := &session.CookieMngrOptions{
-		AllowHTTP: allowInsecureCookies == "true",
+		AllowHTTP: allowInsecureCookies,
 	}
 
 	session.Global = session.NewCookieManagerOptions(store, options)

@@ -51,7 +51,6 @@ func init() {
 	})
 
 	// Authentication Types
-	// TODO: Should we restrict this to UESIO_DEV and/or PRIMARY_DOMAIN=localhost only?
 	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})

@@ -16,7 +16,7 @@ services:
       retries: 4
       start_period: 10s
   app:
-    image: "${APP_IMAGE:?error}"
+    image: "${APP_IMAGE:?APP_IMAGE is required}"
     depends_on:
       db:
         condition: service_healthy
@@ -26,33 +26,29 @@ services:
       - "${UESIO_PORT:-3000}:${UESIO_PORT:-3000}"
     environment:
       UESIO_REDIS_HOST: redis
-      UESIO_REDIS_PORT: 6379
-      UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
-      UESIO_CACHE_SITE_BUNDLES: "true"
       UESIO_DB_DATABASE: pgtest
       UESIO_DB_HOST: db
       UESIO_DB_USER: postgres
       UESIO_DB_PASSWORD: postgres
-      UESIO_DB_PORT: 5432
-      UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.local
-      UESIO_PLATFORM_FILESOURCE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.local
-      UESIO_SESSION_STORE: "${UESIO_SESSION_STORE-redis}"
-      UESIO_PLATFORM_CACHE: "${UESIO_PLATFORM_CACHE-redis}"
-      UESIO_USAGE_HANDLER: "${UESIO_USAGE_HANDLER-redis}"
-      UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
-      UESIO_MOCK_AUTH: "${UESIO_MOCK_AUTH-true}"
-      # TODO: should default to false (localhost refactor)
-      UESIO_USE_HTTPS: "${UESIO_USE_HTTPS-}"
-      UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES-}"
-      UESIO_DEBUG_SQL: "${UESIO_DEBUG_SQL-true}"
-      UESIO_PORT: "${UESIO_PORT-}"
-      UESIO_HOST: "${UESIO_HOST-}"
-      UESIO_DEV: "${UESIO_DEV-true}"
-      # TODO: should default to localhost (localhost refactor)
-      UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN-}"
-      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL-}"
+      UESIO_SESSION_STORE: redis
+      UESIO_PLATFORM_CACHE: redis
+      UESIO_USAGE_HANDLER: redis
+      UESIO_MOCK_AUTH: true
+      UESIO_DEBUG_SQL: true
+      UESIO_DEV: true
+      UESIO_LOG_LEVEL: -4
+      # All the above are fixed configuration for tests and we do not
+      # pass through any other environment values that may be set
+      # to ensure a controlled test environment.  The below will
+      # honor current environment variables to support running
+      # in CI and local dev to ensure we respect specific machine
+      # setup (e.g., ssl installed, hosts entries, etc.)
+      UESIO_USE_HTTPS: "${UESIO_USE_HTTPS:-false}"
+      UESIO_PORT: "${UESIO_PORT:-3000}"
+      UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN:-localhost}"
+      # for situations where UESIO_PRIMARY_DOMAIN is not localhost and
+      # UESIO_USE_HTTPS is not true, we need to pass this through
+      UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES:-false}"
     volumes:
       - ./apps/platform/ssl:/ssl
     command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"
