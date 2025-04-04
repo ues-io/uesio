@@ -14,9 +14,9 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "model": "uesio.test-simple-responder"
 }
 HTTP 400
-```
-missing required parameter: agent
-```
+[Asserts]
+body contains "missing required parameter: agent"
+
 
 # Invoke with missing thread parameter
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -25,9 +25,9 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "agent": "uesio/tests.myagent"
 }
 HTTP 400
-```
-missing required parameter: thread
-```
+[Asserts]
+body contains "missing required parameter: thread"
+
 
 # Invoke with missing input parameter
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -37,9 +37,8 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "thread": "mythreadid"
 }
 HTTP 400
-```
-missing required parameter: input
-```
+[Asserts]
+body contains "missing required parameter: input"
 
 # Invoke with poorly formatted bad agent id
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -50,9 +49,8 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "input": "can you help me?"
 }
 HTTP 400
-```
-Bad Key for Agent: bad_agent_id
-```
+[Asserts]
+body contains "Bad Key for Agent: bad_agent_id"
 
 # Invoke with correctly formatted bad agent id
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -63,9 +61,8 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "input": "can you help me?"
 }
 HTTP 400
-```
-Couldn't find item from platform load: Collection=uesio/studio.agent, Conditions=uesio/core.uniquekey :: uesio/tests:dev:bad_agent_id
-```
+[Asserts]
+body contains "Couldn't find item from platform load: Collection=uesio/studio.agent, Conditions=uesio/core.uniquekey :: uesio/tests:dev:bad_agent_id"
 
 # Invoke with good agent id, but incompatible model
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -76,9 +73,8 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "input": "can you help me?"
 }
 HTTP 400
-```
-invalid message format for agent
-```
+[Asserts]
+body contains "invalid message format for agent"
 
 # Invoke with good agent id, bad thread id
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -89,9 +85,8 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
     "input": "can you help me?"
 }
 HTTP 400
-```
-invalid input syntax for type uuid: "bad_thread_id"
-```
+[Asserts]
+body contains "invalid input syntax for type uuid: \"bad_thread_id\""
 
 # Create a real thread to use with the agent.
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
