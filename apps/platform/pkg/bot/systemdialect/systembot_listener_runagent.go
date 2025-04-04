@@ -43,17 +43,13 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	// Load in the agent metadata
 	agent, err := meta.NewAgent(agentKey)
 	if err != nil {
-		// TODO: Just wrapping the error in bad request for now.
-		// We could handle this better.
-		return nil, exceptions.NewBadRequestException(err.Error())
+		return nil, exceptions.NewBadRequestException("", err)
 	}
 
 	err = bundle.Load(agent, nil, session.RemoveVersionContext(), connection)
 	if err != nil {
 		if exceptions.IsType[*exceptions.NotFoundException](err) {
-			// TODO: Just wrapping the error in bad request for now.
-			// We could handle this better.
-			return nil, exceptions.NewBadRequestException(err.Error())
+			return nil, exceptions.NewBadRequestException("", err)
 		}
 		return nil, err
 	}
@@ -101,14 +97,14 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 
 	resultMessages, ok := result.([]bedrock.MessagesContent)
 	if !ok {
-		return nil, exceptions.NewBadRequestException("invalid message format for agent")
+		return nil, exceptions.NewBadRequestException("invalid message format for agent", nil)
 	}
 
 	err = saveNewMessages(userInput, resultMessages, threadID, connection, session)
 	if err != nil {
 		// TODO: Just wrapping the error in bad request for now.
 		// We could handle this better.
-		return nil, exceptions.NewBadRequestException(err.Error())
+		return nil, exceptions.NewBadRequestException("", err)
 	}
 
 	return map[string]any{"results": resultMessages}, nil
