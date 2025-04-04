@@ -29,7 +29,7 @@ services:
       UESIO_DB_HOST: db
       UESIO_DB_USER: postgres
       UESIO_DB_PASSWORD: postgres
-      UESIO_DB_DATABASE: pgtest  
+      UESIO_DB_DATABASE: pgtest
       UESIO_MOCK_AUTH: true
       UESIO_DEBUG_SQL: true
       UESIO_DEV: true
