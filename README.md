@@ -176,14 +176,14 @@ open http://studio.localhost:3000
 If you have [SSL](#set-up-ssl) you can access the Studio via the following:
 
 ```
-open https://studio.localhost.com:3000
+open https://studio.localhost:3000
 ```
 
 To run the app in Docker locally:
 
 ```
 npm run in-docker
-open https://studio.localhost.com:3000
+open https://studio.localhost:3000
 ```
 
 # <a id="set-up-ssl"></a> Set up SSL
@@ -399,7 +399,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 ## Testing (Unit, Integration & E2E)
 
 > [!IMPORTANT]
-> The default behavior for all tests is to run against `https://studio.localhost.com:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
+> The default behavior for all tests is to run against `https://studio.localhost:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
 
 To run the various test suites, there are a number of commands available:
 
