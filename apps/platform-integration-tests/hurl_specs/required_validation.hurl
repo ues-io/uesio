@@ -28,7 +28,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
+jsonpath "$.wires[0].errors[0].message" contains "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 # Test try to INSERT required field as empty string
@@ -52,7 +52,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
+jsonpath "$.wires[0].errors[0].message" contains "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 
@@ -110,7 +110,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
+jsonpath "$.wires[0].errors[0].message" contains "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"
 
 # Test try to UPDATE nulling with empty string a required field on changes
@@ -135,5 +135,5 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field: Genus is required"
+jsonpath "$.wires[0].errors[0].message" contains "Field: Genus is required"
 jsonpath "$.wires[0].errors[0].fieldid" == "uesio/tests.genus"

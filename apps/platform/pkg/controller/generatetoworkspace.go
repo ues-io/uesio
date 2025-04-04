@@ -23,7 +23,6 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		// this should be a BadRequestException
 		ctlutil.HandleError(w, err)
 		return
 	}

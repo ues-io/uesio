@@ -22,8 +22,7 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Sprintf(
-			"invalid integration: %s", err.Error())))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid integration", err))
 		return
 	}
 	conf, err := oauth.GetConfig(integrationConnection.GetCredentials(), fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host))

@@ -68,7 +68,7 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	}
 
 	if len(uniqueErrorStrings) > 0 {
-		return exceptions.NewBadRequestException(strings.Join(errorStrings, " : "))
+		return exceptions.NewBadRequestException(strings.Join(errorStrings, " : "), nil)
 	}
 
 	return nil

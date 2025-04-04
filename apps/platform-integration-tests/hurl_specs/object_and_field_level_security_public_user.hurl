@@ -23,7 +23,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
+jsonpath "$.wires[0].errors[0].message" contains "Profile uesio/tests.public does not have read access to the uesio/tests.wire_condition collection."
 
 
 # Object level security -- we SHOULD be able to query the animal collection
@@ -201,7 +201,7 @@ Content-Type: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.public does not have edit access to the uesio/tests.status field."
+jsonpath "$.wires[0].errors[0].message" contains "Profile uesio/tests.public does not have edit access to the uesio/tests.status field."
 
 # Object level security -- we SHOULD be able to query the tool collection
 # because the public profile DOES have VIEWALL access to it

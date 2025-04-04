@@ -3,6 +3,8 @@ package mock
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -41,7 +43,9 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		const msg = "invalid login request body"
+		slog.Info(fmt.Sprintf("%s: %v", msg, err))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(msg, nil))
 		return
 	}
 	user, _, err := c.DoLogin(loginRequest)
@@ -55,7 +59,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
-		return nil, nil, errors.New("Mock login:" + err.Error())
+		return nil, nil, fmt.Errorf("Mock login: %w", err)
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
 }

@@ -27,7 +27,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body == "missing required param: longitude\n"
+body contains "missing required param: longitude"
 
 # Invoke as a guest user to verify permissions enforcement
 POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/tests/call_custom_run_action

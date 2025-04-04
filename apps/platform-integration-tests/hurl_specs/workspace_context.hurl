@@ -89,7 +89,7 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/p
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire[0].errors[0].message" == "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it."
+jsonpath "$.dependencies.wire[0].errors[0].message" contains "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it."
 
 # Try get config values for the dev workspace
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/configvalues

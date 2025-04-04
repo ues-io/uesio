@@ -118,7 +118,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" == "failed to encode args[2]: unable to encode 1 into text format for text (OID 25): cannot find encode plan"
+jsonpath "$.wires[0].errors[0].message" contains "failed to encode args[2]: unable to encode 1 into text format for text (OID 25): cannot find encode plan"
 
 # Operator: EQ | valueSource: VALUE | ID011-UUID
 # entry 5
