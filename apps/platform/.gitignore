@@ -22,6 +22,8 @@ pgdata
 sessions/
 userfiles/
 localbundlestore/
+uesio-userfiles
+uesio-bundles
 .DS_Store
 .idea
 .vscode/launch.json

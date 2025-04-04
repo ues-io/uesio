@@ -109,14 +109,14 @@ func init() {
 	usageHandler := os.Getenv("UESIO_USAGE_HANDLER")
 
 	needRedisForSessions := sessionStorageMethod == "redis"
-	needRedisForPlatformCache := platformCache != "memory"
+	needRedisForPlatformCache := platformCache == "redis"
 	needRedisForUsage := usageHandler == "redis"
 
 	if !needRedisForSessions && !needRedisForPlatformCache && !needRedisForUsage {
 		return
 	}
 
-	redisHost := os.Getenv("UESIO_REDIS_HOST")
+	redisHost := os.Getenv("UESIO_REDIS_HOST") // redis will default to localhost
 	redisPort := os.Getenv("UESIO_REDIS_PORT")
 	redisUser := os.Getenv("UESIO_REDIS_USER")
 	redisPassword := os.Getenv("UESIO_REDIS_PASSWORD")

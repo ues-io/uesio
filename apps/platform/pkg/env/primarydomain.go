@@ -9,11 +9,8 @@ var (
 )
 
 func init() {
-	if primaryDomainValue, isSet := os.LookupEnv("UESIO_PRIMARY_DOMAIN"); isSet {
+	if primaryDomainValue, isSet := os.LookupEnv("UESIO_PRIMARY_DOMAIN"); isSet && primaryDomainValue != "" {
 		uesioPrimaryDomain = primaryDomainValue
-	} else if InDevMode() {
-		// TODO: eliminate the special case for dev mode and use localhost (localhost refactor)
-		uesioPrimaryDomain = "uesio-dev.com"
 	} else {
 		uesioPrimaryDomain = "localhost"
 	}

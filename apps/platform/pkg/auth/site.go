@@ -43,16 +43,9 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 	return &sd, nil
 }
 
-func isLocalHost(domain string) bool {
-	return domain == "localhost" || domain == "127.0.0.1" || domain == "::1"
-}
-
 func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	siteDomain, err := getDomain(domainType, domain)
 	if err != nil {
-		if domainType == "domain" && isLocalHost(domain) {
-			return datasource.QuerySiteByKey(defaultSite, sess.GetStudioAnonSession(context.Background()), nil)
-		}
 		return nil, err
 	}
 	if siteDomain == nil {

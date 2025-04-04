@@ -11,7 +11,8 @@ import (
 )
 
 var validHostsDevMode = []string{
-	"https://studio.uesio-dev.com:3000",
+	"http://studio.localhost:3000",
+	"https://studio.localhost:3000",
 	"https://studio.ues.io",
 	"https://studio.ues-dev.io",
 }

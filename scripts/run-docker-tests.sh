@@ -10,8 +10,7 @@
 
 set -e
 
-# TODO: should default to localhost and http (localhost refactor)
-TEST_APP_URL=$([ "${UESIO_USE_HTTPS:-true}" = "true" ] && echo "https" || echo "http")://${UESIO_PRIMARY_DOMAIN:-uesio-dev.com}:${UESIO_PORT:-3000}
+TEST_APP_URL=$([ "${UESIO_USE_HTTPS}" = "true" ] && echo "https" || echo "http")://studio.${UESIO_PRIMARY_DOMAIN:-localhost}:${UESIO_PORT:-3000}
 
 # Ensure that we have a Uesio docker image to run
 # In CI, we should have the image built already but locally we want to re-build on every run
@@ -35,7 +34,7 @@ docker compose -f docker-compose-tests.yaml down --volumes
 docker compose -f docker-compose-tests.yaml up -d
 echo "Waiting for Uesio app to start..."
 # curl the app's /health route in a loop and sleep 1 second until we get a 200
-until $(curl --output /dev/null --silent --fail $TEST_APP_URL/health); do
+until $(curl --insecure --output /dev/null --silent --fail $TEST_APP_URL/health); do
     printf '.'
     sleep 1
 done

@@ -18,10 +18,16 @@ var activeHandler string
 
 func init() {
 	usageHandler := os.Getenv("UESIO_USAGE_HANDLER")
-	if usageHandler == "memory" {
+	if usageHandler == "redis" {
+		activeHandler = "redis"
+	} else if usageHandler == "" || usageHandler == "memory" {
 		activeHandler = "memory"
 	} else {
-		activeHandler = "redis"
+		// TODO: The panic here is not ideal but do the way we use init throughout the
+		// codebase we can't handle errors and would only panic anyway.  Need to
+		// refactor how we initialize so that we can improve error handling and avoid
+		// panics.
+		panic("UESIO_USAGE_HANDLER is an unrecognized value: " + usageHandler)
 	}
 }
 

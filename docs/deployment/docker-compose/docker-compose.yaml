@@ -1,6 +1,4 @@
-version: "3.2"
-
-name: "uesio_dev"
+name: "uesio_sample"
 
 services:
   redis:
@@ -28,21 +26,16 @@ services:
       - "3000:3000"
     environment:
       UESIO_REDIS_HOST: redis
-      UESIO_REDIS_PORT: 6379
       UESIO_DB_DATABASE: pgtest
       UESIO_DB_HOST: db
       UESIO_DB_USER: postgres
       UESIO_DB_PASSWORD: postgres
-      UESIO_DB_PORT: 5432
-      UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.aws
-      UESIO_PLATFORM_FILESOURCE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.aws
       UESIO_SESSION_STORE: redis
-      UESIO_USERFILES_BUCKET_NAME: "uesio-userfiles"
-      UESIO_BUNDLES_BUCKET_NAME: "uesio-bundles"
-      UESIO_PORT: 3000
-      UESIO_PRIMARY_DOMAIN: "uesio-dev.com"
+      UESIO_PLATFORM_CACHE: redis
+      UESIO_USAGE_HANDLER: redis
+      # In order to sign-up for a new account, you need to setup https://resend.com to support email notifications. In lieu of
+      # that, UESIO_MOCK_AUTH can be used to allow login with Mock users.  When resend is configured, UESIO_MOCK_AUTH can be
+      # set to false.
       UESIO_MOCK_AUTH: "true"
-      UESIO_MOCK_AUTH_USERNAMES: "uesio"
+      #UESIO_SECRET_UESIO_APPKIT_RESEND_KEY: "${UESIO_SECRET_UESIO_APPKIT_RESEND_KEY:?UESIO_SECRET_UESIO_APPKIT_RESEND_KEY is required}"
     command: sh -c "./uesio migrate && ./uesio seed -i && ./uesio serve"
