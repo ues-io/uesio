@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -105,7 +106,9 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body", nil))
+		msg := "invalid login request body"
+		slog.Info(fmt.Sprintf("%s: %v", msg, err))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(msg, nil))
 		return
 	}
 	user, loginmethod, err := c.DoLogin(loginRequest)

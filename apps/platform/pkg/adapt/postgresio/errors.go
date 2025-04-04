@@ -24,7 +24,7 @@ func TranslatePGError(err error) error {
 
 	msg := err.Error()
 	if strings.Contains(msg, "failed to encode") || strings.Contains(msg, "failed to decode") {
-		return exceptions.NewBadRequestException(msg, nil)
+		return exceptions.NewBadRequestException("", err)
 	}
 	return err
 }

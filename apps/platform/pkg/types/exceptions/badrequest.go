@@ -1,6 +1,9 @@
 package exceptions
 
-type BadRequestException BaseException
+type BadRequestException struct {
+	message string
+	err     error
+}
 
 func NewBadRequestException(message string, err error) *BadRequestException {
 	return &BadRequestException{message, err}
