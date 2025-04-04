@@ -32,6 +32,7 @@
     "format-check-all": "nx format:check --all",
     "help": "nx help",
     "in-docker": "nx run platform:serve-image",
+    "start-deps": "nx exec -- docker compose -f docker-compose.yaml up -d",
     "lint-all": "nx run-many --target=lint --all",
     "migrations": "nx migrate-db platform",
     "migrate:create": "migrate create -dir apps/platform/migrations -ext sql -seq -digits 1",
@@ -49,7 +50,8 @@
   },
   "nx": {
     "includedScripts": [
-      "tests-docker"
+      "tests-docker",
+      "start-deps"
     ]
   },
   "files": [],

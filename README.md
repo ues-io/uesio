@@ -14,29 +14,24 @@ Uesio is a **low-code** application development platform.
 - Install [nvm](https://github.com/nvm-sh/nvm) (for ensuring that your version of Node.js matches the [version](./.nvmrc) used in the repo): `nvm install`
 - Install [Go](https://golang.org/dl/)
 - Install the following brew packages:
-  - `hurl` (for integration tests): `brew install hurl`
   - `jq` (for JSON manipulation in Shell): `brew install jq`
   - `wget` (for fetching URLs): `brew install wget`
-- Start dependencies [here](#dependencies).
+- [Configure environment variables](#environment-variables)
+- [Start dependencies](#dependencies)
 - [Build](#build)
-- [Run](#run).
+- [Run](#run)
 
 ## Optional
 
 - Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
-- Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://localhost:3000`
+- Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run the test suite and/or multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://studio.localhost:3000`
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 - Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 - Install [Oh My Zsh](https://ohmyz.sh/)
 - [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Install the `nx` cli globally: `npm i -g nx`
 - An alternative to installing `nx` globally is to set an alias in your `~/.zshrc` file or equivalent: `alias nx="npx nx"`. This way your global nx version will always be the correct version.
-
-```
-    npm run dev
-```
-
-- _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
+- _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio cli & server debugger in Go and paste the following:
 
 ```
 {
@@ -45,15 +40,27 @@ Uesio is a **low-code** application development platform.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-    "name": "Launch",
-    "type": "go",
-    "request": "launch",
-    "mode": "debug",
-    "program": "${workspaceRoot}",
-    "env": {},
-    "args": ["serve"]
-    }
+      {
+        "name": "Platform Serve",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "program": "${workspaceRoot}/apps/platform",
+        "envFile": "${workspaceRoot}/.env",
+        "cwd": "${workspaceRoot}/apps/platform",
+        "args": ["serve"]
+      },
+      {
+        "name": "CLI Status",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "program": "${workspaceRoot}/apps/cli",
+        "envFile": "${workspaceRoot}/.env",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceRoot}/_workspaces",
+        "args": ["status"]
+      }
   ]
 }
 ```
@@ -78,13 +85,7 @@ npm run build-all
 ## Build a dedicated app (no watcher and no source map)
 
 ```
-cd ./libs/apps/uesio/studio && uesio pack
-
-// or
-npm run nx -- build apps-uesio-studio
-
-// or, if you have nx installed globally (or aliased)
-nx build apps-uesio-studio
+npx nx run apps-uesio-studio:build
 ```
 
 ## Watch mode (for development)
@@ -147,15 +148,15 @@ npm run start # In a separate terminal
 
 If you'd like to use the Uesio CLI that you have built elsewhere on your machine without having to explicitly reference the binary in `dist/cli`:
 
-- Mac OS/Linux: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
+- Linux/macOS: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
 - Windows: add `<absolute project root path>/dist/cli` to your PATH
 
 # <a id="dependencies"></a>Start dependencies
 
-1. Launch all local dependencies (e.g. Postgres) with Docker Compose:
+1. Launch all local dependencies (e.g. Postgres, Redis) in docker:
 
 ```
-docker compose up -d
+npm run start-deps
 ```
 
 2. Seed your local Postgres database with everything Uesio needs for local development
@@ -168,52 +169,72 @@ npm run seeds
 # <a id="run"></a>Run the web application locally
 
 ```
-npm start
-open http://localhost:3000
+npm run start
+open http://studio.localhost:3000
 ```
 
-If you have [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) configured, you can access the Studio via the following "local" DNS:
+If you have [SSL](#set-up-ssl) you can access the Studio via the following:
 
 ```
-open https://studio.uesio-dev.com:3000
+open https://studio.localhost.com:3000
 ```
 
 To run the app in Docker locally:
 
 ```
 npm run in-docker
-open https://studio.uesio-dev.com:3000
+open https://studio.localhost.com:3000
 ```
 
 # <a id="set-up-ssl"></a> Set up SSL
 
-SSL is optional for local development. It is enabled using by setting the environment variable `UESIO_USE_HTTPS=true`
+SSL is optional for local development. It is enabled by setting the environment variable `UESIO_USE_HTTPS=true` (e.g., in your .env file).
 
 ```
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory.
+This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. It will also attempt to register it
+as a trusted certificate based on your operating system (Linux, macOS).
 
-On Windows/Linux, you will need to manually trust this self-signed certificate. On Mac OS, this is done automatically.
+If you are running uesio in WSL but want to access the site from the Windows side, you can trust the certificate:
 
-- Windows: double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
+1. Double-click the certificate.crt file in the File Explorer
+2. Click "Install Certificate..." and place the certificate in the "Trusted Root Certification Authorities".
 
 # <a id="set-up-local-dns"></a> Set up your local DNS
 
-If you just want to work in the Uesio Studio site, local DNS setup is not necessary, you can just access "http://localhost:3000".
+If you just want to work in the Uesio Studio site, local DNS setup is not necessary, you can just access "http://studio.localhost:3000" or "https://studio.localhost:3000" if you [setup ssl](#set-up-ssl).
 
-However, to simmulate how Uesio routes DNS domains and subdomains to Uesio sites, you need to configure your OS to properly route "local" DNS domains (e.g. "uesio-dev.com") to the Uesio app server running on localhost.
+If you want to run integration and/or e2e tests or if you want to use custom domains (e.g., dev-myuesio.com), you will need to configure local DNS.
 
 There are two ways to do this, you'll need to pick one:
 
-1. Modify /etc/hosts directly
+1. Modify your "hosts" file directly:
 
-   On Mac/Linux, modify the `/etc/hosts` file to resolve local subdomains to 127.0.0.1
+   - Linux/macOS:
+     1. Create the localhost subdomain entries by running `bash ./scripts/seed-etc-hosts.sh`
+     2. Optional: Manually modify `/etc/hosts` for any custom domains that you want to use
+        ```text
+        127.0.0.1    studio.dev-myuesio.com
+        127.0.0.1    docs.dev-myuesio.com
+        127.0.0.1    tests.dev-myuesio.com
+        ```
+   - WSL: No modifications are required on the Linux side, but the following is required for the Windows side. Note that you must have elevated priviledges to modify the hosts file.
+     1. Add the localhost subdomain entries to `%WINDIR%\system32\drivers\etc\hosts`
+        ```text
+        127.0.0.1    studio.localhost
+        127.0.0.1    docs.localhost
+        127.0.0.1    tests.localhost
+        ```
+     2. Optional: Add the following entries to `%WINDIR%\system32\drivers\etc\hosts` for any custom domain that you want to use
+        ```text
+        127.0.0.1    studio.dev-myuesio.com
+        127.0.0.1    docs.dev-myuesio.com
+        127.0.0.1    tests.dev-myuesio.com
+        ```
 
-   `bash ./scripts/seed-etc-hosts.sh`
-
-2. Use DNSMasq
+2. Use DNSMasq (Linux/macOS Only)
 
    ```
    brew install dnsmasq
@@ -243,345 +264,96 @@ To run the worker process, use `npm run nx -- worker platform` (Or `nx worker pl
 
 ```
 
-# <a id="environment-variables"></a> (Optional) Environment Variables
+# <a id="environment-variables"></a> Environment Variables
 
-The following environment variables can optionally be configured in your Shell (e.g. in `~/.zshenv` if you are using Zsh)
+If you'd like to get started immediately, you can run `npm run in-docker` and access the site via http://studio.localhost:3000.
 
-<table>
-  <tr>
-    <td>Environment Variable</td>
-    <td>Description</td>
-    <td>Default</td>
-    <td>Examples, Values, and Help</td>
-  </tr>
-  <tr>
-  <tr>
-    <td>UESIO_USE_HTTPS</td>
-    <td>Whether or not to serve with TLS</td>
-    <td>false</td>
-    <td>true / false</td>
-  </tr>
-  <tr>
-    <td>UESIO_HOST</td>
-    <td>Host to use for HTTP server</td>
-    <td>""</td>
-    <td>Set to "localhost" for local development</td>
-  </tr>
-  <tr>
-    <td>UESIO_PORT</td>
-    <td>Port to use for HTTP server</td>
-    <td>3000</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_PRIMARY_DOMAIN</td>
-    <td>The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")</td>
-    <td>localhost (or "uesio-dev.com" if `UESIO_DEV=true`)</td>
-    <td>If running ues.io on your own infrastructure, set to a 2-part TLD that you own.</td>
-  </tr>
-  <tr>
-    <td>UESIO_SESSION_STORE</td>
-    <td>Allows you to specify the storage location for user sessions</td>
-    <td>redis</td>
-    <td>redis, filesystem, ""</td>
-  </tr>
-  <tr>
-    <td>UESIO_USERFILES_BUCKET_NAME</td>
-    <td>The Bucket in AWS / local folder where user-uploaded files will be stored.</td>
-    <td>uesio-userfiles</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_BUNDLES_BUCKET_NAME</td>
-    <td>The Bucket in AWS / local folder where bundles will be stored.</td>
-    <td>uesio-bundles</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_STATIC_ASSETS_HOST</td>
-    <td>Host from which to serve static files, including vendored JS (React) and Uesio assets</td>
-    <td>""</td>
-    <td>By default, assets are served from the local filesystem / Docker container. Alternately, set this to a valid URL where Uesio static assets live, e.g. "https://www.ues.io"</td>
-  </tr>
-  <tr>
-    <td>UESIO_ALLOW_INSECURE_COOKIES</td>
-    <td>Allows cookies without the secure flag</td>
-    <td>true</td>
-    <td>Useful in local docker development</td>
-  </tr>
-  <tr>
-    <td>UESIO_PLATFORM_FILESOURCE_TYPE</td>
-    <td>Controls where user-uploaded files are stored</td>
-    <td>uesio.s3</td>
-    <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
-  </tr>
-  <tr>
-    <td>UESIO_PLATFORM_FILESOURCE_CREDENTIALS</td>
-    <td>The name of the Uesio credential to use for saving user-uploaded files</td>
-    <td>uesio/core.aws</td>
-    <td>Must be a fully-qualified Uesio credential name</td>
-  </tr>
-  <tr>
-    <td>UESIO_PLATFORM_BUNDLESTORE_TYPE</td>
-    <td>Controls where Uesio bundles are stored</td>
-    <td>uesio.s3</td>
-    <td>Either "uesio.local" (filesystem) or "uesio.s3" (store in AWS S3)</td>
-  </tr>
-  <tr>
-    <td>UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS</td>
-    <td>The name of the Uesio credential to use for saving bundlestore files</td>
-    <td>uesio/core.aws</td>
-    <td>Must be a fully-qualified Uesio credential name</td>
-  </tr>
-  <tr>
-    <td>UESIO_DEV</td>
-    <td>Enable various features for use in local development of Uesio</td>
-    <td>false</td>
-    <td>Set to "localhost" for local development</td>
-  </tr>
-  <tr>
-    <td>UESIO_DEBUG_SQL</td>
-    <td>Enable detailed SQL query debugging</td>
-    <td>false</td>
-    <td>If enabled, all Wire loads will return a `debugQueryString` property containing the SQL queries made</td>
-  </tr>
-  <tr>
-    <td>UESIO_MOCK_AUTH</td>
-    <td>Enables you to login with mock user accounts (which can be specified with `UESIO_MOCK_AUTH_USERNAMES`)</td>
-    <td>false</td>
-    <td>Only for local dev / unit tests</td>
-  </tr>
-  <tr>
-    <td>UESIO_MOCK_AUTH_USERNAMES</td>
-    <td>A comma-separated list of usernames to use for mock authentication (requires `UESIO_MOCK_AUTH=true`)</td>
-    <td>ben,abel,wessel,baxter,zach,uesio</td>
-    <td>Only for local dev / unit tests</td>
-  </tr>
-  <tr>
-    <td>UESIO_GRACEFUL_SHUTDOWN_SECONDS</td>
-    <td>The number of seconds to wait before terminating the Uesio app / worker process</td>
-    <td>5</td>
-    <td>Should be less than whatever the ECS / Kubernetes / etc shutdown window is (usually 30)</td>
-  </tr>
-  <tr>
-    <td>UESIO_USAGE_JOB_RECURRENCE_MINUTES</td>
-    <td>The number of minutes to wait between runs of the Usage worker job</td>
-    <td>10</td>
-    <td>Usage data (stored in Redis) will only be aggregated and committed to Postgres as often as this job is run by the worker process. Set to a lower window for more frequent checks.</td>
-  </tr>
-  <tr>
-    <td>UESIO_WORKER_MODE</td>
-    <td>Determines whether the batch job worker will run as part of the serve command or as a separate process.</td>
-    <td>separate</td>
-    <td>separate: The worker will run as a separate process. combined: The worker will run as part of the serve command.</td>
-  </tr>
-  <tr>
-    <td>UESIO_USAGE_MODE</td>
-    <td>Determines whether to handle usage in memory on the web server, or to use redis for multiple web servers.</td>
-    <td>redis</td>
-    <td>redis, memory</td>
-  </tr>
-  <tr>
-    <td>UESIO_PLATFORM_CACHE</td>
-    <td>Determines whether to handle the platform cache in memory on the web server, or to use redis for multiple web servers.</td>
-    <td>redis</td>
-    <td>redis, memory</td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_HOST</td>
-    <td>The host to connect to Redis</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_PORT</td>
-    <td>The port to connect to Redis</td>
-    <td>6739</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_USER</td>
-    <td>The Redis Username (If Necessary)</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_PASSWORD</td>
-    <td>The Redis Password (If Necessary)</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_TTL</td>
-    <td>Redis TTL Seconds</td>
-    <td>86400</td>
-    <td>Default is one day.</td>
-  </tr>
-  <tr>
-    <td>UESIO_REDIS_TLS</td>
-    <td>Whether or not to use TLS Mode</td>
-    <td>false</td>
-    <td>true or false</td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_USER</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_PASSWORD</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_DATABASE</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_HOST</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_PORT</td>
-    <td></td>
-    <td>5432</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_DB_SSLMODE</td>
-    <td></td>
-    <td>disable</td>
-    <td>disable, allow, prefer, require, etc.</td>
-  </tr>
-  <tr>
-    <td>UESIO_LOG_LEVEL</td>
-    <td>Logging level</td>
-    <td>0</td>
-    <td>-4 (Debug), 0 (Info), 4 (Warn), 8 (Error)</td>
-  </tr>
-  <tr>
-    <td>UESIO_BUILD_VERSION</td>
-    <td>Used in urls served for cache busting</td>
-    <td>Empty string in development mode / Docker image contains the version image was built with</td>
-    <td>There is typically no need to provide this, see <a href="docs/http_caching.md">http caching docs</a>.</td>
-  </tr>
-  <tr>
-    <td>UESIO_CACHE_SITE_BUNDLES</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>  
-  <tr>
-    <td>UESIO_AWS_ACCESS_KEY_ID</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_AWS_SECRET_ACCESS_KEY</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_AWS_SESSION_TOKEN</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_AWS_ACCESS_KEY_ID</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_AWS_SECRET_ACCESS_KEY</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>  
-  <tr>
-    <td>UESIO_AWS_SESSION_TOKEN</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_AWS_REGION</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_AWS_ENDPOINT</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_USAGE_HANDLER</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>UESIO_CLI_USERNAME</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_CLI_PASSWORD</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_CLI_LOGIN_METHOD</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_CLI_HOST</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_CACHE_BOT_PROGRAMS</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_WORKSPACE_CACHE_INVALIDATION_ITEMS_CHUNK</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_CACHE_WORKSPACE_BUNDLES</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr> 
-  <tr>
-    <td>UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
+In order to run locally via `npm run start`, you must configure the required environment variables.
 
-In addition, all Uesio Secrets can have their default value set by setting a corresponding `UESIO_SECRET_<namespace>_<name>` environment variable. Any value set for these secrets in a Site/Workspace will override the environment variable default, but it can often be useful, especially for local development, to configure a default value, so that you don't have to populate these secrets in every site. (Note: there is no corresponding feature for Config Values, because you can define a Config Value's default directly in the metadata definition).
+1. Copy the [environment template](./.env.template) to `.env`:
+
+```bash
+cp .env.template .env
+```
+
+2. Set the values for the required variables near the top of the file:
+
+```text
+# Required
+UESIO_DB_USER=postgres
+UESIO_DB_PASSWORD=mysecretpassword
+UESIO_DB_DATABASE=postgresio
+UESIO_MOCK_AUTH=true
+UESIO_DEV=true
+UESIO_DEBUG_SQL=true
+```
+
+3. The above is enough to run the platform, however by default, the server will run with in-memory cache and `INFO` level logging. The following recommended configuration will enable redis for caching, set verbose logging and run the uesio worker in the same process as the server:
+
+```text
+# Recommended
+UESIO_LOG_LEVEL=-4
+UESIO_SESSION_STORE=redis
+UESIO_PLATFORM_CACHE=redis
+UESIO_USAGE_HANDLER=redis
+UESIO_WORKER_MODE=combined
+```
+
+4. Optionally, you can set any of the other `UESIO\_` environment variables although the ones above are a great starting point.
+
+| **Environment Variable**                       | **Description**                                                                                                       | **Default**                                                                               | **Examples, Values, and Help**                                                                                                                                             |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UESIO_USE_HTTPS                                | Whether or not to serve with TLS                                                                                      | false                                                                                     | `true`, `false`                                                                                                                                                            |
+| UESIO_HOST                                     | Host to use for HTTP server                                                                                           |                                                                                           | By default, will listen on all available interfaces                                                                                                                        |
+| UESIO_PORT                                     | Port to use for HTTP server                                                                                           | 3000                                                                                      |                                                                                                                                                                            |
+| UESIO_PRIMARY_DOMAIN                           | The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")                  | localhost                                                                                 | If running with a custom domain, set to your root domain (e.g. `mydomain.com` to have studio available at `studio.mydomain.com`)                                           |
+| UESIO_SESSION_STORE                            | Allows you to specify the storage location for user sessions                                                          | memory                                                                                    | `redis`, `memory`, `filesystem`                                                                                                                                            |
+| UESIO_PLATFORM_CACHE                           | Determines whether to handle the platform cache in memory on the web server, or to use redis for multiple web servers | memory                                                                                    | `redis`, `memory`                                                                                                                                                          |
+| UESIO_USAGE_HANDLER                            | Determines whether to handle usage in memory on the web server, or to use redis for multiple web servers              | memory                                                                                    | `redis`, `memory`                                                                                                                                                          |
+| UESIO_USERFILES_BUCKET_NAME                    | The Bucket in AWS / local folder where user-uploaded files will be stored                                             | uesio-userfiles                                                                           |                                                                                                                                                                            |
+| UESIO_BUNDLES_BUCKET_NAME                      | The Bucket in AWS / local folder where bundles will be stored.                                                        | uesio-bundles                                                                             |                                                                                                                                                                            |
+| UESIO_STATIC_ASSETS_HOST                       | Host from which to serve static files, including vendored JS (React) and Uesio assets                                 |                                                                                           | By default, assets are served from the local filesystem / Docker container. Alternately, set this to a valid URL where Uesio static assets live, e.g. `https://www.ues.io` |
+| UESIO_ALLOW_INSECURE_COOKIES                   | Allows cookies without the secure flag                                                                                | false                                                                                     | Ignored when `UESIO_USE_HTTPS=true`, useful in local docker development when using custom domains & HTTP                                                                   |
+| UESIO_PLATFORM_FILESOURCE_TYPE                 | Controls where user-uploaded files are stored                                                                         | uesio.local                                                                               | Either `uesio.local` (filesystem) or `uesio.s3` (store in AWS S3)                                                                                                          |
+| UESIO_PLATFORM_FILESOURCE_CREDENTIALS          | The name of the Uesio credential to use for saving user-uploaded files                                                | uesio/core.localuserfiles                                                                 | Must be a fully-qualified Uesio credential name                                                                                                                            |
+| UESIO_PLATFORM_BUNDLESTORE_TYPE                | Controls where Uesio bundles are stored                                                                               | uesio.local                                                                               | Either `uesio.local` (filesystem) or `uesio.s3` (store in AWS S3)                                                                                                          |
+| UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS         | The name of the Uesio credential to use for saving bundlestore files                                                  | uesio/core.localuserfiles                                                                 | Must be a fully-qualified Uesio credential name                                                                                                                            |
+| UESIO_DEV                                      | Enable various features for use in local development of Uesio                                                         | false                                                                                     | Set to `localhost` for local development                                                                                                                                   |
+| UESIO_DEBUG_SQL                                | Enable detailed SQL query debugging                                                                                   | false                                                                                     | If enabled, all Wire loads will return a `debugQueryString` property containing the SQL queries made                                                                       |
+| UESIO_MOCK_AUTH                                | Enables you to login with mock user accounts                                                                          | false                                                                                     | Only for local dev / unit tests                                                                                                                                            |
+| UESIO_GRACEFUL_SHUTDOWN_SECONDS                | The number of seconds to wait before terminating the Uesio app / worker process                                       | 5 (0 when `UESIO_DEV=true`)                                                               | Should be less than whatever the ECS / Kubernetes / etc shutdown window is (usually 30)                                                                                    |
+| UESIO_USAGE_JOB_RECURRENCE_MINUTES             | The number of minutes to wait between runs of the Usage worker job                                                    | 10                                                                                        | Interval between 1-30 to aggregate and commit usage data to Postgres by the worker process. Set to a lower window for more frequent checks.                                |
+| UESIO_WORKER_MODE                              | Determines whether the batch job worker will run as part of the serve command or as a separate process                | separate                                                                                  | `separate` (worker will run as a separate process), `combined` (worker will run as part of the serve command)                                                              |
+| UESIO_REDIS_HOST                               | The host to connect to Redis                                                                                          | localhost                                                                                 |                                                                                                                                                                            |
+| UESIO_REDIS_PORT                               | The port to connect to Redis                                                                                          | 6739                                                                                      |                                                                                                                                                                            |
+| UESIO_REDIS_USER                               | The Redis Username (If Necessary)                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_REDIS_PASSWORD                           | The Redis Password (If Necessary)                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_REDIS_TTL                                | Redis TTL Seconds                                                                                                     | 86400                                                                                     |                                                                                                                                                                            |
+| UESIO_REDIS_TLS                                | Whether or not to use TLS Mode                                                                                        | false                                                                                     | `true`, `false`                                                                                                                                                            |
+| UESIO_DB_USER                                  | Postgres username                                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_DB_PASSWORD                              | Postgres password                                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_DB_DATABASE                              | Postgres database name                                                                                                |                                                                                           |                                                                                                                                                                            |
+| UESIO_DB_HOST                                  | Postgres host name                                                                                                    | localhost                                                                                 |                                                                                                                                                                            |
+| UESIO_DB_PORT                                  | Postgres port                                                                                                         | 5432                                                                                      |                                                                                                                                                                            |
+| UESIO_DB_SSLMODE                               | Postgres sslmode                                                                                                      | disable                                                                                   | `disable`, `allow`, `prefer`, `require`, etc.                                                                                                                              |
+| UESIO_LOG_LEVEL                                | Logging level                                                                                                         | 0                                                                                         | `-4` (Debug), `0` (Info), `4` (Warn), `8` (Error)                                                                                                                          |
+| UESIO_BUILD_VERSION                            | Used in urls served for cache busting                                                                                 | Empty string in development mode / Docker image contains the version image was built with | There is typically no need to provide this, see [http caching docs](./docs/http_caching.md)                                                                                |
+| UESIO_CACHE_SITE_BUNDLES                       | Whether or not to cache site bundles                                                                                  | true                                                                                      |                                                                                                                                                                            |
+| UESIO_CACHE_BOT_PROGRAMS                       | Whether or not to cache bot programs                                                                                  | true                                                                                      |                                                                                                                                                                            |
+| UESIO_CACHE_WORKSPACE_BUNDLES                  | Whether or not to cache workspace bundles                                                                             | true                                                                                      |                                                                                                                                                                            |
+| UESIO_WORKSPACE_CACHE_INVALIDATION_ITEMS_CHUNK | The number of items to include in a batch/chunk when saving metadata                                                  | 20                                                                                        | Integer value must be greater than zero                                                                                                                                    |
+| UESIO_AWS_ACCESS_KEY_ID                        | AWS access key id                                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_AWS_SECRET_ACCESS_KEY                    | AWS secret access key                                                                                                 |                                                                                           |                                                                                                                                                                            |
+| UESIO_AWS_SESSION_TOKEN                        | AWS session token                                                                                                     |                                                                                           |                                                                                                                                                                            |
+| UESIO_AWS_REGION                               | AWS region                                                                                                            |                                                                                           |                                                                                                                                                                            |
+| UESIO_AWS_ENDPOINT                             | AWS endpoint                                                                                                          |                                                                                           |                                                                                                                                                                            |
+| UESIO_CLI_USERNAME                             | Username to use when executing CLI                                                                                    |                                                                                           |                                                                                                                                                                            |
+| UESIO_CLI_PASSWORD                             | Password to use when executing CLI                                                                                    |                                                                                           |                                                                                                                                                                            |
+| UESIO_CLI_LOGIN_METHOD                         | Login method to use when executing CLI                                                                                |                                                                                           | `uesio/core.platform`, `uesio/core.mock`                                                                                                                                   |
+| UESIO_CLI_HOST                                 | Host to interact with when executing CLI                                                                              |                                                                                           |                                                                                                                                                                            |
+| UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL           | Base url for external bundle store                                                                                    | https://studio.ues.io                                                                     |                                                                                                                                                                            |
+
+5. In addition, all Uesio Secrets can have their default value set by setting a corresponding `UESIO_SECRET_<namespace>_<name>` environment variable. Any value set for these secrets in a Site/Workspace will override the environment variable default, but it can often be useful, especially for local development, to configure a default value, so that you don't have to populate these secrets in every site. (Note: there is no corresponding feature for Config Values, because you can define a Config Value's default directly in the metadata definition).
 
 For example, the `uesio/appkit.resend_key` secret's default value can be configured with `export UESIO_SECRET_UESIO_APPKIT_RESEND_KEY=your-resend-key`
 
@@ -627,7 +399,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 ## Testing (Unit, Integration & E2E)
 
 > [!IMPORTANT]
-> The default behavior for all tests is to run against `https://studio.uesio-dev.com:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
+> The default behavior for all tests is to run against `https://studio.localhost.com:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
 
 To run the various test suites, there are a number of commands available:
 
