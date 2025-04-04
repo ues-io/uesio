@@ -184,7 +184,7 @@ func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.S
 	}
 	params, err := ResolveRouteParams(route.Params, session, r.URL.Query())
 	if err != nil {
-		return nil, exceptions.NewBadRequestException(fmt.Errorf("unable to resolve route parameters: %w"))
+		return nil, exceptions.NewBadRequestException("unable to resolve route parameters: %w", nil)
 	}
 	route.Params = params
 	route, err = datasource.RunRouteBots(route, r, session, connection)

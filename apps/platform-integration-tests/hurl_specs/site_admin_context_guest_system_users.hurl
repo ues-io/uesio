@@ -80,7 +80,7 @@ Content-Type: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors[0].message" == "user system can't be deleted"
+jsonpath "$.wires[0].errors[0].message" contains "user system can't be deleted"
 
 # Try to delete guest user from the test site as the owner of the app
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/save
@@ -100,7 +100,7 @@ Content-Type: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors[0].message" == "user guest can't be deleted"
+jsonpath "$.wires[0].errors[0].message" contains "user guest can't be deleted"
 
 # Try to delete pepe user from the test site as the owner of the app
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/save

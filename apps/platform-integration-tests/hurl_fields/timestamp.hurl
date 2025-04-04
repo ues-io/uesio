@@ -34,7 +34,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type bigint: \"BAD_VALUE\""
+jsonpath "$.wires[0].errors[0].message" contains "invalid input syntax for type bigint: \"BAD_VALUE\""
 
 
 # Operator: EQ | valueSource: VALUE | value as string
@@ -100,7 +100,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" == "invalid input syntax for type bigint: \"2001-01-01T01:01:00Z\""
+jsonpath "$.wires[0].errors[0].message" contains "invalid input syntax for type bigint: \"2001-01-01T01:01:00Z\""
 
 # Operator: EQ | valueSource: VALUE | value as number (unix timestamp)
 # entry 5
@@ -163,7 +163,7 @@ Accept: application/json
     "wires": [
         {
             "collection":"uesio/tests.wire_condition",
-            "fields": [{"id": "uesio/tests.timestamp"}],            
+            "fields": [{"id": "uesio/tests.timestamp"}],
             "query":true,
             "conditions": [
                 {

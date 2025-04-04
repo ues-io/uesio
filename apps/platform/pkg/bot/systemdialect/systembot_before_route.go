@@ -1,8 +1,6 @@
 package systemdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -31,7 +29,7 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		case "redirect":
 			redirect, _ := change.GetFieldAsString("uesio/studio.redirect")
 			if redirect == "" {
-				return exceptions.NewBadRequestException(errors.New("redirect field is required"))
+				return exceptions.NewBadRequestException("redirect field is required", nil)
 			}
 			return nil
 		default:

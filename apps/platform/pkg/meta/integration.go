@@ -11,7 +11,7 @@ import (
 func NewIntegration(key string) (*Integration, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException(fmt.Errorf("Bad Key for Integration: %s", key))
+		return nil, exceptions.NewBadRequestException(fmt.Sprintf("Bad Key for Integration: %s", key), nil)
 	}
 	return NewBaseIntegration(namespace, name), nil
 }

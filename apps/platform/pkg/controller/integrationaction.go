@@ -34,7 +34,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("action parameter is required")))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required", nil))
 		return
 	}
 
@@ -144,7 +144,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("action parameter is required")))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required", nil))
 		return
 	}
 

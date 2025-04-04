@@ -159,7 +159,7 @@ func TestRouteUnmarshal(t *testing.T) {
 			"myroute_badname.yaml",
 			"my/namespace",
 			nil,
-			exceptions.NewBadRequestException(errors.New("Metadata name does not match filename: myroute, myroute_badname")),
+			exceptions.NewBadRequestException("Metadata name does not match filename: myroute, myroute_badname", nil),
 		},
 	}
 

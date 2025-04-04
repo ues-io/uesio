@@ -207,7 +207,7 @@ func (cmh *ClaudeModelHandler) Stream(connection *Connection, options *InvokeMod
 				break outer
 			}
 			if reader != nil && reader.Err() != nil {
-				outputStream.Err() <- exceptions.NewBadRequestException(reader.Err())
+				outputStream.Err() <- exceptions.NewBadRequestException("", reader.Err())
 				break outer
 			}
 		}

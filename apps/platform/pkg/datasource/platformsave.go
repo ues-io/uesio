@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -69,7 +68,7 @@ func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
 	}
 
 	if len(uniqueErrorStrings) > 0 {
-		return exceptions.NewBadRequestException(errors.New(strings.Join(errorStrings, " : ")))
+		return exceptions.NewBadRequestException(strings.Join(errorStrings, " : "), nil)
 	}
 
 	return nil

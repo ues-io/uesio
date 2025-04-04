@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -21,7 +20,7 @@ func getParamsFromRequestBody(r *http.Request) (map[string]interface{}, error) {
 	if strings.Contains(contentType, "application/x-www-form-urlencoded") {
 		// ParseForm must be called in order for r.Form to contain any parsed form data variables
 		if err := r.ParseForm(); err != nil {
-			return nil, exceptions.NewBadRequestException(fmt.Errorf("Unable to parse form data: %w", err))
+			return nil, exceptions.NewBadRequestException("Unable to parse form data", err)
 		}
 		params = map[string]interface{}{}
 		for param, values := range r.Form {
@@ -30,7 +29,7 @@ func getParamsFromRequestBody(r *http.Request) (map[string]interface{}, error) {
 	} else {
 		err := json.NewDecoder(r.Body).Decode(&params)
 		if err != nil {
-			return nil, exceptions.NewBadRequestException(fmt.Errorf("Invalid request format: %w", err))
+			return nil, exceptions.NewBadRequestException("Invalid request format", err)
 		}
 	}
 	return params, nil

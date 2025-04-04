@@ -228,7 +228,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				if exceptions.GetStatusCodeForError(err) < 500 {
 					return err
 				}
-				return exceptions.NewBadRequestException(fmt.Errorf("Unable to read file '%s': %w", collectionItem.GetKey(), err.Error()))
+				return exceptions.NewBadRequestException(fmt.Sprintf("Unable to read file '%s'", collectionItem.GetKey()), err)
 			}
 			continue
 		}

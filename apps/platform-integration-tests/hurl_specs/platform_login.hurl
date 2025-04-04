@@ -7,7 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {}
 HTTP 400
 [Asserts]
-body == "You must enter a username\n"
+body contains "You must enter a username"
 
 # Try to login without providing password
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/platform/login
@@ -16,4 +16,4 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 }
 HTTP 400
 [Asserts]
-body == "You must enter a password\n"
+body contains "You must enter a password"

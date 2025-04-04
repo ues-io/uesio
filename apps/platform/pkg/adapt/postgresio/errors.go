@@ -18,13 +18,13 @@ func TranslatePGError(err error) error {
 			// invalid input syntax
 			// We're intentionally hiding the details of the error
 			// for example: pgErr.Severity and pgErr.Code
-			return exceptions.NewBadRequestException(errors.New(pgErr.Message))
+			return exceptions.NewBadRequestException(pgErr.Message, nil)
 		}
 	}
 
 	msg := err.Error()
 	if strings.Contains(msg, "failed to encode") || strings.Contains(msg, "failed to decode") {
-		return exceptions.NewBadRequestException(err)
+		return exceptions.NewBadRequestException("", err)
 	}
 	return err
 }

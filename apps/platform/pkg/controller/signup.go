@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -27,7 +26,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("invalid signup request body")))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body", nil))
 		return
 	}
 

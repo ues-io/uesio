@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,7 +26,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("invalid request body: %w", err)))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))
 		return
 	}
 
@@ -47,7 +46,7 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("invalid request body: %w", err)))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))
 		return
 	}
 

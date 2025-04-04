@@ -46,7 +46,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return NewFileUploadBatch(body, job, session)
 	}
 
-	return nil, exceptions.NewBadRequestException(fmt.Errorf("invalid JobType for creating batches: %s", job.Spec.JobType))
+	return nil, exceptions.NewBadRequestException(fmt.Sprintf("invalid JobType for creating batches: %s", job.Spec.JobType), nil)
 
 }
 

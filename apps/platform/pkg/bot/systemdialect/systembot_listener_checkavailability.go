@@ -1,8 +1,6 @@
 package systemdialect
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -14,7 +12,7 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 	paramItems := (wire.Item)(params)
 	username, err := paramItems.GetFieldAsString("username")
 	if err != nil || username == "" {
-		return nil, exceptions.NewBadRequestException(errors.New("no username provided"))
+		return nil, exceptions.NewBadRequestException("no username provided", nil)
 	}
 
 	systemSession, err := auth.GetSystemSession(session.Context(), session.GetSite(), nil)
@@ -32,6 +30,6 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 		return nil, err
 	}
 
-	return nil, exceptions.NewBadRequestException(errors.New("That username is not available"))
+	return nil, exceptions.NewBadRequestException("That username is not available", nil)
 
 }

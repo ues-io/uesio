@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 
@@ -53,11 +52,11 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 
 	username, err := mergeTemplate(payload, signupMethod.UsernameTemplate)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException(errors.New("Signup failed - username not provided"))
+		return nil, exceptions.NewBadRequestException("Signup failed - username not provided", nil)
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, exceptions.NewBadRequestException(fmt.Errorf("Signup failed - username does not match required pattern: %s", signupMethod.UsernameFormatExplanation))
+		return nil, exceptions.NewBadRequestException(fmt.Sprintf("Signup failed - username does not match required pattern: %s", signupMethod.UsernameFormatExplanation), nil)
 	}
 
 	err = authconn.Signup(signupMethod, payload, username)

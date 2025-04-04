@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"sort"
 
@@ -71,7 +70,7 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 		},
 	}, adminSession, nil)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("Failed Getting Bundle List: %w", err)))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List", err))
 		return
 	}
 
@@ -101,7 +100,7 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 		})
 		return nil
 	}); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("Failed Getting Bundle List: %w", err)))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle List", err))
 		return
 	}
 	sort.Slice(responses, func(i, j int) bool {

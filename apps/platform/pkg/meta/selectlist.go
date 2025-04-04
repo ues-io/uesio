@@ -90,7 +90,7 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 
 func (sl *SelectList) GenerateTypeDefinitions() (string, error) {
 	if sl.Name == "" || sl.Namespace == "" {
-		return "", exceptions.NewBadRequestException(errors.New("Select List name and namespace must be provided to generate types"))
+		return "", exceptions.NewBadRequestException("Select List name and namespace must be provided to generate types", nil)
 	}
 	if sl.Options == nil {
 		return "", nil

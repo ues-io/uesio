@@ -41,7 +41,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(errors.New("invalid login request body")))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body", nil))
 		return
 	}
 	user, _, err := c.DoLogin(loginRequest)

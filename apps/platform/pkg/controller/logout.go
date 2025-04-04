@@ -33,7 +33,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Errorf("invalid login route: %s", loginRoute)))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException(fmt.Sprintf("invalid login route: %s", loginRoute), nil))
 		return
 	}
 
