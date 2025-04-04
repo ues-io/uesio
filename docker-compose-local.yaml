@@ -8,32 +8,25 @@ services:
         - BUILD_VERSION=
     ports:
       - "${UESIO_PORT:-3000}:${UESIO_PORT:-3000}"
+    env_file:
+      # Ensures that all UESIO_ environment variables present in the environment are available to the container
+      - .env.template
     environment:
-      UESIO_REDIS_HOST: host.docker.internal
-      UESIO_REDIS_PORT: 6379
-      UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
-      UESIO_CACHE_SITE_BUNDLES: "true"
-      UESIO_DB_DATABASE: postgresio
-      UESIO_DB_HOST: host.docker.internal
-      UESIO_DB_USER: postgres
-      UESIO_DB_PASSWORD: mysecretpassword
-      UESIO_DB_PORT: 5432
-      UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.local
-      UESIO_PLATFORM_FILESOURCE_CREDENTIALS: uesio/core.aws
-      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.local
-      UESIO_SESSION_STORE: "${UESIO_SESSION_STORE-redis}"
-      UESIO_PLATFORM_CACHE: "${UESIO_PLATFORM_CACHE-redis}"
-      UESIO_USAGE_HANDLER: "${UESIO_USAGE_HANDLER-redis}"
-      UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
-      UESIO_MOCK_AUTH: "${UESIO_MOCK_AUTH-true}"
-      UESIO_USE_HTTPS: "${UESIO_USE_HTTPS-}"
-      UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES-}"
-      UESIO_DEBUG_SQL: "${UESIO_DEBUG_SQL-true}"
-      UESIO_PORT: "${UESIO_PORT-}"
-      UESIO_HOST: "${UESIO_HOST-}"
+      # Due to .env.template, all environment variables that are present in the environment will be passed through to the
+      # container.  The below are simply here for convenience to provide defaults for all required variables and variables
+      # that are docker related. The below defaults will only be used if the variable in the environment is not set or is
+      # empty.  For all other environment variables not listed, they will be passed through to the container as they exist
+      # in the environment.
+      UESIO_REDIS_HOST: "${UESIO_REDIS_HOST:-redis}"
+      UESIO_DB_HOST: "${UESIO_DB_HOST:-db}"
+      UESIO_DB_USER: "${UESIO_DB_USER:-postgres}"
+      UESIO_DB_PASSWORD: "${UESIO_DB_PASSWORD:-mysecretpassword}"
+      UESIO_DB_DATABASE: "${UESIO_DB_DATABASE:-postgresio}"
+      UESIO_MOCK_AUTH: "${UESIO_MOCK_AUTH:-true}"
       UESIO_DEV: "${UESIO_DEV:-true}"
-      UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN-}"
-      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL-}"
+      UESIO_DEBUG_SQL: "${UESIO_DEBUG_SQL:-true}"
+      UESIO_SESSION_STORE: "${UESIO_SESSION_STORE:-redis}"
+      UESIO_PLATFORM_CACHE: "${UESIO_PLATFORM_CACHE:-redis}"
+      UESIO_USAGE_HANDLER: "${UESIO_USAGE_HANDLER:-redis}"
     volumes:
       - ./apps/platform/ssl:/ssl
