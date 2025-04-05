@@ -6,6 +6,7 @@ on:
       uesioLogLevel:
         description: "Uesio Log level"
         required: false
+        default: 8
         type: choice
         options:
           - -4
