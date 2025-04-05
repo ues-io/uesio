@@ -162,16 +162,23 @@ jobs:
           # then run all Integration and E2E tests against the app
           npm run tests-docker
 
+      - name: Capture docker logs
+        if: always()
+        run: docker compose logs
+
       - name: Collect docker logs on failure
         #if: failure()
+        if: always()
         uses: jwalton/gh-docker-logs@v2
         with:
           dest: "./docker-logs"
       - name: Tar logs
-        if: failure()
+        #if: failure()
+        if: always()
         run: tar cvzf ./docker-logs.tgz ./docker-logs
       - name: Upload logs to GitHub
-        if: failure()
+        #if: failure()
+        if: always()
         uses: actions/upload-artifact@master
         with:
           name: docker-logs.tgz
