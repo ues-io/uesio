@@ -184,6 +184,10 @@ jobs:
           name: docker-logs.tgz
           path: ./docker-logs.tgz
 
+      - name: stop docker
+        if: always()
+        run: docker compose -f docker-compose-tests.yaml down
+
   check:
     name: Check format and lint
     runs-on: ubuntu-latest

@@ -44,4 +44,4 @@ done
 nx run-many -t test-integration test-e2e --parallel=1
 
 # Spin down the tests network's Docker containers
-docker compose -f docker-compose-tests.yaml down
+#docker compose -f docker-compose-tests.yaml down
