@@ -162,7 +162,7 @@ jobs:
       - name: Integration and e2e tests
         env:
           APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
-          UESIO_USE_HTTPS: false
+          UESIO_USE_HTTPS: true
           UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
         run: |
           ./scripts/seed-etc-hosts.sh
