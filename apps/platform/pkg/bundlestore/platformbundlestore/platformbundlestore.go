@@ -2,13 +2,13 @@ package platformbundlestore
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/filebundlestore"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
@@ -20,7 +20,7 @@ var platformFileConnection file.Connection
 
 func init() {
 	// on by default
-	if os.Getenv("UESIO_CACHE_SITE_BUNDLES") != "false" {
+	if env.ShouldCacheSiteBundles() {
 		bundleStoreCache = bundle.NewBundleStoreCache(4*time.Hour, 15*time.Minute)
 	}
 }

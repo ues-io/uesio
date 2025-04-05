@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -44,7 +45,7 @@ var configValues = map[string]string{
 	"uesio/core.db_sslmode":                       GetEnvWithDefault("UESIO_DB_SSLMODE", "disable"),
 	"uesio/core.bundlestore_bucket":               GetEnvWithDefault("UESIO_BUNDLES_BUCKET_NAME", "uesio-bundles"),
 	"uesio/studio.external_bundle_store_base_url": os.Getenv("UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL"), // has default from config yaml
-	"uesio/core.primary_domain":                   GetEnvWithDefault("UESIO_PRIMARY_DOMAIN", "localhost"),
+	"uesio/core.primary_domain":                   env.GetPrimaryDomain(),
 }
 
 func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
