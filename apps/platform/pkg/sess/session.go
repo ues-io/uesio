@@ -378,6 +378,12 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return newSess
 }
 
+func (s *Session) RemoveVersionContext() *Session {
+	newSess := s.Clone()
+	newSess.versionSession = nil
+	return newSess
+}
+
 func (s *Session) Clone() *Session {
 	newSess := *s
 	return &newSess
