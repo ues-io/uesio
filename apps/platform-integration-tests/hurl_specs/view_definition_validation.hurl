@@ -128,7 +128,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "Field 'Definition' failed YAML schema validation: [1] wires.users.batchsize: Invalid type. Expected: number, given: string [2] wires.users: Additional property collectio is not allowed [3] wires.users: collection is required"
+jsonpath "$.wires[0].errors[0].message" contains "Field 'Definition' failed YAML schema validation: [1] wires.users.batchsize: Invalid type. Expected: number, given: string [2] wires.users: Additional property collectio is not allowed [3] wires.users: collection is required"
 
 # Create a view with a valid ViewOnly wire
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save

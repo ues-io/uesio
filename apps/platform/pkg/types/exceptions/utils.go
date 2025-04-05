@@ -2,6 +2,7 @@ package exceptions
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -46,4 +47,31 @@ func GetStatusCodeForError(err error) int {
 func IsType[K error](err error) bool {
 	var e K
 	return errors.As(err, &e)
+}
+
+func printErr(prefix, message string, err error) string {
+	if prefix != "" {
+		return printErrWithPrefix(prefix, message, err)
+	}
+	return printErrNoPrefix(message, err)
+}
+
+func printErrWithPrefix(prefix, message string, err error) string {
+	if message != "" && err != nil {
+		return fmt.Sprintf("%s %s: %v", prefix, message, err)
+	}
+	if err != nil {
+		return fmt.Sprintf("%s %v", prefix, err)
+	}
+	return fmt.Sprintf("%s %s", prefix, message)
+}
+
+func printErrNoPrefix(message string, err error) string {
+	if message != "" && err != nil {
+		return fmt.Sprintf("%s: %v", message, err)
+	}
+	if err != nil {
+		return err.Error()
+	}
+	return message
 }

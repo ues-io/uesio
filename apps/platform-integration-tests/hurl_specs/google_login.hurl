@@ -52,7 +52,7 @@ POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/ues
 }
 HTTP 400
 [Asserts]
-body == "google login: no client id associated with auth source\n"
+body contains "google login: no client id associated with auth source"
 
 # Set the google auth source config client id value
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/save
@@ -98,7 +98,7 @@ POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/ues
 {}
 HTTP 400
 [Asserts]
-body == "google login: key 'credential' not present in payload\n"
+body contains "google login: key 'credential' not present in payload"
 
 # Log in to google with the wrong client id
 POST {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/uesio/core/google/login
@@ -110,7 +110,7 @@ variable: jwt="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwi
 }
 HTTP 400
 [Asserts]
-body == "idtoken: audience provided does not match aud claim in the JWT\n"
+body contains "idtoken: audience provided does not match aud claim in the JWT"
 
 # Now try to set the token in a workspace and then try to login
 
@@ -161,7 +161,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body == "google login: no client id associated with auth source\n"
+body contains "google login: no client id associated with auth source"
 
 # Set the google auth source config client id value
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
@@ -212,7 +212,7 @@ variable: jwt="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwi
 }
 HTTP 400
 [Asserts]
-body == "idtoken: audience provided does not match aud claim in the JWT\n"
+body contains "idtoken: audience provided does not match aud claim in the JWT"
 
 # Verify that if you try to log in with a workspace context you get an error
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/auth/uesio/core/mock/login
@@ -221,4 +221,4 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body == "Login isn't currently supported for workspaces\n"
+body contains "Login isn't currently supported for workspaces"

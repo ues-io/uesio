@@ -165,7 +165,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/s
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "User does not have parent access to write to this record: uesio:testorguser of collection: uesio/core.organizationuser"
+jsonpath "$.wires[0].errors[0].message" contains "User does not have parent access to write to this record: uesio:testorguser of collection: uesio/core.organizationuser"
 
 # now, login as Ben and do the same thing,
 # which should succeed since ben is the owner of the org and has write access

@@ -19,11 +19,17 @@ func NewBaseAgent(namespace, name string) *Agent {
 	return &Agent{BundleableBase: NewBase(namespace, name)}
 }
 
+type AgentTool struct {
+	Name string
+	Type string
+}
+
 type Agent struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Description    string `yaml:"description" json:"uesio/studio.description"`
-	ProfileRef     string `yaml:"profile" json:"uesio/studio.profile"`
+	Description    string      `yaml:"description" json:"uesio/studio.description"`
+	ProfileRef     string      `yaml:"profile" json:"uesio/studio.profile"`
+	Tools          []AgentTool `yaml:"tools" json:"uesio/studio.tools"`
 }
 
 type AgentWrapper Agent

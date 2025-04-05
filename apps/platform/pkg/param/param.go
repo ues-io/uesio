@@ -12,7 +12,7 @@ func GetRequiredString(params map[string]interface{}, paramName string) (string,
 			return stringValue, nil
 		}
 	}
-	return "", exceptions.NewInvalidParamException("missing required parameter "+paramName, paramName)
+	return "", exceptions.NewInvalidParamException("missing required parameter", paramName)
 }
 
 func GetOptionalString(params map[string]interface{}, paramName, defaultValue string) string {

@@ -55,9 +55,9 @@ func (c *ChangeAPI) SetAll(record map[string]interface{}) {
 }
 
 func (c *ChangeAPI) AddError(message string) {
-	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, "", message))
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, "", message, nil))
 }
 
 func (c *ChangeAPI) AddFieldError(message string, field string) {
-	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, field, message))
+	c.op.AddError(exceptions.NewSaveException(c.change.IDValue, field, message, nil))
 }

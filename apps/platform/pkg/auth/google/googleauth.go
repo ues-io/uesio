@@ -63,21 +63,21 @@ func (c *Connection) callListenerBot(botKey string, payload map[string]interface
 func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload, error) {
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
+		return nil, exceptions.NewBadRequestException("google login", err)
 	}
 
 	trustedClientID, err := c.credentials.GetRequiredEntry("client_id")
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("google login: " + err.Error())
+		return nil, exceptions.NewBadRequestException("google login", err)
 	}
 
 	if trustedClientID == "" {
-		return nil, exceptions.NewBadRequestException("google login: no client id associated with auth source")
+		return nil, exceptions.NewBadRequestException("google login: no client id associated with auth source", err)
 	}
 
 	validToken, err := idtoken.Validate(c.session.Context(), token, trustedClientID)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException(err.Error())
+		return nil, exceptions.NewBadRequestException("google login", err)
 	}
 
 	return validToken, nil
@@ -93,7 +93,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body", err))
 		return
 	}
 	user, _, err := c.DoLogin(loginRequest)
@@ -143,10 +143,10 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
 func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
-	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
+	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) ConfirmResetPassword(payload map[string]interface{}) (*meta.User, error) {
-	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
+	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
 	validated, err := c.Validate(payload)
@@ -161,5 +161,5 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}, c.connection, c.session)
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
-	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password")
+	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }

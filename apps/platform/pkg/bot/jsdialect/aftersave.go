@@ -42,7 +42,7 @@ func NewAfterSaveAPI(bot *meta.Bot, request *wire.SaveOp, connection wire.Connec
 }
 
 func (as *AfterSaveAPI) AddError(message string) {
-	as.op.AddError(exceptions.NewSaveException("", "", message))
+	as.op.AddError(exceptions.NewSaveException("", "", message, nil))
 }
 
 func (as *AfterSaveAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {

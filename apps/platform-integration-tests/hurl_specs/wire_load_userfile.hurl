@@ -159,16 +159,14 @@ HTTP 404
 [Asserts]
 body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
 
-# TODO: This should be a 400 not 500, need to refactor how we handle errors on loads https://github.com/ues-io/uesio/blob/7f4b77089be0b0cd6525d13ea83fa4fd8ae10944/apps/platform/pkg/datasource/load.go#L76
-# Verify 500 when invalid userfileid format
+# Verify 400 when invalid userfileid format
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid=my-bad-id
-HTTP 500
+HTTP 400
 
 # Verify 404 when file not found
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/userfiles/download?userfileid=472df010-e3df-48d0-9cb6-7b28022ab045&version=1734112100
 HTTP 404
 
-# TODO: This should be a 400 not 500, need to refactor how we handle errors on loads https://github.com/ues-io/uesio/blob/7f4b77089be0b0cd6525d13ea83fa4fd8ae10944/apps/platform/pkg/datasource/load.go#L76
-# Verify 500 when invalid userfileid format
+# Verify 400 when invalid userfileid format
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/userfiles/download?userfileid=my-bad-id&version=1734112100
-HTTP 500
+HTTP 400

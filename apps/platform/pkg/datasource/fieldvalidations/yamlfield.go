@@ -1,6 +1,7 @@
 package fieldvalidations
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -13,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/validation"
 )
 
-const yamlValidationError = "Field '%s' failed YAML schema validation: %s"
+const YAML_VALIDATION_ERROR_FORMAT = "Field '%s' failed YAML schema validation"
 
 func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
 	return func(change *wire.ChangeItem) *exceptions.SaveException {
@@ -32,11 +33,11 @@ func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
 		if len(field.ValidationMetadata.SchemaUri) > 0 {
 			schema, err2 := validation.GetSchema(field.ValidationMetadata.SchemaUri)
 			if err2 != nil {
-				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(YAML_VALIDATION_ERROR_FORMAT, field.Label), err2)
 			}
 			validationResult, err2 := validation.ValidateYaml(schema, yamlBytes)
 			if err2 != nil {
-				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err2.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(YAML_VALIDATION_ERROR_FORMAT, field.Label), err2)
 			}
 			if validationResult.Valid() {
 				return nil
@@ -59,11 +60,11 @@ func ValidateYamlField(field *wire.FieldMetadata) ValidationFunc {
 					errStrings[i] = fmt.Sprintf("[%d] %s", i+1, formatted)
 				}
 			}
-			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, strings.Join(errStrings, " ")))
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(YAML_VALIDATION_ERROR_FORMAT, field.Label), errors.New(strings.Join(errStrings, " ")))
 		} else {
 			err = yaml.Unmarshal(yamlBytes, node)
 			if err != nil {
-				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(yamlValidationError, field.Label, err.Error()))
+				return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf(YAML_VALIDATION_ERROR_FORMAT, field.Label), err)
 			}
 			return nil
 		}
