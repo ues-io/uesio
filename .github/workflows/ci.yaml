@@ -6,7 +6,7 @@ on:
       uesioLogLevel:
         description: "Uesio Log level"
         required: false
-        default: 8
+        default: -4
         type: choice
         options:
           - -4
@@ -52,7 +52,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - name: Ensure tracking against main
-        run: git2 branch --track main origin/main
+        run: git branch --track main origin/main
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
 
       - name: Setup node
@@ -176,36 +176,17 @@ jobs:
           npm run tests-docker
 
       - name: Collect docker logs
-        #if: failure()
         if: always()
         uses: jwalton/gh-docker-logs@v2
         with:
           dest: ${{ env.DOCKER_LOGS_FOLDER }}
 
       - name: Upload docker logs
-        #if: failure()
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: docker-logs
           path: ${{ env.DOCKER_LOGS_FOLDER }}
-
-      # - name: Tar logs
-      #   #if: failure()
-      #   if: always()
-      #   run: tar cvzf ./docker-logs.tgz ${{ env.DOCKER_COMPOSE_LOGS }}
-
-      # - name: Upload logs to GitHub
-      #   #if: failure()
-      #   if: always()
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: docker-logs.tgz
-      #     path: ./docker-logs.tgz
-
-      # - name: stop docker
-      #   if: always()
-      #   run: docker compose -f docker-compose-tests.yaml down
 
   check:
     name: Check format and lint

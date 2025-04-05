@@ -57,7 +57,7 @@ services:
       UESIO_USE_HTTPS: "${UESIO_USE_HTTPS:-false}"
       UESIO_PORT: "${UESIO_PORT:-3000}"
       UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN:-localhost}"
-      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL-}"
+      UESIO_LOG_LEVEL: "${UESIO_LOG_LEVEL:-0}"
       # for situations where UESIO_PRIMARY_DOMAIN is not localhost and
       # UESIO_USE_HTTPS is not true, we need to pass this through
       UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES:-false}"
