@@ -33,8 +33,7 @@ docker compose -f docker-compose-tests.yaml up -d --wait
 
 # parallel=1 to ensure the tests run sequentially as they rely on the same "test data"
 # TODO: refactor e2e and integration tests so that they don't rely on the same "test data" so that they can be run in parallel
-#nx run-many -t test-integration test-e2e --parallel=1
-nx run platform-integration-tests:run-test hurl_specs/allmetadata.hurl
+nx run-many -t test-integration test-e2e --parallel=1
 
 # Spin down the tests network's Docker containers
 # In CI, we leave it up so that we can collect the logs

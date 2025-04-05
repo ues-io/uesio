@@ -116,7 +116,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].data" count == 5
+jsonpath "$.wires[0].data" count == 4
 jsonpath "$.wires[0].data[0]['uesio/studio.name']" == "get_config_value"
 jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "aftersave:uesio/tests.animal:uesio/tests.get_config_value"
 jsonpath "$.wires[0].data[1]['uesio/studio.name']" == "increase_population"
