@@ -173,7 +173,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, optio
 	collectionName := item.GetCollectionName()
 
 	// First check the cache
-	if doCache {
+	if bundleStoreCache != nil {
 		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey); ok {
 			return meta.Copy(item, cachedItem)
 		}
@@ -202,7 +202,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, optio
 
 	item.SetNamespace(b.Namespace)
 
-	if !doCache {
+	if bundleStoreCache == nil {
 		return nil
 	}
 	return bundleStoreCache.AddItemToCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey, item)

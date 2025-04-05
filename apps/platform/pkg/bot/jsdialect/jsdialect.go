@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -45,7 +45,7 @@ var botProgramsCache cache.Cache[*goja.Program]
 
 func init() {
 	// Always cache bot programs by default
-	if os.Getenv("UESIO_CACHE_BOT_PROGRAMS") != "false" {
+	if env.ShouldCacheBotPrograms() {
 		botProgramsCache = cache.NewMemoryCache[*goja.Program](15*time.Minute, 5*time.Minute)
 	}
 }
