@@ -162,6 +162,21 @@ jobs:
           # then run all Integration and E2E tests against the app
           npm run tests-docker
 
+      - name: Collect docker logs on failure
+        #if: failure()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: "./docker-logs"
+      - name: Tar logs
+        if: failure()
+        run: tar cvzf ./docker-logs.tgz ./docker-logs
+      - name: Upload logs to GitHub
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: docker-logs.tgz
+          path: ./docker-logs.tgz
+
   check:
     name: Check format and lint
     runs-on: ubuntu-latest
