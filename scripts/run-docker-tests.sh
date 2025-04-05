@@ -10,8 +10,6 @@
 
 set -e
 
-TEST_APP_URL=$([ "${UESIO_USE_HTTPS}" = "true" ] && echo "https" || echo "http")://studio.${UESIO_PRIMARY_DOMAIN:-localhost}:${UESIO_PORT:-3000}
-
 # Ensure that we have a Uesio docker image to run
 # In CI, we should have the image built already but locally we want to re-build on every run
 if [[ -z "${APP_IMAGE}" ]]; then
@@ -31,17 +29,14 @@ fi
 
 # Spin up dependencies and the app, and run migrations againt the DB
 docker compose -f docker-compose-tests.yaml down --volumes
-docker compose -f docker-compose-tests.yaml up -d
-echo "Waiting for Uesio app to start..."
-# curl the app's /health route in a loop and sleep 1 second until we get a 200
-until $(curl --insecure --output /dev/null --silent --fail $TEST_APP_URL/health); do
-    printf '.'
-    sleep 1
-done
+docker compose -f docker-compose-tests.yaml up -d --wait
 
 # parallel=1 to ensure the tests run sequentially as they rely on the same "test data"
 # TODO: refactor e2e and integration tests so that they don't rely on the same "test data" so that they can be run in parallel
 nx run-many -t test-integration test-e2e --parallel=1
 
 # Spin down the tests network's Docker containers
-docker compose -f docker-compose-tests.yaml down
+# In CI, we leave it up so that we can collect the logs
+if [[ ${CI} != "true" ]]; then 
+    docker compose -f docker-compose-tests.yaml down
+fi

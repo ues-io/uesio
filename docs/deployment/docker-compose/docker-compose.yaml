@@ -3,6 +3,12 @@ name: "uesio_sample"
 services:
   redis:
     image: "redis:alpine"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 4
+      start_period: 10s
   db:
     image: "postgres:14"
     environment:
@@ -21,7 +27,13 @@ services:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
+      healthcheck:
+        test: ["CMD-SHELL", 'wget -q --no-check-certificate $(if [ "$${UESIO_USE_HTTPS}" = "true" ]; then echo "https"; else echo "http"; fi)://studio.$${UESIO_PRIMARY_DOMAIN}:$${UESIO_PORT}/health']
+        interval: 5s
+        timeout: 10s
+        retries: 4
+        start_period: 10s
     ports:
       - "3000:3000"
     environment:
@@ -33,6 +45,9 @@ services:
       UESIO_SESSION_STORE: redis
       UESIO_PLATFORM_CACHE: redis
       UESIO_USAGE_HANDLER: redis
+      UESIO_USE_HTTPS: "${UESIO_USE_HTTPS:-false}"
+      UESIO_PORT: "${UESIO_PORT:-3000}"
+      UESIO_PRIMARY_DOMAIN: "${UESIO_PRIMARY_DOMAIN:-localhost}"
       # In order to sign-up for a new account, you need to setup https://resend.com to support email notifications. In lieu of
       # that, UESIO_MOCK_AUTH can be used to allow login with Mock users.  When resend is configured, UESIO_MOCK_AUTH can be
       # set to false.
