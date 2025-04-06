@@ -174,7 +174,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/ca
 HTTP 200
 
 # It is possible to read the owner field of an protected collection.
-# because ben user impersoning with owner_locked profile DOES have MODIFYALL access to it 
+# because ben user impersoning with owner_locked profile DOES have MODIFYALL access to it
 # and read access to the owner field, the owner should still be abel
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
 Accept: application/json
@@ -228,4 +228,4 @@ Content-Type: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors[0].message" == "Profile uesio/tests.owner_locked does not have edit access to the uesio/core.owner field."
+jsonpath "$.wires[0].errors[0].message" contains "Profile uesio/tests.owner_locked does not have edit access to the uesio/core.owner field."

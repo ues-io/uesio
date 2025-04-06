@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
@@ -38,7 +37,7 @@ func Static(currentWorkingDirectory, routePrefix string, cache bool) http.Handle
 	if staticAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
 	}
-	if cache && !env.InDevMode() {
+	if cache {
 		handler = middleware.With1YearCache(handler)
 	}
 	return handler

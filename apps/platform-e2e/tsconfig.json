@@ -13,7 +13,7 @@
     "**/*.js",
     "**/*.mjs",
     "**/*.cjs",
-    "cypress.config.mjs",
+    "cypress.config.ts",
     "**/*.cy.ts",
     "**/*.cy.tsx",
     "**/*.cy.js",

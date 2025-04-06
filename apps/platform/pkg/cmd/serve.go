@@ -87,12 +87,11 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
 	version := os.Getenv("UESIO_BUILD_VERSION")
-	cacheSiteBundles := os.Getenv("UESIO_CACHE_SITE_BUNDLES") != "false"
 	cacheStaticAssets := false
 	staticAssetsPath := ""
 	if version != "" {
 		staticAssetsPath = "/" + version
-	} else if cacheSiteBundles {
+	} else if env.ShouldCacheSiteBundles() {
 		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
 	}
 	if staticAssetsPath != "" {

@@ -13,14 +13,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
-
-const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
 
 func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadSeeker) {
 	if stream == nil {
@@ -37,13 +34,11 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 	}
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
-	if fileRequest.TreatAsImmutable() && !env.InDevMode() {
-		w.Header().Set("Cache-Control", CacheFor1Year)
+	if fileRequest.TreatAsImmutable() {
+		middleware.Set1YearCache(w)
 	}
 
 	http.ServeContent(w, r, fileRequest.Path, fileRequest.LastModified, stream)
-	return
-
 }
 
 func ServeFileContent(file *meta.File, version string, path string, w http.ResponseWriter, r *http.Request) {

@@ -26,7 +26,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	authCode, state, err := extractAuthCodeAndState(r.URL.Query())
 	if err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", exceptions.NewBadRequestException(err.Error()), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", exceptions.NewBadRequestException("", err), false)
 		return
 	}
 	// If we have either workspace / site admin context embedded in the state token,

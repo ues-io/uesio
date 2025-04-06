@@ -1,13 +1,13 @@
 package systembundlestore
 
 import (
-	"os"
 	"path"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/filebundlestore"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 )
 
@@ -18,7 +18,7 @@ var bundleStoreCache *bundle.BundleStoreCache
 
 func init() {
 	// system bundle store cache - on by default
-	if os.Getenv("UESIO_CACHE_SITE_BUNDLES") != "false" {
+	if env.ShouldCacheSiteBundles() {
 		bundleStoreCache = bundle.NewBundleStoreCache(15*time.Minute, 15*time.Minute)
 	}
 }

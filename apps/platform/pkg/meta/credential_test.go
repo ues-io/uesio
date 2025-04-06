@@ -168,7 +168,7 @@ func TestCredentialUnmarshal(t *testing.T) {
 			"somecredential_badname.yaml",
 			"my/namespace",
 			nil,
-			exceptions.NewBadRequestException("Metadata name does not match filename: somecredential, somecredential_badname"),
+			exceptions.NewBadRequestException("Metadata name does not match filename: somecredential, somecredential_badname", nil),
 		},
 	}
 

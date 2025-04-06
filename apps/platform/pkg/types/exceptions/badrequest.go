@@ -1,12 +1,18 @@
 package exceptions
 
 type BadRequestException struct {
-	msg string
+	message string
+	err     error
 }
 
-func NewBadRequestException(msg string) *BadRequestException {
-	return &BadRequestException{msg}
+func NewBadRequestException(message string, err error) *BadRequestException {
+	return &BadRequestException{message, err}
 }
+
 func (e *BadRequestException) Error() string {
-	return e.msg
+	return printErr("bad request:", e.message, e.err)
+}
+
+func (e *BadRequestException) Unwrap() error {
+	return e.err
 }

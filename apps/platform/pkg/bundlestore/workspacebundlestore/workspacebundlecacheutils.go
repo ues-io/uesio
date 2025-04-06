@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -23,13 +23,11 @@ type WorkspaceMetadataChange struct {
 	ChangedItems   []string
 }
 
-var doCache bool
 var bundleStoreCache *bundle.BundleStoreCache
 
 func init() {
 	// Default to using workspace bundle caching
-	doCache = os.Getenv("UESIO_CACHE_WORKSPACE_BUNDLES") != "false"
-	if doCache {
+	if env.ShouldCacheWorkspaceBundles() {
 		// For the workspace bundle store, cache entries should be short-lived
 		bundleStoreCache = bundle.NewBundleStoreCache(10*time.Minute, 10*time.Minute)
 		// Listen for changes to workspace metadata, and invalidate items in the cache as needed

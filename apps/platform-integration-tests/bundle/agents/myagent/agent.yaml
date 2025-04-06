@@ -1,0 +1,7 @@
+name: myagent
+label: My Test Agent
+description: An AI agent that is just a test.
+tools:
+  - name: my_favorite_tool
+    type: hammer
+public: true
