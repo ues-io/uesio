@@ -50,4 +50,4 @@ services:
       UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES:-false}"
     volumes:
       - ./apps/platform/ssl:/ssl
-    command: sh -c "./uesio migrate && ./uesio seed && ./uesio serve"
+    command: sh -c "cp /ssl/certificate.crt /usr/local/share/ca-certificates && update-ca-certificates && ./uesio migrate && ./uesio seed && ./uesio serve"

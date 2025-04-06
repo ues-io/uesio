@@ -17,6 +17,7 @@ COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
 COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
+RUN apk add --upgrade --no-cache ca-certificates && update-ca-certificates
 
 ARG BUILD_VERSION
 ENV UESIO_BUILD_VERSION=${BUILD_VERSION}
