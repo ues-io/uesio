@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"fmt"
+
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -9,7 +11,7 @@ import (
 func NewIntegration(key string) (*Integration, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("Bad Key for Integration: " + key)
+		return nil, exceptions.NewBadRequestException(fmt.Sprintf("Bad Key for Integration: %s", key), nil)
 	}
 	return NewBaseIntegration(namespace, name), nil
 }

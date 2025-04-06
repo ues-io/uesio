@@ -93,7 +93,7 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	userFileID := query.Get("userfileid")
 	version := query.Get("version")
 	if userFileID == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
 		return
 	}
 	buf := &bytes.Buffer{}
@@ -116,11 +116,11 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 	path := vars["path"]
 	version := vars["version"]
 	if recordID == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment recordid"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment recordid", nil))
 		return
 	}
 	if path == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment path"))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment path", nil))
 		return
 	}
 

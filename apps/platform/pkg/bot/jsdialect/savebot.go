@@ -103,7 +103,7 @@ func (sba *SaveBotAPI) GetUser() *UserAPI {
 }
 
 func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
-	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, message))
+	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, message, nil))
 }
 
 func (sba *SaveBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {

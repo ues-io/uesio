@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -45,7 +46,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return NewFileUploadBatch(body, job, session)
 	}
 
-	return nil, exceptions.NewBadRequestException("invalid JobType for creating batches: " + job.Spec.JobType)
+	return nil, exceptions.NewBadRequestException(fmt.Sprintf("invalid JobType for creating batches: %s", job.Spec.JobType), nil)
 
 }
 

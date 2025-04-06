@@ -76,7 +76,7 @@ func requireValue(change *wire.ChangeItem, fieldName string) (string, error) {
 				msg = "unable to update existing record of collection " + change.Metadata.GetFullName() + " with key " + change.RecordKey + ": " + msg
 			}
 		}
-		return "", exceptions.NewSaveException(change.RecordKey, fieldName, msg)
+		return "", exceptions.NewSaveException(change.RecordKey, fieldName, msg, nil)
 	}
 
 	return value, nil

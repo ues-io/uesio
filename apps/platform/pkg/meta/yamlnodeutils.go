@@ -181,10 +181,10 @@ func validateMetadataNameNode(node *yaml.Node, expectedName, nameKey string) err
 
 func validateMetadataName(name string, expectedName string) error {
 	if expectedName != "" && name != expectedName {
-		return exceptions.NewBadRequestException(fmt.Sprintf("Metadata name does not match filename: %s, %s", name, expectedName))
+		return exceptions.NewBadRequestException(fmt.Sprintf("Metadata name does not match filename: %s, %s", name, expectedName), nil)
 	}
 	if !IsValidMetadataName(name) {
-		return exceptions.NewBadRequestException(fmt.Sprintf("Failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9: %s", name))
+		return exceptions.NewBadRequestException(fmt.Sprintf("Failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9: %s", name), nil)
 	}
 	return nil
 }

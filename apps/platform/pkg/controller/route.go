@@ -146,7 +146,7 @@ func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path, namesp
 }
 
 func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.Route, session *sess.Session) {
-	w.Header().Set("Cache-Control", "no-cache")
+	middleware.SetNoCache(w)
 
 	mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
 		Session: session,
@@ -349,7 +349,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 	switch route.Type {
 	case "redirect":
 		// Handle redirect routes
-		w.Header().Set("Cache-Control", "no-cache")
+		middleware.SetNoCache(w)
 		mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
 			Session: session,
 		})

@@ -1,6 +1,8 @@
 package fieldvalidations
 
 import (
+	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -16,7 +18,7 @@ func ValidateNumberField(field *wire.FieldMetadata) ValidationFunc {
 		_, isInt := val.(int)
 		if err == nil && !isFloat && !isInt64 && !isInt {
 			return exceptions.NewSaveException(
-				change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
+				change.RecordKey, field.GetFullName(), fmt.Sprintf("Field: %s is not a valid number", field.Label), nil)
 		}
 		return nil
 	}

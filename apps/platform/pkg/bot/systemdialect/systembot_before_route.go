@@ -29,7 +29,7 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		case "redirect":
 			redirect, _ := change.GetFieldAsString("uesio/studio.redirect")
 			if redirect == "" {
-				return exceptions.NewBadRequestException("redirect field is required")
+				return exceptions.NewBadRequestException("redirect field is required", nil)
 			}
 			return nil
 		default:

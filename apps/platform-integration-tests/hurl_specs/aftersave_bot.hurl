@@ -29,7 +29,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" == "No Zebras Allowed!"
+jsonpath "$.wires[0].errors[0].message" contains "No Zebras Allowed!"
 
 # Verify that no zebras were created
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load

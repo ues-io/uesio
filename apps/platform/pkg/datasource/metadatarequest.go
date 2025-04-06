@@ -130,7 +130,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return exceptions.NewBadRequestException("tried to add blank collection")
+		return exceptions.NewBadRequestException("tried to add blank collection", nil)
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}

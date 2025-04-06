@@ -26,7 +26,7 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	adminSession := sess.GetAnonSession(context.Background(), site)
 	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", nil, adminSession)
 	if err != nil || loginmethod == nil {
-		return nil, exceptions.NewBadRequestException("The api key you are trying to log in with does not exist")
+		return nil, exceptions.NewBadRequestException("The api key you are trying to log in with does not exist", nil)
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(loginmethod.Hash), []byte(key))
 	if err != nil {
