@@ -152,11 +152,7 @@ jobs:
           APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
           UESIO_USE_HTTPS: true
         run: |
-          ./scripts/seed-etc-hosts.sh
-
-          cd apps/platform/ssl
-          bash ./create.sh
-          cd ../../../
+          npm run setup-ssl
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
