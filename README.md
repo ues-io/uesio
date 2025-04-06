@@ -23,8 +23,8 @@ Uesio is a **low-code** application development platform.
 
 ## Optional
 
-- Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
-- Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run the test suite and/or multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://studio.localhost:3000`
+- Set up SSL [here](#set-up-ssl-for-localhost). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
+- Set up local DNS [here](#set-up-your-local-dns-advanced). This is only necessary if you want to setup a [custom domain for local development](#custom-domain-for-local-development) (e.g., `dev.mylocaluesio.com` pointing to your local machine)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 - Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 - Install [Oh My Zsh](https://ohmyz.sh/)
@@ -173,7 +173,7 @@ npm run start
 open http://studio.localhost:3000
 ```
 
-If you have [SSL](#set-up-ssl) you can access the Studio via the following:
+If you have setup [SSL](#set-up-ssl-for-localhost) you can access the Studio via the following:
 
 ```
 open https://studio.localhost:3000
@@ -186,54 +186,69 @@ npm run in-docker
 open https://studio.localhost:3000
 ```
 
-# <a id="set-up-ssl"></a> Set up SSL
+# Set up SSL for localhost
 
-SSL is optional for local development. It is enabled by setting the environment variable `UESIO_USE_HTTPS=true` (e.g., in your .env file).
+SSL is optional for local development. In addition to generating an ssl certificate, you must enable the platform to use SSL by setting the environment variable `UESIO_USE_HTTPS=true` (e.g., in your .env file).
+
+The below steps will generate an SSL certificate with subject and subject alternate names for `localhost` and `*.localhost` which is all that is needed to run the uesio platform. If you'd like to configure your local environment to use a custom domain (e.g., `dev.mylocaluesio.com`) pointing to your local machine, see the section [Custom domain for local development](#custom-domain-for-local-development).
 
 ```
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. It will also attempt to register it
-as a trusted certificate based on your operating system (Linux, macOS).
+This script will create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. It will also attempt to register it as a trusted certificate based on your operating system (Linux, macOS).
 
 If you are running uesio in WSL but want to access the site from the Windows side, you can trust the certificate:
 
 1. Double-click the certificate.crt file in the File Explorer
 2. Click "Install Certificate..." and place the certificate in the "Trusted Root Certification Authorities".
 
-# <a id="set-up-local-dns"></a> Set up your local DNS
+# Custom domain for local development
 
-If you just want to work in the Uesio Studio site, local DNS setup is not necessary, you can just access "http://studio.localhost:3000" or "https://studio.localhost:3000" if you [setup ssl](#set-up-ssl).
+If you'd like to be able to access your local development environment via a custom domain (e.g., `dev.mylocaluesio.com`) either via http or https, you will need to perform the following:
 
-If you want to run integration and/or e2e tests or if you want to use custom domains (e.g., dev-myuesio.com), you will need to configure local DNS.
+> [!NOTE]
+> If you are running WSL on Windows and want to be able to access the site from your Windows machine, please see the [advanced local dns](#set-up-local-dns-advanced) section.
 
-There are two ways to do this, you'll need to pick one:
+1. Update your `.env` file to contain `UESIO_PRIMARY_DOMAIN=<domainname>` (e.g., `UESIO_PRIMARY_DOMAIN=dev.mylocaluesio.com`)
+2. `npm run setup-ssl -- -p`
+3. `npm run setup-local-dns -- -p`
 
-1. Modify your "hosts" file directly:
+After starting the server (e.g., `npm run start`), you can access your studio site at `http://studio.dev.mylocaluesio.com` or `https://studio.dev.mylocaluesio.com` if you have set `UESIO_USE_HTTPS=true`. When running without SSL, make sure you set `UESIO_ALLOW_INSECURE_COOKIES=true`.
 
+If you'd like to be able to switch between custom domains, see the advanced usage below for [ssl](#set-up-ssl-for-custom-domain-advanced) and [local dns](#set-up-local-dns-advanced)
+
+## Set up SSL for custom domain (Advanced)
+
+To configure multiple custom domains in a single SSL certificate, you can execute the following which will include `localhost` and any domains you specify in the generated certificate:
+
+```bash
+npm run setup-ssl -- first.domain second.domain third.domain`
+```
+
+## Set up local DNS (Advanced)
+
+To configure multiple custom domains in local dns, there are two options:
+
+1. Modify your "hosts" file:
    - Linux/macOS:
-     1. Create the localhost subdomain entries by running `bash ./scripts/seed-etc-hosts.sh`
-     2. Optional: Manually modify `/etc/hosts` for any custom domains that you want to use
+     1. Create the subdomain entries by running:
+        ```bash
+        npm run setup-local-dns -- first.domain second.domain third.domain`
+        ```
+     2. Optional: Manually modify `/etc/hosts` for any custom domains that you want to use specifying a studio.<domain>, docs.<domain> & tests.<domain> entry
         ```text
-        127.0.0.1    studio.dev-myuesio.com
-        127.0.0.1    docs.dev-myuesio.com
-        127.0.0.1    tests.dev-myuesio.com
+        127.0.0.1    studio.dev-myuesio.com docs.dev-myuesio.com tests.dev-myuesio.com
         ```
    - WSL: No modifications are required on the Linux side, but the following is required for the Windows side. Note that you must have elevated priviledges to modify the hosts file.
      1. Add the localhost subdomain entries to `%WINDIR%\system32\drivers\etc\hosts`
         ```text
-        127.0.0.1    studio.localhost
-        127.0.0.1    docs.localhost
-        127.0.0.1    tests.localhost
+        127.0.0.1    studio.localhost docs.localhost tests.localhost
         ```
      2. Optional: Add the following entries to `%WINDIR%\system32\drivers\etc\hosts` for any custom domain that you want to use
         ```text
-        127.0.0.1    studio.dev-myuesio.com
-        127.0.0.1    docs.dev-myuesio.com
-        127.0.0.1    tests.dev-myuesio.com
+        127.0.0.1    studio.dev-myuesio.com docs.dev-myuesio.com tests.dev-myuesio.com
         ```
-
 2. Use DNSMasq (Linux/macOS Only)
 
    ```
@@ -399,7 +414,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 ## Testing (Unit, Integration & E2E)
 
 > [!IMPORTANT]
-> The default behavior for all tests is to run against `https://studio.localhost:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
+> The default behavior for all tests is to run against `http://studio.localhost:3000` although tests will execute based on the settings in your environment (or `.env` file), for example, `UESIO_USE_HTTPS` will run tests against `https`.
 
 To run the various test suites, there are a number of commands available:
 
