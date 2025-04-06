@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/context"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	uesiohttp "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -25,6 +26,12 @@ type RequestSpec struct {
 }
 
 type ResultReader[K any] func(io.Reader) (K, error)
+
+// TODO: The way that http client is created and used throughout the code
+// base needs to be evaluated. In the CLI itself, this isn't as much of a
+// concern vs. the platform but the CLI should be contemplated in the
+// evaluation nonetheless. See https://github.com/ues-io/uesio/issues/4781
+var useioClient = uesiohttp.NewLocalhostClient()
 
 func Request(r *RequestSpec) (*http.Response, error) {
 
@@ -48,7 +55,7 @@ func Request(r *RequestSpec) (*http.Response, error) {
 		}
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := useioClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
