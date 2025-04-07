@@ -29,7 +29,12 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", 'wget -q --no-check-certificate $(if [ "$${UESIO_USE_HTTPS}" = "true" ]; then echo "https"; else echo "http"; fi)://studio.$${UESIO_PRIMARY_DOMAIN}:$${UESIO_PORT}/health']
+      # Intentionally using $${UESIO_PRIMARY_DOMAIN}:$${UESIO_PORT} instead of studio.$${UESIO_PRIMARY_DOMAIN}:$${UESIO_PORT} because this command is executed from within
+      # the container itself and there is no hosts entry on the container or the host for studio.localhost when UESIO_PRIMARY_DOMAIN=localhost so since wget does not
+      # automatically force localhost & *.localhost to loopback address like browser, curl, etc. do this is required.
+      # Note - studio.localhost does resolve in Github runner (there must be something configured within the docker setup on GH runner) but it does not resolve on
+      # local development machines (which I would expect it not to without a hosts entry).
+      test: ["CMD-SHELL", 'wget -q --no-check-certificate $(if [ "$${UESIO_USE_HTTPS}" = "true" ]; then echo "https"; else echo "http"; fi)://$${UESIO_PRIMARY_DOMAIN}:$${UESIO_PORT}/health']
       interval: 5s
       timeout: 10s
       retries: 4
@@ -63,4 +68,4 @@ services:
       UESIO_ALLOW_INSECURE_COOKIES: "${UESIO_ALLOW_INSECURE_COOKIES:-false}"
     volumes:
       - ./apps/platform/ssl:/ssl
-    command: sh -c "cat /etc/hosts && ping -w 15 studio.localhost && cp /ssl/certificate.crt /usr/local/share/ca-certificates && update-ca-certificates && ./uesio migrate && ./uesio seed && ./uesio serve"
+    command: sh -c "cp /ssl/certificate.crt /usr/local/share/ca-certificates && update-ca-certificates && ./uesio migrate && ./uesio seed && ./uesio serve"
