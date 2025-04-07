@@ -232,11 +232,14 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Check formatting
+      # format:check is nx CLI command that runs prettier (only formats file types that prettier supports)
+      - name: Check formatting (prettier)
         run: npx nx format:check --verbose
 
-      - name: Lint
-        run: npx nx affected -t lint --configuration=ci --parallel=5 --verbose
+      # include format:check target (different than nx format:check cli command) to check formatting
+      # on projects/filetypes that prettier does not support (e.g., go)
+      - name: Lint & Check formatting (non-prettier)
+        run: npx nx affected -t lint format:check --configuration=ci --parallel=5 --verbose
 
   typecheck:
     name: Check types
