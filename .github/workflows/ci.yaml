@@ -165,6 +165,8 @@ jobs:
           UESIO_USE_HTTPS: true
           UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
         run: |
+          cat /etc/hosts
+          ping -w 15 studio.localhost
           npm run setup-ssl
 
           # Start up the Uesio app, and dependencies, in Docker
