@@ -41,16 +41,6 @@
     },
     "typecheck": {
       "cache": true
-    },
-    "@nx-go/nx-go:build": {
-      "inputs": ["golang", "^production", "sharedGlobals"],
-      "outputs": ["{options.outputPath}"]
-    },
-    "@nx-go/nx-go:test": {
-      "inputs": ["golang", "^production", "sharedGlobals"]
-    },
-    "@nx-go/nx-go:lint": {
-      "inputs": ["golang", "^production", "sharedGlobals"]
     }
   },
   "plugins": [
@@ -74,8 +64,7 @@
       "options": {
         "targetName": "test"
       }
-    },
-    "@nx-go/nx-go"
+    }
   ],
   "generators": {
     "@nx/react": {
