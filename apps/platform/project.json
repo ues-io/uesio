@@ -5,44 +5,72 @@
   "sourceRoot": "apps/platform",
   "targets": {
     "build": {
-      "executor": "@nx-go/nx-go:build",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go",
-        "outputPath": "dist/platform/uesio"
-      }
+        "command": "go build -o {args.outputPath} main.go",
+        "cwd": "{projectRoot}",
+        "outputPath": "../../dist/cli/uesio"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "outputs": ["{options.outputPath}"]
+    },
+    "format": {
+      "dependsOn": ["format:write"]
+    },
+    "format:write": {
+      "dependsOn": ["gofmt:write", "tidy:write"]
+    },
+    "format:check": {
+      "dependsOn": ["gofmt:check", "tidy:check"]
+    },
+    "gofmt:write": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "gofmt -l -w -s -e .",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+    },
+    "gofmt:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "output=\"$(gofmt -d -e .)\" && echo \"$output\" && test -z \"$output\"",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
     },
     "lint": {
-      "executor": "@nx-go/nx-go:lint"
+      "dependsOn": ["vet"]
     },
     "seed": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go",
-        "args": ["seed"]
+        "command": "go run main.go seed",
+        "cwd": "{projectRoot}"
       },
       "dependsOn": ["vendor:build"]
     },
     "migrate-db": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go",
-        "args": ["migrate"]
+        "command": "go run main.go migrate",
+        "cwd": "{projectRoot}"
       },
       "dependsOn": ["vendor:build"]
     },
     "serve": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go",
-        "args": ["serve"]
+        "command": "go run main.go serve",
+        "cwd": "{projectRoot}"
       },
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     },
     "worker": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go",
-        "args": ["worker"]
+        "command": "go run main.go worker",
+        "cwd": "{projectRoot}"
       },
       "dependsOn": ["vendor:build"]
     },
@@ -63,11 +91,37 @@
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     },
     "test": {
-      "executor": "@nx-go/nx-go:test",
-      "dependsOn": ["vendor:build", "ui:build"]
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test -v ./...",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["vendor:build", "ui:build"],
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
     },
-    "tidy": {
-      "executor": "@nx-go/nx-go:tidy"
+    "tidy:write": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+    },
+    "tidy:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy -diff",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+    },
+    "vet": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go vet ./...",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["golang", "default", "^production", "sharedGlobals"]
     },
     "watch-deps": {
       "executor": "nx:run-commands",
