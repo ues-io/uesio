@@ -9,7 +9,7 @@
       "options": {
         "command": "go build -o {args.outputPath} main.go",
         "cwd": "{projectRoot}",
-        "outputPath": "../../dist/cli/uesio"
+        "outputPath": "../../dist/platform/uesio"
       },
       "inputs": ["golang", "default", "^production", "sharedGlobals"],
       "outputs": ["{options.outputPath}"]
