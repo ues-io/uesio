@@ -2,6 +2,17 @@ name: CI
 run-name: ${{ (github.event_name == 'workflow_dispatch' && format('manual{0} {1}', ':', github.sha)) || '' }}
 on:
   workflow_dispatch:
+    inputs:
+      uesioLogLevel:
+        description: "Uesio Log level"
+        required: false
+        default: -4
+        type: choice
+        options:
+          - -4
+          - 0
+          - 4
+          - 8
   push:
     branches: [main]
     paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
@@ -18,6 +29,7 @@ concurrency:
 
 env:
   GO_CACHE_INFO_FILE: wf-go-cache-info.txt
+  DOCKER_LOGS_FOLDER: ./docker-logs
 
 jobs:
   build:
@@ -151,12 +163,26 @@ jobs:
         env:
           APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
           UESIO_USE_HTTPS: true
+          UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
         run: |
           npm run setup-ssl
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app
           npm run tests-docker
+
+      - name: Collect docker logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: ${{ env.DOCKER_LOGS_FOLDER }}
+
+      - name: Upload docker logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-logs
+          path: ${{ env.DOCKER_LOGS_FOLDER }}
 
   check:
     name: Check format and lint
