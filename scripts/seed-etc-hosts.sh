@@ -36,8 +36,8 @@ if [ ${#domains[@]} -eq 0 ]; then
     exit 1
 fi
 
-# Deduplicate
-mapfile -t domains < <(printf "%s\n" "${domains[@]}" | awk '!seen[$0]++')
+# Deduplicate - support for Linux and macOS so can't use mapfile
+domains=($(printf '%s\n' "${domains[@]}" | sort -u))
 
 # Process each domain
 for domain in "${domains[@]}"; do

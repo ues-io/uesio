@@ -91,8 +91,8 @@ if [ $# -gt 0 ]; then
                 sed 's/DNS\.\([0-9]\+\).*/\1/' | sort -rn | head -1)
     dns_count=${dns_count:-0}
 
-    # Deduplicate
-    mapfile -t domains < <(printf "%s\n" "${domains[@]}" | awk '!seen[$0]++')
+    # Deduplicate - support for Linux and macOS so can't use mapfile
+    domains=($(printf '%s\n' "${domains[@]}" | sort -u))
 
     # Add new domains to alt_names section
     for domain in "${domains[@]}"; do
