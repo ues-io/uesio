@@ -22,7 +22,7 @@
     "tests-init": "nx run platform-integration-tests:setup-data",
     "tests-integration": "nx run-many -t test-integration",
     "tests-all": "nx run-many -t test && nx run-many -t test-integration test-e2e --parallel=1",
-    "tests-docker": "nx exec -- bash ./scripts/run-docker-tests.sh",
+    "tests-docker": "nx run uesio:tests-docker",
     "tests-cypress-open": "nx run platform-e2e:open-cypress",
     "tests-cypress-run": "nx run platform-e2e:e2e",
     "format": "npm run format:write",
@@ -32,7 +32,7 @@
     "format-check-all": "nx format:check --all && nx run-many -t format:check || echo \"Formatting Errors Found!\"",
     "help": "nx help",
     "in-docker": "nx run platform:serve-image",
-    "start-deps": "nx exec -- docker compose -f docker-compose.yaml up -d",
+    "start-deps": "nx run uesio:start-deps",
     "lint-all": "nx run-many --target=lint --all",
     "migrations": "nx migrate-db platform",
     "migrate:create": "migrate create -dir apps/platform/migrations -ext sql -seq -digits 1",
@@ -49,10 +49,23 @@
     "watch-dev": "nx run platform:serve:watch"
   },
   "nx": {
-    "includedScripts": [
-      "tests-docker",
-      "start-deps"
-    ]
+    "includedScripts": [],
+    "targets": {
+      "tests-docker": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "bash ./scripts/run-docker-tests.sh",
+          "cwd": "{workspaceRoot}"
+        }
+      },
+      "start-deps": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker compose -f docker-compose.yaml up -d",
+          "cwd": "{workspaceRoot}"
+        }
+      }
+    }
   },
   "files": [],
   "devDependencies": {
