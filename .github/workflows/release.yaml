@@ -116,9 +116,11 @@ jobs:
         with:
           go-version-file: go.work
           # Maintaining go.work.sum even though not in repo in case its added back - don't want to overlookg re-adding it
+          # and including release.yaml so that if the workflow itself changes it will invalidate the cache
           cache-dependency-path: |
             apps/*/go.sum
             go.work.sum
+            .github/workflows/release.yaml
             ${{ env.GO_CACHE_INFO_FILE }}
 
       - name: Build CLI
