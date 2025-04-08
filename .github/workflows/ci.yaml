@@ -228,6 +228,7 @@ jobs:
       # Note that the cache key used (https://github.com/actions/setup-go/blob/main/src/cache-restore.ts#L35) by
       # actions/setup-go is already platform/arch/go-version specific so we only need to further differentiate
       # by workflow and job.
+      # Testing a forced change
       - name: Create go cache info file
         run: echo "go-cache-${{ github.workflow }}-${{ github.job }}" > ${GO_CACHE_INFO_FILE}
 
