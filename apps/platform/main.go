@@ -40,7 +40,6 @@ import (
 )
 
 func init() {
-	// forcing a change to test go cache
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 	mime.AddExtensionType(".md", "text/markdown")
