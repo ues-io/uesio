@@ -173,8 +173,8 @@ jobs:
           if [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
             npm run setup-ssl
           else 
-            ./scripts/seed-etc-hosts.sh -p
-            npm run setup-ssl -p              
+            npm run setup-local-dns -- -p
+            npm run setup-ssl -- -p              
           fi          
 
           # Start up the Uesio app, and dependencies, in Docker
