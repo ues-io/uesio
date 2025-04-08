@@ -4,8 +4,7 @@ set -e
 
 # Adds uesio subdomains to /etc/hosts for each specified domain
 subdomains="studio docs tests"
-ip_address="127.0.0.1"
-domains=()
+local_addresses=("127.0.0.1" "::1")
 script_name=$(basename "${BASH_SOURCE[0]:-$0}")
 
 # collect the domains
@@ -41,19 +40,21 @@ domains=($(printf '%s\n' "${domains[@]}" | sort -u))
 
 # Process each domain
 for domain in "${domains[@]}"; do
-    all_domains=""
+    all_subdomains=""
     for subdomain in $subdomains; do
-        if [ -z "$all_domains" ]; then
-            all_domains="$subdomain.$domain"
+        if [ -z "$all_subdomains" ]; then
+            all_subdomains="$subdomain.$domain"
         else
-            all_domains="$all_domains $subdomain.$domain"
+            all_subdomains="$all_subdomains $subdomain.$domain"
         fi
     done
-    host_entry="$ip_address $all_domains"
-    if grep -q "$host_entry" /etc/hosts; then
-        echo "Entry for domain $domain already exists in /etc/hosts"
-    else
-        echo "$host_entry" | sudo tee -a /etc/hosts > /dev/null
-        echo "Entry for domain $domain added to /etc/hosts"
-    fi
+    for ip_address in "${local_addresses[@]}"; do
+        host_entry="$ip_address $domain $all_subdomains"
+        if grep -v '^[[:space:]]*#' /etc/hosts | grep -q "$host_entry"; then        
+            echo "Entry $ip_address for domain $domain already exists in /etc/hosts"
+        else
+            echo "$host_entry" | sudo tee -a /etc/hosts > /dev/null
+            echo "Entry $ip_address for domain $domain added to /etc/hosts"
+        fi
+    done
 done
