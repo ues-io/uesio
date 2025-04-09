@@ -1,6 +1,7 @@
 import {
   SignalDefinition,
   ComponentSignalDescriptor,
+  ComponentSignalDispatcher,
   SignalDescriptor,
 } from "./definition/signal"
 
@@ -12,4 +13,9 @@ import {
 
 export { getSignals, getSignal, getComponentSignalDefinition }
 
-export type { ComponentSignalDescriptor, SignalDefinition, SignalDescriptor }
+export type {
+  ComponentSignalDescriptor,
+  ComponentSignalDispatcher,
+  SignalDefinition,
+  SignalDescriptor,
+}
