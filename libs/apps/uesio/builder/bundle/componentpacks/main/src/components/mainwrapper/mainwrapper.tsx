@@ -15,6 +15,10 @@ import { toggleBuildMode } from "../../helpers/buildmode"
 import BuildBar from "./buildbar/buildbar"
 import { ReactNode } from "react"
 import AdjustableHeightArea from "../../utilities/adjustableheightarea/adjustableheightarea"
+import {
+  getSelectedContentDispatcher,
+  handleEditsDispatcher,
+} from "./editortool"
 
 const StyleDefaults = Object.freeze({
   root: ["h-full", "grid-cols-[1fr]", "auto-cols-auto", "grid-rows-[100%]"],
@@ -175,6 +179,12 @@ MainWrapper.signals = {
   SET_DIMENSIONS: {
     dispatcher: (state, payload) => [payload.width, payload.height],
     target: "dimensions",
+  },
+  GET_SELECTED_CONTENT: {
+    dispatcher: getSelectedContentDispatcher,
+  },
+  HANDLE_EDITS: {
+    dispatcher: handleEditsDispatcher,
   },
 }
 
