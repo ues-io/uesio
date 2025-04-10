@@ -41,7 +41,8 @@
     "prettier-format": "prettier --write .",
     "typecheck-all": "nx run-many -t typecheck --all",
     "seeds": "nx seed platform",
-    "setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
+    "setup-ssl": "nx run platform:setup-ssl",
+    "setup-local-dns": "nx run uesio:setup-local-dns",
     "start": "nx run platform:serve",
     "test": "nx run-many --target=test --all",
     "watch-all": "npm run build-all && nx watch --all -- nx run-many -t build -p \\$NX_PROJECT_NAME",
@@ -63,6 +64,13 @@
         "options": {
           "command": "docker compose -f docker-compose.yaml up -d",
           "cwd": "{workspaceRoot}"
+        }
+      },
+      "setup-local-dns": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "bash ./seed-etc-hosts.sh",
+          "cwd": "{workspaceRoot}/scripts"
         }
       }
     }

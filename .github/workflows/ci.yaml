@@ -13,6 +13,10 @@ on:
           - 0
           - 4
           - 8
+      uesioPrimaryDomain:
+        description: "Uesio Primary Domain"
+        required: false
+        type: string
   push:
     branches: [main]
     paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
@@ -166,12 +170,12 @@ jobs:
           APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
           UESIO_USE_HTTPS: true
           UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
+          UESIO_PRIMARY_DOMAIN: ${{ inputs.uesioPrimaryDomain }}
         run: |
-          ./scripts/seed-etc-hosts.sh
-
-          cd apps/platform/ssl
-          bash ./create.sh
-          cd ../../../
+          if ! [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
+            npm run setup-local-dns            
+          fi
+          npm run setup-ssl
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app

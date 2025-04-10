@@ -180,12 +180,18 @@ func getClient(ctx context.Context, integration *meta.Integration, credentials *
 		return nil, exceptions.NewUnauthorizedException("unsupported OAuth 2 grant type")
 	}
 
+	// TODO: This should be refactored in to the http package to promote consistent creation
+	// of http clients and ensure that proper defaults, etc. are established and that we
+	// account for a consistent pattern of where/how we use http clients.
+	// See https://github.com/ues-io/uesio/issues/4781
+	var defaultClient = httpClient.Get()
 	return &http.Client{
 		Transport: &Transport{
 			Source:        tokenSource,
-			Base:          httpClient.Get().Transport,
+			Base:          defaultClient.Transport,
 			ClientOptions: opts,
 		},
+		Timeout: defaultClient.Timeout,
 	}, nil
 }
 

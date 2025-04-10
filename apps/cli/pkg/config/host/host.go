@@ -11,19 +11,24 @@ import (
 )
 
 var validHostsDevMode = []string{
-	"http://studio.localhost:3000",
-	"https://studio.localhost:3000",
-	"https://studio.ues.io",
-	"https://studio.ues-dev.io",
+	// Not using tls.ServeAppDefaultScheme() here because often times the cli
+	// will be run directly from command line and not have the environment
+	// variables set
+	buildStudioHostUrl("http", env.GetPrimaryDomain(), env.GetPort()),
+	buildStudioHostUrl("https", env.GetPrimaryDomain(), env.GetPort()),
+	buildStudioHostUrl("https", "ues.io", ""),
+	buildStudioHostUrl("https", "ues-dev.io", ""),
 }
 var validHostsRegular = []string{
-	"https://studio.ues.io",
+	buildStudioHostUrl("https", "ues.io", ""),
 }
 
 func GetValidHosts() []string {
 	if env.InDevMode() {
+		fmt.Println("In dev mode")
 		return validHostsDevMode
 	} else {
+		fmt.Println("NOT in dev mode")
 		return validHostsRegular
 	}
 }
@@ -74,4 +79,11 @@ func SetHostPrompt() (string, error) {
 		return "", err
 	}
 	return host, SetHost(host)
+}
+
+func buildStudioHostUrl(scheme string, domain string, port string) string {
+	if port != "" {
+		port = ":" + port
+	}
+	return fmt.Sprintf("%s://studio.%s%s", scheme, domain, port)
 }

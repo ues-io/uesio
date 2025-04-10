@@ -23,8 +23,8 @@ Uesio is a **low-code** application development platform.
 
 ## Optional
 
-- Set up SSL [here](#set-up-ssl). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
-- Set up local DNS [here](#set-up-local-dns) This is also necessary if you want to run the test suite and/or multiple sites locally in addition to the ues.io studio. By default, you can access the studio at `http://studio.localhost:3000`
+- Set up SSL [here](#set-up-ssl-for-localhost). If you don't set up SSL locally and you still want to run multiple sites locally in addition to the ues.io studio, you will need to set the `UESIO_ALLOW_INSECURE_COOKIES` environment variable to `true`
+- Set up local DNS [here](#set-up-your-local-dns-advanced). This is only necessary if you want to setup a [custom domain for local development](#custom-domain-for-local-development) (e.g., `dev.mylocaluesio.com` pointing to your local machine)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 - Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 - Install [Oh My Zsh](https://ohmyz.sh/)
@@ -170,81 +170,150 @@ npm run seeds
 
 ```
 npm run start
-open http://studio.localhost:3000
+open http://studio.uesio.localhost:3000
 ```
 
-If you have [SSL](#set-up-ssl) you can access the Studio via the following:
+If you have setup [SSL](#set-up-ssl-for-localhost) you can access the Studio via the following:
 
 ```
-open https://studio.localhost:3000
+open https://studio.uesio.localhost:3000
 ```
 
 To run the app in Docker locally:
 
 ```
 npm run in-docker
-open https://studio.localhost:3000
+open https://studio.uesio.localhost:3000
 ```
 
-# <a id="set-up-ssl"></a> Set up SSL
+# Set up SSL for localhost
 
-SSL is optional for local development. It is enabled by setting the environment variable `UESIO_USE_HTTPS=true` (e.g., in your .env file).
+SSL is optional for local development. In addition to generating an ssl certificate, you must enable the platform to use SSL by setting the environment variable `UESIO_USE_HTTPS=true` (e.g., in your .env file).
+
+The below steps will generate an SSL certificate with subject and subject alternate names for `uesio.localhost` and `*.uesio.localhost` which is all that is needed to run the uesio platform. If you'd like to configure your local environment to use a custom domain (e.g., `dev.mylocaluesio.com`) pointing to your local machine, see the section [Custom domain for local development](#custom-domain-for-local-development).
 
 ```
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. It will also attempt to register it
-as a trusted certificate based on your operating system (Linux, macOS).
+This script will create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. It will also attempt to register it as a trusted certificate based on your operating system (Linux, macOS).
 
 If you are running uesio in WSL but want to access the site from the Windows side, you can trust the certificate:
 
-1. Double-click the certificate.crt file in the File Explorer
-2. Click "Install Certificate..." and place the certificate in the "Trusted Root Certification Authorities".
+1. Double-click the certificate.crt file in the File Explorer to open the Certificate dialog
+2. Choose "Install Certificate..." on the "Certificate->General" tab of the Certificate dialog
+3. Choose "Current User" on the "Certificate Import Wizard" page 1 and click "Next"
+4. Choose "Place all certificates in the following store" on the "Certificate Import Wizard" page 2
+5. Choose "Browse" on "Certificate Import Wizard" page 2, select "Trusted Root Certification Authorities" and then click "OK"
+6. Choose "Next" on "Certificate Import Wizard" page 2
+7. Choose "Finish" on "Certificate Import Wizard" page 3
+8. Choose "Yes" on the "Security Warning" dialog which warns that uesio.localhost cannot be validated
+9. Choose "OK" on the confirmation dialog indicating the import was successful
+10. Choose "OK" on the Certificate dialog to dismiss it
 
-# <a id="set-up-local-dns"></a> Set up your local DNS
+## `UESIO_USE_HTTPS` Details
 
-If you just want to work in the Uesio Studio site, local DNS setup is not necessary, you can just access "http://studio.localhost:3000" or "https://studio.localhost:3000" if you [setup ssl](#set-up-ssl).
+In a standard production environment behind a load balancer, the value of `UESIO_USE_HTTPS` will typically be `false`. However, when `false`, the platform should still ensure that any outbound requests to any site running on the same platform
+use `https` since those sites are accessed via `https`. Generally speaking, relative paths are used for routes, etc. so this differentiation does not come in to play. However, since uesio bots, integrations, etc. can use absolute URLs to access
+other sites on the platform and/or externally, it is important that when its another site on the same platform that it use `https` for the request. In this case, there is a need to differentiate between what the uesio platform
+is listening for requests on and what it is making requests to. To accomodiate these options, the following values define how `HTTPS_USE_HTTPS` is interpreted:
 
-If you want to run integration and/or e2e tests or if you want to use custom domains (e.g., dev-myuesio.com), you will need to configure local DNS.
+1. `false` (default) - Uesio will listen for `http` and `$Site{scheme}` merge will resolve to `https` EXCEPT for when `UESIO_PRIMARY_DOMAIN` is `localhost` or ends with `.localhost` in which case it will resolve to `http`
+   - This is the recommended configuration for when uesio is behind a local balancer or when running in development against a `localhost` based domain such as the default of `uesio.localhost`
+2. `true` - Uesio will listen for `https` and `$Site{scheme}` merge will resolve to `https`
+   - This is the recommended configuration when uesio is not behind a load balancer
+3. `never` - Uesio will listen for `https` and `$Site{scheme}` merge will resolve to `http`
+   - This is a seldom used configuration and should only be used when running in a development environment against a custom domain and wanting to use `http` for listening.
 
-There are two ways to do this, you'll need to pick one:
+# Custom domain for local development
 
-1. Modify your "hosts" file directly:
+> [!NOTE]
+> Whenever you change the value of `UESIO_PRIMARY_DOMAIN` to a different non-empty value, you must re-run steps 2 & 3 below after each change you make since the generated certificate will only contain
+> subject alternate names for `uesio.localhost` and your current `UESIO_PRIMARY_DOMAIN` by default. See the advanced usage for [ssl](#set-up-ssl-for-custom-domain-advanced) and [local dns](#set-up-local-dns-advanced)
+> regarding configuring multiple domains to avoid having to run steps 2 & 3 after each change.
 
-   - Linux/macOS:
-     1. Create the localhost subdomain entries by running `bash ./scripts/seed-etc-hosts.sh`
-     2. Optional: Manually modify `/etc/hosts` for any custom domains that you want to use
+If you'd like to be able to access your local development environment via a custom domain (e.g., `dev.mylocaluesio.com`) either via http or https, you will need to perform the following:
+
+1. Update your `.env`:
+   - HTTP Settings
+     ```bash
+     UESIO_PRIMARY_DOMAIN=<domainname>  #(e.g., UESIO_PRIMARY_DOMAIN=dev.mylocaluesio.com)
+     UESIO_ALLOW_INSECURE_COOKIES=true
+     UESIO_USE_HTTPS=never # see "UESIO_USE_HTTPS" Details section for more information
+     ```
+   - HTTPS Settings
+     ```bash
+     UESIO_PRIMARY_DOMAIN=<domainname>  #(e.g., UESIO_PRIMARY_DOMAIN=dev.mylocaluesio.com)
+     UESIO_USE_HTTPS=true
+     ```
+2. `npm run setup-ssl`
+3. `npm run setup-local-dns`
+
+After starting the server (e.g., `npm run start`), you can access your studio site at `http://studio.dev.mylocaluesio.com` or `https://studio.dev.mylocaluesio.com` if you configure HTTPS.
+
+> [!NOTE]
+> If you are running WSL on Windows and want to be able to access the site from your Windows machine, please see the [advanced local dns](#set-up-local-dns-advanced) section.
+
+## Set up SSL for custom domain (Advanced)
+
+To configure multiple custom domains in a single SSL certificate, you can execute the following which will include `uesio.localhost`, your currently configured `UESIO_PRIMARY_DOMAIN` (if set), and any domains you specify in the generated certificate:
+
+```bash
+npm run setup-ssl -- first.domain second.domain third.domain`
+```
+
+## Set up local DNS (Advanced)
+
+> [!NOTE]
+> Configuring local DNS is only required when using a custom domain via `UESIO_PRIMARY_DOMAIN` that does not end in `.localhost`.
+
+To configure multiple custom domains in local dns, there are two options:
+
+1. Modify your "hosts" file:
+   - Linux/macOS - choose one of the following:
+     1. Create the default subdomain entries (studio/tests/docs) for each primary domain by running:
+        ```bash
+        npm run setup-local-dns -- myuesio.com youruesio.com dev.foobar.com
+        ```
+     2. Manually modify `/etc/hosts` for any custom domains that you want to use specifying a studio.<domain>, docs.<domain> & tests.<domain> entry
         ```text
-        127.0.0.1    studio.dev-myuesio.com
-        127.0.0.1    docs.dev-myuesio.com
-        127.0.0.1    tests.dev-myuesio.com
+        127.0.0.1    studio.myuesio.com docs.myuesio.com tests.myuesio.com
+        127.0.0.1    studio.youruesio.com docs.youruesio.com tests.youruesio.com
+        127.0.0.1    studio.dev.foobar.com docs.dev.foobar.com tests.dev.foobar.com
         ```
    - WSL: No modifications are required on the Linux side, but the following is required for the Windows side. Note that you must have elevated priviledges to modify the hosts file.
-     1. Add the localhost subdomain entries to `%WINDIR%\system32\drivers\etc\hosts`
+     1. Manually modify `%WINDIR%\system32\drivers\etc\hosts` for any custom domains that you want to use specifying a studio.<domain>, docs.<domain> & tests.<domain> entry
         ```text
-        127.0.0.1    studio.localhost
-        127.0.0.1    docs.localhost
-        127.0.0.1    tests.localhost
+        127.0.0.1    studio.myuesio.com docs.myuesio.com tests.myuesio.com
+        127.0.0.1    studio.youruesio.com docs.youruesio.com tests.youruesio.com
+        127.0.0.1    studio.dev.foobar.com docs.dev.foobar.com tests.dev.foobar.com
         ```
-     2. Optional: Add the following entries to `%WINDIR%\system32\drivers\etc\hosts` for any custom domain that you want to use
+2. Use DNSMasq - See [dnsmasq](https://dnsmasq.org/doc.html) docs for details on how to install and configure.
+
+### Adding a uesio site to local DNS
+
+The default behavior of the steps above will ensure that you can access `studio.<mydomain>`, `tests.<mydomain>` and `docs.<mydomain>` domains locally. These are the standard uesio site domains that are required for runtime and running tests.
+
+If you create a site in your uesio instance locally and want to access it using a custom domain, you must also add the full domain to the site to local DNS (this is not required when using `*.localhost` domains). For example, let's say you
+set your `UESIO_PRIMARY_DOMAIN` to `myuesio.com` and then created an app in uesio called `mycoolapp`, created a `dev` workspace for it, packaged it and created a site for it using Studio. By default, the site would be accessible at
+`http://mycoolapp.myuesio.com` but that domain would not be reachable by DNS. Assuming you have already completed the steps in [set up local dns](#set-up-local-dns-advanced), to add `mycoolapp.myuesio.com` to DNS:
+
+1. Modify your "hosts" file:
+   - Linux/MacOS - choose one of the following:
+     1. Create the subdomain entries by running:
+        ```
+        npm run setup-local-dns -e mycoolapp.myuesio.com
+        ```
+     2. Manually modify `/etc/hosts` to contain the following:
+        ```
+        127.0.0.1 mycoolapp.myuesio.com
+        ```
+   - WSL: No modifications are required on the Linux side, but the following is required for the Windows side. Note that you must have elevated priviledges to modify the hosts file.
+     1. Manually modify `%WINDIR%\system32\drivers\etc\hosts` to contain the following:
         ```text
-        127.0.0.1    studio.dev-myuesio.com
-        127.0.0.1    docs.dev-myuesio.com
-        127.0.0.1    tests.dev-myuesio.com
+        127.0.0.1 mycoolapp.myuesio.com
         ```
-
-2. Use DNSMasq (Linux/macOS Only)
-
-   ```
-   brew install dnsmasq
-   ```
-
-   The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
-
-   ```
-   sudo brew services start dnsmasq
-   ```
+2. Use DNSMasq - See [dnsmasq](https://dnsmasq.org/doc.html) docs for details on how to install and configure.
 
 ## Worker jobs
 
@@ -266,7 +335,7 @@ To run the worker process, use `npm run nx -- worker platform` (Or `nx worker pl
 
 # <a id="environment-variables"></a> Environment Variables
 
-If you'd like to get started immediately, you can run `npm run in-docker` and access the site via http://studio.localhost:3000.
+If you'd like to get started immediately, you can run `npm run in-docker` and access the site via http://studio.uesio.localhost:3000.
 
 In order to run locally via `npm run start`, you must configure the required environment variables.
 
@@ -299,14 +368,14 @@ UESIO_USAGE_HANDLER=redis
 UESIO_WORKER_MODE=combined
 ```
 
-4. Optionally, you can set any of the other `UESIO\_` environment variables although the ones above are a great starting point.
+4. Optionally, you can set any of the other `UESIO_` environment variables although the ones above are a great starting point.
 
 | **Environment Variable**                       | **Description**                                                                                                       | **Default**                                                                               | **Examples, Values, and Help**                                                                                                                                             |
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UESIO_USE_HTTPS                                | Whether or not to serve with TLS                                                                                      | false                                                                                     | `true`, `false`                                                                                                                                                            |
+| UESIO_USE_HTTPS                                | Whether or not to serve with TLS                                                                                      | false                                                                                     | `true`, `false`, `never` (see [details](#uesio_use_https-details))                                                                                                         |
 | UESIO_HOST                                     | Host to use for HTTP server                                                                                           |                                                                                           | By default, will listen on all available interfaces                                                                                                                        |
 | UESIO_PORT                                     | Port to use for HTTP server                                                                                           | 3000                                                                                      |                                                                                                                                                                            |
-| UESIO_PRIMARY_DOMAIN                           | The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")                  | localhost                                                                                 | If running with a custom domain, set to your root domain (e.g. `mydomain.com` to have studio available at `studio.mydomain.com`)                                           |
+| UESIO_PRIMARY_DOMAIN                           | The primary domain to use for site identification purposes (e.g. for ues.io cloud, this is "ues.io")                  | uesio.localhost                                                                           | If running with a custom domain, set to your root domain (e.g. `mydomain.com` to have studio available at `studio.mydomain.com`)                                           |
 | UESIO_SESSION_STORE                            | Allows you to specify the storage location for user sessions                                                          | memory                                                                                    | `redis`, `memory`, `filesystem`                                                                                                                                            |
 | UESIO_PLATFORM_CACHE                           | Determines whether to handle the platform cache in memory on the web server, or to use redis for multiple web servers | memory                                                                                    | `redis`, `memory`                                                                                                                                                          |
 | UESIO_USAGE_HANDLER                            | Determines whether to handle usage in memory on the web server, or to use redis for multiple web servers              | memory                                                                                    | `redis`, `memory`                                                                                                                                                          |
@@ -318,7 +387,7 @@ UESIO_WORKER_MODE=combined
 | UESIO_PLATFORM_FILESOURCE_CREDENTIALS          | The name of the Uesio credential to use for saving user-uploaded files                                                | uesio/core.localuserfiles                                                                 | Must be a fully-qualified Uesio credential name                                                                                                                            |
 | UESIO_PLATFORM_BUNDLESTORE_TYPE                | Controls where Uesio bundles are stored                                                                               | uesio.local                                                                               | Either `uesio.local` (filesystem) or `uesio.s3` (store in AWS S3)                                                                                                          |
 | UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS         | The name of the Uesio credential to use for saving bundlestore files                                                  | uesio/core.localuserfiles                                                                 | Must be a fully-qualified Uesio credential name                                                                                                                            |
-| UESIO_DEV                                      | Enable various features for use in local development of Uesio                                                         | false                                                                                     | Set to `localhost` for local development                                                                                                                                   |
+| UESIO_DEV                                      | Enable various features for use in local development of Uesio                                                         | false                                                                                     |                                                                                                                                                                            |
 | UESIO_DEBUG_SQL                                | Enable detailed SQL query debugging                                                                                   | false                                                                                     | If enabled, all Wire loads will return a `debugQueryString` property containing the SQL queries made                                                                       |
 | UESIO_MOCK_AUTH                                | Enables you to login with mock user accounts                                                                          | false                                                                                     | Only for local dev / unit tests                                                                                                                                            |
 | UESIO_GRACEFUL_SHUTDOWN_SECONDS                | The number of seconds to wait before terminating the Uesio app / worker process                                       | 5 (0 when `UESIO_DEV=true`)                                                               | Should be less than whatever the ECS / Kubernetes / etc shutdown window is (usually 30)                                                                                    |
@@ -399,7 +468,7 @@ bash apps/platform/migrations_test/test_migrations.sh
 ## Testing (Unit, Integration & E2E)
 
 > [!IMPORTANT]
-> The default behavior for all tests is to run against `https://studio.localhost:3000` so you must ensure that [SSL](#set-up-ssl) and [local DNS](#set-up-your-local-dns) have been configured.
+> The default behavior for all tests is to run against `http://studio.uesio.localhost:3000` although tests will execute based on the settings in your environment (or `.env` file), for example, `UESIO_USE_HTTPS` will run tests against `https`.
 
 To run the various test suites, there are a number of commands available:
 

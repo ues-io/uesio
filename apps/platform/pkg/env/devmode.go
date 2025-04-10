@@ -1,6 +1,9 @@
 package env
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 var devMode bool
 
@@ -20,7 +23,7 @@ func InDevMode() bool {
 }
 
 func IsLocalhost() bool {
-	return GetPrimaryDomain() == "localhost"
+	return GetPrimaryDomain() == "localhost" || strings.HasSuffix(GetPrimaryDomain(), ".localhost")
 }
 
 // SetDevMode alters the dev mode flag for testing purposes.

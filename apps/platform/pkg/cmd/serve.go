@@ -421,13 +421,9 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Special handling for local routes
 	lr.HandleFunc("/{route:.*}", controller.ServeLocalRoute)
 
-	port := os.Getenv("UESIO_PORT")
-	if port == "" {
-		port = "3000"
-	}
-	// Host can be blank by default, but in local development it should be set to "localhost"
-	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
-	host := os.Getenv("UESIO_HOST")
+	port := env.GetPort()
+	// Host can be blank by default which will listen on all interfaces
+	host := env.GetHost()
 	serveAddr := host + ":" + port
 
 	// Universal middlewares
