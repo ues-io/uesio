@@ -1,6 +1,6 @@
 module github.com/thecloudmasters/uesio
 
-go 1.24.1
+go 1.24.2
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
