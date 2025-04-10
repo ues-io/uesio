@@ -30,6 +30,9 @@ func ServeAppDefaultScheme() string {
 	// when running behind load balancer, UESIO_USE_HTTPS=false
 	// but we want $Site{scheme} to be https.  This is a
 	// special case for serving platform via http when in development.
+	// "never" supports the scenario when UESIO_PRIMARY_DOMAIN is set
+	// to a non-localhost custom domain (e.g., foobar.com) and HTTP
+	// is still desired - this should only occur when in development mode.
 	if (env.IsLocalhost() && !ServeAppWithTLS()) || uesioUseHttps == "never" {
 		return "http"
 	}
