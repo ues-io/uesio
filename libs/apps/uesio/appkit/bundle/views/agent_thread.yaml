@@ -1,0 +1,71 @@
+name: agent_thread
+public: true
+definition:
+  wires:
+    agent:
+      collection: uesio/core.agent
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{agent}
+    threaditems:
+      collection: uesio/aikit.thread_item
+      fields:
+        uesio/aikit.content:
+        uesio/aikit.thread:
+        uesio/aikit.author:
+        uesio/aikit.tool_input:
+        uesio/aikit.tool_use_id:
+        uesio/aikit.tool_name:
+        uesio/aikit.type:
+        uesio/core.createdat:
+        uesio/core.createdby:
+          fields:
+            uesio/core.picture:
+            uesio/core.initials:
+            uesio/core.firstname:
+            uesio/core.lastname:
+            uesio/core.username:
+      conditions:
+        - field: uesio/aikit.thread
+          valueSource: PARAM
+          param: thread_id
+      defaults:
+        - field: uesio/aikit.thread
+          value: $Param{thread_id}
+  components:
+    - uesio/io.scrollpanel:
+        uesio.styleTokens:
+          footer:
+            - pt-2
+        uesio.display:
+          - type: paramIsSet
+            param: thread_id
+        header:
+        content:
+          - uesio/io.deck:
+              wire: threaditems
+              mode: READ
+              id: threaditems
+              uesio.variant: uesio/appkit.tiles
+              components:
+                - uesio/appkit.tile_ai_comment:
+              emptyState:
+                - uesio/io.emptystate:
+                    title: This conversation is empty.
+                    subtitle: ${agent:description}
+                    icon: forum
+                    iconFill: false
+        footer:
+          - uesio/aikit.agent_chat:
+              wire: threaditems
+              agent: $Param{agent}
+              thread: $Param{thread_id}
+              beforeChatSignals: $Param{beforeChatSignals}
+              afterChatSignals: $Param{afterChatSignals}
+  params:
+    agent:
+      type: TEXT
+      required: true
+    thread_id:
+      type: TEXT
+      required: true

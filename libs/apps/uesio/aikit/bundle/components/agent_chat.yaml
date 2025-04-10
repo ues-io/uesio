@@ -1,0 +1,11 @@
+name: agent_chat
+title: Agent Chat
+icon: support_agent
+description: Add a chat to an agent
+category: INTERACTION
+pack: main
+entrypoint: components/agent_chat/agent_chat
+discoverable: false
+properties:
+sections:
+styleRegions:

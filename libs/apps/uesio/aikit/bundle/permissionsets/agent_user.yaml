@@ -1,7 +1,10 @@
 name: agent_user
+bots:
+  uesio/aikit.runagent: true
 files:
   uesio/aikit.anthropic: true
 collections:
+  uesio/core.agent: true
   uesio/aikit.thread: true
   uesio/aikit.thread_item: true
 public: true

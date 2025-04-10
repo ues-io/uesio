@@ -19,6 +19,8 @@ bots:
   uesio/studio.select_plan: true
 views:
   uesio/appkit.user_detail_content: true
+  uesio/appkit.agent_thread: true
+  uesio/appkit.agent_threads: true
   uesio/studio.agent: true
   uesio/studio.agents: true
   uesio/studio.app: true

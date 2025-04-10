@@ -1,0 +1,120 @@
+name: agent_threads
+public: true
+definition:
+  # Wires connect to data in collections
+  wires:
+    threads:
+      collection: uesio/aikit.thread
+      fields:
+        uesio/aikit.title:
+        uesio/aikit.parent:
+      conditions:
+        - field: uesio/core.owner
+          value: $User{id}
+        - field: uesio/aikit.agent
+          value: $Param{agent}
+      defaults:
+        - field: uesio/aikit.agent
+          value: $Param{agent}
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.scrollpanel:
+        header:
+          - uesio/io.group:
+              uesio.variant: uesio/appkit.breadcrumbs
+              components:
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/appkit.breadcrumb
+                    title: Threads
+                    icon: forum
+                    signals:
+                      - signal: view/SET_PARAM
+                        param: thread_id
+                        value: ""
+                - uesio/io.item:
+                    uesio.display:
+                      - type: hasValue
+                        value: $Param{thread_id}
+                    external:
+                      collection: uesio/aikit.thread
+                      record: $Param{thread_id}
+                    components:
+                      - uesio/appkit.icontile:
+                          tileVariant: uesio/appkit.breadcrumb
+                          title: $If{[${uesio/aikit.title}][${uesio/aikit.title}][New Conversation]}
+        content:
+          - uesio/io.scrollpanel:
+              uesio.display:
+                - type: paramIsNotSet
+                  param: thread_id
+              content:
+                - uesio/io.deck:
+                    wire: threads
+                    mode: READ
+                    id: threads
+                    uesio.variant: uesio/appkit.tiles
+                    components:
+                      - uesio/appkit.tile_ai_thread:
+                          signals:
+                            - signal: component/CALL
+                              component: uesio/core.view
+                              componentsignal: SET_PARAMS
+                              targettype: specific
+                              componentid: agent_thread
+                              params:
+                                thread_id: ${uesio/core.id}
+                            - signal: view/SET_PARAM
+                              param: thread_id
+                              value: ${uesio/core.id}
+                    emptyState:
+                      - uesio/io.emptystate:
+                          uesio.display:
+                            - type: wireIsNotLoading
+                              wire: threads
+                          title: No Conversations Found
+                          subtitle: You haven't created any ai conversations yet.
+                          icon: forum
+              footer:
+                - uesio/io.box:
+                    components:
+                      - uesio/io.group:
+                          columnGap: 10px
+                          components:
+                            - uesio/io.button:
+                                text: New Conversation
+                                uesio.variant: uesio/appkit.secondary_small
+                                signals:
+                                  - signal: wire/CREATE_RECORD
+                                    stepId: create
+                                    wire: threads
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - threads
+                                  - signal: component/CALL
+                                    component: uesio/core.view
+                                    componentsignal: SET_PARAMS
+                                    targettype: specific
+                                    componentid: agent_thread
+                                    params:
+                                      thread_id: ${uesio/core.id}
+                                  - signal: view/SET_PARAM
+                                    param: thread_id
+                                    value: ${uesio/core.id}
+          - uesio/core.view:
+              uesio.id: agent_thread_$Param{thread_id}
+              uesio.display:
+                - type: paramIsSet
+                  param: thread_id
+              view: agent_thread
+              params:
+                agent: $Param{agent}
+                thread_id: $Param{thread_id}
+                beforeChatSignals: $Param{beforeChatSignals}
+                afterChatSignals: $Param{afterChatSignals}
+        uesio.variant: uesio/appkit.sidebar
+  params:
+    agent:
+      type: TEXT
+      required: true
+    thread_id:
+      type: TEXT

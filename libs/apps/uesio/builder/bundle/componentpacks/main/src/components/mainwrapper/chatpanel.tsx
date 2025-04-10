@@ -43,11 +43,28 @@ const ChatPanel: definition.UtilityComponent = (props) => {
       className={classes.root}
     >
       <component.Component
-        componentType="uesio/io.emptystate"
+        componentType="uesio/core.view"
         definition={{
-          title: "Not Implemented yet.",
-          subtitle: "The AI Chat feature is coming soon.",
-          icon: "construction",
+          view: "uesio/appkit.agent_threads",
+          "uesio.id": "builderAgent",
+          params: {
+            agent: "uesio/studio.viewbuilder",
+            thread_id: "",
+            beforeChatSignals: [
+              {
+                signal: "component/CALL",
+                component: "uesio/builder.mainwrapper",
+                componentsignal: "GET_SELECTED_CONTENT",
+              },
+            ],
+            afterChatSignals: [
+              {
+                signal: "component/CALL",
+                component: "uesio/builder.mainwrapper",
+                componentsignal: "HANDLE_EDITS",
+              },
+            ],
+          },
         }}
         path={""}
         context={context}
