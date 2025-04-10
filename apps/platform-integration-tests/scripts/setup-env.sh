@@ -3,7 +3,7 @@
 set -e
 
 export HURL_site_scheme=$([ "${UESIO_USE_HTTPS}" = "true" ] && echo "https" || echo "http")
-export HURL_site_primary_domain=${UESIO_PRIMARY_DOMAIN:-localhost}
+export HURL_site_primary_domain=${UESIO_PRIMARY_DOMAIN:-uesio.localhost}
 export HURL_site_port=${UESIO_PORT:-3000}
 
 export UESIO_CLI_LOGIN_METHOD=uesio/core.mock

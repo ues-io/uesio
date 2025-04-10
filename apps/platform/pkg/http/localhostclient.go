@@ -63,7 +63,9 @@ func customDialContext(dialer *net.Dialer) func(context.Context, string, string)
 		// localhost addresses which are intended to be used in uesio
 		// dev environments.
 		// NOTE - this is intended to simplify setup/config for uesio development
-		// environments but will apply to ANY uesio environment.
+		// environments but will apply to ANY uesio environment. We only use
+		// uesio.localhost by default in local development so we could check
+		// suffix for uesio.localhost but the below mirrors what browsers/curl/etc. do
 		if host == "localhost" || strings.HasSuffix(host, ".localhost") {
 			loopbacks := []string{"::1", "127.0.0.1"}
 			for _, loopback := range loopbacks {

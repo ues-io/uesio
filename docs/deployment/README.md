@@ -16,7 +16,7 @@ To run the app locally with Docker Compose, simply run the following:
 
 ```
 npm run in-docker
-open http://studio.localhost:3000
+open http://studio.uesio.localhost:3000
 ```
 
 ## Run in Production

@@ -172,12 +172,10 @@ jobs:
           UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
           UESIO_PRIMARY_DOMAIN: ${{ inputs.uesioPrimaryDomain }}
         run: |
-          if [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
-            npm run setup-ssl
-          else 
-            npm run setup-local-dns -- -p
-            npm run setup-ssl -- -p              
-          fi          
+          if ! [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
+            npm run setup-local-dns            
+          fi
+          npm run setup-ssl
 
           # Start up the Uesio app, and dependencies, in Docker
           # then run all Integration and E2E tests against the app

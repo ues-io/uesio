@@ -25,11 +25,11 @@ import (
 
 func init() {
 	session.Global.Close()
-	// The localhost check here is only necessary because hurl doesn't handle secure cookies against localhost by default like browsers, curl, etc.
-	// do. If/When they treat "localhost" as a secure connection the localhost condition can be removed.
+	// The localhost check here is only necessary because hurl doesn't handle secure cookies against *.localhost by default like browsers, curl, etc.
+	// do. If/When they treat "localhost" as a secure connection the IsLocalHost condition can be removed.
 	// TODO: File an issue with hurl regarding this.  libcurl is returning the cookie to them, its in the response, but they are not carrying it
 	// forward to subsequent requests.
-	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.GetPrimaryDomain() == "localhost" || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
+	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.IsLocalhost() || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
 	storageType := os.Getenv("UESIO_SESSION_STORE")
 
 	var store session.Store
@@ -115,6 +115,7 @@ func removePort(host string) (string, string, error) {
 	return net.SplitHostPort(host)
 }
 
+// returns domainType, domain, subdomain, isSubDomain, error
 func parseHost(host string) (string, string, string, bool, error) {
 
 	primaryDomain := env.GetPrimaryDomain()

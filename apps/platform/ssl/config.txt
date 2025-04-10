@@ -10,14 +10,15 @@ C = US
 ST = Tennessee
 L = Chattanooga
 O = Uesio
-CN = localhost
+CN = uesio.localhost
 
 [v3_req]
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = localhost
-DNS.2 = *.localhost
-DNS.3 = [::1]
+DNS.1 = uesio.localhost
+DNS.2 = *.uesio.localhost
+DNS.3 = localhost
 IP.1=127.0.0.1
-IP.2=fe80::1
+IP.2=::1
+IP.3=fe80::1

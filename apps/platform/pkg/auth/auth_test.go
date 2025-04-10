@@ -105,7 +105,7 @@ func TestParseHost(t *testing.T) {
 		},
 		{
 			"Scenario K",
-			"Scenario with subdomain & localhost",
+			"Scenario with single subdomain & localhost",
 			"studio.localhost",
 			"subdomain",
 			"localhost",
@@ -114,12 +114,21 @@ func TestParseHost(t *testing.T) {
 		},
 		{
 			"Scenario L",
-			"Scenario with multi-segment subdomain & localhost",
-			"foo.bar.localhost",
+			"Scenario with single subdomain and multi-segment localhost primary domain",
+			"studio.uesio.localhost",
 			"subdomain",
-			"localhost",
+			"uesio.localhost",
+			"studio",
+			"uesio.localhost",
+		},
+		{
+			"Scenario M",
+			"Scenario with multi-segment subdomain & multi-segment localhost primary domain",
+			"foo.bar.uesio.localhost",
+			"subdomain",
+			"uesio.localhost",
 			"foo.bar",
-			"localhost",
+			"uesio.localhost",
 		},
 	}
 

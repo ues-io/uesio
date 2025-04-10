@@ -39,35 +39,35 @@ trust_cert_linux() {
 
 # collect the domains
 for domain in "$@"; do
-    if [ "${domain}" = "-p" ]; then
-      if [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
-          echo "Error: UESIO_PRIMARY_DOMAIN is not set, please make sure its set."
-          exit 1
-      else 
-          domains+=($UESIO_PRIMARY_DOMAIN)                
-      fi
-    elif [[ "${domain}" == "localhost" ]]; then
-        echo "Error: Localhost is included by default, no need to specify it."
-        exit 1
+    if [[ "${domain}" == "uesio.localhost" || "${domain}" == "localhost" ]]; then
+        # included by default in config.txt so can safely ignore
+        echo "Ignoring domain ${domain} which is included by default."
+        continue
     elif ! [[ "$domain" =~ ^([a-zA-Z0-9](-?[a-zA-Z0-9])*\.)+[a-zA-Z]{2,}$ ]]; then
-        echo "Error: $domain is invalid. Domain names can only contain valid characters and must be at least two-parts (e.g., mysite.com)."
+        echo "Error: $domain is invalid. Domain names can only contain valid characters and must be at least two-parts (e.g., mysite.com)." >&2
         exit 1
     else
         domains+=("${domain}")
     fi
 done
 
+# automatically include UESIO_PRIMARY_DOMAIN if set and not blank
+if ! [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then
+    echo "UESIO_PRIMARY_DOMAIN detected, will include ${UESIO_PRIMARY_DOMAIN} and *.${UESIO_PRIMARY_DOMAIN} in certificate subject alternate names."
+    domains+=("${UESIO_PRIMARY_DOMAIN}")               
+fi
+
 # Check if certificate exists
-if [ -f "$CERT_FILE" ]; then
-    read -p "SSL certificate already exists. Delete and continue? (y/N) " answer
+if [ -f "$CERT_FILE" -o -f "$KEY_FILE" ]; then
+    read -p "SSL certificate and/or private key already exists. Delete and continue? (y/N) " answer
     case ${answer:0:1} in
         y|Y )
-            rm "$CERT_FILE" "$KEY_FILE"
+            rm -f "$CERT_FILE" "$KEY_FILE"
             echo "Existing certificate deleted."
             ;;
         * )
             echo "Cancelled, existing certificate preserved."
-            exit 1
+            exit 0
             ;;
     esac
 fi
@@ -75,7 +75,7 @@ fi
 # If domains were provided, we will create a temporary config file with the default alt_names from config.txt 
 # plus two for each domain specified - the domain itself and a wildcard for that domain (e.g., mydomain.com & *.mydomain.com)
 config_arg="$CONFIG_FILE"
-if [ $# -gt 0 ]; then
+if [ ${#domains[@]} -gt 0 ]; then
     # Create temporary config file
     temp_config=$(mktemp)
     trap 'rm -f "$temp_config"' EXIT
@@ -87,8 +87,18 @@ if [ $# -gt 0 ]; then
     alt_names=$(awk '/^\[alt_names\]/{p=1;print;next} /^\[/{p=0} p{print}' "$CONFIG_FILE")
 
     # Get highest DNS number
-    dns_count=$(echo "$alt_names" | grep -E '^DNS\.[0-9]+' | 
-                sed 's/DNS\.\([0-9]\+\).*/\1/' | sort -rn | head -1)
+    dns_count=$(echo "$alt_names" | awk '
+        /^DNS\.[0-9]+/ {
+            split($1, a, ".")
+            if (a[2] > max) max = a[2]
+        }
+        END { print (max ? max : 0) }
+    ')    
+    # Validate dns_count is a number
+    if ! [[ "$dns_count" =~ ^[0-9]+$ ]]; then
+        echo "Error: DNS counter must be a number, got: $dns_count" >&2
+        exit 1
+    fi                
     dns_count=${dns_count:-0}
 
     # Deduplicate - support for Linux and macOS so can't use mapfile
@@ -102,7 +112,12 @@ if [ $# -gt 0 ]; then
         alt_names+=$'\nDNS.'"${dns_count} = *.${domain}"
     done
 
-    sed '/^\[alt_names\]/,/^\[/{//!d; /^\[alt_names\]/d}' "$CONFIG_FILE" > "$temp_config"
+    awk '
+        /^\[alt_names\]/ { p=1; print; next }
+        /^\[/            { p=0; print; next }
+        p               { next }
+        { print }
+    ' "$CONFIG_FILE" > "$temp_config"
     printf "\n%s\n" "$alt_names" >> "$temp_config"
 
     config_arg="$temp_config"
@@ -119,14 +134,14 @@ if [[ "$(uname)" == "Darwin" ]]; then
     if trust_cert_macos; then
         echo "Certificate trusted in macOS keychain"
     else
-        echo "Failed to trust certificate in macOS keychain"
+        echo "Failed to trust certificate in macOS keychain, you will need to trust it manually." >&2
         exit 1
     fi
 else
     if trust_cert_linux; then
         echo "Certificate trusted in system CA store"
     else
-        echo "Failed to trust certificate. You may need to trust it manually."
+        echo "Failed to trust certificate, you will need to trust it manually." >&2
         exit 1
     fi
 fi
@@ -134,4 +149,3 @@ fi
 # Show the certificate details
 echo "====================================="
 openssl x509 -in "$CERT_FILE" -text -noout
-

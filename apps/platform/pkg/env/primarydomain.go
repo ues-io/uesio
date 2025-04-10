@@ -6,14 +6,21 @@ import (
 
 var (
 	uesioPrimaryDomain string
+	uesioPort          string
+	uesioHost          string
 )
 
 func init() {
 	if primaryDomainValue, isSet := os.LookupEnv("UESIO_PRIMARY_DOMAIN"); isSet && primaryDomainValue != "" {
 		uesioPrimaryDomain = primaryDomainValue
 	} else {
-		uesioPrimaryDomain = "localhost"
+		uesioPrimaryDomain = "uesio.localhost"
 	}
+	uesioPort = os.Getenv("UESIO_PORT")
+	if uesioPort == "" {
+		uesioPort = "3000"
+	}
+	uesioHost = os.Getenv("UESIO_HOST")
 }
 
 func GetPrimaryDomain() string {
@@ -22,4 +29,12 @@ func GetPrimaryDomain() string {
 
 func SetPrimaryDomain(newPrimaryDomain string) {
 	uesioPrimaryDomain = newPrimaryDomain
+}
+
+func GetPort() string {
+	return uesioPort
+}
+
+func GetHost() string {
+	return uesioHost
 }
