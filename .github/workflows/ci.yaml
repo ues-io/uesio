@@ -319,7 +319,7 @@ jobs:
   update-dev-branch:
     name: Update Dev environment to latest image
     runs-on: ubuntu-latest
-    if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && ${{ needs.check-changes.outputs.run_job == 'true' }}
+    if: ${{ github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && needs.check-changes.outputs.run_job == 'true' }}
     needs: [build, check, typecheck, check-changes]
     timeout-minutes: 3
     permissions:
