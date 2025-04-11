@@ -64,9 +64,6 @@ var tests = []PasswordTest{
 const PasswordPolicyAllowedSymbols = `~!@#$%^&*()_+={}|[]\:"<>?,./` + "`-"
 const PasswordPolicySimplifiedSymbols = `!@#$%^&*(){}[]` // should be a subset of PasswordPolicyAllowedSymbols
 
-func PP(password string) error {
-	return passwordPolicyValidation(password)
-}
 func passwordPolicyValidation(password string) error {
 	for _, test := range tests {
 		if t, err := regexp.MatchString(test.test, password); err != nil {
