@@ -55,8 +55,12 @@ jobs:
     outputs:
       run_job: ${{ steps.filter.outputs.run_job }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for changed files
         id: filter
+        uses: dorny/paths-filter@v3
         with:
           # Note - For PRs, the check is not commit specific, if any file in the PR is outside of this list run_job will be true. Identical behavior to https://github.com/orgs/community/discussions/25161#discussioncomment-3246673.
           predicate-quantifier: "every"
