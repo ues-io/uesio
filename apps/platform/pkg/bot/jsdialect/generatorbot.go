@@ -2,9 +2,12 @@ package jsdialect
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
+	"math/big"
 	"regexp"
 	"strings"
 	"sync"
@@ -14,6 +17,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v3"
 
+	"github.com/thecloudmasters/uesio/pkg/auth/platform"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -27,9 +31,13 @@ import (
 var passwordGenerator *password.Generator
 
 func init() {
-	passwordGenerator, _ = password.NewGenerator(&password.GeneratorInput{
-		Symbols: "!@#$%^&*(){}[]",
+	var err error
+	passwordGenerator, err = password.NewGenerator(&password.GeneratorInput{
+		Symbols: platform.PasswordPolicySimplifiedSymbols,
 	})
+	if err != nil {
+		panic(fmt.Sprintf("failed to create password generator: %v", err))
+	}
 }
 
 func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
@@ -187,9 +195,31 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 }
 
 func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
-	// TODO: Ensure generated password meets our current requirements - as written currently
-	// do not believe it will guarantee at least 1 lower & upper case characters
-	return passwordGenerator.Generate(10, 1, 1, false, false)
+	// generate password with two digits, two symbols and 9 letters
+	generated, err := passwordGenerator.Generate(13, 2, 2, false, false)
+	if err != nil {
+		return "", err
+	}
+	// make sure we have at least one lower and one upper to satisfy our password policy
+	lower, err := randomElement(rand.Reader, password.LowerLetters)
+	if err != nil {
+		return "", err
+	}
+	upper, err := randomElement(rand.Reader, password.UpperLetters)
+	if err != nil {
+		return "", err
+	}
+	generated, err = randomInsert(rand.Reader, generated, lower)
+	if err != nil {
+		return "", err
+	}
+	generated, err = randomInsert(rand.Reader, generated, upper)
+	if err != nil {
+		return "", err
+	}
+
+	// 15 char password with 2 digits, 2 symbols and 11 letters with at least 1 lower and 1 upper
+	return generated, nil
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
@@ -450,4 +480,25 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 
 	return nil
 
+}
+
+func randomInsert(reader io.Reader, s, val string) (string, error) {
+	if s == "" {
+		return val, nil
+	}
+
+	n, err := rand.Int(reader, big.NewInt(int64(len(s)+1)))
+	if err != nil {
+		return "", fmt.Errorf("failed to generate random integer: %w", err)
+	}
+	i := n.Int64()
+	return s[0:i] + val + s[i:], nil
+}
+
+func randomElement(reader io.Reader, s string) (string, error) {
+	n, err := rand.Int(reader, big.NewInt(int64(len(s))))
+	if err != nil {
+		return "", fmt.Errorf("failed to generate random integer: %w", err)
+	}
+	return string(s[n.Int64()]), nil
 }
