@@ -19,12 +19,9 @@ on:
         type: string
   push:
     branches: [main]
-    paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
   merge_group:
   pull_request:
     branches: [main]
-    # Note - Ignore is not commit specific, if any file in the PR is outside of this list, workflow will run, see https://github.com/orgs/community/discussions/25161#discussioncomment-3246673
-    paths-ignore: [".vscode/**", "docs/**", "**/README.md", "LICENSE.md", ".github/**.md"]
 
 # Automatically cancel in-progress actions on the same branch except for main
 concurrency:
@@ -36,9 +33,40 @@ env:
   DOCKER_LOGS_FOLDER: ./docker-logs
 
 jobs:
+  # This job is used to check if any files that have changed require the full workflow to run. It is used instead
+  # of the `paths-ignore` filter in the workflow "on" trigger due to the required status checks configured
+  # for the ci workflow in the repo Rulesets. Github actions leaves required status check in "pending" state
+  # when the entire workflow is skipped. Given this, a PR that requites the checks is not mergeable without bypassing
+  # the required checks which requires the ruleset to have admins configured to allow bypass which is not ideal. Using
+  # the approach below, the check-changes jobs will always run and all other jobs depend on "check-changes" job and
+  # should condition on the result using "if: ${{ needs.check-changes.outputs.run_job == 'true' }}".
+  # IMPORTANT: All other jobs in this workflow should condition on this job per the above information.
+  # See
+  #   - https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/troubleshooting-required-status-checks#handling-skipped-but-required-checks).
+  #   - https://github.com/orgs/community/discussions/13690
+  #   - https://github.com/orgs/community/discussions/44490
+  #   - https://github.com/github/docs/issues/8926
+  #   - https://github.com/actions/runner/issues/2566
+  check-changes:
+    name: Check for file changes
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.filter.outputs.run_job }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # Note - For PRs, the check is not commit specific, if any file in the PR is outside of this list run_job will be true. Identical behavior to https://github.com/orgs/community/discussions/25161#discussioncomment-3246673.
+          predicate-quantifier: "every"
+          list-files: "json"
+          filters: |
+            run_job: ["!.vscode/**", "!docs/**", "!**/README.md", "!LICENSE.md", "!.github/**.md"]
+
   build:
     name: Build and test
     runs-on: ubuntu-latest
+    if: ${{ needs.check-changes.outputs.run_job == 'true' }}
+    needs: [check-changes]
     outputs:
       image_sha: ${{ steps.setDockerSHAs.outputs.image_sha }}
       image_version: ${{ steps.setDockerSHAs.outputs.image_version }}
@@ -197,6 +225,8 @@ jobs:
   check:
     name: Check format and lint
     runs-on: ubuntu-latest
+    if: ${{ needs.check-changes.outputs.run_job == 'true' }}
+    needs: [check-changes]
     timeout-minutes: 5
     steps:
       - name: Checkout
@@ -256,6 +286,8 @@ jobs:
   typecheck:
     name: Check types
     runs-on: ubuntu-latest
+    if: ${{ needs.check-changes.outputs.run_job == 'true' }}
+    needs: [check-changes]
     timeout-minutes: 5
     steps:
       - name: Checkout
@@ -286,9 +318,9 @@ jobs:
 
   update-dev-branch:
     name: Update Dev environment to latest image
-    if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    needs: [build, check, typecheck]
+    if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && ${{ needs.check-changes.outputs.run_job == 'true' }}
+    needs: [build, check, typecheck, check-changes]
     timeout-minutes: 3
     permissions:
       id-token: write # This is required for requesting a OIDC JWT for AWS
