@@ -40,6 +40,7 @@ import (
 )
 
 func init() {
+	// Trigger full workflow
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 	mime.AddExtensionType(".md", "text/markdown")
