@@ -51,12 +51,27 @@ type PasswordTest struct {
 	errorMessage string
 }
 
-var tests = []PasswordTest{{".{8,}", "password must have at least 8 characters"}, {"[a-z]", "password must have at least 1 lower case character"}, {"[A-Z]", "password must have at least 1 upper case character"}, {"[0-9]", "password must have at least 1 number"}, {"[^\\d\\w]", "password must have at least 1 special character"}}
+var tests = []PasswordTest{
+	{".{8,}", "password must have at least 8 characters"},
+	{"[a-z]", "password must have at least 1 lower case character"},
+	{"[A-Z]", "password must have at least 1 upper case character"},
+	{"[0-9]", "password must have at least 1 number"},
+	{"[" + regexp.QuoteMeta(PasswordPolicyAllowedSymbols) + "]",
+		fmt.Sprintf("password must have at least 1 special character: %s", PasswordPolicyAllowedSymbols)},
+}
 
+// NOTE: Hypen must be at beginning or end of the list to avoid being treated as a range when used in regex.
+const PasswordPolicyAllowedSymbols = `~!@#$%^&*()_+={}|[]\:"<>?,./` + "`-"
+const PasswordPolicySimplifiedSymbols = `!@#$%^&*(){}[]` // should be a subset of PasswordPolicyAllowedSymbols
+
+func PP(password string) error {
+	return passwordPolicyValidation(password)
+}
 func passwordPolicyValidation(password string) error {
 	for _, test := range tests {
-		t, _ := regexp.MatchString(test.test, password)
-		if !t {
+		if t, err := regexp.MatchString(test.test, password); err != nil {
+			return err
+		} else if !t {
 			return errors.New(test.errorMessage)
 		}
 	}
