@@ -47,6 +47,8 @@ jobs:
   #   - https://github.com/orgs/community/discussions/44490
   #   - https://github.com/github/docs/issues/8926
   #   - https://github.com/actions/runner/issues/2566
+  # NOTE: There is a benign bug in dorny/paths-filter@v3 that will result in the following warning in the logs - see https://github.com/dorny/paths-filter/issues/225
+  #   "Unexpected input(s) 'predicate-quantifier', valid inputs are ['token', 'working-directory', 'ref', 'base', 'filters', 'list-files', 'initial-fetch-depth']"
   check-changes:
     name: Check for file changes
     runs-on: ubuntu-latest
