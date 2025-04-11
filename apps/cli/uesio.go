@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// Change file that requires full workflow
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
 	}
