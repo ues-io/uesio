@@ -1,5 +1,7 @@
 # Deploy Uesio in your environment
 
+## Testing
+
 The Uesio app is distributed via a single Docker image, which you can pull and run locally:
 
 ```
