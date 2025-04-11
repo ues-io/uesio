@@ -4,7 +4,7 @@
     {
       "name": "uesio_web",
       "image": "ghcr.io/ues-io/uesio:latest",
-      "cpu": 256,
+      "cpu": 555,
       "memory": 512,
       "portMappings": [
         {
