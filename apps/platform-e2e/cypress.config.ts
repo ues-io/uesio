@@ -12,6 +12,8 @@ const inCi = process.env.CI === "true"
 
 export default defineConfig({
   e2e: {
+    // NOTE: CI workflow captures output from cypress so the output folders (e.g., screenshots, videos)
+    // should be kept in sync with the captured directory in the workflow file (.github/workflows/ci.yml)
     ...nxE2EPreset(import.meta.filename, {
       cypressDir: "cypress",
     }),
