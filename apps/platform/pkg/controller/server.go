@@ -33,6 +33,11 @@ func GetGracefulShutdownSeconds() int {
 
 func NewServer(serveAddress string, router http.Handler) *ServerWithShutdown {
 	return &ServerWithShutdown{
+		// TODO: Evaluate timeouts here (e.g., ReadTimeout, WriteTimeout, etc.). The default and what
+		// we currently use is 0 (no timeout) which could lead to a client taking a connection forever
+		// which could result in running out of file descriptors.
+		// See https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/ &
+		// https://blog.cloudflare.com/exposing-go-on-the-internet/ & https://simon-frey.com/blog/go-as-in-golang-standard-net-http-config-will-break-your-production/
 		Server: http.Server{
 			Addr:    serveAddress,
 			Handler: router,
