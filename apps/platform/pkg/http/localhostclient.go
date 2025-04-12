@@ -35,7 +35,7 @@ func createCustomTransport() *http.Transport {
 	return &http.Transport{
 		Proxy: defaultTransport.Proxy, // http.ProxyFromEnvironment
 		DialContext: customDialContext(&net.Dialer{
-			Timeout:   30 * time.Second, // same as DefaultTransport
+			Timeout:   5 * time.Second,  // DefaultTransport is 30 * time.Second
 			KeepAlive: 30 * time.Second, // same as DefaultTransport
 		}), // Custom resolver for localhost
 		ForceAttemptHTTP2:     defaultTransport.ForceAttemptHTTP2,     // true
