@@ -230,7 +230,7 @@ jobs:
           path: ${{ env.DOCKER_LOGS_FOLDER }}
 
       - name: Upload cypress output
-        if: ${{ failed() && steps.integrationAndE2ETests.outcome == 'failure' }}
+        if: ${{ failure() && steps.integrationAndE2ETests.outcome == 'failure' }}
         uses: actions/upload-artifact@v4
         with:
           name: cypress-output
