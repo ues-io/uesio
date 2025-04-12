@@ -234,6 +234,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-output
+          # This should keep in sync with value from apps/platform-e2e/cypress.config.ts
           path: ./dist/cypress
 
   check:
