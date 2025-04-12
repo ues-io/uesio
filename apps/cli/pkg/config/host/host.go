@@ -25,10 +25,8 @@ var validHostsRegular = []string{
 
 func GetValidHosts() []string {
 	if env.InDevMode() {
-		fmt.Println("In dev mode")
 		return validHostsDevMode
 	} else {
-		fmt.Println("NOT in dev mode")
 		return validHostsRegular
 	}
 }
