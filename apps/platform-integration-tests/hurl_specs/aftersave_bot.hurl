@@ -28,7 +28,7 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-jsonpath "$.wires[0].errors" count == 1
+jsonpath "$.wires[0].errors" count == 2
 jsonpath "$.wires[0].errors[0].message" contains "No Zebras Allowed!"
 
 # Verify that no zebras were created

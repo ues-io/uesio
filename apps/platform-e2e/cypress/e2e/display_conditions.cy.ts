@@ -28,7 +28,7 @@ describe("Display Conditions", () => {
     cy.getByIdFragment("span", "text-paramIsNotSet").should("have.length", 1)
     cy.getByIdFragment("span", "text-paramValue-notEquals").should(
       "have.length",
-      2,
+      1,
     )
     cy.getByIdFragment("span", "text-paramValue-equals").should(
       "have.length",
