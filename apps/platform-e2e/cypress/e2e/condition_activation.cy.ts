@@ -18,7 +18,7 @@ describe("Condition activation/deactivation", () => {
   const assertConditionState = (inactive: boolean, value: string) => {
     cy.getWireState(getViewID(username, appName, viewName), "conditions")
       .its("conditions")
-      .should("have.length", 1)
+      .should("have.length", 2)
       .each(($condition) => {
         cy.wrap($condition).should("deep.include", {
           field: "uesio/tests.name",
