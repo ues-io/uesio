@@ -200,6 +200,7 @@ jobs:
           path: ${{ runner.temp }}/uesio-image.tar
 
       - name: Integration and e2e tests
+        id: integrationAndE2ETests
         env:
           APP_IMAGE: ${{ steps.setDockerSHAs.outputs.image_version }}
           UESIO_USE_HTTPS: true
@@ -227,6 +228,13 @@ jobs:
         with:
           name: docker-logs
           path: ${{ env.DOCKER_LOGS_FOLDER }}
+
+      - name: Upload cypress output
+        if: ${{ failed() && steps.integrationAndE2ETests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-output
+          path: ./dist/cypress
 
   check:
     name: Check format and lint
