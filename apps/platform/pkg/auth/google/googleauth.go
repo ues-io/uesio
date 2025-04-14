@@ -86,7 +86,6 @@ func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload,
 
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
 	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
-	return
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {

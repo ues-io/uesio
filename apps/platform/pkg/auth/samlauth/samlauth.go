@@ -216,7 +216,6 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, redirectPath, http.StatusSeeOther)
-	return
 }
 
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {

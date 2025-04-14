@@ -223,12 +223,10 @@ func (api *BotHttpAPI) makeRequest(req *http.Request, auth *BotHttpAuth) (*http.
 		if err := api.setApiKeyInRequest(req, auth.Credentials); err != nil {
 			return nil, err
 		}
-		break
 	case "BASIC_AUTH":
 		if err := api.setBasicAuthHeaderInRequest(req, auth.Credentials); err != nil {
 			return nil, err
 		}
-		break
 	case "OAUTH2_AUTHORIZATION_CODE", "OAUTH2_CLIENT_CREDENTIALS":
 		return oauthlib.MakeRequestWithStoredUserCredentials(req, api.ic)
 	}
