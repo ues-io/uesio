@@ -37,7 +37,8 @@
         "command": "gofmt -l -w -s -e .",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "cache": true
     },
     "gofmt:check": {
       "executor": "nx:run-commands",
@@ -45,7 +46,8 @@
         "command": "output=\"$(gofmt -d -e .)\" && echo \"$output\" && test -z \"$output\"",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "cache": true
     },
     "lint": {
       "dependsOn": ["vet"]
@@ -56,7 +58,8 @@
         "command": "go mod tidy",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "cache": true
     },
     "tidy:check": {
       "executor": "nx:run-commands",
@@ -64,7 +67,8 @@
         "command": "go mod tidy -diff",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "cache": true
     },
     "vet": {
       "executor": "nx:run-commands",
@@ -72,7 +76,8 @@
         "command": "go vet ./...",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "cache": true
     }
   },
   "tags": [],
