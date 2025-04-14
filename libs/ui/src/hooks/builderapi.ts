@@ -1,12 +1,10 @@
 import { Context } from "../context/context"
-import * as api from "../api/api"
 
 import { MetadataType } from "../metadata/types"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { dispatchRouteDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
-import { makeComponentId } from "./componentapi"
 
 const useMetadataList = (
   context: Context,
