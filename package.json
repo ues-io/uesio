@@ -120,7 +120,7 @@
     "cypress": "^13.17.0",
     "esbuild": "^0.25.1",
     "eslint": "^9.23.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-cypress": "^4.2.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
