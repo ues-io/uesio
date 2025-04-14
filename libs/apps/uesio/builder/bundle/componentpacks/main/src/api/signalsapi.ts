@@ -43,7 +43,7 @@ type SignalDescriptor = {
   properties: (
     signal: signal.SignalDefinition,
     context: context.Context,
-  ) => ComponentProperty[]
+  ) => ComponentProperty[] | ComponentProperty[]
   outputs?: SignalOutput[]
   canError?: boolean
   disabled?: boolean

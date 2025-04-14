@@ -1,4 +1,4 @@
-import { context, wire, signal } from "@uesio/ui"
+import { context, wire, signal, component } from "@uesio/ui"
 import { SignalBandDefinition } from "../api/signalsapi"
 
 import {
@@ -152,13 +152,17 @@ const signals: SignalBandDefinition = {
 
         // Append signal-specific properties, if there are any
         if (signal.component && signal.componentsignal) {
-          const componentDef = getComponentDef(signal.component)?.signals?.[
+          const signalDescriptor = getComponentDef(signal.component)?.signals?.[
             signal.componentsignal
           ]
-          if (componentDef && componentDef.properties) {
-            return baseProperties.concat(
-              componentDef.properties(signal, context),
-            )
+          if (signalDescriptor && signalDescriptor.properties){
+            if (typeof signalDescriptor.properties === "function") {
+              return baseProperties.concat(
+                signalDescriptor.properties(signal, context),
+              )
+            } else {
+              return baseProperties.concat(signalDescriptor.properties)
+            }
           }
         }
 
