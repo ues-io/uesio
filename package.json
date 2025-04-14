@@ -117,7 +117,7 @@
     "chai": "^5.2.0",
     "chart.js": "^4.4.8",
     "css-tree": "^3.1.0",
-    "cypress": "^13.17.0",
+    "cypress": "^14.3.0",
     "esbuild": "^0.25.1",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^9.1.0",
