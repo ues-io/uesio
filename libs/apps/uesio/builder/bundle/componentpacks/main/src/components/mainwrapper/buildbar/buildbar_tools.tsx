@@ -59,7 +59,7 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
     },
   ]
 
-  const baseContext = context.removeViewFrame(1)
+  const baseContext = context.getRouteContext()
 
   const toggleCode = api.signal.getHandler(
     [

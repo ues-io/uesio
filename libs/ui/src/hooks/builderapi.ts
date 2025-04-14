@@ -1,12 +1,10 @@
 import { Context } from "../context/context"
-import * as api from "../api/api"
 
 import { MetadataType } from "../metadata/types"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { dispatchRouteDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
-import { makeComponentId } from "./componentapi"
 
 const useMetadataList = (
   context: Context,
@@ -29,17 +27,6 @@ const useAvailableNamespaces = (
   )
 
 const getBuilderDeps = async (context: Context) => {
-  const workspace = context.getWorkspace()
-  if (!workspace || !workspace.wrapper) return
-
-  const namespaces = api.component.getExternalState(
-    makeComponentId(context, workspace?.wrapper, "namespaces"),
-  )
-
-  const isLoaded = !!namespaces
-
-  if (isLoaded) return
-
   const response = await platform.getBuilderDeps(context)
 
   await loadScripts(response.componentpack, context)
