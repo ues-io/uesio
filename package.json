@@ -159,7 +159,7 @@
     "yaml": "^2.7.1"
   },
   "overrides": {
-    "typescript": "^5.8.3",
+    "typescript": "$typescript",
     "@modern-js/node-bundle-require": {
       "esbuild": "$esbuild"
     }
