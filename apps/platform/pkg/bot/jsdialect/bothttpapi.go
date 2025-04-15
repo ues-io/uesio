@@ -14,7 +14,6 @@ import (
 	httpClient "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	oauthlib "github.com/thecloudmasters/uesio/pkg/oauth2"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -22,10 +21,6 @@ import (
 
 type BotHttpAPI struct {
 	ic *wire.IntegrationConnection
-}
-
-func (api *BotHttpAPI) getSession() *sess.Session {
-	return api.ic.GetSession()
 }
 
 func (api *BotHttpAPI) GetIntegration() *meta.Integration {
