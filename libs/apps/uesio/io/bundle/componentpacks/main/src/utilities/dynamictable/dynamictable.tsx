@@ -1,5 +1,5 @@
 import { api, component, context, wire, definition, signal } from "@uesio/ui"
-import { MutableRefObject } from "react"
+import { RefObject } from "react"
 import { useDeepCompareEffect } from "react-use"
 
 type RowAction = {
@@ -11,7 +11,7 @@ interface DynamicTableProps {
   path: string
   fields: Record<string, wire.ViewOnlyField>
   rowactions?: RowAction[]
-  initialValues: Record<string, wire.PlainWireRecord>
+  initialValues?: wire.PlainWireRecord[]
   columns?: definition.DefinitionList
   mode?: context.FieldMode
   onUpdate?: (
@@ -20,16 +20,7 @@ interface DynamicTableProps {
     recordId: string,
     record: wire.PlainWireRecord,
   ) => void
-  wireRef?: MutableRefObject<wire.Wire | undefined>
-}
-
-const createRecordsInWire = (
-  wire: wire.Wire,
-  initialValues: Record<string, wire.PlainWireRecord>,
-) => {
-  Object.entries(initialValues).forEach(([recordId, initialValue]) => {
-    wire.createRecord(initialValue, false, recordId)
-  })
+  wireRef?: RefObject<wire.Wire | undefined>
 }
 
 const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
@@ -67,13 +58,11 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
   if (wireRef) wireRef.current = wire
 
   useDeepCompareEffect(() => {
-    if (!wire || !initialValues) return
-    if (!wire.getData().length) {
-      createRecordsInWire(wire, initialValues)
-    } else if (Object.keys(initialValues).length) {
+    if (!wire || !initialValues?.length) return
+    if (wire.getData().length) {
       wire.empty()
-      createRecordsInWire(wire, initialValues)
     }
+    wire.createRecords({ context, records: initialValues })
   }, [!!wire, initialValues])
 
   api.event.useEvent(
