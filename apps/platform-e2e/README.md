@@ -39,7 +39,7 @@ npx nx run platform-e2e:e2e
 
 When `package.json` exists in `platform-e2e` folder with `"type": "module"`, `npx nx graph` no longer seems to fail so changing approach to go back to `ts` file and adding `package.json` to folder with `"type": "module"`. This is still a workaround for what appears to be an issue with cypress and/or nx/cypress integration where it respects root level package.json `"type": "module"` to get things started but then NX cypress plugin only looks in the folder itself and ends up loading commonjs. Nothing wrong with having the package.json in the folder with `"type": "module"`, just should be unnecessary.
 
-TODO: Continue to monitor and could potentially eliminate the package.json if Nx ever fixes the underlying issue.
+TODO: Continue to monitor and could potentially eliminate the package.json if Cypress ever fixes the underlying issue.
 
 ### As of March 17, 2025
 
@@ -77,4 +77,4 @@ $> npx nx graph
 
 To avoid both issues, using mjs instead of ts extension (cypress does not support mts extension for config).
 
-TODO: Track nx and cypress for improvements on both of these and change back to ts extension if/when issues are resolved. We haven't updated to cypress 14 yet due to [nx limitations](../../README.md#npm-dependencies) but in reviewing cypress code, that upgrade alone is unlikely to resolve the issues.
+~~TODO: Track nx and cypress for improvements on both of these and change back to ts extension if/when issues are resolved. We haven't updated to cypress 14 yet due to [nx limitations](../../README.md#npm-dependencies) but in reviewing cypress code, that upgrade alone is unlikely to resolve the issues.~~
