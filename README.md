@@ -597,5 +597,43 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - https://github.com/jestjs/jest/issues/15173
    - https://github.com/jestjs/jest/issues/15236
    - https://github.com/jestjs/jest/issues/15325
-4. Unable to update to `eslint-config-prettier` v10 due to `@nx/eslint-plugin` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/eslint-plugin/package.json#L29). See https://github.com/nrwl/nx/issues/30145.
-5. Unable to update to `cypress` v14 due to `@nx/cypress` not supporting it yet (https://github.com/nrwl/nx/blob/master/packages/cypress/package.json#L47). See https://github.com/nrwl/nx/issues/30097.
+4. In [nx 20.7.0](https://github.com/nrwl/nx/releases/tag/20.7.0) there was some work done around @module-federation which surfaced an underlying dependency issue that [@module-federation/node](https://github.com/module-federation/core/pull/3646/files#diff-3a108956588c19d9297e9c80997226f7df3d304f0fed9931c3a2ed5c6e839e84L72) has with the now retired `@module-federation/utilities` package which has a peer dependency on `react` but does not include `react v19`. This causes an unresolved peer dependency issue when running `npm install` in this repo. The warning can be safely ignored and will go away once https://github.com/module-federation/core/pull/3646 is released and this repo updated accordingly to the then latest version of `@module-federation/node` which nx will support based on its [semver](https://github.com/nrwl/nx/blob/bc685ce3c522ab12a3cfa075fd7c0e879117981f/packages/module-federation/package.json#L35).
+   ```
+   npm warn ERESOLVE overriding peer dependency
+   npm warn While resolving: @module-federation/utilities@3.1.51
+   npm warn Found: react@19.0.0
+   npm warn node_modules/react
+   npm warn   dev react@"^19.0.0" from the root project
+   npm warn   32 more (@floating-ui/react, @floating-ui/react-dom, ...)
+   npm warn
+   npm warn Could not resolve dependency:
+   npm warn peerOptional react@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
+   npm warn node_modules/@module-federation/node/node_modules/@module-federation/utilities
+   npm warn   @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
+   npm warn   node_modules/@module-federation/node
+   npm warn
+   npm warn Conflicting peer dependency: react@18.3.1
+   npm warn node_modules/react
+   npm warn   peerOptional react@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
+   npm warn   node_modules/@module-federation/node/node_modules/@module-federation/utilities
+   npm warn     @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
+   npm warn     node_modules/@module-federation/node
+   npm warn ERESOLVE overriding peer dependency
+   npm warn While resolving: @module-federation/utilities@3.1.51
+   npm warn Found: react-dom@19.0.0
+   npm warn node_modules/react-dom
+   npm warn   dev react-dom@"^19.0.0" from the root project
+   npm warn   20 more (@floating-ui/react, @floating-ui/react-dom, ...)
+   npm warn
+   npm warn Could not resolve dependency:
+   npm warn peerOptional react-dom@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
+   npm warn node_modules/@module-federation/node/node_modules/@module-federation/utilities
+   npm warn   @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
+   npm warn   node_modules/@module-federation/node
+   npm warn
+   npm warn Conflicting peer dependency: react-dom@18.3.1
+   npm warn node_modules/react-dom
+   npm warn   peerOptional react-dom@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
+   npm warn   node_modules/@module-federation/node/node_modules/@module-federation/utilities
+   npm warn     @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
+   ```
