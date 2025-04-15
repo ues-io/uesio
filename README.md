@@ -587,19 +587,20 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
 
 ## Managing Dependencies
 
-1. We're pinning monaco to version 0.50.0 for now because of an intermittent issue thats results in the error below. The issue is not reproducible in all environments, however as of Cypress 14 update, does occur on both @humandad machine (2019 Intel-based MacBook Pro which has known slow performance issues) and CI. Prior to Cypress 14, this was only reproducible on @humandad machine.  There are many issues filed in monaco-editor repo regarding [Illegal value for lineNumber](https://github.com/search?q=repo%3Amicrosoft%2Fmonaco-editor+%22Illegal+value+for+lineNumber%22&type=issues). Disabling `stickyScroll` does seem to make the problem go away, however that is not an ideal outcome. There are no known limitations with v0.50.0 given our current usage of `monaco-editor` so just sticking with that until `monaco-editor` resolves the underlying issue.
+1. We're pinning monaco to version 0.50.0 for now because of an intermittent issue thats results in the error below. The issue is not reproducible in all environments, however as of Cypress 14 update, does occur on both @humandad machine (2019 Intel-based MacBook Pro which has known slow performance issues) and CI. Prior to Cypress 14, this was only reproducible on @humandad machine. There are many issues filed in monaco-editor repo regarding [Illegal value for lineNumber](https://github.com/search?q=repo%3Amicrosoft%2Fmonaco-editor+%22Illegal+value+for+lineNumber%22&type=issues). Disabling `stickyScroll` does seem to make the problem go away, however that is not an ideal outcome. There are no known limitations with v0.50.0 given our current usage of `monaco-editor` so just sticking with that until `monaco-editor` resolves the underlying issue.
+
    ```
       1) Uesio Route Sanity Tests
             Create a new View
             creates view:
          Error: The following error originated from your application code, not from Cypress. It was caused by an unhandled promise rejection.
-   
+
       > Illegal value for lineNumber
-   
+
    When Cypress detects uncaught errors originating from your application it will automatically fail the current test.
-   
+
    This behavior is configurable, and you can choose to turn this off by listening to the `uncaught:exception` event.
-   
+
    https://on.cypress.io/uncaught-exception-from-application
          at H.getLineMaxColumn (https://studio.uesio.localhost:3000/static/vendor/monaco-editor/0.52.2/min/vs/editor/editor.main.js:683:144)
          at W.getBottomForLineNumber (https://studio.uesio.localhost:3000/static/vendor/monaco-editor/0.52.2/min/vs/editor/editor.main.js:695:2184)
@@ -607,11 +608,14 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
          at v._updateState (https://studio.uesio.localhost:3000/static/vendor/monaco-editor/0.52.2/min/vs/editor/editor.main.js:722:158371)
          at async v._renderStickyScroll (https://studio.uesio.localhost:3000/static/vendor/monaco-editor/0.52.2/min/vs/editor/editor.main.js:722:157326)
    ```
-   Previously, we were encountering this [bug](https://github.com/microsoft/monaco-editor/issues/4654) with v0.52.2, however we no longer seem to be able to reproduce this one.  To recap:
-      - The issue only seems to occur when running the Cypress tests (haven't been able to reproduce in a live browser when using builder) and only [builder.cy.ts](./apps/platform-e2e/cypress/e2e/builder.cy.ts) tests fail (believe this is the only test that uses the code panel but not 100% sure).
-      - Given the issue is intermittent, it is likely some type of race condition either in the browser, cypress and/or monaco-editor
-      - Only experienced the failure on @humandad machine (2019 Intel-based MacBook Pro which does seem to run perf tests slower than other machines) and CI (which runs on the slower side) so possibly the slower execution/latency is the key to encountering the issue.
-      - Need to continue to monitor the monaco-editor issue(s) and update if/when possible
+
+   Previously, we were encountering this [bug](https://github.com/microsoft/monaco-editor/issues/4654) with v0.52.2, however we no longer seem to be able to reproduce this one. To recap:
+
+   - The issue only seems to occur when running the Cypress tests (haven't been able to reproduce in a live browser when using builder) and only [builder.cy.ts](./apps/platform-e2e/cypress/e2e/builder.cy.ts) tests fail (believe this is the only test that uses the code panel but not 100% sure).
+   - Given the issue is intermittent, it is likely some type of race condition either in the browser, cypress and/or monaco-editor
+   - Only experienced the failure on @humandad machine (2019 Intel-based MacBook Pro which does seem to run perf tests slower than other machines) and CI (which runs on the slower side) so possibly the slower execution/latency is the key to encountering the issue.
+   - Need to continue to monitor the monaco-editor issue(s) and update if/when possible
+
 2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.
 3. When running `npm install` there are errors related to `inflight@1.0.6`, `abab@2.0.6`, `glob@7.2.3`, `domexception@4.0.0` that all are dependencies of jest and its related tooling. There is a jest@next package (currently v30.0.0-alpha.6) that should address most (and hopefully) all of these. See:
    - https://github.com/jestjs/jest/issues/15173
