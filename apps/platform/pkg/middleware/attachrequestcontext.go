@@ -5,7 +5,9 @@ import (
 	"net/http"
 )
 
-var requestContextKey = "request"
+type RequestContextKey struct{}
+
+var requestContextKey = RequestContextKey{}
 
 func GetRequestContext(ctx context.Context) *http.Request {
 	val := ctx.Value(requestContextKey)

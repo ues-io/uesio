@@ -21,7 +21,7 @@ func NewGenericSaveException(err error) *exceptions.SaveException {
 		if pgError.Code == "23505" && pgError.Message == uesioUniqueKeyDupIdxMessage && strings.HasPrefix(pgError.Detail, uesioUniqueKeyDupDetailPrefix) {
 			// Example detail:
 			// Key (tenant, collection, uniquekey)=(site:uesio/studio:prod, uesio/studio.bundledependency, uesio/tests:dev:uesio/builder) already exists.
-			parts := strings.Split(strings.TrimSuffix(strings.Trim(pgError.Detail, uesioUniqueKeyDupDetailPrefix), uesioUniqueKeyDupDetailSuffix), ", ")
+			parts := strings.Split(strings.TrimSuffix(strings.TrimPrefix(pgError.Detail, uesioUniqueKeyDupDetailPrefix), uesioUniqueKeyDupDetailSuffix), ", ")
 			recordID := parts[2]
 			return exceptions.NewSaveException(recordID, commonfields.UniqueKey, fmt.Sprintf(formattedUesioDupError, parts[1], recordID), nil)
 		}

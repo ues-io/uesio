@@ -118,9 +118,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *wire.MetadataC
 		default:
 			loader = getTextLoader
 		}
-		if loader != nil {
-			loaderFuncs = append(loaderFuncs, loader(index, &mapping, fieldMetadata, valueGetter))
-		}
+		loaderFuncs = append(loaderFuncs, loader(index, &mapping, fieldMetadata, valueGetter))
 	}
 
 	for {

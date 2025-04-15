@@ -10,10 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-// In the future, we could improve this to take an environment variable.
-// That way we could have instances of uesio that just serve a single site.
-var defaultSite = "uesio/studio:prod"
-
 func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOne(

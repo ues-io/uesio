@@ -32,7 +32,7 @@ func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.
 			change[fieldMetadata.GetFullName()] = floatVal
 			return nil
 		}
-		return errors.New(fmt.Sprintf(InvalidNumberError, fieldMetadata.GetFullName(), rawVal))
+		return fmt.Errorf(InvalidNumberError, fieldMetadata.GetFullName(), rawVal)
 	}
 }
 
@@ -48,7 +48,7 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire
 			change[fieldMetadata.GetFullName()] = booleanVal
 			return nil
 		}
-		return errors.New(fmt.Sprintf(InvalidCheckboxError, fieldMetadata.GetFullName(), rawVal))
+		return fmt.Errorf(InvalidCheckboxError, fieldMetadata.GetFullName(), rawVal)
 	}
 }
 
@@ -89,7 +89,7 @@ func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wi
 			// Try parsing as Unix Timestamp
 			int64Val, err := strconv.ParseInt(stringValue, 10, 64)
 			if err != nil {
-				return errors.New(fmt.Sprintf(InvalidTimestampError, fieldMetadata.GetFullName(), stringValue))
+				return fmt.Errorf(InvalidTimestampError, fieldMetadata.GetFullName(), stringValue)
 			}
 			t = time.Unix(int64Val, 0)
 		}

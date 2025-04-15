@@ -43,7 +43,7 @@ func getExpireTimestamp() int64 {
 }
 
 func isExpired(timestamp int64) bool {
-	return time.Unix(0, timestamp).Sub(time.Now()) < 0
+	return time.Until(time.Unix(0, timestamp)) < 0
 }
 
 type PasswordTest struct {

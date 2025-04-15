@@ -64,7 +64,7 @@ func (r RedisCache[T]) Set(key string, value T) error {
 }
 
 func (r RedisCache[T]) Del(keys ...string) error {
-	namespacedKeys := make([]string, len(keys), len(keys))
+	namespacedKeys := make([]string, len(keys))
 	for i, k := range keys {
 		namespacedKeys[i] = namespaced(r.getNamespace(), k)
 	}

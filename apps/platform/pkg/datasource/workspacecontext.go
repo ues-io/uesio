@@ -260,10 +260,6 @@ func getWorkspaceWritePermName(workspaceID string) string {
 	return fmt.Sprintf(workspaceWritePerm, workspaceID)
 }
 
-func isMetadataKey(s string) bool {
-	return strings.Contains(s, "/")
-}
-
 // QueryWorkspaceForWrite queries a workspace, with write access required
 func QueryWorkspaceForWrite(value, field string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
