@@ -56,10 +56,6 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 
 // QueryAppForWrite queries an app with write access required
 func QueryAppForWrite(value, field string, session *sess.Session, connection wire.Connection) (*meta.App, error) {
-	useSession := session
-	if useSession.GetWorkspace() != nil {
-		useSession = session.RemoveWorkspaceContext()
-	}
 	var app meta.App
 	err := PlatformLoadOne(
 		&app,

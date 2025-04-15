@@ -7,11 +7,6 @@ import (
 
 // This cache can be switched between memory or redis depending on the setup.
 
-type platformCache[T any] struct {
-	c       Cache[T]
-	options *CacheOptions[T]
-}
-
 func getDefaultExpiration() time.Duration {
 	return time.Duration(redisTTLSeconds) * time.Second
 }

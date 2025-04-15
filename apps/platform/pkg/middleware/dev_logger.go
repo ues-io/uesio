@@ -20,7 +20,6 @@ type DevLogHandler struct {
 }
 
 func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
-	level := r.Level.String() + ":"
 
 	color.NoColor = false
 
@@ -36,7 +35,7 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 	default:
 		colorFunc = color.MagentaString
 	}
-	level = colorFunc(level)
+
 	msg := colorFunc(r.Message)
 
 	fields := map[string]interface{}{}

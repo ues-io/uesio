@@ -322,9 +322,8 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 		return err
 	}
 	// Don't do the merge if we don't have params
-	if params == nil || len(params) == 0 {
-		gba.AddFile(filename, strings.NewReader(templateString))
-		return nil
+	if len(params) == 0 {
+		return gba.AddFile(filename, strings.NewReader(templateString))
 	}
 	f, err := gba.create(filename)
 	if err != nil {
@@ -407,6 +406,8 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 
 }
 
+var MERGE_REGEX = regexp.MustCompile(`\$\{(.*?)\}`)
+
 func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 	if node == nil || params == nil {
 		return nil
@@ -426,8 +427,8 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 	}
 
 	if node.Kind == yaml.ScalarNode {
-		re := regexp.MustCompile("\\$\\{(.*?)\\}")
-		matches := re.FindAllStringSubmatch(node.Value, -1)
+
+		matches := MERGE_REGEX.FindAllStringSubmatch(node.Value, -1)
 		for _, match := range matches {
 			if len(match) == 2 {
 				matchExpression := match[0] //${mymerge}
@@ -444,7 +445,7 @@ func mergeNode(node *yaml.Node, params map[string]interface{}) error {
 						return err
 					}
 
-					if newNode.Content == nil || len(newNode.Content) == 0 {
+					if len(newNode.Content) == 0 {
 						node.SetString("")
 						continue
 					}

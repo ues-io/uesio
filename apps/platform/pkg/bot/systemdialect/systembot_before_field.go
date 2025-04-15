@@ -76,7 +76,7 @@ func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 				// to make sure that the uesio/studio.collection field exists and is valid.
 				isMultiCollection = false
 			}
-			if isMultiCollection == nil || isMultiCollection.(bool) == false {
+			if isMultiCollection == nil || !isMultiCollection.(bool) {
 				err = depMap.AddRequired(change, "collection", "uesio/studio.reference->uesio/studio.collection")
 				if err != nil {
 					return err

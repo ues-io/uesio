@@ -122,7 +122,7 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 		return err
 	}
 
-	appUniqueKeys := make([]string, len(apps), len(apps))
+	appUniqueKeys := make([]string, len(apps))
 	for i, app := range apps {
 		appUniqueKeys[i] = app.UniqueKey
 	}

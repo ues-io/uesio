@@ -275,7 +275,7 @@ func (api *BotHttpAPI) setApiKeyInRequest(req *http.Request, cred *wire.Credenti
 
 	switch location {
 	case "header":
-		req.Header.Set(http.CanonicalHeaderKey(locationName), locationValue)
+		req.Header.Set(locationName, locationValue)
 		return nil
 	case "querystring":
 		query := req.URL.Query()

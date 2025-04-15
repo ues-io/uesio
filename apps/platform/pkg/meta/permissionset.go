@@ -49,7 +49,7 @@ type FieldPermissionMap map[string]FieldPermission
 func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
 
 	if *cpm == nil {
-		*cpm = *(&CollectionPermissionMap{})
+		*cpm = CollectionPermissionMap{}
 	}
 
 	collectionPermissionPairs, err := GetMapNodes(node)
@@ -336,7 +336,7 @@ func (ps *PermissionSet) HasNamedPermission(namedPermission string) bool {
 	if ps.NamedRefs == nil {
 		return false
 	}
-	return ps.NamedRefs[namedPermission] == true
+	return ps.NamedRefs[namedPermission]
 }
 
 func (ps *PermissionSet) AddNamedPermission(namedPermission string) {

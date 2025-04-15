@@ -1,7 +1,6 @@
 package systemdialect
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -29,7 +28,7 @@ func clearUserCache(request *wire.SaveOp, connection wire.Connection, session *s
 func preventSystemGuestUserDeletion(request *wire.SaveOp) error {
 	for _, uniquekey := range getUniqueKeysFromDeletes(request) {
 		if uniquekey == "system" || uniquekey == "guest" {
-			return errors.New(fmt.Sprintf("user %s can't be deleted", uniquekey))
+			return fmt.Errorf("user %s can't be deleted", uniquekey)
 		}
 	}
 	return nil

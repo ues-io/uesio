@@ -130,7 +130,7 @@ func (r *Route) GetResponse() *bots.RouteResponse {
 }
 
 func (r *Route) Copy() *Route {
-	newRoute := &*r
+	newRoute := r
 	paramsCopy := map[string]interface{}{}
 	if r.Params != nil {
 		maps.Copy(paramsCopy, r.Params)

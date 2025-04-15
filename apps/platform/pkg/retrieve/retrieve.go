@@ -93,25 +93,23 @@ func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnect
 			return err
 		}
 		// If we need to output types grouped by namespace, iterate over each namespace
-		if typeDefsByNamespace != nil {
-			for ns, stringBuilder := range typeDefsByNamespace {
-				// Write the wrapper
-				_, err = out.Write([]byte(`
+		for ns, stringBuilder := range typeDefsByNamespace {
+			// Write the wrapper
+			_, err = out.Write([]byte(`
 declare module "@uesio/app/` + group.GetBundleFolderName() + "/" + ns + "\" {"))
-				if err != nil {
-					return err
-				}
-				// write all types for the namespace
-				typesForNS := stringBuilder.String()
-				_, err = out.Write([]byte(typesForNS))
-				if err != nil {
-					return err
-				}
-				// Write the end of the module
-				_, err = out.Write([]byte("\n}"))
-				if err != nil {
-					return err
-				}
+			if err != nil {
+				return err
+			}
+			// write all types for the namespace
+			typesForNS := stringBuilder.String()
+			_, err = out.Write([]byte(typesForNS))
+			if err != nil {
+				return err
+			}
+			// Write the end of the module
+			_, err = out.Write([]byte("\n}"))
+			if err != nil {
+				return err
 			}
 		}
 	}
