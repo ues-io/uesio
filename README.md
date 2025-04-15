@@ -637,3 +637,5 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    npm warn   node_modules/@module-federation/node/node_modules/@module-federation/utilities
    npm warn     @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
    ```
+5. There is a known security vulnerability with [esbuild 0.17.19](https://github.com/ues-io/uesio/security/dependabot/52) which is due to [@modern-js/node-bundle-require](https://github.com/web-infra-dev/modern.js/issues/6993) that is pinned to that esbuild version since it maintains support for [Node 16 until June 30, 2025](https://github.com/web-infra-dev/modern.js/issues/6993#issuecomment-2791792837).  To workaround, adding overriding [esbuild for ](./package.json#L163).
+   - TODO: Once https://github.com/web-infra-dev/modern.js/issues/6993 is resolved/merged/released, the override for esbuild in package.json can be removed.
