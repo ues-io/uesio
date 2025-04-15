@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.29.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.79.2
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
-	github.com/crewjam/saml v0.4.14
+	github.com/crewjam/saml v0.5.0
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20250309171923-bcd7cc6bf64c
 	github.com/evanw/esbuild v0.25.2
@@ -63,7 +63,6 @@ require (
 	github.com/aws/smithy-go v1.22.3 // indirect
 	github.com/beevik/etree v1.5.0 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/crewjam/httperr v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
@@ -91,7 +90,6 @@ require (
 	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russellhaering/goxmldsig v1.5.0 // indirect
 	github.com/sethvargo/go-password v0.3.1
