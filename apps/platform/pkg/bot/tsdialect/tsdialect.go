@@ -27,7 +27,7 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection 
 		return err
 	}
 	// Transform from TS to JS
-	result := esbuild.Transform(string(buf.Bytes()), esbuild.TransformOptions{
+	result := esbuild.Transform(buf.String(), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
 	if len(result.Errors) > 0 {
