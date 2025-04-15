@@ -154,7 +154,7 @@ func getFileContents(sourceKey, sourcePath string, session *sess.Session, connec
 	if err != nil {
 		return "", err
 	}
-	return string(buf.Bytes()), nil
+	return buf.String(), nil
 }
 
 func getHostUrl(session *sess.Session, connection wire.Connection) (string, error) {

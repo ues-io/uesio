@@ -297,7 +297,7 @@ func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(buf.Bytes()), nil
+	return buf.String(), nil
 }
 
 func (gba *GeneratorBotAPI) MergeYamlString(params map[string]interface{}, templateString string) (string, error) {
