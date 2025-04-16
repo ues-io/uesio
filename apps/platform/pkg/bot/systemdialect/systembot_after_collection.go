@@ -11,6 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+// TODO: This seems like it is likely done somewhere else and we should either use that or this should be
+// made a public utility function??
 func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	//ben/greenlink:dev:companymember to ben/greenlink.companymember
 	keyArray := strings.Split(uniquekey, ":")
@@ -23,33 +25,54 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 
 func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	var collectionUniqueKeys []string
-	for i := range request.Deletes {
-		if collectionUniqueKey, err := request.Deletes[i].GetOldFieldAsString(commonfields.UniqueKey); err == nil {
-			collectionUniqueKeys = append(collectionUniqueKeys, collectionUniqueKey)
-		} else {
+	workspaceCollections := make(map[string][]string, len(request.Deletes))
+	for _, d := range request.Deletes {
+		workspaceId, err := d.GetOldFieldAsString("uesio/studio.workspace->uesio/core.id")
+		if err != nil {
 			return err
 		}
+		collectionUniqueKey, err := d.GetOldFieldAsString(commonfields.UniqueKey)
+		if err != nil {
+			return err
+		}
+		// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object", but the "uesio/studio.collection" 
+		// field for fields will be something like "uesio/tests.rare_and_unusual_object", so we need to parse this
+		// TODO: It seems like there should be a method that already does this somewhere?
+		collectionName, err := parseUniquekeyToCollectionKey(collectionUniqueKey)
+		if err != nil {
+			return err
+		}
+		workspaceCollections[workspaceId] = append(workspaceCollections[workspaceId], collectionName)
 	}
 
-	if len(collectionUniqueKeys) == 0 {
+	if len(workspaceCollections) == 0 {
 		return nil
 	}
 
-	// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object",
-	// but the "uesio/studio.collection" field for fields will be something like "uesio/tests.rare_and_unusual_object",
-	// so we need to parse this
-	var targetCollections []string
-	for _, collectionUniqueKey := range collectionUniqueKeys {
-		if targetCollection, err := parseUniquekeyToCollectionKey(collectionUniqueKey); err == nil {
-			targetCollections = append(targetCollections, targetCollection)
-		} else {
-			return err
+	var conditions []wire.LoadRequestCondition
+	for workspaceId, collectionNames := range workspaceCollections {
+		collectionCondition := wire.LoadRequestCondition{
+			Field:    "uesio/studio.collection",
 		}
-	}
-
-	if len(targetCollections) == 0 {
-		return nil
+		if len(collectionNames) > 1 {
+			collectionCondition.Operator = "IN"
+			collectionCondition.Values = collectionNames
+		} else			{
+			collectionCondition.Operator = "EQ"
+			collectionCondition.Value = collectionNames[0]
+		}
+		conditions = append(conditions, wire.LoadRequestCondition{
+						Type: "GROUP",
+						Conjunction: "AND",
+						SubConditions: []wire.LoadRequestCondition{
+							{
+								Field: "uesio/studio.workspace",
+								Value: workspaceId,
+								Operator: "EQ",
+							},
+							collectionCondition,
+						},
+					})
 	}
 
 	fc := meta.FieldCollection{}
@@ -59,13 +82,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 				ID: commonfields.Id,
 			},
 		},
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/studio.collection",
-				Values:   targetCollections,
-				Operator: "IN",
-			},
-		},
+		Conditions: conditions,
 		Connection: connection,
 		Params:     request.Params,
 	}, session); err != nil {
@@ -79,13 +96,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 				ID: commonfields.Id,
 			},
 		},
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/studio.collection",
-				Values:   targetCollections,
-				Operator: "IN",
-			},
-		},
+		Conditions: conditions,
 		Connection: connection,
 		Params:     request.Params,
 	}, session); err != nil {
@@ -99,13 +110,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 				ID: commonfields.Id,
 			},
 		},
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/studio.collection",
-				Values:   targetCollections,
-				Operator: "IN",
-			},
-		},
+		Conditions: conditions,		
 		Connection: connection,
 		Params:     request.Params,
 	}, session); err != nil {
@@ -140,6 +145,8 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 			Params:     request.Params,
 		})
 	}
+
+	// TODO: Should we delete collection data for the workspace?
 
 	if len(requests) == 0 {
 		return nil
