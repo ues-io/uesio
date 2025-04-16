@@ -35,7 +35,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 		if err != nil {
 			return err
 		}
-		// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object", but the "uesio/studio.collection" 
+		// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object", but the "uesio/studio.collection"
 		// field for fields will be something like "uesio/tests.rare_and_unusual_object", so we need to parse this
 		// TODO: It seems like there should be a method that already does this somewhere?
 		collectionName, err := parseUniquekeyToCollectionKey(collectionUniqueKey)
@@ -52,27 +52,27 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	var conditions []wire.LoadRequestCondition
 	for workspaceId, collectionNames := range workspaceCollections {
 		collectionCondition := wire.LoadRequestCondition{
-			Field:    "uesio/studio.collection",
+			Field: "uesio/studio.collection",
 		}
 		if len(collectionNames) > 1 {
 			collectionCondition.Operator = "IN"
 			collectionCondition.Values = collectionNames
-		} else			{
+		} else {
 			collectionCondition.Operator = "EQ"
 			collectionCondition.Value = collectionNames[0]
 		}
 		conditions = append(conditions, wire.LoadRequestCondition{
-						Type: "GROUP",
-						Conjunction: "AND",
-						SubConditions: []wire.LoadRequestCondition{
-							{
-								Field: "uesio/studio.workspace",
-								Value: workspaceId,
-								Operator: "EQ",
-							},
-							collectionCondition,
-						},
-					})
+			Type:        "GROUP",
+			Conjunction: "AND",
+			SubConditions: []wire.LoadRequestCondition{
+				{
+					Field:    "uesio/studio.workspace",
+					Value:    workspaceId,
+					Operator: "EQ",
+				},
+				collectionCondition,
+			},
+		})
 	}
 
 	fc := meta.FieldCollection{}
@@ -110,7 +110,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 				ID: commonfields.Id,
 			},
 		},
-		Conditions: conditions,		
+		Conditions: conditions,
 		Connection: connection,
 		Params:     request.Params,
 	}, session); err != nil {
