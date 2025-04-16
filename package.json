@@ -149,7 +149,7 @@
     "reactflow": "^11.11.4",
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.3",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.2.0",
     "ts-jest": "^29.3.2",
     "ts-json-schema-generator": "^2.4.0",
     "ts-node": "^10.9.2",
