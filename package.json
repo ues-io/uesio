@@ -159,7 +159,15 @@
     "yaml": "^2.7.1"
   },
   "overrides": {
-    "typescript": "$typescript",
+    "@twind/core": {
+      "typescript": "$typescript"
+    },
+    "@twind/preset-autoprefix": {
+      "typescript": "$typescript"
+    },
+    "@twind/preset-tailwind": {
+      "typescript": "$typescript"
+    },
     "@modern-js/node-bundle-require": {
       "esbuild": "$esbuild"
     }
