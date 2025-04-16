@@ -248,20 +248,12 @@ func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated
 		return nil, exceptions.NewBadRequestException("Unable to reset password: you must provide a username", nil)
 	}
 
-	code := generateCode()
-
-	adminSession := sess.GetAnonSessionFrom(c.session)
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, adminSession)
-	if err != nil {
-		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
-	}
-
 	user, err := auth.GetUserByKey(username, c.session, c.connection)
 	if err != nil {
 		return nil, err
 	}
 
-	loginmethod, err = auth.GetLoginMethodByUserID(user.ID, c.authSource.GetKey(), c.connection, c.session)
+	loginmethod, err := auth.GetLoginMethodByUserID(user.ID, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -269,6 +261,9 @@ func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated
 	if loginmethod == nil {
 		return nil, exceptions.NewBadRequestException("No account found with this login method", nil)
 	}
+
+	code := generateCode()
+
 	loginmethod.FederationID = username
 	loginmethod.VerificationCode = code
 	loginmethod.VerificationExpires = getExpireTimestamp()
