@@ -31,7 +31,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		Wires: batch.Wires,
 	}
 	// Only include metadata if explicitly requested
-	if batch.IncludeMetadata == true {
+	if batch.IncludeMetadata {
 		loadResponse.Collections = metadata.Collections
 		loadResponse.SelectLists = metadata.GetSelectLists()
 	}

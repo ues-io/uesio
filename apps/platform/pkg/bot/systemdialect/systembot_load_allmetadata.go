@@ -657,7 +657,7 @@ func compareItemsByField(a, b meta.Item, field string) int {
 	case bool:
 		// need to have some ordering so treat false as less than true
 		typedBVal := bVal.(bool)
-		if typedAVal == false && typedBVal == true {
+		if !typedAVal && typedBVal {
 			return -1
 		} else if typedAVal == typedBVal {
 			return 0

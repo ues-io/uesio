@@ -300,7 +300,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 				// There could be nestedSubFields that we haven't loaded yet.
 				if refCollection != nil {
 					_, err := refCollection.GetField(fieldKey)
-					hasEmptySubSubFields := nestedSubFields == nil || len(nestedSubFields) == 0
+					hasEmptySubSubFields := len(nestedSubFields) == 0
 					if err == nil && hasEmptySubSubFields {
 						continue
 					}

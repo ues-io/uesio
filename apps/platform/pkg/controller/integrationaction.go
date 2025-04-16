@@ -170,7 +170,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 	var actionParams meta.BotParams
 	// 1. Priority 1 --- read params off of the Integration Action itself.
-	if action.Params != nil && len(action.Params) > 0 {
+	if len(action.Params) > 0 {
 		actionParams = action.Params
 	} else {
 		// 2. Fallback --- read params off of the associated Bot.
@@ -194,7 +194,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If we couldn't find any parameters --- return an error
-	if actionParams == nil || len(actionParams) < 1 {
+	if len(actionParams) < 1 {
 		ctlutil.HandleError(w, exceptions.NewNotFoundException("could not find any parameters for this action"))
 		return
 	}

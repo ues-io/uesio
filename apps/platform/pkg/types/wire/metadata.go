@@ -201,7 +201,7 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 		var subFieldMetadata *FieldMetadata
 		for _, namePart := range names[1:] {
 			if tmp, exists := fieldMetadata.SubFields[namePart]; !exists {
-				return nil, errors.New(fmt.Sprintf("subfield '%s' doesn't exist on Struct field: '%s'.", namePart, mainFieldName))
+				return nil, fmt.Errorf("subfield '%s' doesn't exist on Struct field: '%s'.", namePart, mainFieldName)
 			} else {
 				subFieldMetadata = tmp
 			}

@@ -79,24 +79,10 @@ func Test_Request(t *testing.T) {
 		server.Close()
 	})()
 
-	type Address struct {
-		Street1       string `json:"street1"`
-		Street2       string `json:"street2"`
-		City          string `json:"city"`
-		ZipPostalCode string `json:"zip"`
-		Country       string `json:"country"`
-		State         string `json:"state"`
-	}
-
 	type User struct {
 		First         string   `json:"first"`
 		Last          string   `json:"last"`
 		FavoriteFoods []string `json:"favoriteFoods"`
-	}
-
-	type ResponseArgs struct {
-		responseData   interface{}
-		requestOptions interface{}
 	}
 
 	type ResponseAssertsFunc func(t *testing.T, response *BotHttpResponse)

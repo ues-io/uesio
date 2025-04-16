@@ -226,7 +226,7 @@ func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result any, inputTo
 	content := modelOutput.Content
 	usage := modelOutput.Usage
 
-	if content == nil || len(content) < 1 {
+	if len(content) < 1 {
 		return "", 0, 0, errors.New("Invalid Response from Bedrock")
 	}
 

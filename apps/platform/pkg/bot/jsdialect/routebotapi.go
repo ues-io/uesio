@@ -89,7 +89,6 @@ func (p *RouteBotParamsAPI) GetAll() map[string]interface{} {
 type RouteBotAPI struct {
 	session       *sess.Session
 	originalRoute *meta.Route
-	newRoute      *meta.Route
 	connection    wire.Connection
 	bot           *meta.Bot
 	Params        *RouteBotParamsAPI   `bot:"params"`
