@@ -56,9 +56,22 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, true, nil)
 	}
 
-	// if we do not have either of these, there is nothing we can go "look up"
-	if wsKeyInfo.GetWorkspaceID() == "" && wsKeyInfo.GetUniqueKey() == "" {
-		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, fmt.Errorf("workspaceid or both app and workspacename must be provided"))
+	// First check the Studio Site Session permissions
+	site := session.GetSite()
+	studioPerms := session.GetSiteUser().Permissions
+
+	var accessErr error
+	// 1. Make sure we're in a site that can read/modify workspaces
+	if site.GetAppFullName() != "uesio/studio" {
+		accessErr = errors.New("this site does not allow working with workspaces")
+	} else if !studioPerms.HasNamedPermission(constant.WorkspaceAdminPerm) {
+		accessErr = errors.New("your profile does not allow you to edit workspace metadata")
+	} else if wsKeyInfo.GetWorkspaceID() == "" && wsKeyInfo.GetUniqueKey() == "" {
+		// if we do not have either of these, there is nothing we can go "look up"
+		accessErr = errors.New("workspaceid or both app and workspacename must be provided")
+	}
+	if accessErr != nil {
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, accessErr)
 	}
 
 	if wsKeyInfo.HasAnyMissingField() {
@@ -75,20 +88,6 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		}
 	}
 
-	// First check the Studio Site Session permissions
-	site := session.GetSite()
-	studioPerms := session.GetSiteUser().Permissions
-
-	var accessErr error
-	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppFullName() != "uesio/studio" {
-		accessErr = errors.New("this site does not allow working with workspaces")
-	} else if !studioPerms.HasNamedPermission(constant.WorkspaceAdminPerm) {
-		accessErr = errors.New("your profile does not allow you to edit workspace metadata")
-	}
-	if accessErr != nil {
-		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, accessErr)
-	}
 	// 2. does the user have the workspace-specific write permission,
 	// or is this a Studio Super-User (such as the  Anonymous Admin Session which we use for Workspace Bundle Store?)
 	haveAccess := (wsKeyInfo.GetWorkspaceID() != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(wsKeyInfo.GetWorkspaceID()))) || studioPerms.ModifyAllRecords
