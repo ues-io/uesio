@@ -172,9 +172,18 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 
 	// Perform cascade deletes as an Admin to make sure we find all the records we need to
 	// and to avoid unnecessary security logic
-	adminSession := GetSiteAdminSession(session)
+	// Elevate permissions for cascade deletes to make sure we find all the records we need to
+	// and to avoid unnecessary security logic. If we already have a SiteAdmin or Workspace session,
+	// maintain it, else elevate to AnonSession which will grant admin permission set but ensure
+	// we do not have full SiteAdmin privledges (e.g., in some cases, will skip adding WHERE clause
+	// conditions) since we only need rights to all the metadata objects but should maintain
+	// other criteria as appropriate
+	cascadeSession := session
+	if cascadeSession.GetSiteAdminSession() == nil && cascadeSession.GetWorkspaceSession() == nil {
+		cascadeSession = sess.GetAnonSessionFrom(session)
+	}
 
-	deletes, err := getCascadeDeletes(op, connection, adminSession)
+	deletes, err := getCascadeDeletes(op, connection, cascadeSession)
 	if err != nil {
 		return err
 	}
@@ -197,5 +206,5 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 			})
 		}
 	}
-	return SaveWithOptions(saves, adminSession, NewSaveOptions(connection, nil))
+	return SaveWithOptions(saves, cascadeSession, NewSaveOptions(connection, nil))
 }
