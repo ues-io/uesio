@@ -11,8 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-// TODO: This seems like it is likely done somewhere else and we should either use that or this should be
-// made a public utility function??
 func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	//ben/greenlink:dev:companymember to ben/greenlink.companymember
 	keyArray := strings.Split(uniquekey, ":")
@@ -25,6 +23,12 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 
 func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
+	// We will end up here through several different avenues and sometimes we will be in an admin context,
+	// sometimes in an anon context and sometimes in a workspace context, etc. Additionally, depending on
+	// context there may or may not be a request param that contains the workspace ID that would ensure
+	// that any loads we do restrict queries to a workspace. Moreover, depending on how we go here, the request.Deletes
+	// could span one or more workspaces so we need to ensure that we only delete the collection for the workspace
+	// that it is associated with.
 	workspaceCollections := make(map[string][]string, len(request.Deletes))
 	for _, d := range request.Deletes {
 		workspaceId, err := d.GetOldFieldAsString("uesio/studio.workspace->uesio/core.id")
@@ -37,7 +41,6 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 		}
 		// collection unique keys will be something like "uesio/tests:dev:rare_and_unusual_object", but the "uesio/studio.collection"
 		// field for fields will be something like "uesio/tests.rare_and_unusual_object", so we need to parse this
-		// TODO: It seems like there should be a method that already does this somewhere?
 		collectionName, err := parseUniquekeyToCollectionKey(collectionUniqueKey)
 		if err != nil {
 			return err
@@ -146,7 +149,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 		})
 	}
 
-	// TODO: Should we delete collection data for the workspace?
+	// TODO: Should we delete collection data for the workspace?  See https://github.com/ues-io/uesio/issues/4832
 
 	if len(requests) == 0 {
 		return nil
