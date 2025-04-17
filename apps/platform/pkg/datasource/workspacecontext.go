@@ -23,12 +23,10 @@ type QueryWorkspaceForWriteFn func(queryValue, queryField string, session *sess.
 // this cache exists to provide quick access to essential fields about a workspace
 // without having to constantly query for it
 var wsKeyInfoIdCache cache.Cache[workspace.KeyInfo]
-var wsKeyInfoUniqueKeyCache cache.Cache[workspace.KeyInfo]
 var queryWorkspaceForWriteFn QueryWorkspaceForWriteFn
 
 func init() {
 	wsKeyInfoIdCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
-	wsKeyInfoUniqueKeyCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
 	queryWorkspaceForWriteFn = QueryWorkspaceForWrite
 }
 
@@ -74,17 +72,9 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, accessErr)
 	}
 
-	if wsKeyInfo.HasAnyMissingField() {
-		// if we find wsKeyInfo in one of the caches, it will always have all three fields
-		if wsKeyInfo.GetWorkspaceID() != "" {
-			if result, err := wsKeyInfoIdCache.Get(wsKeyInfo.GetWorkspaceID()); err == nil {
-				wsKeyInfo = result
-			}
-		}
-		if wsKeyInfo.HasAnyMissingField() && wsKeyInfo.GetUniqueKey() != "" {
-			if result, err := wsKeyInfoUniqueKeyCache.Get(wsKeyInfo.GetUniqueKey()); err == nil {
-				wsKeyInfo = result
-			}
+	if wsKeyInfo.GetWorkspaceID() != "" && wsKeyInfo.HasAnyMissingField() {
+		if result, err := wsKeyInfoIdCache.Get(wsKeyInfo.GetWorkspaceID()); err == nil {
+			wsKeyInfo = result
 		}
 	}
 
@@ -111,8 +101,10 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		// Flesh out our workspace key info cache
 		if ws != nil && wsKeyInfo.HasAnyMissingField() {
 			wsKeyInfo = workspace.NewKeyInfo(ws.App.FullName, ws.Name, ws.ID)
+			// NOTE - We only cache by id since the uniquekey->id mapping is mutable (e.g., create workspace, delete it, create w/ same name). We could cache by uniquekey
+			// if we clear the cache if/when a workspace gets deleted
+			// TODO: Is there a way to get notified so we can avoid the lookup below every time we only have a uniquekey?
 			wsKeyInfoIdCache.Set(ws.ID, wsKeyInfo)
-			wsKeyInfoUniqueKeyCache.Set(ws.UniqueKey, wsKeyInfo)
 		}
 	} else if wsKeyInfo.HasAnyMissingField() {
 		// TODO: Need a way to get all three values when studioPerms.ModifyAllRecords is true. We can't queryWorkspaceForWriteFn because
