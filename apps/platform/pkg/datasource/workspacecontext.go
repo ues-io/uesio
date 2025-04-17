@@ -22,11 +22,13 @@ type QueryWorkspaceForWriteFn func(queryValue, queryField string, session *sess.
 
 // this cache exists to provide quick access to essential fields about a workspace
 // without having to constantly query for it
-var wsKeyInfoCache cache.Cache[workspace.KeyInfo]
+var wsKeyInfoIdCache cache.Cache[workspace.KeyInfo]
+var wsKeyInfoUniqueKeyCache cache.Cache[workspace.KeyInfo]
 var queryWorkspaceForWriteFn QueryWorkspaceForWriteFn
 
 func init() {
-	wsKeyInfoCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
+	wsKeyInfoIdCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
+	wsKeyInfoUniqueKeyCache = cache.NewMemoryCache[workspace.KeyInfo](15*time.Minute, 15*time.Minute)
 	queryWorkspaceForWriteFn = QueryWorkspaceForWrite
 }
 
@@ -37,13 +39,14 @@ func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 
 func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
 
-	workspaceID := goutils.StringValue(params["workspaceid"])
-	workspaceName := goutils.StringValue(params["workspacename"])
-	appName := goutils.StringValue(params["app"])
-	workspaceUniqueKey := ""
+	wsKeyInfo := workspace.NewKeyInfo(goutils.StringValue(params["app"]), goutils.StringValue(params["workspacename"]), goutils.StringValue(params["workspaceid"]))
 
-	wsKeyInfo := workspace.NewKeyInfo(appName, workspaceName, workspaceID)
-
+	// TODO: This could return an AccessResult that contains a wsKeyInfo with empty
+	// fields in any or all of the properties workspaceId, appName, workspaceName. For
+	// backwards compat, leaving as-is for now since we're a SiteAdmin anyway but this
+	// should likely be revisited and evaluated as it could have unexpected behavior
+	// downstream. In most cases, when SiteAdminSession, the params aren't used however
+	// since SiteAdminSession has system wide access.
 	if siteAdminSession := session.GetSiteAdminSession(); siteAdminSession != nil {
 		site := siteAdminSession.GetSite()
 		if site.GetAppFullName() != "uesio/studio" || site.Name != "prod" {
@@ -53,13 +56,22 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		return workspace.NewWorkspaceAccessResult(wsKeyInfo, true, true, nil)
 	}
 
-	if appName != "" && workspaceName != "" {
-		workspaceUniqueKey = fmt.Sprintf("%s:%s", appName, workspaceName)
+	// if we do not have either of these, there is nothing we can go "look up"
+	if wsKeyInfo.GetWorkspaceID() == "" && wsKeyInfo.GetUniqueKey() == "" {
+		return workspace.NewWorkspaceAccessResult(wsKeyInfo, false, false, fmt.Errorf("workspaceid or both app and workspacename must be provided"))
 	}
-	if workspaceID != "" && wsKeyInfo.HasAnyMissingField() {
-		// Try to find the workspace key info from workspace ID
-		if result, err := wsKeyInfoCache.Get(workspaceID); err == nil {
-			wsKeyInfo = result
+
+	if wsKeyInfo.HasAnyMissingField() {
+		// if we find wsKeyInfo in one of the caches, it will always have all three fields
+		if wsKeyInfo.GetWorkspaceID() != "" {
+			if result, err := wsKeyInfoIdCache.Get(wsKeyInfo.GetWorkspaceID()); err == nil {
+				wsKeyInfo = result
+			}
+		}
+		if wsKeyInfo.HasAnyMissingField() && wsKeyInfo.GetUniqueKey() != "" {
+			if result, err := wsKeyInfoUniqueKeyCache.Get(wsKeyInfo.GetUniqueKey()); err == nil {
+				wsKeyInfo = result
+			}
 		}
 	}
 
@@ -79,15 +91,17 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 	}
 	// 2. does the user have the workspace-specific write permission,
 	// or is this a Studio Super-User (such as the  Anonymous Admin Session which we use for Workspace Bundle Store?)
-	haveAccess := studioPerms.HasNamedPermission(getWorkspaceWritePermName(workspaceID)) || studioPerms.ModifyAllRecords
+	haveAccess := (wsKeyInfo.GetWorkspaceID() != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(wsKeyInfo.GetWorkspaceID()))) || studioPerms.ModifyAllRecords
 
+	// we do not cache access itself so we will query every time to check for access which is
+	// needed in case our access changes in real-time.
 	if !haveAccess {
 		// Otherwise we need to query the workspace for write
 		queryField := commonfields.Id
-		queryValue := workspaceID
-		if workspaceID == "" && workspaceUniqueKey != "" {
+		queryValue := wsKeyInfo.GetWorkspaceID()
+		if queryValue == "" && wsKeyInfo.GetUniqueKey() != "" {
 			queryField = commonfields.UniqueKey
-			queryValue = workspaceUniqueKey
+			queryValue = wsKeyInfo.GetUniqueKey()
 		}
 		ws, err := queryWorkspaceForWriteFn(queryValue, queryField, session, connection)
 		if err == nil && ws != nil {
@@ -97,11 +111,16 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 		}
 		// Flesh out our workspace key info cache
 		if ws != nil && wsKeyInfo.HasAnyMissingField() {
-			workspaceID = ws.ID
-			wsKeyInfo = workspace.NewKeyInfo(appName, workspaceName, workspaceID)
-			wsKeyInfoCache.Set(workspaceID, wsKeyInfo)
+			wsKeyInfo = workspace.NewKeyInfo(ws.App.FullName, ws.Name, ws.ID)
+			wsKeyInfoIdCache.Set(ws.ID, wsKeyInfo)
+			wsKeyInfoUniqueKeyCache.Set(ws.UniqueKey, wsKeyInfo)
 		}
+	} else if wsKeyInfo.HasAnyMissingField() {
+		// TODO: Need a way to get all three values when studioPerms.ModifyAllRecords is true. We can't queryWorkspaceForWriteFn because
+		// that might actually fail even though we are able to access due to ModifyAllRecords.
+		fmt.Println("TODO")
 	}
+
 	// Ensure our params are hydrated before returning with the full results of our checks
 	params["workspaceid"] = wsKeyInfo.GetWorkspaceID()
 	params["workspacename"] = wsKeyInfo.GetWorkspaceName()

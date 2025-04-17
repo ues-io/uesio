@@ -32,3 +32,10 @@ func (t KeyInfo) GetAppName() string {
 func (t KeyInfo) GetWorkspaceID() string {
 	return t.workspaceID
 }
+
+func (t KeyInfo) GetUniqueKey() string {
+	if t.GetAppName() != "" && t.GetWorkspaceName() != "" {
+		return t.GetAppName() + ":" + t.GetWorkspaceName()
+	}
+	return ""
+}
