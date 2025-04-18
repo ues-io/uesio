@@ -45,7 +45,9 @@ const toggleBuildMode = async (
   buildMode: boolean,
 ) => {
   // check if we've already loaded the builder dependencies
-  const isLoaded = !!getBuilderExternalState(ctx, "namespaces")
+  // TODO: This should likely come from state rather than a component that we
+  // know won't be loaded in "preview" mode
+  const isLoaded = !!getBuilderExternalState(ctx, "indexpanel")
   if (!isLoaded) {
     await api.builder.getBuilderDeps(ctx)
   }
