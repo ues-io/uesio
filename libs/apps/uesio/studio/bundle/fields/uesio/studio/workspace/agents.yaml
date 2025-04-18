@@ -1,0 +1,7 @@
+name: agents
+type: REFERENCEGROUP
+label: Agents
+referenceGroup:
+  collection: agent
+  field: workspace
+  onDelete: CASCADE
