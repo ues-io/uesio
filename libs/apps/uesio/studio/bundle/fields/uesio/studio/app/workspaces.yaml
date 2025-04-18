@@ -4,3 +4,4 @@ label: Workspaces
 referenceGroup:
   collection: workspace
   field: app
+  onDelete: CASCADE
