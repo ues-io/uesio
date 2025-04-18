@@ -103,7 +103,10 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
     field: string,
     value: boolean,
     recordId: string,
+    record: wire.WireRecord,
   ) => {
+    const idValue = record.getIdFieldValue()
+    if (!idValue) return
     let recordPerms
     if (field === DefaultFieldName) {
       recordPerms = value
@@ -114,8 +117,8 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
     }
     updateDataValue({
       ...getDataValue(),
-      [recordId]: recordPerms,
-    } as wire.PlainWireRecord)
+      [idValue]: recordPerms,
+    })
   }
 
   // Iterate over the wires in the order specified by the sourceWires prop
@@ -142,13 +145,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
       itemNames.sort()
       return itemNames
     })
-    .reduce(
-      (acc, itemName) => ({
-        ...acc,
-        [itemName]: getPermRecord(itemName),
-      }),
-      {},
-    )
+    .map(getPermRecord)
 
   const firstCollectionLabel = sourceWiresList[0]?.getCollection().getLabel()
   const tableFields = [

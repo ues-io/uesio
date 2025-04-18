@@ -122,13 +122,9 @@ class Wire {
     )
   }
 
-  createRecord = (
-    record: PlainWireRecord,
-    prepend?: boolean,
-    recordId?: string,
-  ) => {
+  createRecord = (record: PlainWireRecord, prepend?: boolean) => {
     // TODO: This code should be converted to using createRecordOp
-    if (!recordId) recordId = nanoid()
+    const recordId = nanoid()
     dispatch(
       createRecord({
         entity: this.getFullId(),
