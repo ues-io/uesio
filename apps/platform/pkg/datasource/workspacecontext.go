@@ -35,6 +35,19 @@ func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 	queryWorkspaceForWriteFn = fn
 }
 
+// TODO: Re-evaluate the approach of why we do this and if still needed, how we do this. The entire approach to this can likely be simplified
+// to always ensure we have a full wsKeyInfo (all fields and in all situations) and minimize database hits by possibly caching the uniquekey
+// as well as the id. If the uniquekey is cached, it needs to be invalidated when the workspace gets deleted because the uniquekey to id map
+// is mutable - for example, you could create a workspace, delete it and create it with the same name. When invalidating the cache, need
+// to be careful of "reads" to the cache while the new value is being written and also if the "save/after bot" that would do a notify fails to
+// actually complete. Likely best in this case to just clear the uniquekey field and not set it again in the invalidate and just let the
+// next call to this method find the current id for that uniquekey. In short, the general approach should likely be:
+//  1. Get frmo cache
+//  2. If nothing in cache, lookup based on either id (to get the unique key) or uniquekey (to get the id) using an elevated context to just retrieve the 3 fields needed
+//  3. if no match, return error
+//  4. if match, store in cache
+//  5. continue processing with the various scenarios (e.g., Site Admin, non-site general perm checks, non-site admin workspace
+//     perm checks)
 func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
 
 	wsKeyInfo := workspace.NewKeyInfo(goutils.StringValue(params["app"]), goutils.StringValue(params["workspacename"]), goutils.StringValue(params["workspaceid"]))
@@ -82,8 +95,13 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 	// or is this a Studio Super-User (such as the  Anonymous Admin Session which we use for Workspace Bundle Store?)
 	haveAccess := (wsKeyInfo.GetWorkspaceID() != "" && studioPerms.HasNamedPermission(getWorkspaceWritePermName(wsKeyInfo.GetWorkspaceID()))) || studioPerms.ModifyAllRecords
 
-	// we do not cache access itself so we will query every time to check for access which is
-	// needed in case our access changes in real-time.
+	// we do not cache access itself so we will query every time to check for access which is needed in case our access changes in
+	// real-time. Note that we'll only find permissions in studioPermissions if we have a wsKeyInfo.GetWorkspaceID() so if we only have
+	// uniquekey, we'll never have access unless we have studioPerms.ModifyAllRecords. If we do have studioPerms.ModifyAllRecords we
+	// will never go to the database so even if we were caching uniquekey, it wouldn't be in the cache with the workspaceid that is needed
+	// for HasNamedPermission lookup. We do not go to the database below when we don't have access or when wsKeyInfo.HasMissingField() because
+	// this would result in us going to the database every time we only have a uniquekey since we don't cache it.
+	// TODO: See potential improvements mentioned in comment above function signature.
 	if !haveAccess {
 		// Otherwise we need to query the workspace for write
 		queryField := commonfields.Id
@@ -106,10 +124,6 @@ func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.
 			// TODO: Is there a way to get notified so we can avoid the lookup below every time we only have a uniquekey?
 			wsKeyInfoIdCache.Set(ws.ID, wsKeyInfo)
 		}
-	} else if wsKeyInfo.HasAnyMissingField() {
-		// TODO: Need a way to get all three values when studioPerms.ModifyAllRecords is true. We can't queryWorkspaceForWriteFn because
-		// that might actually fail even though we are able to access due to ModifyAllRecords.
-		fmt.Println("TODO")
 	}
 
 	// Ensure our params are hydrated before returning with the full results of our checks
