@@ -1,5 +1,4 @@
 import { api, context } from "@uesio/ui"
-import { getBuilderExternalState } from "../api/stateapi"
 
 const editPath = "/edit"
 const previewPath = "/preview"
