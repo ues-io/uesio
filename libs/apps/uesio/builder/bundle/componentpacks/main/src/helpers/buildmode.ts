@@ -1,5 +1,4 @@
 import { api, context } from "@uesio/ui"
-import { getBuilderExternalState } from "../api/stateapi"
 
 const editPath = "/edit"
 const previewPath = "/preview"
@@ -42,12 +41,13 @@ const swapEditAndPreviewMode = (ctx: context.Context, buildMode: boolean) => {
 const toggleBuildMode = async (
   ctx: context.Context,
   setBuildMode: (state: boolean) => void,
+  setBuildDepsLoaded: (state: boolean) => void,
   buildMode: boolean,
+  buildDepsLoaded: boolean,
 ) => {
-  // check if we've already loaded the builder dependencies
-  const isLoaded = !!getBuilderExternalState(ctx, "namespaces")
-  if (!isLoaded) {
+  if (!buildMode && !buildDepsLoaded) {
     await api.builder.getBuilderDeps(ctx)
+    setBuildDepsLoaded(true)
   }
   swapEditAndPreviewMode(ctx, !!buildMode)
   setBuildMode(!buildMode)

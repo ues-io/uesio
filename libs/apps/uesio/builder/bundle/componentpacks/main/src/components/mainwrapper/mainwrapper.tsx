@@ -4,6 +4,7 @@ import {
   useBuildMode,
   useBuilderState,
   getBuilderComponentId,
+  useBuildDepsLoaded,
 } from "../../api/stateapi"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
@@ -59,6 +60,10 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
   const Grid = component.getUtility("uesio/io.grid")
 
   const [buildMode, setBuildMode] = useBuildMode(context)
+  const [buildDepsLoaded, setBuildDepsLoaded] = useBuildDepsLoaded(
+    context,
+    !!buildMode,
+  )
 
   // Add a view frame to our builder context so that our component ids work right
   const builderContext = context
@@ -79,7 +84,13 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
   hooks.useHotKeyCallback(
     "meta+u",
     () => {
-      toggleBuildMode(builderContext, setBuildMode, !!buildMode)
+      toggleBuildMode(
+        builderContext,
+        setBuildMode,
+        setBuildDepsLoaded,
+        !!buildMode,
+        !!buildDepsLoaded,
+      )
     },
     true,
     [buildMode, setBuildMode],
