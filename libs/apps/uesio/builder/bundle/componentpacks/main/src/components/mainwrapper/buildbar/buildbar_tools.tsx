@@ -44,6 +44,9 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
+  const hasChatFeature =
+    context.getFeatureFlag("uesio/studio.chat_panel")?.value === true
+
   const viewOptions: ViewOption[] = [
     {
       id: "code",
@@ -53,11 +56,14 @@ const BuildBarTools: definition.UtilityComponent<Props> = (props) => {
       id: "index",
       label: "Index Panel",
     },
-    {
+  ]
+
+  if (hasChatFeature) {
+    viewOptions.push({
       id: "chat",
       label: "Chat Panel",
-    },
-  ]
+    })
+  }
 
   const baseContext = context.getRouteContext()
 

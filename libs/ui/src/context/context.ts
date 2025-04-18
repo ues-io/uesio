@@ -11,7 +11,7 @@ import { selectors as componentVariantSelectors } from "../bands/componentvarian
 import { selectors as selectListSelectors } from "../bands/selectlist"
 import { selectors as routeAssignmentSelectors } from "../bands/routeassignment"
 import { selectors as themeSelectors } from "../bands/theme"
-import { selectByName as selectFeatureFlagByName } from "../bands/featureflag"
+import { selectors as featureFlagSelectors } from "../bands/featureflag"
 import { selectors as configValueSelectors } from "../bands/configvalue"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
@@ -534,7 +534,7 @@ class Context {
     fileSelectors.selectById(getCurrentState(), fileKey)?.updatedAt
 
   getFeatureFlag = (name: string) =>
-    selectFeatureFlagByName(getCurrentState(), name)
+    featureFlagSelectors.selectById(getCurrentState(), name)
 
   getConfigValue = (name: string) =>
     configValueSelectors.selectById(getCurrentState(), name)

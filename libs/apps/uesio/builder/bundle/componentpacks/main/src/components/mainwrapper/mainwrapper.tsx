@@ -117,6 +117,9 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
   const [showIndex] = useBuilderState<boolean>(context, "indexpanel")
   const [showChat] = useBuilderState<boolean>(context, "chatpanel")
 
+  const hasChatFeature =
+    context.getFeatureFlag("uesio/studio.chat_panel")?.value === true
+
   if (!buildMode) {
     return (
       <>
@@ -164,7 +167,7 @@ const MainWrapper: definition.UC<component.ViewComponentDefinition> = (
             </AdjustableHeightArea>
           )}
         </Grid>
-        {showChat && (
+        {showChat && hasChatFeature && (
           <Grid context={context} className={classes.rightpanel}>
             <ChatPanel context={builderContext.deleteWorkspace()} />
           </Grid>

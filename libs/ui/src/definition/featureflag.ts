@@ -1,6 +1,6 @@
 import { BundleableBase } from "../metadata/types"
 
 export type FeatureFlagState = {
-  value: string
+  value: string | boolean | number
   type: "CHECKBOX" | "NUMBER"
 } & BundleableBase
