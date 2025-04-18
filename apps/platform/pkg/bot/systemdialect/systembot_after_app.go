@@ -4,7 +4,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -14,12 +13,6 @@ import (
 
 func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	if len(request.Deletes) > 0 {
-		err := cascadeDeleteWorkspaces(request, connection, session)
-		if err != nil {
-			return err
-		}
-	}
 	if len(request.Inserts) > 0 {
 		err := runStarterTemplates(request, connection, session)
 		if err != nil {
@@ -173,52 +166,4 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 
 	_, err = deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
 	return err
-
-}
-
-func cascadeDeleteWorkspaces(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	adminSession := datasource.GetSiteAdminSession(session)
-	wc := meta.WorkspaceCollection{}
-	err := datasource.PlatformLoad(&wc, &datasource.PlatformLoadOptions{
-		Fields: []wire.LoadRequestField{
-			{
-				ID: commonfields.Id,
-			},
-			{
-				ID: "uesio/studio.name",
-			},
-		},
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/studio.app",
-				Values:   request.Deletes.GetIDs(),
-				Operator: "IN",
-			},
-		},
-		Connection: connection,
-	}, adminSession)
-	if err != nil {
-		return err
-	}
-
-	requests := []datasource.SaveRequest{}
-
-	for _, workspace := range wc {
-		requests = append(requests, datasource.SaveRequest{
-			Collection: "uesio/studio.workspace",
-			Wire:       "RunAppAfterSaveBot",
-			Deletes:    &meta.WorkspaceCollection{workspace},
-			Params: map[string]interface{}{
-				"workspaceid": workspace.ID,
-			},
-			Options: &wire.SaveOptions{IgnoreMissingRecords: true},
-		})
-	}
-
-	if len(requests) == 0 {
-		return nil
-	}
-
-	return datasource.SaveWithOptions(requests, adminSession, datasource.NewSaveOptions(connection, nil))
-
 }
