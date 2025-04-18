@@ -16,7 +16,7 @@ HTTP *
 status toString matches /^(204|404)$/
 
 # Delete the tests app if it already exists, which should cascade delete the workspace and all of its metadata
-DELETE {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=eq.uesio%2Ftests
+DELETE {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/api/v1/collection/uesio/studio/app?uesio/studio.fullname=sw.uesio%2Ftests
 HTTP *
 [Asserts]
 status toString matches /^(204|404)$/
@@ -28,10 +28,12 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/l
         {
             "name": "workspaces",
             "collection": "uesio/studio.workspace",
+            "query": true,
+            "fields": [{ "id": "uesio/core.uniquekey" }],
             "conditions": [
                 {
                     "field": "uesio/studio.app->uesio/studio.fullname",
-                    "operator": "EQ",
+                    "operator": "STARTS_WITH",
                     "value": "uesio/tests"
                 }
             ]
@@ -50,10 +52,12 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/l
         {
             "name": "sites",
             "collection": "uesio/studio.site",
+            "query": true,
+            "fields": [{ "id": "uesio/core.uniquekey" }],            
             "conditions": [
                 {
                     "field": "uesio/studio.app->uesio/studio.fullname",
-                    "operator": "EQ",
+                    "operator": "STARTS_WITH",
                     "value": "uesio/tests"
                 }
             ]
