@@ -501,8 +501,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 		deps.ComponentVariant.AddItem(variants[i])
 	}
 
-	// Load in studio specific feature flags.
-
 	deps.Component.AddItem(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
 	deps.Component.AddItem(preload.NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
 
