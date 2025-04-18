@@ -19,14 +19,9 @@ user_id: jsonpath "$.user.id"
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/metadata/builder/uesio/tests/display_conditions
 HTTP 200
 [Asserts]
-# Verify that the feature flags are loaded in the view builder
-# Type Checkbox
-jsonpath "$.featureflag[9].name" == "manage_user_access_tokens"
-jsonpath "$.featureflag[9].type" == "CHECKBOX"
-jsonpath "$.featureflag[9].user" == {{user_id}}
-
-# Type Number
-jsonpath "$.featureflag[10].name" == "max_domains_per_user"
-jsonpath "$.featureflag[10].type" == "NUMBER"
-jsonpath "$.featureflag[10].value" >= 0
-jsonpath "$.featureflag[10].user" == {{user_id}}
+# Verify that the feature flags and labels are not loaded
+# Verify that the correct view definition is returned in the payload
+jsonpath "$.featureflag" isEmpty
+jsonpath "$.label" isEmpty
+jsonpath "$.viewdef[0].namespace" == "uesio/tests"
+jsonpath "$.viewdef[0].name" == "display_conditions"

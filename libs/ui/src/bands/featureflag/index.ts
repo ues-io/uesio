@@ -9,9 +9,6 @@ const adapter = createEntityAdapter({
 
 const selectors = adapter.getSelectors((state: RootState) => state.featureflag)
 
-const selectByName = (state: RootState, name: string) =>
-  selectors.selectAll(state).find((el) => el.name && el.name === name)
-
 const metadataSlice = createSlice({
   name: "featureflag",
   initialState: adapter.getInitialState(),
@@ -21,7 +18,7 @@ const metadataSlice = createSlice({
   },
 })
 
-export { selectByName, selectors, adapter }
+export { selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

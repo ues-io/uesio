@@ -416,12 +416,21 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 		return err
 	}
 
-	err = bundle.Load(theme, nil, session.RemoveWorkspaceContext(), nil)
+	baseStudioSession := session.RemoveWorkspaceContext()
+
+	err = bundle.Load(theme, nil, baseStudioSession, nil)
 	if err != nil {
 		return err
 	}
 
 	deps.Theme.AddItem(theme)
+
+	// Add in any builder-specfic feature flags.
+	chatPanelFlag, err := featureflagstore.GetFeatureFlag("uesio/studio.chat_panel", baseStudioSession, baseStudioSession.GetContextUser().ID)
+	if err != nil {
+		return err
+	}
+	deps.FeatureFlag.AddItem(chatPanelFlag)
 
 	// Get the metadata list
 	appNames := session.GetContextNamespaces()
@@ -481,11 +490,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 		return errors.New("Failed to load components: " + err.Error())
 	}
 
-	labels, err := translate.GetTranslatedLabels(session)
-	if err != nil {
-		return errors.New("Failed to get translated labels: " + err.Error())
-	}
-
 	for _, component := range components {
 		if err = getDepsForComponent(component, deps, map[string]*yaml.Node{}, session); err != nil {
 			return err
@@ -495,28 +499,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 
 	for i := range variants {
 		deps.ComponentVariant.AddItem(variants[i])
-	}
-
-	for key, value := range labels {
-		label, err := meta.NewLabel(key)
-		if err != nil {
-			return err
-		}
-		label.Value = value
-		deps.Label.AddItem(label)
-	}
-
-	// need an admin session for retrieving feature flags
-	// in order to prevent users from having to have read on the uesio/core.featureflagassignment table
-	adminSession := sess.GetAnonSessionFrom(session)
-
-	featureFlags, err := featureflagstore.GetFeatureFlags(adminSession, session.GetContextUser().ID)
-	if err != nil {
-		return errors.New("Failed to get feature flags: " + err.Error())
-	}
-
-	for _, flag := range *featureFlags {
-		deps.FeatureFlag.AddItem(flag)
 	}
 
 	deps.Component.AddItem(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), true))

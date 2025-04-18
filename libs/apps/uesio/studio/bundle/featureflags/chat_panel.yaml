@@ -1,0 +1,4 @@
+name: chat_panel
+label: Chat Panel
+type: CHECKBOX
+defaultValue: false

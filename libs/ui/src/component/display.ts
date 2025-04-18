@@ -4,6 +4,7 @@ import { wire as wireApi } from "../api/api"
 import { Wire, WireRecord } from "../wireexports"
 import { DISPLAY_CONDITIONS } from "../componentexports"
 import { metadata } from ".."
+import { getFullyQualifiedKey } from "../bands/collection/class"
 
 type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
   T,
@@ -377,8 +378,13 @@ function should(condition: DisplayCondition, context: Context): boolean {
 
   if (type === "fieldMode") return condition.mode === context.getFieldMode()
 
-  if (type === "featureFlag")
-    return !!context.getFeatureFlag(condition.name)?.value
+  if (type === "featureFlag") {
+    const qualifiedKey = getFullyQualifiedKey(
+      condition.name,
+      context.getNamespace(),
+    )
+    return !!context.getFeatureFlag(qualifiedKey)?.value
+  }
 
   if (type === "recordIsNew") return !!context.getRecord(wireName)?.isNew()
 

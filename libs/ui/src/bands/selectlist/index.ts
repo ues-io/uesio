@@ -14,9 +14,6 @@ const adapter = createEntityAdapter({
 
 const selectors = adapter.getSelectors((state: RootState) => state.selectlist)
 
-const selectByName = (state: RootState, name: string) =>
-  selectors.selectAll(state).find((el) => el.name && el.name === name)
-
 const selectById = (state: RootState, id: string) =>
   selectors.selectAll(state).find((el) => id === getKey(el))
 
@@ -62,14 +59,7 @@ const useSelectList = (key: string) =>
 
 const useSelectListKeys = () => useSelector(selectors.selectIds) as string[]
 
-export {
-  useSelectList,
-  useSelectListKeys,
-  selectById,
-  selectByName,
-  selectors,
-  adapter,
-}
+export { useSelectList, useSelectListKeys, selectById, selectors, adapter }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer
