@@ -31,6 +31,10 @@ func getUesioOperatorFromPostgrestOperator(pgOp string) string {
 		return "GTE"
 	case "in":
 		return "IN"
+	case "cs":
+		return "CONTAINS"
+	case "sw":
+		return "STARTS_WITH"
 	}
 	return "EQ"
 }

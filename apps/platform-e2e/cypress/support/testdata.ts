@@ -12,7 +12,7 @@ export function getUniqueAppName() {
     { length: 8 },
     getRandomLowercaseAlphabetLetter,
   ).join("")
-  return `e2e${randomLetters}`
+  return `tests_e2e_${randomLetters}`
 }
 
 export function deleteApp(appName: string) {
