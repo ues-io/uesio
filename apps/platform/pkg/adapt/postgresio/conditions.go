@@ -166,7 +166,7 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 	if useValue != nil && isCoreUUIDField {
 		useValueString, ok := useValue.(string)
 		if !ok {
-			return fmt.Errorf("Value must be string for field: %s : %s", fieldName, useValue)
+			return fmt.Errorf("value must be string for field: %s : %s", fieldName, useValue)
 		}
 		useValue = useValueString
 	}
@@ -176,12 +176,12 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		uuidStrings := []string{}
 		useValueSlice, ok := useValue.([]any)
 		if !ok {
-			return fmt.Errorf("Value must be slice of strings for field: %s : %s", fieldMetadata.GetFullName(), useValue)
+			return fmt.Errorf("value must be slice of strings for field: %s : %s", fieldMetadata.GetFullName(), useValue)
 		}
 		for _, val := range useValueSlice {
 			useValueString, ok := val.(string)
 			if !ok {
-				return fmt.Errorf("Value must be string for field: %s : %s", fieldName, val)
+				return fmt.Errorf("value must be string for field: %s : %s", fieldName, val)
 			}
 			uuidStrings = append(uuidStrings, useValueString)
 		}
@@ -206,13 +206,13 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 
 	case "HAS_ANY":
 		if fieldType != "MULTISELECT" {
-			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
+			return errors.New("operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(useValues)))
 
 	case "HAS_ALL":
 		if fieldType != "MULTISELECT" {
-			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
+			return errors.New("operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(useValues)))
 
@@ -263,13 +263,13 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 
 	case "CONTAINS":
 		if !isTextType {
-			return fmt.Errorf("Operator CONTAINS is not supported for field type %s", fieldType)
+			return fmt.Errorf("operator CONTAINS is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%%%v%%", useValue))))
 
 	case "STARTS_WITH":
 		if !isTextType {
-			return fmt.Errorf("Operator STARTS_WITH is not supported for field type %s", fieldType)
+			return fmt.Errorf("operator STARTS_WITH is not supported for field type %s", fieldType)
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", useValue))))
 
