@@ -273,18 +273,6 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		}
 		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v%%", useValue))))
 
-	case "LIKE":
-		if !isTextType {
-			return fmt.Errorf("operator LIKE is not supported for field type %s", fieldType)
-		}
-		builder.addQueryPart(fmt.Sprintf("%s LIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v", useValue))))
-
-	case "ILIKE":
-		if !isTextType {
-			return fmt.Errorf("operator ILIKE is not supported for field type %s", fieldType)
-		}
-		builder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldName, builder.addValue(fmt.Sprintf("%v", useValue))))
-
 	default:
 		if fieldType == "MULTISELECT" {
 			// Same as HAS_ANY
