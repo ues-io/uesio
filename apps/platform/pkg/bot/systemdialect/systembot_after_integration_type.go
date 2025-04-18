@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -23,33 +24,59 @@ func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
 // Delete all Integration Actions when an Integration Type is deleted
 func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
-	var integrationTypeKeys []string
-	for i := range request.Deletes {
-		integrationTypeKey, err := request.Deletes[i].GetOldFieldAsString("uesio/core.uniquekey")
+	// We will end up here through several different avenues and sometimes we will be in an admin context,
+	// sometimes in an anon context and sometimes in a workspace context, etc. Additionally, depending on
+	// context there may or may not be a request param that contains the workspace ID that would ensure
+	// that any loads we do restrict queries to a workspace. Moreover, depending on how we go here, the request.Deletes
+	// could span one or more workspaces so we need to ensure that we only delete the integration type for the workspace
+	// that it is associated with.
+	workspaceIntegrationTypes := make(map[string][]string, len(request.Deletes))
+	for _, d := range request.Deletes {
+		workspaceId, err := d.GetOldFieldAsString("uesio/studio.workspace->uesio/core.id")
 		if err != nil {
 			return err
 		}
-		integrationTypeKeys = append(integrationTypeKeys, integrationTypeKey)
-	}
-
-	if len(integrationTypeKeys) == 0 {
-		return nil
-	}
-
-	// unique keys will be something like "uesio/tests:dev:salesforce",
-	// but the "uesio/studio.integrationtype" field for Integration Actions will be something like "uesio/tests.salesforce",
-	// so we need to parse this
-	var targetIntegrationTypes []string
-	for _, integrationUniqueKey := range integrationTypeKeys {
-		targetCollection, err := parseUniquekeyToIntegrationTypeKey(integrationUniqueKey)
+		integrationTypeUniqueKey, err := d.GetOldFieldAsString(commonfields.UniqueKey)
 		if err != nil {
 			return err
 		}
-		targetIntegrationTypes = append(targetIntegrationTypes, targetCollection)
+		// unique keys will be something like "uesio/tests:dev:salesforce", but the "uesio/studio.integrationtype" field for Integration
+		// Actions will be something like "uesio/tests.salesforce", so we need to parse this
+		integrationTypeName, err := parseUniquekeyToIntegrationTypeKey(integrationTypeUniqueKey)
+		if err != nil {
+			return err
+		}
+		workspaceIntegrationTypes[workspaceId] = append(workspaceIntegrationTypes[workspaceId], integrationTypeName)
 	}
 
-	if len(targetIntegrationTypes) == 0 {
+	if len(workspaceIntegrationTypes) == 0 {
 		return nil
+	}
+
+	var conditions []wire.LoadRequestCondition
+	for workspaceId, integrationTypes := range workspaceIntegrationTypes {
+		integrationTypesCondition := wire.LoadRequestCondition{
+			Field: "uesio/studio.integrationtype",
+		}
+		if len(integrationTypes) > 1 {
+			integrationTypesCondition.Operator = "IN"
+			integrationTypesCondition.Values = integrationTypes
+		} else {
+			integrationTypesCondition.Operator = "EQ"
+			integrationTypesCondition.Value = integrationTypes[0]
+		}
+		conditions = append(conditions, wire.LoadRequestCondition{
+			Type:        "GROUP",
+			Conjunction: "AND",
+			SubConditions: []wire.LoadRequestCondition{
+				{
+					Field:    "uesio/studio.workspace",
+					Value:    workspaceId,
+					Operator: "EQ",
+				},
+				integrationTypesCondition,
+			},
+		})
 	}
 
 	iac := meta.IntegrationActionCollection{}
@@ -59,13 +86,7 @@ func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connec
 				ID: "uesio/core.id",
 			},
 		},
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/studio.integrationtype",
-				Values:   targetIntegrationTypes,
-				Operator: "IN",
-			},
-		},
+		Conditions: conditions,
 		Connection: connection,
 		Params:     request.Params,
 	}, session)

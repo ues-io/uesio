@@ -115,7 +115,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/react-transition-group": "^4.4.12",
     "chai": "^5.2.0",
-    "chart.js": "^4.4.8",
+    "chart.js": "^4.4.9",
     "css-tree": "^3.1.0",
     "cypress": "^14.3.0",
     "esbuild": "^0.25.2",
@@ -159,7 +159,15 @@
     "yaml": "^2.7.1"
   },
   "overrides": {
-    "typescript": "$typescript",
+    "@twind/core": {
+      "typescript": "$typescript"
+    },
+    "@twind/preset-autoprefix": {
+      "typescript": "$typescript"
+    },
+    "@twind/preset-tailwind": {
+      "typescript": "$typescript"
+    },
     "@modern-js/node-bundle-require": {
       "esbuild": "$esbuild"
     }

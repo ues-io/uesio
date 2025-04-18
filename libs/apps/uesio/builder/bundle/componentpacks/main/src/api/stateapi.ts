@@ -128,6 +128,12 @@ const getBuildMode = (context: ctx.Context) =>
 const useBuildMode = (context: ctx.Context) =>
   useBuilderState<boolean>(context, "buildmode") || false
 
+const getBuildDepsLoaded = (context: ctx.Context) =>
+  getBuilderState<boolean>(context, "builddepsloaded") || false
+
+const useBuildDepsLoaded = (context: ctx.Context, initialState: boolean) =>
+  useBuilderState<boolean>(context, "builddepsloaded", initialState) || false
+
 const useSelectedPath = (context: ctx.Context) =>
   parseFullPath(useBuilderExternalState<string>(context, "selected"))
 
@@ -507,6 +513,8 @@ const getSlotComponents = (
 export {
   getBuildMode,
   useBuildMode,
+  getBuildDepsLoaded,
+  useBuildDepsLoaded,
   useDropPath,
   setDropPath,
   useDragPath,
