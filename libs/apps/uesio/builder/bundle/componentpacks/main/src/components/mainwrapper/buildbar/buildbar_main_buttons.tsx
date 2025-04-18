@@ -1,6 +1,6 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { cancel, save, useHasChanges } from "../../../api/defapi"
-import { useBuildMode } from "../../../api/stateapi"
+import { useBuildDepsLoaded, useBuildMode } from "../../../api/stateapi"
 import { toggleBuildMode } from "../../../helpers/buildmode"
 
 // Yes, navigator.platform is deprecated, but according to MDN in 2023
@@ -23,6 +23,10 @@ const BuildBarMainButtons: definition.UtilityComponent = (props) => {
 
   const hasChanges = useHasChanges(context)
   const [buildMode, setBuildMode] = useBuildMode(context)
+  const [buildDepsLoaded, setBuildDepsLoaded] = useBuildDepsLoaded(
+    context,
+    !!buildMode,
+  )
 
   hooks.useHotKeyCallback("meta+s", () => {
     save(context)
@@ -39,7 +43,13 @@ const BuildBarMainButtons: definition.UtilityComponent = (props) => {
         label={buildMode ? "Preview" : "Build"}
         variant="uesio/builder.secondarytoolbar"
         onClick={() => {
-          toggleBuildMode(context, setBuildMode, !!buildMode)
+          toggleBuildMode(
+            context,
+            setBuildMode,
+            setBuildDepsLoaded,
+            !!buildMode,
+            !!buildDepsLoaded,
+          )
         }}
       />
       <Button

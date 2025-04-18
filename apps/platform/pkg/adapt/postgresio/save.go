@@ -10,7 +10,7 @@ import (
 )
 
 const INSERT_QUERY = "INSERT INTO public.data (id,uniquekey,owner,createdby,updatedby,createdat,updatedat,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5,to_timestamp($6),to_timestamp($7),$8,$9,$10,$11)"
-const UPDATE_QUERY = "UPDATE public.data SET uniquekey = $2, owner = $3, createdby = $4, updatedby = $5, createdat = to_timestamp($6), updatedat = to_timestamp($7), fields = fields || $10 WHERE id = $1 and collection = $8 and tenant = $9"
+const UPDATE_QUERY = "UPDATE public.data SET uniquekey = $2, owner = $3, updatedby = $4, updatedat = to_timestamp($5), fields = fields || $8 WHERE id = $1 and collection = $6 and tenant = $7"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2 and tenant = $3"
 
 func queue(batch *pgx.Batch, query string, arguments ...any) {
@@ -71,7 +71,7 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 		if change.IsNew {
 			queue(batch, INSERT_QUERY, fullRecordID, uniqueID, ownerID, createdByID, updatedByID, createdAt, updatedAt, collectionName, tenantID, change.Autonumber, fieldJSON)
 		} else {
-			queue(batch, UPDATE_QUERY, fullRecordID, uniqueID, ownerID, createdByID, updatedByID, createdAt, updatedAt, collectionName, tenantID, fieldJSON)
+			queue(batch, UPDATE_QUERY, fullRecordID, uniqueID, ownerID, updatedByID, updatedAt, collectionName, tenantID, fieldJSON)
 		}
 
 		return nil
