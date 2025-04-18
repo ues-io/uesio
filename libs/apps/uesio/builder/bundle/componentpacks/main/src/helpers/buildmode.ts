@@ -42,14 +42,13 @@ const swapEditAndPreviewMode = (ctx: context.Context, buildMode: boolean) => {
 const toggleBuildMode = async (
   ctx: context.Context,
   setBuildMode: (state: boolean) => void,
+  setBuildDepsLoaded: (state: boolean) => void,
   buildMode: boolean,
+  buildDepsLoaded: boolean,
 ) => {
-  // check if we've already loaded the builder dependencies
-  // TODO: This should likely come from state rather than a component that we
-  // know won't be loaded in "preview" mode
-  const isLoaded = !!getBuilderExternalState(ctx, "indexpanel")
-  if (!isLoaded) {
+  if (!buildMode && !buildDepsLoaded) {
     await api.builder.getBuilderDeps(ctx)
+    setBuildDepsLoaded(true)
   }
   swapEditAndPreviewMode(ctx, !!buildMode)
   setBuildMode(!buildMode)
