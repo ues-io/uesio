@@ -16,6 +16,24 @@ definition:
       - text-sm
       - w-full
       - overflow-auto
+      # Line Numbers based on https://github.com/shikijs/shiki/issues/3#issuecomment-830564854
+      # TODO: This approach has two limitations
+      #   1. uesio themes do not currently support "dark:<token>" keys so to workaround, not specifying text-slate-600 for light theme (our normal color) and instead relying on the shiki currentColor based on theme
+      #   2. The w-8 does not accomodate larger numbers (e.g., 10000+) and also takes up more space than needed for smaller numbers. Need to
+      #      refine this approach to use something like expressive code (https://github.com/expressive-code/expressive-code/blob/876a8cd5b20cb917188ff9ad911820bfbc2c7ea7/packages/%40expressive-code/plugin-line-numbers/src/index.ts#L41)
+      #      and monaco-editor where an actual gutter is created that flexes width as needed. For now, we accomodate 9999 lines while still ensuring that all numbers right align. Numbers greater than 9999
+      #      will still display, but the right alignment will be off with the smaller numbers.
+      - "[counter-reset:step]"
+      - "[counter-increment:step_0]"
+      - "[&_.line]:before:content-[counter(step)]"
+      - "[&_.line]:before:[counter-increment:step]"
+      - "[&_.line]:before:w-8"
+      - "[&_.line]:before:mr-6"
+      - "[&_.line]:before:inline-block"
+      - "[&_.line]:before:text-right"
+      #- "[&_.line]:before:text-slate-600"
+      - "[&_.line]:before:text-current"
+      - "[&_.line]:before:opacity-40"
     codeInline:
       - bg-primary-50
       - rounded

@@ -2,21 +2,22 @@ import { ClassAttributes, FC, HTMLAttributes, ReactNode } from "react"
 import { api, definition, styles, context, wire } from "@uesio/ui"
 import ReactMarkdown, { ExtraProps } from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
-import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import CodeField from "../codefield/codefield"
-
-import languageTypescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript"
-import languageYaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"
-
-SyntaxHighlighter.registerLanguage("typescript", languageTypescript)
-SyntaxHighlighter.registerLanguage("yaml", languageYaml)
+import rehypeShikiFromHighlighter from "@shikijs/rehype/core"
+import {
+  highlighter,
+  type HighlightTheme,
+  highlightThemeDefault,
+} from "../syntax-highlight"
+import { visit } from "unist-util-visit"
+import { Element as HastElement } from "hast"
 
 interface MarkDownFieldProps {
   setValue?: (value: wire.FieldValue) => void
   value: wire.FieldValue
   mode?: context.FieldMode
   readonly?: boolean
+  theme?: HighlightTheme
 }
 
 type HeadingElement = "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
@@ -42,6 +43,20 @@ const Heading: FC<
       {children}
     </Element>
   )
+}
+
+/**
+ * Rehype plugin to add an 'inline' property to <code> elements
+ * Sets 'inline' property to true if the <code> is not within a <pre> tag
+ */
+const rehypeInlineCodeProperty = () => {
+  return (tree: any): undefined => {
+    visit(tree, "element", (node: HastElement, _index, parent: HastElement) => {
+      if (node.tagName === "code" && parent.tagName !== "pre") {
+        node.properties.inline = true
+      }
+    })
+  }
 }
 
 const StyleDefaults = Object.freeze({
@@ -70,7 +85,13 @@ const isRelativeUrl = (url?: string) => (url ? url?.startsWith("./") : false)
 const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
   props,
 ) => {
-  const { context, mode, readonly, setValue } = props
+  const {
+    context,
+    mode,
+    readonly,
+    setValue,
+    theme = highlightThemeDefault,
+  } = props
 
   const classes = styles.useUtilityStyleTokens(
     StyleDefaults,
@@ -92,6 +113,7 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
         context={context}
         setValue={(v) => setValue?.(v)}
         mode="EDIT"
+        theme={theme}
       />
     )
   }
@@ -101,6 +123,14 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
       <ReactMarkdown
         children={value}
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[
+          [
+            rehypeShikiFromHighlighter,
+            highlighter,
+            { theme: theme, inline: "tailing-curly-colon" },
+          ],
+          rehypeInlineCodeProperty,
+        ]}
         components={{
           p: (props) => <p className={classes.p}>{props.children}</p>,
           h1: (props) => <Heading {...props} className={classes.h1} />,
@@ -157,23 +187,14 @@ const MarkDownField: definition.UtilityComponent<MarkDownFieldProps> = (
               {props.children}
             </a>
           ),
-          pre: ({ children }) => children,
           code: ({ node, className, children, ...props }) => {
-            const match = /language-(\w+)/.exec(className || "")
-            const isString = typeof children === "string"
-            return match && isString ? (
-              <SyntaxHighlighter
-                className={classes.code}
-                children={children}
-                style={materialDark}
-                language={match[1]}
-              />
-            ) : (
-              <span className={classes.codeInline}>
-                <code {...props} className={className}>
-                  {children}
-                </code>
-              </span>
+            const cn = node?.properties.inline
+              ? classes.codeInline
+              : classes.code
+            return (
+              <code className={cn} {...props}>
+                {children}
+              </code>
             )
           },
         }}

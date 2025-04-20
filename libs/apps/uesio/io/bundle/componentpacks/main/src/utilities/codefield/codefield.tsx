@@ -1,10 +1,12 @@
 import { component, definition, styles, api, context, util } from "@uesio/ui"
 import Editor, { loader, Monaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
-import { CodeFieldUtilityProps } from "./types"
+import type { CodeFieldUtilityProps } from "./types"
 import { useEffect, useMemo, useState } from "react"
 import { useDeepCompareEffect } from "react-use"
 import debounce from "lodash/debounce"
+import { shikiToMonaco } from "@shikijs/monaco"
+import { highlighter, highlightThemeDefault } from "../syntax-highlight"
 const { ErrorMessage } = component
 
 const monacoEditorVersion = api.platform.getMonacoEditorVersion()
@@ -44,7 +46,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
     onMount,
     beforeMount,
     context,
-    theme,
+    theme = highlightThemeDefault,
     mode,
   } = props
   const debounceInterval = props.debounce || DEFAULT_DEBOUNCE_INTERVAL
@@ -130,6 +132,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
         model.dispose()
       })
     }
+    shikiToMonaco(highlighter, monaco)
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)
 
     beforeMount?.(monaco)

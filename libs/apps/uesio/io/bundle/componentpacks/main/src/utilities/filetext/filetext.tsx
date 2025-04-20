@@ -2,12 +2,13 @@ import { definition, context, api } from "@uesio/ui"
 import { UserFileMetadata } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
 import MarkDownField from "../markdownfield/markdownfield"
+import { HighlightTheme } from "../syntax-highlight"
 
 type TextOptions = {
   // The language to use for syntax highlighting
   language?: string
   // The Monaco editor theme to use
-  theme?: string
+  theme?: HighlightTheme
   // An array of URIs which contain ambient type definitions to load in this code field
   typeDefinitionFileURIs?: string[]
 }
@@ -37,6 +38,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
         mode={mode}
         setValue={onChange}
         variant={props.variant}
+        theme={theme}
       />
     )
   }
