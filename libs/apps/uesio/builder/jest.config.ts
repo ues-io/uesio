@@ -6,4 +6,8 @@ export default {
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   coverageDirectory: "../../../../coverage/libs/apps/uesio/builder",
+  transformIgnorePatterns: [
+    "/node_modules/(?!(react-hotkeys-hook)/)",
+    "\\.pnp\\.[^\\\/]+$",
+  ],
 }
