@@ -1,6 +1,7 @@
 import { EditorProps, OnChange } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { context } from "@uesio/ui"
+import type { HighlightTheme } from "../syntax-highlight"
 
 export interface CodeFieldUtilityProps {
   /** time to delay, in ms, before invoking setValue. defaults to 100 ms */
@@ -11,7 +12,7 @@ export interface CodeFieldUtilityProps {
   value: string
   /** the code language, e.g. js, yaml, json */
   language?: string
-  theme?: string
+  theme?: HighlightTheme
   /** "READ" | "EDIT" */
   mode?: context.FieldMode
   /** monaco code editor options */

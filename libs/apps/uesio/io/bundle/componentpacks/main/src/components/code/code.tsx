@@ -1,10 +1,11 @@
 import { styles, api, definition } from "@uesio/ui"
-import { default as IOCodeField } from "../../utilities/codefield/codefield"
+import IOCodeField from "../../utilities/codefield/codefield"
+import { HighlightTheme } from "../../utilities/syntax-highlight"
 
 type CodeComponentDefinition = {
   language?: CodeComponentLanguage
   file: string
-  theme?: string
+  theme?: HighlightTheme
 }
 
 type CodeComponentLanguage =

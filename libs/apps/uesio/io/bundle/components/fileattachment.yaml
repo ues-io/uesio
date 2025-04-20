@@ -55,9 +55,9 @@ properties:
     name: theme
     label: Theme
     options:
-      - value: vs-light
+      - value: light-plus
         label: Light
-      - value: vs-dark
+      - value: dark-plus
         label: Dark
 sections:
   - type: HOME

@@ -117,21 +117,6 @@ const CodePanel: definition.UtilityComponent = (props) => {
     //quickSuggestions: true,
   }
 
-  const beforeMount: EditorProps["beforeMount"] = (monaco) => {
-    /*
-    monaco.editor.defineTheme("custom-dark", {
-      base: "vs-dark",
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.background": "#0F172A",
-        "editorLineNumber.foreground": "#94a3b8",
-      },
-    })
-    monaco.editor.setTheme("custom-dark")
-    */
-  }
-
   const onMount: EditorProps["onMount"] = (editor, monaco) => {
     editorRef.current = editor
     monacoRef.current = monaco
@@ -232,14 +217,12 @@ const CodePanel: definition.UtilityComponent = (props) => {
         styleTokens={{
           input: ["h-full", "border-0"],
         }}
-        theme="custom-dark"
         language="yaml"
         debounce={500}
         setValue={(newValue: string) => {
           const selectedPath = getSelectedViewPath(context)
           setContent(context, selectedPath, newValue || "")
         }}
-        beforeMount={beforeMount}
         onMount={onMount}
       />
     </ScrollPanel>
