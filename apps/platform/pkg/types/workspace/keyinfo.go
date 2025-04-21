@@ -5,6 +5,7 @@ func NewKeyInfo(appName, workspaceName, workspaceID string) KeyInfo {
 		appName:       appName,
 		workspaceID:   workspaceID,
 		workspaceName: workspaceName,
+		unqiueKey:     makeUniqueKey(appName, workspaceName),
 	}
 }
 
@@ -12,6 +13,7 @@ type KeyInfo struct {
 	appName       string
 	workspaceID   string
 	workspaceName string
+	unqiueKey     *string
 }
 
 func (t KeyInfo) HasAnyMissingField() bool {
@@ -31,4 +33,19 @@ func (t KeyInfo) GetAppName() string {
 // GetWorkspaceID returns the workspace's unique id, a UUID
 func (t KeyInfo) GetWorkspaceID() string {
 	return t.workspaceID
+}
+
+func (t KeyInfo) GetUniqueKey() string {
+	if t.unqiueKey == nil {
+		t.unqiueKey = makeUniqueKey(t.GetAppName(), t.GetWorkspaceName())
+	}
+	return *t.unqiueKey
+}
+
+func makeUniqueKey(appName string, workspaceName string) *string {
+	var x string
+	if appName != "" && workspaceName != "" {
+		x = appName + ":" + workspaceName
+	}
+	return &x
 }
