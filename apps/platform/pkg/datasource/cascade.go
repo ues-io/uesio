@@ -2,6 +2,9 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
+	"maps"
+	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -23,7 +26,7 @@ func getCascadeDeletes(
 
 	deleteIds := op.Deletes.GetIDs()
 	userFilesToDelete := &wire.Collection{}
-	loadOp := &wire.LoadOp{
+	userFileIdLoadOp := &wire.LoadOp{
 		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
 		Collection:     userFilesToDelete,
 		WireName:       "deleteUserFiles",
@@ -38,7 +41,7 @@ func getCascadeDeletes(
 		LoadAll: true,
 	}
 
-	err := LoadWithError(loadOp, session, &LoadOptions{
+	err := LoadWithError(userFileIdLoadOp, session, &LoadOptions{
 		Connection: connection,
 	})
 	if err != nil {
@@ -53,116 +56,89 @@ func getCascadeDeletes(
 	if err != nil {
 		return nil, err
 	}
-	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
-	for _, collectionMetadata := range metadata.Collections {
-		collectionKey := collectionMetadata.GetFullName()
-		for _, field := range collectionMetadata.Fields {
-			if field.Type == "REFERENCEGROUP" {
-				referenceGroupMetadata := field.ReferenceGroupMetadata
-				if referenceGroupMetadata.OnDelete != "CASCADE" {
-					continue
-				}
+	cascadeDeleteIdsByCollection := map[string]map[string]*wire.Item{}
 
-				referencedCollection := referenceGroupMetadata.Collection
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+	if err != nil {
+		return nil, err
+	}
 
-				if op.CollectionName != collectionKey || len(op.Deletes) == 0 {
-					continue
-				}
-
-				ids := []string{}
-				for _, deletion := range op.Deletes {
-					ids = append(ids, deletion.IDValue)
-				}
-
-				fields := []wire.LoadRequestField{{ID: commonfields.Id}}
-				op := &wire.LoadOp{
-					CollectionName: referenceGroupMetadata.Collection,
-					WireName:       "CascadeDelete",
-					Fields:         fields,
-					Collection:     &wire.Collection{},
-					Conditions: []wire.LoadRequestCondition{
-						{
-							Field:    referenceGroupMetadata.Field,
-							Value:    ids,
-							Operator: "IN",
-						},
-					},
-					Query:  true,
-					Params: op.Params,
-				}
-
-				versionSession, err := EnterVersionContext(field.Namespace, session, nil)
-				if err != nil {
-					return nil, err
-				}
-
-				// Check for metadata, if it does not exist, go get it.
-				_, err = metadata.GetCollection(referenceGroupMetadata.Collection)
-				if err != nil {
-					err := GetMetadataForLoad(op, metadata, nil, versionSession, connection)
-					if err != nil {
-						return nil, err
-					}
-				}
-
-				op.AttachMetadataCache(metadata)
-
-				err = connection.Load(op, versionSession)
-				if err != nil {
-					return nil, errors.New("Cascade delete error: " + err.Error())
-				}
-
-				currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
-				if !ok {
-					currentCollectionIds = map[string]bool{}
-					cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
-				}
-
-				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
-
-					refRK, err := refItem.GetField(commonfields.Id)
-					if err != nil {
-						return err
-					}
-
-					refRKAsString, ok := refRK.(string)
-					if !ok {
-						return errors.New("Delete id must be a string")
-					}
-
-					currentCollectionIds[refRKAsString] = true
-
-					return nil
-				})
-
-				if err != nil {
-					return nil, err
-				}
-
-			}
-
+	for _, field := range collectionMetadata.Fields {
+		if field.Type != "REFERENCEGROUP" {
+			continue
 		}
+
+		referenceGroupMetadata := field.ReferenceGroupMetadata
+		if referenceGroupMetadata.OnDelete != "CASCADE" {
+			continue
+		}
+
+		referencedCollection := referenceGroupMetadata.Collection
+
+		idLoadCollection := wire.Collection{}
+
+		idLoadOp := &wire.LoadOp{
+			CollectionName: referencedCollection,
+			WireName:       fmt.Sprintf("CascadeDeleteIdLoad_%s", referencedCollection),
+			Fields:         []wire.LoadRequestField{{ID: commonfields.Id}},
+			Collection:     &idLoadCollection,
+			Conditions: []wire.LoadRequestCondition{
+				{
+					Field:    referenceGroupMetadata.Field,
+					Value:    deleteIds,
+					Operator: "IN",
+				},
+			},
+			Query:  true,
+			Params: op.Params,
+		}
+
+		versionSession, err := EnterVersionContext(field.Namespace, session, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		// Check for metadata, if it does not exist, go get it.
+		_, err = metadata.GetCollection(referencedCollection)
+		if err != nil {
+			err := GetMetadataForLoad(idLoadOp, metadata, nil, versionSession, connection)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		idLoadOp.AttachMetadataCache(metadata)
+
+		err = connection.Load(idLoadOp, versionSession)
+		if err != nil {
+			return nil, errors.New("Cascade delete error: " + err.Error())
+		}
+
+		if len(idLoadCollection) == 0 {
+			continue
+		}
+
+		currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
+		if !ok {
+			currentCollectionIds = map[string]*wire.Item{}
+			cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
+		}
+
+		for _, refItem := range idLoadCollection {
+			refID, err := refItem.GetFieldAsString(commonfields.Id)
+			if err != nil {
+				return nil, err
+			}
+			currentCollectionIds[refID] = refItem
+		}
+
 	}
 
 	// Now that we've built a unique set of reference ids to cascade delete by Collection,
 	// convert this to a map of collection names to wire.Collection
 	// so that we can more easily perform the deletes (elsewhere)
-	if len(cascadeDeleteIdsByCollection) > 0 {
-		for collectionName, idsMap := range cascadeDeleteIdsByCollection {
-			numIds := len(idsMap)
-			if numIds == 0 {
-				continue
-			}
-			collectionItems := make(wire.Collection, numIds)
-			i := 0
-			for id := range idsMap {
-				collectionItems[i] = &wire.Item{
-					commonfields.Id: id,
-				}
-				i++
-			}
-			cascadeDeleteFKs[collectionName] = collectionItems
-		}
+	for collectionName, items := range cascadeDeleteIdsByCollection {
+		cascadeDeleteFKs[collectionName] = slices.Collect(maps.Values(items))
 	}
 
 	return cascadeDeleteFKs, nil
