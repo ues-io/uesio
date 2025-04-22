@@ -124,6 +124,18 @@ definition:
                         path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
                 - uesio/appkit.icontile:
                     tileVariant: uesio/io.nav
+                    uesio.display:
+                      - type: featureFlag
+                        name: manage_components
+                    uesio.id: componentpacks
+                    title: Component Packs
+                    icon: package_2
+                    selectedid: $Param{selected}
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/componentpacks
+                - uesio/appkit.icontile:
+                    tileVariant: uesio/io.nav
                     uesio.id: themes
                     title: Themes
                     icon: palette

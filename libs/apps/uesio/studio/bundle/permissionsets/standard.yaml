@@ -37,6 +37,8 @@ views:
   uesio/studio.collections: true
   uesio/studio.component: true
   uesio/studio.components: true
+  uesio/studio.componentpack: true
+  uesio/studio.componentpacks: true
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
   uesio/studio.credential: true
@@ -154,6 +156,8 @@ routes:
   uesio/studio.collections: true
   uesio/studio.component: true
   uesio/studio.components: true
+  uesio/studio.componentpack: true
+  uesio/studio.componentpacks: true
   uesio/studio.configvalue: true
   uesio/studio.configvalues: true
   uesio/studio.credential: true
