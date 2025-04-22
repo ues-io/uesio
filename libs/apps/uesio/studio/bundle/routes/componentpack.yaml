@@ -1,0 +1,5 @@
+name: componentpack
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/componentpacks/{namespace:\w*\/\w*}/{componentpackname}
+view: componentpack
+theme: default
+title: "Component Pack: $Param{componentpackname}"

@@ -1,0 +1,5 @@
+name: componentpacks
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/componentpacks
+view: componentpacks
+theme: default
+title: Component Packs

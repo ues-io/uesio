@@ -1,0 +1,62 @@
+name: componentpack
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
+    componentpacks:
+      collection: uesio/studio.componentpack
+      conditions:
+        - field: uesio/studio.allmetadata
+          value: true
+        - field: uesio/studio.item
+          value: $Param{namespace}.$Param{componentpackname}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.viewlayout:
+        uesio.variant: uesio/studio.main
+        left:
+          - uesio/core.view:
+              uesio.context:
+                wire: workspaces
+              view: workspacenav
+              params:
+                selected: componentpacks
+                itemType: componentpacks
+                itemIcon: package_2
+                itemName: $Param{componentpackname}
+                itemNameSpace: $Param{namespace}
+                itemNameSpaceIcon: ${componentpacks:uesio/studio.appicon}
+                itemNameSpaceColor: ${componentpacks:uesio/studio.appcolor}
+        content:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/appkit.form_detail:
+                    wire: componentpacks
+                    avataricon: ${uesio/studio.appicon}
+                    avatariconcolor: ${uesio/studio.appcolor}
+                    deleteconfirm: true
+                    deletesignals:
+                      - signal: wire/MARK_FOR_DELETE
+                      - signal: wire/SAVE
+                      - signal: route/NAVIGATE
+                        path: app/$Param{app}/workspace/$Param{workspacename}/componentpacks
+                    content:
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
+                          components:
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.two_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
