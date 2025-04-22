@@ -2,6 +2,9 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
+	"maps"
+	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -53,7 +56,7 @@ func getCascadeDeletes(
 	if err != nil {
 		return nil, err
 	}
-	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
+	cascadeDeleteIdsByCollection := map[string]map[string]*wire.Item{}
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
@@ -72,21 +75,17 @@ func getCascadeDeletes(
 
 		referencedCollection := referenceGroupMetadata.Collection
 
-		ids := []string{}
-		for _, deletion := range op.Deletes {
-			ids = append(ids, deletion.IDValue)
-		}
+		idLoadCollection := wire.Collection{}
 
-		fields := []wire.LoadRequestField{{ID: commonfields.Id}}
-		op := &wire.LoadOp{
-			CollectionName: referenceGroupMetadata.Collection,
-			WireName:       "CascadeDelete",
-			Fields:         fields,
-			Collection:     &wire.Collection{},
+		idLoadOp := &wire.LoadOp{
+			CollectionName: referencedCollection,
+			WireName:       fmt.Sprintf("CascadeDeleteIdLoad_%s", referencedCollection),
+			Fields:         []wire.LoadRequestField{{ID: commonfields.Id}},
+			Collection:     &idLoadCollection,
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    referenceGroupMetadata.Field,
-					Value:    ids,
+					Value:    deleteIds,
 					Operator: "IN",
 				},
 			},
@@ -100,9 +99,9 @@ func getCascadeDeletes(
 		}
 
 		// Check for metadata, if it does not exist, go get it.
-		_, err = metadata.GetCollection(referenceGroupMetadata.Collection)
+		_, err = metadata.GetCollection(referencedCollection)
 		if err != nil {
-			err := GetMetadataForLoad(op, metadata, nil, versionSession, connection)
+			err := GetMetadataForLoad(idLoadOp, metadata, nil, versionSession, connection)
 			if err != nil {
 				return nil, err
 			}
@@ -110,36 +109,27 @@ func getCascadeDeletes(
 
 		op.AttachMetadataCache(metadata)
 
-		err = connection.Load(op, versionSession)
+		err = connection.Load(idLoadOp, versionSession)
 		if err != nil {
 			return nil, errors.New("Cascade delete error: " + err.Error())
 		}
 
+		if len(idLoadCollection) == 0 {
+			continue
+		}
+
 		currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
 		if !ok {
-			currentCollectionIds = map[string]bool{}
+			currentCollectionIds = map[string]*wire.Item{}
 			cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
 		}
 
-		err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
-
-			refRK, err := refItem.GetField(commonfields.Id)
+		for _, refItem := range idLoadCollection {
+			refID, err := refItem.GetFieldAsString(commonfields.Id)
 			if err != nil {
-				return err
+				return nil, err
 			}
-
-			refRKAsString, ok := refRK.(string)
-			if !ok {
-				return errors.New("Delete id must be a string")
-			}
-
-			currentCollectionIds[refRKAsString] = true
-
-			return nil
-		})
-
-		if err != nil {
-			return nil, err
+			currentCollectionIds[refID] = refItem
 		}
 
 	}
@@ -147,22 +137,8 @@ func getCascadeDeletes(
 	// Now that we've built a unique set of reference ids to cascade delete by Collection,
 	// convert this to a map of collection names to wire.Collection
 	// so that we can more easily perform the deletes (elsewhere)
-	if len(cascadeDeleteIdsByCollection) > 0 {
-		for collectionName, idsMap := range cascadeDeleteIdsByCollection {
-			numIds := len(idsMap)
-			if numIds == 0 {
-				continue
-			}
-			collectionItems := make(wire.Collection, numIds)
-			i := 0
-			for id := range idsMap {
-				collectionItems[i] = &wire.Item{
-					commonfields.Id: id,
-				}
-				i++
-			}
-			cascadeDeleteFKs[collectionName] = collectionItems
-		}
+	for collectionName, items := range cascadeDeleteIdsByCollection {
+		cascadeDeleteFKs[collectionName] = slices.Collect(maps.Values(items))
 	}
 
 	return cascadeDeleteFKs, nil
