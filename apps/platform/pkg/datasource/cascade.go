@@ -26,7 +26,7 @@ func getCascadeDeletes(
 
 	deleteIds := op.Deletes.GetIDs()
 	userFilesToDelete := &wire.Collection{}
-	loadOp := &wire.LoadOp{
+	userFileIdLoadOp := &wire.LoadOp{
 		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
 		Collection:     userFilesToDelete,
 		WireName:       "deleteUserFiles",
@@ -41,7 +41,7 @@ func getCascadeDeletes(
 		LoadAll: true,
 	}
 
-	err := LoadWithError(loadOp, session, &LoadOptions{
+	err := LoadWithError(userFileIdLoadOp, session, &LoadOptions{
 		Connection: connection,
 	})
 	if err != nil {
@@ -107,7 +107,7 @@ func getCascadeDeletes(
 			}
 		}
 
-		op.AttachMetadataCache(metadata)
+		idLoadOp.AttachMetadataCache(metadata)
 
 		err = connection.Load(idLoadOp, versionSession)
 		if err != nil {
