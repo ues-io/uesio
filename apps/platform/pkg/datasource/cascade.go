@@ -54,94 +54,94 @@ func getCascadeDeletes(
 		return nil, err
 	}
 	cascadeDeleteIdsByCollection := map[string]map[string]bool{}
-	for _, collectionMetadata := range metadata.Collections {
-		collectionKey := collectionMetadata.GetFullName()
-		for _, field := range collectionMetadata.Fields {
-			if field.Type == "REFERENCEGROUP" {
-				referenceGroupMetadata := field.ReferenceGroupMetadata
-				if referenceGroupMetadata.OnDelete != "CASCADE" {
-					continue
-				}
 
-				referencedCollection := referenceGroupMetadata.Collection
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+	if err != nil {
+		return nil, err
+	}
 
-				if op.CollectionName != collectionKey || len(op.Deletes) == 0 {
-					continue
-				}
+	for _, field := range collectionMetadata.Fields {
+		if field.Type != "REFERENCEGROUP" {
+			continue
+		}
 
-				ids := []string{}
-				for _, deletion := range op.Deletes {
-					ids = append(ids, deletion.IDValue)
-				}
+		referenceGroupMetadata := field.ReferenceGroupMetadata
+		if referenceGroupMetadata.OnDelete != "CASCADE" {
+			continue
+		}
 
-				fields := []wire.LoadRequestField{{ID: commonfields.Id}}
-				op := &wire.LoadOp{
-					CollectionName: referenceGroupMetadata.Collection,
-					WireName:       "CascadeDelete",
-					Fields:         fields,
-					Collection:     &wire.Collection{},
-					Conditions: []wire.LoadRequestCondition{
-						{
-							Field:    referenceGroupMetadata.Field,
-							Value:    ids,
-							Operator: "IN",
-						},
-					},
-					Query:  true,
-					Params: op.Params,
-				}
+		referencedCollection := referenceGroupMetadata.Collection
 
-				versionSession, err := EnterVersionContext(field.Namespace, session, nil)
-				if err != nil {
-					return nil, err
-				}
+		ids := []string{}
+		for _, deletion := range op.Deletes {
+			ids = append(ids, deletion.IDValue)
+		}
 
-				// Check for metadata, if it does not exist, go get it.
-				_, err = metadata.GetCollection(referenceGroupMetadata.Collection)
-				if err != nil {
-					err := GetMetadataForLoad(op, metadata, nil, versionSession, connection)
-					if err != nil {
-						return nil, err
-					}
-				}
+		fields := []wire.LoadRequestField{{ID: commonfields.Id}}
+		op := &wire.LoadOp{
+			CollectionName: referenceGroupMetadata.Collection,
+			WireName:       "CascadeDelete",
+			Fields:         fields,
+			Collection:     &wire.Collection{},
+			Conditions: []wire.LoadRequestCondition{
+				{
+					Field:    referenceGroupMetadata.Field,
+					Value:    ids,
+					Operator: "IN",
+				},
+			},
+			Query:  true,
+			Params: op.Params,
+		}
 
-				op.AttachMetadataCache(metadata)
+		versionSession, err := EnterVersionContext(field.Namespace, session, nil)
+		if err != nil {
+			return nil, err
+		}
 
-				err = connection.Load(op, versionSession)
-				if err != nil {
-					return nil, errors.New("Cascade delete error: " + err.Error())
-				}
+		// Check for metadata, if it does not exist, go get it.
+		_, err = metadata.GetCollection(referenceGroupMetadata.Collection)
+		if err != nil {
+			err := GetMetadataForLoad(op, metadata, nil, versionSession, connection)
+			if err != nil {
+				return nil, err
+			}
+		}
 
-				currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
-				if !ok {
-					currentCollectionIds = map[string]bool{}
-					cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
-				}
+		op.AttachMetadataCache(metadata)
 
-				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
+		err = connection.Load(op, versionSession)
+		if err != nil {
+			return nil, errors.New("Cascade delete error: " + err.Error())
+		}
 
-					refRK, err := refItem.GetField(commonfields.Id)
-					if err != nil {
-						return err
-					}
+		currentCollectionIds, ok := cascadeDeleteIdsByCollection[referencedCollection]
+		if !ok {
+			currentCollectionIds = map[string]bool{}
+			cascadeDeleteIdsByCollection[referencedCollection] = currentCollectionIds
+		}
 
-					refRKAsString, ok := refRK.(string)
-					if !ok {
-						return errors.New("Delete id must be a string")
-					}
+		err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
-					currentCollectionIds[refRKAsString] = true
-
-					return nil
-				})
-
-				if err != nil {
-					return nil, err
-				}
-
+			refRK, err := refItem.GetField(commonfields.Id)
+			if err != nil {
+				return err
 			}
 
+			refRKAsString, ok := refRK.(string)
+			if !ok {
+				return errors.New("Delete id must be a string")
+			}
+
+			currentCollectionIds[refRKAsString] = true
+
+			return nil
+		})
+
+		if err != nil {
+			return nil, err
 		}
+
 	}
 
 	// Now that we've built a unique set of reference ids to cascade delete by Collection,
