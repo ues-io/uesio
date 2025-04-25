@@ -107,7 +107,7 @@ func DownloadItem(w io.Writer, userFile *meta.UserFileMetadata, session *sess.Se
 	}
 
 	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
-	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
 
 	return userFile, nil
 }

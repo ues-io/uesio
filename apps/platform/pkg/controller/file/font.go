@@ -41,7 +41,7 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lastModified := *fileMeta.LastModified()
+	lastModified := fileMeta.LastModified()
 
 	// Get the greater of the two modification times
 	if lastModified.Unix() < font.UpdatedAt {

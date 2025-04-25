@@ -18,9 +18,8 @@ func (fm *localFileMeta) ContentLength() int64 {
 	return fm.fileInfo.Size()
 }
 
-func (fm *localFileMeta) LastModified() *time.Time {
-	t := fm.fileInfo.ModTime()
-	return &t
+func (fm *localFileMeta) LastModified() time.Time {
+	return fm.fileInfo.ModTime()
 }
 
 func (fm *localFileMeta) Path() string {

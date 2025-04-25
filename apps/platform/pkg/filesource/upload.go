@@ -131,7 +131,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			CollectionID: op.CollectionID,
 			MimeType:     mime.TypeByExtension(path.Ext(op.Path)),
 			FieldID:      op.FieldID,
-			Path:         op.Path,
+			FilePath:     op.Path,
 			Type:         GetFileType(op.FieldID),
 			RecordID:     op.RecordID,
 			FileSourceID: PLATFORM_FILE_SOURCE,
@@ -152,7 +152,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			return nil, err
 		}
 
-		ufm.ContentLength = written
+		ufm.FileContentLength = written
 
 		usage.RegisterEvent("UPLOAD", "FILESOURCE", ufm.FileSourceID, 0, session)
 		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, written, session)
