@@ -70,7 +70,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 	}
 
 	for _, userFile := range *userFiles {
-		file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path))
+		file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path()))
 		if err != nil {
 			return err
 		}

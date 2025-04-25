@@ -47,8 +47,8 @@ func (fm *s3FileMeta) ContentLength() int64 {
 	return 0
 }
 
-func (fm *s3FileMeta) LastModified() *time.Time {
-	return fm.s3Output.LastModified
+func (fm *s3FileMeta) LastModified() time.Time {
+	return *fm.s3Output.LastModified
 }
 
 func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {

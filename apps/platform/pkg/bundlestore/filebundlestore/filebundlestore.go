@@ -101,8 +101,10 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 		},
 	}
 
-	item.SetModified(*fileMetadata.LastModified())
-	item.SetCreated(*fileMetadata.LastModified())
+	lastModified := fileMetadata.LastModified()
+
+	item.SetModified(lastModified)
+	item.SetCreated(lastModified)
 
 	item.SetModifiedBy(fakeNamespaceUser)
 	item.SetCreatedBy(fakeNamespaceUser)

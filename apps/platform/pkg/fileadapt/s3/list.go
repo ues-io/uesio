@@ -31,8 +31,8 @@ func (fm *s3PaginatorFileMeta) ContentLength() int64 {
 	return 0
 }
 
-func (fm *s3PaginatorFileMeta) LastModified() *time.Time {
-	return fm.s3Output.LastModified
+func (fm *s3PaginatorFileMeta) LastModified() time.Time {
+	return *fm.s3Output.LastModified
 }
 
 func (c *Connection) List(path string) ([]file.Metadata, error) {

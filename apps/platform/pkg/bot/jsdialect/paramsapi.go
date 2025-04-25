@@ -1,6 +1,9 @@
 package jsdialect
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"maps"
+)
 
 type ParamsAPI struct {
 	// TODO: This field should not be bot-accessible, users should have to use GetAll()
@@ -18,8 +21,6 @@ func (p *ParamsAPI) Get(paramName string) interface{} {
 func (p *ParamsAPI) GetAll() map[string]interface{} {
 	// Return a copy of the map so that the bot can't modify the original
 	paramsCopy := make(map[string]interface{})
-	for k, v := range p.Params {
-		paramsCopy[k] = v
-	}
+	maps.Copy(paramsCopy, p.Params)
 	return paramsCopy
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"maps"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -80,9 +82,7 @@ func (p *RouteBotParamsAPI) Get(paramName string) interface{} {
 func (p *RouteBotParamsAPI) GetAll() map[string]interface{} {
 	// Return a copy of the map so that the bot can't modify the original
 	paramsCopy := make(map[string]interface{})
-	for k, v := range p.params {
-		paramsCopy[k] = v
-	}
+	maps.Copy(paramsCopy, p.params)
 	return paramsCopy
 }
 

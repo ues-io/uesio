@@ -73,7 +73,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 	}
 	respondFile(w, r, &FileRequest{
 		Path:         path,
-		LastModified: *fileMetadata.LastModified(),
+		LastModified: fileMetadata.LastModified(),
 		Namespace:    file.Namespace,
 		Version:      version,
 	}, bytes.NewReader(buf.Bytes()))

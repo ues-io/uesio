@@ -387,7 +387,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 				}
 			} else {
 				// Otherwise, just write the thing as text
-				marshalled = []byte(fmt.Sprintf("%v", response.Body))
+				marshalled = fmt.Appendf(nil, "%v", response.Body)
 			}
 			if marshalled != nil {
 				if _, err = w.Write(marshalled); err != nil {

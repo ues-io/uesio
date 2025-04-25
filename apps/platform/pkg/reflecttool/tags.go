@@ -62,7 +62,7 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 
 func addTags(tagMap map[string]string, objType reflect.Type) {
 	fieldsCount := objType.NumField()
-	for i := 0; i < fieldsCount; i++ {
+	for i := range fieldsCount {
 		structField := objType.Field(i)
 		// PkgPath is empty for exported fields.
 		if structField.PkgPath == "" {
