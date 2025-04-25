@@ -139,7 +139,7 @@ func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID s
 	_, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
 			Data:         buf,
-			Path:         userFileMetadata.Path,
+			Path:         userFileMetadata.Path(),
 			CollectionID: destCollectionID,
 			RecordID:     destRecordID,
 			FieldID:      destFieldID,
