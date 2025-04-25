@@ -10,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetFieldMetadata(f *meta.Field, session *sess.Session) *wire.FieldMetadata {
+func GetFieldMetadata(f *meta.Field) *wire.FieldMetadata {
 	fieldMetadata := &wire.FieldMetadata{
 		Name:                   f.Name,
 		Namespace:              f.Namespace,
@@ -249,7 +249,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *wire.Collec
 	AddAllBuiltinFields(&fields, collectionKey)
 
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(field, session))
+		collectionMetadata.SetField(GetFieldMetadata(field))
 	}
 	return nil
 }
@@ -258,10 +258,10 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 
 	// Always add metadata for id and unique key
 	idFieldMeta, _ := GetBuiltinField(commonfields.Id, collectionKey)
-	collectionMetadata.SetField(GetFieldMetadata(&idFieldMeta, session))
+	collectionMetadata.SetField(GetFieldMetadata(&idFieldMeta))
 
 	uniqueKeyFieldMeta, _ := GetBuiltinField(commonfields.UniqueKey, collectionKey)
-	collectionMetadata.SetField(GetFieldMetadata(&uniqueKeyFieldMeta, session))
+	collectionMetadata.SetField(GetFieldMetadata(&uniqueKeyFieldMeta))
 
 	fields := []meta.BundleableItem{}
 	for _, key := range keys {
@@ -270,7 +270,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 			// Check if this field is built-in, if so, handle its metadata here
 			builtInField, isBuiltIn := GetBuiltinField(key, collectionKey)
 			if isBuiltIn {
-				collectionMetadata.SetField(GetFieldMetadata(&builtInField, session))
+				collectionMetadata.SetField(GetFieldMetadata(&builtInField))
 				continue
 			}
 			field, err := meta.NewField(collectionKey, meta.GetFullyQualifiedKey(key, collectionMetadata.Namespace))
@@ -297,7 +297,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 		if field.Type == "" {
 			continue
 		}
-		collectionMetadata.SetField(GetFieldMetadata(field, session))
+		collectionMetadata.SetField(GetFieldMetadata(field))
 	}
 	return nil
 }
