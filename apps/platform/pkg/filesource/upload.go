@@ -28,11 +28,11 @@ func GetFileType(fieldID string) string {
 type FileUploadOp struct {
 	Data            io.Reader
 	RecordUniqueKey string
-	Path            string                 `json:"name"`
-	CollectionID    string                 `json:"collectionID"`
-	RecordID        string                 `json:"recordID"`
-	FieldID         string                 `json:"fieldID"`
-	Params          map[string]interface{} `json:"params"`
+	Path            string         `json:"name"`
+	CollectionID    string         `json:"collectionID"`
+	RecordID        string         `json:"recordID"`
+	FieldID         string         `json:"fieldID"`
+	Params          map[string]any `json:"params"`
 }
 
 func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, fieldID string) (*wire.CollectionMetadata, *wire.FieldMetadata, error) {
@@ -52,7 +52,7 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 	return collectionMetadata, fieldMetadata, nil
 }
 
-func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]interface{}) ([]*meta.UserFileMetadata, error) {
+func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]any) ([]*meta.UserFileMetadata, error) {
 
 	var userFileCollection meta.UserFileMetadataCollection
 	if len(ops) == 0 {
@@ -187,7 +187,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 				Wire:       "filefieldupdate",
 				Changes: &wire.Collection{
 					{
-						ufm.FieldID: map[string]interface{}{
+						ufm.FieldID: map[string]any{
 							commonfields.Id: ufm.ID,
 						},
 						commonfields.Id: ufm.RecordID,

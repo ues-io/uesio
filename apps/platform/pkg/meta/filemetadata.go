@@ -17,7 +17,7 @@ func (f *FileMetadata) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*FileMetadataWrapper)(f))
 }
 
-func (f *FileMetadata) MarshalYAML() (interface{}, error) {
+func (f *FileMetadata) MarshalYAML() (any, error) {
 	f.FileSource = removeDefault(GetLocalizedKey(f.FileSource, f.Namespace), "uesio/core.platform")
 	return (*FileMetadataWrapper)(f), nil
 }

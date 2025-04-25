@@ -39,15 +39,15 @@ func (as *AuthSource) GetBundleFolderName() string {
 	return AUTHSOURCE_FOLDER_NAME
 }
 
-func (as *AuthSource) SetField(fieldName string, value interface{}) error {
+func (as *AuthSource) SetField(fieldName string, value any) error {
 	return StandardFieldSet(as, fieldName, value)
 }
 
-func (as *AuthSource) GetField(fieldName string) (interface{}, error) {
+func (as *AuthSource) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(as, fieldName)
 }
 
-func (as *AuthSource) Loop(iter func(string, interface{}) error) error {
+func (as *AuthSource) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(as, iter)
 }
 
@@ -66,7 +66,7 @@ func (as *AuthSource) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (as *AuthSource) MarshalYAML() (interface{}, error) {
+func (as *AuthSource) MarshalYAML() (any, error) {
 	as.Credentials = GetLocalizedKey(as.Credentials, as.Namespace)
 	return (*AuthSourceWrapper)(as), nil
 }

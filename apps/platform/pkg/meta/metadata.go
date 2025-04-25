@@ -64,7 +64,7 @@ func (bi *BuiltIn) SetItemMeta(itemMeta *ItemMeta) {
 	bi.itemMeta = itemMeta
 }
 
-type BundleConditions map[string]interface{}
+type BundleConditions map[string]any
 
 type CollectionableGroup interface {
 	Group
@@ -230,7 +230,7 @@ func StandardGetFields(item CollectionableItem) []string {
 	return names
 }
 
-func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
+func StandardFieldGet(item CollectionableItem, fieldName string) (any, error) {
 	itemMeta := item.GetItemMeta()
 	if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
 		return nil, errors.New("Field Not Found: " + item.GetCollectionName() + " : " + fieldName)
@@ -238,7 +238,7 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, e
 	return reflecttool.GetField(item, fieldName)
 }
 
-func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
+func StandardFieldSet(item CollectionableItem, fieldName string, value any) error {
 	err := reflecttool.SetField(item, fieldName, value)
 	if err != nil {
 		return fmt.Errorf("Failed to set field: %s on item: %s: %w", fieldName, item.GetCollectionName(), err)
@@ -246,7 +246,7 @@ func StandardFieldSet(item CollectionableItem, fieldName string, value interface
 	return nil
 }
 
-func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
+func StandardItemLoop(item CollectionableItem, iter func(string, any) error) error {
 	itemMeta := item.GetItemMeta()
 	for _, fieldName := range StandardGetFields(item) {
 		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
@@ -339,13 +339,13 @@ func init() {
 	}
 }
 
-func IsNilGroupingValue(groupingValue interface{}) bool {
+func IsNilGroupingValue(groupingValue any) bool {
 	switch v := groupingValue.(type) {
 	case string:
 		return v == ""
 	case []string:
 		return len(v) == 0
-	case []interface{}:
+	case []any:
 		return len(v) == 0
 	}
 	return groupingValue == nil
@@ -373,7 +373,7 @@ func init() {
 	}
 }
 
-func GetGroupingConditions(metadataType, grouping interface{}) (BundleConditions, error) {
+func GetGroupingConditions(metadataType, grouping any) (BundleConditions, error) {
 	metadataTypeString, ok := metadataType.(string)
 	if !ok {
 		return nil, errors.New("metadata type must be a string")
@@ -419,7 +419,7 @@ func GetTypeFromCollectionName(studioCollectionName string) string {
 	return bundleableCollectionNames[studioCollectionName]
 }
 
-func Copy(to, from interface{}) error {
+func Copy(to, from any) error {
 	return reprint.FromTo(from, to)
 }
 

@@ -14,7 +14,7 @@ import (
 
 func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Site) session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
-		CAttrs: map[string]interface{}{
+		CAttrs: map[string]any{
 			"Site":   site.GetFullName(),
 			"UserID": user.ID,
 		},

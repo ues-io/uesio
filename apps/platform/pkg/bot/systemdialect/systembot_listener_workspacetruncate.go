@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runWorkspaceTruncateListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runWorkspaceTruncateListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	appID, err := param.GetRequiredString(params, "app")
 	if err != nil {

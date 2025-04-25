@@ -15,15 +15,15 @@ func (lt *LicenseTemplate) GetCollectionName() string {
 	return LICENSETEMPLATE_COLLECTION_NAME
 }
 
-func (lt *LicenseTemplate) SetField(fieldName string, value interface{}) error {
+func (lt *LicenseTemplate) SetField(fieldName string, value any) error {
 	return StandardFieldSet(lt, fieldName, value)
 }
 
-func (lt *LicenseTemplate) GetField(fieldName string) (interface{}, error) {
+func (lt *LicenseTemplate) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(lt, fieldName)
 }
 
-func (lt *LicenseTemplate) Loop(iter func(string, interface{}) error) error {
+func (lt *LicenseTemplate) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(lt, iter)
 }
 

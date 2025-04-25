@@ -61,9 +61,9 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	starterTemplateParamsMap, ok := starterTemplateParams.(map[string]interface{})
+	starterTemplateParamsMap, ok := starterTemplateParams.(map[string]any)
 	if !ok {
-		starterTemplateParamsMap = map[string]interface{}{}
+		starterTemplateParamsMap = map[string]any{}
 	}
 
 	bundleUniqueKey := strings.Join([]string{starterApp, major, minor, patch}, ":")
@@ -115,7 +115,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 					},
 				},
 			},
-			Params: map[string]interface{}{
+			Params: map[string]any{
 				"workspaceid": newWorkspace.ID,
 			},
 		},

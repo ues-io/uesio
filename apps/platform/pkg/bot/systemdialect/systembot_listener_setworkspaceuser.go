@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runSetWorkspaceUserBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runSetWorkspaceUserBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	workspaceID, hasWorkspaceID := params["workspaceid"]
 	if !hasWorkspaceID {
@@ -30,11 +30,11 @@ func runSetWorkspaceUserBot(params map[string]interface{}, connection wire.Conne
 			Collection: "uesio/studio.workspaceuser",
 			Changes: &wire.Collection{
 				{
-					"uesio/studio.workspace": map[string]interface{}{
+					"uesio/studio.workspace": map[string]any{
 						"uesio/core.id": workspaceID,
 					},
 					"uesio/studio.profile": profileName,
-					"uesio/studio.user": map[string]interface{}{
+					"uesio/studio.user": map[string]any{
 						"uesio/core.id": session.GetSiteUser().ID,
 					},
 				},

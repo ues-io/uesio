@@ -20,11 +20,11 @@ func (aaa *AsAdminApi) Delete(collection string, deletes wire.Collection) error 
 	return botDelete(collection, deletes, datasource.GetSiteAdminSession(aaa.session), aaa.connection, nil)
 }
 
-func (aaa *AsAdminApi) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (aaa *AsAdminApi) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, datasource.GetSiteAdminSession(aaa.session), aaa.connection)
 }
 
-func (aaa *AsAdminApi) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (aaa *AsAdminApi) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, aaa.session, aaa.connection)
 }
 

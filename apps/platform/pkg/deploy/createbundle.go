@@ -31,7 +31,7 @@ type CreateBundleOptions struct {
 	Description   string        `bot:"description"`
 }
 
-func NewCreateBundleOptions(params map[string]interface{}) (*CreateBundleOptions, error) {
+func NewCreateBundleOptions(params map[string]any) (*CreateBundleOptions, error) {
 	appName, err := param.GetRequiredString(params, "app")
 	if err != nil {
 		return nil, err

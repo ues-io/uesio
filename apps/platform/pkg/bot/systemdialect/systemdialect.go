@@ -17,7 +17,7 @@ import (
 
 type BotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
-type CallBotFunc func(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error)
+type CallBotFunc func(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
 
 type LoadBotFunc func(request *wire.LoadOp, connection wire.Connection, session *sess.Session) error
 
@@ -25,7 +25,7 @@ type SaveBotFunc func(request *wire.SaveOp, connection wire.Connection, session 
 
 type RouteBotFunc func(*meta.Route, *http.Request, wire.Connection, *sess.Session) (*meta.Route, error)
 
-type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error)
+type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]any) (any, error)
 
 type SystemDialect struct {
 }
@@ -103,7 +103,7 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connectio
 
 }
 
-func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	var botFunction CallBotFunc
 
 	botNamespace := bot.GetNamespace()
@@ -144,7 +144,7 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 
 }
 
-func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	var botFunction RunIntegrationActionBotFunc
 
@@ -164,7 +164,7 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return nil, nil
 }
 

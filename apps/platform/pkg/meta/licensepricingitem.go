@@ -18,15 +18,15 @@ func (lpi *LicensePricingItem) GetCollectionName() string {
 	return LICENSEPRICINGITEM_COLLECTION_NAME
 }
 
-func (lpi *LicensePricingItem) SetField(fieldName string, value interface{}) error {
+func (lpi *LicensePricingItem) SetField(fieldName string, value any) error {
 	return StandardFieldSet(lpi, fieldName, value)
 }
 
-func (lpi *LicensePricingItem) GetField(fieldName string) (interface{}, error) {
+func (lpi *LicensePricingItem) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(lpi, fieldName)
 }
 
-func (lpi *LicensePricingItem) Loop(iter func(string, interface{}) error) error {
+func (lpi *LicensePricingItem) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(lpi, iter)
 }
 

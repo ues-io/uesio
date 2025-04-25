@@ -18,15 +18,15 @@ func (lt *LicensePricingTemplate) GetCollectionName() string {
 	return LICENSEPRICINGTEMPLATE_COLLECTION_NAME
 }
 
-func (lt *LicensePricingTemplate) SetField(fieldName string, value interface{}) error {
+func (lt *LicensePricingTemplate) SetField(fieldName string, value any) error {
 	return StandardFieldSet(lt, fieldName, value)
 }
 
-func (lt *LicensePricingTemplate) GetField(fieldName string) (interface{}, error) {
+func (lt *LicensePricingTemplate) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(lt, fieldName)
 }
 
-func (lt *LicensePricingTemplate) Loop(iter func(string, interface{}) error) error {
+func (lt *LicensePricingTemplate) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(lt, iter)
 }
 

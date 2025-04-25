@@ -71,7 +71,7 @@ func addDataToCollection(op *wire.LoadOp, collectionMetadata *wire.CollectionMet
 
 	return externalData.Loop(func(item meta.Item, index string) error {
 		newItem := op.Collection.NewItem()
-		err := item.Loop(func(s string, i interface{}) error {
+		err := item.Loop(func(s string, i any) error {
 			fieldMetadata := externalFieldMap[s]
 			fieldName := s
 			if fieldMetadata != nil {

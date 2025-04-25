@@ -67,15 +67,15 @@ func (t *Theme) GetBundleFolderName() string {
 	return THEME_FOLDER_NAME
 }
 
-func (t *Theme) SetField(fieldName string, value interface{}) error {
+func (t *Theme) SetField(fieldName string, value any) error {
 	return StandardFieldSet(t, fieldName, value)
 }
 
-func (t *Theme) GetField(fieldName string) (interface{}, error) {
+func (t *Theme) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-func (t *Theme) Loop(iter func(string, interface{}) error) error {
+func (t *Theme) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(t, iter)
 }
 

@@ -54,15 +54,15 @@ func (a *Agent) GetPath() string {
 	return path.Join(a.Name, "agent.yaml")
 }
 
-func (a *Agent) SetField(fieldName string, value interface{}) error {
+func (a *Agent) SetField(fieldName string, value any) error {
 	return StandardFieldSet(a, fieldName, value)
 }
 
-func (a *Agent) GetField(fieldName string) (interface{}, error) {
+func (a *Agent) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(a, fieldName)
 }
 
-func (a *Agent) Loop(iter func(string, interface{}) error) error {
+func (a *Agent) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(a, iter)
 }
 

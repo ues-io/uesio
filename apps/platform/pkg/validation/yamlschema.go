@@ -12,7 +12,7 @@ import (
 // and no schema validation will be performed.
 func ValidateYaml(yamlSchema *gojsonschema.Schema, yamlText []byte) (*gojsonschema.Result, error) {
 	// Load the YAML into a document that can be validated
-	var document map[interface{}]interface{}
+	var document map[any]any
 	if err := yaml.Unmarshal(yamlText, &document); err != nil {
 		return nil, errors.New("invalid YAML")
 	}

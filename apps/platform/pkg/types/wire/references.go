@@ -42,7 +42,7 @@ type ReferenceRequest struct {
 }
 
 type ReferenceLocator struct {
-	Item  interface{}
+	Item  any
 	Field *FieldMetadata
 }
 

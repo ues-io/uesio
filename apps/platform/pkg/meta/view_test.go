@@ -20,7 +20,7 @@ func TestViewGetField(t *testing.T) {
 		name        string
 		description string
 		view        *View
-		expectvalue interface{}
+		expectvalue any
 	}
 
 	var tests = []testCase{
@@ -60,7 +60,7 @@ func TestViewSetField(t *testing.T) {
 	type testCase struct {
 		name        string
 		description string
-		value       interface{}
+		value       any
 		expectview  *View
 	}
 

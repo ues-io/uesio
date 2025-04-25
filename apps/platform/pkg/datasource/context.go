@@ -11,8 +11,8 @@ import (
 
 // GetParamsFromSession returns a map of parameters needed for querying / saving
 // if you have a workspace / site admin context
-func GetParamsFromSession(session *sess.Session) map[string]interface{} {
-	params := map[string]interface{}{}
+func GetParamsFromSession(session *sess.Session) map[string]any {
+	params := map[string]any{}
 	if session.GetWorkspace() != nil {
 		params["workspacename"] = session.GetWorkspace().Name
 		params["app"] = session.GetWorkspace().GetAppFullName()
@@ -23,7 +23,7 @@ func GetParamsFromSession(session *sess.Session) map[string]interface{} {
 	return params
 }
 
-func GetContextSessionFromParams(params map[string]interface{}, connection wire.Connection, session *sess.Session) (*sess.Session, error) {
+func GetContextSessionFromParams(params map[string]any, connection wire.Connection, session *sess.Session) (*sess.Session, error) {
 	workspaceID := goutils.StringValue(params["workspaceid"])
 	workspace := goutils.StringValue(params["workspacename"])
 	site := goutils.StringValue(params["sitename"])

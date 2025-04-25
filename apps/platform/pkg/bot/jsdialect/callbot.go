@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connection, params map[string]interface{}) *CallBotAPI {
+func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connection, params map[string]any) *CallBotAPI {
 	return &CallBotAPI{
 		Session: session,
 		Params: &ParamsAPI{
@@ -21,7 +21,7 @@ func NewCallBotAPI(bot *meta.Bot, session *sess.Session, connection wire.Connect
 		connection: connection,
 		metadata:   &wire.MetadataCache{},
 		bot:        bot,
-		Results:    map[string]interface{}{},
+		Results:    map[string]any{},
 		LogApi:     NewBotLogAPI(bot, session.Context()),
 		Http:       NewBotHttpAPI(wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
 	}
@@ -34,7 +34,7 @@ type CallBotAPI struct {
 	bot        *meta.Bot
 	errors     []string
 	metadata   *wire.MetadataCache
-	Results    map[string]interface{}
+	Results    map[string]any
 	AsAdmin    AsAdminApi  `bot:"asAdmin"`
 	LogApi     *BotLogAPI  `bot:"log"`
 	Http       *BotHttpAPI `bot:"http"`
@@ -48,7 +48,7 @@ func (cba *CallBotAPI) GetErrors() []string {
 	return cba.errors
 }
 
-func (cba *CallBotAPI) AddResult(key string, value interface{}) {
+func (cba *CallBotAPI) AddResult(key string, value any) {
 	cba.Results[key] = value
 }
 
@@ -64,11 +64,11 @@ func (cba *CallBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, cba.Session, cba.connection, cba.metadata)
 }
 
-func (cba *CallBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (cba *CallBotAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, cba.Session, cba.connection)
 }
 
-func (cba *CallBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (cba *CallBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, cba.Session, cba.connection)
 }
 
@@ -112,11 +112,11 @@ func (cba *CallBotAPI) GetFileUrl(sourceKey, sourcePath string) string {
 	return getFileUrl(sourceKey, sourcePath)
 }
 
-func (cba *CallBotAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
+func (cba *CallBotAPI) MergeTemplate(templateString string, params map[string]any) (string, error) {
 	return mergeTemplateString(templateString, params)
 }
 
-func (cba *CallBotAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
+func (cba *CallBotAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]any) (string, error) {
 	return mergeTemplateFile(sourceKey, sourcePath, params, cba.Session, cba.connection)
 }
 

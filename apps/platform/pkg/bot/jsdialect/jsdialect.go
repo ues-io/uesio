@@ -73,7 +73,7 @@ func getBotProgramCacheKey(bot *meta.Bot, session *sess.Session) string {
 	}
 }
 
-func CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]interface{}, error) {
+func CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
 	botAPI := NewGeneratorBotAPI(bot, params, create, session, connection)
 	err := RunBot(bot, botAPI, session, connection, hydrate, nil)
 	if err != nil {
@@ -82,7 +82,7 @@ func CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[
 	return botAPI.Results, nil
 }
 
-func CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]interface{}, error) {
+func CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
 	botAPI := NewCallBotAPI(bot, session, connection, params)
 	if err := RunBot(bot, botAPI, session, connection, hydrate, botAPI.AddError); err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Conne
 	return botAPI.Results, nil
 }
 
-func RunBot(bot *meta.Bot, api interface{}, session *sess.Session, connection wire.Connection, hydrateBot HydrateFunc, errorFunc func(string)) error {
+func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Connection, hydrateBot HydrateFunc, errorFunc func(string)) error {
 
 	cacheKey := getBotProgramCacheKey(bot, session)
 
@@ -174,11 +174,11 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 	return RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return CallBot(bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
 }
 
@@ -216,7 +216,7 @@ func (b *JSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Conn
 	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
 	err := RunBot(bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
 	if err != nil {

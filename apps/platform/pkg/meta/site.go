@@ -41,15 +41,15 @@ func (s *Site) GetCollectionName() string {
 	return SITE_COLLECTION_NAME
 }
 
-func (s *Site) SetField(fieldName string, value interface{}) error {
+func (s *Site) SetField(fieldName string, value any) error {
 	return StandardFieldSet(s, fieldName, value)
 }
 
-func (s *Site) GetField(fieldName string) (interface{}, error) {
+func (s *Site) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(s, fieldName)
 }
 
-func (s *Site) Loop(iter func(string, interface{}) error) error {
+func (s *Site) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(s, iter)
 }
 

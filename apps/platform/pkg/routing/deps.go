@@ -191,9 +191,9 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 	return nil
 }
 
-func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, wireData map[string]meta.Group, session *sess.Session) (map[string]interface{}, *yaml.Node, error) {
+func getSubParams(viewDef *yaml.Node, parentParamValues map[string]any, wireData map[string]meta.Group, session *sess.Session) (map[string]any, *yaml.Node, error) {
 
-	subParams := map[string]interface{}{}
+	subParams := map[string]any{}
 	var slotMapNode *yaml.Node
 	// Process the params
 	for i, prop := range viewDef.Content {
@@ -232,7 +232,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]interface{}, 
 	return subParams, slotMapNode, nil
 }
 
-func processViewWires(view *meta.View, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, session *sess.Session) (map[string]meta.Group, error) {
+func processViewWires(view *meta.View, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, session *sess.Session) (map[string]meta.Group, error) {
 	wires, err := meta.GetMapNode((*yaml.Node)(view.Definition), "wires")
 	if err != nil {
 		wires = nil
@@ -349,7 +349,7 @@ func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotM
 	return subViews, nil
 }
 
-func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData map[string]meta.Group, subViews map[string]*yaml.Node, params map[string]interface{}, session *sess.Session) error {
+func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData map[string]meta.Group, subViews map[string]*yaml.Node, params map[string]any, session *sess.Session) error {
 	for viewKey, viewCompDef := range subViews {
 
 		if view.GetKey() == viewKey {
@@ -379,7 +379,7 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 	return nil
 }
 
-func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]interface{}, slotMapNode *yaml.Node, session *sess.Session) error {
+func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, slotMapNode *yaml.Node, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {

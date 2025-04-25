@@ -32,10 +32,10 @@ func (yd *YAMLDef) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*yaml.Node)(yd))
 }
 
-func (yd *YAMLDef) MarshalYAML() (interface{}, error) {
+func (yd *YAMLDef) MarshalYAML() (any, error) {
 	return UnwrapDocumentNode((*yaml.Node)(yd)), nil
 }
 
-func (yd *YAMLDef) Decode(v interface{}) error {
+func (yd *YAMLDef) Decode(v any) error {
 	return (*yaml.Node)(yd).Decode(v)
 }

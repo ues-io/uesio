@@ -31,15 +31,15 @@ func (w *Workspace) GetCollectionName() string {
 	return WORKSPACE_COLLECTION_NAME
 }
 
-func (w *Workspace) SetField(fieldName string, value interface{}) error {
+func (w *Workspace) SetField(fieldName string, value any) error {
 	return StandardFieldSet(w, fieldName, value)
 }
 
-func (w *Workspace) GetField(fieldName string) (interface{}, error) {
+func (w *Workspace) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(w, fieldName)
 }
 
-func (w *Workspace) Loop(iter func(string, interface{}) error) error {
+func (w *Workspace) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(w, iter)
 }
 

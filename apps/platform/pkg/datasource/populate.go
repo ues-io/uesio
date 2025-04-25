@@ -65,12 +65,12 @@ func populateUser(field *wire.FieldMetadata, user *meta.User) ChangeProcessor {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
-			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
+			err := change.FieldChanges.SetField(field.GetFullName(), map[string]any{
 				commonfields.Id:        user.ID,
 				commonfields.UniqueKey: user.UniqueKey, //TO-DO this not sure should be UUIIDD
 				"uesio/core.firstname": user.FirstName,
 				"uesio/core.lastname":  user.LastName,
-				"uesio/core.picture": map[string]interface{}{
+				"uesio/core.picture": map[string]any{
 					commonfields.Id: user.GetPictureID(),
 				},
 			})
@@ -126,7 +126,7 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 			}
 		}
 		// Enforce field-level security for save
-		return change.Loop(func(field string, value interface{}) error {
+		return change.Loop(func(field string, value any) error {
 			if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field) {
 				return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have edit access to the %s field.", session.GetContextProfile(), field))
 			}

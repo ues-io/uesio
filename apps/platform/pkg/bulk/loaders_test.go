@@ -21,7 +21,7 @@ func Test_TimestampLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -29,7 +29,7 @@ func Test_TimestampLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    interface{}
+		want    any
 		wantErr string
 	}{
 		{
@@ -96,7 +96,7 @@ func Test_NumberLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -104,7 +104,7 @@ func Test_NumberLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    interface{}
+		want    any
 		wantErr string
 	}{
 		{
@@ -172,7 +172,7 @@ func Test_BooleanLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -180,7 +180,7 @@ func Test_BooleanLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    interface{}
+		want    any
 		wantErr string
 	}{
 		{
@@ -255,7 +255,7 @@ func Test_MultiselectLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -263,7 +263,7 @@ func Test_MultiselectLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    interface{}
+		want    any
 		wantErr string
 	}{
 		{
@@ -322,7 +322,7 @@ func Test_MapLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -330,31 +330,31 @@ func Test_MapLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    map[string]interface{}
+		want    map[string]any
 		wantErr string
 	}{
 		{
 			"parse MAP from empty string",
 			"",
-			map[string]interface{}{},
+			map[string]any{},
 			"",
 		},
 		{
 			"parse MAP from empty JSON object",
 			"{}",
-			map[string]interface{}{},
+			map[string]any{},
 			"",
 		},
 		{
 			"parse MAP from valid JSON object",
 			"{\"chattanooga\":{\"is_accurate\":false,\"latitude\":34.555,\"longitude\":-12.12},\"nashville\":{\"is_accurate\":false,\"latitude\":35.555,\"longitude\":-14.12}}",
-			map[string]interface{}{
-				"chattanooga": map[string]interface{}{
+			map[string]any{
+				"chattanooga": map[string]any{
 					"is_accurate": false,
 					"latitude":    34.555,
 					"longitude":   -12.12,
 				},
-				"nashville": map[string]interface{}{
+				"nashville": map[string]any{
 					"is_accurate": false,
 					"latitude":    35.555,
 					"longitude":   -14.12,
@@ -384,12 +384,12 @@ func Test_MapLoader(t *testing.T) {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
 				assert.Nil(t, err)
-				mapVal, ok := val.(map[string]interface{})
+				mapVal, ok := val.(map[string]any)
 				assert.True(t, ok, "expected val to be a map, but it was not: "+tt.input)
 				for k, wantV := range tt.want {
 					assert.Equalf(t, wantV, mapVal[k], "MapLoader(%s)", tt.input)
-					if wantMapValue, ok := wantV.(map[string]interface{}); ok {
-						actualMapVal := mapVal[k].(map[string]interface{})
+					if wantMapValue, ok := wantV.(map[string]any); ok {
+						actualMapVal := mapVal[k].(map[string]any)
 						for k1, v2 := range wantMapValue {
 							assert.Equalf(t, v2, actualMapVal[k1], "MapLoader(%s)", tt.input)
 						}
@@ -413,7 +413,7 @@ func Test_ListLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -421,31 +421,31 @@ func Test_ListLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    []interface{}
+		want    []any
 		wantErr string
 	}{
 		{
 			"parse LIST from empty string",
 			"",
-			[]interface{}{},
+			[]any{},
 			"",
 		},
 		{
 			"parse LIST from empty JSON array",
 			"[]",
-			[]interface{}{},
+			[]any{},
 			"",
 		},
 		{
 			"parse LIST from valid JSON array of strings",
 			"[\"bar\",\"foo\"]",
-			[]interface{}{"bar", "foo"},
+			[]any{"bar", "foo"},
 			"",
 		},
 		{
 			"parse LIST from valid JSON array of numbers",
 			"[1,2]",
-			[]interface{}{1.0, 2.0},
+			[]any{1.0, 2.0},
 			"",
 		},
 		{
@@ -470,7 +470,7 @@ func Test_ListLoader(t *testing.T) {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
 				assert.Nil(t, err)
-				listVal, ok := val.([]interface{})
+				listVal, ok := val.([]any)
 				assert.True(t, ok, "expected val to be a list, but it was not: "+tt.input)
 				assert.Equal(t, len(listVal), len(tt.want))
 				for idx, el := range tt.want {
@@ -504,7 +504,7 @@ func Test_StructLoader(t *testing.T) {
 		ColumnName: "some_column_name",
 	}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -512,25 +512,25 @@ func Test_StructLoader(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    map[string]interface{}
+		want    map[string]any
 		wantErr string
 	}{
 		{
 			"parse STRUCT from empty string",
 			"",
-			map[string]interface{}{},
+			map[string]any{},
 			"",
 		},
 		{
 			"parse STRUCT from empty JSON object",
 			"{}",
-			map[string]interface{}{},
+			map[string]any{},
 			"",
 		},
 		{
 			"parse STRUCT from valid JSON object",
 			"{\"latitude\":35.555,\"longitude\":-14.12}",
-			map[string]interface{}{
+			map[string]any{
 				"latitude":  35.555,
 				"longitude": -14.12,
 			},
@@ -539,7 +539,7 @@ func Test_StructLoader(t *testing.T) {
 		{
 			"ignore fields in JSON object not present in STRUCT",
 			"{\"latitude\":35.555,\"longitude\":-14.12,\"foo\":\"bar\"}",
-			map[string]interface{}{
+			map[string]any{
 				"latitude":  35.555,
 				"longitude": -14.12,
 			},
@@ -567,7 +567,7 @@ func Test_StructLoader(t *testing.T) {
 				assert.Nil(t, err)
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
 				assert.Nil(t, err)
-				mapVal, ok := val.(map[string]interface{})
+				mapVal, ok := val.(map[string]any)
 				assert.True(t, ok, "expected val to be a map, but it was not: "+tt.input)
 				assert.Equal(t, len(mapVal), len(tt.want))
 				for k, wantV := range tt.want {

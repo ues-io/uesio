@@ -55,15 +55,15 @@ func (t *Translation) GetBundleFolderName() string {
 	return TRANSLATION_FOLDER_NAME
 }
 
-func (t *Translation) SetField(fieldName string, value interface{}) error {
+func (t *Translation) SetField(fieldName string, value any) error {
 	return StandardFieldSet(t, fieldName, value)
 }
 
-func (t *Translation) GetField(fieldName string) (interface{}, error) {
+func (t *Translation) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-func (t *Translation) Loop(iter func(string, interface{}) error) error {
+func (t *Translation) Loop(iter func(string, any) error) error {
 	itemMeta := t.GetItemMeta()
 	for _, fieldName := range TRANSLATION_FIELDS {
 		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {

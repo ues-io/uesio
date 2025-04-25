@@ -23,7 +23,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetContextSite()
 
-	var payload map[string]interface{}
+	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))
@@ -43,7 +43,7 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetSite()
 
-	var payload map[string]interface{}
+	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))

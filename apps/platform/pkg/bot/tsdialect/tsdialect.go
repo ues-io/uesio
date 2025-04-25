@@ -49,11 +49,11 @@ func (b *TSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wi
 	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return jsdialect.CallBot(bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return jsdialect.CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
 
 }
@@ -92,7 +92,7 @@ func (b *TSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Conn
 	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
 	err := jsdialect.RunBot(bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
 	if err != nil {

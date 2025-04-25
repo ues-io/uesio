@@ -10,8 +10,8 @@ type Group interface {
 }
 
 type Item interface {
-	GetField(string) (interface{}, error)
-	SetField(string, interface{}) error
-	Loop(iter func(string, interface{}) error) error
+	GetField(string) (any, error)
+	SetField(string, any) error
+	Loop(iter func(string, any) error) error
 	Len() int
 }

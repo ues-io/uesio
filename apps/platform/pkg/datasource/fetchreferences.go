@@ -12,7 +12,7 @@ func processLocalReferences(
 	op *wire.SaveOp,
 	change *wire.ChangeItem,
 	uniqueKeyFieldValue string,
-	refValue interface{},
+	refValue any,
 	refCollectionMetadata *wire.CollectionMetadata,
 ) (bool, error) {
 

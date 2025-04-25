@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runResetRecordAccessTokensListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	paramItems := (wire.Item)(params)
 	collectionName, err := paramItems.GetFieldAsString("collection")
 	if err != nil {
@@ -20,7 +20,7 @@ func runResetRecordAccessTokensListenerBot(params map[string]interface{}, connec
 	siteName, _ := paramItems.GetFieldAsString("sitename")
 	workspaceName, _ := paramItems.GetFieldAsString("workspacename")
 
-	inContextSession, err := datasource.GetContextSessionFromParams(map[string]interface{}{
+	inContextSession, err := datasource.GetContextSessionFromParams(map[string]any{
 		"app":           app,
 		"sitename":      siteName,
 		"workspacename": workspaceName,

@@ -40,15 +40,15 @@ func (fs *FileSource) GetBundleFolderName() string {
 	return FILESOURCE_FOLDER_NAME
 }
 
-func (fs *FileSource) SetField(fieldName string, value interface{}) error {
+func (fs *FileSource) SetField(fieldName string, value any) error {
 	return StandardFieldSet(fs, fieldName, value)
 }
 
-func (fs *FileSource) GetField(fieldName string) (interface{}, error) {
+func (fs *FileSource) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(fs, fieldName)
 }
 
-func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
+func (fs *FileSource) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(fs, iter)
 }
 

@@ -16,15 +16,15 @@ func (bb *BulkBatch) GetCollection() CollectionableGroup {
 	return &BulkBatchCollection{}
 }
 
-func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
+func (bb *BulkBatch) SetField(fieldName string, value any) error {
 	return StandardFieldSet(bb, fieldName, value)
 }
 
-func (bb *BulkBatch) GetField(fieldName string) (interface{}, error) {
+func (bb *BulkBatch) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(bb, fieldName)
 }
 
-func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
+func (bb *BulkBatch) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(bb, iter)
 }
 

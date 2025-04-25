@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCheckAvailabilityBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	paramItems := (wire.Item)(params)
 	username, err := paramItems.GetFieldAsString("username")
@@ -22,7 +22,7 @@ func runCheckAvailabilityBot(params map[string]interface{}, connection wire.Conn
 
 	_, err = auth.GetUserByKey(username, systemSession, nil)
 	if exceptions.IsNotFoundException(err) {
-		return map[string]interface{}{
+		return map[string]any{
 			"message": "That username is available",
 		}, nil
 	}

@@ -37,7 +37,7 @@ type QueryStatistics struct {
 func GetQueryStatistics() QueryStatistics {
 	queryCountsResult := make(map[string]int64)
 	var totalQueries int64
-	queryCounts.Range(func(k interface{}, v interface{}) bool {
+	queryCounts.Range(func(k any, v any) bool {
 		intValue := v.(*int64)
 		totalQueries = totalQueries + *intValue
 		queryCountsResult[k.(string)] = *intValue

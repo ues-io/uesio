@@ -40,15 +40,15 @@ func (u *Utility) GetBundleFolderName() string {
 	return UTILITY_FOLDER_NAME
 }
 
-func (u *Utility) SetField(fieldName string, value interface{}) error {
+func (u *Utility) SetField(fieldName string, value any) error {
 	return StandardFieldSet(u, fieldName, value)
 }
 
-func (u *Utility) GetField(fieldName string) (interface{}, error) {
+func (u *Utility) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(u, fieldName)
 }
 
-func (u *Utility) Loop(iter func(string, interface{}) error) error {
+func (u *Utility) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(u, iter)
 }
 

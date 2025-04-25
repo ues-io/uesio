@@ -10,9 +10,9 @@ import (
 
 // getParamsFromRequestBody parses a request body, which may be either JSON/form data,
 // into a map[string]interface{}, using the Content Type header
-func getParamsFromRequestBody(r *http.Request) (map[string]interface{}, error) {
+func getParamsFromRequestBody(r *http.Request) (map[string]any, error) {
 
-	var params map[string]interface{}
+	var params map[string]any
 
 	// Currently we accept params only as form data or JSON
 	contentType := r.Header.Get(contentTypeHeader)
@@ -22,7 +22,7 @@ func getParamsFromRequestBody(r *http.Request) (map[string]interface{}, error) {
 		if err := r.ParseForm(); err != nil {
 			return nil, exceptions.NewBadRequestException("Unable to parse form data", err)
 		}
-		params = map[string]interface{}{}
+		params = map[string]any{}
 		for param, values := range r.Form {
 			params[param] = values[0]
 		}

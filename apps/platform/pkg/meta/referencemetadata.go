@@ -29,7 +29,7 @@ func (r *ReferenceMetadata) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (r *ReferenceMetadata) MarshalYAML() (interface{}, error) {
+func (r *ReferenceMetadata) MarshalYAML() (any, error) {
 	if r.MultiCollection {
 		if len(r.CollectionsRefs) > 0 {
 			for i := range r.CollectionsRefs {

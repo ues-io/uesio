@@ -64,9 +64,9 @@ func (sba *SaveBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection(), nil)
 }
 
-func (sba *SaveBotAPI) GetCredentials() map[string]interface{} {
+func (sba *SaveBotAPI) GetCredentials() map[string]any {
 	if sba.integrationConnection == nil || sba.integrationConnection.GetCredentials() == nil {
-		return map[string]interface{}{}
+		return map[string]any{}
 	}
 	return sba.integrationConnection.GetCredentials().GetInterfaceMap()
 }
@@ -106,6 +106,6 @@ func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
 	sba.saveOp.AddError(exceptions.NewSaveException(recordId, fieldId, message, nil))
 }
 
-func (sba *SaveBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (sba *SaveBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, sba.getSession(), sba.connection)
 }

@@ -122,7 +122,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	var routeAssignments meta.RouteAssignmentCollection
 
 	err := bundle.LoadAllFromAny(&routeAssignments, &bundlestore.GetAllItemsOptions{
-		Conditions: map[string]interface{}{"uesio/studio.collection": namespace + "." + collection},
+		Conditions: map[string]any{"uesio/studio.collection": namespace + "." + collection},
 	}, session, nil)
 	if err != nil {
 		return nil, err
@@ -158,13 +158,13 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		// TODO: Update to lookup the record based on recordId and then use the tokens from the Route Assignment
 		// to generate the route params.  For now, we "default" the tokens to be "recordId" until Route Assignment
 		// fully supports token based mapping. See https://github.com/ues-io/uesio/pull/4656
-		route.Params = map[string]interface{}{
+		route.Params = map[string]any{
 			"recordid": recordID,
 		}
 	}
 
 	if viewtype == "list" {
-		route.Params = map[string]interface{}{}
+		route.Params = map[string]any{}
 	}
 
 	// TODO: Allow use of other parameters, e.g. query string parameters, route parameters
@@ -180,7 +180,7 @@ func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.S
 		return nil, fmt.Errorf("unable to load route '%s.%s': %w", namespace, routeName, err)
 	}
 	if route.Params == nil {
-		route.Params = map[string]interface{}{}
+		route.Params = map[string]any{}
 	}
 	params, err := ResolveRouteParams(route.Params, session, r.URL.Query())
 	if err != nil {
@@ -196,7 +196,7 @@ func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.S
 	return route, nil
 }
 
-func mergeRoutePath(path string, params map[string]interface{}) string {
+func mergeRoutePath(path string, params map[string]any) string {
 	if len(path) == 0 || len(params) == 0 {
 		return path
 	}
@@ -207,8 +207,8 @@ func mergeRoutePath(path string, params map[string]interface{}) string {
 	return path
 }
 
-func ResolveRouteParams(routeParams map[string]interface{}, s *sess.Session, vars url.Values) (map[string]interface{}, error) {
-	processedParams := map[string]interface{}{}
+func ResolveRouteParams(routeParams map[string]any, s *sess.Session, vars url.Values) (map[string]any, error) {
+	processedParams := map[string]any{}
 
 	for paramName, paramValue := range routeParams {
 		// For now, only merge string parameters. Consider merging []string as well...

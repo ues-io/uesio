@@ -39,7 +39,7 @@ func newOpenAiConnection(ic *wire.IntegrationConnection) (*connection, error) {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	c, err := newOpenAiConnection(ic)
 	if err != nil {
@@ -54,7 +54,7 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 
 }
 
-func (c *connection) autoComplete(requestOptions interface{}) (interface{}, error) {
+func (c *connection) autoComplete(requestOptions any) (any, error) {
 
 	options := &AutoCompleteOptions{}
 	err := datasource.HydrateOptions(requestOptions, options)

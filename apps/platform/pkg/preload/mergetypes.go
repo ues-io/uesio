@@ -19,16 +19,16 @@ type LoginResponse struct {
 }
 
 type RouteMergeData struct {
-	Dependencies *PreloadMetadata       `json:"dependencies"`
-	Namespace    string                 `json:"namespace"`
-	Params       map[string]interface{} `json:"params"`
-	Path         string                 `json:"path"`
-	Tags         []meta.Tag             `json:"tags"`
-	Theme        string                 `json:"theme"`
-	Title        string                 `json:"title"`
-	Type         string                 `json:"type"`
-	View         string                 `json:"view"`
-	Workspace    *WorkspaceMergeData    `json:"workspace"`
+	Dependencies *PreloadMetadata    `json:"dependencies"`
+	Namespace    string              `json:"namespace"`
+	Params       map[string]any      `json:"params"`
+	Path         string              `json:"path"`
+	Tags         []meta.Tag          `json:"tags"`
+	Theme        string              `json:"theme"`
+	Title        string              `json:"title"`
+	Type         string              `json:"type"`
+	View         string              `json:"view"`
+	Workspace    *WorkspaceMergeData `json:"workspace"`
 }
 
 type UserPictureMergeData struct {

@@ -2,9 +2,9 @@ package meta
 
 type FeatureFlagAssignment struct {
 	BuiltIn `yaml:",inline"`
-	Flag    string      `json:"uesio/core.flag"`
-	Value   interface{} `json:"uesio/core.value"`
-	User    *User       `json:"uesio/core.user"`
+	Flag    string `json:"uesio/core.flag"`
+	Value   any    `json:"uesio/core.value"`
+	User    *User  `json:"uesio/core.user"`
 }
 
 func (ffa *FeatureFlagAssignment) GetCollection() CollectionableGroup {
@@ -15,15 +15,15 @@ func (ffa *FeatureFlagAssignment) GetCollectionName() string {
 	return FEATUREFLAGASSIGNMENT_COLLECTION_NAME
 }
 
-func (ffa *FeatureFlagAssignment) SetField(fieldName string, value interface{}) error {
+func (ffa *FeatureFlagAssignment) SetField(fieldName string, value any) error {
 	return StandardFieldSet(ffa, fieldName, value)
 }
 
-func (ffa *FeatureFlagAssignment) GetField(fieldName string) (interface{}, error) {
+func (ffa *FeatureFlagAssignment) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(ffa, fieldName)
 }
 
-func (ffa *FeatureFlagAssignment) Loop(iter func(string, interface{}) error) error {
+func (ffa *FeatureFlagAssignment) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(ffa, iter)
 }
 

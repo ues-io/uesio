@@ -22,7 +22,7 @@ func (yd *YAMLtoJSONArray) MarshalJSONArray(enc *gojay.Encoder) {
 	for i := range yd.Content {
 		item := yd.Content[i]
 		if item.Kind == yaml.ScalarNode {
-			var value interface{}
+			var value any
 			err := yd.Content[i].Decode(&value)
 			if err != nil {
 				fmt.Println("Got an error decoding scalar: " + item.Value)
@@ -61,7 +61,7 @@ func (yd *YAMLtoJSONMap) MarshalJSONObject(enc *gojay.Encoder) {
 			keyItem := yd.Content[i]
 			valueItem := yd.Content[i+1]
 			if valueItem.Kind == yaml.ScalarNode {
-				var value interface{}
+				var value any
 				err := yd.Content[i+1].Decode(&value)
 				if err != nil {
 					fmt.Println("Got an error decoding scalar in map: " + keyItem.Value + " : " + valueItem.Value)

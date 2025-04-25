@@ -64,7 +64,7 @@ type DeployOptions struct {
 	Prefix     string
 }
 
-func GenerateToWorkspace(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session, extraWriter io.Writer) (map[string]interface{}, error) {
+func GenerateToWorkspace(namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session, extraWriter io.Writer) (map[string]any, error) {
 	buf := new(bytes.Buffer)
 	var zipWriter *zip.Writer
 	// If we were requested to return a ZIP file,
@@ -331,7 +331,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 		)
 	}
 
-	params := map[string]interface{}{
+	params := map[string]any{
 		"workspaceid":   workspace.ID,
 		"workspacename": workspace.Name,
 		"app":           namespace,

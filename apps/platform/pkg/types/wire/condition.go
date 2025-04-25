@@ -27,10 +27,10 @@ func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {
 type LoadRequestCondition struct {
 	ID              string                 `json:"id,omitempty" bot:"id" yaml:"id"`
 	Field           string                 `json:"field" bot:"field" yaml:"field"`
-	Value           interface{}            `json:"-" bot:"value" yaml:"-"`
-	Values          interface{}            `json:"-" bot:"values" yaml:"-"`
-	RawValue        interface{}            `json:"value,omitempty" yaml:"value"`
-	RawValues       interface{}            `json:"values,omitempty" yaml:"values"`
+	Value           any                    `json:"-" bot:"value" yaml:"-"`
+	Values          any                    `json:"-" bot:"values" yaml:"-"`
+	RawValue        any                    `json:"value,omitempty" yaml:"value"`
+	RawValues       any                    `json:"values,omitempty" yaml:"values"`
 	Param           string                 `json:"param,omitempty" yaml:"param"`
 	Params          []string               `json:"params,omitempty" yaml:"params"`
 	ValueSource     string                 `json:"valueSource,omitempty" yaml:"valueSource"`
@@ -43,20 +43,20 @@ type LoadRequestCondition struct {
 	SubCollection   string                 `json:"subcollection,omitempty" bot:"subcollection" yaml:"subcollection"`
 	SubField        string                 `json:"subfield,omitempty" bot:"subfield" yaml:"subfield"`
 	Conjunction     string                 `json:"conjunction,omitempty" bot:"conjunction" yaml:"conjunction"`
-	Start           interface{}            `json:"start,omitempty" bot:"start" yaml:"start"`
-	End             interface{}            `json:"end,omitempty" bot:"end" yaml:"end"`
+	Start           any                    `json:"start,omitempty" bot:"start" yaml:"start"`
+	End             any                    `json:"end,omitempty" bot:"end" yaml:"end"`
 	InclusiveStart  bool                   `json:"inclusiveStart,omitempty" bot:"inclusiveStart" yaml:"inclusiveStart"`
 	InclusiveEnd    bool                   `json:"inclusiveEnd,omitempty" bot:"inclusiveEnd" yaml:"inclusiveEnd"`
 	Inactive        bool                   `json:"inactive" bot:"inactive" yaml:"inactive"`
 	NoValueBehavior string                 `json:"noValueBehavior" bot:"noValueBehavior" yaml:"noValueBehavior"`
 }
 
-func GetStringSlice(input interface{}) ([]string, error) {
+func GetStringSlice(input any) ([]string, error) {
 	sliceString, ok := input.([]string)
 	if ok {
 		return sliceString, nil
 	}
-	sliceInterface, ok := input.([]interface{})
+	sliceInterface, ok := input.([]any)
 	if ok {
 		sliceString := []string{}
 		for _, value := range sliceInterface {

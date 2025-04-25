@@ -12,7 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getStringValue(fieldMetadata *wire.FieldMetadata, value interface{}) (string, error) {
+func getStringValue(fieldMetadata *wire.FieldMetadata, value any) (string, error) {
 
 	// Handle all nils as empty string
 	if value == nil {
@@ -32,7 +32,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value interface{}) (strin
 		// Multi-select fields are stored in DB as map[string]bool
 		// To be concise, but also allow for nested commas/quotes within the Multiselect value,
 		// we serialize to a JSON array
-		values := goutils.MapKeys(value.(map[string]interface{}))
+		values := goutils.MapKeys(value.(map[string]any))
 		sort.Strings(values)
 		byteValue, err := json.Marshal(values)
 		if err != nil {

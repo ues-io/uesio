@@ -15,7 +15,7 @@ type TestEvaluator struct {
 	fieldKeys map[string]bool
 }
 
-func getDummyData(fieldType string, field *wire.FieldMetadata) interface{} {
+func getDummyData(fieldType string, field *wire.FieldMetadata) any {
 	switch fieldType {
 	case "NUMBER":
 		return 1234
@@ -30,7 +30,7 @@ func getDummyData(fieldType string, field *wire.FieldMetadata) interface{} {
 	}
 }
 
-func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
+func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (any, error) {
 
 	field, err := te.metadata.GetField(k)
 	if err != nil {

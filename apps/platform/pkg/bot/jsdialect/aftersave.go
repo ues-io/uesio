@@ -57,7 +57,7 @@ func (as *AfterSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, as.session, as.connection, nil)
 }
 
-func (as *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (as *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, as.session, as.connection)
 }
 
@@ -65,7 +65,7 @@ func (as *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValue(configValueKey, as.session)
 }
 
-func (as *AfterSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (as *AfterSaveAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, as.session, as.connection)
 }
 
@@ -77,10 +77,10 @@ func (as *AfterSaveAPI) GetFileUrl(sourceKey, sourcePath string) string {
 	return getFileUrl(sourceKey, sourcePath)
 }
 
-func (as *AfterSaveAPI) MergeTemplate(templateString string, params map[string]interface{}) (string, error) {
+func (as *AfterSaveAPI) MergeTemplate(templateString string, params map[string]any) (string, error) {
 	return mergeTemplateString(templateString, params)
 }
 
-func (as *AfterSaveAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}) (string, error) {
+func (as *AfterSaveAPI) MergeTemplateFile(sourceKey, sourcePath string, params map[string]any) (string, error) {
 	return mergeTemplateFile(sourceKey, sourcePath, params, as.session, as.connection)
 }

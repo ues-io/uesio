@@ -101,7 +101,7 @@ var modelHandlers = map[string]ModelHandler{
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	bc, err := getBedrockConnection(ic)
 	if err != nil {
@@ -122,7 +122,7 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 const MAX_TOKENS_TO_SAMPLE = 200000
 const DEFAULT_TOKENS_TO_SAMPLE = 4096
 
-func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions, error) {
+func hydrateOptions(requestOptions map[string]any) (*InvokeModelOptions, error) {
 
 	options := &InvokeModelOptions{}
 	err := datasource.HydrateOptions(requestOptions, options)

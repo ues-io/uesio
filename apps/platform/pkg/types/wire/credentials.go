@@ -22,8 +22,8 @@ func (c *Credentials) GetHash() string {
 	return string(sum[:])
 }
 
-func (c *Credentials) GetInterfaceMap() map[string]interface{} {
-	result := make(map[string]interface{}, len(*c))
+func (c *Credentials) GetInterfaceMap() map[string]any {
+	result := make(map[string]any, len(*c))
 	i := 0
 	for k, v := range *c {
 		result[k] = v

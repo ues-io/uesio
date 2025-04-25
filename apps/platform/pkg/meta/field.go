@@ -101,15 +101,15 @@ func (f *Field) GetPath() string {
 	return path.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
-func (f *Field) SetField(fieldName string, value interface{}) error {
+func (f *Field) SetField(fieldName string, value any) error {
 	return StandardFieldSet(f, fieldName, value)
 }
 
-func (f *Field) GetField(fieldName string) (interface{}, error) {
+func (f *Field) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *Field) Loop(iter func(string, interface{}) error) error {
+func (f *Field) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(f, iter)
 }
 
@@ -202,7 +202,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (f *Field) MarshalYAML() (interface{}, error) {
+func (f *Field) MarshalYAML() (any, error) {
 
 	// We have to pass our namespace down to our children so that they
 	// can properly localize their references to other metadata items

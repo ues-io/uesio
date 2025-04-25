@@ -11,7 +11,7 @@ import (
 func WriteCSVItem(csvwriter *csv.Writer, item meta.Item, collectionMetadata *wire.CollectionMetadata, columnIndexes map[string]int) error {
 	data := make([]string, len(columnIndexes))
 
-	err := item.Loop(func(fieldName string, value interface{}) error {
+	err := item.Loop(func(fieldName string, value any) error {
 		fieldMetadata, err := collectionMetadata.GetField(fieldName)
 		if err != nil {
 			return err

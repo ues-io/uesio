@@ -26,7 +26,7 @@ type MessagesModelStreamOutput struct {
 	Usage *MessagesModelUsage `json:"usage"`
 }
 
-func (c *Connection) streamModel(requestOptions map[string]interface{}) (interface{}, error) {
+func (c *Connection) streamModel(requestOptions map[string]any) (any, error) {
 
 	options, err := hydrateOptions(requestOptions)
 	if err != nil {

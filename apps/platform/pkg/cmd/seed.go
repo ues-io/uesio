@@ -31,7 +31,7 @@ func init() {
 
 }
 
-func getSeedDataFile(v interface{}, fileName string) error {
+func getSeedDataFile(v any, fileName string) error {
 	filePath := filepath.Join("seed", fileName)
 	file, err := os.Open(filePath)
 	if err != nil {

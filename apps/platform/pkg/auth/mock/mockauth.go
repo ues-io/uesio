@@ -39,7 +39,7 @@ func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-	var loginRequest map[string]interface{}
+	var loginRequest map[string]any
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		const msg = "invalid login request body"
@@ -55,25 +55,25 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	auth.LoginRedirectResponse(w, r, user, c.session)
 }
 
-func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
 		return nil, nil, fmt.Errorf("Mock login: %w", err)
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
 }
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
 	return errors.New("Mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, errors.New("Mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
 	return nil, errors.New("Mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
 	return errors.New("Mock login: unfortunately you cannot create a login")
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
 	return errors.New("Mock login: unfortunately you cannot change the password")
 }

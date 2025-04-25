@@ -15,15 +15,15 @@ func (bj *BulkJob) GetCollection() CollectionableGroup {
 	return &BulkJobCollection{}
 }
 
-func (bj *BulkJob) SetField(fieldName string, value interface{}) error {
+func (bj *BulkJob) SetField(fieldName string, value any) error {
 	return StandardFieldSet(bj, fieldName, value)
 }
 
-func (bj *BulkJob) GetField(fieldName string) (interface{}, error) {
+func (bj *BulkJob) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(bj, fieldName)
 }
 
-func (bj *BulkJob) Loop(iter func(string, interface{}) error) error {
+func (bj *BulkJob) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(bj, iter)
 }
 

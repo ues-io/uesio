@@ -139,7 +139,7 @@ func processConditions(
 		}
 
 		if condition.ValueSource == "PARAM" && len(condition.Params) > 0 {
-			var values []interface{}
+			var values []any
 			for _, param := range condition.Params {
 				value, ok := op.Params[param]
 				if !ok {
@@ -169,7 +169,7 @@ func processConditions(
 				return nil, exceptions.NewBadRequestException(fmt.Sprintf("Could not find lookup wire: %s", condition.LookupWire), nil)
 			}
 
-			values := make([]interface{}, 0, lookupOp.Collection.Len())
+			values := make([]any, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {

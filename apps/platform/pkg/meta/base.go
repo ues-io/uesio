@@ -59,7 +59,7 @@ func (bb *BundleableBase) GetPath() string {
 	return bb.Name + ".yaml"
 }
 
-func refScanner(obj interface{}, data []byte) error {
+func refScanner(obj any, data []byte) error {
 	if data[0] == '"' {
 		return json.Unmarshal(append([]byte("{\"uesio/core.id\":"), append(data, []byte("}")...)...), obj)
 	}

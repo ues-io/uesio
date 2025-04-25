@@ -19,7 +19,7 @@ func getFieldName(objType reflect.Type, uesioName string) (string, error) {
 	return name, nil
 }
 
-func GetFieldNames(obj interface{}) ([]string, error) {
+func GetFieldNames(obj any) ([]string, error) {
 	structValue := ReflectValue(obj)
 	structKind := structValue.Kind()
 	structType := structValue.Type()

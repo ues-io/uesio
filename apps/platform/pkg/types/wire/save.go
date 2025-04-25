@@ -23,7 +23,7 @@ type SaveOp struct {
 	Options        *SaveOptions
 	Errors         *[]*exceptions.SaveException
 	InsertCount    int
-	Params         map[string]interface{}
+	Params         map[string]any
 
 	metadata              *MetadataCache
 	integrationConnection *IntegrationConnection
@@ -185,7 +185,7 @@ func (ci *ChangeItem) IsNil() bool {
 
 func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 
-	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+	err := ci.FieldChanges.Loop(func(fieldID string, value any) error {
 		// Skip marshalling builtin fields
 		switch fieldID {
 		case
@@ -293,14 +293,14 @@ func (ci *ChangeItem) GetOldFieldAsInt(fieldID string) (int64, error) {
 	return GetValueInt(value)
 }
 
-func (ci *ChangeItem) GetOldField(fieldID string) (interface{}, error) {
+func (ci *ChangeItem) GetOldField(fieldID string) (any, error) {
 	if ci.OldValues != nil {
 		return ci.OldValues.GetField(fieldID)
 	}
 	return nil, nil
 }
 
-func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
+func (ci *ChangeItem) GetField(fieldID string) (any, error) {
 	changeVal, err := ci.FieldChanges.GetField(fieldID)
 	if err == nil && changeVal != nil {
 		return changeVal, nil
@@ -313,11 +313,11 @@ func (ci *ChangeItem) HasFieldChanges(fieldID string) bool {
 	return err == nil && changeVal != nil
 }
 
-func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {
+func (ci *ChangeItem) SetField(fieldID string, value any) error {
 	return ci.FieldChanges.SetField(fieldID, value)
 }
 
-func (ci *ChangeItem) Loop(iter func(string, interface{}) error) error {
+func (ci *ChangeItem) Loop(iter func(string, any) error) error {
 	return ci.FieldChanges.Loop(iter)
 }
 
@@ -363,7 +363,7 @@ type SaveOptions struct {
 	IgnoreValidationErrors bool `json:""`
 }
 
-func GetValueInt(value interface{}) (int64, error) {
+func GetValueInt(value any) (int64, error) {
 	switch typedVal := value.(type) {
 	case nil:
 		return 0, nil
@@ -377,7 +377,7 @@ func GetValueInt(value interface{}) (int64, error) {
 	return 0, fmt.Errorf("could not get value as int: %T", value)
 }
 
-func GetValueString(value interface{}) (string, error) {
+func GetValueString(value any) (string, error) {
 	valueString, ok := value.(string)
 	if !ok {
 		return "", fmt.Errorf("could not get value as string: %T", value)
@@ -385,7 +385,7 @@ func GetValueString(value interface{}) (string, error) {
 	return valueString, nil
 }
 
-func GetFieldValueString(value interface{}, key string) (string, error) {
+func GetFieldValueString(value any, key string) (string, error) {
 	value, err := GetFieldValue(value, key)
 	if err != nil {
 		return "", err
@@ -393,8 +393,8 @@ func GetFieldValueString(value interface{}, key string) (string, error) {
 	return GetValueString(value)
 }
 
-func GetLoadable(value interface{}) (meta.Item, error) {
-	valueMap, ok := value.(map[string]interface{})
+func GetLoadable(value any) (meta.Item, error) {
+	valueMap, ok := value.(map[string]any)
 	if ok {
 		loadableItem := Item(valueMap)
 		return &loadableItem, nil
@@ -408,8 +408,8 @@ func GetLoadable(value interface{}) (meta.Item, error) {
 	return nil, fmt.Errorf("invalid Loadable type: %T", value)
 }
 
-func GetFieldValue(value interface{}, key string) (interface{}, error) {
-	valueMap, ok := value.(map[string]interface{})
+func GetFieldValue(value any, key string) (any, error) {
+	valueMap, ok := value.(map[string]any)
 	if ok {
 		fk, ok := valueMap[key]
 		if !ok {
@@ -426,7 +426,7 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 	return nil, fmt.Errorf("not a valid map or item: %T", value)
 }
 
-func GetReferenceKey(value interface{}) (string, error) {
+func GetReferenceKey(value any) (string, error) {
 	if value == nil {
 		return "", nil
 	}
@@ -446,7 +446,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 
 // NewFieldChanges function returns a template that can merge field changes
 func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
+	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (any, error) {
 		fieldMetadata, err := collectionMetadata.GetFieldWithMetadata(key, metadata)
 		if err != nil {
 			return nil, err

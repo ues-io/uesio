@@ -45,7 +45,7 @@ func SecureRandomBytes(length int) []byte {
 	return randomBytes
 }
 
-func runCreateApiKeyListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCreateApiKeyListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	// Currently this only works in a siteadmin context
 	if session.GetSiteAdmin() == nil {

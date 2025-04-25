@@ -23,7 +23,7 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 
 	color.NoColor = false
 
-	var colorFunc func(string, ...interface{}) string
+	var colorFunc func(string, ...any) string
 
 	switch r.Level {
 	case slog.LevelInfo:
@@ -38,12 +38,12 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 
 	msg := colorFunc(r.Message)
 
-	fields := map[string]interface{}{}
+	fields := map[string]any{}
 
 	r.Attrs(func(a slog.Attr) bool {
 		// Assuming a single level here
 		if a.Value.Kind() == slog.KindGroup {
-			groupVal := map[string]interface{}{}
+			groupVal := map[string]any{}
 			for _, v := range a.Value.Group() {
 				groupVal[v.Key] = v.Value.Any()
 			}
@@ -68,8 +68,8 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 
 	// If this is the "per-request" log, use a specific formatter
 	if fields["stats"] != nil && fields["request"] != nil {
-		requestObject := fields["request"].(map[string]interface{})
-		statsObject := fields["stats"].(map[string]interface{})
+		requestObject := fields["request"].(map[string]any)
+		statsObject := fields["stats"].(map[string]any)
 		size := color.BlueString(byteCountDecimal(statsObject["size"].(int64)))
 		duration := statsObject["duration"].(time.Duration).Round(time.Millisecond)
 		path := colorFunc(requestObject["path"].(string))

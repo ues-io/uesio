@@ -40,15 +40,15 @@ func (i *IntegrationType) GetBundleFolderName() string {
 	return INTEGRATION_TYPE_FOLDER_NAME
 }
 
-func (i *IntegrationType) SetField(fieldName string, value interface{}) error {
+func (i *IntegrationType) SetField(fieldName string, value any) error {
 	return StandardFieldSet(i, fieldName, value)
 }
 
-func (i *IntegrationType) GetField(fieldName string) (interface{}, error) {
+func (i *IntegrationType) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(i, fieldName)
 }
 
-func (i *IntegrationType) Loop(iter func(string, interface{}) error) error {
+func (i *IntegrationType) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(i, iter)
 }
 
@@ -66,7 +66,7 @@ func (i *IntegrationType) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*IntegrationTypeWrapper)(i))
 }
 
-func (i *IntegrationType) MarshalYAML() (interface{}, error) {
+func (i *IntegrationType) MarshalYAML() (any, error) {
 	i.LoadBot = removeDefault(GetLocalizedKey(i.LoadBot, i.Namespace), "")
 	i.SaveBot = removeDefault(GetLocalizedKey(i.SaveBot, i.Namespace), "")
 	i.RunActionBot = removeDefault(GetLocalizedKey(i.RunActionBot, i.Namespace), "")

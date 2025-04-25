@@ -16,15 +16,15 @@ func (l *Invoice) GetCollectionName() string {
 	return INVOICE_COLLECTION_NAME
 }
 
-func (l *Invoice) SetField(fieldName string, value interface{}) error {
+func (l *Invoice) SetField(fieldName string, value any) error {
 	return StandardFieldSet(l, fieldName, value)
 }
 
-func (l *Invoice) GetField(fieldName string) (interface{}, error) {
+func (l *Invoice) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(l, fieldName)
 }
 
-func (l *Invoice) Loop(iter func(string, interface{}) error) error {
+func (l *Invoice) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(l, iter)
 }
 

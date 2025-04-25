@@ -129,7 +129,7 @@ func GetConnection(options ConnectionOptions) (BundleStoreConnection, error) {
 	return bs.GetConnection(options)
 }
 
-func DecodeYAML(v interface{}, reader io.Reader) error {
+func DecodeYAML(v any, reader io.Reader) error {
 	return yaml.NewDecoder(reader).Decode(v)
 }
 
@@ -144,7 +144,7 @@ func DoesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.Bund
 			return false
 		}
 		switch conditionVal := conditionDef.(type) {
-		case []interface{}:
+		case []any:
 			foundMatch := slices.Contains(conditionVal, fieldValue)
 			if !foundMatch {
 				return false

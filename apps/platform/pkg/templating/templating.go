@@ -10,7 +10,7 @@ import (
 
 const defaultTemplateKey = "__default__"
 
-func ValidKeyFunc(m map[string]interface{}, key string) (interface{}, error) {
+func ValidKeyFunc(m map[string]any, key string) (any, error) {
 	val, ok := m[key]
 	if !ok {
 		return nil, errors.New("missing key " + key)
@@ -18,7 +18,7 @@ func ValidKeyFunc(m map[string]interface{}, key string) (interface{}, error) {
 	return val, nil
 }
 
-func ForceErrorFunc(m interface{}, key string) (interface{}, error) {
+func ForceErrorFunc(m any, key string) (any, error) {
 	return nil, errors.New("This template function is not allowed: " + key)
 }
 
@@ -26,7 +26,7 @@ func NewTemplateWithValidKeysOnly(templateString string) (*template.Template, er
 	return NewWithFunc(templateString, ValidKeyFunc)
 }
 
-func NewWithFunc(templateString string, templateFunc interface{}) (*template.Template, error) {
+func NewWithFunc(templateString string, templateFunc any) (*template.Template, error) {
 	return NewWithFuncs(templateString, templateFunc, nil)
 }
 
@@ -50,7 +50,7 @@ func ExtractKeys(templateString string) []string {
 	return keys
 }
 
-func NewWithFuncs(templateString string, defaultTemplateFunc interface{}, templateFuncs map[string]interface{}) (*template.Template, error) {
+func NewWithFuncs(templateString string, defaultTemplateFunc any, templateFuncs map[string]any) (*template.Template, error) {
 	if templateString == "" {
 		return nil, nil
 	}
@@ -90,7 +90,7 @@ func MergeTemplate(templateString string, validFuncKeys []string, templateFunc f
 	})
 }
 
-func Execute(tmpl *template.Template, data interface{}) (string, error) {
+func Execute(tmpl *template.Template, data any) (string, error) {
 	if tmpl != nil {
 		var tpl bytes.Buffer
 		err := tmpl.Execute(&tpl, data)

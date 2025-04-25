@@ -45,15 +45,15 @@ func (rct *RecordChallengeToken) GetPath() string {
 	return path.Join(nsUser, appName, collectionName, rct.Name) + ".yaml"
 }
 
-func (rct *RecordChallengeToken) SetField(fieldName string, value interface{}) error {
+func (rct *RecordChallengeToken) SetField(fieldName string, value any) error {
 	return StandardFieldSet(rct, fieldName, value)
 }
 
-func (rct *RecordChallengeToken) GetField(fieldName string) (interface{}, error) {
+func (rct *RecordChallengeToken) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(rct, fieldName)
 }
 
-func (rct *RecordChallengeToken) Loop(iter func(string, interface{}) error) error {
+func (rct *RecordChallengeToken) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(rct, iter)
 }
 

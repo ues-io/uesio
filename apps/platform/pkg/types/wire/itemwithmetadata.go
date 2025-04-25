@@ -36,15 +36,15 @@ func (i *ItemWithMetadata) MarshalJSON() ([]byte, error) {
 	return json.Marshal(i.data)
 }
 
-func (i *ItemWithMetadata) SetField(fieldName string, value interface{}) error {
+func (i *ItemWithMetadata) SetField(fieldName string, value any) error {
 	return i.data.SetField(fieldName, value)
 }
 
-func (i *ItemWithMetadata) GetField(fieldName string) (interface{}, error) {
+func (i *ItemWithMetadata) GetField(fieldName string) (any, error) {
 	return i.data.GetField(fieldName)
 }
 
-func (i *ItemWithMetadata) Loop(iter func(string, interface{}) error) error {
+func (i *ItemWithMetadata) Loop(iter func(string, any) error) error {
 	return i.data.Loop(iter)
 }
 
@@ -60,7 +60,7 @@ func (i *ItemWithMetadata) UnmarshalJSONObject(dec *gojay.Decoder, k string) err
 		return err
 	}
 
-	var value interface{}
+	var value any
 	err = json.Unmarshal(embedded, &value)
 	if err != nil {
 		return err
