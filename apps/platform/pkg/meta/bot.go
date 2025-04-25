@@ -89,8 +89,8 @@ func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 
 type IBotParamCondition interface {
 	GetParam() string
-	GetValue() interface{}
-	GetValues() []interface{}
+	GetValue() any
+	GetValues() []any
 	GetOperator() string
 	GetType() string
 }
@@ -101,22 +101,22 @@ type IBotParam interface {
 }
 
 type BotParamCondition struct {
-	Param    string        `yaml:"param" json:"param"`
-	Value    interface{}   `yaml:"value,omitempty" json:"value"`
-	Values   []interface{} `yaml:"values,omitempty" json:"values"`
-	Type     string        `yaml:"type,omitempty" json:"type"`
-	Operator string        `yaml:"operator,omitempty" json:"operator"`
+	Param    string `yaml:"param" json:"param"`
+	Value    any    `yaml:"value,omitempty" json:"value"`
+	Values   []any  `yaml:"values,omitempty" json:"values"`
+	Type     string `yaml:"type,omitempty" json:"type"`
+	Operator string `yaml:"operator,omitempty" json:"operator"`
 }
 
 func (b BotParamCondition) GetParam() string {
 	return b.Param
 }
 
-func (b BotParamCondition) GetValue() interface{} {
+func (b BotParamCondition) GetValue() any {
 	return b.Value
 }
 
-func (b BotParamCondition) GetValues() []interface{} {
+func (b BotParamCondition) GetValues() []any {
 	return b.Values
 }
 
@@ -129,22 +129,22 @@ func (b BotParamCondition) GetOperator() string {
 }
 
 type BotParamConditionResponse struct {
-	Param    string        `json:"param"`
-	Value    interface{}   `json:"value"`
-	Values   []interface{} `json:"values"`
-	Type     string        `json:"type"`
-	Operator string        `json:"operator"`
+	Param    string `json:"param"`
+	Value    any    `json:"value"`
+	Values   []any  `json:"values"`
+	Type     string `json:"type"`
+	Operator string `json:"operator"`
 }
 
 func (b BotParamConditionResponse) GetParam() string {
 	return b.Param
 }
 
-func (b BotParamConditionResponse) GetValue() interface{} {
+func (b BotParamConditionResponse) GetValue() any {
 	return b.Value
 }
 
-func (b BotParamConditionResponse) GetValues() []interface{} {
+func (b BotParamConditionResponse) GetValues() []any {
 	return b.Values
 }
 
@@ -310,15 +310,15 @@ func (b *Bot) GetPath() string {
 	return path.Join(b.GetBasePath(), "bot.yaml")
 }
 
-func (b *Bot) SetField(fieldName string, value interface{}) error {
+func (b *Bot) SetField(fieldName string, value any) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-func (b *Bot) GetField(fieldName string) (interface{}, error) {
+func (b *Bot) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-func (b *Bot) Loop(iter func(string, interface{}) error) error {
+func (b *Bot) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(b, iter)
 }
 
@@ -345,7 +345,7 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (b *Bot) MarshalYAML() (interface{}, error) {
+func (b *Bot) MarshalYAML() (any, error) {
 	b.CollectionRef = GetLocalizedKey(b.CollectionRef, b.Namespace)
 	if b.Params != nil {
 		for i := range b.Params {
@@ -362,7 +362,7 @@ func isMultiValueOperator(operator string) bool {
 	return operator == "IN" || operator == "NOT_IN"
 }
 
-func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
+func IsParamRelevant(param IBotParam, paramValues map[string]any) bool {
 	conditions := param.GetConditions()
 	if len(conditions) < 1 {
 		return true
@@ -399,7 +399,7 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 	return true
 }
 
-func ValidateParams(params BotParams, paramValues map[string]interface{}, bundleLoader BundleLoader) error {
+func ValidateParams(params BotParams, paramValues map[string]any, bundleLoader BundleLoader) error {
 	for _, param := range params {
 
 		// Ignore validations on Params which are not relevant due to conditions
@@ -486,11 +486,11 @@ func ValidateParams(params BotParams, paramValues map[string]interface{}, bundle
 
 // ValidateParams checks validates received a map of provided bot params
 // against any bot parameter metadata defined for the Bot
-func (b *Bot) ValidateParams(params map[string]interface{}, bundleLoader BundleLoader) error {
+func (b *Bot) ValidateParams(params map[string]any, bundleLoader BundleLoader) error {
 	return ValidateParams(b.Params, params, bundleLoader)
 }
 
-func isNumericType(val interface{}) bool {
+func isNumericType(val any) bool {
 	switch val.(type) {
 	case int64, float64, int, float32, int32, int8, int16:
 		return true

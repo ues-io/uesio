@@ -14,7 +14,7 @@ func Test_getStringValue(t *testing.T) {
 
 	type args struct {
 		fieldMetadata *wire.FieldMetadata
-		value         interface{}
+		value         any
 	}
 	tests := []struct {
 		name    string
@@ -171,7 +171,7 @@ func Test_getStringValue(t *testing.T) {
 				&wire.FieldMetadata{
 					Type: "REFERENCE",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"uesio/core.id": v7UUID.String(),
 				},
 			},
@@ -184,7 +184,7 @@ func Test_getStringValue(t *testing.T) {
 				&wire.FieldMetadata{
 					Type: "MULTISELECT",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"Ready, Set, Go":                   true,
 					"\"Look at all \" these quotes \"": true,
 				},
@@ -198,7 +198,7 @@ func Test_getStringValue(t *testing.T) {
 				&wire.FieldMetadata{
 					Type: "MULTISELECT",
 				},
-				map[string]interface{}{},
+				map[string]any{},
 			},
 			"[]",
 			"",
@@ -275,7 +275,7 @@ func Test_getStringValue(t *testing.T) {
 				&wire.FieldMetadata{
 					Type: "STRUCT",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"is_accurate": true,
 					"latitude":    34.555,
 					"longitude":   -12.12,
@@ -291,13 +291,13 @@ func Test_getStringValue(t *testing.T) {
 					Type:    "MAP",
 					SubType: "STRUCT",
 				},
-				map[string]interface{}{
-					"chattanooga": map[string]interface{}{
+				map[string]any{
+					"chattanooga": map[string]any{
 						"is_accurate": false,
 						"latitude":    34.555,
 						"longitude":   -12.12,
 					},
-					"nashville": map[string]interface{}{
+					"nashville": map[string]any{
 						"is_accurate": false,
 						"latitude":    35.555,
 						"longitude":   -14.12,

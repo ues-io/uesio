@@ -11,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runGetStarterParamsBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runGetStarterParamsBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	starterTemplate, ok := params["template"]
 	if !ok {
@@ -46,7 +46,7 @@ func runGetStarterParamsBot(params map[string]interface{}, connection wire.Conne
 	}
 
 	// Figure out the right bot to use.
-	return map[string]interface{}{
+	return map[string]any{
 		"params": botParams,
 	}, nil
 }

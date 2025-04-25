@@ -46,7 +46,7 @@ func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, bs.session, bs.connection, nil)
 }
 
-func (bs *BeforeSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (bs *BeforeSaveAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, bs.session, bs.connection)
 }
 
@@ -54,6 +54,6 @@ func (bs *BeforeSaveAPI) GetConfigValue(configValueKey string) (string, error) {
 	return configstore.GetValue(configValueKey, bs.session)
 }
 
-func (bs *BeforeSaveAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (bs *BeforeSaveAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, bs.session, bs.connection)
 }

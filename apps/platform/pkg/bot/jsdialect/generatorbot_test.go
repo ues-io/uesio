@@ -83,20 +83,20 @@ func Test_MergeYAMLString(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		params      map[string]interface{}
+		params      map[string]any
 		template    string
 		response    string
 		expectedErr error
 	}{
 		{
 			name:     "Sanity",
-			params:   map[string]interface{}{},
+			params:   map[string]any{},
 			template: simple,
 			response: simple,
 		},
 		{
 			name: "Merge Value",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": "myvalue",
 			},
 			template: simpleMerge,
@@ -104,7 +104,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "DoubleMerge Value",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge":  "myvalue",
 				"mymerge2": "myvalue2",
 			},
@@ -113,13 +113,13 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name:     "Merge Value Missing",
-			params:   map[string]interface{}{},
+			params:   map[string]any{},
 			template: simpleMerge,
 			response: simpleMerge,
 		},
 		{
 			name: "Inline Merge Value",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": "myvalue",
 			},
 			template: inlineMerge,
@@ -127,7 +127,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Inline Merge Value Fail",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": list,
 			},
 			template:    inlineMerge,
@@ -136,7 +136,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "List Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": list,
 			},
 			template: simpleMerge,
@@ -144,7 +144,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Key Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"keymerge": "mykey",
 			},
 			template: keyMerge,
@@ -152,7 +152,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Merge In Component Value",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": "myvalue",
 			},
 			template: mergeInComponent,
@@ -160,7 +160,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Number Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": int64(42),
 			},
 			template: simpleMerge,
@@ -168,7 +168,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Boolean Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": true,
 			},
 			template: simpleMerge,
@@ -176,7 +176,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "Array of Strings Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": []string{"bleh", "blah"},
 			},
 			template: simpleMerge,
@@ -184,7 +184,7 @@ func Test_MergeYAMLString(t *testing.T) {
 		},
 		{
 			name: "No Value Strings Merge",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"mymerge": nil,
 			},
 			template: simpleMerge,

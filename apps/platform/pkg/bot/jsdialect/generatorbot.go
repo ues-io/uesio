@@ -40,7 +40,7 @@ func init() {
 	}
 }
 
-func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
+func NewGeneratorBotAPI(bot *meta.Bot, params map[string]any, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
 	return &GeneratorBotAPI{
 		Params: &ParamsAPI{
 			Params: params,
@@ -50,20 +50,20 @@ func NewGeneratorBotAPI(bot *meta.Bot, params map[string]interface{}, create bun
 		create:     create,
 		bot:        bot,
 		connection: connection,
-		Results:    map[string]interface{}{},
+		Results:    map[string]any{},
 	}
 }
 
 type IntegrationActionOptions struct {
-	IntegrationID string      `bot:"integration"`
-	Action        string      `bot:"action"`
-	Options       interface{} `bot:"options"`
+	IntegrationID string `bot:"integration"`
+	Action        string `bot:"action"`
+	Options       any    `bot:"options"`
 }
 
 type GeneratorBotOptions struct {
-	Namespace string                 `bot:"namespace"`
-	Name      string                 `bot:"name"`
-	Params    map[string]interface{} `bot:"params"`
+	Namespace string         `bot:"namespace"`
+	Name      string         `bot:"name"`
+	Params    map[string]any `bot:"params"`
 }
 
 type GeneratorBotAPI struct {
@@ -73,10 +73,10 @@ type GeneratorBotAPI struct {
 	create     bundlestore.FileCreator
 	session    *sess.Session
 	connection wire.Connection
-	Results    map[string]interface{}
+	Results    map[string]any
 }
 
-func (gba *GeneratorBotAPI) AddResult(key string, value interface{}) {
+func (gba *GeneratorBotAPI) AddResult(key string, value any) {
 	gba.Results[key] = value
 }
 
@@ -129,7 +129,7 @@ func (gba *GeneratorBotAPI) Sleep(ms int64) {
 	time.Sleep(time.Duration(ms) * time.Millisecond)
 }
 
-func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (map[string]interface{}, error) {
+func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (map[string]any, error) {
 	if options == nil {
 		return nil, errors.New("you must provide options to the create bundle api")
 	}
@@ -151,7 +151,7 @@ func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (m
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return map[string]any{
 		"major":       bundle.Major,
 		"minor":       bundle.Minor,
 		"patch":       bundle.Patch,
@@ -160,7 +160,7 @@ func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (m
 
 }
 
-func (gba *GeneratorBotAPI) CreateSite(options *deploy.CreateSiteOptions) (map[string]interface{}, error) {
+func (gba *GeneratorBotAPI) CreateSite(options *deploy.CreateSiteOptions) (map[string]any, error) {
 
 	if options == nil {
 		return nil, errors.New("you must provide options to the create site api")
@@ -175,13 +175,13 @@ func (gba *GeneratorBotAPI) CreateSite(options *deploy.CreateSiteOptions) (map[s
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return map[string]any{
 		"id": site.ID,
 	}, nil
 
 }
 
-func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[string]interface{}, error) {
+func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[string]any, error) {
 
 	if options == nil {
 		return nil, errors.New("you must provide options to the create user api")
@@ -190,7 +190,7 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 	if err != nil {
 		return nil, err
 	}
-	return map[string]interface{}{}, nil
+	return map[string]any{}, nil
 
 }
 
@@ -222,11 +222,11 @@ func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
 	return generated, nil
 }
 
-func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, gba.session, gba.connection)
 }
 
-func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
+func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]any) error {
 	_, err := datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
 	return err
 }
@@ -266,7 +266,7 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	return nil
 }
 
-func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOptions) ([]interface{}, error) {
+func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOptions) ([]any, error) {
 	eg := new(errgroup.Group)
 	results := []any{}
 	for _, action := range actions {
@@ -286,7 +286,7 @@ func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOpt
 	return results, nil
 }
 
-func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, gba.session.RemoveWorkspaceContext(), gba.connection)
 }
 
@@ -300,7 +300,7 @@ func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	return buf.String(), nil
 }
 
-func (gba *GeneratorBotAPI) MergeYamlString(params map[string]interface{}, templateString string) (string, error) {
+func (gba *GeneratorBotAPI) MergeYamlString(params map[string]any, templateString string) (string, error) {
 	data, err := performYamlMerge(templateString, params)
 	if err != nil {
 		return "", err
@@ -308,7 +308,7 @@ func (gba *GeneratorBotAPI) MergeYamlString(params map[string]interface{}, templ
 	return data.String(), nil
 }
 
-func (gba *GeneratorBotAPI) MergeYamlTemplate(params map[string]interface{}, templateFile string) (string, error) {
+func (gba *GeneratorBotAPI) MergeYamlTemplate(params map[string]any, templateFile string) (string, error) {
 	templateString, err := gba.GetTemplate(templateFile)
 	if err != nil {
 		return "", err
@@ -316,7 +316,7 @@ func (gba *GeneratorBotAPI) MergeYamlTemplate(params map[string]interface{}, tem
 	return gba.MergeYamlString(params, templateString)
 }
 
-func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
+func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]any, templateFile string) error {
 	templateString, err := gba.GetTemplate(templateFile)
 	if err != nil {
 		return err
@@ -344,7 +344,7 @@ func (gba *GeneratorBotAPI) AddFile(filename string, r io.Reader) error {
 	return nil
 }
 
-func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]interface{}, templateFile string) error {
+func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]any, templateFile string) error {
 	merged, err := gba.MergeYamlTemplate(params, templateFile)
 	if err != nil {
 		return err
@@ -372,7 +372,7 @@ func (gba *GeneratorBotAPI) Save(collection string, changes wire.Collection, opt
 	return botSave(collection, changes, options, gba.session, gba.connection, nil)
 }
 
-func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
+func performYamlMerge(templateString string, params map[string]any) (*bytes.Buffer, error) {
 	node, err := mergeYamlString(templateString, params)
 	if err != nil {
 		return nil, err
@@ -389,7 +389,7 @@ func performYamlMerge(templateString string, params map[string]interface{}) (*by
 	return data, nil
 }
 
-func mergeYamlString(templateString string, params map[string]interface{}) (*yaml.Node, error) {
+func mergeYamlString(templateString string, params map[string]any) (*yaml.Node, error) {
 	node := &yaml.Node{}
 	// First parse the yaml file
 	err := yaml.Unmarshal([]byte(templateString), node)
@@ -408,7 +408,7 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 
 var MERGE_REGEX = regexp.MustCompile(`\$\{(.*?)\}`)
 
-func mergeNode(node *yaml.Node, params map[string]interface{}) error {
+func mergeNode(node *yaml.Node, params map[string]any) error {
 	if node == nil || params == nil {
 		return nil
 	}

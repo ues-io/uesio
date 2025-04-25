@@ -56,15 +56,15 @@ func (c *Credential) GetBundleFolderName() string {
 	return CREDENTIAL_FOLDER_NAME
 }
 
-func (c *Credential) SetField(fieldName string, value interface{}) error {
+func (c *Credential) SetField(fieldName string, value any) error {
 	return StandardFieldSet(c, fieldName, value)
 }
 
-func (c *Credential) GetField(fieldName string) (interface{}, error) {
+func (c *Credential) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Credential) Loop(iter func(string, interface{}) error) error {
+func (c *Credential) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(c, iter)
 }
 
@@ -102,7 +102,7 @@ func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (c *Credential) MarshalYAML() (interface{}, error) {
+func (c *Credential) MarshalYAML() (any, error) {
 	// Localize metadata references within credential entries
 	c.MapEntries(localizeEntry(c.Namespace))
 	return (*CredentialWrapper)(c), nil

@@ -66,15 +66,15 @@ func (ia *IntegrationAction) GetPath() string {
 	return path.Join(nsUser, appName, integrationTypeNamespace, ia.Name) + ".yaml"
 }
 
-func (ia *IntegrationAction) SetField(fieldName string, value interface{}) error {
+func (ia *IntegrationAction) SetField(fieldName string, value any) error {
 	return StandardFieldSet(ia, fieldName, value)
 }
 
-func (ia *IntegrationAction) GetField(fieldName string) (interface{}, error) {
+func (ia *IntegrationAction) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(ia, fieldName)
 }
 
-func (ia *IntegrationAction) Loop(iter func(string, interface{}) error) error {
+func (ia *IntegrationAction) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(ia, iter)
 }
 
@@ -90,7 +90,7 @@ func (ia *IntegrationAction) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*IntegrationActionWrapper)(ia))
 }
 
-func (ia *IntegrationAction) MarshalYAML() (interface{}, error) {
+func (ia *IntegrationAction) MarshalYAML() (any, error) {
 	ia.BotRef = removeDefault(GetLocalizedKey(ia.BotRef, ia.Namespace), "")
 	return (*IntegrationActionWrapper)(ia), nil
 }

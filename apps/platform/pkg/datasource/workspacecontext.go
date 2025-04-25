@@ -35,7 +35,7 @@ func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 	queryWorkspaceForWriteFn = fn
 }
 
-func RequestWorkspaceWriteAccess(params map[string]interface{}, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
+func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
 
 	workspaceID := goutils.StringValue(params["workspaceid"])
 	workspaceName := goutils.StringValue(params["workspacename"])

@@ -14,7 +14,7 @@ import (
 )
 
 type QueryBuilder struct {
-	Values      []interface{}
+	Values      []any
 	Parts       []string
 	Conjunction string
 	Parent      *QueryBuilder
@@ -29,7 +29,7 @@ var operatorMap = map[string]string{
 
 func NewQueryBuilder() *QueryBuilder {
 	return &QueryBuilder{
-		Values: []interface{}{},
+		Values: []any{},
 		Parts:  []string{},
 	}
 }
@@ -49,7 +49,7 @@ func (qb *QueryBuilder) getBase() *QueryBuilder {
 	return qb.Parent.getBase()
 }
 
-func (qb *QueryBuilder) addValue(value interface{}) string {
+func (qb *QueryBuilder) addValue(value any) string {
 	base := qb.getBase()
 	base.Values = append(base.Values, value)
 	return "$" + strconv.Itoa(len(base.Values))

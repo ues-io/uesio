@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCreateBundleListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCreateBundleListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	options, err := deploy.NewCreateBundleOptions(params)
 	if err != nil {
@@ -18,7 +18,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection wire.C
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return map[string]any{
 		"major":       bundle.Major,
 		"minor":       bundle.Minor,
 		"patch":       bundle.Patch,

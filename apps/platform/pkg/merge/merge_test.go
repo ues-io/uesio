@@ -98,7 +98,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 		funcName string
 		data     ServerMergeData
 		template string
-		want     interface{}
+		want     any
 		wantErr  error
 	}{
 		// $Param merges
@@ -106,7 +106,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Param: missing param",
 			"Param",
 			ServerMergeData{
-				ParamValues: map[string]interface{}{},
+				ParamValues: map[string]any{},
 			},
 			"foo",
 			"",
@@ -116,7 +116,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			"Param: valid param",
 			"Param",
 			ServerMergeData{
-				ParamValues: map[string]interface{}{
+				ParamValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -255,7 +255,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			funcValue := ServerMergeFuncs[tt.funcName].(func(data ServerMergeData, m string) (interface{}, error))
+			funcValue := ServerMergeFuncs[tt.funcName].(func(data ServerMergeData, m string) (any, error))
 			actual, actualErr := funcValue(tt.data, tt.template)
 			if tt.wantErr != nil {
 				assert.Equal(t, tt.wantErr, actualErr)

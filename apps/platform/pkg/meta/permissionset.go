@@ -117,15 +117,15 @@ func (ps *PermissionSet) GetBundleFolderName() string {
 	return PERMISSIONSET_FOLDER_NAME
 }
 
-func (ps *PermissionSet) SetField(fieldName string, value interface{}) error {
+func (ps *PermissionSet) SetField(fieldName string, value any) error {
 	return StandardFieldSet(ps, fieldName, value)
 }
 
-func (ps *PermissionSet) GetField(fieldName string) (interface{}, error) {
+func (ps *PermissionSet) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(ps, fieldName)
 }
 
-func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
+func (ps *PermissionSet) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(ps, iter)
 }
 

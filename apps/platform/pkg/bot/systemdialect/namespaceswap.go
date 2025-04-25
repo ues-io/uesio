@@ -35,7 +35,7 @@ func (c *NamespaceSwapCollection) NewItem() meta.Item {
 
 func (c *NamespaceSwapCollection) SwapItem(item meta.Item) (*wire.Item, error) {
 	swappedItem := &wire.Item{}
-	err := item.Loop(func(s string, i interface{}) error {
+	err := item.Loop(func(s string, i any) error {
 		reflectValue := reflecttool.ReflectValue(i)
 		kind := reflectValue.Kind()
 		if kind == reflect.Struct {

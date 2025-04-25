@@ -87,15 +87,15 @@ func (c *ComponentVariant) GetCollection() CollectionableGroup {
 	return &ComponentVariantCollection{}
 }
 
-func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
+func (v *ComponentVariant) SetField(fieldName string, value any) error {
 	return StandardFieldSet(v, fieldName, value)
 }
 
-func (v *ComponentVariant) GetField(fieldName string) (interface{}, error) {
+func (v *ComponentVariant) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-func (c *ComponentVariant) Loop(iter func(string, interface{}) error) error {
+func (c *ComponentVariant) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(c, iter)
 }
 

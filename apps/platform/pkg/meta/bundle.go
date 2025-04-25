@@ -56,15 +56,15 @@ func (b *Bundle) GetCollection() CollectionableGroup {
 	return &BundleCollection{}
 }
 
-func (b *Bundle) SetField(fieldName string, value interface{}) error {
+func (b *Bundle) SetField(fieldName string, value any) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-func (b *Bundle) GetField(fieldName string) (interface{}, error) {
+func (b *Bundle) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-func (b *Bundle) Loop(iter func(string, interface{}) error) error {
+func (b *Bundle) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(b, iter)
 }
 

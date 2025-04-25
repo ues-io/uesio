@@ -17,15 +17,15 @@ func (l *Payment) GetCollectionName() string {
 	return PAYMENT_COLLECTION_NAME
 }
 
-func (l *Payment) SetField(fieldName string, value interface{}) error {
+func (l *Payment) SetField(fieldName string, value any) error {
 	return StandardFieldSet(l, fieldName, value)
 }
 
-func (l *Payment) GetField(fieldName string) (interface{}, error) {
+func (l *Payment) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(l, fieldName)
 }
 
-func (l *Payment) Loop(iter func(string, interface{}) error) error {
+func (l *Payment) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(l, iter)
 }
 

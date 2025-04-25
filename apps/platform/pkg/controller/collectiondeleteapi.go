@@ -53,7 +53,7 @@ func parseConditionFromQueryValue(paramName string, paramValue string) wire.Load
 		operator = getUesioOperatorFromPostgrestOperator(parts[0])
 		value = strings.Join(parts[1:], ".")
 	}
-	var useValue interface{}
+	var useValue any
 	// Special value handling
 	if operator == "IN" {
 		// PostgREST expects values to be in format:  (1,2,3)
@@ -138,8 +138,8 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getWireParamsFromRequestHeaders(r *http.Request) map[string]interface{} {
-	params := map[string]interface{}{}
+func getWireParamsFromRequestHeaders(r *http.Request) map[string]any {
+	params := map[string]any{}
 	if workspaceName := r.Header.Get("x-uesio-workspacename"); workspaceName != "" {
 		params["workspacename"] = workspaceName
 	}

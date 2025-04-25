@@ -57,11 +57,11 @@ type AuthenticationType interface {
 type AuthConnection interface {
 	Login(http.ResponseWriter, *http.Request)
 	RequestLogin(http.ResponseWriter, *http.Request)
-	Signup(*meta.SignupMethod, map[string]interface{}, string) error
-	ConfirmSignUp(*meta.SignupMethod, map[string]interface{}) error
-	ResetPassword(map[string]interface{}, bool) (*meta.LoginMethod, error)
-	ConfirmResetPassword(map[string]interface{}) (*meta.User, error)
-	CreateLogin(*meta.SignupMethod, map[string]interface{}, *meta.User) error
+	Signup(*meta.SignupMethod, map[string]any, string) error
+	ConfirmSignUp(*meta.SignupMethod, map[string]any) error
+	ResetPassword(map[string]any, bool) (*meta.LoginMethod, error)
+	ConfirmResetPassword(map[string]any) (*meta.User, error)
+	CreateLogin(*meta.SignupMethod, map[string]any, *meta.User) error
 }
 
 func GetAuthConnection(authSourceID string, connection wire.Connection, session *sess.Session) (AuthConnection, error) {
@@ -417,7 +417,7 @@ func CreateLoginMethod(loginMethod *meta.LoginMethod, connection wire.Connection
 	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
 }
 
-func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {
+func GetPayloadValue(payload map[string]any, key string) (string, error) {
 
 	value, ok := payload[key]
 	if !ok {
@@ -433,7 +433,7 @@ func GetPayloadValue(payload map[string]interface{}, key string) (string, error)
 
 }
 
-func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string, error) {
+func GetRequiredPayloadValue(payload map[string]any, key string) (string, error) {
 	value, err := GetPayloadValue(payload, key)
 	if err != nil {
 		return "", err

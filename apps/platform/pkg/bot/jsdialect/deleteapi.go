@@ -14,7 +14,7 @@ func (d *DeleteAPI) GetId() string {
 	return d.delete.IDValue
 }
 
-func (d *DeleteAPI) GetOld(fieldName string) interface{} {
+func (d *DeleteAPI) GetOld(fieldName string) any {
 	if fieldName == commonfields.Id {
 		return d.GetId()
 	}

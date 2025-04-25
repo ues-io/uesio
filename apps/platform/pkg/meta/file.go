@@ -75,15 +75,15 @@ func (f *File) GetPermChecker() *PermissionSet {
 	}
 }
 
-func (f *File) SetField(fieldName string, value interface{}) error {
+func (f *File) SetField(fieldName string, value any) error {
 	return StandardFieldSet(f, fieldName, value)
 }
 
-func (f *File) GetField(fieldName string) (interface{}, error) {
+func (f *File) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *File) Loop(iter func(string, interface{}) error) error {
+func (f *File) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(f, iter)
 }
 

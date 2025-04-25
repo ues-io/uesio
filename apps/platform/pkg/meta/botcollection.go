@@ -93,7 +93,7 @@ func (bc *BotCollection) IsDefinitionPath(path string) bool {
 	}
 }
 
-func isBotTypeMatch(botTypeFromPath string, requestedTypes interface{}) bool {
+func isBotTypeMatch(botTypeFromPath string, requestedTypes any) bool {
 	requestedTypesSlice, ok := goutils.StringSliceValue(requestedTypes)
 	if !ok {
 		return false

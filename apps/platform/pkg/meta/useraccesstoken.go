@@ -38,15 +38,15 @@ func (uat *UserAccessToken) GetBundleFolderName() string {
 	return USERACCESSTOKEN_FOLDER_NAME
 }
 
-func (uat *UserAccessToken) SetField(fieldName string, value interface{}) error {
+func (uat *UserAccessToken) SetField(fieldName string, value any) error {
 	return StandardFieldSet(uat, fieldName, value)
 }
 
-func (uat *UserAccessToken) GetField(fieldName string) (interface{}, error) {
+func (uat *UserAccessToken) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(uat, fieldName)
 }
 
-func (uat *UserAccessToken) Loop(iter func(string, interface{}) error) error {
+func (uat *UserAccessToken) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(uat, iter)
 }
 

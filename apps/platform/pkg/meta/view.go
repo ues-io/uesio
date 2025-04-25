@@ -76,15 +76,15 @@ func (v *View) GetPermChecker() *PermissionSet {
 	}
 }
 
-func (v *View) SetField(fieldName string, value interface{}) error {
+func (v *View) SetField(fieldName string, value any) error {
 	return StandardFieldSet(v, fieldName, value)
 }
 
-func (v *View) GetField(fieldName string) (interface{}, error) {
+func (v *View) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-func (v *View) Loop(iter func(string, interface{}) error) error {
+func (v *View) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(v, iter)
 }
 

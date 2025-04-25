@@ -85,7 +85,7 @@ func GetIntegrationConnection(integrationID string, session *sess.Session, conne
 
 // HydrateOptions takes loads arbitrary map[string]interface{} data into a struct.
 // It's not the prettiest or most performant approach, but it's simple.
-func HydrateOptions(optionsInput interface{}, optionsOutput interface{}) error {
+func HydrateOptions(optionsInput any, optionsOutput any) error {
 	jsonBody, err := json.Marshal(optionsInput)
 	if err != nil {
 		return err

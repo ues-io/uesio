@@ -12,7 +12,7 @@ import (
 // SetField sets the provided obj field with provided value. obj param has
 // to be a pointer to a struct, otherwise it will soundly fail. Provided
 // value type should match with the struct field you're trying to set.
-func SetField(obj interface{}, name string, value interface{}) error {
+func SetField(obj any, name string, value any) error {
 
 	structValue := reflect.ValueOf(obj).Elem()
 	structKind := structValue.Kind()
@@ -107,7 +107,7 @@ func setPointer(to reflect.Value, from reflect.Value) error {
 	fromKind := from.Kind()
 	// Special handling for strings, just set the id field.
 	if fromKind == reflect.String {
-		from = reflect.ValueOf(map[string]interface{}{
+		from = reflect.ValueOf(map[string]any{
 			commonfields.Id: from.String(),
 		})
 	}

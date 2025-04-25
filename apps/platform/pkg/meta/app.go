@@ -19,15 +19,15 @@ func (a *App) GetCollection() CollectionableGroup {
 	return &AppCollection{}
 }
 
-func (a *App) SetField(fieldName string, value interface{}) error {
+func (a *App) SetField(fieldName string, value any) error {
 	return StandardFieldSet(a, fieldName, value)
 }
 
-func (a *App) GetField(fieldName string) (interface{}, error) {
+func (a *App) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(a, fieldName)
 }
 
-func (a *App) Loop(iter func(string, interface{}) error) error {
+func (a *App) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(a, iter)
 }
 

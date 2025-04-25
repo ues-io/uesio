@@ -9,7 +9,7 @@ func TestValidateValue(t *testing.T) {
 	tests := []struct {
 		name    string
 		ff      *meta.FeatureFlag
-		value   interface{}
+		value   any
 		isValid bool
 		wantErr string
 	}{

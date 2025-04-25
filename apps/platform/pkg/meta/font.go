@@ -51,15 +51,15 @@ func (f *Font) GetPath() string {
 	return path.Join(f.Name, "font.yaml")
 }
 
-func (f *Font) SetField(fieldName string, value interface{}) error {
+func (f *Font) SetField(fieldName string, value any) error {
 	return StandardFieldSet(f, fieldName, value)
 }
 
-func (f *Font) GetField(fieldName string) (interface{}, error) {
+func (f *Font) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *Font) Loop(iter func(string, interface{}) error) error {
+func (f *Font) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(f, iter)
 }
 

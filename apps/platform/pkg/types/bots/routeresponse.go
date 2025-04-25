@@ -7,10 +7,10 @@ import "net/http"
 type RouteResponse struct {
 	StatusCode    int
 	Headers       http.Header
-	Body          interface{}
+	Body          any
 	RedirectURL   string
 	RedirectRoute string
-	Params        map[string]interface{}
+	Params        map[string]any
 }
 
 func NewRouteResponse() *RouteResponse {

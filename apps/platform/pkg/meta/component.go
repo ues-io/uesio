@@ -165,15 +165,15 @@ func (c *Component) GetBundleFolderName() string {
 	return COMPONENT_FOLDER_NAME
 }
 
-func (c *Component) SetField(fieldName string, value interface{}) error {
+func (c *Component) SetField(fieldName string, value any) error {
 	return StandardFieldSet(c, fieldName, value)
 }
 
-func (c *Component) GetField(fieldName string) (interface{}, error) {
+func (c *Component) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Component) Loop(iter func(string, interface{}) error) error {
+func (c *Component) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(c, iter)
 }
 
@@ -248,9 +248,9 @@ func (cdw *RuntimeComponentMetadata) GetType() string {
 }
 
 type PropertyDef struct {
-	Name         string      `yaml:"name" json:"name"`
-	DefaultValue interface{} `yaml:"defaultValue" json:"defaultValue"`
-	Type         string      `yaml:"type" json:"type"`
+	Name         string `yaml:"name" json:"name"`
+	DefaultValue any    `yaml:"defaultValue" json:"defaultValue"`
+	Type         string `yaml:"type" json:"type"`
 }
 
 type PropertyDefs []*PropertyDef

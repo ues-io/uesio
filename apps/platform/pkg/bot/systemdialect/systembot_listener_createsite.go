@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runCreateSiteListenerBot(params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func runCreateSiteListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	userOptions, err := deploy.NewCreateSiteOptions(params)
 	if err != nil {
@@ -28,6 +28,6 @@ func runCreateSiteListenerBot(params map[string]interface{}, connection wire.Con
 		return nil, err
 	}
 
-	return map[string]interface{}{}, nil
+	return map[string]any{}, nil
 
 }

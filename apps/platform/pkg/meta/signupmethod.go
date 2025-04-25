@@ -48,15 +48,15 @@ func (sm *SignupMethod) GetBundleFolderName() string {
 	return SIGNUPMETHOD_FOLDER_NAME
 }
 
-func (sm *SignupMethod) SetField(fieldName string, value interface{}) error {
+func (sm *SignupMethod) SetField(fieldName string, value any) error {
 	return StandardFieldSet(sm, fieldName, value)
 }
 
-func (sm *SignupMethod) GetField(fieldName string) (interface{}, error) {
+func (sm *SignupMethod) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(sm, fieldName)
 }
 
-func (sm *SignupMethod) Loop(iter func(string, interface{}) error) error {
+func (sm *SignupMethod) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(sm, iter)
 }
 
@@ -80,7 +80,7 @@ func (sm *SignupMethod) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (sm *SignupMethod) MarshalYAML() (interface{}, error) {
+func (sm *SignupMethod) MarshalYAML() (any, error) {
 	sm.AuthSource = GetLocalizedKey(sm.AuthSource, sm.Namespace)
 	sm.CreateLoginBot = GetLocalizedKey(sm.CreateLoginBot, sm.Namespace)
 	sm.SignupBot = GetLocalizedKey(sm.SignupBot, sm.Namespace)

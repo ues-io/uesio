@@ -175,7 +175,7 @@ func getRouteAPIResult(route *meta.Route, session *sess.Session) (*preload.Route
 }
 
 func getNotFoundRoute(path, namespace, err, displayButton string) *meta.Route {
-	params := map[string]interface{}{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
+	params := map[string]any{"error": err, "title": "Nothing to see here.", "icon": "😞", "displayButton": displayButton}
 	if namespace == "" {
 		namespace = "uesio/core"
 	}
@@ -192,7 +192,7 @@ func getNotFoundRoute(path, namespace, err, displayButton string) *meta.Route {
 }
 
 func GetErrorRoute(path, namespace, err string) *meta.Route {
-	params := map[string]interface{}{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
+	params := map[string]any{"error": err, "title": "Error", "icon": "🤯", "displayButton": "false"}
 	if namespace == "" {
 		namespace = "uesio/core"
 	}

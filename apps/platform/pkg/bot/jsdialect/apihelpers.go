@@ -69,7 +69,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connectio
 	return collection, nil
 }
 
-func runIntegrationAction(integrationID string, action string, options interface{}, session *sess.Session, connection wire.Connection) (interface{}, error) {
+func runIntegrationAction(integrationID string, action string, options any, session *sess.Session, connection wire.Connection) (any, error) {
 	ic, err := datasource.GetIntegrationConnection(integrationID, session, connection)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func runIntegrationAction(integrationID string, action string, options interface
 	return datasource.RunIntegrationAction(ic, action, options, connection)
 }
 
-func botCall(botKey string, params map[string]interface{}, session *sess.Session, connection wire.Connection) (map[string]interface{}, error) {
+func botCall(botKey string, params map[string]any, session *sess.Session, connection wire.Connection) (map[string]any, error) {
 	botNamespace, botName, err := meta.ParseKeyWithDefault(botKey, session.GetContextAppName())
 	if err != nil {
 		return nil, errors.New("invalid bot name provided")
@@ -180,7 +180,7 @@ func getFileUrl(sourceKey, sourcePath string) string {
 	return "/site/files/" + namespace + "/" + name + usePath
 }
 
-func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
+func mergeTemplate(file io.Writer, params map[string]any, templateString string) error {
 	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
 	if err != nil {
 		return err
@@ -188,7 +188,7 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 	return template.Execute(file, params)
 }
 
-func mergeTemplateString(templateString string, params map[string]interface{}) (string, error) {
+func mergeTemplateString(templateString string, params map[string]any) (string, error) {
 	// Create a buffer to store the output
 	var buf bytes.Buffer
 	err := mergeTemplate(&buf, params, templateString)
@@ -198,7 +198,7 @@ func mergeTemplateString(templateString string, params map[string]interface{}) (
 	return buf.String(), nil
 }
 
-func mergeTemplateFile(sourceKey, sourcePath string, params map[string]interface{}, session *sess.Session, connection wire.Connection) (string, error) {
+func mergeTemplateFile(sourceKey, sourcePath string, params map[string]any, session *sess.Session, connection wire.Connection) (string, error) {
 	templateString, err := getFileContents(sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return "", err

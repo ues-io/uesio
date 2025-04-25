@@ -14,7 +14,7 @@ func (c *ChangeAPI) GetId() string {
 	return c.change.IDValue
 }
 
-func (c *ChangeAPI) Get(fieldName string) interface{} {
+func (c *ChangeAPI) Get(fieldName string) any {
 	val, err := c.change.FieldChanges.GetField(fieldName)
 	if err != nil {
 		return c.GetOld(fieldName)
@@ -22,16 +22,16 @@ func (c *ChangeAPI) Get(fieldName string) interface{} {
 	return val
 }
 
-func (c *ChangeAPI) GetAll() map[string]interface{} {
-	allChanges := map[string]interface{}{}
-	c.change.FieldChanges.Loop(func(field string, value interface{}) error {
+func (c *ChangeAPI) GetAll() map[string]any {
+	allChanges := map[string]any{}
+	c.change.FieldChanges.Loop(func(field string, value any) error {
 		allChanges[field] = value
 		return nil
 	})
 	return allChanges
 }
 
-func (c *ChangeAPI) GetOld(fieldName string) interface{} {
+func (c *ChangeAPI) GetOld(fieldName string) any {
 	if c.change.OldValues == nil {
 		return nil
 	}
@@ -42,13 +42,13 @@ func (c *ChangeAPI) GetOld(fieldName string) interface{} {
 	return val
 }
 
-func (c *ChangeAPI) Set(fieldName string, value interface{}) {
+func (c *ChangeAPI) Set(fieldName string, value any) {
 	if err := c.change.FieldChanges.SetField(fieldName, value); err != nil {
 		c.AddFieldError(err.Error(), fieldName)
 	}
 }
 
-func (c *ChangeAPI) SetAll(record map[string]interface{}) {
+func (c *ChangeAPI) SetAll(record map[string]any) {
 	for field, value := range record {
 		c.Set(field, value)
 	}

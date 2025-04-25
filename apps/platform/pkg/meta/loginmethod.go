@@ -22,15 +22,15 @@ func (lm *LoginMethod) GetCollectionName() string {
 	return LOGINMETHOD_COLLECTION_NAME
 }
 
-func (lm *LoginMethod) SetField(fieldName string, value interface{}) error {
+func (lm *LoginMethod) SetField(fieldName string, value any) error {
 	return StandardFieldSet(lm, fieldName, value)
 }
 
-func (lm *LoginMethod) GetField(fieldName string) (interface{}, error) {
+func (lm *LoginMethod) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(lm, fieldName)
 }
 
-func (lm *LoginMethod) Loop(iter func(string, interface{}) error) error {
+func (lm *LoginMethod) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(lm, iter)
 }
 

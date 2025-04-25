@@ -62,7 +62,7 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 	}
 
 	// Make map of assignments
-	assignmentsMap := map[string]interface{}{}
+	assignmentsMap := map[string]any{}
 	for _, assignment := range *assignments {
 		assignmentsMap[assignment.Flag] = assignment.Value
 	}
@@ -118,7 +118,7 @@ func Remove(key, userID string, session *sess.Session) error {
 	return store.Remove(key, userID, session)
 }
 
-func SetValue(key string, value interface{}, userID string, session *sess.Session) error {
+func SetValue(key string, value any, userID string, session *sess.Session) error {
 	featureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func NewValidationError(msg string) *ValidationError {
 }
 
 // ValidateValue checks that the provided value is valid for the FeatureFlag definition
-func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, *ValidationError) {
+func ValidateValue(ff *meta.FeatureFlag, value any) (bool, *ValidationError) {
 	if value == nil {
 		return false, NewValidationError("no value provided")
 	}
@@ -177,7 +177,7 @@ func ValidateValue(ff *meta.FeatureFlag, value interface{}) (bool, *ValidationEr
 	}
 }
 
-func setValueInternal(cv *meta.FeatureFlag, value interface{}, userID string, session *sess.Session) error {
+func setValueInternal(cv *meta.FeatureFlag, value any, userID string, session *sess.Session) error {
 	store, err := getFeatureFlagStore("platform")
 	if err != nil {
 		return err

@@ -8,7 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func ResetPassword(ctx context.Context, authSourceID string, payload map[string]interface{}, site *meta.Site) (*meta.LoginMethod, error) {
+func ResetPassword(ctx context.Context, authSourceID string, payload map[string]any, site *meta.Site) (*meta.LoginMethod, error) {
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func ResetPassword(ctx context.Context, authSourceID string, payload map[string]
 	})
 }
 
-func ConfirmResetPassword(ctx context.Context, authSourceID string, payload map[string]interface{}, site *meta.Site) (*meta.User, error) {
+func ConfirmResetPassword(ctx context.Context, authSourceID string, payload map[string]any, site *meta.Site) (*meta.User, error) {
 
 	session, err := GetSystemSession(ctx, site, nil)
 	if err != nil {

@@ -84,10 +84,10 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 
 		if lt.AutoCreate {
 			LicenseTemplateDeps = append(LicenseTemplateDeps, &wire.Item{
-				"uesio/studio.app": map[string]interface{}{
+				"uesio/studio.app": map[string]any{
 					commonfields.UniqueKey: app,
 				},
-				"uesio/studio.applicensed": map[string]interface{}{
+				"uesio/studio.applicensed": map[string]any{
 					commonfields.UniqueKey: applicensed,
 				},
 				"uesio/studio.active":       true,

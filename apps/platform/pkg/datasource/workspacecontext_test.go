@@ -78,7 +78,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 	tests := []struct {
 		name            string
 		session         *sess.Session
-		params          map[string]interface{}
+		params          map[string]any
 		expectHasAccess bool
 		expectErr       string
 		expectKeyInfo   workspace.KeyInfo
@@ -87,21 +87,21 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		{
 			name:            "no access if not in Studio site",
 			session:         sessWithPerms(otherSite, &meta.PermissionSet{}),
-			params:          map[string]interface{}{},
+			params:          map[string]any{},
 			expectHasAccess: false,
 			expectErr:       "this site does not allow working with workspaces",
 		},
 		{
 			name:            "no access if not workspace admin",
 			session:         sessWithPerms(studioSite, &meta.PermissionSet{}),
-			params:          map[string]interface{}{},
+			params:          map[string]any{},
 			expectHasAccess: false,
 			expectErr:       "your profile does not allow you to edit workspace metadata",
 		},
 		{
 			name:    "grant access if Session already has named perm",
 			session: sessWithPerms(studioSite, wsAdminPermsWithWorkspaceIdWritePerm),
-			params: map[string]interface{}{
+			params: map[string]any{
 				"workspaceid":   ws.ID,
 				"workspacename": ws.Name,
 				"app":           app.FullName,
@@ -112,7 +112,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		{
 			name:    "grant access if Session is Studio super-admin",
 			session: sessWithPerms(studioSite, studioSuperAdminPerms),
-			params: map[string]interface{}{
+			params: map[string]any{
 				"workspaceid":   ws.ID,
 				"workspacename": ws.Name,
 				"app":           app.FullName,
@@ -123,7 +123,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		{
 			name:    "it should query the database to check if user has workspace write access",
 			session: sessWithPerms(studioSite, wsAdminPerms),
-			params: map[string]interface{}{
+			params: map[string]any{
 				"workspacename": ws.Name,
 				"app":           app.FullName,
 			},
@@ -138,7 +138,7 @@ func TestRequestWorkspaceWriteAccess(t *testing.T) {
 		{
 			name:    "it should query the database to check if user has workspace write access (no access scenario)",
 			session: sessWithPerms(studioSite, wsAdminPerms),
-			params: map[string]interface{}{
+			params: map[string]any{
 				"workspaceid": ws.ID,
 			},
 			mockWSQuery: func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {

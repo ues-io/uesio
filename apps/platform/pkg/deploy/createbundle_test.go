@@ -8,7 +8,7 @@ import (
 
 func Test_resolveBundleParameters(t *testing.T) {
 	type args struct {
-		params     map[string]interface{}
+		params     map[string]any
 		lastBundle *meta.Bundle
 	}
 	tests := []struct {
@@ -22,7 +22,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 		{
 			"no params or previous bundle",
 			args{
-				params: map[string]interface{}{},
+				params: map[string]any{},
 			},
 			0,
 			0,
@@ -37,7 +37,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"major":       2,
 					"minor":       3,
 					"patch":       "fooooo",
@@ -57,7 +57,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"major":       2,
 					"minor":       3,
 					"description": "another",
@@ -76,7 +76,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"major": 2,
 					"minor": 3,
 					"patch": 4,
@@ -95,7 +95,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"major":       2,
 					"minor":       1,
 					"patch":       1,
@@ -115,7 +115,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					// Use string values to simulate requests from the Studio UI
 					"major":       "2",
 					"minor":       "4",
@@ -136,7 +136,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"type":        "major",
 					"description": "Spring release",
 				},
@@ -154,7 +154,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"type":        "minor",
 					"description": "Spring point release",
 				},
@@ -172,7 +172,7 @@ func Test_resolveBundleParameters(t *testing.T) {
 					Minor: 2,
 					Patch: 2,
 				},
-				params: map[string]interface{}{
+				params: map[string]any{
 					"type":        "patch",
 					"description": "Nightly build",
 				},

@@ -39,15 +39,15 @@ func (b *BundleDependency) GetCollectionName() string {
 	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }
 
-func (b *BundleDependency) SetField(fieldName string, value interface{}) error {
+func (b *BundleDependency) SetField(fieldName string, value any) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
+func (b *BundleDependency) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
+func (b *BundleDependency) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(b, iter)
 }
 

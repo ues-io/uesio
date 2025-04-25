@@ -47,15 +47,15 @@ func (i *Integration) GetBundleFolderName() string {
 	return INTEGRATION_FOLDER_NAME
 }
 
-func (i *Integration) SetField(fieldName string, value interface{}) error {
+func (i *Integration) SetField(fieldName string, value any) error {
 	return StandardFieldSet(i, fieldName, value)
 }
 
-func (i *Integration) GetField(fieldName string) (interface{}, error) {
+func (i *Integration) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(i, fieldName)
 }
 
-func (i *Integration) Loop(iter func(string, interface{}) error) error {
+func (i *Integration) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(i, iter)
 }
 
@@ -72,7 +72,7 @@ func (i *Integration) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*IntegrationWrapper)(i))
 }
 
-func (i *Integration) MarshalYAML() (interface{}, error) {
+func (i *Integration) MarshalYAML() (any, error) {
 	i.Type = removeDefault(GetLocalizedKey(i.Type, i.Namespace), "")
 	i.Credentials = removeDefault(GetLocalizedKey(i.Credentials, i.Namespace), "")
 	return (*IntegrationWrapper)(i), nil

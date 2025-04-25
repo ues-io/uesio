@@ -74,15 +74,15 @@ func (cv *ConfigValue) GetPath() string {
 	return cv.Name + ".yaml"
 }
 
-func (cv *ConfigValue) SetField(fieldName string, value interface{}) error {
+func (cv *ConfigValue) SetField(fieldName string, value any) error {
 	return StandardFieldSet(cv, fieldName, value)
 }
 
-func (cv *ConfigValue) GetField(fieldName string) (interface{}, error) {
+func (cv *ConfigValue) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(cv, fieldName)
 }
 
-func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {
+func (cv *ConfigValue) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(cv, iter)
 }
 

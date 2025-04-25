@@ -25,7 +25,7 @@ type CreateUserOptions struct {
 	ForceReset   bool   `bot:"forceReset"`
 }
 
-func NewCreateUserOptions(siteID string, params map[string]interface{}) (*CreateUserOptions, error) {
+func NewCreateUserOptions(siteID string, params map[string]any) (*CreateUserOptions, error) {
 	firstName, err := param.GetRequiredString(params, "firstname")
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func CreateUser(options *CreateUserOptions, connection wire.Connection, session 
 		return nil, err
 	}
 
-	err = auth.CreateLoginWithConnection(signupMethod, map[string]interface{}{
+	err = auth.CreateLoginWithConnection(signupMethod, map[string]any{
 		"username":     options.Username,
 		"email":        options.Email,
 		"password":     options.Password,

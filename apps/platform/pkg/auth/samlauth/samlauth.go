@@ -218,18 +218,18 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectPath, http.StatusSeeOther)
 }
 
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up", nil)
 }
-func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot create a login", nil)
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }

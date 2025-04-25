@@ -8,14 +8,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
-type Item map[string]interface{}
+type Item map[string]any
 
-func (i *Item) SetField(fieldName string, value interface{}) error {
+func (i *Item) SetField(fieldName string, value any) error {
 	(*i)[fieldName] = value
 	return nil
 }
 
-func (i *Item) GetField(fieldName string) (interface{}, error) {
+func (i *Item) GetField(fieldName string) (any, error) {
 	// Split the field name into tokens
 	names := strings.Split(fieldName, constant.RefSep)
 	if len(names) == 1 {
@@ -26,7 +26,7 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 		return value, nil
 	}
 
-	var value interface{}
+	var value any
 	value = i
 
 	for _, name := range names {
@@ -52,7 +52,7 @@ func (i *Item) GetFieldAsString(fieldName string) (string, error) {
 	return valueString, nil
 }
 
-func (i *Item) Loop(iter func(string, interface{}) error) error {
+func (i *Item) Loop(iter func(string, any) error) error {
 	for key, val := range *i {
 		err := iter(key, val)
 		if err != nil {

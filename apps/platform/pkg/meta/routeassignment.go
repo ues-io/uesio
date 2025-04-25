@@ -77,15 +77,15 @@ func (r *RouteAssignment) GetBundleFolderName() string {
 	return ROUTE_ASSIGNMENT_FOLDER_NAME
 }
 
-func (r *RouteAssignment) SetField(fieldName string, value interface{}) error {
+func (r *RouteAssignment) SetField(fieldName string, value any) error {
 	return StandardFieldSet(r, fieldName, value)
 }
 
-func (r *RouteAssignment) GetField(fieldName string) (interface{}, error) {
+func (r *RouteAssignment) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(r, fieldName)
 }
 
-func (r *RouteAssignment) Loop(iter func(string, interface{}) error) error {
+func (r *RouteAssignment) Loop(iter func(string, any) error) error {
 	itemMeta := r.GetItemMeta()
 	for _, fieldName := range ROUTE_ASSIGNMENT_FIELDS {
 		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
@@ -120,7 +120,7 @@ func (r *RouteAssignment) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*RouteAssignmentWrapper)(r))
 }
 
-func (r *RouteAssignment) MarshalYAML() (interface{}, error) {
+func (r *RouteAssignment) MarshalYAML() (any, error) {
 	r.RouteRef = GetLocalizedKey(r.RouteRef, r.Namespace)
 	return (*RouteAssignmentWrapper)(r), nil
 }

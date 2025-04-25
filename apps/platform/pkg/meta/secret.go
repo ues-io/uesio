@@ -39,15 +39,15 @@ func (s *Secret) GetBundleFolderName() string {
 	return SECRET_FOLDER_NAME
 }
 
-func (s *Secret) SetField(fieldName string, value interface{}) error {
+func (s *Secret) SetField(fieldName string, value any) error {
 	return StandardFieldSet(s, fieldName, value)
 }
 
-func (s *Secret) GetField(fieldName string) (interface{}, error) {
+func (s *Secret) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(s, fieldName)
 }
 
-func (s *Secret) Loop(iter func(string, interface{}) error) error {
+func (s *Secret) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(s, iter)
 }
 

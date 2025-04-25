@@ -42,15 +42,15 @@ func (p *Profile) GetBundleFolderName() string {
 	return PROFILE_FOLDER_NAME
 }
 
-func (p *Profile) SetField(fieldName string, value interface{}) error {
+func (p *Profile) SetField(fieldName string, value any) error {
 	return StandardFieldSet(p, fieldName, value)
 }
 
-func (p *Profile) GetField(fieldName string) (interface{}, error) {
+func (p *Profile) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(p, fieldName)
 }
 
-func (p *Profile) Loop(iter func(string, interface{}) error) error {
+func (p *Profile) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(p, iter)
 }
 

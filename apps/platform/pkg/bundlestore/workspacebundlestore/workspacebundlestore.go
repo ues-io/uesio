@@ -40,8 +40,8 @@ func (fm *wsFileMeta) LastModified() *time.Time {
 	return &t
 }
 
-func getParamsFromWorkspace(workspace *meta.Workspace) map[string]interface{} {
-	return map[string]interface{}{
+func getParamsFromWorkspace(workspace *meta.Workspace) map[string]any {
+	return map[string]any{
 		"workspaceid": workspace.ID,
 	}
 }
@@ -257,7 +257,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 	for field, value := range options.Conditions {
 		// Handle multi-value conditions
 		switch typedVal := value.(type) {
-		case []interface{}, []string:
+		case []any, []string:
 			loadConditions[i] = wire.LoadRequestCondition{
 				Field:       field,
 				Values:      typedVal,

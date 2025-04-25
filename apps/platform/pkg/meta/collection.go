@@ -32,8 +32,8 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 type TokenCondition struct {
-	Field string      `yaml:"field" json:"field"`
-	Value interface{} `yaml:"value" json:"value"`
+	Field string `yaml:"field" json:"field"`
+	Value any    `yaml:"value" json:"value"`
 }
 
 type Collection struct {
@@ -76,15 +76,15 @@ func (c *Collection) GetPermChecker() *PermissionSet {
 	}
 }
 
-func (c *Collection) SetField(fieldName string, value interface{}) error {
+func (c *Collection) SetField(fieldName string, value any) error {
 	return StandardFieldSet(c, fieldName, value)
 }
 
-func (c *Collection) GetField(fieldName string) (interface{}, error) {
+func (c *Collection) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Collection) Loop(iter func(string, interface{}) error) error {
+func (c *Collection) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(c, iter)
 }
 
@@ -119,7 +119,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-func (c *Collection) MarshalYAML() (interface{}, error) {
+func (c *Collection) MarshalYAML() (any, error) {
 	c.IntegrationRef = removeDefault(GetLocalizedKey(c.IntegrationRef, c.Namespace), PLATFORM_DATA_SOURCE)
 	c.NameField = removeDefault(GetLocalizedKey(c.NameField, c.Namespace), commonfields.Id)
 	c.IdField = removeDefault(GetLocalizedKey(c.IdField, c.Namespace), commonfields.Id)

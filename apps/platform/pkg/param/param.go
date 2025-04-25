@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
-func GetRequiredString(params map[string]interface{}, paramName string) (string, error) {
+func GetRequiredString(params map[string]any, paramName string) (string, error) {
 	if paramValue, hasParam := params[paramName]; hasParam {
 		if stringValue, isString := paramValue.(string); isString {
 			return stringValue, nil
@@ -15,7 +15,7 @@ func GetRequiredString(params map[string]interface{}, paramName string) (string,
 	return "", exceptions.NewInvalidParamException("missing required parameter", paramName)
 }
 
-func GetOptionalString(params map[string]interface{}, paramName, defaultValue string) string {
+func GetOptionalString(params map[string]any, paramName, defaultValue string) string {
 	if paramValue, hasParam := params[paramName]; hasParam {
 		if stringValue, isString := paramValue.(string); isString {
 			if stringValue == "" {
@@ -27,7 +27,7 @@ func GetOptionalString(params map[string]interface{}, paramName, defaultValue st
 	return defaultValue
 }
 
-func GetBoolean(params map[string]interface{}, paramName string) bool {
+func GetBoolean(params map[string]any, paramName string) bool {
 	paramValue, hasValue := params[paramName]
 	if !hasValue {
 		return false
@@ -39,7 +39,7 @@ func GetBoolean(params map[string]interface{}, paramName string) bool {
 	return boolValue
 }
 
-func GetAsInt(m map[string]interface{}, key string) (int, bool) {
+func GetAsInt(m map[string]any, key string) (int, bool) {
 	if value, ok := m[key]; ok {
 		if intValue, isInt := value.(int); isInt {
 			return intValue, true

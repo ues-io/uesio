@@ -74,7 +74,7 @@ func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName, f
 	return nil
 }
 
-func getTimestampValue(condition wire.LoadRequestCondition) interface{} {
+func getTimestampValue(condition wire.LoadRequestCondition) any {
 	value, ok := condition.Value.(string)
 	if !ok {
 		return condition.Value

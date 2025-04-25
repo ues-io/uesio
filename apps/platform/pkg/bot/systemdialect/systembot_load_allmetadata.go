@@ -88,7 +88,7 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 
 	for _, item := range newCollection.collection {
 		newItem := op.Collection.NewItem()
-		err := item.Loop(func(s string, i interface{}) error {
+		err := item.Loop(func(s string, i any) error {
 			return newItem.SetField(s, i)
 		})
 		if err != nil {
@@ -580,7 +580,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	return nil
 }
 
-func getConditionValue(condition *wire.LoadRequestCondition) interface{} {
+func getConditionValue(condition *wire.LoadRequestCondition) any {
 	if condition.Value != nil {
 		return goutils.StringValue(condition.Value)
 	} else if condition.Values != nil {

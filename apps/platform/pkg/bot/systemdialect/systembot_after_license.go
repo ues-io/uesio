@@ -80,10 +80,10 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 
 		for _, ptc := range lptc {
 			licensePricingItemDeps = append(licensePricingItemDeps, &wire.Item{
-				"uesio/studio.app": map[string]interface{}{
+				"uesio/studio.app": map[string]any{
 					commonfields.Id: appID,
 				},
-				"uesio/studio.license": map[string]interface{}{
+				"uesio/studio.license": map[string]any{
 					commonfields.Id: licenseID,
 				},
 				"uesio/studio.metadatatype": ptc.MetadataType,

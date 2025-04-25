@@ -13,8 +13,8 @@ type Depable interface {
 }
 
 type ComponentMergeData struct {
-	ID    string      `json:"id"`
-	State interface{} `json:"state"`
+	ID    string `json:"id"`
+	State any    `json:"state"`
 }
 
 func (c *ComponentMergeData) GetKey() string {
@@ -25,7 +25,7 @@ func (c *ComponentMergeData) GetBytes() ([]byte, error) {
 	return json.Marshal(c)
 }
 
-func NewComponentMergeData(componentID string, state interface{}) Depable {
+func NewComponentMergeData(componentID string, state any) Depable {
 	return &ComponentMergeData{
 		ID:    componentID,
 		State: state,

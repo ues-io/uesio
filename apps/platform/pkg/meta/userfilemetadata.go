@@ -25,15 +25,15 @@ func (ufm *UserFileMetadata) GetCollectionName() string {
 	return USERFILEMETADATA_COLLECTION_NAME
 }
 
-func (ufm *UserFileMetadata) SetField(fieldName string, value interface{}) error {
+func (ufm *UserFileMetadata) SetField(fieldName string, value any) error {
 	return StandardFieldSet(ufm, fieldName, value)
 }
 
-func (ufm *UserFileMetadata) GetField(fieldName string) (interface{}, error) {
+func (ufm *UserFileMetadata) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(ufm, fieldName)
 }
 
-func (ufm *UserFileMetadata) Loop(iter func(string, interface{}) error) error {
+func (ufm *UserFileMetadata) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(ufm, iter)
 }
 

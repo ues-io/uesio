@@ -267,7 +267,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 	return nil
 }
 
-func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return nil, err
@@ -305,13 +305,13 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 	return false, exceptions.NewForbiddenException(fmt.Sprintf(BotAccessErrorMessage, botKey))
 }
 
-func CallListenerBotInTransaction(namespace, name string, params map[string]interface{}, session *sess.Session) (map[string]interface{}, error) {
-	return WithTransactionResult(session, nil, func(conn wire.Connection) (map[string]interface{}, error) {
+func CallListenerBotInTransaction(namespace, name string, params map[string]any, session *sess.Session) (map[string]any, error) {
+	return WithTransactionResult(session, nil, func(conn wire.Connection) (map[string]any, error) {
 		return CallListenerBot(namespace, name, params, conn, session)
 	})
 }
 
-func CallListenerBot(namespace, name string, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func CallListenerBot(namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return nil, err
@@ -376,7 +376,7 @@ func GetIntegrationActionBotName(integrationAction *meta.IntegrationAction, inte
 	return "", exceptions.NewNotFoundException("could not find bot for this integration action")
 }
 
-func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requestOptions interface{}, connection wire.Connection) (interface{}, error) {
+func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requestOptions any, connection wire.Connection) (any, error) {
 	integration := ic.GetIntegration()
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()
@@ -388,7 +388,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 	}
 
 	// convert requestOptions into a params map
-	params, isMap := requestOptions.(map[string]interface{})
+	params, isMap := requestOptions.(map[string]any)
 	if !isMap {
 		return nil, fmt.Errorf("invalid request options provided to integrationConnection action with name %s for integrationConnection %s - must be a map", actionKey, integrationKey)
 	}

@@ -84,7 +84,7 @@ func (b *DeclarativeDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, conn
 	return runSteps((*yaml.Node)(bot.Definition), botAPI)
 }
 
-func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
 	err := runSteps((*yaml.Node)(bot.Definition), botAPI)
 	if err != nil {
@@ -93,7 +93,7 @@ func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]interface{
 	return botAPI.Results, nil
 }
 
-func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]interface{}, connection wire.Connection, session *sess.Session) (map[string]interface{}, error) {
+func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return nil, errors.New("Declarative Dialect not implemented yet.")
 }
 
@@ -109,6 +109,6 @@ func (b *DeclarativeDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection 
 	return errors.New("Declarative Dialect not implemented yet.")
 }
 
-func (b *DeclarativeDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]interface{}) (interface{}, error) {
+func (b *DeclarativeDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 	return nil, errors.New("Declarative Dialect not implemented yet.")
 }

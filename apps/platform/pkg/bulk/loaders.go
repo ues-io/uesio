@@ -13,15 +13,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) string
-type loaderFunc func(change wire.Item, data interface{}) error
+type valueFunc func(data any, mapping *meta.FieldMapping, index int) string
+type loaderFunc func(change wire.Item, data any) error
 
 const InvalidTimestampError = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
 const InvalidNumberError = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
 const InvalidCheckboxError = "Invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
 		if rawVal == "" {
 			change[fieldMetadata.GetFullName()] = nil
@@ -37,7 +37,7 @@ func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.
 }
 
 func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
 		if rawVal == "" {
 			change[fieldMetadata.GetFullName()] = nil
@@ -53,17 +53,17 @@ func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire
 }
 
 func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index)
 		return nil
 	}
 }
 
 func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		value := getValue(data, mapping, index)
 		if value != "" {
-			change[fieldMetadata.GetFullName()] = map[string]interface{}{
+			change[fieldMetadata.GetFullName()] = map[string]any{
 				commonfields.UniqueKey: value,
 			}
 		}
@@ -77,7 +77,7 @@ func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wi
 //
 // Expected output: an int64 representation for a Unix Timestamp
 func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		stringValue := getValue(data, mapping, index)
 		// If there's no value, there's nothing to do
 		if stringValue == "" {
@@ -99,7 +99,7 @@ func getTimestampLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wi
 }
 
 func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		stringValue := getValue(data, mapping, index)
 		// If there's no value, there's nothing to do
 		if stringValue == "" {
@@ -117,11 +117,11 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.Fi
 
 // Struct fields are stored in DB as a JSON object
 func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
-		cleanMap := make(map[string]interface{}, len(fieldMetadata.SubFields))
+		cleanMap := make(map[string]any, len(fieldMetadata.SubFields))
 		if rawVal != "" && rawVal != "{}" {
-			var jsonVal map[string]interface{}
+			var jsonVal map[string]any
 			if err := json.Unmarshal([]byte(rawVal), &jsonVal); err != nil {
 				return errors.New("Invalid struct format: " + fieldMetadata.GetFullName() + " : " + err.Error())
 			}
@@ -142,7 +142,7 @@ func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.
 // To be concise, but also allow for nested commas/quotes within the Multiselect value,
 // we serialize to a JSON array
 func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
 		valuesMap := map[string]bool{}
 		// If there's no data, just do an early return
@@ -173,9 +173,9 @@ func getMultiSelectLoader(index int, mapping *meta.FieldMapping, fieldMetadata *
 
 // We serialize STRUCT and MAP fields to a JSON object
 func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
-		value := map[string]interface{}{}
+		value := map[string]any{}
 		// If there's no data, just use the empty map
 		if rawVal != "" && rawVal != "{}" {
 			err := json.Unmarshal([]byte(rawVal), &value)
@@ -190,9 +190,9 @@ func getMapLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.Fie
 
 // We serialize LIST fields to a JSON array
 func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change wire.Item, data interface{}) error {
+	return func(change wire.Item, data any) error {
 		rawVal := getValue(data, mapping, index)
-		value := []interface{}{}
+		value := []any{}
 		// If there's no data, just use the empty slice
 		if rawVal != "" && rawVal != "[]" {
 			err := json.Unmarshal([]byte(rawVal), &value)

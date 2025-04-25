@@ -21,18 +21,18 @@ var identFunc = func(r rune, pos int) bool {
 
 var baseLanguage = gval.NewLanguage(
 	gval.Full(),
-	gval.Function("STR_LEN", func(args ...interface{}) (interface{}, error) {
+	gval.Function("STR_LEN", func(args ...any) (any, error) {
 		length := len(args[0].(string))
 		return (float64)(length), nil
 	}),
-	gval.Function("TO_STRING", func(args ...interface{}) (interface{}, error) {
+	gval.Function("TO_STRING", func(args ...any) (any, error) {
 		if len(args) == 0 || args[0] == nil {
 			return "", nil
 		}
 		valStr := fmt.Sprint(args[0])
 		return valStr, nil
 	}),
-	gval.Function("IS_BLANK", func(args ...interface{}) (interface{}, error) {
+	gval.Function("IS_BLANK", func(args ...any) (any, error) {
 		if len(args) == 0 || args[0] == nil {
 			return true, nil
 		}
@@ -42,7 +42,7 @@ var baseLanguage = gval.NewLanguage(
 		}
 		return false, nil
 	}),
-	gval.Function("TO_NUMBER", func(args ...interface{}) (interface{}, error) {
+	gval.Function("TO_NUMBER", func(args ...any) (any, error) {
 		number := args[0]
 		int64Num, ok := number.(int64)
 		if ok {
@@ -59,7 +59,7 @@ var baseLanguage = gval.NewLanguage(
 
 		return 0, nil
 	}),
-	gval.Function("FIRST", func(args ...interface{}) (interface{}, error) {
+	gval.Function("FIRST", func(args ...any) (any, error) {
 		if len(args) == 0 || args[0] == nil {
 			return "", nil
 		}
@@ -69,7 +69,7 @@ var baseLanguage = gval.NewLanguage(
 		}
 		return valStr[0:1], nil
 	}),
-	gval.Function("NOW", func(args ...interface{}) (interface{}, error) {
+	gval.Function("NOW", func(args ...any) (any, error) {
 		return time.Now().Unix(), nil
 	}),
 )
@@ -111,7 +111,7 @@ type RuntimeEvaluator struct {
 	collectionMetadata *wire.CollectionMetadata
 }
 
-func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
+func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (any, error) {
 
 	fieldMetadata, err := re.collectionMetadata.GetField(k)
 	if err != nil {

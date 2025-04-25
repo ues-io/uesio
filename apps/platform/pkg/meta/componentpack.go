@@ -67,15 +67,15 @@ func (cp *ComponentPack) GetPath() string {
 	return path.Join(cp.Name, "pack.yaml")
 }
 
-func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
+func (cp *ComponentPack) SetField(fieldName string, value any) error {
 	return StandardFieldSet(cp, fieldName, value)
 }
 
-func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
+func (cp *ComponentPack) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(cp, fieldName)
 }
 
-func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
+func (cp *ComponentPack) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(cp, iter)
 }
 

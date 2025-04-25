@@ -186,7 +186,7 @@ func HandleReferences(
 						if err != nil {
 							return err
 						}
-						err = referenceValue.Loop(func(fieldName string, value interface{}) error {
+						err = referenceValue.Loop(func(fieldName string, value any) error {
 							return existingRefItem.SetField(fieldName, value)
 						})
 						if err != nil {

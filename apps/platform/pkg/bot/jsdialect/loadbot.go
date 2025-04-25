@@ -91,9 +91,9 @@ func (lb *LoadBotAPI) getSession() *sess.Session {
 	return lb.integrationConnection.GetSession()
 }
 
-func (lb *LoadBotAPI) GetCredentials() map[string]interface{} {
+func (lb *LoadBotAPI) GetCredentials() map[string]any {
 	if lb.integrationConnection == nil || lb.integrationConnection.GetCredentials() == nil {
-		return map[string]interface{}{}
+		return map[string]any{}
 	}
 	return lb.integrationConnection.GetCredentials().GetInterfaceMap()
 }
@@ -134,13 +134,13 @@ func (lb *LoadBotAPI) AddError(error string) {
 	lb.errors = append(lb.errors, error)
 }
 
-func (lb *LoadBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (lb *LoadBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, lb.getSession(), lb.integrationConnection.GetPlatformConnection())
 }
 
-func (lb *LoadBotAPI) AddRecord(record interface{}) {
+func (lb *LoadBotAPI) AddRecord(record any) {
 	switch typedRecord := record.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		item := lb.loadOp.Collection.NewItem()
 		for key, typedField := range typedRecord {
 			item.SetField(meta.GetFullyQualifiedKey(key, lb.bot.Namespace), typedField)

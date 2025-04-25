@@ -73,7 +73,7 @@ func getLicenseDescr(uniquekey string, labels map[string]string) (string, error)
 		return "", err
 	}
 
-	templateMergeValues := map[string]interface{}{
+	templateMergeValues := map[string]any{
 		"app": app,
 	}
 
@@ -99,7 +99,7 @@ func getLipsDescr(uniquekey string, labels map[string]string) (string, error) {
 		return "", err
 	}
 
-	templateMergeValues := map[string]interface{}{
+	templateMergeValues := map[string]any{
 		"app":          app,
 		"metadatatype": metadatatype,
 		"actiontype":   actiontype,

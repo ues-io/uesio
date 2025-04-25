@@ -57,9 +57,9 @@ type BotHttpRequest struct {
 	Headers      map[string]string `json:"headers" bot:"headers"`
 	Method       string            `json:"method" bot:"method"`
 	URL          string            `json:"url" bot:"url"`
-	Body         interface{}       `json:"body" bot:"body"`
+	Body         any               `json:"body" bot:"body"`
 	Auth         *BotHttpAuth      `json:"auth" bot:"auth"`
-	ResponseBody interface{}       `json:"-"`
+	ResponseBody any               `json:"-"`
 }
 
 func (req *BotHttpRequest) getLowerCaseHeaderMap() map[string]string {
@@ -82,7 +82,7 @@ type BotHttpResponse struct {
 	Headers map[string]string `json:"headers" bot:"headers"`
 	Code    int               `json:"code" bot:"code"`
 	Status  string            `json:"status" bot:"status"`
-	Body    interface{}       `json:"body" bot:"body"`
+	Body    any               `json:"body" bot:"body"`
 }
 
 func Unauthorized(message string) *BotHttpResponse {
@@ -141,7 +141,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 			payloadReader = strings.NewReader(payload)
 		case []byte:
 			payloadReader = bytes.NewReader(payload)
-		case map[string]interface{}, []interface{}, wire.LoadRequestBatch:
+		case map[string]any, []any, wire.LoadRequestBatch:
 
 			if strings.Contains(req.getContentType(), "x-www-form-urlencoded") {
 				qs := &form.Values{}
@@ -257,7 +257,7 @@ func (api *BotHttpAPI) setApiKeyInRequest(req *http.Request, cred *wire.Credenti
 	}
 	templateString := cred.GetEntry("locationValue", "${apikey}")
 
-	locationTemplate, err := templating.NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
+	locationTemplate, err := templating.NewWithFunc(templateString, func(m map[string]any, key string) (any, error) {
 		return cred.GetRequiredEntry(key)
 	})
 	if err != nil {
@@ -291,7 +291,7 @@ func getBotHeaders(header http.Header) map[string]string {
 
 // ParseResponseBody has two returns: one if responseBody is not nil, to be used by GO
 // and the other one if it is to be used by TS/JS the first returned argument
-func ParseResponseBody(contentType string, rawBody []byte, responseBody interface{}) (interface{}, error) {
+func ParseResponseBody(contentType string, rawBody []byte, responseBody any) (any, error) {
 
 	// responseBody may be a non-nil struct so that we can deserialize directly into specific structs.
 	if responseBody != nil {
@@ -305,10 +305,10 @@ func ParseResponseBody(contentType string, rawBody []byte, responseBody interfac
 	if strings.Contains(contentType, "/json") {
 		// If it starts with a curly brace, treat it as JSON object
 		if string(rawBody[0]) == "{" {
-			responseBody = &map[string]interface{}{}
+			responseBody = &map[string]any{}
 		} else {
 			// Otherwise, assume it's a JSON array
-			responseBody = &[]interface{}{}
+			responseBody = &[]any{}
 		}
 		err := json.NewDecoder(bytes.NewReader(rawBody)).Decode(responseBody)
 		if err != nil {

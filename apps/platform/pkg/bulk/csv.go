@@ -38,7 +38,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *wire.MetadataC
 
 	loaderFuncs := []loaderFunc{}
 
-	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+	getValue := func(data any, mapping *meta.FieldMapping, index int) string {
 		record := data.([]string)
 		return record[index]
 	}
@@ -89,7 +89,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *wire.MetadataC
 			if mapping.Value == "" {
 				return nil, errors.New("No Value Provided for mapping: " + fieldName)
 			}
-			valueGetter = func(data interface{}, mapping *meta.FieldMapping, index int) string {
+			valueGetter = func(data any, mapping *meta.FieldMapping, index int) string {
 				return mapping.Value
 			}
 		}

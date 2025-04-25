@@ -32,15 +32,15 @@ type Tag struct {
 type Route struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Type           string                 `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Path           string                 `yaml:"path,omitempty" json:"uesio/studio.path"`
-	ViewRef        string                 `yaml:"view,omitempty" json:"uesio/studio.view"`
-	BotRef         string                 `yaml:"bot,omitempty" json:"uesio/studio.bot"`
-	Redirect       string                 `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
-	Params         map[string]interface{} `yaml:"params,omitempty" json:"uesio/studio.params"`
-	ThemeRef       string                 `yaml:"theme,omitempty" json:"uesio/studio.theme"`
-	Title          string                 `yaml:"title,omitempty" json:"uesio/studio.title"`
-	Tags           []Tag                  `yaml:"tags,omitempty" json:"uesio/studio.tags"`
+	Type           string         `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Path           string         `yaml:"path,omitempty" json:"uesio/studio.path"`
+	ViewRef        string         `yaml:"view,omitempty" json:"uesio/studio.view"`
+	BotRef         string         `yaml:"bot,omitempty" json:"uesio/studio.bot"`
+	Redirect       string         `yaml:"redirect,omitempty" json:"uesio/studio.redirect"`
+	Params         map[string]any `yaml:"params,omitempty" json:"uesio/studio.params"`
+	ThemeRef       string         `yaml:"theme,omitempty" json:"uesio/studio.theme"`
+	Title          string         `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Tags           []Tag          `yaml:"tags,omitempty" json:"uesio/studio.tags"`
 
 	// Only used by Route Bots to attach additional context to the Route
 	response *bots.RouteResponse
@@ -69,15 +69,15 @@ func (r *Route) GetPermChecker() *PermissionSet {
 	}
 }
 
-func (r *Route) SetField(fieldName string, value interface{}) error {
+func (r *Route) SetField(fieldName string, value any) error {
 	return StandardFieldSet(r, fieldName, value)
 }
 
-func (r *Route) GetField(fieldName string) (interface{}, error) {
+func (r *Route) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(r, fieldName)
 }
 
-func (r *Route) Loop(iter func(string, interface{}) error) error {
+func (r *Route) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(r, iter)
 }
 
@@ -110,7 +110,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode((*RouteWrapper)(r))
 }
 
-func (r *Route) MarshalYAML() (interface{}, error) {
+func (r *Route) MarshalYAML() (any, error) {
 	r.ThemeRef = GetLocalizedKey(r.ThemeRef, r.Namespace)
 	r.ViewRef = GetLocalizedKey(r.ViewRef, r.Namespace)
 	r.BotRef = GetLocalizedKey(r.BotRef, r.Namespace)
@@ -131,7 +131,7 @@ func (r *Route) GetResponse() *bots.RouteResponse {
 
 func (r *Route) Copy() *Route {
 	newRoute := r
-	paramsCopy := map[string]interface{}{}
+	paramsCopy := map[string]any{}
 	if r.Params != nil {
 		maps.Copy(paramsCopy, r.Params)
 	}

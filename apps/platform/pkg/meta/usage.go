@@ -20,15 +20,15 @@ func (u *Usage) GetCollectionName() string {
 	return USAGE_COLLECTION_NAME
 }
 
-func (u *Usage) SetField(fieldName string, value interface{}) error {
+func (u *Usage) SetField(fieldName string, value any) error {
 	return StandardFieldSet(u, fieldName, value)
 }
 
-func (u *Usage) GetField(fieldName string) (interface{}, error) {
+func (u *Usage) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(u, fieldName)
 }
 
-func (u *Usage) Loop(iter func(string, interface{}) error) error {
+func (u *Usage) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(u, iter)
 }
 

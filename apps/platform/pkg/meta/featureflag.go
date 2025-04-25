@@ -10,14 +10,14 @@ import (
 type FeatureFlag struct {
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
-	Value          interface{} `yaml:"-" json:"-"`
-	DefaultValue   interface{} `yaml:"defaultValue" json:"uesio/studio.defaultvalue"`
-	Min            int64       `yaml:"min" json:"uesio/studio.min"`
-	Max            int64       `yaml:"max" json:"uesio/studio.max"`
-	Type           string      `yaml:"type" json:"uesio/studio.type"`
-	ValidForOrgs   bool        `yaml:"validForOrgs" json:"uesio/studio.validfororgs"`
-	User           string      `yaml:"-" json:"-"`
-	HasValue       bool        `yaml:"-" json:"-"`
+	Value          any    `yaml:"-" json:"-"`
+	DefaultValue   any    `yaml:"defaultValue" json:"uesio/studio.defaultvalue"`
+	Min            int64  `yaml:"min" json:"uesio/studio.min"`
+	Max            int64  `yaml:"max" json:"uesio/studio.max"`
+	Type           string `yaml:"type" json:"uesio/studio.type"`
+	ValidForOrgs   bool   `yaml:"validForOrgs" json:"uesio/studio.validfororgs"`
+	User           string `yaml:"-" json:"-"`
+	HasValue       bool   `yaml:"-" json:"-"`
 }
 
 type FeatureFlagWrapper FeatureFlag
@@ -63,15 +63,15 @@ func (ff *FeatureFlag) GetBundleFolderName() string {
 	return FEATUREFLAG_FOLDER_NAME
 }
 
-func (ff *FeatureFlag) SetField(fieldName string, value interface{}) error {
+func (ff *FeatureFlag) SetField(fieldName string, value any) error {
 	return StandardFieldSet(ff, fieldName, value)
 }
 
-func (ff *FeatureFlag) GetField(fieldName string) (interface{}, error) {
+func (ff *FeatureFlag) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(ff, fieldName)
 }
 
-func (ff *FeatureFlag) Loop(iter func(string, interface{}) error) error {
+func (ff *FeatureFlag) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(ff, iter)
 }
 

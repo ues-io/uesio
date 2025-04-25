@@ -137,7 +137,7 @@ func Test_Request(t *testing.T) {
 					assert.Equal(t, "200 OK", response.Status)
 					assert.Equal(t, http.StatusOK, response.Code)
 					assert.Equal(t, "application/json", response.Headers["Content-Type"])
-					if responseMap, ok := response.Body.(*map[string]interface{}); ok {
+					if responseMap, ok := response.Body.(*map[string]any); ok {
 						assert.Equal(t, "bar", (*responseMap)["foo"])
 					} else {
 						assert.Fail(t, "response is not a map[string]interface{}")
@@ -162,8 +162,8 @@ func Test_Request(t *testing.T) {
 					assert.Equal(t, "200 OK", response.Status)
 					assert.Equal(t, http.StatusOK, response.Code)
 					assert.Equal(t, "text/json", response.Headers["Content-Type"])
-					if responses, ok := response.Body.(*[]interface{}); ok {
-						if item, isMap := (*responses)[1].(map[string]interface{}); isMap {
+					if responses, ok := response.Body.(*[]any); ok {
+						if item, isMap := (*responses)[1].(map[string]any); isMap {
 							assert.Equal(t, "world", item["hello"])
 						}
 					} else {
@@ -237,7 +237,7 @@ func Test_Request(t *testing.T) {
 				request: &BotHttpRequest{
 					Method: "POST",
 					URL:    server.URL + "/user/create",
-					Body: []interface{}{
+					Body: []any{
 						"a cool",
 						"value",
 					},
@@ -264,7 +264,7 @@ func Test_Request(t *testing.T) {
 				request: &BotHttpRequest{
 					Method: "POST",
 					URL:    server.URL + "/user/create",
-					Body: map[string]interface{}{
+					Body: map[string]any{
 						"value1": "cool",
 						"value2": "cooler",
 					},
@@ -294,8 +294,8 @@ func Test_Request(t *testing.T) {
 				request: &BotHttpRequest{
 					Method: "POST",
 					URL:    server.URL + "/user/create",
-					Body: map[string]interface{}{
-						"value1": map[string]interface{}{
+					Body: map[string]any{
+						"value1": map[string]any{
 							"subvalue1": "blah",
 							"subvalue2": "woo",
 						},
@@ -362,7 +362,7 @@ func Test_Request(t *testing.T) {
 				request: &BotHttpRequest{
 					Method: "patch",
 					URL:    server.URL + "/user/111",
-					Body: map[string]interface{}{
+					Body: map[string]any{
 						"first": "Mario",
 					},
 					Headers: map[string]string{
@@ -414,7 +414,7 @@ func Test_Request(t *testing.T) {
 				request: &BotHttpRequest{
 					Method: "PUT",
 					URL:    server.URL + "/user/create",
-					Body: map[string]interface{}{
+					Body: map[string]any{
 						"favoriteFoods": []string{
 							"Mango",
 							"Pineapple",
@@ -721,7 +721,7 @@ func Test_Request(t *testing.T) {
 						assert.Equal(t, "api refresh_token", request.Form.Get("scope"))
 						expectedAuthHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte("suchclient:muchsecret"))
 						assert.Equal(t, expectedAuthHeader, request.Header.Get("Authorization"))
-						accessTokenResponse, err := json.Marshal(map[string]interface{}{
+						accessTokenResponse, err := json.Marshal(map[string]any{
 							"access_token": "abcd1234",
 							"token_type":   "bearer",
 						})
@@ -841,7 +841,7 @@ func Test_Request(t *testing.T) {
 						assert.False(t, request.Form.Has("scope"))
 						expectedAuthHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte("suchclient:muchsecret"))
 						assert.Equal(t, expectedAuthHeader, request.Header.Get("Authorization"))
-						accessTokenResponse, err := json.Marshal(map[string]interface{}{
+						accessTokenResponse, err := json.Marshal(map[string]any{
 							"access_token": "newtoken",
 							"token_type":   "bearer",
 						})

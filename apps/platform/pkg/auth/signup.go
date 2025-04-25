@@ -13,7 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func mergeTemplate(payload map[string]interface{}, usernameTemplate string) (string, error) {
+func mergeTemplate(payload map[string]any, usernameTemplate string) (string, error) {
 	template, err := templating.NewTemplateWithValidKeysOnly(usernameTemplate)
 	if err != nil {
 		return "", err
@@ -29,7 +29,7 @@ func matchesRegex(usarname string, regex string) bool {
 	return validMetaRegex.MatchString(usarname)
 }
 
-func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
+func Signup(signupMethod *meta.SignupMethod, payload map[string]any, session *sess.Session) (*meta.User, error) {
 
 	// If the Signup Method does not have self-signup enabled,
 	// then block the request, unless we are in a Site Admin context
@@ -43,7 +43,7 @@ func Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, ses
 
 }
 
-func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) (*meta.User, error) {
+func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]any, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 
 	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
 	if err != nil {
@@ -67,7 +67,7 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]in
 	return GetUserByKey(username, session, connection)
 }
 
-func ConfirmSignUp(systemSession *sess.Session, signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+func ConfirmSignUp(systemSession *sess.Session, signupMethodID string, payload map[string]any, site *meta.Site) error {
 
 	signupMethod, err := GetSignupMethod(signupMethodID, systemSession)
 	if err != nil {

@@ -28,11 +28,11 @@ func NewBotLogAPI(bot *meta.Bot, ctx context.Context) *BotLogAPI {
 
 // BotLogEntry defines a bot logging entry
 type BotLogEntry struct {
-	Sequence     uint64      `json:"sequence"`
-	BotName      string      `json:"name"`
-	BotNamespace string      `json:"namespace"`
-	Elapsed      string      `json:"elapsed"`
-	Data         interface{} `json:"data,omitempty"`
+	Sequence     uint64 `json:"sequence"`
+	BotName      string `json:"name"`
+	BotNamespace string `json:"namespace"`
+	Elapsed      string `json:"elapsed"`
+	Data         any    `json:"data,omitempty"`
 }
 
 // LogValue implements the LogValuer interface to define how this struct
@@ -58,7 +58,7 @@ func (e *BotLogEntry) LogValue() slog.Value {
 	return slog.GroupValue(attrs...)
 }
 
-func (logapi *BotLogAPI) log(level slog.Level, message string, data interface{}) {
+func (logapi *BotLogAPI) log(level slog.Level, message string, data any) {
 	elapsed := time.Since(logapi.start)
 	logEntry := BotLogEntry{
 		Elapsed:      fmt.Sprintf("%ds%dms", int64(elapsed.Seconds()), elapsed.Milliseconds()),
@@ -70,12 +70,12 @@ func (logapi *BotLogAPI) log(level slog.Level, message string, data interface{})
 	slog.Log(logapi.ctx, level, message, "bot", &logEntry)
 }
 
-func (logapi *BotLogAPI) Info(message string, data interface{}) {
+func (logapi *BotLogAPI) Info(message string, data any) {
 	logapi.log(slog.LevelInfo, message, data)
 }
-func (logapi *BotLogAPI) Warn(message string, data interface{}) {
+func (logapi *BotLogAPI) Warn(message string, data any) {
 	logapi.log(slog.LevelWarn, message, data)
 }
-func (logapi *BotLogAPI) Error(message string, data interface{}) {
+func (logapi *BotLogAPI) Error(message string, data any) {
 	logapi.log(slog.LevelError, message, data)
 }

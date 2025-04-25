@@ -35,7 +35,7 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) callListenerBot(botKey string, payload map[string]interface{}) error {
+func (c *Connection) callListenerBot(botKey string, payload map[string]any) error {
 
 	site := c.session.GetSite()
 
@@ -60,7 +60,7 @@ func (c *Connection) callListenerBot(botKey string, payload map[string]interface
 	return nil
 }
 
-func (c *Connection) Validate(payload map[string]interface{}) (*idtoken.Payload, error) {
+func (c *Connection) Validate(payload map[string]any) (*idtoken.Payload, error) {
 	token, err := auth.GetPayloadValue(payload, "credential")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("google login", err)
@@ -89,7 +89,7 @@ func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-	var loginRequest map[string]interface{}
+	var loginRequest map[string]any
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login request body", err))
@@ -103,7 +103,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	auth.LoginRedirectResponse(w, r, user, c.session)
 }
 
-func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
 	validated, err := c.Validate(payload)
 	if err != nil {
 		return nil, nil, err
@@ -111,7 +111,7 @@ func (c *Connection) DoLogin(payload map[string]interface{}) (*meta.User, *meta.
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), validated.Subject, c.connection, c.session)
 }
 
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]interface{}, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
 	validated, err := c.Validate(payload)
 	if err != nil {
 		return err
@@ -141,13 +141,13 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 
 	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
-func (c *Connection) ResetPassword(payload map[string]interface{}, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]interface{}) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
 	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
 	validated, err := c.Validate(payload)
 	if err != nil {
 		return err
@@ -159,6 +159,6 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 		SignupMethod: signupMethod.GetKey(),
 	}, c.connection, c.session)
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]interface{}) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
 	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
 }

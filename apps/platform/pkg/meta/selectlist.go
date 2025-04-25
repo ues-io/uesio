@@ -64,15 +64,15 @@ func (sl *SelectList) GetBundleFolderName() string {
 	return SELECTLIST_FOLDER_NAME
 }
 
-func (sl *SelectList) SetField(fieldName string, value interface{}) error {
+func (sl *SelectList) SetField(fieldName string, value any) error {
 	return StandardFieldSet(sl, fieldName, value)
 }
 
-func (sl *SelectList) GetField(fieldName string) (interface{}, error) {
+func (sl *SelectList) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(sl, fieldName)
 }
 
-func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
+func (sl *SelectList) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(sl, iter)
 }
 

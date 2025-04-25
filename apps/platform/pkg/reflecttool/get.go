@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/constant"
 )
 
-func ReflectValue(obj interface{}) reflect.Value {
+func ReflectValue(obj any) reflect.Value {
 	objType := reflect.TypeOf(obj)
 	if objType != nil && objType.Kind() == reflect.Ptr {
 		return reflect.ValueOf(obj).Elem()
@@ -19,7 +19,7 @@ func ReflectValue(obj interface{}) reflect.Value {
 
 // GetField returns the value of the provided obj field. obj can either
 // be a structure or pointer to structure.
-func GetField(obj interface{}, name string) (interface{}, error) {
+func GetField(obj any, name string) (any, error) {
 
 	// Split the field name into tokens
 	names := strings.SplitSeq(name, constant.RefSep)
@@ -60,7 +60,7 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 
 }
 
-func getPointer(from reflect.Value) (interface{}, error) {
+func getPointer(from reflect.Value) (any, error) {
 	if from.IsNil() {
 		return nil, nil
 	}
@@ -68,7 +68,7 @@ func getPointer(from reflect.Value) (interface{}, error) {
 	return from.Interface(), nil
 }
 
-func getFieldReflect(value reflect.Value) (interface{}, error) {
+func getFieldReflect(value reflect.Value) (any, error) {
 
 	if !value.IsValid() {
 		return nil, fmt.Errorf("No such field")

@@ -21,7 +21,7 @@ type CreateSiteOptions struct {
 	Version   string `bot:"version"`
 }
 
-func NewCreateSiteOptions(params map[string]interface{}) (*CreateSiteOptions, error) {
+func NewCreateSiteOptions(params map[string]any) (*CreateSiteOptions, error) {
 
 	subdomain, err := param.GetRequiredString(params, "subdomain")
 	if err != nil {

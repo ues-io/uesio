@@ -14,7 +14,7 @@ func Truncate(w http.ResponseWriter, r *http.Request) {
 	if err := truncate.TruncateWorkspaceData(session.GetTenantID(), session); err != nil {
 		ctlutil.HandleError(w, err)
 	} else {
-		filejson.RespondJSON(w, r, map[string]interface{}{
+		filejson.RespondJSON(w, r, map[string]any{
 			"success":     true,
 			"workspaceId": session.GetWorkspaceID(),
 		})

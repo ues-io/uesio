@@ -21,7 +21,7 @@ func Capitalize(str string) string {
 
 // StringValue returns the input interface{} as a string.
 // if the value is not a string type, the empty string is returned.
-func StringValue(v interface{}) string {
+func StringValue(v any) string {
 	if stringValue, isString := v.(string); isString {
 		return stringValue
 	}
@@ -38,11 +38,11 @@ func StringValue(v interface{}) string {
 // if the value is an []interface{}, it will cast the items to strings and create a []string.
 // if the value is a string, a []string with that value will be returned.
 // otherwise, (nil, false) is returned
-func StringSliceValue(v interface{}) ([]string, bool) {
+func StringSliceValue(v any) ([]string, bool) {
 	switch typed := v.(type) {
 	case []string:
 		return typed, true
-	case []interface{}:
+	case []any:
 		stringSlice := make([]string, len(typed))
 		for i := range typed {
 			stringSlice[i] = StringValue(typed[i])

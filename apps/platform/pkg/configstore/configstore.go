@@ -154,7 +154,7 @@ func SetValue(key, value string, session *sess.Session) error {
 }
 
 func Merge(template string, session *sess.Session) (string, error) {
-	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
+	configTemplate, err := templating.NewWithFunc(template, func(m map[string]any, key string) (any, error) {
 		return GetValue(key, session)
 	})
 	if err != nil {

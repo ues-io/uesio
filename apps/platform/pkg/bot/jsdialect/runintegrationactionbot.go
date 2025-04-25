@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]interface{}) *RunIntegrationActionBotAPI {
+func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]any) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
 		actionName: actionName,
 		LogApi:     NewBotLogAPI(bot, integrationConnection.Context()),
@@ -15,7 +15,7 @@ func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.In
 		Params: &ParamsAPI{
 			Params: params,
 		},
-		Results:               map[string]interface{}{},
+		Results:               map[string]any{},
 		integrationConnection: integrationConnection,
 	}
 }
@@ -26,7 +26,7 @@ type RunIntegrationActionBotAPI struct {
 	integrationConnection *wire.IntegrationConnection
 	LogApi                *BotLogAPI `bot:"log"`
 	Params                *ParamsAPI `bot:"params"`
-	Results               map[string]interface{}
+	Results               map[string]any
 	Errors                []string
 }
 
@@ -34,7 +34,7 @@ func (b *RunIntegrationActionBotAPI) AddError(error string) {
 	b.Errors = append(b.Errors, error)
 }
 
-func (b *RunIntegrationActionBotAPI) AddResult(key string, value interface{}) {
+func (b *RunIntegrationActionBotAPI) AddResult(key string, value any) {
 	b.Results[key] = value
 }
 
@@ -42,9 +42,9 @@ func (b *RunIntegrationActionBotAPI) GetActionName() string {
 	return b.actionName
 }
 
-func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]interface{} {
+func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]any {
 	if b.integrationConnection == nil || b.integrationConnection.GetCredentials() == nil {
-		return map[string]interface{}{}
+		return map[string]any{}
 	}
 	return b.integrationConnection.GetCredentials().GetInterfaceMap()
 }
@@ -70,7 +70,7 @@ func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
 	return NewUserAPI(b.integrationConnection.GetSession().GetContextUser())
 }
 
-func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
 }
 

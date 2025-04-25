@@ -67,15 +67,15 @@ func (l *Label) GetBundleFolderName() string {
 	return LABEL_FOLDER_NAME
 }
 
-func (l *Label) SetField(fieldName string, value interface{}) error {
+func (l *Label) SetField(fieldName string, value any) error {
 	return StandardFieldSet(l, fieldName, value)
 }
 
-func (l *Label) GetField(fieldName string) (interface{}, error) {
+func (l *Label) GetField(fieldName string) (any, error) {
 	return StandardFieldGet(l, fieldName)
 }
 
-func (l *Label) Loop(iter func(string, interface{}) error) error {
+func (l *Label) Loop(iter func(string, any) error) error {
 	return StandardItemLoop(l, iter)
 }
 

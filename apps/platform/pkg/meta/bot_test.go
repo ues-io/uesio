@@ -83,7 +83,7 @@ func TestNewGeneratorBot(t *testing.T) {
 func TestIsParamRelevant(t *testing.T) {
 	type args struct {
 		param       IBotParam
-		paramValues map[string]interface{}
+		paramValues map[string]any
 	}
 	tests := []struct {
 		name string
@@ -111,7 +111,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -129,7 +129,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{},
+				paramValues: map[string]any{},
 			},
 			false,
 		},
@@ -145,7 +145,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -163,7 +163,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{},
+				paramValues: map[string]any{},
 			},
 			true,
 		},
@@ -180,7 +180,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -199,7 +199,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -218,7 +218,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{},
+				paramValues: map[string]any{},
 			},
 			false,
 		},
@@ -234,7 +234,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -252,7 +252,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -270,7 +270,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{},
+				paramValues: map[string]any{},
 			},
 			false,
 		},
@@ -287,7 +287,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -306,7 +306,7 @@ func TestIsParamRelevant(t *testing.T) {
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "booo",
 				},
 			},
@@ -320,12 +320,12 @@ func TestIsParamRelevant(t *testing.T) {
 					Conditions: []BotParamCondition{
 						{
 							Param:    "foo",
-							Values:   []interface{}{"bar", "baz"},
+							Values:   []any{"bar", "baz"},
 							Operator: "NOT_IN",
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "jjjjjjj",
 				},
 			},
@@ -339,12 +339,12 @@ func TestIsParamRelevant(t *testing.T) {
 					Conditions: []BotParamCondition{
 						{
 							Param:    "foo",
-							Values:   []interface{}{"bar", "baz"},
+							Values:   []any{"bar", "baz"},
 							Operator: "NOT_IN",
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "baz",
 				},
 			},
@@ -358,12 +358,12 @@ func TestIsParamRelevant(t *testing.T) {
 					Conditions: []BotParamCondition{
 						{
 							Param:    "foo",
-							Values:   []interface{}{"bar", "baz"},
+							Values:   []any{"bar", "baz"},
 							Operator: "IN",
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "jjjjjjj",
 				},
 			},
@@ -377,12 +377,12 @@ func TestIsParamRelevant(t *testing.T) {
 					Conditions: []BotParamCondition{
 						{
 							Param:    "foo",
-							Values:   []interface{}{"bar", "baz"},
+							Values:   []any{"bar", "baz"},
 							Operator: "IN",
 						},
 					},
 				},
-				paramValues: map[string]interface{}{
+				paramValues: map[string]any{
 					"foo": "baz",
 				},
 			},
@@ -441,7 +441,7 @@ func TestBotCollectionPathFilter(t *testing.T) {
 			args{
 				path: "listener/add_numbers/bot.yaml",
 				conditions: BundleConditions{
-					"uesio/studio.type": []interface{}{
+					"uesio/studio.type": []any{
 						"LISTENER",
 						"GENERATOR",
 					},
@@ -577,10 +577,10 @@ func TestBot_ValidateParams(t *testing.T) {
 	tests := []struct {
 		name            string
 		params          BotParams
-		input           map[string]interface{}
+		input           map[string]any
 		wantErr         string
 		bundleLoader    BundleLoader
-		inputAssertions func(t *testing.T, input map[string]interface{})
+		inputAssertions func(t *testing.T, input map[string]any)
 	}{
 		{
 			name: "should enforce required fields",
@@ -590,7 +590,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					Required: true,
 				},
 			},
-			input:   map[string]interface{}{},
+			input:   map[string]any{},
 			wantErr: "missing required param: foo",
 		},
 		{
@@ -602,7 +602,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					Type:     "NUMBER",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "abcdef",
 			},
 			wantErr: "could not convert param to number: foo",
@@ -621,12 +621,12 @@ func TestBot_ValidateParams(t *testing.T) {
 					Type:     "NUMBER",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": 1.34,
 				"bar": "7.89",
 			},
 			wantErr: "",
-			inputAssertions: func(t *testing.T, input map[string]interface{}) {
+			inputAssertions: func(t *testing.T, input map[string]any) {
 				assert.Equalf(t, 1.34, input["foo"], "expected value for foo")
 				assert.Equalf(t, 7.89, input["bar"], "expected value for bar")
 			},
@@ -640,7 +640,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					Type:     "CHECKBOX",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "blah",
 			},
 			wantErr: "param value must either be 'true' or 'false': foo",
@@ -659,7 +659,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					Type:     "CHECKBOX",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "true",
 				"bar": "false",
 				"goo": true,
@@ -676,7 +676,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					Type:     "SELECT",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "blah",
 			},
 			wantErr: "no Select List provided for SELECT parameter: foo",
@@ -691,7 +691,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					SelectList: "luigi/some.selectlist",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "alpha",
 			},
 			wantErr: "invalid value for param: foo",
@@ -718,7 +718,7 @@ func TestBot_ValidateParams(t *testing.T) {
 					SelectList: "luigi/some.selectlist",
 				},
 			},
-			input: map[string]interface{}{
+			input: map[string]any{
 				"foo": "two",
 			},
 			wantErr: "",

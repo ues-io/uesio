@@ -10,13 +10,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]interface{}, session *sess.Session) error {
+func CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, session *sess.Session) error {
 	return datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
 		return CreateLoginWithConnection(signupMethod, payload, conn, session)
 	})
 }
 
-func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]interface{}, connection wire.Connection, session *sess.Session) error {
+func CreateLoginWithConnection(signupMethod *meta.SignupMethod, payload map[string]any, connection wire.Connection, session *sess.Session) error {
 
 	if !session.GetContextPermissions().HasNamedPermission(constant.UserAdminPerm) {
 		return errors.New("you must be a user admin to create login methods for users")

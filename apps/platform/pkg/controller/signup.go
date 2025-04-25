@@ -23,7 +23,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetSite()
 
-	var payload map[string]interface{}
+	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body", nil))
@@ -82,7 +82,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Convert all query-string params into a map of values to send to the signup confirmation method
-	if err = auth.ConfirmSignUp(systemSession, signupMethodId, map[string]interface{}{
+	if err = auth.ConfirmSignUp(systemSession, signupMethodId, map[string]any{
 		"username":         username,
 		"verificationcode": queryParams.Get("code"),
 	}, site); err != nil {

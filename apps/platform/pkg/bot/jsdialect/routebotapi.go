@@ -64,10 +64,10 @@ func NewRouteBotApi(bot *meta.Bot, route *meta.Route, request *http.Request, ses
 // RouteBotParamsAPI differs from BotParamsAPI in that params (the internal map)
 // is NOT accessible to the Bot JS code, access is only through the Get and GetAll methods
 type RouteBotParamsAPI struct {
-	params map[string]interface{}
+	params map[string]any
 }
 
-func NewRouteBotParamsAPI(params map[string]interface{}) *RouteBotParamsAPI {
+func NewRouteBotParamsAPI(params map[string]any) *RouteBotParamsAPI {
 	return &RouteBotParamsAPI{params: params}
 }
 
@@ -75,13 +75,13 @@ func (p *RouteBotParamsAPI) MarshalJSON() ([]byte, error) {
 	return json.Marshal(p.params)
 }
 
-func (p *RouteBotParamsAPI) Get(paramName string) interface{} {
+func (p *RouteBotParamsAPI) Get(paramName string) any {
 	return p.params[paramName]
 }
 
-func (p *RouteBotParamsAPI) GetAll() map[string]interface{} {
+func (p *RouteBotParamsAPI) GetAll() map[string]any {
 	// Return a copy of the map so that the bot can't modify the original
-	paramsCopy := make(map[string]interface{})
+	paramsCopy := make(map[string]any)
 	maps.Copy(paramsCopy, p.params)
 	return paramsCopy
 }
@@ -104,7 +104,7 @@ type RouteBotRequestAPI struct {
 	Method  string                 `bot:"method"`
 	Params  *RouteBotParamsAPI     `bot:"params"`
 	Headers SimpleKeyStore[string] `bot:"headers"`
-	Body    interface{}            `bot:"body"`
+	Body    any                    `bot:"body"`
 }
 
 type RouteBotResponseAPI struct {
@@ -137,7 +137,7 @@ func (r *RouteBotResponseAPI) SetStatusCode(statusCode int) {
 	}
 }
 
-func (r *RouteBotResponseAPI) SetBody(body interface{}, contentType string) {
+func (r *RouteBotResponseAPI) SetBody(body any, contentType string) {
 	r.response.Body = body
 	if contentType != "" {
 		r.response.Headers.Set("Content-Type", contentType)
@@ -176,11 +176,11 @@ func (rba *RouteBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
 	return botLoad(request, rba.session, rba.connection, nil)
 }
 
-func (rba *RouteBotAPI) RunIntegrationAction(integrationID string, action string, options interface{}) (interface{}, error) {
+func (rba *RouteBotAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
 	return runIntegrationAction(integrationID, action, options, rba.session, rba.connection)
 }
 
-func (rba *RouteBotAPI) CallBot(botKey string, params map[string]interface{}) (interface{}, error) {
+func (rba *RouteBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
 	return botCall(botKey, params, rba.session, rba.connection)
 }
 

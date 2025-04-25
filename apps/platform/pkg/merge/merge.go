@@ -13,14 +13,14 @@ import (
 type ServerMergeData struct {
 	Session     *sess.Session
 	WireData    map[string]meta.Group
-	ParamValues map[string]interface{}
+	ParamValues map[string]any
 }
 
 var AlphaUnderscore = "[a-zA-Z_]+"
 var MetadataKey = fmt.Sprintf(`%s\/%s\.%s`, AlphaUnderscore, AlphaUnderscore, AlphaUnderscore)
 var RecordMergeRegex = regexp.MustCompile(fmt.Sprintf(`(?P<wireName>%s)\:(?P<fieldName>%s|%s)`, AlphaUnderscore, MetadataKey, AlphaUnderscore))
 
-var ParamMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
+var ParamMergeFunc = func(m ServerMergeData, key string) (any, error) {
 	val, ok := m.ParamValues[key]
 	if !ok {
 		return "", nil
@@ -28,7 +28,7 @@ var ParamMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 	return val, nil
 }
 
-var UserMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
+var UserMergeFunc = func(m ServerMergeData, key string) (any, error) {
 	userInfo := m.Session.GetContextUser()
 	if userInfo == nil {
 		return nil, nil
@@ -50,7 +50,7 @@ var UserMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 	return nil, nil
 }
 
-var SiteMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
+var SiteMergeFunc = func(m ServerMergeData, key string) (any, error) {
 	siteInfo := m.Session.GetContextSite()
 	if siteInfo == nil {
 		return nil, nil
@@ -76,7 +76,7 @@ var SiteMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 	return nil, nil
 }
 
-var RecordMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
+var RecordMergeFunc = func(m ServerMergeData, key string) (any, error) {
 	// Parse the key to support the following Record data merge scenarios
 	// $Record{wireName:fieldName}
 	recordMergeParams := extractRegexParams(RecordMergeRegex, key)
@@ -123,7 +123,7 @@ var RecordMergeFunc = func(m ServerMergeData, key string) (interface{}, error) {
 	return targetValue, nil
 }
 
-var ServerMergeFuncs = map[string]interface{}{
+var ServerMergeFuncs = map[string]any{
 	"Param":  ParamMergeFunc,
 	"User":   UserMergeFunc,
 	"Site":   SiteMergeFunc,

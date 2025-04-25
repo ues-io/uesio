@@ -71,7 +71,7 @@ func TestFormulas(t *testing.T) {
 		expression     string
 		item           meta.Item
 		metadata       *wire.CollectionMetadata
-		expectedResult interface{}
+		expectedResult any
 	}{
 		{
 			"sanity",

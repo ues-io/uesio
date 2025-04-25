@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func (c *Connection) invokeModel(requestOptions map[string]interface{}) (interface{}, error) {
+func (c *Connection) invokeModel(requestOptions map[string]any) (any, error) {
 
 	options, err := hydrateOptions(requestOptions)
 	if err != nil {

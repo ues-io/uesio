@@ -28,7 +28,7 @@ func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			}
 		}
 		if userCondition.Values != nil {
-			values, ok := userCondition.Values.([]interface{})
+			values, ok := userCondition.Values.([]any)
 			if !ok {
 				return errors.New("invalid user condition value")
 			}

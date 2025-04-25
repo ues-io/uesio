@@ -198,7 +198,7 @@ func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem)
 	basePath := filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
 
 	// Add condition here so that our cache key contains it
-	filterConditions := map[string]interface{}{"attachments": "yes"}
+	filterConditions := map[string]any{"attachments": "yes"}
 	originalFilter := item.GetCollection().(meta.BundleableGroup)
 	filter := func(s string, bc meta.BundleConditions, b bool) bool {
 		// We want all files that *aren't* the definition file
