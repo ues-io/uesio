@@ -22,9 +22,9 @@ func ReflectValue(obj interface{}) reflect.Value {
 func GetField(obj interface{}, name string) (interface{}, error) {
 
 	// Split the field name into tokens
-	names := strings.Split(name, constant.RefSep)
+	names := strings.SplitSeq(name, constant.RefSep)
 
-	for _, name := range names {
+	for name := range names {
 
 		if obj == nil {
 			return nil, errors.New("invalid map value")

@@ -31,8 +31,8 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 	queryFields, ok := r.URL.Query()["fields"]
 	if ok {
 		for _, fieldList := range queryFields {
-			fieldArray := strings.Split(fieldList, ",")
-			for _, field := range fieldArray {
+			fieldArray := strings.SplitSeq(fieldList, ",")
+			for field := range fieldArray {
 				fields = append(fields, wire.LoadRequestField{
 					ID: field,
 				})

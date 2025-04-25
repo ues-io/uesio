@@ -9,6 +9,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -378,13 +380,7 @@ func IsParamRelevant(param IBotParam, paramValues map[string]interface{}) bool {
 			}
 		} else {
 			if isMultiValueOperator(operator) && len(condition.GetValues()) > 0 {
-				valueIsOneOfValues := false
-				for _, v := range condition.GetValues() {
-					if v == value {
-						valueIsOneOfValues = true
-						break
-					}
-				}
+				valueIsOneOfValues := slices.Contains(condition.GetValues(), value)
 				if operator == "NOT_IN" {
 					return !valueIsOneOfValues
 				} else {

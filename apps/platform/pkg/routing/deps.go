@@ -21,6 +21,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/translate"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
+	"maps"
+
 	yptr "github.com/zachelrath/yaml-jsonpointer"
 )
 
@@ -856,9 +858,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 	var variantPropsWithNoValue map[string]*meta.PropertyDefinition
 	if len(variantPropertyNames) > 0 {
 		variantPropsWithNoValue = make(map[string]*meta.PropertyDefinition, len(variantPropertyNames))
-		for k, v := range variantPropertyNames {
-			variantPropsWithNoValue[k] = v
-		}
+		maps.Copy(variantPropsWithNoValue, variantPropertyNames)
 	}
 
 	for i, prop := range compDefinitionMap.Content {

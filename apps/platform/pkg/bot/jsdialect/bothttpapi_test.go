@@ -900,10 +900,7 @@ func Test_Request(t *testing.T) {
 			requestAsserts = tt.args.requestAsserts
 			testInstance = t
 			countRequests = map[string]uint32{}
-			reqsToMake := 1
-			if tt.args.makeRequestNTimes > 1 {
-				reqsToMake = tt.args.makeRequestNTimes
-			}
+			reqsToMake := max(tt.args.makeRequestNTimes, 1)
 			var actualResponse *BotHttpResponse
 			for {
 				reqsToMake = reqsToMake - 1

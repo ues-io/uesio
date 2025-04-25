@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -103,14 +105,7 @@ func HandleOldValuesLookup(
 		}
 		if wire.IsReference(fieldMetadata.Type) {
 
-			isPartOfKey := false
-
-			for _, keypart := range collectionMetadata.UniqueKey {
-				if keypart == fieldID {
-					isPartOfKey = true
-					break
-				}
-			}
+			isPartOfKey := slices.Contains(collectionMetadata.UniqueKey, fieldID)
 
 			if isPartOfKey {
 				allFields = append(allFields, wire.LoadRequestField{

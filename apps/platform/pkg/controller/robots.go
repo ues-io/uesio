@@ -71,7 +71,7 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 }
 
 func writeAllowPath(w io.Writer, path string) (int, error) {
-	return w.Write([]byte(fmt.Sprintf(allowPath, path)))
+	return w.Write(fmt.Appendf(nil, allowPath, path))
 }
 
 // Adds all JS/CSS/Fonts, favicon, and vendored asset routes

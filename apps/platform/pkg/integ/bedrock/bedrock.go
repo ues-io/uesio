@@ -132,11 +132,7 @@ func hydrateOptions(requestOptions map[string]interface{}) (*InvokeModelOptions,
 
 	// Now set defaults
 	if options.MaxTokensToSample == 0 {
-		options.MaxTokensToSample = DEFAULT_TOKENS_TO_SAMPLE
-		// Set a hard limit
-		if options.MaxTokensToSample > MAX_TOKENS_TO_SAMPLE {
-			options.MaxTokensToSample = MAX_TOKENS_TO_SAMPLE
-		}
+		options.MaxTokensToSample = min(DEFAULT_TOKENS_TO_SAMPLE, MAX_TOKENS_TO_SAMPLE)
 	}
 
 	return options, nil

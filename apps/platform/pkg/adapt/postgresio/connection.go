@@ -87,7 +87,7 @@ func (c *Connection) SendBatch(batch *pgx.Batch) error {
 	results := c.GetClient().SendBatch(c.ctx, batch)
 
 	execCount := batch.Len()
-	for i := 0; i < execCount; i++ {
+	for range execCount {
 		_, err := results.Exec()
 		if err != nil {
 			results.Close()
