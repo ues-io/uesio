@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 
@@ -101,8 +100,8 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 	} else {
 		respondFile(w, r, &FileRequest{
-			Path:         userFile.Path,
-			LastModified: time.Unix(userFile.UpdatedAt, 0),
+			Path:         userFile.Path(),
+			LastModified: userFile.LastModified(),
 			Namespace:    "",
 			Version:      version,
 		}, bytes.NewReader(buf.Bytes()))
@@ -129,8 +128,8 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, err)
 	} else {
 		respondFile(w, r, &FileRequest{
-			Path:         userFile.Path,
-			LastModified: time.Unix(userFile.UpdatedAt, 0),
+			Path:         userFile.Path(),
+			LastModified: userFile.LastModified(),
 			Namespace:    "",
 			Version:      version,
 		}, bytes.NewReader(buf.Bytes()))

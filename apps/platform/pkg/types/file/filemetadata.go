@@ -9,7 +9,7 @@ import (
 
 type Metadata interface {
 	ContentLength() int64
-	LastModified() *time.Time
+	LastModified() time.Time
 	Path() string
 }
 
@@ -19,10 +19,10 @@ type MetadataWrapper struct {
 
 func (m MetadataWrapper) MarshalJSON() ([]byte, error) {
 	type metadataJSON struct {
-		FileSize int64      `json:"filesize"`
-		Path     string     `json:"path"`
-		Modified *time.Time `json:"modified"`
-		MimeType string     `json:"mimetype"`
+		FileSize int64     `json:"filesize"`
+		Path     string    `json:"path"`
+		Modified time.Time `json:"modified"`
+		MimeType string    `json:"mimetype"`
 	}
 
 	filePath := m.Metadata.Path()

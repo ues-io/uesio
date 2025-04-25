@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -18,27 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
-
-type wsFileMeta struct {
-	userFileMeta *meta.UserFileMetadata
-}
-
-func newWorkspaceFileMeta(info *meta.UserFileMetadata) file.Metadata {
-	return &wsFileMeta{info}
-}
-
-func (fm *wsFileMeta) ContentLength() int64 {
-	return fm.userFileMeta.ContentLength
-}
-
-func (fm *wsFileMeta) Path() string {
-	return fm.userFileMeta.Path
-}
-
-func (fm *wsFileMeta) LastModified() *time.Time {
-	t := time.Unix(fm.userFileMeta.UpdatedAt, 0)
-	return &t
-}
 
 func getParamsFromWorkspace(workspace *meta.Workspace) map[string]any {
 	return map[string]any{
@@ -323,7 +301,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	if err != nil {
 		return nil, err
 	}
-	return newWorkspaceFileMeta(userFileMetadata), nil
+	return userFileMetadata, nil
 }
 
 func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
@@ -357,7 +335,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 	}
 	paths := make([]file.Metadata, userFiles.Len())
 	for i, ufm := range *userFiles {
-		paths[i] = newWorkspaceFileMeta(ufm)
+		paths[i] = ufm
 	}
 	return paths, nil
 }
@@ -369,7 +347,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	}
 
 	for _, ufm := range *userFiles {
-		f, err := creator(ufm.Path)
+		f, err := creator(ufm.Path())
 		if err != nil {
 			return err
 		}

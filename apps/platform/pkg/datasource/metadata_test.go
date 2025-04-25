@@ -6,18 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 func TestGetFieldMetadata(t *testing.T) {
-	session := &sess.Session{}
-	site := &meta.Site{}
-	session.SetSiteSession(sess.NewSiteSession(site, &meta.User{}))
-	session.SetLabels(map[string]string{
-		"luigi/foo.bar": "Bar",
-		"luigi/foo.baz": "Baz",
-	})
 	builtIn := meta.BuiltIn{}
 	bundleableBase := meta.BundleableBase{
 		Name:      "fieldname",
@@ -206,7 +198,7 @@ func TestGetFieldMetadata(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, GetFieldMetadata(tt.input, session), "GetFieldMetadata(%v)", tt.input)
+			assert.Equalf(t, tt.want, GetFieldMetadata(tt.input), "GetFieldMetadata(%v)", tt.input)
 		})
 	}
 }
