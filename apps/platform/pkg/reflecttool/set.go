@@ -40,7 +40,7 @@ func setSlice(to reflect.Value, from reflect.Value) error {
 	if fromKind != reflect.Slice {
 		return fmt.Errorf("Cannot set kind: %s to slice", fromKind)
 	}
-	for i := 0; i < from.Len(); i++ {
+	for i := range from.Len() {
 		newItem := reflect.Indirect(reflect.New(itemType))
 		err := setFieldReflect(newItem, from.Index(i).Elem())
 		if err != nil {

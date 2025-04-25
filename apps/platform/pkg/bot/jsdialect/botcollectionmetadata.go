@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"maps"
+
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -82,8 +84,6 @@ func (cm *BotCollectionMetadata) GetFieldMetadata(fieldName string) *wire.FieldM
 func (cm *BotCollectionMetadata) GetAllFieldMetadata() map[string]*wire.FieldMetadata {
 	// Clone the map to prevent it being messed with by bots
 	cloned := map[string]*wire.FieldMetadata{}
-	for k, v := range cm.fields {
-		cloned[k] = v
-	}
+	maps.Copy(cloned, cm.fields)
 	return cloned
 }

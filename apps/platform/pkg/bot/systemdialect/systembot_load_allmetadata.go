@@ -7,6 +7,8 @@ import (
 
 	"github.com/teris-io/shortid"
 
+	"maps"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -374,9 +376,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 				if err != nil {
 					return err
 				}
-				for k, v := range groupingConditions {
-					conditions[k] = v
-				}
+				maps.Copy(conditions, groupingConditions)
 			} else {
 				conditions[condition.Field] = getConditionValue(&condition)
 			}

@@ -94,10 +94,7 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 
 	// Chunk the messages to avoid hitting the max Postgres NOTIFY size limit
 	for i := 0; i < totalChangedKeys; i += itemsPerChunk {
-		end := i + maxItemsPerChunk
-		if end > totalChangedKeys {
-			end = totalChangedKeys
-		}
+		end := min(i+maxItemsPerChunk, totalChangedKeys)
 		useWorkspaceId := wsAccessResult.GetWorkspaceID()
 		if wsAccessResult.IsSiteAdmin() {
 			useWorkspaceId = changedWorkspaceIds[i]
