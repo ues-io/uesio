@@ -7,6 +7,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
@@ -143,13 +145,7 @@ func DoesItemMeetBundleConditions(item meta.BundleableItem, conditions meta.Bund
 		}
 		switch conditionVal := conditionDef.(type) {
 		case []interface{}:
-			foundMatch := false
-			for i := range conditionVal {
-				if conditionVal[i] == fieldValue {
-					foundMatch = true
-					break
-				}
-			}
+			foundMatch := slices.Contains(conditionVal, fieldValue)
 			if !foundMatch {
 				return false
 			}

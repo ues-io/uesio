@@ -3,6 +3,8 @@ package datasource
 import (
 	"fmt"
 
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -232,12 +234,9 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 
 		// We don't care about read tokens here because we're doing a write
 		if isReadWrite {
-			for _, userToken := range flatTokens {
-				if token == userToken {
-					//fmt.Println("GRANTED BASED ON TOKEN: " + challengeMetadata.GetFullName() + " MATCHING " + token)
-					hasToken = true
-					break
-				}
+			if slices.Contains(flatTokens, token) {
+				//fmt.Println("GRANTED BASED ON TOKEN: " + challengeMetadata.GetFullName() + " MATCHING " + token)
+				hasToken = true
 			}
 		}
 	}

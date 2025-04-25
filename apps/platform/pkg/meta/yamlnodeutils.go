@@ -7,6 +7,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"slices"
+
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -82,7 +84,7 @@ func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
 	contentSize := len(node.Content) / 2
 	nodes := make([]NodePair, contentSize)
 
-	for i := 0; i < contentSize; i++ {
+	for i := range contentSize {
 		j := i * 2
 		nodes[i] = NodePair{
 			Node: node.Content[j+1],
@@ -124,7 +126,7 @@ func pickNodeFromMap(node *yaml.Node, property string) *yaml.Node {
 		return nil
 	}
 	// delete key and value nodes
-	node.Content = append(node.Content[:index], node.Content[index+2:]...)
+	node.Content = slices.Delete(node.Content, index, index+2)
 	return keyNode
 }
 

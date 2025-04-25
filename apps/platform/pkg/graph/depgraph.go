@@ -3,6 +3,8 @@ package graph
 import (
 	"errors"
 
+	"maps"
+
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 )
 
@@ -10,9 +12,7 @@ type NodeSet[T comparable] map[T]bool
 
 func (ns NodeSet[T]) Clone() NodeSet[T] {
 	out := make(NodeSet[T], len(ns))
-	for k, v := range ns {
-		out[k] = v
-	}
+	maps.Copy(out, ns)
 	return out
 }
 
