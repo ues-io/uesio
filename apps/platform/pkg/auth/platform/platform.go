@@ -57,7 +57,7 @@ var tests = []PasswordTest{
 	{"[A-Z]", "password must have at least 1 upper case character"},
 	{"[0-9]", "password must have at least 1 number"},
 	{"[" + regexp.QuoteMeta(PasswordPolicyAllowedSymbols) + "]",
-		fmt.Sprintf("password must have at least 1 special character: %s", PasswordPolicyAllowedSymbols)},
+		"password must have at least 1 special character: " + PasswordPolicyAllowedSymbols},
 }
 
 // NOTE: Hypen must be at beginning or end of the list to avoid being treated as a range when used in regex.

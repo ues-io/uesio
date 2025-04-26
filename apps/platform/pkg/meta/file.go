@@ -98,7 +98,7 @@ func (f *File) UnmarshalYAML(node *yaml.Node) error {
 	// Backwards compatibility
 	oldFileNameProperty := GetNodeValueAsString(node, "fileName")
 	if oldFileNameProperty != "" {
-		f.Path = fmt.Sprintf("file/%s", oldFileNameProperty)
+		f.Path = "file/" + oldFileNameProperty
 	}
 	return node.Decode((*FileWrapper)(f))
 }

@@ -228,7 +228,7 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 
 	case "IS_BLANK":
 		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
-			builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
+			builder.addQueryPart(fieldName + " IS NULL")
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NULL) OR (%s = 'null') OR (%s = ''))", fieldName, fieldName, fieldName))
 		} else if fieldType == "STRUCT" {
@@ -238,7 +238,7 @@ func processValueCondition(condition wire.LoadRequestCondition, collectionMetada
 		}
 	case "IS_NOT_BLANK":
 		if fieldType == "CHECKBOX" || fieldType == "TIMESTAMP" {
-			builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
+			builder.addQueryPart(fieldName + " IS NOT NULL")
 		} else if isTextType {
 			builder.addQueryPart(fmt.Sprintf("((%s IS NOT NULL) AND (%s != 'null') AND (%s != ''))", fieldName, fieldName, fieldName))
 		} else if fieldType == "STRUCT" {

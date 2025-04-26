@@ -64,7 +64,7 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 
 	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for app " + appName)
 	}
 
 	major, minor, patch, err := meta.ParseVersionString(version)

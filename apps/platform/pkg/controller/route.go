@@ -282,7 +282,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 func getErrorResponse(err error, statusCode int) *errorResponse {
 	resp := &errorResponse{
 		Code:   statusCode,
-		Status: strings.Replace(http.StatusText(statusCode), fmt.Sprintf("%d", statusCode), "", 1),
+		Status: strings.Replace(http.StatusText(statusCode), strconv.Itoa(statusCode), "", 1),
 		Error:  err.Error(),
 	}
 	var paramException *exceptions.InvalidParamException

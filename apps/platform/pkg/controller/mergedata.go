@@ -113,7 +113,7 @@ func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMe
 		// NON-system bundles
 		if namespace == site.App {
 			// If requested namespace is the app's name, use the site version
-			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+			siteBundleVersion = "/" + site.Version
 		} else if site.Dependencies != nil {
 			// For all other deps, use the site's declared bundle dependency version,
 			// which SHOULD be present (otherwise how are they using it...)
@@ -130,7 +130,7 @@ func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMe
 			siteBundleVersion = fmt.Sprintf("/%d", modstamp)
 		} else if site.Version != "" {
 			// Final fallback --- use site version
-			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+			siteBundleVersion = "/" + site.Version
 		}
 	}
 

@@ -165,14 +165,14 @@ func processConditions(
 			}
 
 			if lookupOp == nil {
-				return nil, exceptions.NewBadRequestException(fmt.Sprintf("Could not find lookup wire: %s", condition.LookupWire), nil)
+				return nil, exceptions.NewBadRequestException("Could not find lookup wire: "+condition.LookupWire, nil)
 			}
 
 			values := make([]any, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
-					return exceptions.NewBadRequestException(fmt.Sprintf("could not get value of specific Lookup field from record: %s", condition.LookupField), nil)
+					return exceptions.NewBadRequestException("could not get value of specific Lookup field from record: "+condition.LookupField, nil)
 				}
 				values = append(values, value)
 				return nil
@@ -188,7 +188,7 @@ func processConditions(
 				condition.Operator = "IN"
 			}
 			if condition.Operator != "IN" && condition.Operator != "NOT_IN" {
-				return nil, exceptions.NewBadRequestException(fmt.Sprintf("invalid operator for lookup condition, must be one of [IN, NOT_IN]: %s", condition.Operator), nil)
+				return nil, exceptions.NewBadRequestException("invalid operator for lookup condition, must be one of [IN, NOT_IN]: "+condition.Operator, nil)
 			}
 		}
 		useConditions = append(useConditions, condition)
@@ -382,10 +382,10 @@ func getMetadataForConditionLoad(
 	if condition.ValueSource == "LOOKUP" {
 
 		if condition.LookupWire == "" {
-			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupWire is required")
+			return errors.New("invalid condition with valueSource 'LOOKUP': lookupWire is required")
 		}
 		if condition.LookupField == "" {
-			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupField is required")
+			return errors.New("invalid condition with valueSource 'LOOKUP': lookupField is required")
 		}
 
 		// Look through the previous wires to find the one to look up on.

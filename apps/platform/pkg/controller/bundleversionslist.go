@@ -101,7 +101,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		}
 		responses = append(responses, BundleVersionsListResponse{
 			Description: goutils.StringValue(description),
-			Version:     fmt.Sprintf("v%s", goutils.StringValue(version)),
+			Version:     "v" + goutils.StringValue(version),
 		})
 		return nil
 	}); err != nil {

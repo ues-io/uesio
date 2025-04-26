@@ -249,7 +249,7 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceID, commonfields.Id, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it")
+		return nil, errors.New("could not get workspace context: workspace does not exist or you don't have access to modify it")
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }

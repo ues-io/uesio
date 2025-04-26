@@ -534,7 +534,7 @@ func getParamDef(p *BotParam) (typeOutput, importOutput string, err error) {
 	}
 	typeOutput, importOutput, err = getTSTypeNameForParam(p)
 	if err != nil {
-		return "", "", exceptions.NewBadRequestException(fmt.Sprintf("Could not generate type for parameter: %s", p.Name), err)
+		return "", "", exceptions.NewBadRequestException("Could not generate type for parameter: "+p.Name, err)
 	}
 	// example: "foo: string", "bar?: number", "baz: CustomType"
 	typeOutput = p.Name + joiner + typeOutput

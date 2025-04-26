@@ -161,10 +161,10 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	// OAuth routes
 	sr.HandleFunc("/oauth2/callback", oauth.Callback).Methods(http.MethodGet)
-	wr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
-	sr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
-	sa.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
-	vr.HandleFunc(fmt.Sprintf("/oauth2/authorize/%s", itemParam), oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	wr.HandleFunc("/oauth2/authorize/"+itemParam, oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sr.HandleFunc("/oauth2/authorize/"+itemParam, oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	sa.HandleFunc("/oauth2/authorize/"+itemParam, oauth.GetRedirectMetadata).Methods(http.MethodGet)
+	vr.HandleFunc("/oauth2/authorize/"+itemParam, oauth.GetRedirectMetadata).Methods(http.MethodGet)
 	if env.InDevMode() {
 		// Add a mock oauth2 token server for testing. Someday this could be a real server
 		// but for now we just need it for integration tests
@@ -204,12 +204,12 @@ func serve(cmd *cobra.Command, args []string) error {
 	sa.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 
 	// Bot routes for site and workspace context
-	callBotPath := fmt.Sprintf("/bots/call/%s", itemParam)
+	callBotPath := "/bots/call/" + itemParam
 	sr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 	wr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 	sa.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 
-	botParamPath := fmt.Sprintf("/bots/params/{type}/%s", itemParam)
+	botParamPath := "/bots/params/{type}/" + itemParam
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
@@ -217,27 +217,27 @@ func serve(cmd *cobra.Command, args []string) error {
 	wr.HandleFunc("/retrieve/types", controller.RetrieveAppTypes).Methods(http.MethodGet)
 
 	// Run Integration Action routes for site and workspace context
-	runIntegrationActionPath := fmt.Sprintf("/integrationactions/run/%s", itemParam)
-	describeActionsPath := fmt.Sprintf("/integrationactions/describe/%s", itemParam)
+	runIntegrationActionPath := "/integrationactions/run/" + itemParam
+	describeActionsPath := "/integrationactions/describe/" + itemParam
 	sr.HandleFunc(runIntegrationActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
 	wr.HandleFunc(runIntegrationActionPath, controller.RunIntegrationAction).Methods(http.MethodPost)
 	wr.HandleFunc(describeActionsPath, controller.DescribeIntegrationAction).Methods(http.MethodGet)
 
-	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)
+	viewParamPath := "/views/params/" + itemParam
 	wr.HandleFunc(viewParamPath, controller.GetViewParams).Methods(http.MethodGet)
-	routeParamPath := fmt.Sprintf("/routes/params/%s", itemParam)
+	routeParamPath := "/routes/params/" + itemParam
 	wr.HandleFunc(routeParamPath, controller.GetRouteParams).Methods(http.MethodGet)
 
 	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
 
 	// Versioned file serving routes
-	versionedFilesPath := fmt.Sprintf("/files/%s", versionedItemParam)
+	versionedFilesPath := "/files/" + versionedItemParam
 	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Un-versioned file serving routes - for backwards compatibility, and for local development
-	filesPath := fmt.Sprintf("/files/%s", itemParam)
+	filesPath := "/files/" + itemParam
 	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 
@@ -253,12 +253,12 @@ func serve(cmd *cobra.Command, args []string) error {
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
 	sr.HandleFunc(serveRoutePath, controller.ServeRoute)
 	wr.HandleFunc(serveRoutePath, controller.ServeRoute)
-	serveRouteByKey := fmt.Sprintf("/r/%s", itemParam)
+	serveRouteByKey := "/r/" + itemParam
 	sr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
 	wr.HandleFunc(serveRouteByKey, controller.ServeRouteByKey)
 
 	// Route navigation apis for site and workspace context for collection based route assignments
-	collectionRouteAssignmentPath := fmt.Sprintf("/routes/assignment/{viewtype}/collection/%s", itemParam)
+	collectionRouteAssignmentPath := "/routes/assignment/{viewtype}/collection/" + itemParam
 	sr.HandleFunc(collectionRouteAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
 	wr.HandleFunc(collectionRouteAssignmentPath, controller.RouteAssignment).Methods(http.MethodGet)
 	sr.HandleFunc(collectionRouteAssignmentPath+"/{id}", controller.RouteAssignment).Methods(http.MethodGet)
@@ -276,7 +276,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc(pathRoutePath, controller.RouteByPath).Methods(http.MethodGet)
 	wr.HandleFunc(pathRoutePath, controller.RouteByPath).Methods(http.MethodGet)
 
-	routeByKey := fmt.Sprintf("/routes/key/%s", itemParam)
+	routeByKey := "/routes/key/" + itemParam
 	sr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 	wr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 
@@ -284,7 +284,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	componentPackFileSuffix := "/{filename:[a-zA-Z0-9\\-_]+\\.(?:json|js|xml|txt|css){1}(?:\\.map)?}"
 
 	// Versioned component pack file routes
-	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
+	versionedComponentPackPath := "/componentpacks/" + versionedItemParam
 
 	versionedComponentPackFinal := versionedComponentPackPath + componentPackFileSuffix
 
@@ -293,7 +293,7 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	fontFileSuffix := "/{filename:.*}"
 
-	fontPath := fmt.Sprintf("/fonts/%s", versionedItemParam)
+	fontPath := "/fonts/" + versionedItemParam
 
 	fontFinal := fontPath + fontFileSuffix
 
@@ -314,7 +314,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	vr.HandleFunc(metadataRetrievePath, controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
-	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
+	collectionMetadataPath := "/collections/meta/" + collectionParam
 	wr.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodGet)
 	sa.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodGet)
 
@@ -334,7 +334,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	sa.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 	vr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
 
-	itemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/list/%s", groupingParam)
+	itemListPathWithGrouping := "/metadata/types/{type}/list/" + groupingParam
 	sr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	wr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
 	sa.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
@@ -361,7 +361,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	sa.HandleFunc(bulkBatchPath, controller.BulkBatch).Methods(http.MethodPost)
 
 	// View Preview Routes
-	viewPath := fmt.Sprintf("/views/%s", itemParam)
+	viewPath := "/views/" + itemParam
 	wr.HandleFunc(viewPath+"/preview", controller.ViewPreview(false)).Methods(http.MethodGet)
 	wr.HandleFunc(viewPath+"/edit", controller.ViewPreview(true)).Methods(http.MethodGet)
 

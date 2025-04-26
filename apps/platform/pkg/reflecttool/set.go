@@ -153,11 +153,11 @@ func setFieldReflect(to reflect.Value, from reflect.Value) error {
 	}
 
 	if !to.IsValid() {
-		return fmt.Errorf("no such field")
+		return errors.New("no such field")
 	}
 
 	if !to.CanSet() {
-		return fmt.Errorf("cannot set")
+		return errors.New("cannot set")
 	}
 
 	switch to.Kind() {

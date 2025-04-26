@@ -71,7 +71,7 @@ func getPointer(from reflect.Value) (any, error) {
 func getFieldReflect(value reflect.Value) (any, error) {
 
 	if !value.IsValid() {
-		return nil, fmt.Errorf("no such field")
+		return nil, errors.New("no such field")
 	}
 
 	switch value.Kind() {

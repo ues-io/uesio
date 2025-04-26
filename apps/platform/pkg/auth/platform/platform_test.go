@@ -21,32 +21,32 @@ func Test_passwordPolicyValidation(t *testing.T) {
 		{
 			name:     "Invalid Password - Too Short",
 			password: "Short1!",
-			expected: fmt.Errorf("at least 8 characters"),
+			expected: errors.New("at least 8 characters"),
 		},
 		{
 			name:     "Invalid Password - No Uppercase",
 			password: "invalidpassword123!",
-			expected: fmt.Errorf("at least 1 upper case"),
+			expected: errors.New("at least 1 upper case"),
 		},
 		{
 			name:     "Invalid Password - No Lowercase",
 			password: "INVALIDPASSWORD123!",
-			expected: fmt.Errorf("at least 1 lower case"),
+			expected: errors.New("at least 1 lower case"),
 		},
 		{
 			name:     "Invalid Password - No special character",
 			password: "ValidPassword123",
-			expected: fmt.Errorf("at least 1 special character"),
+			expected: errors.New("at least 1 special character"),
 		},
 		{
 			name:     "Invalid Password - Invalid special character (space)",
 			password: "Valid Password123",
-			expected: fmt.Errorf("at least 1 special character"),
+			expected: errors.New("at least 1 special character"),
 		},
 		{
 			name:     "Invalid Password - No number",
 			password: "ValidPassword!",
-			expected: fmt.Errorf("at least 1 number"),
+			expected: errors.New("at least 1 number"),
 		},
 	}
 

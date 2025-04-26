@@ -197,7 +197,7 @@ func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.Fi
 		if rawVal != "" && rawVal != "[]" {
 			err := json.Unmarshal([]byte(rawVal), &value)
 			if err != nil {
-				return fmt.Errorf("invalid LIST field value")
+				return errors.New("invalid LIST field value")
 			}
 		}
 		change[fieldMetadata.GetFullName()] = value

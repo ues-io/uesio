@@ -78,7 +78,7 @@ func getCascadeDeletes(
 
 		idLoadOp := &wire.LoadOp{
 			CollectionName: referencedCollection,
-			WireName:       fmt.Sprintf("CascadeDeleteIdLoad_%s", referencedCollection),
+			WireName:       "CascadeDeleteIdLoad_" + referencedCollection,
 			Fields:         []wire.LoadRequestField{{ID: commonfields.Id}},
 			Collection:     &idLoadCollection,
 			Conditions: []wire.LoadRequestCondition{

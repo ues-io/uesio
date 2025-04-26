@@ -43,7 +43,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 		})
 	}
 
-	file, err := create(fmt.Sprintf("%s.csv", strings.ReplaceAll(spec.Collection, "/", "_")))
+	file, err := create(strings.ReplaceAll(spec.Collection, "/", "_") + ".csv")
 	if err != nil {
 		return err
 	}

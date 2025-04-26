@@ -74,7 +74,7 @@ func (h *DevLogHandler) Handle(ctx context.Context, r slog.Record) error {
 		duration := statsObject["duration"].(time.Duration).Round(time.Millisecond)
 		path := colorFunc(requestObject["path"].(string))
 		method := colorFunc(requestObject["method"].(string))
-		code := colorFunc(fmt.Sprintf("%d", int(statsObject["code"].(int64))))
+		code := colorFunc(strconv.Itoa(int(statsObject["code"].(int64))))
 		h.l.Printf("%v %-4s %-32s %s %5s %16s %s %s\n", timeStr, method, path, code, duration, size, siteKey, user)
 	} else {
 		var fieldsString string

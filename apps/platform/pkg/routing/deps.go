@@ -441,7 +441,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 		return err
 	}
 
-	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(preload.NewComponentMergeData(builderComponentID+":namespaces", appData))
 
 	return nil
 }
@@ -512,11 +512,11 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 }
 
 func GetBuildModeKey(builderComponentID string) string {
-	return fmt.Sprintf("%s:buildmode", builderComponentID)
+	return builderComponentID + ":buildmode"
 }
 
 func GetIndexPanelKey(builderComponentID string) string {
-	return fmt.Sprintf("%s:indexpanel", builderComponentID)
+	return builderComponentID + ":indexpanel"
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.PreloadMetadata, error) {

@@ -89,12 +89,12 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 
 	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for app " + appName)
 	}
 
 	workspace, err := datasource.QueryWorkspaceForWrite(appName+":"+workspaceName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for workspace " + workspaceName)
 	}
 
 	var bundles meta.BundleCollection
