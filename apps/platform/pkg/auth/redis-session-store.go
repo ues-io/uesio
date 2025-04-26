@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/icza/session"

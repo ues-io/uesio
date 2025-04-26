@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"

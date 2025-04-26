@@ -1,7 +1,6 @@
 package bulk
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"

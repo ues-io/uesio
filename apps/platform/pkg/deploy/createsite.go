@@ -2,7 +2,6 @@ package deploy
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"

@@ -2,7 +2,6 @@ package sess
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"sort"
 	"time"

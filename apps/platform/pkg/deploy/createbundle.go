@@ -3,7 +3,6 @@ package deploy
 import (
 	"bytes"
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant"

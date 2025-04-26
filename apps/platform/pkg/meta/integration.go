@@ -1,8 +1,6 @@
 package meta
 
 import (
-	"fmt"
-
 	"gopkg.in/yaml.v3"
 
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
