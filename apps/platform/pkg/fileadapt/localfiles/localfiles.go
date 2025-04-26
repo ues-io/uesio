@@ -98,12 +98,12 @@ func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
 
 	outFile, err := os.Create(fullPath)
 	if err != nil {
-		return 0, errors.New("Error Creating File: " + err.Error())
+		return 0, fmt.Errorf("error creating file: %w", err)
 	}
 	defer outFile.Close()
 	size, err := io.Copy(outFile, fileData)
 	if err != nil {
-		return 0, errors.New("Error Writing File: " + err.Error())
+		return 0, fmt.Errorf("error writing file: %w", err)
 	}
 
 	return size, nil
@@ -134,7 +134,7 @@ func (c *Connection) Delete(path string) error {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.Remove(fullPath)
 	if err != nil {
-		return errors.New("Error Reading File: " + err.Error())
+		return fmt.Errorf("error reading file: %w", err)
 	}
 	// Now remove subfolders if they're empty
 	removeEmptyDir(filepath.Dir(fullPath))
@@ -145,7 +145,7 @@ func (c *Connection) EmptyDir(path string) error {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.RemoveAll(fullPath)
 	if err != nil {
-		return errors.New("Error Reading File: " + err.Error())
+		return fmt.Errorf("error reading file: %w", err)
 	}
 	return nil
 }

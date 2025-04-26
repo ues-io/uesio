@@ -25,16 +25,16 @@ func createRecordStep(stepDef *yaml.Node, api any) error {
 	// Make sure our api is capable of saving
 	saveAPI, ok := api.(BotSaveable)
 	if !ok {
-		return errors.New("You can create a record in this declarative context")
+		return errors.New("you can create a record in this declarative context")
 	}
 	collection := meta.GetNodeValueAsString(stepDef, "collection")
 	if collection == "" {
-		return errors.New("No collection specified to create record step")
+		return errors.New("no collection specified to create record step")
 	}
 
 	record, err := meta.GetMapNode(stepDef, "record")
 	if err != nil {
-		return errors.New("No record provided to create record step")
+		return errors.New("no record provided to create record step")
 	}
 
 	var item wire.Item
@@ -50,10 +50,10 @@ func createRecordStep(stepDef *yaml.Node, api any) error {
 func runSteps(def *yaml.Node, api any) error {
 	steps, err := meta.GetMapNode(def, "steps")
 	if err != nil {
-		return errors.New("No steps found in declarative bot")
+		return errors.New("no steps found in declarative bot")
 	}
 	if steps == nil || steps.Kind != yaml.SequenceNode {
-		return errors.New("Invalid steps node in declarative bot")
+		return errors.New("invalid steps node in declarative bot")
 	}
 	for i := range steps.Content {
 		err := runStep(steps.Content[i], api)
@@ -70,7 +70,7 @@ func runStep(stepDef *yaml.Node, api any) error {
 	case "CREATE_RECORD":
 		return createRecordStep(stepDef, api)
 	default:
-		return errors.New("Invalid Step Type")
+		return errors.New("invalid step type")
 	}
 }
 
@@ -94,21 +94,21 @@ func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]any, conne
 }
 
 func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	return nil, errors.New("Declarative Dialect not implemented yet.")
+	return nil, errors.New("declarative dialect not implemented yet")
 }
 
 func (b *DeclarativeDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
-	return nil, errors.New("Declarative Dialect not implemented yet.")
+	return nil, errors.New("declarative dialect not implemented yet")
 }
 
 func (b *DeclarativeDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	return errors.New("Declarative Dialect not implemented yet.")
+	return errors.New("declarative dialect not implemented yet")
 }
 
 func (b *DeclarativeDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	return errors.New("Declarative Dialect not implemented yet.")
+	return errors.New("declarative dialect not implemented yet")
 }
 
 func (b *DeclarativeDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
-	return nil, errors.New("Declarative Dialect not implemented yet.")
+	return nil, errors.New("declarative dialect not implemented yet")
 }

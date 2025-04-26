@@ -110,7 +110,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
-		return errors.New("No Workspace provided for deployment")
+		return errors.New("no workspace provided for deployment")
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
@@ -228,7 +228,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 				if exceptions.GetStatusCodeForError(err) < 500 {
 					return err
 				}
-				return exceptions.NewBadRequestException(fmt.Sprintf("Unable to read file '%s'", collectionItem.GetKey()), err)
+				return exceptions.NewBadRequestException(fmt.Sprintf("unable to read file '%s'", collectionItem.GetKey()), err)
 			}
 			continue
 		}

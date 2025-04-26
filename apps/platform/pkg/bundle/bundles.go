@@ -2,7 +2,6 @@ package bundle
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 
@@ -52,7 +51,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 
 	_, _, err := meta.ParseNamespace(namespace)
 	if err != nil {
-		return "", errors.New("Bad namespace: " + namespace)
+		return "", fmt.Errorf("bad namespace: %s", namespace)
 	}
 
 	if appName == namespace {
@@ -63,7 +62,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
-		return "", fmt.Errorf("No Bundle info provided for: %s", appName)
+		return "", fmt.Errorf("no bundle info provided for: %s", appName)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
@@ -72,7 +71,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 	}
 
 	if bundle.Licenses == nil {
-		return "", fmt.Errorf("No License info provided for: %s", appName)
+		return "", fmt.Errorf("no license info provided for: %s", appName)
 	}
 
 	license, hasLicense := bundle.Licenses[namespace]
@@ -137,7 +136,7 @@ func HasAny(group meta.BundleableGroup, namespace string, options *bundlestore.H
 func LoadAll(group meta.BundleableGroup, namespace string, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
-		fmt.Println("Failed Load All: " + group.GetName())
+		fmt.Println("failed load all: " + group.GetName())
 		return err
 	}
 	return bs.GetAllItems(group, options)
@@ -150,7 +149,7 @@ func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOpti
 			if options.IgnoreUnlicensedItems {
 				continue
 			}
-			fmt.Println("Failed load many")
+			fmt.Println("failed load many")
 			for _, item := range nsItems {
 				fmt.Println(item.GetKey())
 			}

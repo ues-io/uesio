@@ -92,7 +92,7 @@ func (s *ServerWithShutdown) WaitShutdown() {
 	// Completely shutdown the server
 	err := s.Shutdown(ctx)
 	if err != nil {
-		slog.Error(fmt.Sprintf("Error terminating server: %s", err.Error()))
+		slog.Error(fmt.Sprintf("error terminating server: %s", err.Error()))
 	}
 	if !startupError {
 		slog.Info("Graceful shutdown is complete.")

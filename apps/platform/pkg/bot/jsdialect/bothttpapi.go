@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -186,7 +186,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	// Read the full body into a byte array, so we can cache / parse
 	responseData, responseError := io.ReadAll(httpResp.Body)
 	if responseError != nil {
-		return ServerError(errors.New("unable to read response body: " + responseError.Error()))
+		return ServerError(fmt.Errorf("unable to read response body: %w", responseError))
 	}
 
 	contentType := httpResp.Header.Get("Content-Type")

@@ -25,12 +25,12 @@ func (m MetadataWrapper) MarshalJSON() ([]byte, error) {
 		MimeType string    `json:"mimetype"`
 	}
 
-	filePath := m.Metadata.Path()
+	filePath := m.Path()
 
 	return json.Marshal(metadataJSON{
-		FileSize: m.Metadata.ContentLength(),
+		FileSize: m.ContentLength(),
 		Path:     filePath,
-		Modified: m.Metadata.LastModified(),
+		Modified: m.LastModified(),
 		MimeType: mime.TypeByExtension(path.Ext(filePath)),
 	})
 }

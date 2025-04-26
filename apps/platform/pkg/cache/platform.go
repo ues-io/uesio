@@ -16,9 +16,10 @@ func NewPlatformCache[T any](namespace string, expiration time.Duration) Cache[T
 		expiration = getDefaultExpiration()
 	}
 	cacheType := os.Getenv("UESIO_PLATFORM_CACHE")
-	if cacheType == "redis" {
+	switch cacheType {
+	case "redis":
 		return NewRedisCache[T](namespace).WithExpiration(expiration)
-	} else if cacheType == "" || cacheType == "memory" {
+	case "", "memory":
 		return NewMemoryCache[T](expiration, expiration*2)
 	}
 	// TODO: The panic here is not ideal but we currently call NewPlatformCache from

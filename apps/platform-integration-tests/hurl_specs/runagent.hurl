@@ -50,7 +50,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body contains "Bad Key for Agent: bad_agent_id"
+body contains "bad key for agent: bad_agent_id"
 
 # Invoke with correctly formatted bad agent id
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent
@@ -62,7 +62,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body contains "Couldn't find item from platform load: Collection=uesio/studio.agent, Conditions=uesio/core.uniquekey :: uesio/tests:dev:bad_agent_id"
+body contains "couldn't find item from platform load: Collection=uesio/studio.agent, Conditions=uesio/core.uniquekey :: uesio/tests:dev:bad_agent_id"
 
 # Invoke with good agent id, but incompatible model
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/bots/call/uesio/aikit/runagent

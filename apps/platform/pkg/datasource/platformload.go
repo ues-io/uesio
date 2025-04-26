@@ -93,10 +93,10 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 	collectionName := collection.GetName()
 
 	if length == 0 {
-		return exceptions.NewNotFoundException(fmt.Sprintf("Couldn't find item from platform load: Collection=%s, Conditions=%v", collectionName, options.GetConditionsDebug()))
+		return exceptions.NewNotFoundException(fmt.Sprintf("couldn't find item from platform load: Collection=%s, Conditions=%v", collectionName, options.GetConditionsDebug()))
 	}
 	if length > 1 {
-		return exceptions.NewDuplicateException(fmt.Sprintf("Duplicate item found from platform load: %s (%v)", collectionName+" : "+options.GetConditionsDebug(), length))
+		return exceptions.NewDuplicateException(fmt.Sprintf("duplicate item found from platform load: %s (%v)", collectionName+" : "+options.GetConditionsDebug(), length))
 	}
 
 	return nil

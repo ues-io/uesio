@@ -76,14 +76,14 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	// to several different approaches that could be taken but need to be consistent for same/similar operations.
 	hasPermission := b.Permissions.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		message := fmt.Sprintf("No Permission to metadata item: %s : %s", item.GetCollectionName(), key)
+		message := fmt.Sprintf("no permission to metadata item: %s : %s", item.GetCollectionName(), key)
 		return exceptions.NewForbiddenException(message)
 	}
 
 	if b.Cache != nil {
 		if cachedItem, ok := b.Cache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key); ok {
 			if !b.AllowPrivate && !cachedItem.IsPublic() {
-				message := fmt.Sprintf("Metadata item: %s is not public", key)
+				message := fmt.Sprintf("metadata item: %s is not public", key)
 				return exceptions.NewForbiddenException(message)
 			}
 			return meta.Copy(item, cachedItem)
@@ -112,11 +112,11 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 
 	err = bundlestore.DecodeYAML(item, buf)
 	if err != nil {
-		return fmt.Errorf("Error decoding metadata item: %s from file: %s : %w", key, fileMetadata.Path(), err)
+		return fmt.Errorf("error decoding metadata item: %s from file: %s : %w", key, fileMetadata.Path(), err)
 	}
 
 	if !b.AllowPrivate && !item.IsPublic() {
-		return exceptions.NewForbiddenException("Metadata item: " + key + " is not public")
+		return exceptions.NewForbiddenException("metadata item: " + key + " is not public")
 	}
 	if b.Cache == nil {
 		return nil
@@ -239,7 +239,7 @@ func (b *FileBundleStoreConnection) StoreItem(path string, reader io.Reader) err
 
 	_, err := b.FileConnection.Upload(reader, fullFilePath)
 	if err != nil {
-		return errors.New("Error Writing File: " + err.Error())
+		return fmt.Errorf("error writing file: %w", err)
 	}
 
 	return nil
@@ -255,7 +255,7 @@ func (b *FileBundleStoreConnection) DeleteBundle() error {
 
 	err := b.FileConnection.EmptyDir(fullFilePath)
 	if err != nil {
-		return errors.New("Error Deleting Bundle: " + err.Error())
+		return fmt.Errorf("error deleting bundle: %w", err)
 	}
 
 	return nil

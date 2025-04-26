@@ -59,7 +59,7 @@ func differentHostLoad(op *wire.LoadOp, session *sess.Session) error {
 	})
 
 	if response.Code != 200 {
-		return fmt.Errorf("External Load failed: %s, %v, %s", baseUrl, response.Code, response.Status)
+		return fmt.Errorf("external load failed: %s, %v, %s", baseUrl, response.Code, response.Status)
 	}
 
 	return addDataToCollection(op, collectionMetadata, &responseBody.Wires[0].Data)

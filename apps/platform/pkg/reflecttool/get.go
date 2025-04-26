@@ -42,7 +42,7 @@ func GetField(obj any, name string) (any, error) {
 			continue
 		}
 		if objKind != reflect.Struct && objKind != reflect.Ptr {
-			return nil, errors.New("Cannot use GetField on a non-struct interface")
+			return nil, errors.New("cannot use GetField on a non-struct interface")
 		}
 
 		fieldName, err := getFieldName(objType, name)
@@ -71,7 +71,7 @@ func getPointer(from reflect.Value) (any, error) {
 func getFieldReflect(value reflect.Value) (any, error) {
 
 	if !value.IsValid() {
-		return nil, fmt.Errorf("No such field")
+		return nil, fmt.Errorf("no such field")
 	}
 
 	switch value.Kind() {

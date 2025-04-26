@@ -3,7 +3,6 @@ package command
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -60,7 +59,7 @@ func Generate(key string) error {
 
 	botParams := &meta.BotParamsResponse{}
 	if err = call.GetJSON(paramsURL, sessionId, botParams); err != nil {
-		return errors.New("unable to retrieve metadata for generator '" + key + "': " + err.Error())
+		return fmt.Errorf("unable to retrieve metadata for generator '%s': %w", key, err)
 	}
 
 	answers, err := param.AskMany(botParams, app, version, sessionId)

@@ -78,12 +78,12 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	routeMatch := &mux.RouteMatch{}
 
 	if matched := router.Match(r, routeMatch); !matched {
-		return nil, errors.New("No Route Match Found: " + path)
+		return nil, fmt.Errorf("no route match found: %s", path)
 	}
 
 	pathTemplate, err := routeMatch.Route.GetPathTemplate()
 	if err != nil {
-		return nil, errors.New("no Path Template found for route")
+		return nil, errors.New("no path template found for route")
 	}
 
 	pathTemplate = strings.Replace(pathTemplate, prefix, "", 1)
@@ -97,7 +97,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		}
 	}
 	if route == nil {
-		return nil, errors.New("Error matching route")
+		return nil, errors.New("error matching route")
 	}
 	route.Path = path
 	// Inject all routeMatch vars, which are fully-resolved and can safely override anything in route params
@@ -109,7 +109,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	params, err := ResolveRouteParams(route.Params, session, r.URL.Query())
 	if err != nil {
-		return nil, errors.New("unable to resolve route parameters: " + err.Error())
+		return nil, fmt.Errorf("unable to resolve route parameters: %w", err)
 	}
 	route.Params = params
 
@@ -136,7 +136,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	}
 
 	if routeAssignment == nil {
-		return nil, errors.New("No route found with this collection and view type: " + namespace + "." + collection + " : " + viewtype)
+		return nil, fmt.Errorf("no route found with this collection and view type: %s.%s : %s", namespace, collection, viewtype)
 	}
 
 	route, err := meta.NewRoute(routeAssignment.RouteRef)

@@ -26,7 +26,7 @@ func (c *Connection) EmptyDir(path string) error {
 
 	objKeys, err := c.List(path)
 	if err != nil {
-		return errors.New("failed to EmptyDir")
+		return errors.New("failed to empty directory")
 	}
 
 	if len(objKeys) == 0 {
@@ -46,7 +46,7 @@ func (c *Connection) EmptyDir(path string) error {
 	})
 
 	if err != nil {
-		return errors.New("failed to EmptyDir")
+		return errors.New("failed to empty directory")
 	}
 
 	return nil

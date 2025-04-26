@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -49,7 +48,7 @@ func (iac *IntegrationActionCollection) GetItemFromPath(path, namespace string) 
 func (iac *IntegrationActionCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ":")
 	if (len(keyArray)) != 2 {
-		return nil, errors.New("invalid Integration Action Key")
+		return nil, fmt.Errorf("invalid integration action key: %s", key)
 	}
 	return NewIntegrationAction(keyArray[0], keyArray[1])
 }

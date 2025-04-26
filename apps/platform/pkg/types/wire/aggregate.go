@@ -10,14 +10,14 @@ import (
 
 func GetAggregationFieldNames(aggregateFields []AggregationField, groupByFields []AggregationField, getDBAggregateFieldName func(*AggregationField) string) ([]string, error) {
 	if len(aggregateFields) == 0 {
-		return nil, errors.New("No aggregate fields selected")
+		return nil, errors.New("no aggregate fields selected")
 	}
 
 	i := 0
 	dbNames := make([]string, len(aggregateFields)+len(groupByFields))
 	for _, aggregation := range aggregateFields {
 		if aggregation.Function == "" {
-			return nil, errors.New("Missing function for aggregation field")
+			return nil, errors.New("missing function for aggregation field")
 		}
 		dbNames[i] = getDBAggregateFieldName(&aggregation)
 		i++
@@ -33,7 +33,7 @@ func GetAggregationFieldNames(aggregateFields []AggregationField, groupByFields 
 func GetGroupBySelects(groupByFields []AggregationField, getDBGroupByFieldName func(*AggregationField) string) (string, error) {
 
 	if len(groupByFields) == 0 {
-		return "", errors.New("No group by fields selected")
+		return "", errors.New("no group by fields selected")
 	}
 
 	i := 0
@@ -49,7 +49,7 @@ func GetGroupBySelects(groupByFields []AggregationField, getDBGroupByFieldName f
 func GetGroupByClause(groupByFields []AggregationField, prefix string, getDBGroupByFieldName func(*AggregationField) string) (string, error) {
 
 	if len(groupByFields) == 0 {
-		return "", errors.New("No group by fields selected")
+		return "", errors.New("no group by fields selected")
 	}
 
 	if prefix == "" {

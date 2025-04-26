@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -12,12 +13,12 @@ func runSecretLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess
 
 	// Currently, this doesn't work for regular contexts
 	if session.GetWorkspace() == nil && session.GetSiteAdmin() == nil {
-		return errors.New("Must be in workspace or site admin context")
+		return errors.New("must be in workspace or site admin context")
 	}
 
 	secrets, err := secretstore.GetSecrets(session)
 	if err != nil {
-		return errors.New("Failed to get secrets: " + err.Error())
+		return fmt.Errorf("failed to get secrets: %w", err)
 	}
 
 	for _, secret := range *secrets {

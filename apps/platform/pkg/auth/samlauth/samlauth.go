@@ -87,7 +87,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 
 	if metadataXML == "" {
 		if metadataXMLURL == "" {
-			return nil, errors.New("You must provide a metadata xml value or url value.")
+			return nil, errors.New("you must provide a metadata xml value or url value")
 		}
 
 		idpMetadataURL, err := url.Parse(metadataXMLURL)

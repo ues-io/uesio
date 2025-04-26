@@ -12,7 +12,7 @@ func PrintUserSummary(user *auth.UserMergeData) string {
 
 func PrintUser(user *auth.UserMergeData) {
 	if user == nil {
-		fmt.Println("No user set")
+		fmt.Println("no user set")
 		return
 	}
 	fmt.Println(PrintUserSummary(user))
@@ -20,16 +20,16 @@ func PrintUser(user *auth.UserMergeData) {
 
 func PrintHost(host string) {
 	if host == "" {
-		fmt.Println("No host set")
+		fmt.Println("no host set")
 		return
 	}
-	fmt.Println("Host: " + host)
+	fmt.Println("host: " + host)
 }
 
 func PrintWorkspace(workspaceName string) {
 	if workspaceName == "" {
-		fmt.Println("No active workspace set")
+		fmt.Println("no active workspace set")
 		return
 	}
-	fmt.Println("Workspace: " + workspaceName)
+	fmt.Println("workspace: " + workspaceName)
 }

@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -29,7 +29,7 @@ type SelectListWrapper SelectList
 func NewSelectList(key string) (*SelectList, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for SelectList: " + key)
+		return nil, fmt.Errorf("bad key for select list: %s", key)
 	}
 	return NewBaseSelectList(namespace, name), nil
 }

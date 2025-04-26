@@ -2,7 +2,7 @@ package usage_worker
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -19,7 +19,7 @@ func UsageWorker(ctx context.Context) error {
 
 	session, err := auth.GetStudioSystemSession(ctx, nil)
 	if err != nil {
-		return errors.New("Unable to obtain a system session to use for usage events job: " + err.Error())
+		return fmt.Errorf("unable to obtain a system session to use for usage events job: %w", err)
 	}
 
 	err = usage.ApplyBatch(session)

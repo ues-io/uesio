@@ -2,7 +2,7 @@ package systemdialect
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -160,7 +160,7 @@ func threadItemToMessage(threadItem *wire.Item) (*bedrock.AnthropicMessage, erro
 		}, nil
 	}
 
-	return nil, errors.New("Thread item type not supported: " + itemType)
+	return nil, fmt.Errorf("thread item type not supported: %s", itemType)
 
 }
 

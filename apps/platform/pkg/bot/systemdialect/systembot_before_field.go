@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -33,7 +33,7 @@ func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 
 		_, ok := meta.GetFieldTypes()[ftype]
 		if !ok {
-			return errors.New("Invalid Field Type for Field: " + ftype)
+			return fmt.Errorf("invalid field type for field: %s", ftype)
 		}
 
 		err = depMap.AddRequired(change, "collection", "uesio/studio.collection")

@@ -73,7 +73,7 @@ func NewCreateBundleOptions(params map[string]any) (*CreateBundleOptions, error)
 func CreateBundle(options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (*meta.Bundle, error) {
 
 	if options == nil {
-		return nil, errors.New("Invalid Create options")
+		return nil, errors.New("invalid create options")
 	}
 
 	appName := options.AppName

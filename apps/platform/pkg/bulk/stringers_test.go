@@ -108,7 +108,7 @@ func Test_getStringValue(t *testing.T) {
 				"foo",
 			},
 			"",
-			"Bad timestamp value",
+			"bad timestamp value",
 		},
 		{
 			"stringify TIMESTAMP fields with float64 values into RFC-3339 UTC format",

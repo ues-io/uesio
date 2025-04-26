@@ -32,7 +32,7 @@ func runAppBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		}
 		name, err := change.GetFieldAsString("uesio/studio.name")
 		if err != nil {
-			return errors.New("The name field is required to create an app")
+			return errors.New("the name field is required to create an app")
 		}
 		return change.SetField("uesio/studio.fullname", userKey+"/"+name)
 

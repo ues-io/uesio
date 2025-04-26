@@ -99,7 +99,7 @@ func Save(collectionName string, changes []map[string]interface{}, saveOptions S
 	}
 
 	if len(saveResponse.Wires) != 1 {
-		return nil, errors.New("Wrong number of responses returned")
+		return nil, errors.New("wrong number of responses returned")
 	}
 
 	singleResponse := saveResponse.Wires[0]
@@ -112,7 +112,7 @@ func Save(collectionName string, changes []map[string]interface{}, saveOptions S
 			}
 			errString = errString + saveErr.Error()
 		}
-		return nil, errors.New("Error saving record: " + errString)
+		return nil, fmt.Errorf("error saving record: %s", errString)
 	}
 
 	results := []map[string]interface{}{}

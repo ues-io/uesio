@@ -92,7 +92,7 @@ var RecordMergeFunc = func(m ServerMergeData, key string) (any, error) {
 
 	wireData, hasWireData := m.WireData[wireName]
 	if !hasWireData {
-		return nil, errors.New("$Record{} merge referenced wire " + wireName + ", which was not loaded")
+		return nil, fmt.Errorf("$Record{} merge referenced wire %s, which was not loaded", wireName)
 	}
 
 	if wireData.Len() < 1 {

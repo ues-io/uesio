@@ -1,7 +1,7 @@
 package siteadmin
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/cli/pkg/config"
@@ -39,7 +39,7 @@ func SetSiteAdminPrompt(appId string) (string, error) {
 		return options[0], SetSiteAdmin(options[0])
 	}
 	if len(options) == 0 {
-		return "", errors.New("unable to create new workspace for app: " + err.Error())
+		return "", fmt.Errorf("unable to create new workspace for app: %w", err)
 	}
 
 	err = survey.AskOne(&survey.Select{

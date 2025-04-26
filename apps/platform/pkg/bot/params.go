@@ -51,11 +51,12 @@ func GetBotParams(namespace, name, metadataType string, session *sess.Session) (
 	}
 
 	var robot *meta.Bot
-	if metadataType == "GENERATOR" {
+	switch metadataType {
+	case "GENERATOR":
 		robot = meta.NewGeneratorBot(namespace, name)
-	} else if metadataType == "LISTENER" {
+	case "LISTENER":
 		robot = meta.NewListenerBot(namespace, name)
-	} else if metadataType == "RUNACTION" {
+	case "RUNACTION":
 		robot = meta.NewRunActionBot(namespace, name)
 	}
 

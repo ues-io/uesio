@@ -46,7 +46,7 @@ func GetAWSConfig(ctx context.Context, dbcreds *wire.Credentials) (aws.Config, e
 
 	region, ok := (*dbcreds)["region"]
 	if !ok {
-		return aws.Config{}, errors.New("No region provided in credentials")
+		return aws.Config{}, errors.New("no region provided in credentials")
 	}
 
 	endpoint := (*dbcreds)["endpoint"]

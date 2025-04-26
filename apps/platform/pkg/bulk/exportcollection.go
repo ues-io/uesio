@@ -1,7 +1,6 @@
 package bulk
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -56,7 +55,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 	}
 
 	if collection == nil {
-		return errors.New("Cannot process that file type: " + spec.FileType)
+		return fmt.Errorf("cannot process that file type: %s", spec.FileType)
 	}
 
 	return datasource.LoadWithError(&wire.LoadOp{

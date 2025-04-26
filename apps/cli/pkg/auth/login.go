@@ -26,7 +26,7 @@ type LoginMethodHandler struct {
 func parseKey(key string) (string, string, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
-		return "", "", errors.New("Invalid Key: " + key)
+		return "", "", fmt.Errorf("invalid key: %s", key)
 	}
 	return keyArray[0], keyArray[1], nil
 }
@@ -238,7 +238,7 @@ func Login() (*UserMergeData, error) {
 	}
 
 	if sessid == "" {
-		return nil, errors.New("No cookie found in login response")
+		return nil, errors.New("no cookie found in login response")
 	}
 
 	err = config.SetSessionID(sessid)

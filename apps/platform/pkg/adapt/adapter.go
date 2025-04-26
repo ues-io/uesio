@@ -2,7 +2,7 @@ package adapt
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -25,7 +25,7 @@ func GetAdapter(adapterType string) (Adapter, error) {
 
 	adapter, ok := adapterMap[adapterType]
 	if !ok {
-		return nil, errors.New("No adapter found of this type: " + adapterType)
+		return nil, fmt.Errorf("no adapter found of this type: %s", adapterType)
 	}
 	return adapter, nil
 }

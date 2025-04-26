@@ -1,7 +1,6 @@
 package wire
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -21,7 +20,7 @@ func (i *Item) GetField(fieldName string) (any, error) {
 	if len(names) == 1 {
 		value, ok := (*i)[fieldName]
 		if !ok {
-			return nil, errors.New("Field not found: " + fieldName)
+			return nil, fmt.Errorf("field not found: %s", fieldName)
 		}
 		return value, nil
 	}
@@ -33,7 +32,7 @@ func (i *Item) GetField(fieldName string) (any, error) {
 		var err error
 		value, err = GetFieldValue(value, name)
 		if err != nil {
-			return nil, errors.New("Field Path not found: " + fieldName)
+			return nil, fmt.Errorf("field path not found: %s", fieldName)
 		}
 	}
 
@@ -47,7 +46,7 @@ func (i *Item) GetFieldAsString(fieldName string) (string, error) {
 	}
 	valueString, ok := value.(string)
 	if !ok {
-		return "", fmt.Errorf("Cannot get field as string: %T", value)
+		return "", fmt.Errorf("cannot get field as string: %T", value)
 	}
 	return valueString, nil
 }

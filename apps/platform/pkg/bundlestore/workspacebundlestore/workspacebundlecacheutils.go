@@ -98,7 +98,7 @@ func handleWorkspaceMetadataChange(payload string) {
 	} else {
 		for _, itemKey := range wmc.ChangedItems {
 			if err := bundleStoreCache.InvalidateCacheItem(wmc.AppName, wmc.WorkspaceID, wmc.CollectionName, itemKey); err != nil {
-				slog.Error("Unable to purge workspace metadata cache key: " + err.Error())
+				slog.Error("unable to purge workspace metadata cache key: " + err.Error())
 			}
 		}
 	}

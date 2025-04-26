@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"path"
 	"strconv"
@@ -18,13 +17,13 @@ func NewBot(key string) (*Bot, error) {
 	keyArray := strings.Split(key, ":")
 	keyArraySize := len(keyArray)
 	if (keyArraySize) < 2 {
-		return nil, errors.New("Invalid Bot Key")
+		return nil, fmt.Errorf("invalid bot key: %s", key)
 	}
 	botType := keyArray[0]
 	var collectionKey, botKey string
 	if IsBotTypeWithCollection(botType) {
 		if (keyArraySize) != 3 {
-			return nil, errors.New("Invalid Bot Key")
+			return nil, fmt.Errorf("invalid bot key: %s", key)
 		}
 		collectionKey = keyArray[1]
 		botKey = keyArray[2]
@@ -32,7 +31,7 @@ func NewBot(key string) (*Bot, error) {
 		collectionKey = ""
 		botKey = keyArray[1]
 		if (keyArraySize) > 3 {
-			return nil, errors.New("Invalid Bot Key")
+			return nil, fmt.Errorf("invalid bot key: %s", key)
 		}
 		if (keyArraySize) == 3 {
 			collectionKey = keyArray[1]

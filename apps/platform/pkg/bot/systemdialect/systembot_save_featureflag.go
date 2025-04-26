@@ -33,7 +33,7 @@ func getKeyInfo(change *wire.ChangeItem, session *sess.Session) (string, string,
 		userID = keyParts[1]
 	}
 	if userID == "" {
-		return "", "", errors.New("No User Id provided to feature flag save.")
+		return "", "", errors.New("no user id provided to feature flag save")
 	}
 	return key, userID, nil
 }

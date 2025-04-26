@@ -2,7 +2,7 @@ package fileadapt
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -26,7 +26,7 @@ func GetFileAdapter(adapterType string, session *sess.Session) (FileAdapter, err
 	}
 	adapter, ok := adapterMap[mergedType]
 	if !ok {
-		return nil, errors.New("No adapter found of this type: " + adapterType)
+		return nil, fmt.Errorf("no adapter found of this type: %s", adapterType)
 	}
 	return adapter, nil
 }

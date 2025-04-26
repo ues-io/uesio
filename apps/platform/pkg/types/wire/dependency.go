@@ -1,7 +1,7 @@
 package wire
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -21,7 +21,7 @@ func (m *MetadataDependencyMap) AddMap(keys map[string]bool, metadataType string
 func (m *MetadataDependencyMap) AddRequired(change *ChangeItem, metadataType, fieldName string) error {
 	metadataName, err := change.GetFieldAsString(fieldName)
 	if err != nil || metadataName == "" {
-		return errors.New("Missing metadata item in field: " + fieldName)
+		return fmt.Errorf("missing metadata item in field: %s", fieldName)
 	}
 	return m.AddItem(metadataType, metadataName)
 }

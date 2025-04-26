@@ -1,8 +1,7 @@
 package datasource
 
 import (
-	"errors"
-	"strconv"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -78,7 +77,7 @@ func HandleUpsertLookup(
 		}
 
 		if len(matchIndexes) != 1 {
-			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
+			return fmt.Errorf("bad lookup: %d", len(matchIndexes))
 		}
 
 		match := matchIndexes[0].Item

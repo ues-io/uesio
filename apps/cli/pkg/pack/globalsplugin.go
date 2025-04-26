@@ -2,8 +2,9 @@ package pack
 
 import (
 	"errors"
-	"github.com/thecloudmasters/cli/pkg/goutils"
 	"strings"
+
+	"github.com/thecloudmasters/cli/pkg/goutils"
 
 	"github.com/evanw/esbuild/pkg/api"
 )
@@ -36,7 +37,7 @@ func GetGlobalsPlugin(globalsMap map[string]string) api.Plugin {
 				func(args api.OnLoadArgs) (api.OnLoadResult, error) {
 					match, ok := globalsMap[args.Path]
 					if !ok {
-						return api.OnLoadResult{}, errors.New("Invalid Import")
+						return api.OnLoadResult{}, errors.New("invalid import")
 					}
 					contents := "module.exports = " + match
 					return api.OnLoadResult{

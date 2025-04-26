@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -163,11 +163,11 @@ func HandleOldValuesLookup(
 			if op.Options != nil && op.Options.IgnoreMissingRecords {
 				return nil
 			}
-			return errors.New("Could not find record to update or delete: " + ID)
+			return fmt.Errorf("could not find record to update or delete: %s", ID)
 		}
 
 		if len(matchIndexes) == 0 {
-			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
+			return fmt.Errorf("bad oldvalue lookup: %d", len(matchIndexes))
 		}
 
 		for _, matchIndex := range matchIndexes {

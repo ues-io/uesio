@@ -24,7 +24,7 @@ func LoadLooper(
 	ids := idMap.GetIDs()
 	idLength := len(ids)
 	if idLength == 0 {
-		return errors.New("No ids provided for load looper")
+		return errors.New("no ids provided for load looper")
 	}
 	var condition wire.LoadRequestCondition
 	if idLength == 1 {
@@ -166,7 +166,7 @@ func HandleReferences(
 				if options.AllowMissingItems {
 					return nil
 				}
-				return fmt.Errorf("Missing Reference Item For Key: %s on %s -> %s", ID, collectionName, ref.GetMatchField())
+				return fmt.Errorf("missing reference item for key: %s on %s -> %s", ID, collectionName, ref.GetMatchField())
 			}
 
 			// Loop over all matchIndexes and copy the data from the refItem

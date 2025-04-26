@@ -1,7 +1,6 @@
 package secretstore
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -23,7 +22,7 @@ var secretStoreMap = map[string]SecretStore{}
 func GetSecretStore(secretStoreType string) (SecretStore, error) {
 	secretStore, ok := secretStoreMap[secretStoreType]
 	if !ok {
-		return nil, errors.New("Invalid secret store type: " + secretStoreType)
+		return nil, fmt.Errorf("invalid secret store type: %s", secretStoreType)
 	}
 	return secretStore, nil
 }

@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -32,7 +32,7 @@ func (v *View) IsNil() bool {
 func NewView(key string) (*View, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for View: " + key)
+		return nil, fmt.Errorf("bad key for view: %s", key)
 	}
 	return NewBaseView(namespace, name), nil
 }

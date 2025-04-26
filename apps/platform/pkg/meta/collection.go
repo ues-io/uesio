@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"gopkg.in/yaml.v3"
@@ -10,7 +10,7 @@ import (
 func NewCollection(key string) (*Collection, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Collection: " + key)
+		return nil, fmt.Errorf("bad key for collection: %s", key)
 	}
 	return NewBaseCollection(namespace, name), nil
 }

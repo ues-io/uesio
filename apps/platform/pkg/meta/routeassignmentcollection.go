@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -61,11 +60,11 @@ func (rc *RouteAssignmentCollection) GetItemFromPath(path, namespace string) Bun
 func (rc *RouteAssignmentCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ":")
 	if (len(keyArray)) != 2 {
-		return nil, errors.New("Invalid Route Assignment Key")
+		return nil, fmt.Errorf("invalid route assignment key: %s", key)
 	}
 	namespace, viewType, err := ParseKey(keyArray[1])
 	if err != nil {
-		return nil, errors.New("Bad Key for RouteAssignment: " + key)
+		return nil, fmt.Errorf("bad key for route assignment: %s", key)
 	}
 	return NewRouteAssignment(keyArray[0], namespace, viewType)
 }

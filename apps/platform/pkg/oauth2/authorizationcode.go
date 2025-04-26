@@ -3,6 +3,7 @@ package oauth2
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -51,7 +52,7 @@ func ExchangeAuthorizationCodeForAccessToken(ctx context.Context, credentials *w
 	}
 	tok, err := conf.Exchange(newCtx, code, oauth2.VerifierOption(verifier))
 	if err != nil {
-		return nil, errors.New("failed to exchange authorization code for access token: " + err.Error())
+		return nil, fmt.Errorf("failed to exchange authorization code for access token: %w", err)
 	}
 	// Now that the exchange succeeded, prevent replay attacks
 	oauthExchangeCache.Del(state.Nonce)
@@ -68,7 +69,7 @@ func GetRedirectMetadata(conf *oauth2.Config, integrationName string, s *sess.Se
 	stateObject := NewState(integrationName).WithContext(s)
 	stateString, err := stateObject.Marshal()
 	if err != nil {
-		return nil, errors.New("unable to generate an OAuth state token: " + err.Error())
+		return nil, fmt.Errorf("unable to generate an OAuth state token: %w", err)
 	}
 
 	// Generate the fully-qualified authorization code URL
@@ -78,7 +79,7 @@ func GetRedirectMetadata(conf *oauth2.Config, integrationName string, s *sess.Se
 	// Store the verifier in Redis, associated with the state nonce,
 	// so that we can use it to exchange the access token
 	if err = oauthExchangeCache.Set(stateObject.Nonce, verifier); err != nil {
-		return nil, errors.New("unable to store oauth exchange state in Redis: " + err.Error())
+		return nil, fmt.Errorf("unable to store oauth exchange state in Redis: %w", err)
 	}
 
 	return &RedirectMetadata{

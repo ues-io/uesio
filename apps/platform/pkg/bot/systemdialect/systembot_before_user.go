@@ -25,7 +25,7 @@ func runUserBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 			return err
 		}
 		if username == "" {
-			return errors.New("User must have a username")
+			return errors.New("user must have a username")
 		}
 		return change.SetField(commonfields.Owner, &meta.User{
 			BuiltIn: meta.BuiltIn{

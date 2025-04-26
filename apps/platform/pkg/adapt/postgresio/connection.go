@@ -38,7 +38,7 @@ func (c *Connection) GetCredentials() *wire.Credentials {
 
 func (c *Connection) BeginTransaction() error {
 	if c.transaction != nil {
-		return errors.New("A transaction on this connection has already started")
+		return errors.New("a transaction on this connection has already started")
 	}
 	client, err := connectForSave(c.ctx, c.credentials)
 	if err != nil {

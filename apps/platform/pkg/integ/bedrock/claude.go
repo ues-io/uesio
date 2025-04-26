@@ -227,11 +227,11 @@ func (cmh *ClaudeModelHandler) GetInvokeResult(body []byte) (result any, inputTo
 	usage := modelOutput.Usage
 
 	if len(content) < 1 {
-		return "", 0, 0, errors.New("Invalid Response from Bedrock")
+		return "", 0, 0, errors.New("invalid response from bedrock")
 	}
 
 	if usage == nil {
-		return "", 0, 0, errors.New("No usage information provided")
+		return "", 0, 0, errors.New("no usage information provided")
 	}
 
 	return content, usage.InputTokens, usage.OutputTokens, nil
@@ -247,7 +247,7 @@ func (cmh *ClaudeModelHandler) HandleStreamChunk(chunk []byte) (result []byte, i
 
 	if modelOutput.Type == "message_start" {
 		if modelOutput.Message == nil || modelOutput.Message.Usage == nil {
-			return nil, 0, 0, false, errors.New("Could not get input token usage")
+			return nil, 0, 0, false, errors.New("could not get input token usage")
 		}
 		inputTokens += modelOutput.Message.Usage.InputTokens
 	}
@@ -256,7 +256,7 @@ func (cmh *ClaudeModelHandler) HandleStreamChunk(chunk []byte) (result []byte, i
 	if modelOutput.Type == "message_stop" && modelOutput.AmazonBedrockInvocationMetrics != nil {
 
 		if modelOutput.AmazonBedrockInvocationMetrics == nil {
-			return nil, 0, 0, false, errors.New("Could not get output token usage")
+			return nil, 0, 0, false, errors.New("could not get output token usage")
 		}
 
 		outputTokens += int64(modelOutput.AmazonBedrockInvocationMetrics.OutputTokenCount)

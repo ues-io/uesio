@@ -41,7 +41,7 @@ func siteUse(cmd *cobra.Command, args []string) error {
 	err := site.UseBundle(siteName, newBundleVersion)
 	if err != nil {
 
-		return fmt.Errorf("Unable to update site to use the requested bundle: %w", err)
+		return fmt.Errorf("unable to update site to use the requested bundle: %w", err)
 	}
 	fmt.Printf("Successfully updated site %s to use bundle: %s\n", siteName, newBundleVersion)
 	return nil

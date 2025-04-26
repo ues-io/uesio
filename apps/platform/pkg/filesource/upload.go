@@ -2,6 +2,7 @@ package filesource
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"mime"
 	"path"
@@ -71,7 +72,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 
 		if op.RecordID == "" {
 			if op.RecordUniqueKey == "" {
-				return nil, errors.New("You must provide either a RecordID, or a RecordUniqueKey for a file upload")
+				return nil, errors.New("you must provide either a RecordID, or a RecordUniqueKey for a file upload")
 			}
 			idMap, ok := idMaps[op.CollectionID]
 			if !ok {
@@ -104,7 +105,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 		}, commonfields.UniqueKey, metadataResponse, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			if item == nil {
-				return errors.New("Could not match upload on unique key: " + ID)
+				return fmt.Errorf("could not match upload on unique key: %s", ID)
 			}
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
@@ -204,7 +205,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 
 	err = datasource.SaveWithOptions(fieldUpdates, session, datasource.NewSaveOptions(connection, metadataResponse))
 	if err != nil {
-		return nil, errors.New("Failed to update field for the given file: " + err.Error())
+		return nil, fmt.Errorf("failed to update field for the given file: %w", err)
 	}
 
 	return userFileCollection, nil

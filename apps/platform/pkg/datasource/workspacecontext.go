@@ -112,7 +112,7 @@ func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connecti
 func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
 
 	if session.GetWorkspace() == nil {
-		return errors.New("Must already have a workspace context to add impersonation.")
+		return errors.New("must already have a workspace context to add impersonation")
 	}
 
 	results := &wire.Collection{}
@@ -153,7 +153,7 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 		if profileKey != "" {
 			profile, err := LoadAndHydrateProfile(profileKey, session)
 			if err != nil {
-				return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+				return fmt.Errorf("error loading profile: %s : %w", profileKey, err)
 			}
 
 			session.SetWorkspaceSession(sess.NewWorkspaceSession(
@@ -213,7 +213,7 @@ func AddWorkspaceImpersonationContext(workspaceKey string, session *sess.Session
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
+		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it", workspaceKey)
 	}
 	err = addWorkspaceContext(workspace, sessClone, connection)
 	if err != nil {
@@ -235,7 +235,7 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it.", workspaceKey)
+		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it", workspaceKey)
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
@@ -249,7 +249,7 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceID, commonfields.Id, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it.")
+		return nil, fmt.Errorf("could not get workspace context: workspace does not exist or you don't have access to modify it")
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }

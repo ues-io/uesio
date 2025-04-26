@@ -216,7 +216,7 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 
 		jsonValue, err := json.Marshal(value)
 		if err != nil {
-			return errors.New("Error getting json value: " + fieldMetadata.GetFullName())
+			return fmt.Errorf("error getting json value: %s", fieldMetadata.GetFullName())
 		}
 		ej := gojay.EmbeddedJSON(jsonValue)
 		enc.AddEmbeddedJSONKey(fieldID, &ej)
@@ -453,7 +453,7 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 		}
 		val, err := item.GetField(key)
 		if err != nil {
-			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
+			return nil, fmt.Errorf("missing key %s : %s : %s", key, collectionMetadata.GetFullName(), templateString)
 		}
 		if IsReference(fieldMetadata.Type) {
 			key, err := GetReferenceKey(val)
@@ -461,7 +461,7 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 				return nil, err
 			}
 			if key == "" {
-				return nil, errors.New("Bad Reference Key in template: " + templateString)
+				return nil, fmt.Errorf("bad reference key in template: %s", templateString)
 			}
 			return key, nil
 		}

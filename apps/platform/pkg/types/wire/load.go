@@ -113,14 +113,14 @@ func (op *LoadOp) GetIntegrationConnection() (*IntegrationConnection, error) {
 	if op.integrationConnection != nil {
 		return op.integrationConnection, nil
 	}
-	return nil, errors.New("integrationConnection not available on LoadOp")
+	return nil, errors.New("integration connection not available on load op")
 }
 
 func (op *LoadOp) GetCollectionMetadata() (*CollectionMetadata, error) {
 	if op.metadata != nil {
 		return op.metadata.GetCollection(op.CollectionName)
 	}
-	return nil, errors.New("no collection metadata available on LoadOp")
+	return nil, errors.New("no collection metadata available on load op")
 
 }
 
@@ -128,7 +128,7 @@ func (op *LoadOp) GetMetadata() (*MetadataCache, error) {
 	if op.metadata != nil {
 		return op.metadata, nil
 	}
-	return nil, errors.New("no metadata available on LoadOp")
+	return nil, errors.New("no metadata available on load op")
 }
 
 func (op *LoadOp) AttachMetadataCache(response *MetadataCache) *LoadOp {
@@ -189,7 +189,7 @@ type FieldsResponse struct {
 
 func GetUniqueDBFieldNames(fieldsMap map[string]*FieldMetadata, getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(fieldsMap) == 0 {
-		return nil, errors.New("No fields selected")
+		return nil, errors.New("no fields selected")
 	}
 
 	i := 0

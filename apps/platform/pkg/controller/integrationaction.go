@@ -47,7 +47,7 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("Unable to obtain platform connection: %w", err))
+		ctlutil.HandleError(w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
 
@@ -151,7 +151,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Unable to obtain platform connection: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
 

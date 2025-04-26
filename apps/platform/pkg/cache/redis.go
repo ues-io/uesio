@@ -175,7 +175,7 @@ func deleteKeys(keys []string) error {
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
 	if err != nil {
-		return fmt.Errorf("Error deleting cache keys from bot: %w", err)
+		return fmt.Errorf("error deleting cache keys from bot: %w", err)
 	}
 	return nil
 }
@@ -185,7 +185,7 @@ func flushAll() error {
 	defer conn.Close()
 	_, err := conn.Do("FLUSHALL")
 	if err != nil {
-		return fmt.Errorf("Error flushing cache from bot: %w", err)
+		return fmt.Errorf("error flushing cache from bot: %w", err)
 	}
 	return nil
 }

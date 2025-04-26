@@ -1,7 +1,7 @@
 package bulk
 
 import (
-	"errors"
+	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -37,7 +37,7 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	}
 
 	if saveRequest == nil {
-		return nil, errors.New("Cannot process that file type: " + fileFormat)
+		return nil, fmt.Errorf("cannot process that file type: %s", fileFormat)
 	}
 
 	err = datasource.Save(saveRequest, session)

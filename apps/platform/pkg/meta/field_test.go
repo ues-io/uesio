@@ -243,7 +243,7 @@ func TestFieldUnmarshal(t *testing.T) {
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 			nil,
-			errors.New("Invalid Field Type for Field: my/namespace.mycollection:my/namespace.myfield : TACO"),
+			errors.New("invalid field type for field: my/namespace.mycollection:my/namespace.myfield : TACO"),
 		},
 		{
 			"reference",
@@ -357,7 +357,7 @@ func TestFieldUnmarshal(t *testing.T) {
 			"my/namespace/mycollection/myfield.yaml",
 			"my/namespace",
 			nil,
-			errors.New("Invalid selectlist metadata provided for field: my/namespace.mycollection:my/namespace.myfield : Missing select list name"),
+			errors.New("invalid selectlist metadata provided for field: my/namespace.mycollection:my/namespace.myfield : missing select list name"),
 		},
 		{
 			"number",

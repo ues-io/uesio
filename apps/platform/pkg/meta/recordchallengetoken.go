@@ -1,14 +1,14 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"path"
 )
 
 func NewRecordChallengeToken(collectionKey, key string) (*RecordChallengeToken, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Record Challeng Token: " + collectionKey + " : " + key)
+		return nil, fmt.Errorf("bad key for record challenge token: %s : %s", collectionKey, key)
 	}
 	return NewBaseRecordChallengeToken(collectionKey, namespace, name), nil
 }

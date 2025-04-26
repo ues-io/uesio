@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -19,11 +19,11 @@ func RegisterBotDialect(name string, dialect BotDialect) {
 func GetBotDialect(botDialectName string) (BotDialect, error) {
 	dialectKey, ok := meta.GetBotDialects()[botDialectName]
 	if !ok {
-		return nil, errors.New("Invalid bot dialect name: " + botDialectName)
+		return nil, fmt.Errorf("invalid bot dialect name: %s", botDialectName)
 	}
 	dialect, ok := botDialectMap[dialectKey]
 	if !ok {
-		return nil, errors.New("No dialect found for this bot: " + botDialectName)
+		return nil, fmt.Errorf("no dialect found for this bot: %s", botDialectName)
 	}
 	return dialect, nil
 }

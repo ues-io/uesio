@@ -35,7 +35,7 @@ type Connection struct {
 }
 
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
+	ctlutil.HandleError(w, errors.New("requesting login is not supported by this auth source type"))
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
@@ -58,22 +58,22 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
-		return nil, nil, fmt.Errorf("Mock login: %w", err)
+		return nil, nil, fmt.Errorf("mock login: %w", err)
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
 }
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
-	return errors.New("Mock login: unfortunately you cannot sign up for mock login")
+	return errors.New("mock login: unfortunately you cannot sign up for mock login")
 }
 func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
-	return nil, errors.New("Mock login: unfortunately you cannot change the password")
+	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
-	return nil, errors.New("Mock login: unfortunately you cannot change the password")
+	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
-	return errors.New("Mock login: unfortunately you cannot create a login")
+	return errors.New("mock login: unfortunately you cannot create a login")
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
-	return errors.New("Mock login: unfortunately you cannot change the password")
+	return errors.New("mock login: unfortunately you cannot change the password")
 }

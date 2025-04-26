@@ -82,7 +82,7 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("Failed to obtain working directory: %w", err)
+		return fmt.Errorf("failed to obtain working directory: %w", err)
 	}
 
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
@@ -465,7 +465,7 @@ func serve(cmd *cobra.Command, args []string) error {
 			)(r))
 		*/
 		if serveErr != nil && serveErr.Error() != "http: Server closed" {
-			slog.Error("Failed to start server: " + serveErr.Error())
+			slog.Error("failed to start server: " + serveErr.Error())
 			// this will terminate the server without waiting for graceful shutdown
 			server.StartupError()
 		}

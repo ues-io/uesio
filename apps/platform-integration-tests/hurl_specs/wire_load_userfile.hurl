@@ -157,7 +157,7 @@ jsonpath "$.success" == true
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 404
 [Asserts]
-body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
+body startsWith "couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
 
 # Verify 400 when invalid userfileid format
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid=my-bad-id

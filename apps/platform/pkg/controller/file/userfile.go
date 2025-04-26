@@ -43,13 +43,13 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 		}
 		if part.FormName() == "file" {
 			if op.Path == "" {
-				return nil, errors.New("No name specified")
+				return nil, errors.New("no name specified")
 			}
 			if op.CollectionID == "" {
-				return nil, errors.New("No collectionid specified")
+				return nil, errors.New("no collectionid specified")
 			}
 			if op.RecordID == "" {
-				return nil, errors.New("No recordid specified")
+				return nil, errors.New("no recordid specified")
 			}
 			op.Data = part
 			results, err := filesource.Upload([]*filesource.FileUploadOp{op}, nil, session, op.Params)
@@ -57,7 +57,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 				return nil, err
 			}
 			if len(results) != 1 {
-				return nil, errors.New("Upload Failed: Invalid Response")
+				return nil, errors.New("upload failed: invalid response")
 			}
 			result = results[0]
 		}

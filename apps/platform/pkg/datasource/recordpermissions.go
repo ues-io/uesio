@@ -167,7 +167,7 @@ func handleStandardChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, sessi
 	}
 
 	if !hasToken && !userCanModifyAllRecords {
-		return exceptions.NewForbiddenException("User does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("user does not have access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil
@@ -190,7 +190,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 
 		accessItem, err = wire.GetLoadable(accessInterface)
 		if err != nil {
-			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
+			return fmt.Errorf("couldn't convert item: %T", accessInterface)
 		}
 
 		fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
@@ -242,7 +242,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 	}
 
 	if !hasToken {
-		return exceptions.NewForbiddenException("User does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
+		return exceptions.NewForbiddenException("user does not have parent access to write to this record: " + change.UniqueKey + " of collection: " + change.Metadata.GetFullName())
 	}
 
 	return nil

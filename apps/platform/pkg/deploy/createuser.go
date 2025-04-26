@@ -73,7 +73,7 @@ func NewCreateUserOptions(siteID string, params map[string]any) (*CreateUserOpti
 
 func CreateUser(options *CreateUserOptions, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 	if options == nil {
-		return nil, errors.New("Invalid Create options")
+		return nil, errors.New("invalid create options")
 	}
 
 	user := &meta.User{

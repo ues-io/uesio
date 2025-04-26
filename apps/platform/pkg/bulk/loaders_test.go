@@ -54,7 +54,7 @@ func Test_TimestampLoader(t *testing.T) {
 			"return error if input is not an expected format",
 			"2022/12/13",
 			nil,
-			"Invalid format for TIMESTAMP field 'uesio/core.updatedat': value '2022/12/13' is not valid ISO-8601 UTC datetime or Unix timestamp",
+			"invalid format for TIMESTAMP field 'uesio/core.updatedat': value '2022/12/13' is not valid ISO-8601 UTC datetime or Unix timestamp",
 		},
 	}
 	for _, tt := range tests {
@@ -73,7 +73,7 @@ func Test_TimestampLoader(t *testing.T) {
 				val, err := changeItem.GetField(fieldMetadata.GetFullName())
 				if tt.want == nil {
 					assert.NotNil(t, err)
-					assert.Equal(t, err.Error(), "Field not found: "+fieldMetadata.GetFullName())
+					assert.Equal(t, err.Error(), "field not found: "+fieldMetadata.GetFullName())
 				} else {
 					assert.Nil(t, err)
 					assert.Equalf(t, tt.want, val, "TimestampLoader(%s)", tt.input)
@@ -135,7 +135,7 @@ func Test_NumberLoader(t *testing.T) {
 			"return error if input is not an expected format",
 			"2022/12/13",
 			nil,
-			"Invalid format for NUMBER field 'uesio/core.total_population': value '2022/12/13' is not a valid number",
+			"invalid format for NUMBER field 'uesio/core.total_population': value '2022/12/13' is not a valid number",
 		},
 	}
 	for _, tt := range tests {
@@ -205,7 +205,7 @@ func Test_BooleanLoader(t *testing.T) {
 			"return error if input can not be parsed as boolean",
 			"not a boolean",
 			nil,
-			"Invalid format for CHECKBOX field 'uesio/core.checkbox': value 'not a boolean' is not a valid boolean",
+			"invalid format for CHECKBOX field 'uesio/core.checkbox': value 'not a boolean' is not a valid boolean",
 		},
 	}
 	for _, tt := range tests {
@@ -549,7 +549,7 @@ func Test_StructLoader(t *testing.T) {
 			"return error if input is not an expected format",
 			"asjdfkasdjf",
 			nil,
-			"Invalid struct format: uesio/core.location : invalid character 'a' looking for beginning of value",
+			"invalid struct format: uesio/core.location : invalid character 'a' looking for beginning of value",
 		},
 	}
 	for _, tt := range tests {

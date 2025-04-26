@@ -221,4 +221,4 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ue
 }
 HTTP 400
 [Asserts]
-body contains "Login isn't currently supported for workspaces"
+body contains "login isn't currently supported for workspaces"

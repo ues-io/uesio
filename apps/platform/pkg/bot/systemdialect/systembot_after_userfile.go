@@ -38,7 +38,8 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 		if err != nil {
 			return err
 		}
-		if relatedCollection == userCollectionId {
+		switch relatedCollection {
+		case userCollectionId:
 			relatedField, err := change.GetField("uesio/core.fieldid")
 			if err != nil {
 				return err
@@ -46,7 +47,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 			if relatedField == "uesio/core.picture" {
 				userKeysToDelete = append(userKeysToDelete, auth.GetUserCacheKey(relatedRecordId, site))
 			}
-		} else if relatedCollection == studioFileCollectionId {
+		case studioFileCollectionId:
 			pathField, err := change.GetField("uesio/core.path")
 			if err != nil || pathField == "" {
 				return nil
@@ -59,7 +60,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 			} else {
 				return nil
 			}
-		} else if relatedCollection == studioBotCollectionId {
+		case studioBotCollectionId:
 			// Increment the timestamp on the parent Bot,
 			// so that we are able to achieve cache invalidation
 			studioBotUpdates = append(studioBotUpdates, &wire.Item{

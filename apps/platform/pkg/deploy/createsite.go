@@ -54,7 +54,7 @@ func NewCreateSiteOptions(params map[string]any) (*CreateSiteOptions, error) {
 func CreateSite(options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (*meta.Site, error) {
 
 	if options == nil {
-		return nil, errors.New("Invalid Create options")
+		return nil, errors.New("invalid create options")
 	}
 
 	appName := options.AppName

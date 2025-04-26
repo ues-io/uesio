@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -283,7 +282,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 
 	routingMergeData, err := GetRoutingMergeData(route, preloadmeta, session)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("error getting route merge data: %w", err))
 		return
 	}
 
@@ -307,7 +306,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 	// }
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
-		ctlutil.HandleError(w, errors.New("Error merging template: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("error merging template: %w", err))
 		return
 	}
 }

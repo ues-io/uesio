@@ -83,7 +83,7 @@ func (ffs *FeatureFlagStore) Get(key, user string, session *sess.Session) (*meta
 	}
 	length := len(assignments)
 	if length > 1 {
-		return nil, errors.New("Too many Assignments")
+		return nil, errors.New("too many assignments")
 	}
 	if length == 1 {
 		return assignments[0], nil

@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"path"
 
 	"gopkg.in/yaml.v3"
@@ -10,7 +10,7 @@ import (
 func NewAgent(key string) (*Agent, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Agent: " + key)
+		return nil, fmt.Errorf("bad key for agent: %s", key)
 	}
 	return NewBaseAgent(namespace, name), nil
 }

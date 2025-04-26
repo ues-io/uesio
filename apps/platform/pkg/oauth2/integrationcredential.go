@@ -1,7 +1,7 @@
 package oauth2
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -166,7 +166,7 @@ func GetIntegrationCredential(
 			Connection: connection,
 		},
 	); err != nil {
-		return nil, errors.New("unable to load existing integration credentials: " + err.Error())
+		return nil, fmt.Errorf("unable to load existing integration credentials: %w", err)
 	}
 	// Return the record we found, if any
 	if integrationCredentials.Len() == 0 {

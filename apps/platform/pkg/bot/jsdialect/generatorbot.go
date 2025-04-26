@@ -461,7 +461,7 @@ func mergeNode(node *yaml.Node, params map[string]any) error {
 					// If newNode is not a scalar, then we have to be sure it was the
 					// entire merge.
 					if matchExpression != node.Value {
-						return errors.New("cannot merge a sequence or map into a multipart template: " + matchExpression + " : " + node.Value)
+						return fmt.Errorf("cannot merge a sequence or map into a multipart template: %s : %s", matchExpression, node.Value)
 					}
 
 					// Replace that crap

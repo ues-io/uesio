@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 
 	"gopkg.in/yaml.v3"
@@ -122,7 +123,7 @@ func runWorkspaceAfterSaveBot(request *wire.SaveOp, connection wire.Connection, 
 			return errors.New("unable to get workspace unique key, cannot truncate data")
 		}
 		if err = connection.TruncateTenantData(sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
-			return errors.New("unable to truncate workspace data: " + err.Error())
+			return fmt.Errorf("unable to truncate workspace data: %w", err)
 		}
 		return nil
 	})

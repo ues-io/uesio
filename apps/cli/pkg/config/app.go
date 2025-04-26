@@ -1,7 +1,7 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -32,7 +32,7 @@ func GetVersion(namespace string) (string, error) {
 
 	versionInfo, ok := def.Dependencies[namespace]
 	if !ok {
-		return "", errors.New("That namespace is not installed: " + namespace)
+		return "", fmt.Errorf("that namespace is not installed: %s", namespace)
 	}
 
 	return versionInfo.Version, nil

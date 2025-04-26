@@ -13,7 +13,7 @@ import (
 func NewRoute(key string) (*Route, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Invalid Route Key: " + key)
+		return nil, fmt.Errorf("invalid route key: %s", key)
 	}
 	return NewBaseRoute(namespace, name), nil
 }
@@ -91,16 +91,17 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	routeType := GetNodeValueAsString(node, "type")
-	if routeType == "redirect" {
+	switch routeType {
+	case "redirect":
 		if redirectTo := GetNodeValueAsString(node, "redirect"); redirectTo == "" {
 			return errors.New("redirect property is required for routes of type 'redirect'")
 		}
-	} else if routeType == "bot" {
+	case "bot":
 		r.BotRef, err = pickRequiredMetadataItem(node, "bot", r.Namespace)
 		if err != nil || r.BotRef == "" {
-			return errors.New("bot property is required for Run Bot routes")
+			return errors.New("bot property is required for run bot routes")
 		}
-	} else {
+	default:
 		r.ViewRef, err = pickRequiredMetadataItem(node, "view", r.Namespace)
 		if err != nil {
 			return fmt.Errorf("invalid route %s: %s", r.GetKey(), err.Error())

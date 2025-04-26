@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -11,7 +10,7 @@ import (
 
 func RunUsageWorker(w http.ResponseWriter, r *http.Request) {
 	if err := usage_worker.UsageWorker(r.Context()); err != nil {
-		ctlutil.HandleError(w, errors.New("Usage Worker Failed: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("usage worker failed: %w", err))
 		return
 	}
 	fmt.Fprintf(w, "Usage Worker Success")

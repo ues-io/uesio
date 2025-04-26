@@ -67,7 +67,7 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 
 	if redirectPath == "" {
 		if redirectKey == "" {
-			return nil, errors.New("No redirect route specified")
+			return nil, errors.New("no redirect route specified")
 		}
 		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
@@ -108,7 +108,7 @@ func ResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user 
 func GetUserFromFederationID(authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
 
 	if session.GetWorkspace() != nil {
-		return nil, nil, exceptions.NewBadRequestException("Login isn't currently supported for workspaces", nil)
+		return nil, nil, exceptions.NewBadRequestException("login isn't currently supported for workspaces", nil)
 	}
 
 	adminSession := sess.GetAnonSessionFrom(session)
@@ -116,16 +116,16 @@ func GetUserFromFederationID(authSourceID string, federationID string, connectio
 	// 4. Check for Existing User
 	loginMethod, err := GetLoginMethod(federationID, authSourceID, connection, adminSession)
 	if err != nil {
-		return nil, nil, errors.New("Failed Getting Login Method Data: " + err.Error())
+		return nil, nil, fmt.Errorf("failed getting login method data: %w", err)
 	}
 
 	if loginMethod == nil {
-		return nil, nil, exceptions.NewNotFoundException("No account found with this login method")
+		return nil, nil, exceptions.NewNotFoundException("no account found with this login method")
 	}
 
 	user, err := GetUserByID(loginMethod.User.ID, adminSession, nil)
 	if err != nil {
-		return nil, nil, exceptions.NewNotFoundException("failed Getting user Data: " + err.Error())
+		return nil, nil, exceptions.NewNotFoundException("failed getting user data: " + err.Error())
 	}
 
 	return user, loginMethod, nil

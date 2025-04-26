@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"path"
 
@@ -14,7 +13,7 @@ func NewIntegrationAction(integrationTypeName, actionName string) (*IntegrationA
 		// Action Name probably is local, so use the integration type's namespace
 		integrationTypeName, _, err := ParseKey(integrationTypeName)
 		if err != nil {
-			return nil, errors.New("bad key for Integration Action: " + actionName)
+			return nil, fmt.Errorf("bad key for integration action: %s", actionName)
 		}
 		namespace = integrationTypeName
 		name = actionName

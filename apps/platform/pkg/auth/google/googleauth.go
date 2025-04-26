@@ -85,7 +85,7 @@ func (c *Connection) Validate(payload map[string]any) (*idtoken.Payload, error) 
 }
 
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(w, errors.New("Requesting login is not supported by this auth source type"))
+	ctlutil.HandleError(w, errors.New("requesting login is not supported by this auth source type"))
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
@@ -142,10 +142,10 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return c.callListenerBot(signupMethod.SignupBot, payload)
 }
 func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
-	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
+	return nil, exceptions.NewBadRequestException("google login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
-	return nil, exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
+	return nil, exceptions.NewBadRequestException("google login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
 	validated, err := c.Validate(payload)
@@ -160,5 +160,5 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}, c.connection, c.session)
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
-	return exceptions.NewBadRequestException("Google login: unfortunately you cannot change the password", nil)
+	return exceptions.NewBadRequestException("google login: unfortunately you cannot change the password", nil)
 }

@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -133,7 +134,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 			return errors.New("unable to get site unique key, cannot truncate data")
 		}
 		if err = connection.TruncateTenantData(sess.MakeSiteTenantID(siteUniqueKey)); err != nil {
-			return errors.New("unable to truncate site data: " + err.Error())
+			return fmt.Errorf("unable to truncate site data: %w", err)
 		}
 		return nil
 	})

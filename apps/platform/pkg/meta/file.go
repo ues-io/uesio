@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"path"
 
@@ -13,7 +12,7 @@ import (
 func NewFile(key string) (*File, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for File: " + key)
+		return nil, fmt.Errorf("bad key for file: %s", key)
 	}
 	return NewBaseFile(namespace, name), nil
 }

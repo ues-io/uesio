@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -15,7 +15,7 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	//ben/greenlink:dev:companymember to ben/greenlink.companymember
 	keyArray := strings.Split(uniquekey, ":")
 	if len(keyArray) != 3 {
-		return "", errors.New("Invalid Collection Key: " + uniquekey)
+		return "", fmt.Errorf("invalid collection key: %s", uniquekey)
 	}
 
 	return keyArray[0] + "." + keyArray[2], nil

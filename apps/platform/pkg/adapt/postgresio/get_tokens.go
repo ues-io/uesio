@@ -1,7 +1,7 @@
 package postgresio
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 
@@ -15,7 +15,7 @@ func (c *Connection) GetRecordAccessTokens(recordID string, session *sess.Sessio
 	defer c.mux.Unlock()
 	rows, err := c.GetClient().Query(c.ctx, TOKEN_QUERY, recordID, session.GetTenantID())
 	if err != nil {
-		return nil, errors.New("Failed to load tokens:" + err.Error())
+		return nil, fmt.Errorf("failed to load tokens: %w", err)
 	}
 	return pgx.CollectRows(rows, func(row pgx.CollectableRow) (string, error) {
 		var token string

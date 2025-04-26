@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -9,7 +9,7 @@ import (
 func NewIntegrationType(key string) (*IntegrationType, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Integration Type: " + key)
+		return nil, fmt.Errorf("bad key for integration type: %s", key)
 	}
 	return NewBaseIntegrationType(namespace, name), nil
 }

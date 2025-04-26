@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -38,7 +38,7 @@ func GetConnection(dataSourceKey string, session *sess.Session, connection wire.
 
 	mergedType, hasType := dataSourceTypesByName[dataSourceKey]
 	if !hasType {
-		return nil, errors.New("unknown datasource type: " + dataSourceKey)
+		return nil, fmt.Errorf("unknown datasource type: %s", dataSourceKey)
 	}
 
 	adapter, err := adapt.GetAdapter(mergedType)

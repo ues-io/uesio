@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/dimchansky/utfbom"
@@ -19,7 +20,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 	spec := job.Spec
 
 	if spec.Collection == "" {
-		return nil, errors.New("Collection is required for an upload job")
+		return nil, errors.New("collection is required for an upload job")
 	}
 
 	// Unfortunately, we have to read the whole thing into memory
@@ -39,7 +40,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 	// First open upload.csv
 	manifest, err := zipReader.Open("upload.csv")
 	if err != nil {
-		return nil, errors.New("No upload upload.csv manifiest file provided")
+		return nil, errors.New("no upload upload.csv manifiest file provided")
 	}
 
 	defer manifest.Close()
@@ -60,17 +61,17 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	recordIDIndex, ok := columnIndexes["uesio/core.recordid"]
 	if !ok {
-		return nil, errors.New("No record id column provided in upload.csv")
+		return nil, errors.New("no record id column provided in upload.csv")
 	}
 
 	fieldIDIndex, ok := columnIndexes["uesio/core.fieldid"]
 	if !ok {
-		return nil, errors.New("No field id column provided in upload.csv")
+		return nil, errors.New("no field id column provided in upload.csv")
 	}
 
 	pathIndex, ok := columnIndexes["uesio/core.path"]
 	if !ok {
-		return nil, errors.New("No path column provided in upload.csv")
+		return nil, errors.New("no path column provided in upload.csv")
 	}
 
 	sourcePathIndex, ok := columnIndexes["uesio/core.sourcepath"]
@@ -90,17 +91,17 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 		recordid := record[recordIDIndex]
 		if recordid == "" {
-			return nil, errors.New("No record id provided for upload")
+			return nil, errors.New("no record id provided for upload")
 		}
 
 		path := record[pathIndex]
 		if path == "" {
-			return nil, errors.New("No path provided for upload")
+			return nil, errors.New("no path provided for upload")
 		}
 
 		sourcePath := record[sourcePathIndex]
 		if sourcePath == "" {
-			return nil, errors.New("No source path provided for upload")
+			return nil, errors.New("no source path provided for upload")
 		}
 
 		// It's ok for fieldid to be an empty string.
@@ -109,7 +110,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 		f, err := zipReader.Open("files/" + sourcePath)
 		if err != nil {
-			return nil, errors.New("No file found at path: " + path)
+			return nil, fmt.Errorf("no file found at path: %s", path)
 		}
 		uploadOps = append(uploadOps, &filesource.FileUploadOp{
 			Data:            f,

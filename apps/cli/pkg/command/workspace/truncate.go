@@ -29,7 +29,7 @@ func Truncate() error {
 	}
 
 	if workspace == "" {
-		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
+		return errors.New("no active workspace is set -- use \"uesio work\" to set one")
 	}
 
 	sessionId, err := config.GetSessionID()

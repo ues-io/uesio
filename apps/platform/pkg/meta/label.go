@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -32,7 +32,7 @@ func (l *Label) IsNil() bool {
 func NewLabel(key string) (*Label, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Label: " + key)
+		return nil, fmt.Errorf("bad key for label: %s", key)
 	}
 	return NewBaseLabel(namespace, name), nil
 }

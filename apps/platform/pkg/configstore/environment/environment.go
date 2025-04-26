@@ -2,6 +2,7 @@ package environment
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -17,7 +18,7 @@ type ConfigStore struct {
 func GetRequiredEnv(key string) string {
 	value, ok := os.LookupEnv(key)
 	if !ok || value == "" {
-		log.Fatal(errors.New("Missing environment variable: " + key))
+		log.Fatal(fmt.Errorf("missing environment variable: %s", key))
 	}
 	return value
 }

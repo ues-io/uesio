@@ -1,7 +1,6 @@
 package site
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -18,10 +17,10 @@ func UseBundle(siteName, newBundleVersion string) error {
 	// Verify that the requested site exists
 	siteExists, err := wire.DoesSiteExist(app.ID, siteName)
 	if err != nil {
-		return errors.New("unable to verify that the requested site exists")
+		return fmt.Errorf("unable to verify that the requested site exists: %s", siteName)
 	}
 	if !siteExists {
-		return errors.New("the requested site does not exist: " + siteName)
+		return fmt.Errorf("the requested site does not exist: %s", siteName)
 	}
 
 	// The bundle version's unique key is appFullName:major:minor:patch

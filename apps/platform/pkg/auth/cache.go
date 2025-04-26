@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -82,7 +81,7 @@ func InvalidateHostCache() error {
 func getHostKeyFromDomainId(id string) (string, error) {
 	idParts := strings.Split(id, ":")
 	if len(idParts) != 2 {
-		return "", errors.New("Bad Domain ID: " + id)
+		return "", fmt.Errorf("bad domain id: %s", id)
 	}
 	return getHostKey(idParts[1], idParts[0]), nil
 }

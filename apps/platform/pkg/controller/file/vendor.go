@@ -42,7 +42,7 @@ func init() {
 	vendorScriptsManifestFile, err := os.ReadFile(manifestFilePath)
 
 	if err != nil {
-		fmt.Println("Unable to read vendor scripts manifest file")
+		fmt.Println("unable to read vendor scripts manifest file")
 		panic(err)
 	}
 
@@ -51,7 +51,7 @@ func init() {
 	err = json.Unmarshal(vendorScriptsManifestFile, &vendorManifest)
 
 	if err != nil {
-		fmt.Println("Unable to parse vendor scripts manifest")
+		fmt.Println("unable to parse vendor scripts manifest")
 		panic(err)
 	}
 

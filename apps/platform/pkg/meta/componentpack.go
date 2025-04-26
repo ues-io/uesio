@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"path"
 
 	"github.com/francoispqt/gojay"
@@ -11,7 +11,7 @@ import (
 func NewComponentPack(key string) (*ComponentPack, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Component Pack: " + key)
+		return nil, fmt.Errorf("bad key for component pack: %s", key)
 	}
 	return NewBaseComponentPack(namespace, name), nil
 }

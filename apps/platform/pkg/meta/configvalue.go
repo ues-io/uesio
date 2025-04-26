@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/francoispqt/gojay"
@@ -41,7 +40,7 @@ func (cv *ConfigValue) IsNil() bool {
 func NewConfigValue(key string) (*ConfigValue, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for ConfigValue: " + key)
+		return nil, fmt.Errorf("bad key for config value: %s", key)
 	}
 	return NewBaseConfigValue(namespace, name), nil
 }
