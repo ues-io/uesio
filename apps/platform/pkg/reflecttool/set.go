@@ -18,7 +18,7 @@ func SetField(obj any, name string, value any) error {
 	structKind := structValue.Kind()
 	structType := structValue.Type()
 	if structKind != reflect.Struct {
-		return errors.New("Cannot use SetField on a non-struct interface")
+		return errors.New("cannot use SetField on a non-struct interface")
 	}
 	fieldName, err := getFieldName(structType, name)
 	if err != nil {
@@ -38,7 +38,7 @@ func setSlice(to reflect.Value, from reflect.Value) error {
 	// Verify that from's type is a slice so we don't have a panic
 	fromKind := from.Kind()
 	if fromKind != reflect.Slice {
-		return fmt.Errorf("Cannot set kind: %s to slice", fromKind)
+		return fmt.Errorf("cannot set kind: %s to slice", fromKind)
 	}
 	for i := range from.Len() {
 		newItem := reflect.Indirect(reflect.New(itemType))
@@ -57,7 +57,7 @@ func setMap(to reflect.Value, from reflect.Value) error {
 	// Verify that from's type is a map so we don't have a panic
 	fromKind := from.Kind()
 	if fromKind != reflect.Map {
-		return fmt.Errorf("Cannot set kind: %s to map", fromKind)
+		return fmt.Errorf("cannot set kind: %s to map", fromKind)
 	}
 	for _, key := range from.MapKeys() {
 		newItem := reflect.Indirect(reflect.New(itemType))
@@ -86,7 +86,7 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 		return nil
 	}
 	if fromKind != reflect.Map {
-		return fmt.Errorf("Cannot set kind: %s to a %s struct", fromKind, structType)
+		return fmt.Errorf("cannot set kind: %s to a %s struct", fromKind, structType)
 	}
 	for _, key := range from.MapKeys() {
 		fieldName, err := getFieldName(structType, key.String())
@@ -139,7 +139,7 @@ func setPrimative(to reflect.Value, from reflect.Value) error {
 			fmt.Println("WARNING: converted string to int: " + stringVal)
 			return nil
 		}
-		return errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
+		return fmt.Errorf("provided value type didn't match obj field type: %s : %s", to.Type().String(), from.Type().String())
 	}
 
 	to.Set(from)
@@ -153,11 +153,11 @@ func setFieldReflect(to reflect.Value, from reflect.Value) error {
 	}
 
 	if !to.IsValid() {
-		return fmt.Errorf("No such field")
+		return errors.New("no such field")
 	}
 
 	if !to.CanSet() {
-		return fmt.Errorf("Cannot set")
+		return errors.New("cannot set")
 	}
 
 	switch to.Kind() {

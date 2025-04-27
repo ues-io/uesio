@@ -48,7 +48,7 @@ func (rctc *RecordChallengeTokenCollection) GetItemFromPath(path, namespace stri
 func (rctc *RecordChallengeTokenCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ":")
 	if (len(keyArray)) != 2 {
-		return nil, errors.New("Invalid Record Challenge Token Key")
+		return nil, errors.New("invalid record challenge token key")
 	}
 	return NewRecordChallengeToken(keyArray[0], keyArray[1])
 }

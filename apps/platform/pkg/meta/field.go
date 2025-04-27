@@ -11,7 +11,7 @@ import (
 func NewField(collectionKey, fieldKey string) (*Field, error) {
 	namespace, name, err := ParseKey(fieldKey)
 	if err != nil {
-		return nil, errors.New("Bad Key for Field: " + collectionKey + " : " + fieldKey)
+		return nil, fmt.Errorf("bad key for field: %s : %s", collectionKey, fieldKey)
 	}
 	return NewBaseField(collectionKey, namespace, name), nil
 }
@@ -127,10 +127,10 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 
 	_, ok := GetFieldTypes()[fieldType]
 	if !ok {
-		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
+		return fmt.Errorf("invalid field type for field: %s : %s", f.GetKey(), fieldType)
 	}
 	if f.CollectionRef == "" {
-		return errors.New("Invalid Collection Value for Field: " + f.GetKey())
+		return fmt.Errorf("invalid collection value for field: %s", f.GetKey())
 	}
 
 	if fieldType == "REFERENCE" {
@@ -174,7 +174,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if fieldType == "SELECT" || fieldType == "MULTISELECT" {
 		f.SelectList, err = pickRequiredMetadataItem(node, "selectList", f.Namespace)
 		if err != nil {
-			return fmt.Errorf("Invalid selectlist metadata provided for field: %s : Missing select list name", f.GetKey())
+			return fmt.Errorf("invalid selectlist metadata provided for field: %s : missing select list name", f.GetKey())
 		}
 	}
 

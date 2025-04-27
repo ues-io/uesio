@@ -2,6 +2,7 @@ package reflecttool
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"sync"
@@ -14,7 +15,7 @@ func getFieldName(objType reflect.Type, uesioName string) (string, error) {
 	}
 	name, ok := tags[uesioName]
 	if !ok {
-		return "", errors.New("Could not find field: " + uesioName + " : " + objType.String())
+		return "", fmt.Errorf("could not find field: %s : %s", uesioName, objType.String())
 	}
 	return name, nil
 }
@@ -24,7 +25,7 @@ func GetFieldNames(obj any) ([]string, error) {
 	structKind := structValue.Kind()
 	structType := structValue.Type()
 	if structKind != reflect.Struct {
-		return nil, errors.New("Cannot use GetFieldNames on a non-struct interface")
+		return nil, errors.New("cannot use GetFieldNames on a non-struct interface")
 	}
 	tags, err := getTags(structType)
 	if err != nil {

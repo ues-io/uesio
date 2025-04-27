@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 	"maps"
 	"slices"
@@ -79,7 +78,7 @@ func getCascadeDeletes(
 
 		idLoadOp := &wire.LoadOp{
 			CollectionName: referencedCollection,
-			WireName:       fmt.Sprintf("CascadeDeleteIdLoad_%s", referencedCollection),
+			WireName:       "CascadeDeleteIdLoad_" + referencedCollection,
 			Fields:         []wire.LoadRequestField{{ID: commonfields.Id}},
 			Collection:     &idLoadCollection,
 			Conditions: []wire.LoadRequestCondition{
@@ -111,7 +110,7 @@ func getCascadeDeletes(
 
 		err = connection.Load(idLoadOp, versionSession)
 		if err != nil {
-			return nil, errors.New("Cascade delete error: " + err.Error())
+			return nil, fmt.Errorf("cascade delete error: %w", err)
 		}
 
 		if len(idLoadCollection) == 0 {

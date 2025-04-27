@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/icza/session"
@@ -18,7 +19,7 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	// Split the token on the ":" character
 	cutToken, ok := strings.CutPrefix(token, "ues_")
 	if !ok {
-		return nil, errors.New("The api key you are trying to log in with is invalid")
+		return nil, errors.New("the api key you are trying to log in with is invalid")
 	}
 	id := cutToken[:8]
 	key := cutToken[8:]
@@ -26,11 +27,11 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	adminSession := sess.GetAnonSession(context.Background(), site)
 	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", nil, adminSession)
 	if err != nil || loginmethod == nil {
-		return nil, exceptions.NewBadRequestException("The api key you are trying to log in with does not exist", nil)
+		return nil, exceptions.NewBadRequestException("the api key you are trying to log in with does not exist", nil)
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(loginmethod.Hash), []byte(key))
 	if err != nil {
-		return nil, exceptions.NewUnauthorizedException("The api key you are trying to log in with is invalid")
+		return nil, exceptions.NewUnauthorizedException("the api key you are trying to log in with is invalid")
 	}
 
 	return GetUserByID(loginmethod.User.ID, adminSession, nil)
@@ -44,7 +45,7 @@ func GetUserFromBrowserSession(browserSession session.Session, site *meta.Site) 
 	browserSessionUser := sess.GetSessionAttribute(browserSession, "UserID")
 	// Check to make sure our session site matches the site from our domain.
 	if browserSessionSite != site.GetFullName() {
-		return nil, errors.New("Sites mismatch for user: " + browserSessionUser)
+		return nil, fmt.Errorf("sites mismatch for user: %s", browserSessionUser)
 	}
 	return GetCachedUserByID(browserSessionUser, site)
 }
@@ -57,11 +58,11 @@ func GetSessionFromUser(sessionID string, user *meta.User, site *meta.Site) (*se
 func HydrateUserPermissions(user *meta.User, session *sess.Session) error {
 	profileKey := user.Profile
 	if profileKey == "" {
-		return errors.New("No profile found in session")
+		return errors.New("no profile found in session")
 	}
 	profile, err := datasource.LoadAndHydrateProfile(profileKey, session)
 	if err != nil {
-		return errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
+		return fmt.Errorf("error loading profile: %s : %w", profileKey, err)
 	}
 	user.Permissions = profile.FlattenPermissions()
 	user.ProfileRef = profile

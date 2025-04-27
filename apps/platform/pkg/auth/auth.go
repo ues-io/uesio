@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -33,13 +33,14 @@ func init() {
 	storageType := os.Getenv("UESIO_SESSION_STORE")
 
 	var store session.Store
-	if storageType == "filesystem" {
+	switch storageType {
+	case "filesystem":
 		store = NewFSSessionStore()
-	} else if storageType == "redis" {
+	case "redis":
 		store = NewRedisSessionStore()
-	} else if storageType == "" || storageType == "memory" {
+	case "", "memory":
 		store = session.NewInMemStore()
-	} else {
+	default:
 		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
 	}
 
@@ -99,7 +100,7 @@ func getAuthType(authTypeName string, session *sess.Session) (AuthenticationType
 	}
 	authType, ok := authTypeMap[mergedType]
 	if !ok {
-		return nil, errors.New("No adapter found of this auth type: " + mergedType)
+		return nil, fmt.Errorf("no adapter found of this auth type: %s", mergedType)
 	}
 	return authType, nil
 }
@@ -205,7 +206,7 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 		return nil, err
 	}
 	if site == nil {
-		return nil, errors.New("No Site Found: " + domainType + " : " + domainValue)
+		return nil, fmt.Errorf("no site found: %s : %s", domainType, domainValue)
 	}
 
 	err = setHostCache(domainType, domainValue, site)
@@ -421,12 +422,12 @@ func GetPayloadValue(payload map[string]any, key string) (string, error) {
 
 	value, ok := payload[key]
 	if !ok {
-		return "", errors.New("key '" + key + "' not present in payload")
+		return "", fmt.Errorf("key '%s' not present in payload", key)
 	}
 
 	stringValue, ok := value.(string)
 	if !ok {
-		return "", errors.New("The value for " + key + " is not a string")
+		return "", fmt.Errorf("the value for %s is not a string", key)
 	}
 
 	return stringValue, nil
@@ -439,7 +440,7 @@ func GetRequiredPayloadValue(payload map[string]any, key string) (string, error)
 		return "", err
 	}
 	if value == "" {
-		return "", errors.New("missing required value: " + key)
+		return "", fmt.Errorf("missing required value: %s", key)
 	}
 	return value, nil
 }

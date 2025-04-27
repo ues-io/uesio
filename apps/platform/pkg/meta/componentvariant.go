@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -13,11 +12,11 @@ import (
 func NewComponentVariant(key string) (*ComponentVariant, error) {
 	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid Variant Key: " + key)
+		return nil, fmt.Errorf("invalid variant key: %s", key)
 	}
 	namespace, name, err := ParseKey(keyArray[1])
 	if err != nil {
-		return nil, errors.New("Invalid Variant Key: " + key)
+		return nil, fmt.Errorf("invalid variant key: %s", key)
 	}
 	return NewBaseComponentVariant(keyArray[0], namespace, name), nil
 }

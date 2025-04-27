@@ -25,7 +25,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value any) (string, error
 	case "LIST", "STRUCT", "MAP":
 		byteValue, err := json.Marshal(value)
 		if err != nil {
-			return "", fmt.Errorf("Failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
+			return "", fmt.Errorf("failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
 		}
 		return string(byteValue), nil
 	case "MULTISELECT":
@@ -36,7 +36,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value any) (string, error
 		sort.Strings(values)
 		byteValue, err := json.Marshal(values)
 		if err != nil {
-			return "", fmt.Errorf("Failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
+			return "", fmt.Errorf("failed to serialize: %s: %w", fieldMetadata.GetFullName(), err)
 		}
 		return string(byteValue), nil
 	case "TIMESTAMP":
@@ -51,7 +51,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value any) (string, error
 			unixTimestamp = time.Unix(timestampInt, 0).UTC()
 		} else {
 			// It is neither -- this is not a supported format
-			return "", errors.New("Bad timestamp value")
+			return "", errors.New("bad timestamp value")
 		}
 		return unixTimestamp.Format(time.RFC3339), nil
 	case "NUMBER":
@@ -64,7 +64,7 @@ func getStringValue(fieldMetadata *wire.FieldMetadata, value any) (string, error
 	default:
 		stringVal, ok := value.(string)
 		if !ok {
-			fmt.Println("Failed to set: " + fieldMetadata.GetFullName() + ":" + fieldMetadata.Type)
+			fmt.Println("failed to set: " + fieldMetadata.GetFullName() + ":" + fieldMetadata.Type)
 			stringVal = ""
 		}
 		return stringVal, nil

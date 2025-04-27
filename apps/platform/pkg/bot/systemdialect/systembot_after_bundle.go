@@ -48,7 +48,7 @@ func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session 
 	}
 
 	if len(bundleDependency) > 0 {
-		return errors.New("Tried to delete a Bundle that is in use")
+		return errors.New("tried to delete a Bundle that is in use")
 	}
 
 	return clearFilesForBundles(uniqueKeys, session)

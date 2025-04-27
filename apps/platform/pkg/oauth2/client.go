@@ -3,6 +3,7 @@ package oauth2
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -38,7 +39,7 @@ func defaultCredentialFetch(ic *wire.IntegrationConnection) (*wire.Item, error) 
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
 	if err != nil {
-		return nil, errors.New("failed to enter uesio/core context: " + err.Error())
+		return nil, fmt.Errorf("failed to enter uesio/core context: %w", err)
 	}
 	return GetIntegrationCredential(session.GetSiteUser().ID, ic.GetIntegration().GetKey(), coreSession, connection)
 }
@@ -47,7 +48,7 @@ func defaultCredentialSave(credential *wire.Item, ic *wire.IntegrationConnection
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
 	if err != nil {
-		return errors.New("failed to enter uesio/core context: " + err.Error())
+		return fmt.Errorf("failed to enter uesio/core context: %w", err)
 	}
 	return UpsertIntegrationCredential(credential, coreSession, connection)
 }
@@ -56,7 +57,7 @@ func defaultCredentialDelete(credential *wire.Item, ic *wire.IntegrationConnecti
 	connection := ic.GetPlatformConnection()
 	coreSession, err := datasource.EnterVersionContext("uesio/core", ic.GetSession(), connection)
 	if err != nil {
-		return errors.New("failed to enter uesio/core context: " + err.Error())
+		return fmt.Errorf("failed to enter uesio/core context: %w", err)
 	}
 	return DeleteIntegrationCredential(credential, coreSession, connection)
 }
@@ -81,7 +82,7 @@ func MakeRequestWithStoredUserCredentials(req *http.Request, ic *wire.Integratio
 	isAuthCodeFlow := integration.Authentication == "OAUTH2_AUTHORIZATION_CODE"
 	integrationCredential, err := credentialAccessors.Fetch(ic)
 	if err != nil {
-		return nil, errors.New("unable to retrieve integration credential: " + err.Error())
+		return nil, fmt.Errorf("unable to retrieve integration credential: %w", err)
 	}
 	// If we do NOT have an existing record...
 	if integrationCredential == nil {
@@ -164,19 +165,20 @@ func getClient(ctx context.Context, integration *meta.Integration, credentials *
 
 	var tokenSource oauth2.TokenSource
 
-	if integration.Authentication == "OAUTH2_CLIENT_CREDENTIALS" {
+	switch integration.Authentication {
+	case "OAUTH2_CLIENT_CREDENTIALS":
 		config, err := GetClientCredentialsConfig(credentials)
 		if err != nil {
 			return nil, exceptions.NewUnauthorizedException(err.Error())
 		}
 		tokenSource = oauth2.ReuseTokenSource(t, config.TokenSource(ctx))
-	} else if integration.Authentication == "OAUTH2_AUTHORIZATION_CODE" {
+	case "OAUTH2_AUTHORIZATION_CODE":
 		config, err := GetConfig(credentials, host)
 		if err != nil {
 			return nil, exceptions.NewUnauthorizedException(err.Error())
 		}
 		tokenSource = config.TokenSource(ctx, t)
-	} else {
+	default:
 		return nil, exceptions.NewUnauthorizedException("unsupported OAuth 2 grant type")
 	}
 

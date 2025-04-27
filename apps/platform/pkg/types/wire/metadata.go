@@ -2,7 +2,6 @@ package wire
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -27,7 +26,7 @@ func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata)
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
 	collectionMetadata, ok := mc.Collections[key]
 	if !ok {
-		return nil, errors.New("No metadata provided for collection: " + key)
+		return nil, fmt.Errorf("no metadata provided for collection: %s", key)
 	}
 	return collectionMetadata, nil
 }
@@ -42,7 +41,7 @@ func (mc *MetadataCache) AddSelectList(key string, metadata *SelectListMetadata)
 func (mc *MetadataCache) GetSelectList(key string) (*SelectListMetadata, error) {
 	selectListMetadata, ok := mc.selectLists[key]
 	if !ok {
-		return nil, errors.New("No metadata found for select list: " + key)
+		return nil, fmt.Errorf("no metadata found for select list: %s", key)
 	}
 	return selectListMetadata, nil
 }
@@ -176,7 +175,7 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 	if len(names) == 1 {
 		fieldMetadata, ok := cm.Fields[meta.GetFullyQualifiedKey(key, cm.Namespace)]
 		if !ok {
-			return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
+			return nil, fmt.Errorf("no metadata provided for field: %s in collection: %s", key, cm.Name)
 		}
 		return fieldMetadata, nil
 	}
@@ -184,12 +183,12 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 
 	fieldMetadata, err := cm.GetField(meta.GetFullyQualifiedKey(mainFieldName, cm.Namespace))
 	if err != nil {
-		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
+		return nil, fmt.Errorf("no metadata provided for field: %s in collection: %s", key, cm.Name)
 	}
 
 	if IsReference(fieldMetadata.Type) {
 		if metadata == nil {
-			return nil, errors.New("no metadata found for reference field: " + mainFieldName)
+			return nil, fmt.Errorf("no metadata found for reference field: %s", mainFieldName)
 		}
 		if refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection()); err != nil {
 			return nil, err
@@ -201,7 +200,7 @@ func (cm *CollectionMetadata) GetFieldWithMetadata(key string, metadata *Metadat
 		var subFieldMetadata *FieldMetadata
 		for _, namePart := range names[1:] {
 			if tmp, exists := fieldMetadata.SubFields[namePart]; !exists {
-				return nil, fmt.Errorf("subfield '%s' doesn't exist on Struct field: '%s'.", namePart, mainFieldName)
+				return nil, fmt.Errorf("subfield '%s' doesn't exist on Struct field: '%s'", namePart, mainFieldName)
 			} else {
 				subFieldMetadata = tmp
 			}
@@ -429,14 +428,14 @@ func (fm *FieldMetadata) GetSubField(key string) (*FieldMetadata, error) {
 	if len(names) == 1 {
 		fieldMetadata, ok := fm.SubFields[key]
 		if !ok {
-			return nil, errors.New("No metadata provided for sub-field: " + key + " in collection: " + fm.Name)
+			return nil, fmt.Errorf("no metadata provided for sub-field: %s in collection: %s", key, fm.Name)
 		}
 		return fieldMetadata, nil
 	}
 
 	fieldMetadata, err := fm.GetSubField(names[0])
 	if err != nil {
-		return nil, errors.New("No metadata provided for sub-field: " + key + " in collection: " + fm.Name)
+		return nil, fmt.Errorf("no metadata provided for sub-field: %s in collection: %s", key, fm.Name)
 	}
 
 	return fieldMetadata.GetSubField(strings.Join(names[1:], constant.RefSep))

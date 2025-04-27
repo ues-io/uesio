@@ -31,7 +31,7 @@ func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, to
 				return nil, err
 			}
 			if fieldMetadata.ReferenceMetadata == nil {
-				return nil, errors.New("Access field is not a reference field")
+				return nil, errors.New("access field is not a reference field")
 			}
 			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.GetCollection())
 			if err != nil {

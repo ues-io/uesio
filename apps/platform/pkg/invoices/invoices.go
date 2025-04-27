@@ -2,7 +2,7 @@ package invoices
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
 	"time"
@@ -51,7 +51,7 @@ func InvoicingJob(ctx context.Context) error {
 func parseLicenseKey(key string) (string, string, error) {
 	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 2 {
-		return "", "", errors.New("Invalid Key: " + key)
+		return "", "", fmt.Errorf("invalid key: %s", key)
 	}
 	return keyArray[0], keyArray[1], nil
 }
@@ -59,7 +59,7 @@ func parseLicenseKey(key string) (string, string, error) {
 func parseLipsKey(key string) (string, string, string, error) {
 	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 5 {
-		return "", "", "", errors.New("Invalid Key: " + key)
+		return "", "", "", fmt.Errorf("invalid key: %s", key)
 	}
 	return keyArray[2], keyArray[3], keyArray[4], nil
 }

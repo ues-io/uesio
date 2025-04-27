@@ -37,7 +37,7 @@ func Create(newWorkspace string) error {
 	// Invoke workspace creation API to create the workspace
 	_, err = wire.CreateNewWorkspace(appObject.ID, newWorkspace)
 	if err != nil {
-		return errors.New("unable to create new workspace for app: " + err.Error())
+		return fmt.Errorf("unable to create new workspace for app: %w", err)
 	}
 
 	// Set the current workspace as the new workspace

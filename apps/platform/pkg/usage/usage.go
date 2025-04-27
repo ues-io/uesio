@@ -1,6 +1,7 @@
 package usage
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -18,11 +19,12 @@ var activeHandler string
 
 func init() {
 	usageHandler := os.Getenv("UESIO_USAGE_HANDLER")
-	if usageHandler == "redis" {
+	switch usageHandler {
+	case "redis":
 		activeHandler = "redis"
-	} else if usageHandler == "" || usageHandler == "memory" {
+	case "", "memory":
 		activeHandler = "memory"
-	} else {
+	default:
 		// TODO: The panic here is not ideal but do the way we use init throughout the
 		// codebase we can't handle errors and would only panic anyway.  Need to
 		// refactor how we initialize so that we can improve error handling and avoid
@@ -48,7 +50,7 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 	}
 
 	if user.ID == "" {
-		return fmt.Errorf("Error Registering Usage Event: Empty User ID")
+		return errors.New("error registering usage event: empty user id")
 	}
 
 	currentTime := time.Now()

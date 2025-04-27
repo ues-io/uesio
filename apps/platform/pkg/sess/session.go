@@ -2,7 +2,6 @@ package sess
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"sort"
 	"time"
@@ -287,11 +286,11 @@ func (s *Session) SetVersionSession(version *VersionSession) *Session {
 }
 
 func MakeSiteTenantID(ID string) string {
-	return fmt.Sprintf("site:%s", ID)
+	return "site:" + ID
 }
 
 func MakeWorkspaceTenantID(ID string) string {
-	return fmt.Sprintf("workspace:%s", ID)
+	return "workspace:" + ID
 }
 
 func (s *Session) GetTenantIDForCollection(collectionKey string) string {

@@ -177,7 +177,7 @@ func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, se
 		// Lookup the limit
 		limitDomains, err3 := limits.GetLimitDomainsPerUser(userId, session)
 		if err3 != nil {
-			return errors.New("unable to determine the limit for max domains for user: " + uniqueUserIds[userId])
+			return fmt.Errorf("unable to determine the limit for max domains for user: %s", uniqueUserIds[userId])
 		}
 		// Compute all the variables that go into the equation
 		existingDomains, hasDomains := currentDomainsPerUser[userId]

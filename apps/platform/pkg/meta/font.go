@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"path"
 
 	"gopkg.in/yaml.v3"
@@ -10,7 +10,7 @@ import (
 func NewFont(key string) (*Font, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Font: " + key)
+		return nil, fmt.Errorf("bad key for font: %s", key)
 	}
 	return NewBaseFont(namespace, name), nil
 }

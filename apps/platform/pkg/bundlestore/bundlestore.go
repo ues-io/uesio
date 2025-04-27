@@ -3,6 +3,7 @@ package bundlestore
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 
 	"gopkg.in/yaml.v3"
@@ -38,7 +39,7 @@ func RegisterBundleStore(name string, store BundleStore) {
 func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	adapter, ok := bundleStoreMap[bundleStoreType]
 	if !ok {
-		return nil, errors.New("No bundle store found of this type: " + bundleStoreType)
+		return nil, fmt.Errorf("no bundle store found of this type: %s", bundleStoreType)
 	}
 	return adapter, nil
 }
@@ -102,7 +103,7 @@ func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, e
 	// If we're in a workspace context and the namespace we're looking for is that workspace,
 	// use the workspace bundlestore
 	if namespace == "" {
-		return nil, errors.New("Could not get bundlestore: No namespace provided")
+		return nil, errors.New("could not get bundlestore: no namespace provided")
 	}
 
 	_, _, err := meta.ParseNamespace(namespace)

@@ -3,7 +3,6 @@ package deploy
 import (
 	"bytes"
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/constant"
@@ -73,7 +72,7 @@ func NewCreateBundleOptions(params map[string]any) (*CreateBundleOptions, error)
 func CreateBundle(options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (*meta.Bundle, error) {
 
 	if options == nil {
-		return nil, errors.New("Invalid Create options")
+		return nil, errors.New("invalid create options")
 	}
 
 	appName := options.AppName
@@ -89,12 +88,12 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 
 	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for app " + appName)
 	}
 
 	workspace, err := datasource.QueryWorkspaceForWrite(appName+":"+workspaceName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for workspace %s", workspaceName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for workspace " + workspaceName)
 	}
 
 	var bundles meta.BundleCollection

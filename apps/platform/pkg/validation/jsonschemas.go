@@ -1,12 +1,12 @@
 package validation
 
 import (
-	"errors"
 	"fmt"
-	"github.com/xeipuuv/gojsonschema"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/xeipuuv/gojsonschema"
 )
 
 var schemasCache = map[string]*gojsonschema.Schema{}
@@ -44,15 +44,15 @@ func loadSchemaFromStaticFile(uri string) (*gojsonschema.Schema, error) {
 	resolvedPath := filepath.Join(baseDir, "../../dist", requestPath)
 	fileBody, err := os.ReadFile(resolvedPath)
 	if err != nil {
-		return nil, errors.New("unable to load schema file from uri: " + uri)
+		return nil, fmt.Errorf("unable to load schema file from uri: %s", uri)
 	}
 	jsonLoader := gojsonschema.NewBytesLoader(fileBody)
 	if jsonLoader == nil {
-		return nil, errors.New("unable to parse schema file from uri: " + uri)
+		return nil, fmt.Errorf("unable to parse schema file from uri: %s", uri)
 	}
 	schema, err := gojsonschema.NewSchema(jsonLoader)
 	if err != nil {
-		return nil, errors.New("unable to parse schema file from uri: " + uri)
+		return nil, fmt.Errorf("unable to parse schema file from uri: %s", uri)
 	}
 	AddSchema(uri, schema)
 	return schema, nil

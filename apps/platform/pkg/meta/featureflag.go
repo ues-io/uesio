@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -42,7 +42,7 @@ func (ff *FeatureFlag) IsNil() bool {
 func NewFeatureFlag(key string) (*FeatureFlag, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for FeatureFlag: " + key)
+		return nil, fmt.Errorf("bad key for feature flag: %s", key)
 	}
 	return NewBaseFeatureFlag(namespace, name), nil
 }

@@ -1,13 +1,11 @@
 package meta
 
-import (
-	"errors"
-)
+import "fmt"
 
 func NewUserAccessToken(key string) (*UserAccessToken, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for User Access Token: " + key)
+		return nil, fmt.Errorf("bad key for user access token: %s", key)
 	}
 	return NewBaseUserAccessToken(namespace, name), nil
 }

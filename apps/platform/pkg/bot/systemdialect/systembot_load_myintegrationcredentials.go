@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -136,13 +137,13 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 		if err := bundle.LoadAllFromNamespaces(goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
-			return nil, errors.New("unable to load integrations: " + err.Error())
+			return nil, fmt.Errorf("unable to load integrations: %w", err)
 		}
 	} else {
 		if err := bundle.LoadAllFromAny(group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
-			return nil, errors.New("unable to load integrations: " + err.Error())
+			return nil, fmt.Errorf("unable to load integrations: %w", err)
 		}
 	}
 	return group, nil

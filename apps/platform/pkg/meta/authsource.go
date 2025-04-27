@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -9,7 +9,7 @@ import (
 func NewAuthSource(key string) (*AuthSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for AuthSource: " + key)
+		return nil, fmt.Errorf("bad key for auth source: %s", key)
 	}
 	return NewBaseAuthSource(namespace, name), nil
 }

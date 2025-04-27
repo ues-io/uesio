@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -32,7 +32,7 @@ func (t *Theme) IsNil() bool {
 func NewTheme(key string) (*Theme, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Theme: " + key)
+		return nil, fmt.Errorf("bad key for theme: %s", key)
 	}
 	return NewBaseTheme(namespace, name), nil
 }

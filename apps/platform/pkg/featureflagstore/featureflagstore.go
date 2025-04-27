@@ -1,7 +1,6 @@
 package featureflagstore
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -85,7 +84,7 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 func getFeatureFlagStore(configStoreType string) (FeatureFlagStore, error) {
 	featureFlagAssignment, ok := featureFlagStoreMap[configStoreType]
 	if !ok {
-		return nil, errors.New("Invalid config store type: " + configStoreType)
+		return nil, fmt.Errorf("invalid config store type: %s", configStoreType)
 	}
 	return featureFlagAssignment, nil
 }

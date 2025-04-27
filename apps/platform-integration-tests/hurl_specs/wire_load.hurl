@@ -407,4 +407,4 @@ HTTP 200
 jsonpath "$.wires[0].data[*]" count == 2
 jsonpath "$.wires[0].errors[0].message" not exists
 jsonpath "$.wires[1].data[*]" isEmpty
-jsonpath "$.wires[1].errors[0].message" contains "No metadata provided for field: uesio/tests.non_existing_field in collection: animal"
+jsonpath "$.wires[1].errors[0].message" contains "no metadata provided for field: uesio/tests.non_existing_field in collection: animal"

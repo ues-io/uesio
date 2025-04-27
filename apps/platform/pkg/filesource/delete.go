@@ -51,7 +51,7 @@ func Delete(userFileID string, session *sess.Session) error {
 	if fieldMetadata != nil {
 
 		if fieldMetadata.Type != "FILE" {
-			return errors.New("Can only delete files attached to FILE fields")
+			return errors.New("can only delete files attached to FILE fields")
 		}
 
 		err = datasource.Save([]datasource.SaveRequest{

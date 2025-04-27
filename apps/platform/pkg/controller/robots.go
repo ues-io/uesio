@@ -120,7 +120,7 @@ func writeAllowedRoutePaths(w io.Writer, publicRoutes map[string]bool, homeRoute
 
 func normalizePath(path string) string {
 	if !strings.HasPrefix(path, "/") {
-		return fmt.Sprintf("/%s", path)
+		return "/" + path
 	}
 	return path
 }

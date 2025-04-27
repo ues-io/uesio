@@ -62,7 +62,7 @@ func migrate(cmd *cobra.Command, args []string) error {
 		return conn.Migrate(opts)
 	})
 	if err != nil {
-		return fmt.Errorf("Migrations failed: %w", err)
+		return fmt.Errorf("migrations failed: %w", err)
 	}
 
 	slog.Info("Successfully ran migrations")

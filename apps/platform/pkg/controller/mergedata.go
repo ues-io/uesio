@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -114,7 +113,7 @@ func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMe
 		// NON-system bundles
 		if namespace == site.App {
 			// If requested namespace is the app's name, use the site version
-			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+			siteBundleVersion = "/" + site.Version
 		} else if site.Dependencies != nil {
 			// For all other deps, use the site's declared bundle dependency version,
 			// which SHOULD be present (otherwise how are they using it...)
@@ -131,7 +130,7 @@ func getSiteBundleVersion(namespace string, modstamp int64, site *preload.SiteMe
 			siteBundleVersion = fmt.Sprintf("/%d", modstamp)
 		} else if site.Version != "" {
 			// Final fallback --- use site version
-			siteBundleVersion = fmt.Sprintf("/%s", site.Version)
+			siteBundleVersion = "/" + site.Version
 		}
 	}
 
@@ -283,7 +282,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 
 	routingMergeData, err := GetRoutingMergeData(route, preloadmeta, session)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("Error getting route merge data: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("error getting route merge data: %w", err))
 		return
 	}
 
@@ -307,7 +306,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 	// }
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
-		ctlutil.HandleError(w, errors.New("Error merging template: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("error merging template: %w", err))
 		return
 	}
 }

@@ -1,7 +1,7 @@
 package translate
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -19,7 +19,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	var labels meta.LabelCollection
 	err := bundle.LoadAllFromAny(&labels, nil, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load labels: " + err.Error())
+		return nil, fmt.Errorf("failed to load labels: %w", err)
 	}
 
 	var translations meta.TranslationCollection
@@ -31,7 +31,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 		}, session, nil)
 
 		if err != nil {
-			return nil, errors.New("Failed to load translations: " + err.Error())
+			return nil, fmt.Errorf("failed to load translations: %w", err)
 		}
 	}
 

@@ -40,7 +40,7 @@ func SecureRandomBytes(length int) []byte {
 	var randomBytes = make([]byte, length)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
-		log.Fatal("Unable to generate random bytes")
+		log.Fatal("unable to generate random bytes")
 	}
 	return randomBytes
 }
@@ -49,12 +49,12 @@ func runCreateApiKeyListenerBot(params map[string]any, connection wire.Connectio
 
 	// Currently this only works in a siteadmin context
 	if session.GetSiteAdmin() == nil {
-		return nil, errors.New("Creating api keys currently only works in a site admin context")
+		return nil, errors.New("creating api keys currently only works in a site admin context")
 	}
 
 	keyParam, ok := params["name"]
 	if !ok {
-		return nil, errors.New("You must provide a key name")
+		return nil, errors.New("you must provide a key name")
 	}
 
 	keyName, ok := keyParam.(string)
@@ -64,7 +64,7 @@ func runCreateApiKeyListenerBot(params map[string]any, connection wire.Connectio
 
 	userIDParam, ok := params["userid"]
 	if !ok {
-		return nil, errors.New("You must provide a user id")
+		return nil, errors.New("you must provide a user id")
 	}
 
 	userID, ok := userIDParam.(string)

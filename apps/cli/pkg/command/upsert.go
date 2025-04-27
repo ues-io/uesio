@@ -47,7 +47,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 	if jobType == "UPLOADFILES" {
 		return zip.ZipDir(dataFile), nil
 	}
-	return nil, errors.New("Invalid Job Type: " + jobType)
+	return nil, fmt.Errorf("invalid job type: %s", jobType)
 }
 
 func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
@@ -99,7 +99,7 @@ func getSpec(options *UpsertOptions) (*meta.JobSpecRequest, error) {
 	}
 
 	if spec.Collection == "" {
-		return nil, errors.New("No collection specified")
+		return nil, errors.New("no collection specified")
 	}
 
 	if spec.JobType == "IMPORT" {
@@ -129,7 +129,7 @@ func UpsertToWorkspace(options *UpsertOptions) error {
 	}
 
 	if workspace == "" {
-		return errors.New("No active workspace is set. Use \"uesio work\" to set one.")
+		return errors.New("no active workspace is set -- use \"uesio work\" to set one")
 	}
 
 	return Upsert(getUrlPrefix("workspace", app, workspace), options)
@@ -153,7 +153,7 @@ func UpsertToSite(options *UpsertOptions) error {
 	}
 
 	if site == "" {
-		return errors.New("No active site is set. Use \"uesio siteadmin\" to set one.")
+		return errors.New("no active site is set -- use \"uesio siteadmin\" to set one")
 	}
 
 	return Upsert(getUrlPrefix("siteadmin", app, site), options)
@@ -166,7 +166,7 @@ func Upsert(prefix string, options *UpsertOptions) error {
 	}
 
 	if options.DataFile == "" {
-		return errors.New("No Data File Specified")
+		return errors.New("no data file specified")
 	}
 
 	fmt.Println("Running Upsert Command")

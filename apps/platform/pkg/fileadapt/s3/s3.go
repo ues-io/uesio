@@ -2,7 +2,7 @@ package s3
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
@@ -17,7 +17,7 @@ type FileAdapter struct {
 func (a *FileAdapter) GetFileConnection(ctx context.Context, credentials *wire.Credentials, bucket string) (file.Connection, error) {
 	client, err := getS3Client(ctx, credentials)
 	if err != nil {
-		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
+		return nil, fmt.Errorf("invalid file adapter credentials specified: %w", err)
 	}
 	return &Connection{
 		credentials: credentials,

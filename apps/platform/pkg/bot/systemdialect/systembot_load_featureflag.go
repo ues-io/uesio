@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -18,7 +19,7 @@ func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	if session.GetSiteAdmin() != nil {
 		userCondition := extractConditionByField(op.Conditions, "userid")
 		if userCondition == nil {
-			return errors.New("You must provide a user condition in the site admin context.")
+			return errors.New("you must provide a user condition in the site admin context")
 		}
 		if userCondition.Value != nil {
 			var ok bool
@@ -40,12 +41,12 @@ func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 	}
 
 	if userID == "" {
-		return errors.New("No User Id provided to feature flag load.")
+		return errors.New("no user id provided to feature flag load")
 	}
 
 	featureFlags, err := featureflagstore.GetFeatureFlags(session, userID)
 	if err != nil {
-		return errors.New("Failed to get feature flags: " + err.Error())
+		return fmt.Errorf("failed to get feature flags: %w", err)
 	}
 
 	var orgOnly bool

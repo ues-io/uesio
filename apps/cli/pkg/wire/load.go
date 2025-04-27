@@ -80,7 +80,7 @@ func Load(collectionName string, options *LoadOptions) (wire.Collection, error) 
 	}
 
 	if len(loadResponse.Wires) != 1 {
-		return nil, errors.New("Wrong number of responses returned")
+		return nil, errors.New("wrong number of responses returned")
 	}
 
 	return loadResponse.Wires[0].Data, nil

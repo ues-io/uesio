@@ -713,7 +713,8 @@ func Test_Request(t *testing.T) {
 				},
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					// If this is a request for the access token, respond accordingly
-					if request.URL.Path == "/oauth/token" {
+					switch request.URL.Path {
+					case "/oauth/token":
 						assert.Equal(t, "POST", request.Method)
 						err := request.ParseForm()
 						assert.Nil(t, err)
@@ -729,12 +730,12 @@ func Test_Request(t *testing.T) {
 						serveResponseBody = string(accessTokenResponse)
 						serveContentType = "application/json"
 						serveStatusCode = 200
-					} else if request.URL.Path == "/array" {
+					case "/array":
 						assert.Equal(t, "GET", request.Method)
 						assert.Equal(t, "Bearer abcd1234", request.Header.Get("Authorization"))
 						serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
 						serveContentType = "text/json"
-					} else {
+					default:
 						assert.Fail(t, "unexpected request")
 					}
 				},
@@ -832,7 +833,8 @@ func Test_Request(t *testing.T) {
 				},
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					// If this is a request for the access token, respond accordingly
-					if request.URL.Path == "/oauth/token" {
+					switch request.URL.Path {
+					case "/oauth/token":
 						assert.Equal(t, "POST", request.Method)
 						err := request.ParseForm()
 						assert.Nil(t, err)
@@ -849,7 +851,7 @@ func Test_Request(t *testing.T) {
 						serveResponseBody = string(accessTokenResponse)
 						serveContentType = "application/json"
 						serveStatusCode = 200
-					} else if request.URL.Path == "/array" {
+					case "/array":
 						assert.Equal(t, "GET", request.Method)
 						// If we get called with the old token, return 401
 						if request.Header.Get("Authorization") == "Bearer oldtoken" {
@@ -864,7 +866,7 @@ func Test_Request(t *testing.T) {
 							serveContentType = "text/json"
 							serveStatusCode = http.StatusOK
 						}
-					} else {
+					default:
 						assert.Fail(t, "unexpected request")
 					}
 				},

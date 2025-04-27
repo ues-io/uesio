@@ -1,7 +1,7 @@
 package ws
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -61,7 +61,7 @@ func SetWorkspacePrompt(appId string) (string, error) {
 		// Invoke workspace creation API to create the new workspace
 		_, err := wire.CreateNewWorkspace(appID, newWorkspaceName)
 		if err != nil {
-			return "", errors.New("unable to create new workspace for app: " + err.Error())
+			return "", fmt.Errorf("unable to create new workspace for app: %w", err)
 		}
 		return newWorkspaceName, SetWorkspace(newWorkspaceName)
 	}

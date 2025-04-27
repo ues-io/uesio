@@ -16,9 +16,9 @@ import (
 type valueFunc func(data any, mapping *meta.FieldMapping, index int) string
 type loaderFunc func(change wire.Item, data any) error
 
-const InvalidTimestampError = "Invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
-const InvalidNumberError = "Invalid format for NUMBER field '%s': value '%v' is not a valid number"
-const InvalidCheckboxError = "Invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
+const InvalidTimestampError = "invalid format for TIMESTAMP field '%s': value '%v' is not valid ISO-8601 UTC datetime or Unix timestamp"
+const InvalidNumberError = "invalid format for NUMBER field '%s': value '%v' is not a valid number"
+const InvalidCheckboxError = "invalid format for CHECKBOX field '%s': value '%v' is not a valid boolean"
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change wire.Item, data any) error {
@@ -107,7 +107,7 @@ func getDateLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.Fi
 		}
 		t, err := time.Parse(timeutils.ISO8601Date, stringValue)
 		if err != nil {
-			return errors.New("Invalid date format: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			return fmt.Errorf("invalid date format: %s : %w", fieldMetadata.GetFullName(), err)
 		}
 
 		change[fieldMetadata.GetFullName()] = t.Format(timeutils.ISO8601Date)
@@ -123,7 +123,7 @@ func getStructLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.
 		if rawVal != "" && rawVal != "{}" {
 			var jsonVal map[string]any
 			if err := json.Unmarshal([]byte(rawVal), &jsonVal); err != nil {
-				return errors.New("Invalid struct format: " + fieldMetadata.GetFullName() + " : " + err.Error())
+				return fmt.Errorf("invalid struct format: %s : %w", fieldMetadata.GetFullName(), err)
 			}
 			// Only allow valid subfields, ignore all other fields
 			for key := range fieldMetadata.SubFields {
@@ -197,7 +197,7 @@ func getListLoader(index int, mapping *meta.FieldMapping, fieldMetadata *wire.Fi
 		if rawVal != "" && rawVal != "[]" {
 			err := json.Unmarshal([]byte(rawVal), &value)
 			if err != nil {
-				return fmt.Errorf("invalid LIST field value")
+				return errors.New("invalid LIST field value")
 			}
 		}
 		change[fieldMetadata.GetFullName()] = value

@@ -2,7 +2,6 @@ package meta
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/francoispqt/gojay"
@@ -17,7 +16,7 @@ const (
 func NewComponent(key string) (*Component, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Component: " + key)
+		return nil, fmt.Errorf("bad key for component: %s", key)
 	}
 	return NewBaseComponent(namespace, name), nil
 }

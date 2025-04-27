@@ -2,7 +2,7 @@ package bulk
 
 import (
 	"encoding/csv"
-	"errors"
+	"fmt"
 	"io"
 
 	"github.com/dimchansky/utfbom"
@@ -75,19 +75,20 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *wire.MetadataC
 			return nil, err
 		}
 
-		if mapping.Type == "" || mapping.Type == "IMPORT" {
+		switch mapping.Type {
+		case "", "IMPORT":
 			if mapping.ColumnName == "" {
 				mapping.ColumnName = fieldName
 			}
 			colIndex, ok := columnIndexes[mapping.ColumnName]
 			if !ok {
-				return nil, errors.New("Invalid Column Name for Import: " + mapping.ColumnName)
+				return nil, fmt.Errorf("invalid column name for import: %s", mapping.ColumnName)
 			}
 			index = colIndex
 			valueGetter = getValue
-		} else if mapping.Type == "VALUE" {
+		case "VALUE":
 			if mapping.Value == "" {
-				return nil, errors.New("No Value Provided for mapping: " + fieldName)
+				return nil, fmt.Errorf("no value provided for mapping: %s", fieldName)
 			}
 			valueGetter = func(data any, mapping *meta.FieldMapping, index int) string {
 				return mapping.Value

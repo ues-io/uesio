@@ -1,7 +1,7 @@
 package bedrock
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -15,7 +15,7 @@ func (c *Connection) invokeModel(requestOptions map[string]any) (any, error) {
 
 	handler, ok := modelHandlers[options.Model]
 	if !ok {
-		return nil, errors.New("Model Not Supported: " + options.Model)
+		return nil, fmt.Errorf("model not supported: %s", options.Model)
 	}
 
 	result, inputTokens, outputTokens, err := handler.Invoke(c, options)

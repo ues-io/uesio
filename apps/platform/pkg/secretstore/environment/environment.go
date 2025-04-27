@@ -27,7 +27,7 @@ var secretValues = map[string]string{
 func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
 	value, ok := secretValues[key]
 	if !ok {
-		return nil, exceptions.NewNotFoundException("Secret Value not found: " + key)
+		return nil, exceptions.NewNotFoundException("secret value not found: " + key)
 	}
 	return &meta.SecretStoreValue{
 		Value: value,
@@ -36,9 +36,9 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStore
 }
 
 func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
-	return errors.New("You cannot set secret values in the environment store")
+	return errors.New("you cannot set secret values in the environment store")
 }
 
 func (ss *SecretStore) Remove(key string, session *sess.Session) error {
-	return errors.New("You cannot remove secret values in the environment store")
+	return errors.New("you cannot remove secret values in the environment store")
 }

@@ -56,7 +56,7 @@ func TestIdentifierValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			fields, err := GetFormulaFields(context.Background(), tt.expression)
 			if err != nil {
-				t.Errorf("Error Getting Fields for Expression: %s", err.Error())
+				t.Errorf("error getting fields for expression: %s", err.Error())
 			}
 
 			assert.Equal(t, tt.fields, fields)
@@ -140,14 +140,14 @@ func TestFormulas(t *testing.T) {
 
 			exec, err := UesioLanguage.NewEvaluable(tt.expression)
 			if err != nil {
-				t.Errorf("Error Creating Expression: %s", err.Error())
+				t.Errorf("error creating expression: %s", err.Error())
 			}
 
 			evaluator := &RuntimeEvaluator{item: tt.item, collectionMetadata: tt.metadata}
 
 			value, err := exec(context.Background(), evaluator)
 			if err != nil {
-				t.Errorf("Error Evaluating Expression: %s", err.Error())
+				t.Errorf("error evaluating expression: %s", err.Error())
 			}
 
 			assert.Equal(t, tt.expectedResult, value)

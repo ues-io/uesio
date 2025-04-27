@@ -43,7 +43,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 		return err
 	}
 
-	file, err := create(fmt.Sprintf("%s.csv", strings.ReplaceAll(userFiles.GetName(), "/", "_")))
+	file, err := create(strings.ReplaceAll(userFiles.GetName(), "/", "_") + ".csv")
 	if err != nil {
 		return err
 	}

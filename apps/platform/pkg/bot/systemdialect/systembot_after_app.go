@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -46,7 +46,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 
 	starterTemplateParts := strings.Split(starterTemplate, ":")
 	if len(starterTemplateParts) != 2 {
-		return errors.New("Invalid starter template: " + starterTemplate)
+		return fmt.Errorf("invalid starter template: %s", starterTemplate)
 	}
 	starterApp := starterTemplateParts[0]
 	starterAppVersion := starterTemplateParts[1]

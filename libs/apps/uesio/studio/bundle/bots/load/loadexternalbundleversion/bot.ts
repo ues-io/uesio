@@ -21,7 +21,7 @@ export default function loadexternalbundleversion(bot: LoadBotApi) {
     | undefined
 
   if (!bundleVersionValue) {
-    bot.addError("Missing Uniquekey")
+    bot.addError("missing unique key")
     return
   }
 

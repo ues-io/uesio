@@ -39,7 +39,7 @@ func getFilteredFields(fieldNames []string) []wire.LoadRequestField {
 
 func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, includeUserFields bool, looper func(meta.BundleableItem, []wire.ReferenceLocator, string) error) error {
 	if b.Workspace == nil {
-		return errors.New("Workspace bundle store, needs a workspace in context")
+		return errors.New("workspace bundle store, needs a workspace in context")
 	}
 	collectionLocatorMap := map[string]wire.LocatorMap{}
 	namespace := b.Workspace.GetAppFullName()
@@ -117,7 +117,7 @@ type WorkspaceBundleStore struct{}
 
 func (b *WorkspaceBundleStore) GetConnection(options bundlestore.ConnectionOptions) (bundlestore.BundleStoreConnection, error) {
 	if options.Workspace == nil {
-		return nil, errors.New("Workspace bundle store, needs a workspace in context")
+		return nil, errors.New("workspace bundle store, needs a workspace in context")
 	}
 	return &WorkspaceBundleStoreConnection{
 		ConnectionOptions: options,
@@ -205,13 +205,13 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 	}
 	return b.processItems(items, options.IncludeUserFields, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
-			return errors.New("Found an item we weren't expecting")
+			return errors.New("found an item we weren't expecting")
 		}
 		if item == nil {
 			if options.AllowMissingItems {
 				return nil
 			}
-			return fmt.Errorf("Could not find workspace item: %s", id)
+			return fmt.Errorf("could not find workspace item: %s", id)
 		}
 		for _, locator := range locators {
 			err := meta.Copy(locator.Item, item)
@@ -287,7 +287,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	}
 	recordIDString, ok := recordID.(string)
 	if !ok {
-		return "", errors.New("Invalid Record ID for attachment")
+		return "", errors.New("invalid record id for attachment")
 	}
 	return recordIDString, nil
 }
@@ -307,7 +307,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return nil, errors.New("Invalid Record ID for attachment: " + err.Error())
+		return nil, fmt.Errorf("invalid record id for attachment: %w", err)
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
@@ -413,7 +413,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	}
 	for _, bd := range bdc {
 		if bd.Bundle == nil {
-			return nil, errors.New("Error getting bundle dependency: " + bd.UniqueKey)
+			return nil, fmt.Errorf("error getting bundle dependency: %s", bd.UniqueKey)
 		}
 		key := bd.Bundle.UniqueKey
 		bundleName, _, _ := strings.Cut(key, ":")
@@ -435,22 +435,22 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
 	return b.processItems(items, false, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
-			return errors.New("Found an item we weren't expecting")
+			return errors.New("found an item we weren't expecting")
 		}
 		if item == nil {
-			return fmt.Errorf("Could not find workspace item: %s", id)
+			return fmt.Errorf("could not find workspace item: %s", id)
 		}
 		return nil
 	})
 }
 
 func (b *WorkspaceBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
-	return errors.New("tried to upload bundle zip in Workspace Bundle Store")
+	return errors.New("tried to upload bundle zip in workspace bundle store")
 }
 
 func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 	if b.Workspace == nil {
-		return errors.New("no Workspace provided for retrieve")
+		return errors.New("no workspace provided for retrieve")
 	}
 	// Create a new zip archive.
 	zipwriter := zip.NewWriter(writer)

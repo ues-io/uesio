@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 
@@ -11,7 +11,7 @@ import (
 func NewPermissionSet(key string) (*PermissionSet, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for PermissionSet: " + key)
+		return nil, fmt.Errorf("bad key for permission set: %s", key)
 	}
 	return NewBasePermissionSet(namespace, name), nil
 }

@@ -1,7 +1,7 @@
 package configstore
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -93,7 +93,7 @@ func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.C
 func GetConfigStore(configStoreType string) (ConfigStore, error) {
 	configStore, ok := configStoreMap[configStoreType]
 	if !ok {
-		return nil, errors.New("Invalid config store type: " + configStoreType)
+		return nil, fmt.Errorf("invalid config store type: %s", configStoreType)
 	}
 	return configStore, nil
 }

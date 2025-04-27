@@ -53,7 +53,7 @@ func ZipDir(localPath string) io.Reader {
 		}
 		err := filepath.WalkDir(localPath, walker)
 		if err != nil {
-			fmt.Println("Error Zipping Bundle Dir: " + err.Error())
+			fmt.Println("error zipping bundle dir: " + err.Error())
 		}
 
 		w.Close()

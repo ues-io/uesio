@@ -128,7 +128,7 @@ type BundleableItem interface {
 func ParseKey(key string) (namespace string, name string, err error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
-		return "", "", errors.New("Invalid Key: " + key)
+		return "", "", fmt.Errorf("invalid key: %s", key)
 	}
 	return keyArray[0], keyArray[1], nil
 }
@@ -141,13 +141,13 @@ func ParseKeyWithDefault(key, defaultNamespace string) (string, string, error) {
 	if len(keyArray) == 1 {
 		return defaultNamespace, key, nil
 	}
-	return "", "", errors.New("Invalid Key With Default: " + key)
+	return "", "", fmt.Errorf("invalid key with default: %s", key)
 }
 
 func ParseNamespace(namespace string) (string, string, error) {
 	keyArray := strings.Split(namespace, "/")
 	if len(keyArray) != 2 {
-		return "", "", errors.New("Invalid Namespace: " + namespace)
+		return "", "", fmt.Errorf("invalid namespace: %s", namespace)
 	}
 	return keyArray[0], keyArray[1], nil
 }
@@ -233,7 +233,7 @@ func StandardGetFields(item CollectionableItem) []string {
 func StandardFieldGet(item CollectionableItem, fieldName string) (any, error) {
 	itemMeta := item.GetItemMeta()
 	if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
-		return nil, errors.New("Field Not Found: " + item.GetCollectionName() + " : " + fieldName)
+		return nil, fmt.Errorf("field not found: %s : %s", item.GetCollectionName(), fieldName)
 	}
 	return reflecttool.GetField(item, fieldName)
 }
@@ -241,7 +241,7 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (any, error) {
 func StandardFieldSet(item CollectionableItem, fieldName string, value any) error {
 	err := reflecttool.SetField(item, fieldName, value)
 	if err != nil {
-		return fmt.Errorf("Failed to set field: %s on item: %s: %w", fieldName, item.GetCollectionName(), err)
+		return fmt.Errorf("failed to set field: %s on item: %s: %w", fieldName, item.GetCollectionName(), err)
 	}
 	return nil
 }
@@ -397,7 +397,7 @@ func GetGroupingConditions(metadataType, grouping any) (BundleConditions, error)
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
 	group, ok := bundleableGroupMap[metadataType]
 	if !ok {
-		return nil, errors.New("Bad metadata type: " + metadataType)
+		return nil, fmt.Errorf("bad metadata type: %s", metadataType)
 	}
 	return group(), nil
 }

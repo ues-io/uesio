@@ -18,7 +18,7 @@ func ValidateRegex(field *wire.FieldMetadata) ValidationFunc {
 	return func(change *wire.ChangeItem) *exceptions.SaveException {
 		val, err2 := change.FieldChanges.GetField(field.GetFullName())
 		if err2 == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf("Field: %s does not follow the expected format pattern", field.Label), nil)
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), fmt.Sprintf("field: %s does not follow the expected format pattern", field.Label), nil)
 		}
 		return nil
 	}

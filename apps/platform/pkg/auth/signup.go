@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -56,7 +55,7 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload map[string]an
 	}
 
 	if !matchesRegex(username, signupMethod.UsernameRegex) {
-		return nil, exceptions.NewBadRequestException(fmt.Sprintf("Signup failed - username does not match required pattern: %s", signupMethod.UsernameFormatExplanation), nil)
+		return nil, exceptions.NewBadRequestException("Signup failed - username does not match required pattern: "+signupMethod.UsernameFormatExplanation, nil)
 	}
 
 	err = authconn.Signup(signupMethod, payload, username)

@@ -1,7 +1,6 @@
 package retrieve
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -52,7 +51,7 @@ func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnect
 			Conditions: genOptions.GetTypescriptableItemConditions(),
 		})
 		if err != nil {
-			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
+			return fmt.Errorf("failed to retrieve items of type: %s : %w", metadataType, err)
 		}
 		var typeDefsByNamespace map[string]*strings.Builder
 		// If needed, generate a wrapper module around all types for this group
@@ -148,7 +147,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 		}
 		err = bs.GetAllItems(group, nil)
 		if err != nil {
-			return errors.New("failed to retrieve items of type: " + metadataType + ": " + err.Error())
+			return fmt.Errorf("failed to retrieve items of type: %s : %w", metadataType, err)
 		}
 
 		err = group.Loop(func(item meta.Item, _ string) error {
@@ -157,7 +156,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 
 			f, err := create(path.Join(targetDirectory, metadataType, itempath))
 			if err != nil {
-				return errors.New("failed to create " + metadataType + " file: " + itempath + ": " + err.Error())
+				return fmt.Errorf("failed to create %s file: %s : %w", metadataType, itempath, err)
 			}
 			defer f.Close()
 
@@ -165,7 +164,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 			encoder.SetIndent(2)
 			err = encoder.Encode(item)
 			if err != nil {
-				return errors.New("failed to encode metadata item of type " + metadataType + " into YAML: " + itempath + ": " + err.Error())
+				return fmt.Errorf("failed to encode metadata item of type %s into YAML: %s : %w", metadataType, itempath, err)
 			}
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
@@ -195,7 +194,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 
 	f, err := create(path.Join(targetDirectory, "bundle.yaml"))
 	if err != nil {
-		return errors.New("failed to create bundle.yaml file: " + err.Error())
+		return fmt.Errorf("failed to create bundle.yaml file: %w", err)
 	}
 	defer f.Close()
 
@@ -203,7 +202,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 	encoder.SetIndent(2)
 	err = encoder.Encode(bundleDef)
 	if err != nil {
-		return errors.New("failed to encode bundle.yaml file into YAML: " + err.Error())
+		return fmt.Errorf("failed to encode bundle.yaml file into YAML: %w", err)
 	}
 
 	return nil

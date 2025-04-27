@@ -72,7 +72,7 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 	if len(keyArray) == 1 && componentKey != "" {
 		return fmt.Sprintf("%s:%s", componentKey, fullName), nil
 	}
-	return "", errors.New("Invalid Variant Key: " + fullName)
+	return "", fmt.Errorf("invalid variant key: %s", fullName)
 }
 
 func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) error {
@@ -441,7 +441,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 		return err
 	}
 
-	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:namespaces", builderComponentID), appData))
+	deps.Component.AddItem(preload.NewComponentMergeData(builderComponentID+":namespaces", appData))
 
 	return nil
 }
@@ -483,13 +483,13 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
 	if err != nil {
-		return errors.New("Failed to load variants: " + err.Error())
+		return fmt.Errorf("failed to load variants: %w", err)
 	}
 
 	var components meta.ComponentCollection
 	err = bundle.LoadAllFromAny(&components, nil, session, nil)
 	if err != nil {
-		return errors.New("Failed to load components: " + err.Error())
+		return fmt.Errorf("failed to load components: %w", err)
 	}
 
 	for _, component := range components {
@@ -512,11 +512,11 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 }
 
 func GetBuildModeKey(builderComponentID string) string {
-	return fmt.Sprintf("%s:buildmode", builderComponentID)
+	return builderComponentID + ":buildmode"
 }
 
 func GetIndexPanelKey(builderComponentID string) string {
-	return fmt.Sprintf("%s:indexpanel", builderComponentID)
+	return builderComponentID + ":indexpanel"
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.PreloadMetadata, error) {
@@ -546,24 +546,24 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 
 	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
-		return nil, errors.New("Failed to get translated labels: " + err.Error())
+		return nil, fmt.Errorf("failed to get translated labels: %w", err)
 	}
 
 	featureFlags, err := featureflagstore.GetFeatureFlags(session, session.GetContextUser().ID)
 	if err != nil {
-		return nil, errors.New("Failed to get feature flags: " + err.Error())
+		return nil, fmt.Errorf("failed to get feature flags: %w", err)
 	}
 
 	configValues, err := configstore.GetConfigValues(session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to get config values: " + err.Error())
+		return nil, fmt.Errorf("failed to get config values: %w", err)
 	}
 
 	// Add in fonts
 	var fonts meta.FontCollection
 	err = bundle.LoadAllFromAny(&fonts, nil, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load fonts: " + err.Error())
+		return nil, fmt.Errorf("failed to load fonts: %w", err)
 	}
 
 	for _, font := range fonts {
@@ -574,7 +574,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 	var routeAssignments meta.RouteAssignmentCollection
 	err = bundle.LoadAllFromAny(&routeAssignments, nil, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load route assignments: " + err.Error())
+		return nil, fmt.Errorf("failed to load route assignments: %w", err)
 	}
 
 	routes := []meta.BundleableItem{}
@@ -602,14 +602,14 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load routes for route assignments: " + err.Error())
+		return nil, fmt.Errorf("failed to load routes for route assignments: %w", err)
 	}
 
 	err = bundle.LoadMany(collections, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
-		return nil, errors.New("Failed to load collections for route assignments: " + err.Error())
+		return nil, fmt.Errorf("failed to load collections for route assignments: %w", err)
 	}
 
 	for _, assignment := range routeAssignments {
@@ -707,12 +707,12 @@ func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, wor
 	var files meta.FileCollection
 	err := bundle.LoadAllFromNamespaces([]string{workspace.GetAppFullName()}, &files, nil, session, nil)
 	if err != nil {
-		return errors.New("failed to load static files: " + err.Error())
+		return fmt.Errorf("failed to load static files: %w", err)
 	}
 	err = files.Loop(func(item meta.Item, index string) error {
 		file, ok := item.(*meta.File)
 		if !ok {
-			return errors.New("item is not a valid File")
+			return errors.New("item is not a valid file")
 		}
 		deps.StaticFile.AddItem(file)
 		return nil
@@ -949,7 +949,7 @@ func addComponentType(key string, deps *preload.PreloadMetadata, subViews map[st
 		case *meta.RuntimeComponentMetadata:
 			return (*meta.Component)(c), nil
 		default:
-			return nil, errors.New("Bad type for component metadata")
+			return nil, errors.New("bad type for component metadata")
 		}
 	}
 	// Load the Component meta info from bundle store

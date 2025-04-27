@@ -103,7 +103,7 @@ func GetMetadataForLoad(
 
 	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 	if err != nil {
-		return exceptions.NewForbiddenException("Your profile has no access to the " + collectionKey + " collection")
+		return exceptions.NewForbiddenException("your profile has no access to the " + collectionKey + " collection")
 	}
 
 	// Now loop over fields and do some additional processing for reference & formula fields

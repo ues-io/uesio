@@ -29,7 +29,7 @@ type connection struct {
 func newOpenAiConnection(ic *wire.IntegrationConnection) (*connection, error) {
 	apikey, err := ic.GetCredentials().GetRequiredEntry("apikey")
 	if err != nil || apikey == "" {
-		return nil, errors.New("OpenAI API Key not provided")
+		return nil, errors.New("openai api key not provided")
 	}
 	return &connection{
 		client:      oai.NewClient(apikey),
@@ -50,7 +50,7 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 		return c.autoComplete(params)
 	}
 
-	return nil, errors.New("invalid action name for Open AI integration")
+	return nil, errors.New("invalid action name for openai integration")
 
 }
 

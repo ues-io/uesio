@@ -183,12 +183,12 @@ jsonpath "$.success" == true
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid}}
 HTTP 404
 [Asserts]
-body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
+body startsWith "couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid}}"
 
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid2}}
 HTTP 404
 [Asserts]
-body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid2}}"
+body startsWith "couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid2}}"
 
 
 # Now upload an attachment connected to a file field, but invalid field
@@ -238,7 +238,7 @@ jsonpath "$.success" == true
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid3}}
 HTTP 404
 [Asserts]
-body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid3}}"
+body startsWith "couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid3}}"
 
 # Now test an insert with data and invalid field
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
@@ -264,7 +264,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" contains "No metadata provided for field: uesio/tests.invalidfield in collection: animal"
+jsonpath "$.wires[0].errors[0].message" contains "no metadata provided for field: uesio/tests.invalidfield in collection: animal"
 
 # Now test with a valid field
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/save
@@ -345,7 +345,7 @@ jsonpath "$.success" == true
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/userfiles/download?userfileid={{attachmentid4}}
 HTTP 404
 [Asserts]
-body startsWith "Couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid4}}"
+body startsWith "couldn't find item from platform load: Collection=uesio/core.userfile, Conditions=uesio/core.id :: {{attachmentid4}}"
 
 # Now query the field and make sure it's gone
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load

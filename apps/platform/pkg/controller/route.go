@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -136,7 +137,7 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path, namespace
 
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session) {
 	if routingMergeData, err := getRouteAPIResult(
-		getNotFoundRoute(path, namespace, "You may need to log in again.", "true"),
+		getNotFoundRoute(path, namespace, "you may need to log in again.", "true"),
 		sess.GetAnonSessionFrom(session),
 	); err != nil {
 		ctlutil.HandleError(w, err)
@@ -216,7 +217,7 @@ type errorResponse struct {
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, namespace string, incomingErr error, redirect bool) {
-	slog.Debug("Error Getting Route: " + incomingErr.Error())
+	slog.Debug("error getting route: " + incomingErr.Error())
 
 	// If this is an invalid param exception
 
@@ -247,7 +248,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		// Otherwise, Enter into a version context to display the error page
 		versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 		if err != nil {
-			ctlutil.HandleError(w, fmt.Errorf("Error Getting Version Session: %w", err))
+			ctlutil.HandleError(w, fmt.Errorf("error getting version session: %w", err))
 			return
 		}
 		errorSession = versionSession
@@ -255,7 +256,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	depsCache, err := routing.GetMetadataDeps(route, errorSession)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("Error Getting Error Route Metadata: %w", err))
+		ctlutil.HandleError(w, fmt.Errorf("error getting error route metadata: %w", err))
 		return
 	}
 
@@ -282,7 +283,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 func getErrorResponse(err error, statusCode int) *errorResponse {
 	resp := &errorResponse{
 		Code:   statusCode,
-		Status: strings.Replace(http.StatusText(statusCode), fmt.Sprintf("%d", statusCode), "", 1),
+		Status: strings.Replace(http.StatusText(statusCode), strconv.Itoa(statusCode), "", 1),
 		Error:  err.Error(),
 	}
 	var paramException *exceptions.InvalidParamException

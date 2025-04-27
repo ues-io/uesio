@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -12,14 +13,14 @@ func runConfigValueLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 	// Currently, this doesn't work for regular contexts
 	if session.GetWorkspace() == nil && session.GetSiteAdmin() == nil {
-		return errors.New("Must be in workspace or site admin context")
+		return errors.New("must be in workspace or site admin context")
 	}
 
 	configValues, err := configstore.GetConfigValues(session, &configstore.ConfigLoadOptions{
 		OnlyWriteable: true,
 	})
 	if err != nil {
-		return errors.New("Failed to get config values: " + err.Error())
+		return fmt.Errorf("failed to get config values: %w", err)
 	}
 
 	for _, configValue := range *configValues {

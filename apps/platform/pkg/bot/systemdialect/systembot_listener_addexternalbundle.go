@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -89,17 +89,17 @@ func getBundleFromVersion(namespace, version string) (*meta.Bundle, error) {
 
 	majorInt, err := strconv.Atoi(major)
 	if err != nil {
-		return nil, errors.New("Invalid major version string: " + major)
+		return nil, fmt.Errorf("invalid major version string: %s", major)
 	}
 
 	minorInt, err := strconv.Atoi(minor)
 	if err != nil {
-		return nil, errors.New("Invalid minor version string: " + minor)
+		return nil, fmt.Errorf("invalid minor version string: %s", minor)
 	}
 
 	patchInt, err := strconv.Atoi(patch)
 	if err != nil {
-		return nil, errors.New("Invalid patch version string: " + patch)
+		return nil, fmt.Errorf("invalid patch version string: %s", patch)
 	}
 
 	newBundle, err := meta.NewBundle(namespace, majorInt, minorInt, patchInt, "")

@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -78,7 +79,7 @@ func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
 
 	node = UnwrapDocumentNode(node)
 	if node.Kind != yaml.MappingNode {
-		return nil, fmt.Errorf("Definition is not a mapping node.")
+		return nil, errors.New("definition is not a mapping node")
 	}
 
 	contentSize := len(node.Content) / 2
@@ -106,7 +107,7 @@ func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
 	node = UnwrapDocumentNode(node)
 	if node.Kind != yaml.MappingNode {
-		return nil, 0, fmt.Errorf("Definition is not a mapping node.")
+		return nil, 0, errors.New("definition is not a mapping node")
 	}
 
 	for i := range node.Content {
@@ -116,7 +117,7 @@ func GetMapNodeWithIndex(node *yaml.Node, key string) (*yaml.Node, int, error) {
 		}
 	}
 
-	return nil, 0, fmt.Errorf("Node not found of key: %s", key)
+	return nil, 0, fmt.Errorf("node not found of key: %s", key)
 }
 
 // Removes an entry from a map node and returns it.
@@ -183,10 +184,10 @@ func validateMetadataNameNode(node *yaml.Node, expectedName, nameKey string) err
 
 func validateMetadataName(name string, expectedName string) error {
 	if expectedName != "" && name != expectedName {
-		return exceptions.NewBadRequestException(fmt.Sprintf("Metadata name does not match filename: %s, %s", name, expectedName), nil)
+		return exceptions.NewBadRequestException(fmt.Sprintf("metadata name does not match filename: %s, %s", name, expectedName), nil)
 	}
 	if !IsValidMetadataName(name) {
-		return exceptions.NewBadRequestException(fmt.Sprintf("Failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9: %s", name), nil)
+		return exceptions.NewBadRequestException("failed metadata validation, can only contain lowercase characters a-z, the underscore character and the numerals 0-9: "+name, nil)
 	}
 	return nil
 }

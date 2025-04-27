@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bot"
@@ -15,15 +16,15 @@ func runGetStarterParamsBot(params map[string]any, connection wire.Connection, s
 
 	starterTemplate, ok := params["template"]
 	if !ok {
-		return nil, errors.New("Invalid starter template")
+		return nil, errors.New("invalid starter template")
 	}
 	starterTemplateString, ok := starterTemplate.(string)
 	if !ok {
-		return nil, errors.New("Invalid starter template")
+		return nil, errors.New("invalid starter template")
 	}
 	starterTemplateParts := strings.Split(starterTemplateString, ":")
 	if len(starterTemplateParts) != 2 {
-		return nil, errors.New("Invalid starter template: " + starterTemplateString)
+		return nil, fmt.Errorf("invalid starter template: %s", starterTemplateString)
 	}
 	starterApp := starterTemplateParts[0]
 

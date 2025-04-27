@@ -14,9 +14,9 @@ func Logout() error {
 	}
 
 	if user == nil {
-		fmt.Println("No current session found")
+		fmt.Println("no current session found")
 		return nil
 	}
-	fmt.Println("Successfully logged out user")
+	fmt.Println("successfully logged out user")
 	return nil
 }

@@ -109,7 +109,7 @@ Accept: application/json
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].data[*]" isEmpty
-jsonpath "$.wires[0].errors[0].message" contains "Invalid Condition, param 'numbervalue' was not provided"
+jsonpath "$.wires[0].errors[0].message" contains "invalid condition, param 'numbervalue' was not provided"
 
 # Do a route load to verify view param handling is the same
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/routes/path/uesio/tests/view_params?checkboxvalue=true&numbervalue=4

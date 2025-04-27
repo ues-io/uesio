@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -14,7 +14,7 @@ import (
 func parseKey(key string) (string, string, error) {
 	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 3 {
-		return "", "", errors.New("Invalid Bundle Dep Key: " + key)
+		return "", "", fmt.Errorf("invalid bundle dep key: %s", key)
 	}
 	return keyArray[0], keyArray[2], nil
 }

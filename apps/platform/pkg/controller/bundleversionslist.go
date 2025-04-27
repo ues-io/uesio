@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -85,7 +84,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		},
 		adminSession,
 	); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle Versions List", err))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
 		return
 	}
 
@@ -101,11 +100,11 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		}
 		responses = append(responses, BundleVersionsListResponse{
 			Description: goutils.StringValue(description),
-			Version:     fmt.Sprintf("v%s", goutils.StringValue(version)),
+			Version:     "v" + goutils.StringValue(version),
 		})
 		return nil
 	}); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Failed Getting Bundle Versions List", err))
+		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
 		return
 	}
 	filejson.RespondJSON(w, r, responses)

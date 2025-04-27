@@ -123,7 +123,7 @@ func mergeParam(templateString string, answers map[string]interface{}) (string, 
 	answerFunc := func(m map[string]interface{}, key string) (interface{}, error) {
 		val, ok := answers[key]
 		if !ok {
-			return nil, errors.New("missing answer " + key)
+			return nil, fmt.Errorf("missing answer: %s", key)
 		}
 		return val, nil
 	}
@@ -310,7 +310,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		}
 		answers[param.Name] = answer
 	default:
-		return errors.New("Invalid Param Type: " + param.Type)
+		return fmt.Errorf("invalid param type: %s", param.Type)
 	}
 
 	return nil

@@ -62,7 +62,7 @@ func GetStringSlice(input any) ([]string, error) {
 		for _, value := range sliceInterface {
 			stringValue, ok := value.(string)
 			if !ok {
-				return nil, errors.New("Invalid Parameter Value")
+				return nil, errors.New("invalid parameter value")
 			}
 			sliceString = append(sliceString, stringValue)
 		}
@@ -71,7 +71,7 @@ func GetStringSlice(input any) ([]string, error) {
 
 	repeaterString, ok := input.(string)
 	if !ok {
-		return nil, errors.New("Invalid Parameter Value")
+		return nil, errors.New("invalid parameter value")
 	}
 	return strings.Split(repeaterString, ","), nil
 }

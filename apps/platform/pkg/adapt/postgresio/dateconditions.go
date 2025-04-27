@@ -34,7 +34,7 @@ func processDateRangeCondition(condition wire.LoadRequestCondition, fieldName, f
 
 	value, ok := condition.Value.(string)
 	if !ok {
-		return errors.New("Invalid date range value")
+		return errors.New("invalid date range value")
 	}
 
 	if value == "THIS_WEEK" {

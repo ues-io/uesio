@@ -163,7 +163,7 @@ func seed(cmd *cobra.Command, args []string) error {
 			slog.Info("Ignoring seed failures.")
 			return nil
 		}
-		return fmt.Errorf("Seeds failed: %w", err)
+		return fmt.Errorf("seeds failed: %w", err)
 	}
 
 	slog.Info("Successfully ran seeds")

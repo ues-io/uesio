@@ -52,7 +52,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 
 func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
-		return nil, errors.New("No Site Provided")
+		return nil, errors.New("no site provided")
 	}
 	return GetUserByKey("guest", sess.GetAnonSession(context.Background(), site), connection)
 }
@@ -67,7 +67,7 @@ func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Sessio
 
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
-		return nil, errors.New("No Site Provided")
+		return nil, errors.New("no site provided")
 	}
 	return GetUserByKey("system", sess.GetAnonSession(context.Background(), site), connection)
 }

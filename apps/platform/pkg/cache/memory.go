@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	// Using go-cache package to get thread-safety, sharding, expiration, and cleanup,
@@ -26,7 +26,7 @@ func (mc *MemoryCache[T]) Get(key string) (T, error) {
 	if hasVal {
 		return val.(T), nil
 	}
-	return result, errors.New("key " + key + " not found")
+	return result, fmt.Errorf("key %s not found", key)
 }
 
 func (mc *MemoryCache[T]) Set(key string, value T) error {

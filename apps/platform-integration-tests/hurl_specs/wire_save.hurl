@@ -205,5 +205,5 @@ jsonpath "$.wires[0].changes['temp1']['uesio/tests.species']" == "Flavious"
 jsonpath "$.wires[0].changes['temp1']['uesio/tests.genus']" not exists
 jsonpath "$.wires[0].errors[0]['recordid']" == "temp1"
 jsonpath "$.wires[0].errors[0]['fieldid']" == "uesio/tests.genus"
-jsonpath "$.wires[0].errors[0]['message']" == "Field: Genus is required"
+jsonpath "$.wires[0].errors[0]['message']" == "field: Genus is required"
 

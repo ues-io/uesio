@@ -1,7 +1,7 @@
 package truncate
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -17,18 +17,18 @@ func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 	}
 
 	if tenantID == "site:uesio/studio:prod" {
-		return exceptions.NewForbiddenException("cannot truncate Studio site data")
+		return exceptions.NewForbiddenException("cannot truncate studio site data")
 	}
 
 	if !session.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
-		return exceptions.NewForbiddenException("you must be a Studio workspace admin to truncate workspace data")
+		return exceptions.NewForbiddenException("you must be a studio workspace admin to truncate workspace data")
 	}
 
 	err := datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
 		return conn.TruncateTenantData(tenantID)
 	})
 	if err != nil {
-		return errors.New("unable to truncate workspace data: " + err.Error())
+		return fmt.Errorf("unable to truncate workspace data: %w", err)
 	}
 
 	return nil

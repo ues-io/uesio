@@ -2,7 +2,7 @@ package templating
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 	"text/template"
@@ -13,13 +13,13 @@ const defaultTemplateKey = "__default__"
 func ValidKeyFunc(m map[string]any, key string) (any, error) {
 	val, ok := m[key]
 	if !ok {
-		return nil, errors.New("missing key " + key)
+		return nil, fmt.Errorf("missing key: %s", key)
 	}
 	return val, nil
 }
 
 func ForceErrorFunc(m any, key string) (any, error) {
-	return nil, errors.New("This template function is not allowed: " + key)
+	return nil, fmt.Errorf("this template function is not allowed: %s", key)
 }
 
 func NewTemplateWithValidKeysOnly(templateString string) (*template.Template, error) {

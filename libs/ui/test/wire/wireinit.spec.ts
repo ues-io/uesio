@@ -66,10 +66,10 @@ test("regular wire with view-only field and collection field", () => {
     },
   })
   const myWire = context.getWire(wireId)
-  if (!myWire) throw new Error("Wire not created")
+  if (!myWire) throw new Error("wire not created")
 
   const myCollection = myWire.getCollection()
-  if (!myCollection) throw new Error("Collection not created")
+  if (!myCollection) throw new Error("collection not created")
 
   const viewOnlyField = myCollection.getField("myfield")
   if (!viewOnlyField) throw new Error("view only field not created")

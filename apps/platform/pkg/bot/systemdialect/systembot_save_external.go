@@ -8,5 +8,5 @@ import (
 )
 
 func runUesioExternalSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	return errors.New("Uesio external save not yet supported")
+	return errors.New("uesio external save not yet supported")
 }

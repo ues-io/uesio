@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -48,7 +47,7 @@ func (fc *FieldCollection) GetItemFromPath(path, namespace string) BundleableIte
 func (fc *FieldCollection) GetItemFromKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ":")
 	if (len(keyArray)) != 2 {
-		return nil, errors.New("Invalid Field Key")
+		return nil, fmt.Errorf("invalid field key: %s", key)
 	}
 	return NewField(keyArray[0], keyArray[1])
 }

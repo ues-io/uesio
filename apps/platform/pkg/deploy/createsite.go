@@ -2,7 +2,6 @@ package deploy
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -54,7 +53,7 @@ func NewCreateSiteOptions(params map[string]any) (*CreateSiteOptions, error) {
 func CreateSite(options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (*meta.Site, error) {
 
 	if options == nil {
-		return nil, errors.New("Invalid Create options")
+		return nil, errors.New("invalid create options")
 	}
 
 	appName := options.AppName
@@ -64,7 +63,7 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 
 	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
-		return nil, exceptions.NewForbiddenException(fmt.Sprintf("you do not have permission to create bundles for app %s", appName))
+		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for app " + appName)
 	}
 
 	major, minor, patch, err := meta.ParseVersionString(version)

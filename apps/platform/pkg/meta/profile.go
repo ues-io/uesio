@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -9,7 +9,7 @@ import (
 func NewProfile(key string) (*Profile, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Profile: " + key)
+		return nil, fmt.Errorf("bad key for profile: %s", key)
 	}
 	return NewBaseProfile(namespace, name), nil
 }

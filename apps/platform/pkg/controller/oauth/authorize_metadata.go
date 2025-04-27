@@ -27,8 +27,7 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	}
 	conf, err := oauth.GetConfig(integrationConnection.GetCredentials(), fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host))
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewForbiddenException(fmt.Sprintf(
-			"invalid integration configuration: %s", err.Error())))
+		ctlutil.HandleError(w, exceptions.NewForbiddenException("invalid integration configuration: "+err.Error()))
 		return
 	}
 	redirectMetadata, err := oauth.GetRedirectMetadata(conf, integrationName, session)

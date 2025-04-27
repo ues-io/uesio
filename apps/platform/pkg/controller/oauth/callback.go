@@ -46,12 +46,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("failed to obtain platform connection: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("failed to obtain platform connection: %w", err))
 		return
 	}
 	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("failed to enter version context: "+err.Error()))
+		ctlutil.HandleError(w, fmt.Errorf("failed to enter version context: %w", err))
 		return
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)
@@ -78,7 +78,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	// Now that we have an access token (and maybe refresh token),
 	// store this into an Integration Credential record in the DB.
 	if err = oauth.UpsertIntegrationCredential(oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
-		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", errors.New("failed to obtain access token from authorization code: "+err.Error()), false)
+		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", fmt.Errorf("failed to obtain access token from authorization code: %w", err), false)
 		return
 	}
 

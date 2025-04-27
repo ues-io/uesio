@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"path"
 
@@ -13,7 +12,7 @@ import (
 func NewFile(key string) (*File, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for File: " + key)
+		return nil, fmt.Errorf("bad key for file: %s", key)
 	}
 	return NewBaseFile(namespace, name), nil
 }
@@ -99,7 +98,7 @@ func (f *File) UnmarshalYAML(node *yaml.Node) error {
 	// Backwards compatibility
 	oldFileNameProperty := GetNodeValueAsString(node, "fileName")
 	if oldFileNameProperty != "" {
-		f.Path = fmt.Sprintf("file/%s", oldFileNameProperty)
+		f.Path = "file/" + oldFileNameProperty
 	}
 	return node.Decode((*FileWrapper)(f))
 }

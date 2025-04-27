@@ -148,7 +148,7 @@ func FetchReferences(
 					})
 				}
 
-				return fmt.Errorf("There was a problem getting reference info on field: %s in collection: %s", field.GetFullName(), op.CollectionName)
+				return fmt.Errorf("there was a problem getting reference info on field: %s in collection: %s", field.GetFullName(), op.CollectionName)
 
 			})
 			if err != nil {

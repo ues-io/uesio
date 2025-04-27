@@ -1,7 +1,7 @@
 package limits
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -26,5 +26,5 @@ func GetNumericLimit(numericLimitName, user string, session *sess.Session) (int,
 			return intVal, nil
 		}
 	}
-	return 0, errors.New("No value found for feature flag: " + numericLimitName)
+	return 0, fmt.Errorf("no value found for feature flag: %s", numericLimitName)
 }

@@ -1,8 +1,6 @@
 package bot
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -47,15 +45,16 @@ func GetParamResponse(params meta.BotParams) meta.BotParamsResponse {
 func GetBotParams(namespace, name, metadataType string, session *sess.Session) (meta.BotParamsResponse, error) {
 
 	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
-		return nil, exceptions.NewBadRequestException(fmt.Sprintf("Wrong bot type: %s", metadataType), nil)
+		return nil, exceptions.NewBadRequestException("Wrong bot type: "+metadataType, nil)
 	}
 
 	var robot *meta.Bot
-	if metadataType == "GENERATOR" {
+	switch metadataType {
+	case "GENERATOR":
 		robot = meta.NewGeneratorBot(namespace, name)
-	} else if metadataType == "LISTENER" {
+	case "LISTENER":
 		robot = meta.NewListenerBot(namespace, name)
-	} else if metadataType == "RUNACTION" {
+	case "RUNACTION":
 		robot = meta.NewRunActionBot(namespace, name)
 	}
 

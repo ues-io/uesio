@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -15,7 +15,7 @@ func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
 	//luigi/app:dev:salesforce to luigi/app.salesforce
 	keyArray := strings.Split(uniquekey, ":")
 	if len(keyArray) != 3 {
-		return "", errors.New("invalid integration type key: " + uniquekey)
+		return "", fmt.Errorf("invalid integration type key: %s", uniquekey)
 	}
 
 	return keyArray[0] + "." + keyArray[2], nil

@@ -1,8 +1,6 @@
 package bedrock
 
-import (
-	"errors"
-)
+import "fmt"
 
 type MessagesModelStreamOutput struct {
 	Type  string `json:"type"`
@@ -35,7 +33,7 @@ func (c *Connection) streamModel(requestOptions map[string]any) (any, error) {
 
 	handler, ok := modelHandlers[options.Model]
 	if !ok {
-		return nil, errors.New("Model Not Supported: " + options.Model)
+		return nil, fmt.Errorf("model not supported: %s", options.Model)
 	}
 
 	return handler.Stream(c, options)

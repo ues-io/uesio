@@ -133,7 +133,7 @@ func processConditions(
 				if condition.NoValueBehavior == "DEACTIVATE" {
 					continue
 				}
-				return nil, exceptions.NewBadRequestException(fmt.Sprintf("Invalid Condition, param '%s' was not provided", condition.Param), nil)
+				return nil, exceptions.NewBadRequestException(fmt.Sprintf("invalid condition, param '%s' was not provided", condition.Param), nil)
 			}
 			condition.Value = value
 		}
@@ -143,7 +143,7 @@ func processConditions(
 			for _, param := range condition.Params {
 				value, ok := op.Params[param]
 				if !ok {
-					return nil, exceptions.NewBadRequestException(fmt.Sprintf("Invalid Condition, param: '%s' was not provided", param), nil)
+					return nil, exceptions.NewBadRequestException(fmt.Sprintf("invalid condition, param: '%s' was not provided", param), nil)
 				}
 				values = append(values, value)
 			}
@@ -166,14 +166,14 @@ func processConditions(
 			}
 
 			if lookupOp == nil {
-				return nil, exceptions.NewBadRequestException(fmt.Sprintf("Could not find lookup wire: %s", condition.LookupWire), nil)
+				return nil, exceptions.NewBadRequestException("Could not find lookup wire: "+condition.LookupWire, nil)
 			}
 
 			values := make([]any, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
-					return exceptions.NewBadRequestException(fmt.Sprintf("could not get value of specific Lookup field from record: %s", condition.LookupField), nil)
+					return exceptions.NewBadRequestException("could not get value of specific Lookup field from record: "+condition.LookupField, nil)
 				}
 				values = append(values, value)
 				return nil
@@ -188,8 +188,8 @@ func processConditions(
 			if condition.Operator == "" {
 				condition.Operator = "IN"
 			}
-			if !(condition.Operator == "IN" || condition.Operator == "NOT_IN") {
-				return nil, exceptions.NewBadRequestException(fmt.Sprintf("Invalid operator for lookup condition, must be one of [IN, NOT_IN]: %s", condition.Operator), nil)
+			if condition.Operator != "IN" && condition.Operator != "NOT_IN" {
+				return nil, exceptions.NewBadRequestException("invalid operator for lookup condition, must be one of [IN, NOT_IN]: "+condition.Operator, nil)
 			}
 		}
 		useConditions = append(useConditions, condition)
@@ -224,7 +224,7 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 
 	currentCollectionMetadata, err := metadata.GetCollection(collectionName)
 	if err != nil {
-		return errors.New("unable to find metadata for collection " + collectionName)
+		return fmt.Errorf("unable to find metadata for collection: %s", collectionName)
 	}
 
 	for i, fieldPart := range parts {
@@ -247,15 +247,15 @@ func transformReferenceCrossingConditionToSubquery(collectionName string, condit
 			// with a nested condition, and lookup the related collection metadata
 			referenceField, err := currentCollectionMetadata.GetField(fieldPart)
 			if err != nil {
-				return errors.New("unable to find field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName())
+				return fmt.Errorf("unable to find field %s in collection %s", fieldPart, currentCollectionMetadata.GetFullName())
 			}
 			if !wire.IsReference(referenceField.Type) || referenceField.ReferenceMetadata == nil {
-				return errors.New("field " + fieldPart + " in collection " + currentCollectionMetadata.GetFullName() + " is not a valid Reference field")
+				return fmt.Errorf("field %s in collection %s is not a valid Reference field", fieldPart, currentCollectionMetadata.GetFullName())
 			}
 			relatedCollectionName := referenceField.ReferenceMetadata.GetCollection()
 			subCollectionMetadata, err := metadata.GetCollection(relatedCollectionName)
 			if err != nil {
-				return errors.New("unable to find metadata for collection " + relatedCollectionName)
+				return fmt.Errorf("unable to find metadata for collection %s", relatedCollectionName)
 			}
 
 			newCondition := wire.LoadRequestCondition{}
@@ -320,7 +320,8 @@ func getMetadataForConditionLoad(
 
 	var err error
 
-	if condition.Type == "GROUP" {
+	switch condition.Type {
+	case "GROUP":
 		// Process sub-conditions recursively
 		if len(condition.SubConditions) > 0 {
 			for _, subCondition := range condition.SubConditions {
@@ -331,7 +332,7 @@ func getMetadataForConditionLoad(
 			}
 		}
 		return nil
-	} else if condition.Type == "SEARCH" {
+	case "SEARCH":
 		// Load metadata for all search fields
 		if len(condition.SearchFields) > 0 {
 			for _, searchField := range condition.SearchFields {
@@ -382,10 +383,10 @@ func getMetadataForConditionLoad(
 	if condition.ValueSource == "LOOKUP" {
 
 		if condition.LookupWire == "" {
-			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupWire is required")
+			return errors.New("invalid condition with valueSource 'LOOKUP': lookupWire is required")
 		}
 		if condition.LookupField == "" {
-			return fmt.Errorf("invalid condition with valueSource 'LOOKUP': lookupField is required")
+			return errors.New("invalid condition with valueSource 'LOOKUP': lookupField is required")
 		}
 
 		// Look through the previous wires to find the one to look up on.

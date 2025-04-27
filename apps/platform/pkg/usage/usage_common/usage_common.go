@@ -32,10 +32,10 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 
 	err := datasource.SaveWithOptions(requests, session, nil)
 	if err != nil {
-		return fmt.Errorf("Failed to update usage events: %w : %v", err, len(usage))
+		return fmt.Errorf("failed to update usage events: %w : %v", err, len(usage))
 	}
 
-	slog.Info(fmt.Sprintf("Successfully processed %d usage events", len(usage)))
+	slog.Info(fmt.Sprintf("successfully processed %d usage events", len(usage)))
 	return nil
 
 }
@@ -47,7 +47,7 @@ func GetUsageItem(key string, value int64) *meta.Usage {
 	}
 	keyParts := strings.Split(key, ":")
 	if len(keyParts) != 9 {
-		slog.Error("Usage key did not match expected pattern: " + key)
+		slog.Error("usage key did not match expected pattern: " + key)
 		return nil
 	}
 

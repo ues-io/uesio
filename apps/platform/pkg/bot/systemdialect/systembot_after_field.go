@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/formula"
@@ -136,7 +137,7 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 
 			_, err = formula.UesioLanguage.Evaluate(expression, testEval)
 			if err != nil {
-				return errors.New("Field: invalid expression:" + err.Error())
+				return fmt.Errorf("field: invalid expression: %w", err)
 			}
 
 			for key := range testEval.fieldKeys {
@@ -146,7 +147,7 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 				}
 
 				if field.IsFormula {
-					return errors.New("Field: invalid expression: Formula field cannot reference another formula field")
+					return errors.New("field: invalid expression: formula field cannot reference another formula field")
 				}
 
 			}
