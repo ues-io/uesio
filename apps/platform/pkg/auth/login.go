@@ -52,7 +52,7 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		redirectKey = profile.HomeRoute
 	}
 	// If we had an old session, remove it.
-	w.Header().Del("set-cookie")
+	w.Header().Del("Set-Cookie")
 	session = sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer

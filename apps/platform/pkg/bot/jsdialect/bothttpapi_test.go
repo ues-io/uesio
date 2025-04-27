@@ -69,7 +69,7 @@ func Test_Request(t *testing.T) {
 		if requestAsserts != nil && testInstance != nil {
 			requestAsserts(testInstance, r)
 		}
-		w.Header().Set("content-type", serveContentType)
+		w.Header().Set("Content-Type", serveContentType)
 		w.WriteHeader(serveStatusCode)
 		if serveResponseBody != "" {
 			w.Write([]byte(serveResponseBody))
@@ -433,7 +433,7 @@ func Test_Request(t *testing.T) {
 					assert.Equal(t, "PUT", request.Method)
 					assert.Equal(t, "/user/create", request.URL.Path)
 					assert.Equal(t, "text/plain", request.Header.Get("Accept"))
-					assert.Equal(t, "world", request.Header.Get("x-hello"))
+					assert.Equal(t, "world", request.Header.Get("X-Hello"))
 					body, err := io.ReadAll(request.Body)
 					assert.Equal(t, nil, err)
 					// Verify that we can deserialize our body into an expected format
@@ -583,7 +583,7 @@ func Test_Request(t *testing.T) {
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
 				responseContentType: "text/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
-					assert.Equal(t, "1234", request.Header.Get("x-api-key"))
+					assert.Equal(t, "1234", request.Header.Get("X-Api-Key"))
 				},
 				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
 					assert.Equal(t, http.StatusOK, response.Code)
