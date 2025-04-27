@@ -12,7 +12,7 @@ import (
 
 func getConfig(ctx context.Context, region, endpoint, accessKeyID, secretAccessKey, sessionToken string) (aws.Config, error) {
 	// If we have UESIO_AWS_* variables, apply them to options.  Note that AWS SDK will look for AWS_* environment variables
-	// as a fallback if not provided explicitly in the config meaning if the enviornment has AWS_* variables but not UESIO_AWS_*
+	// as a fallback if not provided explicitly in the config meaning if the environment has AWS_* variables but not UESIO_AWS_*
 	// AWS will still work.
 	// TODO: Reevaluate how we translate config values from UESIO_ to variable third-party systems like AWS.  SHould we always
 	// require UESIO_<provider>_* variables or allow fallback to the third-party default functionality.
