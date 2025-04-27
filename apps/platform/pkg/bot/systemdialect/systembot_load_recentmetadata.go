@@ -12,7 +12,7 @@ import (
 )
 
 //This is a short & temporary version for the CUG
-//like this we have controll of what we show in the recent table
+//like this we have control of what we show in the recent table
 //until we create all the routeassignments in the studio
 
 var supportedCollections = []string{

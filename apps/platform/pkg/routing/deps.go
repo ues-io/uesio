@@ -427,7 +427,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 
 	deps.Theme.AddItem(theme)
 
-	// Add in any builder-specfic feature flags.
+	// Add in any builder-specific feature flags.
 	chatPanelFlag, err := featureflagstore.GetFeatureFlag("uesio/studio.chat_panel", baseStudioSession, baseStudioSession.GetContextUser().ID)
 	if err != nil {
 		return err
@@ -641,7 +641,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		}
 	}
 
-	// Add route Assignemnts for login, signup, and home routes
+	// Add route Assignments for login, signup, and home routes
 	signupRoute, err := GetSignupRoute(session)
 	if err != nil {
 		return nil, err

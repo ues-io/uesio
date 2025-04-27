@@ -100,7 +100,7 @@ func getFieldsMap(fieldKeys []string) *FieldsMap {
 	for _, fieldKey := range fieldKeys {
 		fieldParts := strings.Split(fieldKey, constant.RefSep)
 		if len(fieldParts) == 1 {
-			// This is somewhat wierd, but it prevents reference
+			// This is somewhat weird, but it prevents reference
 			// fields in the token from being fully loaded.
 			// It shouldn't affect other fields
 			fieldsMap[fieldKey] = FieldsMap{
