@@ -29,7 +29,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/sashabaranov/go-openai v1.38.2
+	github.com/sashabaranov/go-openai v1.38.3
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/stripe/stripe-go v70.15.0+incompatible
