@@ -38,16 +38,29 @@ definition:
         uesio/studio.namespace:
           type: TEXT
           label: Namespace
+        uesio/studio.label:
+          type: TEXT
+          label: Label
+        uesio/studio.appicon:
+          type: TEXT
+          label: App Icon
+        uesio/studio.appcolor:
+          type: TEXT
+          label: App Color
       init:
         create: true
         query: false
       defaults:
         - field: uesio/studio.name
-          valueSource: VALUE
           value: "owner"
         - field: uesio/studio.namespace
-          valueSource: VALUE
           value: "uesio/core"
+        - field: uesio/studio.label
+          value: "Owner"
+        - field: uesio/studio.appicon
+          value: "hub"
+        - field: uesio/studio.appcolor
+          value: "#a05195"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -73,14 +86,14 @@ definition:
               mode: READ
               components:
                 - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
+                    uesio.variant: uesio/appkit.main
                     title: Permission Set - ${uesio/studio.name}
                     subtitle: $Param{namespace}
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/appkit.secondary
                                 text: $Label{uesio/io.edit}
                                 uesio.display:
                                   - type: fieldMode
@@ -101,7 +114,7 @@ definition:
                                     targettype: specific
                                     componentid: fieldPerms-table
                             - uesio/io.button:
-                                uesio.variant: uesio/io.primary
+                                uesio.variant: uesio/appkit.primary
                                 text: $Label{uesio/io.save}
                                 uesio.display:
                                   - type: wireHasChanges
@@ -121,7 +134,7 @@ definition:
                                     targettype: specific
                                     componentid: fieldPerms-table
                             - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/appkit.secondary
                                 text: $Label{uesio/io.cancel}
                                 uesio.display:
                                   - type: fieldMode
@@ -140,7 +153,7 @@ definition:
                                     targettype: specific
                                     componentid: fieldPerms-table
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/appkit.primarysection
                     components:
                       - uesio/io.titlebar:
                           title: Fields
@@ -162,7 +175,5 @@ definition:
                                 permissionFields:
                                   - name: read
                                     label: Read
-                                    type: CHECKBOX
                                   - name: edit
                                     label: Edit
-                                    type: CHECKBOX
