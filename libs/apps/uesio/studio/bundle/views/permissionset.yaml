@@ -283,25 +283,16 @@ definition:
                                           permissionFields:
                                             - name: read
                                               label: Read
-                                              type: CHECKBOX
                                             - name: create
                                               label: Create
-                                              type: CHECKBOX
                                             - name: edit
                                               label: Edit
-                                              type: CHECKBOX
                                             - name: delete
                                               label: Delete
-                                              type: CHECKBOX
                                             - name: modifyall
                                               label: Modify all
-                                              type: CHECKBOX
                                             - name: viewall
                                               label: View all
-                                              type: CHECKBOX
-                                            - name: fields
-                                              label: Fields
-                                              type: MAP
                             - id: integrationactions
                               label: Integration Actions
                               uesio.display:
@@ -352,10 +343,6 @@ definition:
                                           permissionFields:
                                             - name: allowAllActions
                                               label: Allow all Actions provided by this Integration
-                                              type: CHECKBOX
-                                            - name: actions
-                                              label: Action Access
-                                              type: MAP
                 - uesio/appkit.section_audit_info:
                 - uesio/appkit.section_delete:
                     confirm: true

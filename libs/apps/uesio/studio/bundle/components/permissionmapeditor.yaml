@@ -58,5 +58,4 @@ definition:
             sourceWires:
               - $Prop{metadataRecordsWireName}
             permissionFields:
-              - type: CHECKBOX
-                label: $Prop{accessFieldLabel}
+              - label: $Prop{accessFieldLabel}

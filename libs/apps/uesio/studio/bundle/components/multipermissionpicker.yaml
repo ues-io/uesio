@@ -15,3 +15,5 @@ variants:
   - uesio/io.table:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.table:uesio/appkit.main
+components:
+  - uesio/studio.item_metadata
