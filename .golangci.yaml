@@ -1,6 +1,8 @@
 version: "2"
 linters:
+  # TODO: Remove this "default: none" setting once we get the default linters passing
   default: none
   enable:
     - perfsprint
+    - canonicalheader
     - misspell

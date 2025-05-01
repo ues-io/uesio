@@ -50,7 +50,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 		if requestAsserts != nil && testInstance != nil {
 			requestAsserts(testInstance, r)
 		}
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(serveStatusCode)
 		if serveResponseBody != "" {
 			w.Write([]byte(serveResponseBody))
