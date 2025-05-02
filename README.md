@@ -621,49 +621,9 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - https://github.com/jestjs/jest/issues/15173
    - https://github.com/jestjs/jest/issues/15236
    - https://github.com/jestjs/jest/issues/15325
-4. In [nx 20.7.0](https://github.com/nrwl/nx/releases/tag/20.7.0) there was some work done around @module-federation which surfaced an underlying dependency issue that [@module-federation/node](https://github.com/module-federation/core/pull/3646/files#diff-3a108956588c19d9297e9c80997226f7df3d304f0fed9931c3a2ed5c6e839e84L72) has with the now retired `@module-federation/utilities` package which has a peer dependency on `react` but does not include `react v19`. This causes an unresolved peer dependency issue when running `npm install` in this repo. The warning can be safely ignored and will go away once https://github.com/module-federation/core/pull/3646 is released and this repo updated accordingly to the then latest version of `@module-federation/node` which nx will support based on its [semver](https://github.com/nrwl/nx/blob/bc685ce3c522ab12a3cfa075fd7c0e879117981f/packages/module-federation/package.json#L35).
-   ```
-   npm warn ERESOLVE overriding peer dependency
-   npm warn While resolving: @module-federation/utilities@3.1.51
-   npm warn Found: react@19.0.0
-   npm warn node_modules/react
-   npm warn   dev react@"^19.0.0" from the root project
-   npm warn   32 more (@floating-ui/react, @floating-ui/react-dom, ...)
-   npm warn
-   npm warn Could not resolve dependency:
-   npm warn peerOptional react@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
-   npm warn node_modules/@module-federation/node/node_modules/@module-federation/utilities
-   npm warn   @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
-   npm warn   node_modules/@module-federation/node
-   npm warn
-   npm warn Conflicting peer dependency: react@18.3.1
-   npm warn node_modules/react
-   npm warn   peerOptional react@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
-   npm warn   node_modules/@module-federation/node/node_modules/@module-federation/utilities
-   npm warn     @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
-   npm warn     node_modules/@module-federation/node
-   npm warn ERESOLVE overriding peer dependency
-   npm warn While resolving: @module-federation/utilities@3.1.51
-   npm warn Found: react-dom@19.0.0
-   npm warn node_modules/react-dom
-   npm warn   dev react-dom@"^19.0.0" from the root project
-   npm warn   20 more (@floating-ui/react, @floating-ui/react-dom, ...)
-   npm warn
-   npm warn Could not resolve dependency:
-   npm warn peerOptional react-dom@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
-   npm warn node_modules/@module-federation/node/node_modules/@module-federation/utilities
-   npm warn   @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
-   npm warn   node_modules/@module-federation/node
-   npm warn
-   npm warn Conflicting peer dependency: react-dom@18.3.1
-   npm warn node_modules/react-dom
-   npm warn   peerOptional react-dom@"^16 || ^17 || ^18" from @module-federation/utilities@3.1.51
-   npm warn   node_modules/@module-federation/node/node_modules/@module-federation/utilities
-   npm warn     @module-federation/utilities@"3.1.51" from @module-federation/node@2.6.33
-   ```
-5. There is a known security vulnerability with [esbuild 0.17.19](https://github.com/ues-io/uesio/security/dependabot/52) which is due to [@modern-js/node-bundle-require](https://github.com/web-infra-dev/modern.js/issues/6993) that is pinned to that esbuild version since it maintains support for [Node 16 until June 30, 2025](https://github.com/web-infra-dev/modern.js/issues/6993#issuecomment-2791792837). To workaround, adding overriding [esbuild for ](./package.json#L163).
+4. There is a known security vulnerability with [esbuild 0.17.19](https://github.com/ues-io/uesio/security/dependabot/52) which is due to [@modern-js/node-bundle-require](https://github.com/web-infra-dev/modern.js/issues/6993) that is pinned to that esbuild version since it maintains support for [Node 16 until June 30, 2025](https://github.com/web-infra-dev/modern.js/issues/6993#issuecomment-2791792837). To workaround, adding overriding for [esbuild](./package.json#L176).
    - TODO: Once https://github.com/web-infra-dev/modern.js/issues/6993 is resolved/merged/released, the override for esbuild in package.json can be removed.
-6. There is a known security vulnerability with [koa 2.15.4](https://github.com/ues-io/uesio/security/dependabot/51) which is due to [@module-federation/dts-plugin](https://github.com/module-federation/core/pull/3683) which [@nx/module-federation](https://github.com/nrwl/nx/blob/master/packages/module-federation/package.json#L34) indirectly depends on via `@module-federation/enhanced`. Once https://github.com/module-federation/core/pull/3683 is merged/released, will need to wait for `nx` to update its version, possibly covered by https://github.com/nrwl/nx/issues/30502.
-   - TODO: Monitor https://github.com/module-federation/core/pull/3683 for resolution and then `nx` for updating to use the new version (possibly via https://github.com/nrwl/nx/issues/30502).
-7. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
-8. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
+5. There is a known security vulnerability with [koa 2.15.4](https://github.com/ues-io/uesio/security/dependabot/51) which is due to [@module-federation/dts-plugin](https://github.com/module-federation/core/pull/3683) which [@nx/module-federation](https://github.com/nrwl/nx/blob/master/packages/module-federation/package.json#L34) indirectly depends on via `@module-federation/enhanced`. Once https://github.com/module-federation/core/pull/3683 is merged/released, will need to wait for `nx` to update its version, possibly covered by https://github.com/nrwl/nx/issues/30502.
+   - TODO: Monitor https://github.com/module-federation/core/pull/3683 for resolution and then `nx` for updating to use the new version via https://github.com/nrwl/nx/pull/30806 (see also https://github.com/nrwl/nx/issues/30748 & https://github.com/nrwl/nx/issues/30502).
+6. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
+7. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
