@@ -37,7 +37,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zachelrath/yaml-jsonpointer v0.2.0
 	golang.org/x/crypto v0.37.0
-	golang.org/x/oauth2 v0.29.0
+	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.24.0
 	google.golang.org/api v0.231.0
 	gopkg.in/yaml.v3 v3.0.1
