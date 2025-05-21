@@ -31,10 +31,9 @@ type FileBundleStoreConnection struct {
 	ReadOnly       bool
 }
 
-func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
-
+func (b *FileBundleStoreConnection) getFilePathsAtBasePath(basePath string) ([]file.Metadata, error) {
 	if b.Cache != nil {
-		cachedKeys, ok := b.Cache.GetFileListFromCache(basePath, conditions)
+		cachedKeys, ok := b.Cache.GetFileListFromCache(basePath)
 		if ok {
 			return cachedKeys, nil
 		}
@@ -45,17 +44,27 @@ func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.Fi
 		return nil, err
 	}
 
+	if b.Cache != nil {
+		b.Cache.AddFileListToCache(basePath, paths)
+	}
+
+	return paths, err
+}
+
+func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
+
 	filteredPaths := []file.Metadata{}
+
+	paths, err := b.getFilePathsAtBasePath(basePath)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, path := range paths {
 		pathString := path.Path()
 		if filter(pathString, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
-	}
-
-	if b.Cache != nil {
-		b.Cache.AddFileListToCache(basePath, conditions, filteredPaths)
 	}
 
 	return filteredPaths, err
