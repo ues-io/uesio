@@ -32,16 +32,16 @@ func NewBundleStoreCache(entryExpiration, cleanupFrequency time.Duration) *Bundl
 	}
 }
 
-func (bsc *BundleStoreCache) GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]file.Metadata, bool) {
-	files, err := bsc.fileListCache.Get(basePath + fmt.Sprint(conditions))
+func (bsc *BundleStoreCache) GetFileListFromCache(basePath string) ([]file.Metadata, bool) {
+	files, err := bsc.fileListCache.Get(basePath)
 	if err != nil || files == nil {
 		return nil, false
 	}
 	return files, true
 }
 
-func (bsc *BundleStoreCache) AddFileListToCache(basePath string, conditions meta.BundleConditions, files []file.Metadata) {
-	bsc.fileListCache.Set(basePath+fmt.Sprint(conditions), files)
+func (bsc *BundleStoreCache) AddFileListToCache(basePath string, files []file.Metadata) {
+	bsc.fileListCache.Set(basePath, files)
 }
 
 func (bsc *BundleStoreCache) getItemCacheKey(namespace, version, bundleGroupName, itemKey string) string {
