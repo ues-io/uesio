@@ -16,6 +16,7 @@ import (
 type BundleStoreCache struct {
 	fileListCache    cache.Cache[[]file.Metadata]
 	bundleEntryCache cache.Cache[meta.BundleableItem]
+	bundleDefCache   cache.Cache[*meta.BundleDef]
 }
 
 const (
@@ -29,6 +30,7 @@ func NewBundleStoreCache(entryExpiration, cleanupFrequency time.Duration) *Bundl
 	return &BundleStoreCache{
 		fileListCache:    cache.NewMemoryCache[[]file.Metadata](entryExpiration, cleanupFrequency),
 		bundleEntryCache: cache.NewMemoryCache[meta.BundleableItem](defaultExpiry, defaultCleanup),
+		bundleDefCache:   cache.NewMemoryCache[*meta.BundleDef](defaultExpiry, defaultCleanup),
 	}
 }
 
@@ -48,6 +50,10 @@ func (bsc *BundleStoreCache) getItemCacheKey(namespace, version, bundleGroupName
 	return fmt.Sprintf("%s|%s|%s|%s", namespace, version, bundleGroupName, itemKey)
 }
 
+func (bsc *BundleStoreCache) getBundleDefCacheKey(namespace, version string) string {
+	return fmt.Sprintf("%s|%s", namespace, version)
+}
+
 func (bsc *BundleStoreCache) GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
 	entry, err := bsc.bundleEntryCache.Get(bsc.getItemCacheKey(namespace, version, bundleGroupName, key))
 	if err != nil || entry == nil {
@@ -64,12 +70,32 @@ func (bsc *BundleStoreCache) InvalidateCacheItem(namespace, version, groupName, 
 	return bsc.bundleEntryCache.Del(bsc.getItemCacheKey(namespace, version, groupName, itemKey))
 }
 
+func (bsc *BundleStoreCache) GetBundleDefFromCache(namespace, version string) (*meta.BundleDef, bool) {
+	entry, err := bsc.bundleDefCache.Get(bsc.getBundleDefCacheKey(namespace, version))
+	if err != nil || entry == nil {
+		return nil, false
+	}
+	return entry, true
+}
+
+func (bsc *BundleStoreCache) AddBundleDefToCache(namespace, version string, bundleDef *meta.BundleDef) error {
+	return bsc.bundleDefCache.Set(bsc.getBundleDefCacheKey(namespace, version), bundleDef)
+}
+
+func (bsc *BundleStoreCache) InvalidateCacheBundleDef(namespace, version string) error {
+	return bsc.bundleDefCache.Del(bsc.getBundleDefCacheKey(namespace, version))
+}
+
 func (bsc *BundleStoreCache) InvalidateCache() error {
 	if err := bsc.invalidateBundleEntryCache(); err != nil {
 		return err
 	}
 
 	if err := bsc.invalidateFileListCache(); err != nil {
+		return err
+	}
+
+	if err := bsc.invalidateBundleDefCache(); err != nil {
 		return err
 	}
 
@@ -82,4 +108,8 @@ func (bsc *BundleStoreCache) invalidateBundleEntryCache() error {
 
 func (bsc *BundleStoreCache) invalidateFileListCache() error {
 	return bsc.fileListCache.DeleteAll()
+}
+
+func (bsc *BundleStoreCache) invalidateBundleDefCache() error {
+	return bsc.bundleDefCache.DeleteAll()
 }
