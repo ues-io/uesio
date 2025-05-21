@@ -269,6 +269,13 @@ func (b *FileBundleStoreConnection) DeleteBundle() error {
 }
 
 func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
+
+	if b.Cache != nil {
+		if cachedItem, ok := b.Cache.GetBundleDefFromCache(b.Namespace, b.Version); ok {
+			return cachedItem, nil
+		}
+	}
+
 	var by meta.BundleDef
 	buf := &bytes.Buffer{}
 	_, err := b.download(buf, filepath.Join(b.PathFunc(b.Namespace, b.Version), "", "bundle.yaml"))
@@ -279,6 +286,13 @@ func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	err = bundlestore.DecodeYAML(&by, buf)
 	if err != nil {
 		return nil, err
+	}
+
+	if b.Cache != nil {
+		err := b.Cache.AddBundleDefToCache(b.Namespace, b.Version, &by)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &by, nil
 }
