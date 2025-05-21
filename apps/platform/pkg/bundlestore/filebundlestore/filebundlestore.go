@@ -115,13 +115,20 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 		return fmt.Errorf("error decoding metadata item: %s from file: %s : %w", key, fileMetadata.Path(), err)
 	}
 
+	// Add the item to the cache even if it is forbidden. That way we don't miss
+	// the cache every time we try to access an item we don't have access to.
+	if b.Cache != nil {
+		err := b.Cache.AddItemToCache(b.Namespace, b.Version, fullCollectionName, key, item)
+		if err != nil {
+			return err
+		}
+	}
+
 	if !b.AllowPrivate && !item.IsPublic() {
 		return exceptions.NewForbiddenException("metadata item: " + key + " is not public")
 	}
-	if b.Cache == nil {
-		return nil
-	}
-	return b.Cache.AddItemToCache(b.Namespace, b.Version, fullCollectionName, key, item)
+
+	return nil
 }
 
 func (b *FileBundleStoreConnection) HasAny(group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
