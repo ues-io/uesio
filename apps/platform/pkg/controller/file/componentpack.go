@@ -3,7 +3,6 @@ package file
 import (
 	"bytes"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -49,16 +48,8 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		lastModified = time.Unix(componentPack.UpdatedAt, 0)
 	}
 
-	usePath := "pack.js"
-	if path != "runtime.js" && strings.HasSuffix(path, ".json") {
-		usePath = path
-	}
-	if path == "runtime.css" {
-		usePath = path
-	}
-
 	respondFile(w, r, &FileRequest{
-		Path:         usePath,
+		Path:         path,
 		LastModified: lastModified,
 		Namespace:    namespace,
 		Version:      resourceVersion,
