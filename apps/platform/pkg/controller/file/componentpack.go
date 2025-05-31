@@ -1,7 +1,6 @@
 package file
 
 import (
-	"bytes"
 	"net/http"
 	"time"
 
@@ -34,8 +33,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buf := &bytes.Buffer{}
-	fileMeta, err := bundle.GetItemAttachment(buf, componentPack, "dist/"+path, session, connection)
+	stream, fileMeta, err := bundle.StreamItemAttachment(componentPack, "dist/"+path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -53,5 +51,5 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		LastModified: lastModified,
 		Namespace:    namespace,
 		Version:      resourceVersion,
-	}, bytes.NewReader(buf.Bytes()))
+	}, stream)
 }

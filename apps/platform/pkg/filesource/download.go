@@ -13,8 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func DownloadAttachment(w io.Writer, recordID string, path string, session *sess.Session) (*meta.UserFileMetadata, error) {
-
+func GetUserFileAttachmentMetadata(recordID, path string, session *sess.Session) (*meta.UserFileMetadata, error) {
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		userFile,
@@ -35,12 +34,10 @@ func DownloadAttachment(w io.Writer, recordID string, path string, session *sess
 	if err != nil {
 		return nil, err
 	}
-
-	return DownloadItem(w, userFile, session)
+	return userFile, nil
 }
 
-func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.UserFileMetadata, error) {
-
+func GetUserFileMetadata(userFileID string, session *sess.Session) (*meta.UserFileMetadata, error) {
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		userFile,
@@ -84,7 +81,22 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 	if err != nil {
 		return nil, err
 	}
+	return userFile, nil
+}
 
+func DownloadAttachment(w io.Writer, recordID string, path string, session *sess.Session) (*meta.UserFileMetadata, error) {
+	userFile, err := GetUserFileAttachmentMetadata(recordID, path, session)
+	if err != nil {
+		return nil, err
+	}
+	return DownloadItem(w, userFile, session)
+}
+
+func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.UserFileMetadata, error) {
+	userFile, err := GetUserFileMetadata(userFileID, session)
+	if err != nil {
+		return nil, err
+	}
 	return DownloadItem(w, userFile, session)
 }
 
@@ -110,4 +122,45 @@ func DownloadItem(w io.Writer, userFile *meta.UserFileMetadata, session *sess.Se
 	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
 
 	return userFile, nil
+}
+
+func StreamAttachment(recordID, path string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+	userFile, err := GetUserFileAttachmentMetadata(recordID, path, session)
+	if err != nil {
+		return nil, nil, err
+	}
+	return StreamItem(userFile, session)
+}
+
+func Stream(userFileID string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+	userFile, err := GetUserFileMetadata(userFileID, session)
+	if err != nil {
+		return nil, nil, err
+	}
+	return StreamItem(userFile, session)
+}
+
+func StreamItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
+
+	if userFile == nil {
+		return nil, nil, errors.New("no file provided")
+	}
+
+	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	fullPath := userFile.GetFullPath(session.GetTenantID())
+
+	stream, _, err := conn.Stream(fullPath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// TODO: We could be charging for extra usage here if we're just asking for a portion of the file.
+	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
+
+	return stream, userFile, nil
 }

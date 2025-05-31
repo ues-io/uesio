@@ -74,6 +74,10 @@ func (b *FileBundleStoreConnection) download(w io.Writer, path string) (file.Met
 	return b.FileConnection.Download(w, path)
 }
 
+func (b *FileBundleStoreConnection) stream(path string) (io.ReadSeeker, file.Metadata, error) {
+	return b.FileConnection.Stream(path)
+}
+
 func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
 	key := item.GetKey()
 	fullCollectionName := item.GetCollectionName()
@@ -209,6 +213,10 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 
 func (b *FileBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
 	return b.download(w, filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
+}
+
+func (b *FileBundleStoreConnection) StreamItemAttachment(item meta.AttachableItem, path string) (io.ReadSeeker, file.Metadata, error) {
+	return b.stream(filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
 func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {

@@ -1,7 +1,6 @@
 package file
 
 import (
-	"bytes"
 	"net/http"
 	"time"
 
@@ -34,8 +33,7 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buf := &bytes.Buffer{}
-	fileMeta, err := bundle.GetItemAttachment(buf, font, path, session, connection)
+	stream, fileMeta, err := bundle.StreamItemAttachment(font, path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -53,5 +51,5 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 		LastModified: lastModified,
 		Namespace:    namespace,
 		Version:      resourceVersion,
-	}, bytes.NewReader(buf.Bytes()))
+	}, stream)
 }

@@ -304,6 +304,14 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item met
 	return userFileMetadata, nil
 }
 
+func (b *WorkspaceBundleStoreConnection) StreamItemAttachment(item meta.AttachableItem, path string) (io.ReadSeeker, file.Metadata, error) {
+	recordIDString, err := b.GetItemRecordID(item)
+	if err != nil {
+		return nil, nil, errors.New("invalid record id for attachment")
+	}
+	return filesource.StreamAttachment(recordIDString, path, b.getStudioAnonSession())
+}
+
 func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {

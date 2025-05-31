@@ -130,6 +130,23 @@ func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
 	return file.NewLocalFileMeta(fileInfo, path), nil
 }
 
+func (c *Connection) Stream(path string) (io.ReadSeeker, file.Metadata, error) {
+	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
+	outFile, err := os.Open(fullPath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, nil, exceptions.NewNotFoundException("file not found at path: " + path)
+		} else {
+			return nil, nil, fmt.Errorf("unable to read file at path '%s': %w", path, err)
+		}
+	}
+	fileInfo, err := outFile.Stat()
+	if err != nil {
+		return nil, nil, err
+	}
+	return outFile, file.NewLocalFileMeta(fileInfo, path), nil
+}
+
 func (c *Connection) Delete(path string) error {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.Remove(fullPath)

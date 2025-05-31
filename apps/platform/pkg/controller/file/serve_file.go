@@ -1,7 +1,6 @@
 package file
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -59,8 +58,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 		path = file.Path
 	}
 
-	buf := &bytes.Buffer{}
-	fileMetadata, err := bundle.GetItemAttachment(buf, file, path, session, connection)
+	stream, fileMetadata, err := bundle.StreamItemAttachment(file, path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
@@ -76,7 +74,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 		LastModified: fileMetadata.LastModified(),
 		Namespace:    file.Namespace,
 		Version:      version,
-	}, bytes.NewReader(buf.Bytes()))
+	}, stream)
 }
 
 func ServeFile(w http.ResponseWriter, r *http.Request) {
