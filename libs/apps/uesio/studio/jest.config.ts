@@ -8,6 +8,6 @@ export default {
   coverageDirectory: "../../../../coverage/libs/apps/uesio/studio",
   transformIgnorePatterns: [
     "/node_modules/(?!(react-hotkeys-hook)/)",
-    "\\.pnp\\.[^\\\/]+$",
+    "\\.pnp\\.[^\\/]+$",
   ],
 }

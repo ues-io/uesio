@@ -9,6 +9,6 @@ export default {
   coverageDirectory: "../../coverage/libs/ui",
   transformIgnorePatterns: [
     "/node_modules/(?!(react-hotkeys-hook)/)",
-    "\\.pnp\\.[^\\\/]+$",
+    "\\.pnp\\.[^\\/]+$",
   ],
 }
