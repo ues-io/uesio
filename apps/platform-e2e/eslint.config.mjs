@@ -1,4 +1,4 @@
-import cypress from "eslint-plugin-cypress/flat"
+import cypress from "eslint-plugin-cypress"
 import baseConfig from "../../eslint.config.mjs"
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.Config[]} */
