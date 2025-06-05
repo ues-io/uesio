@@ -10,7 +10,7 @@ import {
   highlightThemeDefault,
 } from "../syntax-highlight"
 import { visit } from "unist-util-visit"
-import { Element as HastElement } from "hast"
+import type { Element as HastElement, Root } from "hast"
 
 interface MarkDownFieldProps {
   setValue?: (value: wire.FieldValue) => void
@@ -50,7 +50,7 @@ const Heading: FC<
  * Sets 'inline' property to true if the <code> is not within a <pre> tag
  */
 const rehypeInlineCodeProperty = () => {
-  return (tree: any): undefined => {
+  return (tree: Root): undefined => {
     visit(tree, "element", (node: HastElement, _index, parent: HastElement) => {
       if (node.tagName === "code" && parent.tagName !== "pre") {
         node.properties.inline = true
