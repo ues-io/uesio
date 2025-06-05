@@ -76,8 +76,12 @@ __debug_bin
 
 # Ad-hoc query results
 queries/results
+
+# Nx
 .nx/cache
 .nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
 
 # Go
 # See comment in ./go.work regarding why go.work.sum is ignored
