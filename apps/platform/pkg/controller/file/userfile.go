@@ -1,7 +1,6 @@
 package file
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -95,17 +94,18 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
 		return
 	}
-	buf := &bytes.Buffer{}
-	if userFile, err := filesource.Download(buf, userFileID, session); err != nil {
+	stream, userFile, err := filesource.Stream(userFileID, session)
+	if err != nil {
 		ctlutil.HandleError(w, err)
-	} else {
-		respondFile(w, r, &FileRequest{
-			Path:         userFile.Path(),
-			LastModified: userFile.LastModified(),
-			Namespace:    "",
-			Version:      version,
-		}, bytes.NewReader(buf.Bytes()))
+		return
 	}
+
+	respondFile(w, r, &FileRequest{
+		Path:         userFile.Path(),
+		LastModified: userFile.LastModified(),
+		Namespace:    "",
+		Version:      version,
+	}, stream)
 }
 
 func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
@@ -123,15 +123,17 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buf := &bytes.Buffer{}
-	if userFile, err := filesource.DownloadAttachment(buf, recordID, path, session); err != nil {
+	stream, userFile, err := filesource.StreamAttachment(recordID, path, session)
+	if err != nil {
 		ctlutil.HandleError(w, err)
-	} else {
-		respondFile(w, r, &FileRequest{
-			Path:         userFile.Path(),
-			LastModified: userFile.LastModified(),
-			Namespace:    "",
-			Version:      version,
-		}, bytes.NewReader(buf.Bytes()))
+		return
 	}
+
+	respondFile(w, r, &FileRequest{
+		Path:         userFile.Path(),
+		LastModified: userFile.LastModified(),
+		Namespace:    "",
+		Version:      version,
+	}, stream)
+
 }
