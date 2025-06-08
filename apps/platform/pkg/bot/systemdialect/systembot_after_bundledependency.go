@@ -57,10 +57,10 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 			session,
 		)
 		if err != nil {
-			if exceptions.IsNotFoundException(err) {
-				// It's ok if we didn't find an existing license.
+			// It's ok if we didn't find an existing license.
+			if !exceptions.IsNotFoundException(err) {
+				return err
 			}
-			return err
 		}
 
 		if existingLicense.UniqueKey != "" {
@@ -89,10 +89,10 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 			session,
 		)
 		if err != nil {
-			if exceptions.IsNotFoundException(err) {
-				// It's ok if we didn't find a license template.
+			// It's ok if we didn't find a license template.
+			if !exceptions.IsNotFoundException(err) {
+				return err
 			}
-			return err
 		}
 
 		if lt.AutoCreate {
