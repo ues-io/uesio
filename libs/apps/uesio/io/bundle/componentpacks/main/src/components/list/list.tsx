@@ -9,6 +9,7 @@ type ListDefinition = {
   recordDisplay?: component.DisplayCondition[]
   iterate?: boolean
   emptyState?: definition.DefinitionList
+  after?: definition.DefinitionList
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
@@ -25,6 +26,16 @@ const List: definition.UC<ListDefinition> = (props) => {
   const componentId = api.component.getComponentIdFromProps(props)
   const [mode] = api.component.useMode(componentId, definition.mode)
 
+  const afterNode = definition.after && (
+    <component.Slot
+      definition={definition}
+      listName="after"
+      path={path}
+      context={context}
+      componentType={componentType}
+    />
+  )
+
   if (!iterate) {
     if (!wire) return null
     const wireContext = context.addWireFrame({
@@ -32,13 +43,16 @@ const List: definition.UC<ListDefinition> = (props) => {
       view: wire.getViewId(),
     })
     return (
-      <component.Slot
-        definition={definition}
-        listName="components"
-        path={path}
-        context={mode ? wireContext.addFieldModeFrame(mode) : wireContext}
-        componentType={componentType}
-      />
+      <>
+        <component.Slot
+          definition={definition}
+          listName="components"
+          path={path}
+          context={mode ? wireContext.addFieldModeFrame(mode) : wireContext}
+          componentType={componentType}
+        />
+        {afterNode}
+      </>
     )
   }
 
@@ -63,13 +77,16 @@ const List: definition.UC<ListDefinition> = (props) => {
 
   if (!itemContexts.length) {
     return (
-      <component.Slot
-        definition={definition}
-        listName="emptyState"
-        path={path}
-        context={context}
-        componentType={componentType}
-      />
+      <>
+        <component.Slot
+          definition={definition}
+          listName="emptyState"
+          path={path}
+          context={context}
+          componentType={componentType}
+        />
+        {afterNode}
+      </>
     )
   }
 
@@ -85,6 +102,7 @@ const List: definition.UC<ListDefinition> = (props) => {
           componentType={componentType}
         />
       ))}
+      {afterNode}
     </>
   )
 }

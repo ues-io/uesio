@@ -13,6 +13,7 @@ slots:
       - type: FIELD_MODE
         modeProperty: mode
   - name: emptyState
+  - name: after
 defaultVariant: uesio/io.default
 defaultDefinition:
   mode: READ

@@ -5,7 +5,6 @@ import { default as IOGrid } from "../../utilities/grid/grid"
 
 type DeckDefinition = {
   gridVariant?: metadata.MetadataKey
-  emptyState?: definition.DefinitionList
 } & ListDefinition
 
 const Deck: definition.UC<DeckDefinition> = (props) => {
