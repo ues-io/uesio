@@ -15,6 +15,7 @@ slots:
       - type: FIELD_MODE
         modeProperty: mode
   - name: emptyState
+  - name: after
 defaultDefinition:
   mode: READ
 properties:
