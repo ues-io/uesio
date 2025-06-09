@@ -80,7 +80,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build --tag uesio-dev:latest -f ./apps/platform/Dockerfile .",
-        "cwd": "."
+        "cwd": "{workspaceRoot}"
       },
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     },
@@ -88,7 +88,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "docker compose -f docker-compose.yaml -f docker-compose-local.yaml up -d --build",
-        "cwd": "."
+        "cwd": "{workspaceRoot}"
       },
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
     },
@@ -132,27 +132,59 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "mkdir -p apps/platform/.watch",
-          "nx watch -p tag:type:platform-dep  -- \"date && nx run-many -t build -p \\$NX_PROJECT_NAME && date > apps/platform/.watch/nxwatch.log\""
-        ]
+          "mkdir -p .watch",
+          "nx watch -p tag:type:platform-dep  -- \"date && nx run-many -t build -p \\$NX_PROJECT_NAME && date > .watch/nxwatch.log\""
+        ],
+        "cwd": "{projectRoot}"
       }
     },
     "serve:watch": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "cd apps/platform && air serve",
-          "nx run platform:watch-deps"
-        ],
+        "commands": ["air serve", "nx run platform:watch-deps"],
+        "cwd": "{projectRoot}",
         "parallel": true
       },
       "dependsOn": [{ "projects": "tag:type:platform-dep", "target": "build" }]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "bash ./scripts/dev.sh",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": [
+        { "projects": "tag:type:platform-dep", "target": "build" },
+        "start-deps"
+      ]
+    },
+    "wait-for-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "target": "dev",
+          "params": "forward"
+        }
+      ],
+      "options": {
+        "commands": ["bash ./scripts/wait-for-dev.sh"],
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": false
+      }
     },
     "setup-ssl": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash ./create.sh",
         "cwd": "{projectRoot}/ssl"
+      }
+    },
+    "start-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml up -d --wait",
+        "cwd": "{workspaceRoot}"
       }
     }
   },

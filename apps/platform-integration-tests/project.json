@@ -14,14 +14,14 @@
         "commands": [
           "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
-        "cwd": "apps/platform-integration-tests"
+        "cwd": "{projectRoot}"
       }
     },
     "integration": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [". ./scripts/setup-env.sh && npx hurl --jobs 1 -k"],
-        "cwd": "apps/platform-integration-tests"
+        "cwd": "{projectRoot}"
       }
     },
     "run-test": {
@@ -36,11 +36,19 @@
           "npx nx run platform-integration-tests:cleanup-data"
         ],
         "forwardAllArgs": false,
-        "cwd": "apps/platform-integration-tests",
+        "cwd": "{projectRoot}",
         "parallel": false
       }
     },
     "test-integration": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["platform:wait-for-dev"],
+      "options": {
+        "command": "nx run platform-integration-tests:test-integration:run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test-integration:run": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -52,7 +60,7 @@
           "npx nx run platform-integration-tests:integration --test --very-verbose hurl_specs_single_run/perf_stats.hurl",
           "npx nx run platform-integration-tests:cleanup-data"
         ],
-        "cwd": "apps/platform-integration-tests",
+        "cwd": "{projectRoot}",
         "forwardAllArgs": false,
         "parallel": false
       }
@@ -61,14 +69,14 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["bash ./scripts/setup-data.sh"],
-        "cwd": "apps/platform-integration-tests"
+        "cwd": "{projectRoot}"
       }
     },
     "cleanup-data": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["bash ./scripts/cleanup-data.sh"],
-        "cwd": "apps/platform-integration-tests"
+        "cwd": "{projectRoot}"
       }
     }
   }

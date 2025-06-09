@@ -1,6 +1,11 @@
 services:
   redis:
     image: "redis:alpine"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 10s
+      retries: 5
     ports:
       - "6379:6379"
     volumes:
@@ -19,6 +24,11 @@ services:
       # - dev: postgresio (owned by postgres user)
       # - test: pgtest (owned by pgtest user)
       POSTGRES_MULTIPLE_DATABASES: "postgresio,postgres:pgtest,pgtest"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 1s
+      timeout: 10s
+      retries: 5
     volumes:
       - ./apps/platform/scripts/create-multiple-databases.sh:/docker-entrypoint-initdb.d/create-multiple-databases.sh
       - pgdata:/var/lib/postgresql/data
