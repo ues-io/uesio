@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -41,7 +42,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 		visited[pairKey] = true
 
 		var existingLicense meta.License
-		datasource.PlatformLoadOne(
+		err = datasource.PlatformLoadOne(
 			&existingLicense,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
@@ -55,6 +56,12 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 			},
 			session,
 		)
+		if err != nil {
+			// It's ok if we didn't find an existing license.
+			if !exceptions.IsNotFoundException(err) {
+				return err
+			}
+		}
 
 		if existingLicense.UniqueKey != "" {
 			// If the AppLicensed is nil, then this license is corrupted and needs to be recreated
@@ -68,7 +75,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 		}
 
 		var lt meta.LicenseTemplate
-		datasource.PlatformLoadOne(
+		err = datasource.PlatformLoadOne(
 			&lt,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
@@ -81,6 +88,12 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 			},
 			session,
 		)
+		if err != nil {
+			// It's ok if we didn't find a license template.
+			if !exceptions.IsNotFoundException(err) {
+				return err
+			}
+		}
 
 		if lt.AutoCreate {
 			LicenseTemplateDeps = append(LicenseTemplateDeps, &wire.Item{
