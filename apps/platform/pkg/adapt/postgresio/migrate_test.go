@@ -27,7 +27,7 @@ func TestGetConnectionString(t *testing.T) {
 				"database": "foo",
 				"sslmode":  "disable",
 			},
-			"postgres://un:pw@some.host:1234/foo?sslmode=disable",
+			"pgx5://un:pw@some.host:1234/foo?sslmode=disable",
 			nil,
 		},
 		{
@@ -39,7 +39,7 @@ func TestGetConnectionString(t *testing.T) {
 				"database": "foo",
 				"sslmode":  "disable",
 			},
-			"postgres://un:pw@some.host:5432/foo?sslmode=disable",
+			"pgx5://un:pw@some.host:5432/foo?sslmode=disable",
 			nil,
 		},
 		{
@@ -78,7 +78,7 @@ func TestGetConnectionString(t *testing.T) {
 				"database": "foo",
 				"sslmode":  "disable",
 			},
-			"postgres://un:acbd%60cjaskf%3B@some.host:5432/foo?sslmode=disable",
+			"pgx5://un:acbd%60cjaskf%3B@some.host:5432/foo?sslmode=disable",
 			nil,
 		},
 	}
