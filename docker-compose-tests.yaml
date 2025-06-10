@@ -10,7 +10,7 @@ services:
       retries: 4
       start_period: 10s
   db:
-    image: "postgres:14"
+    image: "postgres:17"
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres

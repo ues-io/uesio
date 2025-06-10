@@ -12,7 +12,7 @@ services:
       - $PWD/redis-data:/var/lib/redis
       - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
   db:
-    image: "postgres:14"
+    image: "postgres:17"
     ports:
       - "5432:5432"
     environment:
