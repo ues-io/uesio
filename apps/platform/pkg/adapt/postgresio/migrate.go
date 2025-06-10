@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	"github.com/thecloudmasters/uesio/pkg/types/migrations"
@@ -46,7 +46,7 @@ func getConnectionString(credentials *wire.Credentials) (string, error) {
 	// escape invalid url characters in the password
 	password = url.PathEscape(password)
 
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode), nil
+	return fmt.Sprintf("pgx5://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode), nil
 }
 
 func (c *Connection) Migrate(options *migrations.MigrateOptions) error {

@@ -7,7 +7,7 @@ export PGHOST=localhost
 export PGPORT=5432
 
 export MIGRATIONS_PATH="file://$PWD/apps/platform/migrations"
-export CONN_STR="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE?sslmode=disable"
+export CONN_STR="pgx5://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE?sslmode=prefer"
 
 echo "migrations path is $MIGRATIONS_PATH"
 

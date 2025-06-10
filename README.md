@@ -404,7 +404,7 @@ UESIO_WORKER_MODE=combined
 | UESIO_DB_DATABASE                              | Postgres database name                                                                                                |                                                                                           |                                                                                                                                                                            |
 | UESIO_DB_HOST                                  | Postgres host name                                                                                                    | localhost                                                                                 |                                                                                                                                                                            |
 | UESIO_DB_PORT                                  | Postgres port                                                                                                         | 5432                                                                                      |                                                                                                                                                                            |
-| UESIO_DB_SSLMODE                               | Postgres sslmode                                                                                                      | disable                                                                                   | `disable`, `allow`, `prefer`, `require`, etc.                                                                                                                              |
+| UESIO_DB_SSLMODE                               | Postgres sslmode                                                                                                      | prefer                                                                                    | `disable`, `allow`, `prefer`, `require`, etc.                                                                                                                              |
 | UESIO_LOG_LEVEL                                | Logging level                                                                                                         | 0                                                                                         | `-4` (Debug), `0` (Info), `4` (Warn), `8` (Error)                                                                                                                          |
 | UESIO_BUILD_VERSION                            | Used in urls served for cache busting                                                                                 | Empty string in development mode / Docker image contains the version image was built with | There is typically no need to provide this, see [http caching docs](./docs/http_caching.md)                                                                                |
 | UESIO_CACHE_SITE_BUNDLES                       | Whether or not to cache site bundles                                                                                  | true                                                                                      |                                                                                                                                                                            |
@@ -446,7 +446,7 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 4), you can either use `pgcli` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this (assuming you install `golang-migrate` with brew):
+To forcibly set the migration version to latest (currently 4), you can either use `psql` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this assuming you haved [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) (e.g., via brew):
 
 ```
 brew install golang-migrate
@@ -458,7 +458,7 @@ This will skip running any migrations but update `schema_migrations` table to th
 
 #### testing migrations
 
-To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!):
+To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!) assuming you have [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) and `psql` the [postgres client](https://www.postgresql.org/download/):
 
 ```
 docker compose up -d

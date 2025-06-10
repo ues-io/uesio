@@ -43,7 +43,7 @@ var configValues = map[string]string{
 	"uesio/core.userfiles_bucket_name":            GetEnvWithDefault("UESIO_USERFILES_BUCKET_NAME", "uesio-userfiles"),
 	"uesio/core.db_host":                          GetEnvWithDefault("UESIO_DB_HOST", "localhost"),
 	"uesio/core.db_port":                          GetEnvWithDefault("UESIO_DB_PORT", "5432"),
-	"uesio/core.db_sslmode":                       GetEnvWithDefault("UESIO_DB_SSLMODE", "disable"),
+	"uesio/core.db_sslmode":                       GetEnvWithDefault("UESIO_DB_SSLMODE", "prefer"),
 	"uesio/core.bundlestore_bucket":               GetEnvWithDefault("UESIO_BUNDLES_BUCKET_NAME", "uesio-bundles"),
 	"uesio/studio.external_bundle_store_base_url": os.Getenv("UESIO_EXTERNAL_BUNDLE_STORE_BASE_URL"), // has default from config yaml
 	"uesio/core.primary_domain":                   env.GetPrimaryDomain(),
