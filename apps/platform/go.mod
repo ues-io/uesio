@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.67
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.77
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.30.0
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.80.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.80.1
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.5.1
 	github.com/dimchansky/utfbom v1.1.1
