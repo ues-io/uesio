@@ -10,11 +10,12 @@ import { highlighter, highlightThemeDefault } from "../syntax-highlight"
 const { ErrorMessage } = component
 
 const staticAssetsHost = api.platform.getStaticAssetsHost()
+const staticAssetsPath = api.platform.getStaticAssetsPath()
 const { getFileText } = api.platform
 
 loader.config({
   paths: {
-    vs: `${staticAssetsHost}/static/vendor/monaco-editor/src/vs`,
+    vs: `${staticAssetsHost}${staticAssetsPath}/static/vendor/monaco-editor/src/vs`,
   },
 })
 
