@@ -286,24 +286,14 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 		return
 	}
 
-	vendorScriptUrls := file.GetVendorScriptUrls()
-
 	mergeData := preload.MergeData{
-		Route:               routingMergeData,
-		User:                preload.GetUserMergeData(session),
-		Site:                GetSiteMergeData(site),
-		PreloadMetadata:     preloadmeta,
-		MonacoEditorVersion: file.GetMonacoEditorVersion(),
-		StaticAssetsPath:    file.GetAssetsPath(),
-		StaticAssetsHost:    file.GetAssetsHost(),
-		VendorScriptUrls:    vendorScriptUrls,
+		Route:            routingMergeData,
+		User:             preload.GetUserMergeData(session),
+		Site:             GetSiteMergeData(site),
+		PreloadMetadata:  preloadmeta,
+		StaticAssetsPath: file.GetAssetsPath(),
+		StaticAssetsHost: file.GetAssetsHost(),
 	}
-	// Initiate early preloads of all vendor scripts via Link headers
-	// TODO: Header order seems to be non-deterministic, so unless we can guarantee the order, or load these as modules
-	// which get invoked in a fixed order later on, we can't use this approach for things like React/ReactDOM
-	// for _, script := range vendorScriptUrls {
-	// 	w.Header().Add("Link", fmt.Sprintf("<%s>; rel=preload; as=script", script))
-	// }
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
 		ctlutil.HandleError(w, fmt.Errorf("error merging template: %w", err))

@@ -79,11 +79,9 @@ type MergeData struct {
 	Session   *SessionMergeData   `json:"session,omitempty"`
 	Workspace *WorkspaceMergeData `json:"workspace,omitempty"`
 
-	MonacoEditorVersion string   `json:"-"`
-	StaticAssetsPath    string   `json:"-"`
-	StaticAssetsHost    string   `json:"-"`
-	VendorScriptUrls    []string `json:"-"`
-	*PreloadMetadata    `json:"-"`
+	StaticAssetsPath string `json:"-"`
+	StaticAssetsHost string `json:"-"`
+	*PreloadMetadata `json:"-"`
 }
 
 // String function controls how MergeData is marshalled
