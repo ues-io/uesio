@@ -71,8 +71,6 @@ var (
 	staticPrefix = "/static"
 )
 
-// Vendored scripts live under /static but do NOT get the version of the Uesio app,
-// because they are not expected to change with the version, but are truly static, immutable
 func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
@@ -89,6 +87,8 @@ func serve(cmd *cobra.Command, args []string) error {
 	staticAssetsPath := ""
 	if version != "" {
 		staticAssetsPath = "/" + version
+	} else if env.ShouldCacheSiteBundles() {
+		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
 	}
 	if staticAssetsPath != "" {
 		cacheStaticAssets = true
