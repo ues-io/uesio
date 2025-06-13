@@ -76,11 +76,6 @@ func serve(cmd *cobra.Command, args []string) error {
 	slog.Info("Starting Uesio server")
 	r := mux.NewRouter()
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("failed to obtain working directory: %w", err)
-	}
-
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
 	version := os.Getenv("UESIO_BUILD_VERSION")
 	cacheStaticAssets := false
@@ -99,7 +94,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
