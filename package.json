@@ -85,7 +85,7 @@
     "@nx/eslint-plugin": "21.1.2",
     "@nx/jest": "21.1.2",
     "@nx/js": "21.1.2",
-    "@nx/react": "21.1.2",
+    "@nx/react": "21.2.0",
     "@nx/workspace": "21.1.2",
     "@orangeopensource/hurl": "^6.1.1",
     "@react-hook/resize-observer": "^2.0.2",
