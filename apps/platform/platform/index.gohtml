@@ -30,9 +30,6 @@
                 {{- end }}
             {{- end -}}
         {{- end }}
-        {{- range .VendorScriptUrls }}
-        <script src="{{.}}"></script>
-        {{- end }}
         <script src="{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module" crossorigin="true"></script>
     </head>
 <body>
@@ -42,7 +39,6 @@
         window.uesio = uesio
         window.uesioStaticAssetsHost = "{{ .StaticAssetsHost }}"
         window.uesioStaticAssetsPath = "{{ .StaticAssetsPath }}"
-        window.monacoEditorVersion = "{{ .MonacoEditorVersion }}"
     </script>
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}

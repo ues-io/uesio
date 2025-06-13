@@ -9,13 +9,13 @@ import { shikiToMonaco } from "@shikijs/monaco"
 import { highlighter, highlightThemeDefault } from "../syntax-highlight"
 const { ErrorMessage } = component
 
-const monacoEditorVersion = api.platform.getMonacoEditorVersion()
 const staticAssetsHost = api.platform.getStaticAssetsHost()
+const staticAssetsPath = api.platform.getStaticAssetsPath()
 const { getFileText } = api.platform
 
 loader.config({
   paths: {
-    vs: `${staticAssetsHost}/static/vendor/monaco-editor/${monacoEditorVersion}`,
+    vs: `${staticAssetsHost}${staticAssetsPath}/static/vendor/monaco-editor/src/vs`,
   },
 })
 

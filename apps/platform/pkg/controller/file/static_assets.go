@@ -31,8 +31,8 @@ func GetAssetsHost() string {
 	return staticAssetsHost
 }
 
-func Static(currentWorkingDirectory, routePrefix string, cache bool) http.Handler {
-	fileServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "..", "..", "dist")))
+func Static(routePrefix string, cache bool) http.Handler {
+	fileServer := http.FileServer(http.Dir(filepath.Join("..", "..", "dist")))
 	handler := http.StripPrefix(routePrefix, fileServer)
 	if staticAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")

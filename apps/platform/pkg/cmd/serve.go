@@ -71,19 +71,10 @@ var (
 	staticPrefix = "/static"
 )
 
-// Vendored scripts live under /static but do NOT get the version of the Uesio app,
-// because they are not expected to change with the version, but are truly static, immutable
-const vendorPrefix = "/static/vendor"
-
 func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
 	r := mux.NewRouter()
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("failed to obtain working directory: %w", err)
-	}
 
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
 	version := os.Getenv("UESIO_BUILD_VERSION")
@@ -103,8 +94,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(vendorPrefix+"/{filename:.*}", file.ServeVendor(vendorPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.Handle(staticPrefix+"/{filename:.*}", file.Static(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
