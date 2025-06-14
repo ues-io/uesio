@@ -50,6 +50,8 @@ definition:
       uesio.styleTokens:
         root:
           - $Region{tile}
+        content:
+          - $Region{tileContent}
       signals: $Prop{signals}
       content:
         - uesio/io.scrollpanel:

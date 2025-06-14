@@ -8,7 +8,7 @@ password=$(echo $PGPASSWORD)
 function create_user_and_database() {
 	local database=$(echo $1 | tr ',' ' ' | awk  '{print $1}')
 	local owner=$(echo $1 | tr ',' ' ' | awk  '{print $2}')
-	echo "Creating user and database for '$database'"
+	echo "Creating user '$owner' and database '$database' with owner '$owner'"
 	psql -v ON_ERROR_STOP=1 --username "postgres" <<-EOSQL
 DO \$\$
 BEGIN
@@ -18,7 +18,7 @@ END
 \$\$
 EOSQL
 	psql -v --username "postgres" -c "CREATE DATABASE $database;"
-	psql -v --username "postgres" -c "GRANT ALL PRIVILEGES ON DATABASE $database TO $owner;"
+	psql -v --username "postgres" -c "ALTER DATABASE $database OWNER TO $owner;"
 }
 
 if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then

@@ -12,7 +12,7 @@
         "commands": [
           "npx tsc --build --emitDeclarationOnly --pretty --verbose"
         ],
-        "cwd": "apps/platform-e2e"
+        "cwd": "{projectRoot}"
       }
     },
     "run-test": {
@@ -24,6 +24,14 @@
     },
     "test-e2e": {
       "executor": "nx:run-commands",
+      "dependsOn": ["platform:wait-for-dev"],
+      "options": {
+        "command": ["nx run platform-e2e:test-e2e:run"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test-e2e:run": {
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "npx nx run platform-integration-tests:setup-data",
@@ -34,7 +42,7 @@
           "npx nx run platform-integration-tests:cleanup-data"
         ],
         "forwardAllArgs": false,
-        "cwd": "apps/platform-integration-tests",
+        "cwd": "{projectRoot}",
         "parallel": false
       }
     }

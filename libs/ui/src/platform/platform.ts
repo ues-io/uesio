@@ -75,8 +75,6 @@ const qualifyMetadataKeyForUrl = (key: MetadataKey, context: Context) => {
 interface UesioWindow extends Window {
   uesioStaticAssetsPath: string
   uesioStaticAssetsHost: string
-  // This is a hack to ensure we always load the correct version of Monaco
-  monacoEditorVersion: string
 }
 
 let staticAssetsPath: string | undefined
@@ -92,9 +90,6 @@ export const setStaticAssetsPath = (path: string | undefined) => {
 
 const getStaticAssetsHost = () =>
   (window as unknown as UesioWindow).uesioStaticAssetsHost
-
-const getMonacoEditorVersion = () =>
-  (window as unknown as UesioWindow).monacoEditorVersion
 
 type BotParams = {
   [key: string]: PlainFieldValue | PlainFieldValue[]
@@ -736,7 +731,6 @@ const platform = {
       )}?action=${encodeURIComponent(actionName)}`,
     )
   },
-  getMonacoEditorVersion,
   getStaticAssetsHost,
   getStaticAssetsPath,
   memoizedGetJSON,

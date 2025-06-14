@@ -10,7 +10,8 @@
       "inputs": ["default", "^production"],
       "outputs": ["{workspaceRoot}/dist/vendor"],
       "options": {
-        "commands": ["gulp -f libs/vendor/gulpfile.js"]
+        "cwd": "{projectRoot}",
+        "commands": ["bash ./vendor.sh"]
       }
     },
     "typecheck": {

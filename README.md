@@ -17,9 +17,9 @@ Uesio is a **low-code** application development platform.
   - `jq` (for JSON manipulation in Shell): `brew install jq`
   - `wget` (for fetching URLs): `brew install wget`
 - [Configure environment variables](#environment-variables)
-- [Start dependencies](#dependencies)
+- [Prepare dependencies](#prepare-dependencies)
 - [Build](#build)
-- [Run](#run)
+- [Run](#run-the-web-application-locally)
 
 ## Optional
 
@@ -151,7 +151,7 @@ If you'd like to use the Uesio CLI that you have built elsewhere on your machine
 - Linux/macOS: create a symlink for the Uesio CLI into your bin (NOT an alias, which won't work with `nx`): `sudo ln -s <absolute project root path>/dist/cli/uesio /usr/local/bin`
 - Windows: add `<absolute project root path>/dist/cli` to your PATH
 
-# <a id="dependencies"></a>Start dependencies
+# Prepare dependencies
 
 1. Launch all local dependencies (e.g. Postgres, Redis) in docker:
 
@@ -166,7 +166,7 @@ npm run migrations
 npm run seeds
 ```
 
-# <a id="run"></a>Run the web application locally
+# Run the web application locally
 
 ```
 npm run start
@@ -333,7 +333,7 @@ To run the worker process, use `npm run nx -- worker platform` (Or `nx worker pl
 
 ```
 
-# <a id="environment-variables"></a> Environment Variables
+# Environment Variables
 
 If you'd like to get started immediately, you can run `npm run in-docker` and access the site via http://studio.uesio.localhost:3000.
 
@@ -404,7 +404,7 @@ UESIO_WORKER_MODE=combined
 | UESIO_DB_DATABASE                              | Postgres database name                                                                                                |                                                                                           |                                                                                                                                                                            |
 | UESIO_DB_HOST                                  | Postgres host name                                                                                                    | localhost                                                                                 |                                                                                                                                                                            |
 | UESIO_DB_PORT                                  | Postgres port                                                                                                         | 5432                                                                                      |                                                                                                                                                                            |
-| UESIO_DB_SSLMODE                               | Postgres sslmode                                                                                                      | disable                                                                                   | `disable`, `allow`, `prefer`, `require`, etc.                                                                                                                              |
+| UESIO_DB_SSLMODE                               | Postgres sslmode                                                                                                      | prefer                                                                                    | `disable`, `allow`, `prefer`, `require`, etc.                                                                                                                              |
 | UESIO_LOG_LEVEL                                | Logging level                                                                                                         | 0                                                                                         | `-4` (Debug), `0` (Info), `4` (Warn), `8` (Error)                                                                                                                          |
 | UESIO_BUILD_VERSION                            | Used in urls served for cache busting                                                                                 | Empty string in development mode / Docker image contains the version image was built with | There is typically no need to provide this, see [http caching docs](./docs/http_caching.md)                                                                                |
 | UESIO_CACHE_SITE_BUNDLES                       | Whether or not to cache site bundles                                                                                  | true                                                                                      |                                                                                                                                                                            |
@@ -446,7 +446,7 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 4), you can either use `pgcli` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this (assuming you install `golang-migrate` with brew):
+To forcibly set the migration version to latest (currently 4), you can either use `psql` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this assuming you haved [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) (e.g., via brew):
 
 ```
 brew install golang-migrate
@@ -458,7 +458,7 @@ This will skip running any migrations but update `schema_migrations` table to th
 
 #### testing migrations
 
-To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!):
+To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!) assuming you have [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) and `psql` the [postgres client](https://www.postgresql.org/download/):
 
 ```
 docker compose up -d
@@ -484,9 +484,9 @@ To run the various test suites, there are a number of commands available:
 5. `npm run tests-e2e`
    - Runs _just_ the E2E Tests (against your local app).
 6. `npm run tests-init`
-   - Deletes the `uesio/tests` app if it exists and then creates the `uesio/tests` app with related workspaces and sites and loads seed data. All of the above scripts execute this script automatically so there is not typically a need to run it. However, if you want to run individual tests (via hurl, cypress, etc.) separate from one of the above scripts which runs an entire suite, you will need to run this script to prepare for test execution.
+   - Deletes the `uesio/tests` app if it exists along with any app that starts with `tests_` and then creates the `uesio/tests` app with related workspaces and sites and loads seed data. All of the above scripts execute this script automatically so there is not typically a need to run it. However, if you want to run individual tests (via hurl, cypress, etc.) separate from one of the above scripts which runs an entire suite, you will need to run this script to prepare for test execution.
 7. `npm run tests-cleanup`
-   - Removes the `uesio/tests` app (if it exists). Similar to `tests-init`, the automated test suite scripts will execute this script prior to completion. However, if a test run terminates abnormally and/or if you ran `tests-init` manually, you can execute this script to remove the test related `uesio/tests` app.
+   - Removes the `uesio/tests` app (if it exists) along wit hany app that starts with `tests_`. Similar to `tests-init`, the automated test suite scripts will execute this script prior to completion. However, if a test run terminates abnormally and/or if you ran `tests-init` manually, you can execute this script to remove the test related `uesio/tests` app.
 8. `npm run tests-cypress-open`
    - Runs the cypress visual UI where you can run E2E tests from. See [E2E testing with cypress](#e2e-testing-with-cypress) for details.
 9. `npm run tests-cypress-run`
@@ -538,7 +538,7 @@ npx nx run platform-integration-tests:integration --very-verbose hurl_specs/allm
 If you want to run a single test and avoid having to run `npm run tests-init` prior to each test run, you can use `npx nx run platform-integration-tests:run-test <...other hurl options> <path to testfile>`, e.g.,
 
 ```bash
-npx nx run platform-e2e:run-test --very-verbose hurl_specs/allmetadata.hurl
+npx nx run platform-integration-tests:run-test --very-verbose hurl_specs/allmetadata.hurl
 ```
 
 # Continous integration (CI)
