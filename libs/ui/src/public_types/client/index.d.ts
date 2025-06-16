@@ -76,22 +76,22 @@ type Context = {
    * @returns new Context object
    */
   addSignalOutputFrame: (label: string, data: unknown) => Context
-	/**
-	 * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context.
-	 * If the template specified is not a string or does not contain any merge syntax, the template
-	 * is returned as-is.
-	 * @param template - the template to be merged
-	 * @returns the merged result
-	 */
+  /**
+   * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context.
+   * If the template specified is not a string or does not contain any merge syntax, the template
+   * is returned as-is.
+   * @param template - the template to be merged
+   * @returns the merged result
+   */
   merge: (text: string) => string
   /**
    * Merges a template containing merge syntax, e.g. ${uesio/core.uniquekey} in the current context
-   * with the result coerced in to a string. If the template specified is not a string or does not contain 
+   * with the result coerced in to a string. If the template specified is not a string or does not contain
    * any merge syntax, the value returned is the template coerced to a string.
    * @param template - the template to be merged
    * @returns the merged result as a string
    */
-	mergeString: (template: Mergeable) => string  
+  mergeString: (template: Mergeable) => string
   /**
    * Returns an array of errors that are part of the current context
    * @returns Array of error strings
