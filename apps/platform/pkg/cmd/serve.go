@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/aarol/reload"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
@@ -67,9 +66,7 @@ var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, namePara
 var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
-var (
-	staticPrefix = "/static"
-)
+var staticPrefix = "/static"
 
 func serve(cmd *cobra.Command, args []string) error {
 
@@ -78,15 +75,9 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
 	version := os.Getenv("UESIO_BUILD_VERSION")
-	cacheStaticAssets := false
 	staticAssetsPath := ""
 	if version != "" {
 		staticAssetsPath = "/" + version
-	} else if env.ShouldCacheSiteBundles() {
-		staticAssetsPath = fmt.Sprintf("/%d", time.Now().Unix())
-	}
-	if staticAssetsPath != "" {
-		cacheStaticAssets = true
 		file.SetAssetsPath(staticAssetsPath)
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
@@ -94,7 +85,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix)).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)

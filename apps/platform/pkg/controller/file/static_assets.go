@@ -31,13 +31,13 @@ func GetAssetsHost() string {
 	return staticAssetsHost
 }
 
-func Static(routePrefix string, cache bool) http.Handler {
+func Static(routePrefix string) http.Handler {
 	fileServer := http.FileServer(http.Dir(filepath.Join("..", "..", "dist")))
 	handler := http.StripPrefix(routePrefix, fileServer)
 	if staticAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
 	}
-	if cache {
+	if staticAssetsPath != "" {
 		handler = middleware.With1YearCache(handler)
 	}
 	return handler
