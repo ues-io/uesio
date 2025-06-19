@@ -13,7 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func DownloadAttachment(w io.Writer, recordID string, path string, session *sess.Session) (*meta.UserFileMetadata, error) {
+func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -33,13 +33,13 @@ func DownloadAttachment(w io.Writer, recordID string, path string, session *sess
 		session,
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return DownloadItem(w, userFile, session)
+	return DownloadItem(userFile, session)
 }
 
-func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.UserFileMetadata, error) {
+func Download(userFileID string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -82,32 +82,32 @@ func Download(w io.Writer, userFileID string, session *sess.Session) (*meta.User
 		session,
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return DownloadItem(w, userFile, session)
+	return DownloadItem(userFile, session)
 }
 
-func DownloadItem(w io.Writer, userFile *meta.UserFileMetadata, session *sess.Session) (*meta.UserFileMetadata, error) {
+func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	if userFile == nil {
-		return nil, errors.New("no file provided")
+		return nil, nil, errors.New("no file provided")
 	}
 
 	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	fullPath := userFile.GetFullPath(session.GetTenantID())
 
-	_, err = conn.Download(w, fullPath)
+	r, _, err := conn.Download(fullPath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
 	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
 
-	return userFile, nil
+	return r, userFile, nil
 }

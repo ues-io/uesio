@@ -3,6 +3,7 @@ package bulk
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -70,11 +71,25 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 	}
 
 	for _, userFile := range *userFiles {
-		file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path()))
-		if err != nil {
-			return err
-		}
-		_, err = filesource.DownloadItem(file, userFile, session)
+		err := func() error {
+			file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path()))
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			r, _, err := filesource.DownloadItem(userFile, session)
+			if err != nil {
+				return err
+			}
+			defer r.Close()
+
+			_, err = io.Copy(file, r)
+			if err != nil {
+				return err
+			}
+			return nil
+		}()
 		if err != nil {
 			return err
 		}

@@ -1,7 +1,7 @@
 package systemdialect
 
 import (
-	"bytes"
+	"io"
 	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -53,12 +53,14 @@ func runUserfileLoadBot(op *wire.LoadOp, connection wire.Connection, session *se
 			return nil
 		}
 
-		buf := &bytes.Buffer{}
-		_, err = filesource.Download(buf, userFileIDString, session)
+		r, _, err := filesource.Download(userFileIDString, session)
 		if err != nil {
 			return err
 		}
-		err = item.SetField(USER_FILE_DATA_FIELD, buf.String())
+		defer r.Close()
+
+		b, err := io.ReadAll(r)
+		err = item.SetField(USER_FILE_DATA_FIELD, string(b))
 		if err != nil {
 			return err
 		}

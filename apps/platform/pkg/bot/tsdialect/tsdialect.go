@@ -1,8 +1,8 @@
 package tsdialect
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -22,12 +22,18 @@ type TSDialect struct {
 }
 
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
-	buf := &bytes.Buffer{}
-	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session, connection); err != nil {
+	r, _, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session, connection)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	bytes, err := io.ReadAll(r)
+	if err != nil {
 		return err
 	}
 	// Transform from TS to JS
-	result := esbuild.Transform(buf.String(), esbuild.TransformOptions{
+	result := esbuild.Transform(string(bytes), esbuild.TransformOptions{
 		Loader: esbuild.LoaderTS,
 	})
 	if len(result.Errors) > 0 {

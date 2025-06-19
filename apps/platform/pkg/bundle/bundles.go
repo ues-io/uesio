@@ -170,12 +170,12 @@ func Load(item meta.BundleableItem, options *bundlestore.GetItemOptions, session
 	return bs.GetItem(item, options)
 }
 
-func GetItemAttachment(w io.Writer, item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (file.Metadata, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, file.Metadata, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return bs.GetItemAttachment(w, item, path)
+	return bs.GetItemAttachment(item, path)
 }
 
 func GetAttachmentPaths(item meta.AttachableItem, session *sess.Session, connection wire.Connection) ([]file.Metadata, error) {

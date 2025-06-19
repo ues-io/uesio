@@ -2,7 +2,6 @@ package filebundlestore
 
 import (
 	"archive/zip"
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -70,8 +69,8 @@ func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.Fi
 	return filteredPaths, err
 }
 
-func (b *FileBundleStoreConnection) download(w io.Writer, path string) (file.Metadata, error) {
-	return b.FileConnection.Download(w, path)
+func (b *FileBundleStoreConnection) download(path string) (io.ReadSeekCloser, file.Metadata, error) {
+	return b.FileConnection.Download(path)
 }
 
 func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
@@ -99,11 +98,12 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 		}
 	}
 
-	buf := &bytes.Buffer{}
-	fileMetadata, err := b.download(buf, filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
+	r, fileMetadata, err := b.download(filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
 		return fmt.Errorf("unable to download metadata item '%s' of type '%s': %w", key, collectionName, err)
 	}
+	defer r.Close()
+
 	fakeNamespaceUser := &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: b.Namespace,
@@ -119,7 +119,7 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	item.SetCreatedBy(fakeNamespaceUser)
 	item.SetOwner(fakeNamespaceUser)
 
-	err = bundlestore.DecodeYAML(item, buf)
+	err = bundlestore.DecodeYAML(item, r)
 	if err != nil {
 		return fmt.Errorf("error decoding metadata item: %s from file: %s : %w", key, fileMetadata.Path(), err)
 	}
@@ -207,8 +207,8 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 
 }
 
-func (b *FileBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
-	return b.download(w, filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
+func (b *FileBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
+	return b.download(filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
 func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {
@@ -234,17 +234,29 @@ func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileC
 		return err
 	}
 	for _, pathInfo := range pathInfos {
-		path := pathInfo.Path()
-		f, err := creator(path)
+		err := func() error {
+			path := pathInfo.Path()
+			f, err := creator(path)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+
+			r, _, err := b.FileConnection.Download(filepath.Join(basePath, path))
+			if err != nil {
+				return err
+			}
+			defer r.Close()
+
+			_, err = io.Copy(f, r)
+			if err != nil {
+				return err
+			}
+			return nil
+		}()
 		if err != nil {
 			return err
 		}
-		_, err = b.FileConnection.Download(f, filepath.Join(basePath, path))
-		if err != nil {
-			f.Close()
-			return err
-		}
-		f.Close()
 	}
 	return nil
 }
@@ -286,13 +298,13 @@ func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	}
 
 	var by meta.BundleDef
-	buf := &bytes.Buffer{}
-	_, err := b.download(buf, filepath.Join(b.PathFunc(b.Namespace, b.Version), "", "bundle.yaml"))
+	r, _, err := b.download(filepath.Join(b.PathFunc(b.Namespace, b.Version), "", "bundle.yaml"))
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
-	err = bundlestore.DecodeYAML(&by, buf)
+	err = bundlestore.DecodeYAML(&by, r)
 	if err != nil {
 		return nil, err
 	}
@@ -409,7 +421,14 @@ func (b *FileBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *b
 		return zipwriter.Close()
 	}
 
-	if _, err := filesource.Download(writer, bundle.Contents.ID, session); err != nil {
+	r, _, err := filesource.Download(bundle.Contents.ID, session)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	_, err = io.Copy(writer, r)
+	if err != nil {
 		return err
 	}
 

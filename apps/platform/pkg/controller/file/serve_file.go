@@ -1,7 +1,6 @@
 package file
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -59,12 +58,12 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 		path = file.Path
 	}
 
-	buf := &bytes.Buffer{}
-	fileMetadata, err := bundle.GetItemAttachment(buf, file, path, session, connection)
+	rs, fileMetadata, err := bundle.GetItemAttachment(file, path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(w, err)
 		return
 	}
+	defer rs.Close()
 
 	// Ignore downloads that cannot be cached
 	if r.URL.Path != "/favicon.ico" {
@@ -76,7 +75,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 		LastModified: fileMetadata.LastModified(),
 		Namespace:    file.Namespace,
 		Version:      version,
-	}, bytes.NewReader(buf.Bytes()))
+	}, rs)
 }
 
 func ServeFile(w http.ResponseWriter, r *http.Request) {

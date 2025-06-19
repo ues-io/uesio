@@ -85,7 +85,7 @@ func botCall(botKey string, params map[string]any, session *sess.Session, connec
 	return datasource.CallListenerBot(botNamespace, botName, params, connection, session)
 }
 
-func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (*bytes.Buffer, string, error) {
+func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, string, error) {
 
 	file, err := meta.NewFile(sourceKey)
 	if err != nil {
@@ -101,24 +101,24 @@ func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connect
 		path = file.Path
 	}
 
-	buf := &bytes.Buffer{}
-	_, err = bundle.GetItemAttachment(buf, file, path, session, connection)
+	r, _, err := bundle.GetItemAttachment(file, path, session, connection)
 	if err != nil {
 		return nil, "", err
 	}
-	return buf, path, nil
+	return r, path, nil
 }
 
 func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
 
-	buf, path, err := botGetFileData(sourceKey, sourcePath, session, connection)
+	r, path, err := botGetFileData(sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return err
 	}
+	defer r.Close()
 
 	_, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
-			Data:         buf,
+			Data:         r,
 			Path:         path,
 			CollectionID: destCollectionID,
 			RecordID:     destRecordID,
@@ -130,15 +130,15 @@ func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFiel
 }
 
 func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
-	buf := &bytes.Buffer{}
-	userFileMetadata, err := filesource.Download(buf, sourceFileID, session)
+	r, userFileMetadata, err := filesource.Download(sourceFileID, session)
 	if err != nil {
 		return err
 	}
+	defer r.Close()
 
 	_, err = filesource.Upload([]*filesource.FileUploadOp{
 		{
-			Data:         buf,
+			Data:         r,
 			Path:         userFileMetadata.Path(),
 			CollectionID: destCollectionID,
 			RecordID:     destRecordID,
@@ -150,11 +150,17 @@ func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID s
 }
 
 func getFileContents(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (string, error) {
-	buf, _, err := botGetFileData(sourceKey, sourcePath, session, connection)
+	r, _, err := botGetFileData(sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return "", err
 	}
-	return buf.String(), nil
+	defer r.Close()
+
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 func getHostUrl(session *sess.Session, connection wire.Connection) (string, error) {
