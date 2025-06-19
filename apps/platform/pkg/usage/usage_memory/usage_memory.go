@@ -1,6 +1,9 @@
 package usage_memory
 
 import (
+	"errors"
+	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
@@ -50,6 +53,9 @@ func (pcuh *MemoryUsageHandler) ApplyBatch(session *sess.Session) error {
 func (pcuh *MemoryUsageHandler) Set(key string, size int64) error {
 	value, err := usageCache.Get(key)
 	if err != nil {
+		if !errors.Is(err, cache.ErrKeyNotFound) {
+			slog.Error(fmt.Sprintf("error getting usage for key [%s] from cache: %v", key, err))
+		}
 		value = 0
 	}
 

@@ -53,7 +53,7 @@ func (b *FileBundleStoreConnection) getFilePathsAtBasePath(basePath string) ([]f
 
 func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
 
-	filteredPaths := []file.Metadata{}
+	var filteredPaths []file.Metadata
 
 	paths, err := b.getFilePathsAtBasePath(basePath)
 	if err != nil {

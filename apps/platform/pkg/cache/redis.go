@@ -203,7 +203,14 @@ func setString(key string, data string, ttlSeconds int64) error {
 func getString(key string) (string, error) {
 	conn := GetRedisConn()
 	defer conn.Close()
-	return redis.String(conn.Do("GET", key))
+	s, err := redis.String(conn.Do("GET", key))
+	if err != nil {
+		if err == redis.ErrNil {
+			return s, ErrKeyNotFound
+		}
+		return s, err
+	}
+	return s, nil
 }
 
 func namespaced(namespace, key string) string {
