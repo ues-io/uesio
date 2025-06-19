@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
@@ -41,8 +43,13 @@ func setUserCache(userUniqueKey string, site *meta.Site, user *meta.User) error 
 
 func getUserCache(userUniqueKey string, site *meta.Site) (*meta.User, bool) {
 	user, err := userCache.Get(GetUserCacheKey(userUniqueKey, site))
-	if err != nil || user == nil {
-		return nil, false
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting user for key [%s] from cache: %v", userUniqueKey, err))
+			return nil, false
+		}
 	}
 	// Shallow clone the user, so the caller doesn't have
 	// a reference to the one in the cache.
@@ -56,8 +63,13 @@ func setHostCache(domainType, domainValue string, site *meta.Site) error {
 
 func getHostCache(domainType, domainValue string) (*meta.Site, bool) {
 	site, err := hostCache.Get(getHostKey(domainType, domainValue))
-	if err != nil || site == nil {
-		return nil, false
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting site for domain type [%s] and value [%s] from cache: %v", domainType, domainValue, err))
+			return nil, false
+		}
 	}
 	return site, true
 }

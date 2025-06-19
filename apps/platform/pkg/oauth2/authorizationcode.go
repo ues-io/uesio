@@ -48,7 +48,11 @@ func ExchangeAuthorizationCodeForAccessToken(ctx context.Context, credentials *w
 	// Make sure that this is a valid exchange we initiated, and extract the PKCE identifier
 	verifier, err := oauthExchangeCache.Get(state.Nonce)
 	if err != nil {
-		return nil, errors.New("invalid oauth state parameter")
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, errors.New("invalid oauth state parameter")
+		} else {
+			return nil, err
+		}
 	}
 	tok, err := conf.Exchange(newCtx, code, oauth2.VerifierOption(verifier))
 	if err != nil {
