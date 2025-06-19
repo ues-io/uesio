@@ -15,16 +15,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 )
 
-// see https://stackoverflow.com/a/55788634
-type FakeWriterAt struct {
-	w io.Writer
-}
-
-func (fw FakeWriterAt) WriteAt(p []byte, offset int64) (n int, err error) {
-	// ignore 'offset' because we forced sequential downloads
-	return fw.w.Write(p)
-}
-
 type s3FileMeta struct {
 	s3Output *blob.Reader
 	path     string
