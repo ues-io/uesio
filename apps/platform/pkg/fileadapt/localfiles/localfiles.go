@@ -109,25 +109,21 @@ func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
 	return size, nil
 }
 
-func (c *Connection) Download(w io.Writer, path string) (file.Metadata, error) {
+func (c *Connection) Download(path string) (io.ReadSeekCloser, file.Metadata, error) {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	outFile, err := os.Open(fullPath)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return nil, exceptions.NewNotFoundException("file not found at path: " + path)
+			return nil, nil, exceptions.NewNotFoundException("file not found at path: " + path)
 		} else {
-			return nil, fmt.Errorf("unable to read file at path '%s': %w", path, err)
+			return nil, nil, fmt.Errorf("unable to read file at path '%s': %w", path, err)
 		}
 	}
 	fileInfo, err := outFile.Stat()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	_, err = io.Copy(w, outFile)
-	if err != nil {
-		return nil, err
-	}
-	return file.NewLocalFileMeta(fileInfo, path), nil
+	return outFile, file.NewLocalFileMeta(fileInfo, path), nil
 }
 
 func (c *Connection) Delete(path string) error {

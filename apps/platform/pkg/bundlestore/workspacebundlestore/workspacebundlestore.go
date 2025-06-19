@@ -292,16 +292,16 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	return recordIDString, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(w io.Writer, item meta.AttachableItem, path string) (file.Metadata, error) {
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
 	recordIDString, err := b.GetItemRecordID(item)
 	if err != nil {
-		return nil, errors.New("invalid record id for attachment")
+		return nil, nil, errors.New("invalid record id for attachment")
 	}
-	userFileMetadata, err := filesource.DownloadAttachment(w, recordIDString, path, b.getStudioAnonSession())
+	r, userFileMetadata, err := filesource.DownloadAttachment(recordIDString, path, b.getStudioAnonSession())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return userFileMetadata, nil
+	return r, userFileMetadata, nil
 }
 
 func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
@@ -347,16 +347,28 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	}
 
 	for _, ufm := range *userFiles {
-		f, err := creator(ufm.Path())
+		err := func() error {
+			f, err := creator(ufm.Path())
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+
+			r, _, err := filesource.DownloadItem(ufm, b.getStudioAnonSession())
+			if err != nil {
+				return err
+			}
+			defer r.Close()
+
+			_, err = io.Copy(f, r)
+			if err != nil {
+				return err
+			}
+			return nil
+		}()
 		if err != nil {
 			return err
 		}
-		_, err = filesource.DownloadItem(f, ufm, b.getStudioAnonSession())
-		if err != nil {
-			f.Close()
-			return err
-		}
-		f.Close()
 	}
 	return nil
 }

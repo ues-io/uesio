@@ -1,9 +1,9 @@
 package jsdialect
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -52,11 +52,18 @@ func init() {
 }
 
 func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
-	buf := &bytes.Buffer{}
-	if _, err := bundle.GetItemAttachment(buf, bot, b.GetFilePath(), session, connection); err != nil {
+	r, _, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session, connection)
+	if err != nil {
 		return err
 	}
-	bot.FileContents = buf.String()
+	defer r.Close()
+
+	bytes, err := io.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	bot.FileContents = string(bytes)
 	return nil
 }
 

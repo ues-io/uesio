@@ -292,12 +292,17 @@ func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action st
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
-	buf := &bytes.Buffer{}
-	_, err := bundle.GetItemAttachment(buf, gba.bot, templateFile, gba.session, gba.connection)
+	r, _, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session, gba.connection)
 	if err != nil {
 		return "", err
 	}
-	return buf.String(), nil
+	defer r.Close()
+
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 func (gba *GeneratorBotAPI) MergeYamlString(params map[string]any, templateString string) (string, error) {

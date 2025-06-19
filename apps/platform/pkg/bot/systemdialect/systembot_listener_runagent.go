@@ -1,8 +1,8 @@
 package systemdialect
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -54,13 +54,18 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, err
 	}
 
-	buf := &bytes.Buffer{}
-	_, err = bundle.GetItemAttachment(buf, agent, "prompt.txt", session.RemoveVersionContext(), connection)
+	r, _, err := bundle.GetItemAttachment(agent, "prompt.txt", session.RemoveVersionContext(), connection)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 
-	systemPrompt := buf.String()
+	systemPrompt := string(b)
 	agentTools := []map[string]string{}
 
 	for _, tool := range agent.Tools {
