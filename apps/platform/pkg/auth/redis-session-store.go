@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/icza/session"
@@ -21,8 +23,13 @@ func NewRedisSessionStore() session.Store {
 // Get is to implement Store.Get().
 func (s *RedisSessionStore) Get(id string) session.Session {
 	result, err := s.cacheManager.Get(id)
-	if err != nil || result == nil {
-		return nil
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil
+		} else {
+			slog.Error(fmt.Sprintf("error getting session for id [%s] from cache: %v", id, err))
+			return nil
+		}
 	}
 	return result
 }

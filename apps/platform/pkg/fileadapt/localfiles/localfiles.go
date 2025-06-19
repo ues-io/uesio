@@ -54,7 +54,7 @@ type Connection struct {
 }
 
 func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
-	paths := []file.Metadata{}
+	var paths []file.Metadata
 	basePath := filepath.Join(c.bucket, filepath.FromSlash(dirPath)) + string(os.PathSeparator)
 	err := filepath.WalkDir(basePath, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {

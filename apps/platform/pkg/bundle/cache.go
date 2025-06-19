@@ -1,7 +1,9 @@
 package bundle
 
 import (
+	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/qdm12/reprint"
@@ -36,8 +38,13 @@ func NewBundleStoreCache(entryExpiration, cleanupFrequency time.Duration) *Bundl
 
 func (bsc *BundleStoreCache) GetFileListFromCache(basePath string) ([]file.Metadata, bool) {
 	files, err := bsc.fileListCache.Get(basePath)
-	if err != nil || files == nil {
-		return nil, false
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting file list for path [%s] from cache: %v", basePath, err))
+			return nil, false
+		}
 	}
 	return files, true
 }
@@ -55,9 +62,15 @@ func (bsc *BundleStoreCache) getBundleDefCacheKey(namespace, version string) str
 }
 
 func (bsc *BundleStoreCache) GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
-	entry, err := bsc.bundleEntryCache.Get(bsc.getItemCacheKey(namespace, version, bundleGroupName, key))
-	if err != nil || entry == nil {
-		return nil, false
+	cacheKey := bsc.getItemCacheKey(namespace, version, bundleGroupName, key)
+	entry, err := bsc.bundleEntryCache.Get(cacheKey)
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting bundle entry for key [%s] from cache: %v", cacheKey, err))
+			return nil, false
+		}
 	}
 	return entry, true
 }
@@ -71,9 +84,15 @@ func (bsc *BundleStoreCache) InvalidateCacheItem(namespace, version, groupName, 
 }
 
 func (bsc *BundleStoreCache) GetBundleDefFromCache(namespace, version string) (*meta.BundleDef, bool) {
-	entry, err := bsc.bundleDefCache.Get(bsc.getBundleDefCacheKey(namespace, version))
-	if err != nil || entry == nil {
-		return nil, false
+	cacheKey := bsc.getBundleDefCacheKey(namespace, version)
+	entry, err := bsc.bundleDefCache.Get(cacheKey)
+	if err != nil {
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting bundle def for key [%s] from cache: %v", cacheKey, err))
+			return nil, false
+		}
 	}
 	return entry, true
 }

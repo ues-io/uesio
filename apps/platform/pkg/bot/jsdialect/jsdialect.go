@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -109,8 +110,10 @@ func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Conne
 
 	// Check the file contents cache
 	if botProgramsCache != nil {
-		if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil && cacheItem != nil {
+		if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil {
 			program = cacheItem
+		} else if !errors.Is(err, cache.ErrKeyNotFound) {
+			slog.Error(fmt.Sprintf("error getting bot program for key [%s] from cache: %v", cacheKey, err))
 		}
 	}
 	if program == nil {

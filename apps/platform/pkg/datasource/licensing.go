@@ -2,6 +2,9 @@ package datasource
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"log/slog"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -33,10 +36,12 @@ func setLicenseCache(namespace string, licenses LicenseMap) error {
 func getLicenseCache(namespace string) (LicenseMap, bool) {
 	licenses, err := licenseCache.Get(namespace)
 	if err != nil {
-		return nil, false
-	}
-	if licenses == nil {
-		return nil, false
+		if errors.Is(err, cache.ErrKeyNotFound) {
+			return nil, false
+		} else {
+			slog.Error(fmt.Sprintf("error getting licenses for namespace [%s] from cache: %v", namespace, err))
+			return nil, false
+		}
 	}
 	return licenses, true
 }
