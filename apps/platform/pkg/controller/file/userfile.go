@@ -101,12 +101,11 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rs.Close()
 
-	respondFile(w, r, &FileRequest{
-		Path:         userFile.Path(),
-		LastModified: userFile.LastModified(),
-		Namespace:    "",
-		Version:      version,
-	}, rs)
+	if version != "" {
+		middleware.Set1YearCache(w)
+	}
+
+	respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)
 }
 
 func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
@@ -131,10 +130,9 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rs.Close()
 
-	respondFile(w, r, &FileRequest{
-		Path:         userFile.Path(),
-		LastModified: userFile.LastModified(),
-		Namespace:    "",
-		Version:      version,
-	}, rs)
+	if version != "" {
+		middleware.Set1YearCache(w)
+	}
+
+	respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)
 }

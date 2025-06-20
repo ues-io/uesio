@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -17,7 +18,6 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
-	resourceVersion := vars["version"]
 	path := vars["filename"]
 
 	session := middleware.GetSession(r)
@@ -47,10 +47,9 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 		lastModified = time.Unix(font.UpdatedAt, 0)
 	}
 
-	respondFile(w, r, &FileRequest{
-		Path:         path,
-		LastModified: lastModified,
-		Namespace:    namespace,
-		Version:      resourceVersion,
-	}, rs)
+	if !bundlestore.IsSystemBundle(font.Namespace) {
+		middleware.Set1YearCache(w)
+	}
+
+	respondFile(w, r, path, lastModified, rs)
 }

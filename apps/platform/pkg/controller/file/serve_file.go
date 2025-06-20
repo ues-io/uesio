@@ -6,10 +6,12 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -18,7 +20,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileRequest, stream io.ReadSeeker) {
+func respondFile(w http.ResponseWriter, r *http.Request, path string, modified time.Time, stream io.ReadSeeker) {
 	if stream == nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Header().Set("Content-Type", "application/json")
@@ -32,15 +34,12 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 		return
 	}
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
-	if fileRequest.TreatAsImmutable() {
-		middleware.Set1YearCache(w)
-	}
+	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", path))
 
-	http.ServeContent(w, r, fileRequest.Path, fileRequest.LastModified, stream)
+	http.ServeContent(w, r, path, modified, stream)
 }
 
-func ServeFileContent(file *meta.File, version string, path string, w http.ResponseWriter, r *http.Request) {
+func ServeFileContent(file *meta.File, path string, w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
@@ -65,23 +64,19 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 	}
 	defer rs.Close()
 
-	// Ignore downloads that cannot be cached
-	if r.URL.Path != "/favicon.ico" {
-		usage.RegisterEvent("DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
-		usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
+	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
+
+	if !bundlestore.IsSystemBundle(file.Namespace) {
+		middleware.Set1YearCache(w)
 	}
-	respondFile(w, r, &FileRequest{
-		Path:         path,
-		LastModified: fileMetadata.LastModified(),
-		Namespace:    file.Namespace,
-		Version:      version,
-	}, rs)
+
+	respondFile(w, r, path, fileMetadata.LastModified(), rs)
 }
 
 func ServeFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	file := meta.NewBaseFile(vars["namespace"], vars["name"])
-	version := vars["version"]
 	path := vars["path"]
-	ServeFileContent(file, version, path, w, r)
+	ServeFileContent(file, path, w, r)
 }

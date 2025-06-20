@@ -217,18 +217,9 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 
-	// Un-versioned file serving routes - for backwards compatibility, and for local development
-	filesPath := "/files/" + itemParam
-	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
-
 	versionedFilesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", versionedItemParam)
 	sr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(versionedFilesPathWithPath, file.ServeFile).Methods(http.MethodGet)
-
-	filesPathWithPath := fmt.Sprintf("/files/%s/{path:.*}", itemParam)
-	sr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPathWithPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
@@ -261,24 +252,16 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 	wr.HandleFunc(routeByKey, controller.RouteByKey).Methods(http.MethodGet)
 
-	componentPackFileSuffix := "/{filename:.*}"
-
 	// Versioned component pack file routes
-	versionedComponentPackPath := "/componentpacks/" + versionedItemParam
+	versionedComponentPackPath := "/componentpacks/" + versionedItemParam + "/{filename:.*}"
 
-	versionedComponentPackFinal := versionedComponentPackPath + componentPackFileSuffix
+	sr.HandleFunc(versionedComponentPackPath, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedComponentPackPath, file.ServeComponentPackFile).Methods(http.MethodGet)
 
-	sr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
-	wr.HandleFunc(versionedComponentPackFinal, file.ServeComponentPackFile).Methods(http.MethodGet)
+	fontPath := "/fonts/" + versionedItemParam + "/{filename:.*}"
 
-	fontFileSuffix := "/{filename:.*}"
-
-	fontPath := "/fonts/" + versionedItemParam
-
-	fontFinal := fontPath + fontFileSuffix
-
-	sr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
-	wr.HandleFunc(fontFinal, file.ServeFontFile).Methods(http.MethodGet)
+	sr.HandleFunc(fontPath, file.ServeFontFile).Methods(http.MethodGet)
+	wr.HandleFunc(fontPath, file.ServeFontFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
