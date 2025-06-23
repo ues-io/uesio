@@ -17,8 +17,8 @@ along with the necessary HTTP caching headers to instruct browsers to permanentl
 
 Each time that a new Uesio Docker image is built, it will have a new, unique `UESIO_BUILD_VERSION`, which will be used as the new prefix for static asset serving, and so the browser will have to download the new assets, since their resource path will have changed, e.g.
 
-- `/static/image-1-sha/ui/uesio.js`
-- `/static/image-2-sha/ui/uesio.js`
+- `/static/{UESIO_BUILD_VERSION_1}/ui/uesio.js`
+- `/static/{UESIO_BUILD_VERSION_2}/ui/uesio.js`
 - ...
 
 `UESIO_BUILD_VERSION` must be one of the following formats:

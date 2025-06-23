@@ -74,7 +74,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.PathPrefix("/static").Subrouter().Handle("/{filename:.*}", file.Static()).Methods(http.MethodGet)
+	r.Handle("/static/{filename:.*}", file.Static()).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)

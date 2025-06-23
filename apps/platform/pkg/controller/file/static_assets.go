@@ -65,8 +65,8 @@ func Static() http.Handler {
 	if staticAssetsHost != "" {
 		handler = middleware.WithAccessControlAllowOriginHeader(handler, "*")
 	}
-	if staticAssetsPath != "" {
-		handler = middleware.With1YearCache(handler)
-	}
+
+	handler = middleware.With1YearCache(handler)
+
 	return handler
 }
