@@ -11,7 +11,13 @@
         "cwd": "{projectRoot}",
         "outputPath": "../../dist/cli/uesio"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "outputs": ["{options.outputPath}"]
     },
     "test": {
@@ -20,7 +26,13 @@
         "command": "go test -v ./...",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"]
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ]
     },
     "format": {
       "dependsOn": ["format:write"]
@@ -37,7 +49,13 @@
         "command": "gofmt -l -w -s -e .",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "cache": true
     },
     "gofmt:check": {
@@ -46,7 +64,13 @@
         "command": "output=\"$(gofmt -d -e .)\" && echo \"$output\" && test -z \"$output\"",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "cache": true
     },
     "lint": {
@@ -58,7 +82,13 @@
         "command": "go mod tidy",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "cache": true
     },
     "tidy:check": {
@@ -67,7 +97,13 @@
         "command": "go mod tidy -diff",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "cache": true
     },
     "vet": {
@@ -76,7 +112,13 @@
         "command": "go vet ./...",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["golang", "default", "^production", "sharedGlobals"],
+      "inputs": [
+        "golang",
+        "default",
+        "^production",
+        "sharedGlobals",
+        { "projects": ["platform"], "input": "golang" }
+      ],
       "cache": true
     }
   },
