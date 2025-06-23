@@ -6,8 +6,8 @@ For a particular Uesio Docker image, these assets will NEVER change. Therefore, 
 
 This is accomplished by serving these assets from URLs which contain the Docker image's associated `UESIO_BUILD_VERSION`, e.g.
 
-- `/{UESIO_BUILD_VERSION}/fonts/roboto-v20-latin-300.woff`
-- `/{UESIO_BUILD_VERSION}/static/ui/uesio.js`
+- `/fonts/uesio/io/{UESIO_BUILD_VERSION}/roboto-v20-latin-300.woff`
+- `/static/{UESIO_BUILD_VERSION}/ui/uesio.js`
 
 along with the necessary HTTP caching headers to instruct browsers to permanently cache these resources, e.g.
 
@@ -17,8 +17,8 @@ along with the necessary HTTP caching headers to instruct browsers to permanentl
 
 Each time that a new Uesio Docker image is built, it will have a new, unique `UESIO_BUILD_VERSION`, which will be used as the new prefix for static asset serving, and so the browser will have to download the new assets, since their resource path will have changed, e.g.
 
-- `/image-1-sha/static/ui/uesio.js`
-- `/image-2-sha/static/ui/uesio.js`
+- `/static/image-1-sha/ui/uesio.js`
+- `/static/image-2-sha/ui/uesio.js`
 - ...
 
 `UESIO_BUILD_VERSION` must be one of the following formats:
@@ -26,4 +26,5 @@ Each time that a new Uesio Docker image is built, it will have a new, unique `UE
 - Uesio bundle version string, e.g. v1.2.3
 - A string containing only letters & digits with a minimum length of 8, optionally followed by one or two segments of digits separated by a period (`.`), e.g.,
   - a short Git sha followed by runnumber.runattempt, e.g., abcd1234.13.3
-  - current unix epoch time (e.g., 1738704509)
+
+While developing, you can automatically create a fake build version using a hash of the current time by setting the `UESIO_FORCE_HTTP_CACHING` environment variable to `true`.

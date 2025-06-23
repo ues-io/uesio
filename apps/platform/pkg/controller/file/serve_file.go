@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -67,9 +66,7 @@ func ServeFileContent(file *meta.File, path string, w http.ResponseWriter, r *ht
 	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
 	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
 
-	if !bundlestore.IsSystemBundle(file.Namespace) {
-		middleware.Set1YearCache(w)
-	}
+	middleware.Set1YearCache(w)
 
 	respondFile(w, r, path, fileMetadata.LastModified(), rs)
 }

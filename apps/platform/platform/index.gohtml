@@ -30,12 +30,12 @@
                 {{- end }}
             {{- end -}}
         {{- end }}
-        <script src="{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js" type="module" crossorigin="true"></script>
+        <script src="{{ .StaticAssetsHost }}/static{{ .StaticAssetsPath }}/ui/uesio.js" type="module" crossorigin="true"></script>
     </head>
 <body>
     <div id="root" class="h-screen overflow-auto"></div>
     <script type="module">
-        import * as uesio from "{{ .StaticAssetsHost }}{{ .StaticAssetsPath }}/static/ui/uesio.js"
+        import * as uesio from "{{ .StaticAssetsHost }}/static{{ .StaticAssetsPath }}/ui/uesio.js"
         window.uesio = uesio
         window.uesioStaticAssetsHost = "{{ .StaticAssetsHost }}"
         window.uesioStaticAssetsPath = "{{ .StaticAssetsPath }}"

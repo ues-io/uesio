@@ -66,26 +66,15 @@ var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, namePara
 var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
-var staticPrefix = "/static"
-
 func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
 	r := mux.NewRouter()
 
-	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
-	version := os.Getenv("UESIO_BUILD_VERSION")
-	staticAssetsPath := ""
-	if version != "" {
-		staticAssetsPath = "/" + version
-		file.SetAssetsPath(staticAssetsPath)
-		staticPrefix = staticAssetsPath + staticPrefix
-	}
-
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix)).Methods(http.MethodGet)
+	r.PathPrefix("/static").Subrouter().Handle("/{filename:.*}", file.Static()).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
