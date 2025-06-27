@@ -120,4 +120,10 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 )
 
+// TODO: Temporarily replacing with custom version at https://github.com/techfg/httplog/tree/custom-release.  Once
+// the following issues are resolved and a new version released, this can be removed:
+//    1. https://github.com/go-chi/httplog/issues/62 (PR https://github.com/go-chi/httplog/pull/68)
+//    2. https://github.com/go-chi/httplog/issues/63 (PR https://github.com/go-chi/httplog/pull/69)
+//    3. https://github.com/go-chi/httplog/issues/64 (PR https://github.com/go-chi/httplog/pull/67)
+//    4. https://github.com/go-chi/httplog/issues/65 (PR https://github.com/go-chi/httplog/pull/66)
 replace github.com/go-chi/httplog/v3 => github.com/techfg/httplog/v3 v3.0.0-20250627024852-b40ed84e8b23
