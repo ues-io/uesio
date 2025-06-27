@@ -1,85 +1,132 @@
 package middleware
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"net/http"
-	"os"
-	"strconv"
-	"time"
+	"strings"
+	"sync"
 
-	"github.com/felixge/httpsnoop"
-
-	"github.com/thecloudmasters/uesio/pkg/env"
+	"github.com/go-chi/httplog/v3"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-// By default, we only output logs at INFO level or higher.
-// To minimize noise from per-request logs, we treat all 2xx/3xx
-// request logs as DEBUG, so they will not be recorded.
-// Only 4xx/5xx requests will be logged.
-// Set UESIO_LOG_LEVEL=-4 to log literally EVERYTHING.
-var minLogLevel slog.Level
+// logContextKey is the key for storing log data in the request context
+type logDataContextKey struct{}
 
-func init() {
-	if val, isSet := os.LookupEnv("UESIO_LOG_LEVEL"); isSet {
-		if levelVar, err := strconv.Atoi(val); err == nil {
-			minLogLevel = (slog.Level)(levelVar)
-		}
-	}
-	handlerOptions := &slog.HandlerOptions{
-		AddSource:   false,
-		ReplaceAttr: nil,
-		// 0 (INFO) is the default so a zero value is safe
-		Level: minLogLevel,
-	}
-	var handler slog.Handler
-	// In Dev mode, use our pretty dev logger
-	if env.InDevMode() {
-		handler = NewDevLogHandler(os.Stdout, handlerOptions)
-	} else {
-		// In prod, use a structured JSON handler
-		handler = slog.NewJSONHandler(os.Stdout, handlerOptions)
-	}
-
-	slog.SetDefault(slog.New(NewRequestContextInjector(handler)))
+// logData stores session information that can be set by downstream middleware
+// and accessed by the request logger.
+type logData struct {
+	mu      sync.RWMutex
+	session *sess.Session
 }
 
-func LogRequestHandler(h http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-
-		method := r.Method
-		uri := r.URL.String()
-
-		// this runs handler h and captures information about the HTTP request
-		m := httpsnoop.CaptureMetrics(h, w, r)
-
-		// TODO: send metrics to StatsD for every request regardless of code,
-		// so that we get visibility into app/user/URI specific request/response metrics
-
-		// Don't bother to do this per-request logging if the response code is below the minimum
-		requestLogLevel := getRequestLogLevel(m.Code)
-		if requestLogLevel < minLogLevel {
-			return
-		}
-
-		slog.LogAttrs(r.Context(), requestLogLevel, fmt.Sprintf("%s %s", method, uri),
-			slog.Group(
-				"stats",
-				slog.Int("code", m.Code),
-				slog.Duration("duration", m.Duration.Round(time.Millisecond)),
-				slog.Int64("size", m.Written),
-			))
-	}
-
-	return http.HandlerFunc(fn)
+// SetSession safely sets the session in the log data
+func (ld *logData) SetSession(session *sess.Session) {
+	ld.mu.Lock()
+	defer ld.mu.Unlock()
+	ld.session = session
 }
 
-func getRequestLogLevel(responseCode int) slog.Level {
-	if responseCode >= 500 {
-		return slog.LevelError
+// GetSession safely gets the session from the log data
+func (ld *logData) GetSession() *sess.Session {
+	ld.mu.RLock()
+	defer ld.mu.RUnlock()
+	return ld.session
+}
+
+func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next http.Handler) http.Handler {
+	logHandler := httplog.RequestLogger(logger, defaultOptions(logFormat))
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := context.WithValue(r.Context(), logDataContextKey{}, &logData{})
+			logHandler(next).ServeHTTP(w, r.WithContext(ctx))
+		})
 	}
-	if responseCode >= 400 {
-		return slog.LevelWarn
+
+}
+
+func defaultOptions(logFormat *httplog.Schema) *httplog.Options {
+	return &httplog.Options{
+		Level:         slog.LevelInfo,
+		Schema:        logFormat,
+		RecoverPanics: true,
+		LogAdditionalAttrs: &httplog.LogAdditionalAttrsOptions{
+			AdditionalAttrs: func(details *httplog.LogDetails) []slog.Attr {
+				additionalAttrs := make([]slog.Attr, 0, 2)
+				if ld := getLogData(details.Request.Context()); ld != nil {
+					if s := ld.GetSession(); s != nil {
+						site := s.GetSite()
+						sessionAttrs := make([]any, 0, 7)
+						sessionAttrs = append(sessionAttrs,
+							slog.String("sessionId", s.ID),
+							slog.String("userId", s.GetSiteUser().ID),
+							slog.String("appId", site.App.ID),
+							slog.String("siteId", site.ID),
+							slog.String("site", site.GetAppFullName()+":"+site.Name),
+						)
+						w := s.GetWorkspace()
+						if w != nil {
+							sessionAttrs = append(sessionAttrs,
+								slog.String("workspaceId", w.ID),
+								slog.String("workspace", w.GetAppFullName()+":"+w.Name),
+							)
+						}
+
+						additionalAttrs = append(additionalAttrs, slog.Group("session", sessionAttrs...))
+
+						usage.RegisterEvent(details.Request.Method, "REQUEST_COUNT", "ALL", 1, s)
+						if details.RequestBytesRead > 0 {
+							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", details.RequestBytesRead, s)
+						}
+						if details.ResponseBytes > 0 {
+							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(details.ResponseBytes), s)
+						}
+					}
+				}
+
+				additionalAttrs = append(additionalAttrs,
+					// TODO: getRemoteIP has limitations (see https://github.com/ues-io/uesio/issues/4951). FOr now, rather than modify the request.RemoteAddr value
+					// we'll just override the value that httplog from RemoteAddr for logging purposes.  When #4951 is resolved, RemoteAddr should be set to the actual
+					// client address and then this override can be removed.
+					slog.String(logFormat.RequestRemoteIP, getRemoteIp(details.Request)),
+				)
+
+				return additionalAttrs
+			},
+		},
 	}
-	return slog.LevelDebug
+}
+
+// Request.RemoteAddress contains port, which we want to remove i.e.:
+// "[::1]:58292" => "[::1]"
+func ipAddrFromRemoteAddr(s string) string {
+	idx := strings.LastIndex(s, ":")
+	if idx == -1 {
+		return s
+	}
+	return s[:idx]
+}
+
+// getRemoteIp returns ip address of the client making the request,
+// taking into account http proxies
+// TODO: The approach to obtain the client IP is not reliable and needs to be improved.  See https://github.com/ues-io/uesio/issues/4951
+func getRemoteIp(r *http.Request) string {
+	hdr := r.Header
+	hdrRealIP := hdr.Get("X-Real-Ip")
+	hdrForwardedFor := hdr.Get("X-Forwarded-For")
+	if hdrRealIP == "" && hdrForwardedFor == "" {
+		return ipAddrFromRemoteAddr(r.RemoteAddr)
+	}
+	if hdrForwardedFor != "" {
+		// X-Forwarded-For is potentially a list of addresses separated with ","
+		parts := strings.Split(hdrForwardedFor, ",")
+		for i, p := range parts {
+			parts[i] = strings.TrimSpace(p)
+		}
+		// TODO: should return first non-local address
+		return parts[0]
+	}
+	return hdrRealIP
 }

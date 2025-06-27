@@ -17,6 +17,7 @@ import (
 // Authenticate checks to see if the current user is logged in
 func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 
 		// Get the site we're currently using from our host
 		site, err := auth.GetSiteFromHost(r.Host)
@@ -46,7 +47,8 @@ func Authenticate(next http.Handler) http.Handler {
 				http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
-			next.ServeHTTP(w, r.WithContext(SetSession(r, s)))
+			setSession(ctx, s)
+			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
 
@@ -80,47 +82,56 @@ func Authenticate(next http.Handler) http.Handler {
 		// If the session is expired, and it's not for a public user
 		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicProfile() {
 			session.Remove(browserSession, w)
-			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
+			setSession(ctx, s)
+			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
 			return
 		}
 
-		next.ServeHTTP(w, r.WithContext(SetSession(r, s)))
+		setSession(ctx, s)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		siteName := vars["site"]
 		s := GetSession(r)
 		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
 		if err != nil {
-			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
+			setSession(ctx, s)
+			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
 			return
 		}
 
-		next.ServeHTTP(w, r.WithContext(SetSession(r, siteAdminSession)))
+		setSession(ctx, siteAdminSession)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func AuthenticateWorkspace(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 		s := GetSession(r)
 		workspaceSession, err := datasource.AddWorkspaceImpersonationContext(appName+":"+workspaceName, s, nil)
 		if err != nil {
-			auth.RedirectToLoginRoute(w, r.WithContext(SetSession(r, s)), s, auth.Expired)
+			setSession(ctx, s)
+			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(SetSession(r, workspaceSession)))
+		setSession(ctx, workspaceSession)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func AuthenticateVersion(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		vars := mux.Vars(r)
 		version := vars["version"]
 		app := vars["app"]
@@ -130,6 +141,7 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(SetSession(r, versionSession)))
+		setSession(ctx, versionSession)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
