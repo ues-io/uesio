@@ -8,10 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type sessionContextKey string
-
-const sessionKey sessionContextKey = "session"
-
 func GetSessionFromContext(c context.Context) *sess.Session {
 	if logData := getLogData(c); logData != nil {
 		return logData.GetSession()
