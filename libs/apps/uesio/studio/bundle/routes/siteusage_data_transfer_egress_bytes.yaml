@@ -1,0 +1,11 @@
+name: siteusage_data_transfer_egress_bytes
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/data_transfer/egress/bytes
+view: usage
+theme: default
+title: Site Data Transfer Egress Volume
+params:
+  metadatatype: DATA_TRANSFER
+  metadatatypelabel: Data Transfer
+  metadatatypeicon: upload
+  actiontype: EGRESS_BYTES
+  actiontypelabel: Egress Volume (bytes)
