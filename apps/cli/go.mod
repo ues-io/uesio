@@ -13,6 +13,8 @@ require (
 require (
 	github.com/PaesslerAG/gval v1.2.4 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
+	github.com/go-chi/chi/v5 v5.1.0 // indirect
+	github.com/go-chi/httplog/v3 v3.2.2 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/gomodule/redigo v1.9.2 // indirect
 	github.com/icza/session v1.3.0 // indirect
