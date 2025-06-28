@@ -58,8 +58,9 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 				if ld := getLogData(ctx); ld != nil {
 					if s := ld.GetSession(); s != nil {
 						usage.RegisterEvent("REQUEST_COUNT", "REQUEST", "ALL", 1, s)
-						if br != nil && br.bytesRead > 0 {
-							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", br.bytesRead, s)
+						ingressBytes := computeApproximateRequestSize(r, br)
+						if ingressBytes > 0 {
+							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", ingressBytes, s)
 						}
 						if ww.BytesWritten() > 0 {
 							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(ww.BytesWritten()), s)
@@ -147,6 +148,36 @@ func getRemoteIp(r *http.Request) string {
 		return parts[0]
 	}
 	return hdrRealIP
+}
+
+// Calculates request size similar how Prometheus (see https://github.com/prometheus/client_golang/blob/b0ace3d127a015aa24191b3d0f73d976fc07494c/prometheus/promhttp/instrument_server.go#L409)
+// captures it. The approach is nearly identical but instead of using ContentLength, we use the actual bytes read when available in addition to URL, method, proto, headers, and host.
+func computeApproximateRequestSize(r *http.Request, bodyReader *countingReader) int64 {
+	var s int64
+	if r.URL != nil {
+		s += int64(len(r.URL.String()))
+	}
+
+	s += int64(len(r.Method))
+	s += int64(len(r.Proto))
+	for name, values := range r.Header {
+		s += int64(len(name))
+		for _, value := range values {
+			s += int64(len(value))
+		}
+	}
+	s += int64(len(r.Host))
+
+	// Add content length if available
+	if bodyReader == nil {
+		if r.ContentLength > 0 {
+			s += r.ContentLength
+		}
+	} else {
+		s += bodyReader.bytesRead
+	}
+
+	return s
 }
 
 type countingReader struct {
