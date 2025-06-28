@@ -78,13 +78,23 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
 	baseRouter := mux.NewRouter()
+	// global/universal middleware
+	baseRouter.Use(
+		traceid.Middleware,
+		middleware.RequestLogger(logger, logFormat),
+	)
+	// We hang /health of baseRouter because of the way Authentication middleware currently works. If it does not
+	// find a "site" based on the request.Host an HTTP 500 is currently thrown. For proper health checking, we need
+	// to make sure that we can access the root domain since we may not have dns to an actual site in some cases (e.g.,
+	// inside docker container, we can't resolve studio.<domain>.<tld>) without a hosts entry. If/When authentication
+	// is improved to allow for more graceful "no site" scenario, "baseRouter" and "r" could be combined.
 	baseRouter.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	r := baseRouter.NewRoute().Subrouter()
-	// global/universal middleware
 	r.Use(
-		traceid.Middleware,
-		middleware.RequestLogger(logger, logFormat),
+		// all routes that follow should honor authentication which pay just be a public session
+		// note that as currently written, authenticate will fail if no site can be resolved via request.Host
+		// which is something that could use some improvement.
 		middleware.Authenticate,
 	)
 
