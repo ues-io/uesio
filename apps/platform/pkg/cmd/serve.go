@@ -77,8 +77,10 @@ var staticPrefix = "/static"
 func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
-	r := mux.NewRouter()
+	baseRouter := mux.NewRouter()
+	baseRouter.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
+	r := baseRouter.NewRoute().Subrouter()
 	// global/universal middleware
 	r.Use(
 		traceid.Middleware,
@@ -98,7 +100,6 @@ func serve(cmd *cobra.Command, args []string) error {
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix)).Methods(http.MethodGet)
-	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
 
@@ -400,7 +401,7 @@ func serve(cmd *cobra.Command, args []string) error {
 		r.Use(middleware.GZip())
 	}
 
-	var handler http.Handler = r
+	var handler http.Handler = baseRouter
 	if env.InDevMode() {
 		reloader := reload.New(".watch")
 		reloader.OnReload = func() {
@@ -408,7 +409,7 @@ func serve(cmd *cobra.Command, args []string) error {
 			platformbundlestore.InvalidateCache()
 			systembundlestore.InvalidateCache()
 		}
-		handler = reloader.Handle(r)
+		handler = reloader.Handle(baseRouter)
 	}
 
 	server := controller.NewServer(serveAddr, handler)
@@ -482,7 +483,7 @@ func getLogger(isDevMode bool, logFormat *httplog.Schema) *slog.Logger {
 	}
 
 	logger := slog.New(logHandler(isDevMode, &slog.HandlerOptions{
-		AddSource:   !isDevMode,
+		AddSource:   false,
 		ReplaceAttr: logFormat.ReplaceAttr,
 		Level:       logLevel,
 	}))
