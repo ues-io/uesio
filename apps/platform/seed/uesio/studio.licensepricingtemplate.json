@@ -95,7 +95,6 @@
     "uesio/studio.metadataname": "uesio/core.platform",
     "uesio/studio.price": 1
   },
-,
   {
     "uesio/studio.app": {
       "uesio/core.uniquekey": "uesio/core"
@@ -107,5 +106,5 @@
     "uesio/studio.actiontype": "REQUEST_COUNT",
     "uesio/studio.metadataname": "uesio/core.platform",
     "uesio/studio.price": 1
-  }    
+  }
 ]
