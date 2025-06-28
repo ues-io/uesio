@@ -60,7 +60,6 @@ func defaultOptions(logFormat *httplog.Schema) *httplog.Options {
 						site := s.GetSite()
 						sessionAttrs := make([]any, 0, 7)
 						sessionAttrs = append(sessionAttrs,
-							slog.String("sessionId", s.ID),
 							slog.String("userId", s.GetSiteUser().ID),
 							slog.String("appId", site.App.ID),
 							slog.String("siteId", site.ID),
