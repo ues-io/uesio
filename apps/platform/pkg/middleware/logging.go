@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"net/http"
 	"strings"
 	"sync"
 
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v3"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
@@ -41,7 +43,32 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := context.WithValue(r.Context(), logDataContextKey{}, &logData{})
-			logHandler(next).ServeHTTP(w, r.WithContext(ctx))
+
+			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+			var br *countingReader
+			if r.Body != nil && r.Body != http.NoBody {
+				br = &countingReader{reader: r.Body}
+				r.Body = br
+			}
+
+			defer func() {
+				// Need to track usage separate from logging LogAdditionalAttrs hook
+				// because not all requests will be logged based on log level &
+				// other logging options (e.g., Skip).
+				if ld := getLogData(ctx); ld != nil {
+					if s := ld.GetSession(); s != nil {
+						usage.RegisterEvent("REQUEST_COUNT", "REQUEST", "ALL", 1, s)
+						if br != nil && br.bytesRead > 0 {
+							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", br.bytesRead, s)
+						}
+						if ww.BytesWritten() > 0 {
+							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(ww.BytesWritten()), s)
+						}
+					}
+				}
+			}()
+
+			logHandler(next).ServeHTTP(ww, r.WithContext(ctx))
 		})
 	}
 
@@ -74,19 +101,11 @@ func defaultOptions(logFormat *httplog.Schema) *httplog.Options {
 						}
 
 						additionalAttrs = append(additionalAttrs, slog.Group("session", sessionAttrs...))
-
-						usage.RegisterEvent(details.Request.Method, "REQUEST_COUNT", "ALL", 1, s)
-						if details.RequestBytesRead > 0 {
-							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", details.RequestBytesRead, s)
-						}
-						if details.ResponseBytes > 0 {
-							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(details.ResponseBytes), s)
-						}
 					}
 				}
 
 				additionalAttrs = append(additionalAttrs,
-					// TODO: getRemoteIP has limitations (see https://github.com/ues-io/uesio/issues/4951). FOr now, rather than modify the request.RemoteAddr value
+					// TODO: getRemoteIP has limitations (see https://github.com/ues-io/uesio/issues/4951). For now, rather than modify the request.RemoteAddr value
 					// we'll just override the value that httplog from RemoteAddr for logging purposes.  When #4951 is resolved, RemoteAddr should be set to the actual
 					// client address and then this override can be removed.
 					slog.String(logFormat.RequestRemoteIP, getRemoteIp(details.Request)),
@@ -128,4 +147,19 @@ func getRemoteIp(r *http.Request) string {
 		return parts[0]
 	}
 	return hdrRealIP
+}
+
+type countingReader struct {
+	reader    io.ReadCloser
+	bytesRead int64
+}
+
+func (cr *countingReader) Read(p []byte) (int, error) {
+	n, err := cr.reader.Read(p)
+	cr.bytesRead += int64(n)
+	return n, err
+}
+
+func (cr *countingReader) Close() error {
+	return cr.reader.Close()
 }
