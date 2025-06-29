@@ -6,5 +6,4 @@ variants:
   - uesio/io.searchbox:uesio/appkit.main
 components:
   - uesio/io.table
-  - uesio/io.field
   - uesio/io.searchbox
