@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -27,7 +28,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	loginRoute := site.GetAppBundle().LoginRoute
 	if loginRoute == "" {
-		http.Error(w, "No Home Route defined", http.StatusInternalServerError)
+		ctlutil.HandleErrorContext(r.Context(), w, errors.New("no Login route defined"))
 		return
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)

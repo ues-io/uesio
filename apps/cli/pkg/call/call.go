@@ -11,7 +11,6 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/context"
-	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	uesiohttp "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -187,9 +186,9 @@ func JSONResultReader[K any](result K) ResultReader[K] {
 }
 
 func checkStatus(resp *http.Response) error {
-	status := resp.Trailer.Get(ctlutil.TRAILER_UESIO_STATUS_CODE_KEY)
-	if status != "" && status != ctlutil.TRAILER_UESIO_STATUS_CODE_SUCCESS {
-		message := resp.Trailer.Get(ctlutil.TRAILER_UESIO_STATUS_MESSAGE_KEY)
+	status := resp.Trailer.Get(uesiohttp.TRAILER_UESIO_STATUS_CODE_KEY)
+	if status != "" && status != uesiohttp.TRAILER_UESIO_STATUS_CODE_SUCCESS {
+		message := resp.Trailer.Get(uesiohttp.TRAILER_UESIO_STATUS_MESSAGE_KEY)
 		if message == "" {
 			message = "an unknown error occurred"
 		}
