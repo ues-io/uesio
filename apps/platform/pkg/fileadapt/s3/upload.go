@@ -1,11 +1,14 @@
 package s3
 
 import (
+	"context"
 	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/thecloudmasters/uesio/pkg/types/file"
+	"golang.org/x/sync/errgroup"
 )
 
 type contentLengthReader struct {
@@ -30,14 +33,46 @@ func (r *contentLengthReader) GetContentLength() int64 {
 	return r.contentLength
 }
 
-func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
+func (c *Connection) Upload(req file.FileUploadRequest) (int64, error) {
+	uploader := manager.NewUploader(c.client)
+	return handleFileUpload(c.ctx, uploader, c.bucket, req.Data(), req.Path())
+}
 
+func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) {
 	uploader := manager.NewUploader(c.client)
 
+	// TODO: make maxRequestUploadConcurrency configurable. This is a "per request" concurrency limit currently. Need
+	// to "tune" it and also consider "host/site" wide configuration options beyond just individual request limits. The
+	// configuration limits should likely be exposed at a "host" level (for all configuration limit options) for each
+	// backend provider as the "host" instance and backend provider will have different resource limitations.
+	maxRequestUploadConcurrency := 5
+	g := &errgroup.Group{}
+	g, uploadCtx := errgroup.WithContext(c.ctx)
+	g.SetLimit(maxRequestUploadConcurrency)
+	bytesWritten := make([]int64, len(reqs))
+
+	for i, req := range reqs {
+		g.Go(func() error {
+			size, err := handleFileUpload(uploadCtx, uploader, c.bucket, req.Data(), req.Path())
+			if err == nil {
+				bytesWritten[i] = size
+			}
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	return bytesWritten, nil
+}
+
+func handleFileUpload(ctx context.Context, uploader *manager.Uploader, bucket string, fileData io.Reader, path string) (int64, error) {
 	reader := newContentLengthReader(fileData)
 
-	_, err := uploader.Upload(c.ctx, &s3.PutObjectInput{
-		Bucket: aws.String(c.bucket),
+	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(bucket),
 		Key:    aws.String(path),
 		Body:   reader,
 	})

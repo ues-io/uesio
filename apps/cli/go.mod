@@ -12,6 +12,7 @@ require (
 
 require (
 	github.com/PaesslerAG/gval v1.2.4 // indirect
+	github.com/dolmen-go/contextio v1.0.0 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/gomodule/redigo v1.9.2 // indirect

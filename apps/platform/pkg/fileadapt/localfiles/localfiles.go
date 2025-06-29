@@ -11,9 +11,11 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/dolmen-go/contextio"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
+	"golang.org/x/sync/errgroup"
 )
 
 // Skip .DS_Store files
@@ -85,9 +87,39 @@ func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
 	return paths, nil
 }
 
-func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
+func (c *Connection) Upload(req file.FileUploadRequest) (int64, error) {
+	return handleFileUpload(c.ctx, c.bucket, req.Data(), req.Path())
+}
 
-	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
+func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) {
+	// TODO: make maxRequestUploadConcurrency configurable. This is a "per request" concurrency limit currently. Need
+	// to "tune" it and also consider "host/site" wide configuration options beyond just individual request limits. The
+	// configuration limits should likely be exposed at a "host" level (for all configuration limit options) for each
+	// backend provider as the "host" instance and backend provider will have different resource limitations.
+	maxRequestUploadConcurrency := 10
+	g, uploadCtx := errgroup.WithContext(c.ctx)
+	g.SetLimit(maxRequestUploadConcurrency)
+	bytesWritten := make([]int64, len(reqs))
+
+	for i, req := range reqs {
+		g.Go(func() error {
+			bytes, err := handleFileUpload(uploadCtx, c.bucket, req.Data(), req.Path())
+			if err == nil {
+				bytesWritten[i] = bytes
+			}
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	return bytesWritten, nil
+}
+
+func handleFileUpload(ctx context.Context, bucket string, fileData io.Reader, path string) (int64, error) {
+	fullPath := filepath.Join(bucket, filepath.FromSlash(path))
 
 	directory := filepath.Dir(fullPath)
 
@@ -96,12 +128,21 @@ func (c *Connection) Upload(fileData io.Reader, path string) (int64, error) {
 		return 0, err
 	}
 
+	// Check if context is cancelled before creating the file
+	select {
+	case <-ctx.Done():
+		return 0, ctx.Err()
+	default:
+	}
+
 	outFile, err := os.Create(fullPath)
 	if err != nil {
 		return 0, fmt.Errorf("error creating file: %w", err)
 	}
 	defer outFile.Close()
-	size, err := io.Copy(outFile, fileData)
+	r := contextio.NewReader(ctx, fileData)
+	w := contextio.NewWriter(ctx, outFile)
+	size, err := io.Copy(w, r)
 	if err != nil {
 		return 0, fmt.Errorf("error writing file: %w", err)
 	}
