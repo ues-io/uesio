@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
@@ -22,7 +24,7 @@ func Authenticate(next http.Handler) http.Handler {
 		// Get the site we're currently using from our host
 		site, err := auth.GetSiteFromHost(r.Host)
 		if err != nil {
-			http.Error(w, "Failed to get site from domain: "+err.Error(), http.StatusInternalServerError)
+			HandleError(ctx, w, fmt.Errorf("failed to get site from domain: %w", err))
 			return
 		}
 
@@ -31,20 +33,26 @@ func Authenticate(next http.Handler) http.Handler {
 		if fullToken != "" {
 			splitToken := strings.Split(fullToken, "Bearer ")
 			if len(splitToken) != 2 {
-				http.Error(w, "Invalid bearer token format", http.StatusUnauthorized)
+				// current HandleError will send error message to client to log reason
+				// separately to avoid leaking details to client
+				slog.ErrorContext(ctx, "invalid bearer token format")
+				HandleError(ctx, w, exceptions.NewUnauthorizedException("not authorized"))
 				return
 			}
 			authToken := splitToken[1]
 
 			user, err := auth.GetUserFromAuthToken(authToken, site)
 			if err != nil {
-				http.Error(w, "Invalid bearer token", http.StatusUnauthorized)
+				// current HandleError will send error message to client to log reason
+				// separately to avoid leaking details to client
+				slog.ErrorContext(ctx, "unable to get user from bearer token: "+err.Error())
+				HandleError(ctx, w, exceptions.NewUnauthorizedException("not authorized"))
 				return
 			}
 
 			s, err := auth.GetSessionFromUser("", user, site)
 			if err != nil {
-				http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
+				HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 				return
 			}
 			setSession(ctx, s)
@@ -62,7 +70,7 @@ func Authenticate(next http.Handler) http.Handler {
 			}
 			publicSession, err := auth.GetPublicSession(site, nil)
 			if err != nil {
-				http.Error(w, "Failed to create public session: "+err.Error(), http.StatusInternalServerError)
+				HandleError(ctx, w, fmt.Errorf("failed to create public session: %w", err))
 				return
 			}
 
@@ -76,7 +84,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)
 		if err != nil {
-			http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
+			HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 			return
 		}
 		// If the session is expired, and it's not for a public user
@@ -137,8 +145,7 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		app := vars["app"]
 		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
 		if err != nil {
-			slog.Error(err.Error())
-			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
+			HandleError(ctx, w, fmt.Errorf("failed querying version: %w", err))
 			return
 		}
 		setSession(ctx, versionSession)

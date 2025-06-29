@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/go-chi/httplog/v3"
+	httputil "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,6 +20,14 @@ func GetSessionFromContext(c context.Context) *sess.Session {
 
 func GetSession(r *http.Request) *sess.Session {
 	return GetSessionFromContext(r.Context())
+}
+
+func SetError(c context.Context, err error) {
+	// TODO: ctlutil.HandleErrorContext & HandleTrailingErrorContext have direct call to
+	// httplog.SetError rather than calling this function due to import cycle issues. Any
+	// changes to this method should be synchronized with ctlutil.HandleErrorContext until
+	// the import cycle issues are resolved.
+	httplog.SetError(c, err)
 }
 
 func setSession(ctx context.Context, s *sess.Session) {
@@ -44,4 +54,18 @@ func setLogSession(ctx context.Context, session *sess.Session) {
 func getLogData(ctx context.Context) *logData {
 	ld, _ := ctx.Value(logDataContextKey{}).(*logData)
 	return ld
+}
+
+func HandleError(ctx context.Context, w http.ResponseWriter, err error) {
+	// Set error in context so that it will be included in request logging. Previously,
+	// middleware would not log any errors in any circumstance. For now, logging all
+	// errors in all request log messages. Once things stabalize and error handling & logging
+	// patterns improved, this may be dialed back (e.g. StatusInternalServerError only) if log
+	// messages aren't helpful/needed for all error types.
+	SetError(ctx, err)
+	// delegating to a shared helper that is used by controllers and middleware due to
+	// import cycle issues via auth package. Once refactored, controllers can just call
+	// a middleware HandleError utility (or similar) that can update context with error
+	// and write out the error.
+	httputil.HandleError(ctx, w, err)
 }
