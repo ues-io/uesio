@@ -97,10 +97,10 @@ func serve(cmd *cobra.Command, args []string) error {
 		middleware.Authenticate,
 	)
 
-	r.Handle("/static/{filename:.*}", file.Static()).Methods(http.MethodGet)
-
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
+
+	r.Handle("/static/{filename:.*}", file.Static()).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
 
