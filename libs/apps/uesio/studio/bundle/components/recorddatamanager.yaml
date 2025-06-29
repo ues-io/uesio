@@ -3,9 +3,6 @@ pack: main
 entrypoint: components/recorddatamanager/recorddatamanager
 variants:
   - uesio/io.grid:uesio/io.four_columns
-  - uesio/io.fieldwrapper:uesio/io.table
-  - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.listmenu:uesio/io.default
-  - uesio/io.field:uesio/io.search
-utilities:
+components:
+  - uesio/io.field
   - uesio/io.grid

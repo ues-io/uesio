@@ -2,15 +2,9 @@ name: datamanager
 pack: main
 entrypoint: components/datamanager/datamanager
 variants:
-  - uesio/io.table:uesio/io.default
-  - uesio/io.field:uesio/io.search
-  - uesio/io.field:uesio/io.default
-  - uesio/io.fieldlabel:uesio/io.default
-  - uesio/io.fieldwrapper:uesio/io.table
-  - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.listmenu:uesio/io.default
-  - uesio/io.button:uesio/io.rowaction
   - uesio/io.table:uesio/appkit.main
   - uesio/io.searchbox:uesio/appkit.main
-utilities:
+components:
   - uesio/io.table
+  - uesio/io.field
+  - uesio/io.searchbox
