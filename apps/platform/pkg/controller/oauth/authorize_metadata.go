@@ -22,17 +22,17 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid integration", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid integration", err))
 		return
 	}
 	conf, err := oauth.GetConfig(integrationConnection.GetCredentials(), fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host))
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewForbiddenException("invalid integration configuration: "+err.Error()))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewForbiddenException("invalid integration configuration: "+err.Error()))
 		return
 	}
 	redirectMetadata, err := oauth.GetRedirectMetadata(conf, integrationName, session)
 	if err != nil {
-		ctlutil.HandleError(w, errors.New("unable to generate a state token"))
+		ctlutil.HandleError(r.Context(), w, errors.New("unable to generate a state token"))
 		return
 	}
 	filejson.RespondJSON(w, r, redirectMetadata)

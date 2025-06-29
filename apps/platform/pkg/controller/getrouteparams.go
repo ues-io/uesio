@@ -73,12 +73,12 @@ func GetRouteParams(w http.ResponseWriter, r *http.Request) {
 	}
 	route := meta.NewBaseRoute(namespace, name)
 	if err := loader(route); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	routeParams, err := getRouteParamsResponse(route, loader)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, routeParams)

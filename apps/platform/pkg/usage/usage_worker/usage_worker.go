@@ -15,7 +15,7 @@ func UsageWorkerNoContext() error {
 
 func UsageWorker(ctx context.Context) error {
 
-	slog.Info("Running usage worker job")
+	slog.InfoContext(ctx, "Running usage worker job")
 
 	session, err := auth.GetStudioSystemSession(ctx, nil)
 	if err != nil {
@@ -27,6 +27,6 @@ func UsageWorker(ctx context.Context) error {
 		return err
 	}
 
-	slog.Info("Usage job completed, no issues found")
+	slog.InfoContext(ctx, "Usage job completed, no issues found")
 	return nil
 }

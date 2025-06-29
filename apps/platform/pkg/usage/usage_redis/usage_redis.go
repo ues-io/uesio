@@ -23,7 +23,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-			slog.Error(err.Error())
+			slog.ErrorContext(session.Context(), err.Error())
 		}
 	}(conn)
 
@@ -36,7 +36,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 	}
 
 	if len(keys) == 0 {
-		slog.Info("job completed, no usage events to process")
+		slog.InfoContext(session.Context(), "job completed, no usage events to process")
 		return nil
 	}
 

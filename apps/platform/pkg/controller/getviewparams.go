@@ -66,7 +66,7 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 	}
 	viewParams, err := getParamsForView(namespace, name, loader)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, viewParams)

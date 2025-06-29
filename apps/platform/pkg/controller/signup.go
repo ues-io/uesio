@@ -26,25 +26,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid signup request body", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid signup request body", nil))
 		return
 	}
 
 	systemSession, err := auth.GetSystemSession(session.Context(), site, nil)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("Signup failed: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 
 	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("Signup failed: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 
 	user, err := auth.Signup(signupMethod, payload, systemSession)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -55,7 +55,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -77,7 +77,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	signupMethodId := getSignupMethodID(mux.Vars(r))
 	systemSession, err := auth.GetSystemSession(ctx, site, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -86,14 +86,14 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		"username":         username,
 		"verificationcode": queryParams.Get("code"),
 	}, site); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	// If signup confirmation succeeded, go ahead and log the user in
 	user, err := auth.GetUserByKey(username, systemSession, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

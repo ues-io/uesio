@@ -46,12 +46,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("failed to obtain platform connection: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to obtain platform connection: %w", err))
 		return
 	}
 	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("failed to enter version context: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to enter version context: %w", err))
 		return
 	}
 	route, err := loadCallbackRoute(r, versionSession, connection)

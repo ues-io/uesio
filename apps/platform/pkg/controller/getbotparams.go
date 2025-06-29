@@ -22,7 +22,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 
 	botParams, err := bot.GetBotParams(namespace, name, metadataType, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

@@ -10,7 +10,7 @@ import (
 
 func Deploy(w http.ResponseWriter, r *http.Request) {
 	if err := deploy.Deploy(r.Body, middleware.GetSession(r)); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 }

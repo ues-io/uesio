@@ -22,7 +22,7 @@ func InvoicingJobNoContext() error {
 
 func InvoicingJob(ctx context.Context) error {
 
-	slog.Info("Starting Invoicing job...")
+	slog.InfoContext(ctx, "Starting Invoicing job...")
 
 	session, err := auth.GetStudioSystemSession(ctx, nil)
 	if err != nil {
@@ -42,7 +42,7 @@ func InvoicingJob(ctx context.Context) error {
 		}
 	}
 
-	slog.Info("Invoicing job successfully completed.")
+	slog.InfoContext(ctx, "Invoicing job successfully completed.")
 
 	return nil
 

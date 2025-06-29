@@ -6,7 +6,6 @@ import (
 	"log/slog"
 
 	"github.com/icza/session"
-
 	"github.com/thecloudmasters/uesio/pkg/cache"
 )
 

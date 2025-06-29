@@ -22,23 +22,23 @@ type OAuthTokenResponse struct {
 func GetOAuthToken(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
-		ctlutil.HandleErrorContext(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: unable to parse form data", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: unable to parse form data", err))
 		return
 	}
 
 	if r.Form == nil {
-		ctlutil.HandleErrorContext(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: no body provided", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: no body provided", nil))
 		return
 	}
 	grantType := r.Form.Get("grant_type")
 
 	if grantType != "authorization_code" {
-		ctlutil.HandleErrorContext(r.Context(), w, exceptions.NewBadRequestException("unsupported_grant_type: "+grantType, nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("unsupported_grant_type: "+grantType, nil))
 		return
 	}
 	authorizationCode := r.Form.Get("code")
 	if authorizationCode == "" {
-		ctlutil.HandleErrorContext(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: code is required", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid_grant: code is required", nil))
 		return
 	}
 

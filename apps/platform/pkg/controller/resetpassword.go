@@ -26,13 +26,13 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return
 	}
 
 	_, err = auth.ResetPassword(session.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -46,13 +46,13 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]any
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid request body", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return
 	}
 
 	user, err := auth.ConfirmResetPassword(session.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

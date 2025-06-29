@@ -37,7 +37,7 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection 
 		Loader: esbuild.LoaderTS,
 	})
 	if len(result.Errors) > 0 {
-		slog.Error(fmt.Sprintf("TS Bot %s compilation had %d errors and %d warnings\n",
+		slog.ErrorContext(session.Context(), fmt.Sprintf("TS Bot %s compilation had %d errors and %d warnings\n",
 			bot.GetKey(), len(result.Errors), len(result.Warnings)))
 		return fmt.Errorf("%s", result.Errors[0].Text)
 	}

@@ -27,7 +27,7 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 	deps.Collection = nil
 
 	if err := routing.GetBuilderDependencies(namespace, name, deps, session); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed getting builder metadata", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed getting builder metadata", err))
 		return
 	}
 

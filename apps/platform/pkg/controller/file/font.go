@@ -25,17 +25,17 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 	font := meta.NewBaseFont(namespace, name)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	if err = bundle.Load(font, nil, session, nil); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	rs, fileMeta, err := bundle.GetItemAttachment(font, path, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	defer rs.Close()

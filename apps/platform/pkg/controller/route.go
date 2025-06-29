@@ -36,7 +36,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	route, err := routing.GetRouteFromAssignment(r, collectionNamespace, collectionName, viewtype, id, session, connection)
@@ -74,7 +74,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session, connection)
@@ -106,7 +106,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	route, err := routing.GetRouteByKey(r, namespace, routeName, session, connection)
@@ -129,7 +129,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session, err error) {
 	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, namespace, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, routingMergeData)
 	}
@@ -140,7 +140,7 @@ func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path, namesp
 		getNotFoundRoute(path, namespace, "you may need to log in again.", "true"),
 		sess.GetAnonSessionFrom(session),
 	); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, routingMergeData)
 	}
@@ -153,7 +153,7 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 		Session: session,
 	})
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -217,7 +217,7 @@ type errorResponse struct {
 }
 
 func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, namespace string, incomingErr error, redirect bool) {
-	slog.Debug("error getting route: " + incomingErr.Error())
+	slog.DebugContext(r.Context(), "error getting route: "+incomingErr.Error())
 
 	// If this is an invalid param exception
 
@@ -248,7 +248,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		// Otherwise, Enter into a version context to display the error page
 		versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
 		if err != nil {
-			ctlutil.HandleError(w, fmt.Errorf("error getting version session: %w", err))
+			ctlutil.HandleError(r.Context(), w, fmt.Errorf("error getting version session: %w", err))
 			return
 		}
 		errorSession = versionSession
@@ -256,7 +256,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	depsCache, err := routing.GetMetadataDeps(route, errorSession)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("error getting error route metadata: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("error getting error route metadata: %w", err))
 		return
 	}
 
@@ -382,7 +382,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 				if _, isString := response.Body.(string); !isString {
 					marshalled, err = json.Marshal(response.Body)
 					if err != nil {
-						ctlutil.HandleError(w, err)
+						ctlutil.HandleError(r.Context(), w, err)
 						return
 					}
 				}
@@ -392,7 +392,7 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 			}
 			if marshalled != nil {
 				if _, err = w.Write(marshalled); err != nil {
-					ctlutil.HandleError(w, err)
+					ctlutil.HandleError(r.Context(), w, err)
 					return
 				}
 			}

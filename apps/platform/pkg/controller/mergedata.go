@@ -282,7 +282,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 
 	routingMergeData, err := GetRoutingMergeData(route, preloadmeta, session)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("error getting route merge data: %w", err))
+		ctlutil.HandleError(session.Context(), w, fmt.Errorf("error getting route merge data: %w", err))
 		return
 	}
 
@@ -296,7 +296,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 	}
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("error merging template: %w", err))
+		ctlutil.HandleError(session.Context(), w, fmt.Errorf("error merging template: %w", err))
 		return
 	}
 }

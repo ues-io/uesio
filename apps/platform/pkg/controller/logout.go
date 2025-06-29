@@ -21,19 +21,19 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	site := session.GetSite()
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	session = sess.Logout(w, r, publicUser, session)
 
 	loginRoute := site.GetAppBundle().LoginRoute
 	if loginRoute == "" {
-		ctlutil.HandleErrorContext(r.Context(), w, errors.New("no Login route defined"))
+		ctlutil.HandleError(r.Context(), w, errors.New("no Login route defined"))
 		return
 	}
 	redirectNamespace, redirectRoute, err := meta.ParseKey(loginRoute)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid login route: "+loginRoute, nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid login route: "+loginRoute, nil))
 		return
 	}
 

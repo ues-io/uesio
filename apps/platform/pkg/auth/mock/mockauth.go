@@ -35,7 +35,7 @@ type Connection struct {
 }
 
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(w, errors.New("requesting login is not supported by this auth source type"))
+	ctlutil.HandleError(r.Context(), w, errors.New("requesting login is not supported by this auth source type"))
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
@@ -43,13 +43,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		const msg = "invalid login request body"
-		slog.Info(fmt.Sprintf("%s: %v", msg, err))
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(msg, nil))
+		slog.InfoContext(r.Context(), fmt.Sprintf("%s: %v", msg, err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException(msg, nil))
 		return
 	}
 	user, _, err := c.DoLogin(loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	auth.LoginRedirectResponse(w, r, user, c.session)

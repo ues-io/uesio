@@ -67,7 +67,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	if result, err := processUploadRequest(r); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, result)
 	}
@@ -77,7 +77,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	if err := filesource.Delete(mux.Vars(r)["fileid"], session); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, &bot.BotResponse{
 			Success: true,
@@ -91,12 +91,12 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	userFileID := query.Get("userfileid")
 	version := query.Get("version")
 	if userFileID == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
 		return
 	}
 	rs, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	defer rs.Close()
@@ -116,17 +116,17 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 	path := vars["path"]
 	version := vars["version"]
 	if recordID == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment recordid", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("missing required attachment recordid", nil))
 		return
 	}
 	if path == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("missing required attachment path", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("missing required attachment path", nil))
 		return
 	}
 
 	rs, userFile, err := filesource.DownloadAttachment(recordID, path, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	defer rs.Close()

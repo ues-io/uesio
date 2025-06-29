@@ -113,7 +113,7 @@ func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Conne
 		if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil {
 			program = cacheItem
 		} else if !errors.Is(err, cache.ErrKeyNotFound) {
-			slog.Error(fmt.Sprintf("error getting bot program for key [%s] from cache: %v", cacheKey, err))
+			slog.ErrorContext(session.Context(), fmt.Sprintf("error getting bot program for key [%s] from cache: %v", cacheKey, err))
 		}
 	}
 	if program == nil {

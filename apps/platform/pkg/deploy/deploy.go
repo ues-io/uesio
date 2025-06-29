@@ -186,7 +186,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
 			if err != nil {
 				// Most likely found a folder that we don't have a metadata type for
-				slog.Info("Found bad metadata type: " + metadataType)
+				slog.InfoContext(session.Context(), "Found bad metadata type: "+metadataType)
 				continue
 			}
 			dep[metadataType] = collection
