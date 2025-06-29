@@ -41,11 +41,14 @@ func (c *Connection) Upload(req file.FileUploadRequest) (int64, error) {
 func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) {
 	uploader := manager.NewUploader(c.client)
 
-	// TODO: make maxConcurrency configurable
-	maxConcurrency := 5
+	// TODO: make maxRequestUploadConcurrency configurable. This is a "per request" concurrency limit currently. Need
+	// to "tune" it and also consider "host/site" wide configuration options beyond just individual request limits. The
+	// configuration limits should likely be exposed at a "host" level (for all configuration limit options) for each
+	// backend provider as the "host" instance and backend provider will have different resource limitations.
+	maxRequestUploadConcurrency := 5
 	g := &errgroup.Group{}
 	g, uploadCtx := errgroup.WithContext(c.ctx)
-	g.SetLimit(maxConcurrency)
+	g.SetLimit(maxRequestUploadConcurrency)
 	bytesWritten := make([]int64, len(reqs))
 
 	for i, req := range reqs {
