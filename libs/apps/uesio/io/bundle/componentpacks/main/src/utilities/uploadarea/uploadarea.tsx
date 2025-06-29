@@ -56,7 +56,7 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
     // even though the physical file might have changed.
     if (fileInputRef?.current) {
       fileInputRef.current.value = ""
-    }    
+    }
   }
 
   return (
