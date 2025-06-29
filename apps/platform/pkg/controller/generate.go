@@ -19,13 +19,13 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	s := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(s, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	zipWriter := zip.NewWriter(w)
@@ -38,7 +38,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 
 	_, err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

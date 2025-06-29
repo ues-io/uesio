@@ -89,7 +89,7 @@ func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.Us
 
 	response, err := GetLoginRedirectResponse(w, r, user, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, response)
@@ -99,7 +99,7 @@ func ResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user 
 
 	response, err := GetResetPasswordRedirectResponse(w, r, user, loginMethod, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, response)
@@ -134,7 +134,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, connectio
 func Login(w http.ResponseWriter, r *http.Request, authSourceID string, session *sess.Session) {
 	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	conn.Login(w, r)
@@ -143,7 +143,7 @@ func Login(w http.ResponseWriter, r *http.Request, authSourceID string, session 
 func RequestLogin(w http.ResponseWriter, r *http.Request, authSourceID string, session *sess.Session) {
 	conn, err := GetAuthConnection(authSourceID, nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	conn.RequestLogin(w, r)

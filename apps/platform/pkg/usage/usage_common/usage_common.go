@@ -35,7 +35,7 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 		return fmt.Errorf("failed to update usage events: %w : %v", err, len(usage))
 	}
 
-	slog.Info(fmt.Sprintf("successfully processed %d usage events", len(usage)))
+	slog.InfoContext(session.Context(), fmt.Sprintf("successfully processed %d usage events", len(usage)))
 	return nil
 
 }

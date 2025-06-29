@@ -26,13 +26,13 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := collections.AddCollection(collectionName); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	metadataResponse := wire.MetadataCache{}
 	if err := collections.Load(&metadataResponse, session, nil); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("unable to load collection metadata", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("unable to load collection metadata", err))
 		return
 	}
 

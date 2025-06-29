@@ -62,7 +62,7 @@ func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connecti
 		if result, err := wsKeyInfoCache.Get(workspaceID); err == nil {
 			wsKeyInfo = result
 		} else if !errors.Is(err, cache.ErrKeyNotFound) {
-			slog.Error(fmt.Sprintf("error getting key info for workspace id [%s] from cache: %v", workspaceID, err))
+			slog.ErrorContext(session.Context(), fmt.Sprintf("error getting key info for workspace id [%s] from cache: %v", workspaceID, err))
 		}
 	}
 

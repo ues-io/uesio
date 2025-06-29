@@ -52,7 +52,7 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 
 	err := datasource.LoadWithError(op, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("Load Failed", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("Load Failed", err))
 		return
 	}
 

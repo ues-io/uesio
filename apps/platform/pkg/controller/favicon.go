@@ -21,7 +21,7 @@ func Favicon(w http.ResponseWriter, r *http.Request) {
 	}
 	fileItem, err := meta.NewFile(favicon)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewNotFoundException("favicon file not found"))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewNotFoundException("favicon file not found"))
 		return
 	}
 

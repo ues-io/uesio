@@ -110,7 +110,7 @@ func (c *Connection) callListenerBot(botKey, code string, payload map[string]any
 }
 
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(w, errors.New("requesting login is not supported by this auth source type"))
+	ctlutil.HandleError(r.Context(), w, errors.New("requesting login is not supported by this auth source type"))
 }
 
 func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
@@ -118,13 +118,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		msg := "invalid login request body"
-		slog.Info(fmt.Sprintf("%s: %v", msg, err))
-		ctlutil.HandleError(w, exceptions.NewBadRequestException(msg, nil))
+		slog.InfoContext(r.Context(), fmt.Sprintf("%s: %v", msg, err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException(msg, nil))
 		return
 	}
 	user, loginmethod, err := c.DoLogin(loginRequest)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -134,7 +134,7 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 			return c.ResetPassword(loginRequest, true)
 		})
 		if err != nil {
-			ctlutil.HandleError(w, err)
+			ctlutil.HandleError(r.Context(), w, err)
 			return
 		}
 		auth.ResetPasswordRedirectResponse(w, r, user, loginMethod, c.session)

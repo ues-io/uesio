@@ -52,7 +52,7 @@ var configValues = map[string]string{
 func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
 	value, ok := configValues[key]
 	if !ok {
-		slog.Debug("Config Value not found: " + key)
+		slog.DebugContext(session.Context(), "Config Value not found: "+key)
 		return nil, nil
 	}
 	return &meta.ConfigStoreValue{

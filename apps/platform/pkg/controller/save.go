@@ -16,7 +16,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
 	var saveRequestBatch datasource.SaveRequestBatch
 	if err := json.NewDecoder(r.Body).Decode(&saveRequestBatch); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid save request", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid save request", err))
 		return
 	}
 
@@ -28,7 +28,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 			filejson.RespondJSON(w, r, &saveRequestBatch)
 			return
 		}
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, &saveRequestBatch)

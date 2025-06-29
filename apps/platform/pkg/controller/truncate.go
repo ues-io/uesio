@@ -12,7 +12,7 @@ import (
 func Truncate(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	if err := truncate.TruncateWorkspaceData(session.GetTenantID(), session); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, map[string]any{
 			"success":     true,

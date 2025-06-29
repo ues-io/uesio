@@ -23,14 +23,14 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	respondWithZIP := strings.Contains(r.Header.Get("Accept"), "/zip")
@@ -38,7 +38,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 	if respondWithZIP {
 		_, err := deploy.GenerateToWorkspace(namespace, name, params, connection, session, w)
 		if err != nil {
-			ctlutil.HandleError(w, err)
+			ctlutil.HandleError(r.Context(), w, err)
 		}
 		return
 	}

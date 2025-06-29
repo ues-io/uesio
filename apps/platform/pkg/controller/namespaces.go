@@ -48,7 +48,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 
 	namespaces, err := getNamespaces(metadatatype, session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

@@ -23,10 +23,10 @@ func GetSession(r *http.Request) *sess.Session {
 }
 
 func SetError(c context.Context, err error) {
-	// TODO: ctlutil.HandleErrorContext & HandleTrailingErrorContext have direct call to
+	// TODO: ctlutil.HandleError & ctlutil.HandleTrailingError have direct call to
 	// httplog.SetError rather than calling this function due to import cycle issues. Any
-	// changes to this method should be synchronized with ctlutil.HandleErrorContext until
-	// the import cycle issues are resolved.
+	// changes to this method should be synchronized with ctlutil.HandleError & ctlutil.HandleTrailingError
+	// until the import cycle issues are resolved.
 	httplog.SetError(c, err)
 }
 

@@ -25,17 +25,17 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 	componentPack := meta.NewBaseComponentPack(namespace, name)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	if err = bundle.Load(componentPack, nil, session, nil); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	rs, fileMeta, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	defer rs.Close()

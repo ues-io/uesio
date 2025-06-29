@@ -18,7 +18,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
 	var specRequest meta.JobSpecRequest
 	if err := json.NewDecoder(r.Body).Decode(&specRequest); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("invalid job spec request", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid job spec request", err))
 		return
 	}
 
@@ -27,7 +27,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 	spec := meta.JobSpec(specRequest)
 	jobID, err := bulk.NewJob(&spec, session)
 	if err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed creating new job", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed creating new job", err))
 		return
 	}
 

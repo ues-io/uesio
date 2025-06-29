@@ -26,7 +26,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 		resp["message"] = "Resource Not Found"
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
-			slog.Error(err.Error())
+			slog.ErrorContext(r.Context(), err.Error())
 		}
 		w.Write(jsonResp)
 		return
@@ -45,12 +45,12 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	if err := bundle.Load(file, nil, session, connection); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -60,7 +60,7 @@ func ServeFileContent(file *meta.File, version string, path string, w http.Respo
 
 	rs, fileMetadata, err := bundle.GetItemAttachment(file, path, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	defer rs.Close()
