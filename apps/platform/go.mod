@@ -15,6 +15,7 @@ require (
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.5.1
 	github.com/dimchansky/utfbom v1.1.1
+	github.com/dolmen-go/contextio v1.0.0
 	github.com/dop251/goja v0.0.0-20250624190929-4d26883d182a
 	github.com/evanw/esbuild v0.25.5
 	github.com/francoispqt/gojay v1.2.13
