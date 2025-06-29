@@ -84,7 +84,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		},
 		adminSession,
 	); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
 		return
 	}
 
@@ -104,7 +104,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		})
 		return nil
 	}); err != nil {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed getting bundle versions list", err))
 		return
 	}
 	filejson.RespondJSON(w, r, responses)

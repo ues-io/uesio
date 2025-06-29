@@ -160,12 +160,12 @@ func seed(cmd *cobra.Command, args []string) error {
 	})
 	if err != nil {
 		if ignoreSeedFailures {
-			slog.Info("Ignoring seed failures.")
+			slog.InfoContext(ctx, "Ignoring seed failures.")
 			return nil
 		}
 		return fmt.Errorf("seeds failed: %w", err)
 	}
 
-	slog.Info("Successfully ran seeds")
+	slog.InfoContext(ctx, "Successfully ran seeds")
 	return nil
 }

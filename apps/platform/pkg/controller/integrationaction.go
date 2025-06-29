@@ -34,31 +34,31 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("action parameter is required", nil))
 		return
 	}
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("unable to obtain platform connection: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
 
 	ic, err := datasource.GetIntegrationConnection(integrationId, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	result, err := datasource.RunIntegrationAction(ic, actionKey, params, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	// If the type is a Stream, stream chunks from it to the client
@@ -144,14 +144,14 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	// The action's name, or fully-qualified metadata key
 	actionKey := r.URL.Query().Get("action")
 	if actionKey == "" {
-		ctlutil.HandleError(w, exceptions.NewBadRequestException("action parameter is required", nil))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("action parameter is required", nil))
 		return
 	}
 
 	session := middleware.GetSession(r)
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, fmt.Errorf("unable to obtain platform connection: %w", err))
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
 
@@ -159,13 +159,13 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	integrationTypeName := fmt.Sprintf("%s.%s", namespace, name)
 	integrationType, err := datasource.GetIntegrationType(integrationTypeName, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	// The action itself MUST exist as a baseline.
 	action, err := datasource.GetIntegrationAction(integrationTypeName, actionKey, session, connection)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	var actionParams meta.BotParams
@@ -176,18 +176,18 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 		// 2. Fallback --- read params off of the associated Bot.
 		actionBotKey, err := datasource.GetIntegrationActionBotName(action, integrationType)
 		if err != nil {
-			ctlutil.HandleError(w, err)
+			ctlutil.HandleError(r.Context(), w, err)
 			return
 		}
 		actionBotNamespace, actionBotName, err := meta.ParseKey(actionBotKey)
 		if err != nil {
-			ctlutil.HandleError(w, err)
+			ctlutil.HandleError(r.Context(), w, err)
 			return
 		}
 		robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
 		err = bundle.Load(robot, nil, session, nil)
 		if err != nil {
-			ctlutil.HandleError(w, err)
+			ctlutil.HandleError(r.Context(), w, err)
 			return
 		}
 		actionParams = robot.Params
@@ -195,7 +195,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 
 	// If we couldn't find any parameters --- return an error
 	if len(actionParams) < 1 {
-		ctlutil.HandleError(w, exceptions.NewNotFoundException("could not find any parameters for this action"))
+		ctlutil.HandleError(r.Context(), w, exceptions.NewNotFoundException("could not find any parameters for this action"))
 		return
 	}
 

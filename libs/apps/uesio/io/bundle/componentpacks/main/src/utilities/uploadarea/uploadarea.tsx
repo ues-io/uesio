@@ -50,6 +50,15 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
     e.stopPropagation()
   }
 
+  const resetFile = () => {
+    // Make sure the upload triggers after a delete or an upload as the browser won't trigger onChange if the same file is selected again.
+    // This covers the situation where the file is deleted but also the situation where the same file based on name/path is selected
+    // even though the physical file might have changed.
+    if (fileInputRef?.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
   return (
     <>
       <div
@@ -74,6 +83,7 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
         accept={accept}
         onChange={(e) => {
           onUpload(e.target.files)
+          resetFile()
         }}
         ref={fileInputRef}
         id={uploadLabelId}
@@ -82,7 +92,10 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
         <input
           className={classes.fileinput}
           type="button"
-          onClick={onDelete}
+          onClick={(e) => {
+            onDelete()
+            resetFile()
+          }}
           id={deleteLabelId}
         />
       )}

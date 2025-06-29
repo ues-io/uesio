@@ -16,7 +16,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	var batch wire.LoadRequestBatch
 	if err := json.NewDecoder(r.Body).Decode(&batch); err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -24,7 +24,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	metadata, err := datasource.Load(batch.Wires, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	loadResponse := &wire.LoadResponseBatch{

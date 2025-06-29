@@ -65,6 +65,6 @@ func migrate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("migrations failed: %w", err)
 	}
 
-	slog.Info("Successfully ran migrations")
+	slog.InfoContext(ctx, "Successfully ran migrations")
 	return nil
 }

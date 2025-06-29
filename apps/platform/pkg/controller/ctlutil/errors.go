@@ -1,18 +1,11 @@
 package ctlutil
 
 import (
-	"fmt"
-	"log/slog"
+	"context"
 	"net/http"
-	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
-)
-
-const (
-	TRAILER_UESIO_STATUS_CODE_KEY     = "X-UESIO-STATUS-CODE"
-	TRAILER_UESIO_STATUS_MESSAGE_KEY  = "X-UESIO-STATUS-MESSAGE"
-	TRAILER_UESIO_STATUS_CODE_SUCCESS = "0"
+	"github.com/go-chi/httplog/v3"
+	httputil "github.com/thecloudmasters/uesio/pkg/http"
 )
 
 // HandleError is a utility for returning an appropriate HTTP response code and error message
@@ -24,34 +17,48 @@ const (
 //	   HandleError(w, err)
 //	   return
 //	}
-func HandleError(w http.ResponseWriter, err error) {
-	statusCode := exceptions.GetStatusCodeForError(err)
-	errMessage := err.Error()
-	if statusCode == http.StatusInternalServerError {
-		// Best practice - don't display internal server error details to users,
-		// but log it server-side so that dev team can review
-		slog.Error(errMessage)
-		errMessage = http.StatusText(statusCode)
-	}
-	http.Error(w, errMessage, statusCode)
+func HandleError(ctx context.Context, w http.ResponseWriter, err error) {
+	// Set error in context so that it will be included in request logging. Previously,
+	// only StatusInternalServerError were explicitly logged (separate from request log)
+	// but expanding to include all error information and rather than log directly
+	// include it in request log messages. Once things stabalize and error handling & logging
+	// patterns improved, this may be dialed back if log messages aren't helpful/needed for
+	// all error types.
+	// TODO: Need to use httplog directly here instead of having it within httputil.HandleError
+	// to avoid import cycle error. Refactor to eliminate the import cycle error, include
+	// middleware.SetError in the util HandleError and call directly. In meantime, this should
+	// be kept in sync with middleware.SetError.
+	httplog.SetError(ctx, err)
+	// delegating to a shared helper that is used by controllers and middleware due to
+	// import cycle issues via auth package. Once refactored, controllers can just call
+	// a middleware HandleError utility (or similar) that can update context with error and
+	// write out the error.
+	httputil.HandleError(ctx, w, err)
 }
 
-func HandleTrailingError(w http.ResponseWriter, err error) {
-	statusCode := exceptions.GetStatusCodeForError(err)
-	errMessage := err.Error()
-	if statusCode == http.StatusInternalServerError {
-		// Best practice - don't display internal server error details to users,
-		// but log it server-side so that dev team can review. For now, sending
-		// internal message to client to aid in troubleshooting until full logging
-		// solution is implemented.
-		// TODO: Consider using http.StatusText(statusCode) for trailing status message
-		// on internal errors once determined stable and logging solution implemented.
-		slog.Error(errMessage)
-	}
-	w.Header().Set(TRAILER_UESIO_STATUS_CODE_KEY, strconv.Itoa(statusCode))
-	w.Header().Set(TRAILER_UESIO_STATUS_MESSAGE_KEY, errMessage)
+func HandleTrailingError(ctx context.Context, w http.ResponseWriter, err error) {
+	// Set error in context so that it will be included in request logging. Previously,
+	// only StatusInternalServerError were explicitly logged (separate from request log)
+	// but expanding to include all error information and rather than log directly
+	// include it in request log messages. Once things stabalize and error handling & logging
+	// patterns improved, this may be dialed back if log messages aren't helpful/needed for
+	// all error types.
+	// TODO: Need to use httplog directly here instead of having it within httputil.HandleError
+	// to avoid import cycle error. Refactor to eliminate the import cycle error, include
+	// middleware.SetError in the util HandleError and call directly. In meantime, this should
+	// be kept in sync with middleware.SetError.
+	httplog.SetError(ctx, err)
+	// delegating to a shared helper that is used by controllers and middleware due to
+	// import cycle issues via auth package. Once refactored, controllers can just call
+	// a middleware HandleError utility (or similar) that can update context with error and
+	// write out the error.
+	httputil.HandleTrailingError(ctx, w, err)
 }
 
 func AddTrailingStatus(w http.ResponseWriter) {
-	w.Header().Set("Trailer", fmt.Sprintf("%s, %s", TRAILER_UESIO_STATUS_CODE_KEY, TRAILER_UESIO_STATUS_MESSAGE_KEY))
+	AddTrailingStatusContext(context.Background(), w)
+}
+
+func AddTrailingStatusContext(ctx context.Context, w http.ResponseWriter) {
+	httputil.AddTrailingStatus(ctx, w)
 }

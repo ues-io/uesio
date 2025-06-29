@@ -21,9 +21,9 @@ declare module "@uesio/app/selectlists/uesio/studio" {
 	export type Subtype = "DATE" | "LONGTEXT" | "NUMBER" | "STRUCT" | "TEXT" | "TIMESTAMP"
 	export type Taglocation = "head" | "body"
 	export type Tagtype = "meta" | "link"
-	export type Usageactiontype = "DOWNLOAD" | "DOWNLOAD_BYTES" | "LOAD" | "SAVE" | "UPLOAD" | "UPLOAD_BYTES"
+	export type Usageactiontype = "DOWNLOAD" | "DOWNLOAD_BYTES" | "LOAD" | "SAVE" | "UPLOAD" | "UPLOAD_BYTES" | "EGRESS_BYTES" | "INGRESS_BYTES" | "REQUEST_COUNT"
 	export type Usagemetadataname = "uesio/core.platform"
-	export type Usagemetadatatype = "ROUTE" | "DATASOURCE" | "FILESOURCE"
+	export type Usagemetadatatype = "ROUTE" | "DATASOURCE" | "FILESOURCE" | "DATA_TRANSFER" | "REQUEST"
 	export type Useraccesstokentype = "lookup"
 }
 declare module "@uesio/app/bots/listener/uesio/studio/createlogin" {

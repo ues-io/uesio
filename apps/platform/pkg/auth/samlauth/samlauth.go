@@ -157,7 +157,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
 	samlSP, err := c.getSP(r.Host)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -168,13 +168,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 
 	sp, err := c.getSP(r.Host)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	err = r.ParseForm()
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -185,13 +185,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(target.PrivateErr)
 		}
 
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	sess, err := samlsp.JWTSessionCodec{}.New(assertion)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -199,13 +199,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 
 	user, _, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.connection, c.session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	response, err := auth.GetLoginRedirectResponse(w, r, user, c.session)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 

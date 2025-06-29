@@ -21,7 +21,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 
 	bs, err := bundle.GetBundleStoreConnection(app, session, nil)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -38,7 +38,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 	}); err != nil {
 		// Note - We are streaming result so Http StatusCode will have been set to 200 after
 		// the first Write so we implement custom approach to detecting failure on client
-		ctlutil.HandleTrailingError(w, err)
+		ctlutil.HandleTrailingError(r.Context(), w, err)
 		return
 	}
 }

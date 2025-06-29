@@ -50,14 +50,14 @@ GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/chec
 Authorization: my_very_bad_token
 HTTP 401
 [Asserts]
-body == "Invalid bearer token format\n"
+body == "not authorized\n"
 
 # Try log in with a bad token
 GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/check
 Authorization: Bearer my_invalid_token
 HTTP 401
 [Asserts]
-body == "Invalid bearer token\n"
+body == "not authorized\n"
 
 # Try to check the auth status as vlad with the token.
 GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/check
@@ -142,4 +142,4 @@ GET {{site_scheme}}://tests.{{site_primary_domain}}:{{site_port}}/site/auth/chec
 Authorization: Bearer {{token}}
 HTTP 401
 [Asserts]
-body == "Invalid bearer token\n"
+body == "not authorized\n"

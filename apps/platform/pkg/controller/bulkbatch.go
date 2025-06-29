@@ -16,7 +16,7 @@ import (
 func BulkBatch(w http.ResponseWriter, r *http.Request) {
 	batch, err := bulk.NewBatch(r.Body, mux.Vars(r)["job"], middleware.GetSession(r))
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	filejson.RespondJSON(w, r, &bulktypes.BatchResponse{

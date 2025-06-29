@@ -20,7 +20,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	params, err := getParamsFromRequestBody(r)
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -29,7 +29,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	returnParams, err := datasource.CallListenerBotInTransaction(namespace, name, params, session)
 
 	if err != nil {
-		ctlutil.HandleError(w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
