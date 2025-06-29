@@ -70,5 +70,41 @@
     "uesio/studio.actiontype": "UPLOAD_BYTES",
     "uesio/studio.metadataname": "uesio/core.platform",
     "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "DATA_TRANSFER",
+    "uesio/studio.actiontype": "EGRESS_BYTES",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "DATA_TRANSFER",
+    "uesio/studio.actiontype": "INGRESS_BYTES",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
+  },
+  {
+    "uesio/studio.app": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.licensetemplate": {
+      "uesio/core.uniquekey": "uesio/core"
+    },
+    "uesio/studio.metadatatype": "REQUEST",
+    "uesio/studio.actiontype": "REQUEST_COUNT",
+    "uesio/studio.metadataname": "uesio/core.platform",
+    "uesio/studio.price": 1
   }
 ]

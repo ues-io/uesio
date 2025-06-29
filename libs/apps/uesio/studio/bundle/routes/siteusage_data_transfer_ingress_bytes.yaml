@@ -1,0 +1,11 @@
+name: siteusage_data_transfer_ingress_bytes
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/data_transfer/ingress/bytes
+view: usage
+theme: default
+title: Site Data Transfer Ingress Volume
+params:
+  metadatatype: DATA_TRANSFER
+  metadatatypelabel: Data Transfer
+  metadatatypeicon: download
+  actiontype: INGRESS_BYTES
+  actiontypelabel: Ingress Volume (bytes)

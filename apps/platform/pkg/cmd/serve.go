@@ -5,8 +5,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/aarol/reload"
+	"github.com/go-chi/httplog/v3"
+	"github.com/go-chi/traceid"
+	"github.com/golang-cz/devslog"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/oauth"
@@ -50,6 +54,9 @@ func getFullItemOrTextParam(paramName string) string {
 	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
 }
 
+var buildVersion = os.Getenv("UESIO_BUILD_VERSION")
+var logFormat = httplog.SchemaOTEL.Concise(env.InDevMode())
+var logger = getLogger(env.InDevMode(), logFormat)
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var nameParam = getMetadataItemParam("name")
@@ -65,19 +72,36 @@ var versionedItemParam = fmt.Sprintf("%s/%s/%s", nsParam, versionParam, namePara
 // so the regex here needs to support both
 var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
-
 var staticPrefix = "/static"
 
 func serve(cmd *cobra.Command, args []string) error {
 
 	slog.Info("Starting Uesio server")
-	r := mux.NewRouter()
+	baseRouter := mux.NewRouter()
+	// global/universal middleware
+	baseRouter.Use(
+		traceid.Middleware,
+		middleware.RequestLogger(logger, logFormat),
+	)
+	// We hang /health of baseRouter because of the way Authentication middleware currently works. If it does not
+	// find a "site" based on the request.Host an HTTP 500 is currently thrown. For proper health checking, we need
+	// to make sure that we can access the root domain since we may not have dns to an actual site in some cases (e.g.,
+	// inside docker container, we can't resolve studio.<domain>.<tld>) without a hosts entry. If/When authentication
+	// is improved to allow for more graceful "no site" scenario, "baseRouter" and "r" could be combined.
+	baseRouter.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
+
+	r := baseRouter.NewRoute().Subrouter()
+	r.Use(
+		// all routes that follow should honor authentication which may just be a public session
+		// note that as currently written, authenticate will fail if no site can be resolved via request.Host
+		// which is something that could use some improvement.
+		middleware.Authenticate,
+	)
 
 	// If we have UESIO_BUILD_VERSION, append that to the prefixes to enable us to have versioned assets
-	version := os.Getenv("UESIO_BUILD_VERSION")
 	staticAssetsPath := ""
-	if version != "" {
-		staticAssetsPath = "/" + version
+	if buildVersion != "" {
+		staticAssetsPath = "/" + buildVersion
 		file.SetAssetsPath(staticAssetsPath)
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
@@ -86,55 +110,29 @@ func serve(cmd *cobra.Command, args []string) error {
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.Handle(staticPrefix+"/{filename:.*}", file.Static(staticPrefix)).Methods(http.MethodGet)
-	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	//r.HandleFunc("/api/weather", testapis.TestApi).Methods(http.MethodGet, http.MethodPost, http.MethodDelete)
 
 	// The workspace router
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
 	wr := r.PathPrefix(workspacePath).Subrouter()
-	wr.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-		middleware.AuthenticateWorkspace,
-	)
+	wr.Use(middleware.AuthenticateWorkspace)
 
 	// The version router
 	versionPath := fmt.Sprintf("/version/%s/%s", appParam, versionParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
-	vr.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-		middleware.AuthenticateVersion,
-	)
+	vr.Use(middleware.AuthenticateVersion)
 
 	// The site admin router
 	siteAdminPath := fmt.Sprintf("/siteadmin/%s/{site}", appParam)
 	sa := r.PathPrefix(siteAdminPath).Subrouter()
-	sa.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-		middleware.AuthenticateSiteAdmin,
-	)
+	sa.Use(middleware.AuthenticateSiteAdmin)
 
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
-	sr.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-	)
 
 	// The local router
 	lr := r.NewRoute().Subrouter()
-	lr.Use(
-		middleware.AttachRequestToContext,
-		middleware.Authenticate,
-		middleware.LogRequestHandler,
-	)
 
 	// SEO Routes
 	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
@@ -413,7 +411,7 @@ func serve(cmd *cobra.Command, args []string) error {
 		r.Use(middleware.GZip())
 	}
 
-	var handler http.Handler = r
+	var handler http.Handler = baseRouter
 	if env.InDevMode() {
 		reloader := reload.New(".watch")
 		reloader.OnReload = func() {
@@ -421,7 +419,7 @@ func serve(cmd *cobra.Command, args []string) error {
 			platformbundlestore.InvalidateCache()
 			systembundlestore.InvalidateCache()
 		}
-		handler = reloader.Handle(r)
+		handler = reloader.Handle(baseRouter)
 	}
 
 	server := controller.NewServer(serveAddr, handler)
@@ -465,4 +463,55 @@ func serve(cmd *cobra.Command, args []string) error {
 	<-done
 
 	return nil
+}
+
+func logHandler(isDevMode bool, handlerOpts *slog.HandlerOptions) slog.Handler {
+	var baseHandler slog.Handler
+	if isDevMode {
+		// Pretty logs for development.
+		baseHandler = devslog.NewHandler(os.Stdout, &devslog.Options{
+			SortKeys:           true,
+			MaxErrorStackTrace: 5,
+			MaxSlicePrintSize:  20,
+			HandlerOptions:     handlerOpts,
+			TimeFormat:         "[15:04:05.000]",
+		})
+	} else {
+		// JSON logs for production
+		baseHandler = slog.NewJSONHandler(os.Stdout, handlerOpts)
+	}
+
+	return traceid.LogHandler(baseHandler)
+}
+
+func getLogger(isDevMode bool, logFormat *httplog.Schema) *slog.Logger {
+	var logLevel slog.Level
+	if val, isSet := os.LookupEnv("UESIO_LOG_LEVEL"); isSet {
+		if levelVar, err := strconv.Atoi(val); err == nil {
+			logLevel = (slog.Level)(levelVar)
+		}
+	}
+
+	logger := slog.New(logHandler(isDevMode, &slog.HandlerOptions{
+		AddSource:   false,
+		ReplaceAttr: logFormat.ReplaceAttr,
+		Level:       logLevel,
+	}))
+
+	if !isDevMode {
+		// intentionally ignoring error as hostname is not critical
+		hn, _ := os.Hostname()
+		logger = logger.With(
+			slog.String("host.name", hn),
+			slog.Group("app",
+				slog.String("name", "uesio-platform"),
+				slog.String("version", buildVersion),
+				slog.String("env", "production"),
+			),
+		)
+	}
+
+	slog.SetDefault(logger)
+
+	return logger
 }

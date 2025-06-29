@@ -90,6 +90,24 @@ definition:
                     usageMetadataType: FILESOURCE
                     usageActionType: DOWNLOAD_BYTES
                     path: files/download/bytes
+                - uesio/studio.sitenavusagetile:
+                    title: Data Transfer Egress Bytes
+                    icon: upload
+                    usageMetadataType: DATA_TRANSFER
+                    usageActionType: EGRESS_BYTES
+                    path: data_transfer/egress/bytes
+                - uesio/studio.sitenavusagetile:
+                    title: Data Transfer Ingress Bytes
+                    icon: download
+                    usageMetadataType: DATA_TRANSFER
+                    usageActionType: INGRESS_BYTES
+                    path: data_transfer/ingress/bytes
+                - uesio/studio.sitenavusagetile:
+                    title: Requests
+                    icon: language
+                    usageMetadataType: REQUEST
+                    usageActionType: REQUEST_COUNT
+                    path: requests/count
         footer:
           - uesio/core.view:
               view: profiletag

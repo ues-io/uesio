@@ -1,0 +1,11 @@
+name: siteusage_requests_count
+path: app/{app:\w*\/\w*}/site/{sitename}/usage/requests/count
+view: usage
+theme: default
+title: Site Request Count
+params:
+  metadatatype: REQUEST
+  metadatatypelabel: Requests
+  metadatatypeicon: language
+  actiontype: REQUEST_COUNT
+  actiontypelabel: Count
