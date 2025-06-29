@@ -611,7 +611,6 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    ```
 
    Previously, we were encountering this [bug](https://github.com/microsoft/monaco-editor/issues/4654) with v0.52.2, however we no longer seem to be able to reproduce this one. To recap:
-
    - The issue only seems to occur when running the Cypress tests (haven't been able to reproduce in a live browser when using builder) and only [builder.cy.ts](./apps/platform-e2e/cypress/e2e/builder.cy.ts) tests fail (believe this is the only test that uses the code panel but not 100% sure).
    - Given the issue is intermittent, it is likely some type of race condition either in the browser, cypress and/or monaco-editor
    - Only experienced the failure on @humandad machine (2019 Intel-based MacBook Pro which does seem to run perf tests slower than other machines) and CI (which runs on the slower side) so possibly the slower execution/latency is the key to encountering the issue.
