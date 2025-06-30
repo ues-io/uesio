@@ -9,8 +9,8 @@
   {
     "uesio/core.username": "ben",
     "uesio/core.firstname": "Ben",
-    "uesio/core.lastname": "Hubbard",
-    "uesio/core.profile": "uesio/studio.standard",
+    "uesio/core.lastname": "Hubbard (Admin)",
+    "uesio/core.profile": "uesio/studio.admin",
     "uesio/core.type": "PERSON"
   },
   {

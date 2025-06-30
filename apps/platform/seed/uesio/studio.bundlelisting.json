@@ -1,5 +1,6 @@
 [
   {
+    "uesio/studio.title": "Uesio Core",
     "uesio/studio.description": "Uesio base functionality",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
@@ -8,6 +9,7 @@
     }
   },
   {
+    "uesio/studio.title": "Uesio Builder",
     "uesio/studio.description": "Uesio view builder",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
@@ -16,6 +18,7 @@
     }
   },
   {
+    "uesio/studio.title": "Uesio IO",
     "uesio/studio.description": "Base uesio components",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
@@ -24,14 +27,19 @@
     }
   },
   {
+    "uesio/studio.title": "Site Kit",
     "uesio/studio.description": "Tools for building websites",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
+    "uesio/studio.show_starter_template": true,
+    "uesio/studio.starter_template_version": "v0.0.1",
+    "uesio/studio.starter_template_description": "Use the App Kit starter template if you plan on creating an app for authenticated users who will primarily be doing Create, Read, Update, Delete operations on your data. App Kit has all the tools you need for making an internal admin panel or customer portal.",
     "uesio/studio.app": {
       "uesio/core.uniquekey": "uesio/sitekit"
     }
   },
   {
+    "uesio/studio.title": "AI Kit",
     "uesio/studio.description": "Tools for working with AI",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
@@ -40,9 +48,13 @@
     }
   },
   {
+    "uesio/studio.title": "App Kit",
     "uesio/studio.description": "Tools for building apps",
     "uesio/studio.status": "PUBLISHED",
     "uesio/studio.approved": true,
+    "uesio/studio.show_starter_template": true,
+    "uesio/studio.starter_template_version": "v0.0.1",
+    "uesio/studio.starter_template_description": "Use the Site Kit starter template if your primary use case is a website for public consumption. Site Kit has tools for making great looking, responsive websites in ues.io.",
     "uesio/studio.app": {
       "uesio/core.uniquekey": "uesio/appkit"
     }
