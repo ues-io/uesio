@@ -44,6 +44,15 @@ const getWireDefinition = (
   } as wire.WireDefinition
 }
 
+const getLoadableFields = (
+  collectionMetadata: collection.Collection | undefined,
+) => {
+  if (!collectionMetadata) return []
+  return collectionMetadata
+    .getFields()
+    .filter((f) => f.getType() !== "REFERENCEGROUP")
+}
+
 const COMMON_FIELDS = [
   ID_FIELD,
   UNIQUE_KEY_FIELD,
@@ -129,11 +138,9 @@ const RecordDataManager: definition.UC<DataManagerDefinition> = (props) => {
   )
 
   const collectionFields =
-    collectionMetadata
-      ?.getFields()
-      .filter((f) =>
-        recordID ? f.getUpdateable() || f.getAccessible() : f.getCreateable(),
-      ) || []
+    getLoadableFields(collectionMetadata).filter((f) =>
+      recordID ? f.getUpdateable() || f.getAccessible() : f.getCreateable(),
+    ) || []
 
   const hasAllFields = collectionMetadata?.hasAllFields()
 
