@@ -124,6 +124,8 @@ github.com/docker/go-connections v0.5.0 h1:USnMq7hx7gwdVZq1L49hLXaFtUdTADjXGp+uj
 github.com/docker/go-connections v0.5.0/go.mod h1:ov60Kzw0kKElRwhNs9UlUHAE/F9Fe6GLaXnqyDdmEXc=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+github.com/dolmen-go/contextio v1.0.0 h1:bNfCo4gsRIhMeo6Z1ImXzkxZG81B6I5t2fUFJjphdAU=
+github.com/dolmen-go/contextio v1.0.0/go.mod h1:cxc20xI7fOgsFHWgt+PenlDDnMcrvh7Ocuj5hEFIdEk=
 github.com/dop251/goja v0.0.0-20250624190929-4d26883d182a h1:QIWJoaD2+zxUjN28l8zixmbuvtYqqcxj49Iwzw7mDpk=
 github.com/dop251/goja v0.0.0-20250624190929-4d26883d182a/go.mod h1:MxLav0peU43GgvwVgNbLAj1s/bSGboKkhuULvq/7hx4=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=

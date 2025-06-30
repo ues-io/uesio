@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
+	"golang.org/x/sync/errgroup"
 )
 
 const PLATFORM_FILE_SOURCE = "uesio/core.platform"
@@ -89,8 +90,6 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 
 	}
 
-	fileSourceConnections := map[string]file.Connection{}
-
 	// Go get any Record IDs that we're missing
 	for collectionKey := range idMaps {
 
@@ -126,6 +125,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 
 	tenantID := session.GetTenantID()
 
+	fileSourceConnections := make(map[string][]file.FileUploadRequest)
 	for _, op := range ops {
 
 		ufm := &meta.UserFileMetadata{
@@ -138,25 +138,38 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			FileSourceID: PLATFORM_FILE_SOURCE,
 		}
 		userFileCollection = append(userFileCollection, ufm)
+		fileSourceConnections[ufm.FileSourceID] = append(fileSourceConnections[ufm.FileSourceID], userFileUploadRequest{op.Data, ufm.GetFullPath(tenantID), ufm})
+	}
 
-		conn, isPresent := fileSourceConnections[ufm.FileSourceID]
-		if !isPresent {
-			newConn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
+	g, _ := errgroup.WithContext(session.Context())
+	for fileSourceID, reqs := range fileSourceConnections {
+		g.Go(func() error {
+			conn, err := fileadapt.GetFileConnection(fileSourceID, session)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			conn = newConn
-			fileSourceConnections[ufm.FileSourceID] = newConn
-		}
-		written, err := conn.Upload(op.Data, ufm.GetFullPath(tenantID))
-		if err != nil {
-			return nil, err
-		}
+			writtenResults, err := conn.UploadMany(reqs)
+			if err != nil {
+				return err
+			}
 
-		ufm.FileContentLength = written
+			for i, req := range reqs {
+				ufur, ok := req.(userFileUploadRequest)
+				if !ok {
+					return fmt.Errorf("expected UserFileUploadRequest, got %T", req)
+				}
+				written := writtenResults[i]
+				ufur.Meta.FileContentLength = written
+				usage.RegisterEvent("UPLOAD", "FILESOURCE", ufur.Meta.FileSourceID, 0, session)
+				usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufur.Meta.FileSourceID, written, session)
+			}
 
-		usage.RegisterEvent("UPLOAD", "FILESOURCE", ufm.FileSourceID, 0, session)
-		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, written, session)
+			return nil
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return nil, err
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{
@@ -209,4 +222,19 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 	}
 
 	return userFileCollection, nil
+}
+
+type userFileUploadRequest struct {
+	data io.Reader
+	path string
+
+	Meta *meta.UserFileMetadata
+}
+
+func (r userFileUploadRequest) Data() io.Reader {
+	return r.data
+}
+
+func (r userFileUploadRequest) Path() string {
+	return r.path
 }
