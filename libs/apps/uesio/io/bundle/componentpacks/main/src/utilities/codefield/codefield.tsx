@@ -15,7 +15,7 @@ const { getFileText } = api.platform
 
 loader.config({
   paths: {
-    vs: `${staticAssetsHost}${staticAssetsPath}/static/vendor/monaco-editor/src/vs`,
+    vs: `${staticAssetsHost}/static${staticAssetsPath}/vendor/monaco-editor/src/vs`,
   },
 })
 

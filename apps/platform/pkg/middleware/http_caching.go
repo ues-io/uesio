@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	cw "github.com/bigkevmcd/go-cachewrapper"
-	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
 var (
@@ -69,5 +69,5 @@ func oneYearCache() func(o *cw.CacheOptions) {
 }
 
 func isHTTPCachingEnabled() bool {
-	return !env.InDevMode()
+	return os.Getenv("UESIO_BUILD_VERSION") != "" || os.Getenv("UESIO_FORCE_HTTP_CACHING") == "true"
 }

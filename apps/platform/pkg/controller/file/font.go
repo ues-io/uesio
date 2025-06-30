@@ -17,7 +17,6 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
-	resourceVersion := vars["version"]
 	path := vars["filename"]
 
 	session := middleware.GetSession(r)
@@ -47,10 +46,7 @@ func ServeFontFile(w http.ResponseWriter, r *http.Request) {
 		lastModified = time.Unix(font.UpdatedAt, 0)
 	}
 
-	respondFile(w, r, &FileRequest{
-		Path:         path,
-		LastModified: lastModified,
-		Namespace:    namespace,
-		Version:      resourceVersion,
-	}, rs)
+	middleware.Set1YearCache(w)
+
+	respondFile(w, r, path, lastModified, rs)
 }
