@@ -6,3 +6,4 @@ variants:
 components:
   - uesio/io.field
   - uesio/io.grid
+  - uesio/io.list
