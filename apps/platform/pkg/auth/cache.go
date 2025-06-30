@@ -19,7 +19,7 @@ func init() {
 }
 
 func GetUserCacheKey(userid string, site *meta.Site) string {
-	return fmt.Sprintf("%s:%s:%s", userid, site.GetAppFullName(), site.ID)
+	return fmt.Sprintf("%s:%s", userid, site.GetFullName())
 }
 
 func getHostKey(domainType, domainValue string) string {
