@@ -2,8 +2,11 @@ name: recorddatamanager
 pack: main
 entrypoint: components/recorddatamanager/recorddatamanager
 variants:
-  - uesio/io.grid:uesio/io.four_columns
+  - uesio/io.grid:uesio/appkit.four_columns
+  - uesio/io.box:uesio/appkit.primarysection
 components:
+  - uesio/io.box
   - uesio/io.field
   - uesio/io.grid
   - uesio/io.list
+  - uesio/appkit.section_audit_info

@@ -174,7 +174,7 @@ definition:
             listId: recordDataList
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             text: Save and create another
             uesio.context:
               workspace:
@@ -190,8 +190,7 @@ definition:
                 wires:
                   - collectionData
         - uesio/io.button:
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.save}
             uesio.context:
               workspace:
@@ -207,7 +206,7 @@ definition:
                 wires:
                   - collectionData
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.cancel}
             afterClose:
               - signal: wire/CANCEL

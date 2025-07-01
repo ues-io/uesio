@@ -7,6 +7,7 @@ import {
   wire,
   context,
 } from "@uesio/ui"
+import { COMMON_FIELDS } from "../recorddatamanager/recorddatamanager"
 const {
   ID_FIELD,
   UNIQUE_KEY_FIELD,
@@ -30,15 +31,14 @@ interface Props extends definition.BaseProps {
 
 const getWireDefinition = (
   collectionKey: wire.CollectionKey,
+  collectionFields: collection.Field[],
   collectionMetadata: collection.Collection | undefined,
 ) => {
   if (!collectionMetadata) return null
   const nameField = collectionMetadata?.getNameField()?.getId()
   return {
     collection: collectionKey,
-    fields: Object.fromEntries(
-      getLoadableFields(collectionMetadata).map((f) => [f.getId(), {}]),
-    ),
+    fields: Object.fromEntries(collectionFields.map((f) => [f.getId(), {}])),
     order: [
       {
         field: nameField ? nameField : UNIQUE_KEY_FIELD,
@@ -63,13 +63,45 @@ const getLoadableFields = (
   collectionMetadata: collection.Collection | undefined,
 ) => {
   if (!collectionMetadata) return []
-  return collectionMetadata
-    .getSearchableFields()
-    .filter((f) => f.getType() !== "LONGTEXT")
+
+  const commonFields: collection.Field[] = []
+  COMMON_FIELDS.forEach((fieldId) => {
+    const field = collectionMetadata.getField(fieldId)
+    if (field) commonFields.push(field)
+  })
+
+  const nameField = collectionMetadata.getNameField()
+  const uniqueKeyFields = collectionMetadata.getUniqueKeyFields()
+
+  // If we have a name field, add it to the list of fields to check for duplicates.
+  if (nameField) uniqueKeyFields.push(nameField)
+
+  if (uniqueKeyFields) {
+    // If the Unique Key is NOT the name field or id field,
+    // add the unique key components in as well
+    uniqueKeyFields.forEach((f) => {
+      if (!f) return
+      const alreadyExists = commonFields.find(
+        (common) => common.getId() === f.getId(),
+      )
+      if (!alreadyExists) {
+        commonFields.push(f)
+      }
+    })
+  }
+
+  return commonFields.concat(
+    collectionMetadata
+      .getSearchableFields()
+      .filter((f) => f.getType() !== "LONGTEXT")
+      .filter(
+        (f) => !commonFields.find((common) => common.getId() === f.getId()),
+      ),
+  )
 }
 
 const getColumns = (
-  collectionMetadata: collection.Collection | undefined,
+  collectionFields: collection.Field[],
 ): ColumnDefinition[] => {
   // We want to display only certain fields here, and in a consistent order:
   // 1. Id
@@ -78,64 +110,32 @@ const getColumns = (
   // 4. Other text/select fields
   // 5. Owner
   // 6. Created By, Updated By
-  if (!collectionMetadata) return []
-  const keyFields: ColumnDefinition[] = []
-  const keyFieldSet = new Set()
-  keyFieldSet.add(ID_FIELD)
-  keyFieldSet.add(OWNER_FIELD)
-  keyFieldSet.add(UNIQUE_KEY_FIELD)
-  const nameField = collectionMetadata.getNameField()?.getId()
-  if (nameField && !keyFieldSet.has(nameField)) {
-    keyFields.push({
-      field: nameField,
-      width: "200px",
-    })
-    keyFieldSet.add(nameField)
-  }
-  const uniqueKeyFields = collectionMetadata.getUniqueKeyFields()
-  if (uniqueKeyFields) {
-    // If the Unique Key is NOT the name field or id field,
-    // add the unique key components in as well
-    uniqueKeyFields.forEach((f) => {
-      const fieldId = f?.getId()
-      if (fieldId && !keyFieldSet.has(fieldId)) {
-        keyFields.push({
-          field: fieldId,
-          width: "200px",
-        })
-        keyFieldSet.add(fieldId)
-      }
-    })
-  }
-  getLoadableFields(collectionMetadata)
-    .filter((f) => !keyFieldSet.has(f.getId()))
-    .forEach((f) => {
-      const id = f.getId()
-      keyFields.push({
-        field: id,
-      })
-      keyFieldSet.add(id)
-    })
+
   return [
     {
       field: ID_FIELD,
-      width: "300px",
+      width: "20rem",
     },
-    ...keyFields,
+    ...collectionFields
+      .filter((f) => !COMMON_FIELDS.includes(f.getId()))
+      .map((f) => ({
+        field: f.getId(),
+        width: "12rem",
+      })),
     {
       field: OWNER_FIELD,
-      width: "150px",
+      width: "10rem",
     },
     {
       field: CREATED_BY_FIELD,
-      width: "200px",
+      width: "14rem",
       user: {
         subtitle: `$Time{${CREATED_AT_FIELD}}`,
       },
     },
     {
       field: UPDATED_BY_FIELD,
-      width: "200px",
+      width: "14rem",
       user: {
         subtitle: `$Time{${UPDATED_AT_FIELD}}`,
       },
@@ -182,12 +182,16 @@ const DataManager: FunctionComponent<Props> = (props) => {
     },
   )
 
+  const collectionFields = getLoadableFields(collectionMetadata)
+
   const hasAllFields = collectionMetadata?.hasAllFields()
 
-  const columns = getColumns(collectionMetadata)
   const wireDef = hasAllFields
-    ? getWireDefinition(collectionKey, collectionMetadata)
+    ? getWireDefinition(collectionKey, collectionFields, collectionMetadata)
     : null
+
+  const columns = getColumns(collectionFields)
+
   const dataWire = api.wire.useDynamicWire(wireId, wireDef, context)
 
   if (!dataWire || !hasAllFields) return null

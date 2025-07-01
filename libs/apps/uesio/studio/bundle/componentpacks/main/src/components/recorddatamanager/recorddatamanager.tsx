@@ -46,11 +46,19 @@ const getWireDefinition = (
 
 const getLoadableFields = (
   collectionMetadata: collection.Collection | undefined,
+  isNewRecord: boolean,
 ) => {
   if (!collectionMetadata) return []
-  return collectionMetadata
-    .getFields()
-    .filter((f) => f.getType() !== "REFERENCEGROUP")
+  return (
+    collectionMetadata
+      .getFields()
+      .filter((f) => f.getType() !== "REFERENCEGROUP")
+      .filter((f) =>
+        isNewRecord
+          ? f.getCreateable()
+          : f.getUpdateable() || f.getAccessible(),
+      ) || []
+  )
 }
 
 const COMMON_FIELDS = [
@@ -63,38 +71,26 @@ const COMMON_FIELDS = [
   UPDATED_BY_FIELD,
 ]
 
-const getGridFromFieldDefs = (fieldDefs: Record<string, unknown>[]) => ({
-  "uesio/io.grid": {
-    items: fieldDefs.map((fieldDef) => ({
-      "uesio/io.field": fieldDef,
-    })),
-    [STYLE_VARIANT]: "uesio/io.four_columns",
+const getGridFromFieldDefs = (
+  fieldDefs: collection.Field[],
+  isNewRecord: boolean,
+) => ({
+  "uesio/io.box": {
+    ...(!isNewRecord && { "uesio.variant": "uesio/appkit.primarysection" }),
+    components: [
+      {
+        "uesio/io.grid": {
+          items: fieldDefs.map((fieldDef) => ({
+            "uesio/io.field": {
+              fieldId: fieldDef.getId(),
+            },
+          })),
+          [STYLE_VARIANT]: "uesio/appkit.four_columns",
+        },
+      },
+    ],
   },
 })
-
-const fieldDef = (fieldId: string) => ({
-  fieldId,
-})
-
-const getGridFromFieldIds = (fieldIds: string[]) =>
-  getGridFromFieldDefs(fieldIds.map(fieldDef))
-
-const commonFieldDefs = [
-  fieldDef(ID_FIELD),
-  fieldDef(OWNER_FIELD),
-  {
-    fieldId: CREATED_BY_FIELD,
-    user: {
-      subtitle: `$Time{${CREATED_AT_FIELD}}`,
-    },
-  },
-  {
-    fieldId: UPDATED_BY_FIELD,
-    user: {
-      subtitle: `$Time{${UPDATED_AT_FIELD}}`,
-    },
-  },
-]
 
 const getComponents = (
   collectionFields: collection.Field[],
@@ -108,10 +104,14 @@ const getComponents = (
   const fields = useFields.sort((a, b) =>
     a.getName().localeCompare(b.getName()),
   )
-  const grids = [getGridFromFieldIds(fields.map((field) => field.getId()))]
+  const grids: definition.DefinitionList = [
+    getGridFromFieldDefs(fields, createMode),
+  ]
   // Add in common fields
   if (!createMode) {
-    grids.push(getGridFromFieldDefs(commonFieldDefs))
+    grids.push({
+      "uesio/appkit.section_audit_info": {},
+    })
   }
   return grids
 }
@@ -137,10 +137,8 @@ const RecordDataManager: definition.UC<DataManagerDefinition> = (props) => {
     },
   )
 
-  const collectionFields =
-    getLoadableFields(collectionMetadata).filter((f) =>
-      recordID ? f.getUpdateable() || f.getAccessible() : f.getCreateable(),
-    ) || []
+  const isNewRecord = !recordID
+  const collectionFields = getLoadableFields(collectionMetadata, isNewRecord)
 
   const hasAllFields = collectionMetadata?.hasAllFields()
 
@@ -168,5 +166,5 @@ const RecordDataManager: definition.UC<DataManagerDefinition> = (props) => {
     />
   )
 }
-
+export { COMMON_FIELDS }
 export default RecordDataManager
