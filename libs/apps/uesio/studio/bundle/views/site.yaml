@@ -231,7 +231,7 @@ definition:
                                       text: ${uesio/core.firstname} ${uesio/core.lastname}
                                       element: div
                                   - uesio/io.text:
-                                      text: ${uesio/core.id}
+                                      text: ${uesio/core.username}
                                       uesio.variant: uesio/io.aside
                                       element: div
                                 signals:
