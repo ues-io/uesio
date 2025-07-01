@@ -114,28 +114,28 @@ const getColumns = (
   return [
     {
       field: ID_FIELD,
-      width: "320px",
+      width: "20rem",
     },
     ...collectionFields
       .filter((f) => !COMMON_FIELDS.includes(f.getId()))
       .map((f) => ({
         field: f.getId(),
-        width: "200px",
+        width: "12rem",
       })),
     {
       field: OWNER_FIELD,
-      width: "150px",
+      width: "10rem",
     },
     {
       field: CREATED_BY_FIELD,
-      width: "220px",
+      width: "14rem",
       user: {
         subtitle: `$Time{${CREATED_AT_FIELD}}`,
       },
     },
     {
       field: UPDATED_BY_FIELD,
-      width: "220px",
+      width: "14rem",
       user: {
         subtitle: `$Time{${UPDATED_AT_FIELD}}`,
       },
