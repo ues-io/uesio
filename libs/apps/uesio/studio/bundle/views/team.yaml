@@ -40,9 +40,12 @@ definition:
         uesio/studio.app:
         uesio/studio.member:
           fields:
+            uesio/core.id:
             uesio/core.firstname:
             uesio/core.lastname:
             uesio/core.picture:
+            uesio/core.username:
+            uesio/core.initials:
         uesio/studio.team:
       conditions:
         - field: uesio/studio.app
@@ -58,6 +61,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.member:
+          fields:
+            uesio/core.firstname:
+            uesio/core.lastname:
+            uesio/core.picture:
+            uesio/core.username:
+            uesio/core.initials:
         uesio/studio.team:
       init:
         query: false
@@ -157,6 +166,8 @@ definition:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.member
                                             labelPosition: "none"
+                                            user:
+                                              subtitle: ${uesio/studio.member->uesio/core.username}
                                         - uesio/io.button:
                                             signals:
                                               - signal: wire/MARK_FOR_DELETE
@@ -209,11 +220,15 @@ definition:
                     searchFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
+                      - uesio/core.username
+                      - uesio/core.id
                     returnFields:
+                      - uesio/core.id
                       - uesio/core.firstname
                       - uesio/core.lastname
                       - uesio/core.picture
                       - uesio/core.username
+                      - uesio/core.initials
                     components:
                       - uesio/io.tile:
                           content:
@@ -227,7 +242,7 @@ definition:
                           avatar:
                             - uesio/io.avatar:
                                 image: $UserFile{uesio/core.picture}
-                                text: "-"
+                                text: ${uesio/core.initials}
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
