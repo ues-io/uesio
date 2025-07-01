@@ -26,6 +26,11 @@ slots:
             - signal: wire/SAVE
               wires:
                 - $Prop{wire}
+            - signal: component/CALL
+              component: uesio/io.item
+              componentsignal: SET_READ_MODE
+              targettype: specific
+              componentid: $Prop{wire}_item
           text: Save
           hotkey: "meta+s"
           uesio.variant: uesio/appkit.primary
@@ -37,35 +42,29 @@ slots:
           signals:
             - signal: wire/CANCEL
               wire: $Prop{wire}
+            - signal: component/CALL
+              component: uesio/io.item
+              componentsignal: SET_READ_MODE
+              targettype: specific
+              componentid: $Prop{wire}_item
           text: Cancel
           uesio.variant: uesio/appkit.secondary
           uesio.display:
-            - type: wireHasChanges
-              operator: EQUALS
-              wire: $Prop{wire}
+            - type: group
+              conjunction: OR
+              conditions:
+                - type: mergeValue
+                  operator: EQUALS
+                  sourceValue: $FieldMode{}
+                  value: EDIT
+                - type: wireHasChanges
+                  operator: EQUALS
+                  wire: $Prop{wire}
       - uesio/io.button:
           signals:
             - signal: component/CALL
               component: uesio/io.item
-              componentsignal: TOGGLE_MODE
-              targettype: specific
-              componentid: $Prop{wire}_item
-          text: Read
-          uesio.variant: uesio/appkit.secondary
-          icon: task_alt
-          uesio.display:
-            - type: mergeValue
-              operator: EQUALS
-              sourceValue: $FieldMode{}
-              value: EDIT
-            - type: wireHasNoChanges
-              operator: EQUALS
-              wire: $Prop{wire}
-      - uesio/io.button:
-          signals:
-            - signal: component/CALL
-              component: uesio/io.item
-              componentsignal: TOGGLE_MODE
+              componentsignal: SET_EDIT_MODE
               targettype: specific
               componentid: $Prop{wire}_item
           text: EDIT
@@ -92,6 +91,7 @@ definition:
   - uesio/io.item:
       wire: $Prop{wire}
       uesio.id: $Prop{wire}_item
+      mode: READ
       components:
         - uesio/io.titlebar:
             title: $If{[$Prop{title}][$Prop{title}][$RecordMeta{name}]}
