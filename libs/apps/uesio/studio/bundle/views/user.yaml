@@ -432,30 +432,25 @@ definition:
                                                       - font-mono
                                                   title: Temporary Password
                                                   subtitle: ${uesio/core.temporary_password}
-                      - uesio/io.item:
-                          # uesio/appkit.section_delete has a hardcoded display condition that the record must be in EDIT mode
-                          # so we wrap it inside an item with EDIT mode since the io.list can be in READ or EDIT mode
-                          mode: EDIT
-                          wire: users
-                          components:
-                            - uesio/appkit.section_delete:
-                                confirm: true
-                                confirmTitle: Are you sure?
-                                confirmMessage: The user ${uesio/core.username} will be deleted. This action cannot be undone.
-                                subtitle: The user will be permanently deleted from the system. Please be sure this what you want to do!
-                                signals:
-                                  - signal: context/SET
-                                    type: SITE_ADMIN
-                                    name: $Param{sitename}
-                                    app: $Param{app}
-                                  - signal: wire/MARK_FOR_DELETE
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "users"
-                                  - signal: context/CLEAR
-                                    type: SITE_ADMIN
-                                  - signal: "route/NAVIGATE"
-                                    path: app/$Param{app}/site/$Param{sitename}/users
+                      - uesio/appkit.section_delete:
+                          editModeOnly: false
+                          confirm: true
+                          confirmTitle: Are you sure?
+                          confirmMessage: The user ${uesio/core.username} will be deleted. This action cannot be undone.
+                          subtitle: The user will be permanently deleted from the system. Please be sure this what you want to do!
+                          signals:
+                            - signal: context/SET
+                              type: SITE_ADMIN
+                              name: $Param{sitename}
+                              app: $Param{app}
+                            - signal: wire/MARK_FOR_DELETE
+                            - signal: wire/SAVE
+                              wires:
+                                - "users"
+                            - signal: context/CLEAR
+                              type: SITE_ADMIN
+                            - signal: "route/NAVIGATE"
+                              path: app/$Param{app}/site/$Param{sitename}/users
   panels:
     newLoginMethod:
       uesio.type: uesio/io.dialog

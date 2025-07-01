@@ -6,12 +6,23 @@ properties:
     defaultValue: Delete this $Collection{label}
   - name: subtitle
     defaultValue: You will not be able to access the information associated with this $Collection{label} again.
+  - name: editModeOnly
+    label: Edit Mode Only
+    defaultValue: true
+    type: CHECKBOX
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.section
       uesio.display:
-        - type: fieldMode
-          mode: EDIT
+        - type: group
+          conjunction: OR
+          conditions:
+            - type: fieldMode
+              mode: EDIT
+            - type: mergeValue
+              operator: EQUALS
+              sourceValue: $Prop{editModeOnly}
+              value: false
         - type: recordIsDeleteable
       components:
         - uesio/io.titlebar:
@@ -38,4 +49,5 @@ description: Delete Section
 sections:
   - type: HOME
     properties:
+      - editModeOnly
   - type: DISPLAY
