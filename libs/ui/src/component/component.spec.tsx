@@ -87,12 +87,14 @@ const componentTypeWithSlotsAndContext = {
   ],
 }
 
-const getViewContext = () =>
-  new Context().addViewFrame({
-    params: { foo: "oof", bar: "rab" },
-    view: viewName,
-    viewDef,
-  })
+const getViewFrame = () => ({
+  params: { foo: "oof", bar: "rab" },
+  view: viewName,
+  viewDef,
+  type: "VIEW",
+})
+
+const getViewContext = () => new Context().addViewFrame(getViewFrame())
 
 const resolveDeclarativeComponentDefinitionTests = [
   {
@@ -187,6 +189,31 @@ const resolveDeclarativeComponentDefinitionTests = [
                 path: "",
                 componentType: "me/myapp.testcomponent",
                 readonly: false,
+                context: expect.objectContaining({
+                  stack: [
+                    {
+                      componentType: "me/myapp.testcomponent",
+                      data: {
+                        header: [
+                          {
+                            "uesio/io.text": {
+                              text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+                            },
+                          },
+                        ],
+                        title: "$Param{foo}",
+                      },
+                      path: "",
+                      slots: [
+                        {
+                          name: "header",
+                        },
+                      ],
+                      type: "PROPS",
+                    },
+                    getViewFrame(),
+                  ],
+                }),
               },
             },
           ],

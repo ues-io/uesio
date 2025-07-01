@@ -401,6 +401,10 @@ const handlers: Record<MergeType, MergeHandler> = {
       return {}
     }
 
+    // If the slot says it provides context, then let it render its contents
+    // in the context of itself instead of the parent.
+    const slotContext = slotDef.providesContexts ? undefined : context
+
     return {
       "uesio/core.slot": {
         name: expression,
@@ -410,6 +414,7 @@ const handlers: Record<MergeType, MergeHandler> = {
         path: propsFrame.path || "",
         readonly: !!componentFrame,
         componentType: propsFrame.componentType,
+        context: slotContext as unknown as FieldValue,
       },
     }
   },

@@ -22,9 +22,21 @@ const Slot: UC<SlotDefinition> = (props) => {
     definition,
     readonly,
     path,
+    context: slotContext,
   } = props.definition
 
   if (!definition) return null
+
+  let contextToUse = context
+
+  // If we have a custom slot context in our parent context, we need to transfer it
+  if (slotContext) {
+    contextToUse = slotContext
+    const slotLoader = context.getCustomSlotLoader()
+    if (slotLoader) {
+      contextToUse = contextToUse.setCustomSlotLoader(slotLoader)
+    }
+  }
 
   return (
     <SlotUtility
@@ -32,7 +44,7 @@ const Slot: UC<SlotDefinition> = (props) => {
       listName={name}
       readonly={readonly}
       path={path}
-      context={context
+      context={contextToUse
         .removeAllComponentFrames(DECLARATIVE_COMPONENT)
         .removeAllPropsFrames()}
       componentType={props.definition.componentType || componentType}
