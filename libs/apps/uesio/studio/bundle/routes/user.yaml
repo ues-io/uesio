@@ -2,4 +2,4 @@ name: user
 path: app/{app:\w*\/\w*}/site/{sitename}/users/{userid}
 view: user
 theme: default
-title: "User: $Record{users:uesio/core.username}"
+title: "User: $Param{userid}"
