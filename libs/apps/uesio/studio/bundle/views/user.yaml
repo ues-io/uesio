@@ -155,16 +155,29 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/appkit.secondary
+                                      icon: edit_square
+                                      iconFill: false
                                       text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: mergeValue
+                                          operator: NOT_EQUALS
+                                          sourceValue: $FieldMode{}
+                                          value: EDIT
+                                        - type: wireHasNoChanges
+                                          operator: EQUALS
+                                          wire: users
+                                        - type: wireHasNoChanges
+                                          wire: featureflags
                                       signals:
                                         - signal: component/CALL
                                           component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
+                                          componentsignal: SET_EDIT_MODE
                                           targettype: specific
                                           componentid: userList
                                   - uesio/io.button:
-                                      uesio.variant: uesio/appkit.secondary
+                                      uesio.variant: uesio/appkit.primary
+                                      hotkey: "meta+s"
                                       uesio.display:
                                         - type: group
                                           conjunction: OR
@@ -183,6 +196,11 @@ definition:
                                           wires:
                                             - users
                                             - featureflags
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: userList
                                         - signal: wire/LOAD
                                           wires:
                                             - featureflags
@@ -192,6 +210,10 @@ definition:
                                         - type: group
                                           conjunction: OR
                                           conditions:
+                                            - type: mergeValue
+                                              operator: EQUALS
+                                              sourceValue: $FieldMode{}
+                                              value: EDIT
                                             - type: wireHasChanges
                                               wire: users
                                             - type: wireHasChanges
@@ -202,19 +224,11 @@ definition:
                                           wire: users
                                         - signal: wire/CANCEL
                                           wire: featureflags
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      uesio.display:
-                                        - field: uesio/core.uniquekey
-                                          operator: NOT_IN
-                                          type: fieldValue
-                                          values:
-                                            - guest
-                                            - system
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: deleteUser
+                                        - signal: component/CALL
+                                          component: uesio/io.list
+                                          componentsignal: SET_READ_MODE
+                                          targettype: specific
+                                          componentid: userList
                           avatar:
                             - uesio/io.avatar:
                                 uesio.variant: uesio/appkit.main
@@ -246,6 +260,8 @@ definition:
                                             fieldId: uesio/core.initials
                                         - uesio/io.field:
                                             fieldId: uesio/core.username
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.id
                                         - uesio/io.field:
                                             fieldId: uesio/core.email
                                         - uesio/io.field:
@@ -416,38 +432,31 @@ definition:
                                                       - font-mono
                                                   title: Temporary Password
                                                   subtitle: ${uesio/core.temporary_password}
+                      - uesio/io.item:
+                          # uesio/appkit.section_delete has a hardcoded display condition that the record must be in EDIT mode
+                          # so we wrap it inside an item with EDIT mode since the io.list can be in READ or EDIT mode
+                          mode: EDIT
+                          wire: users
+                          components:
+                            - uesio/appkit.section_delete:
+                                confirm: true
+                                confirmTitle: Are you sure?
+                                confirmMessage: The user ${uesio/core.username} will be deleted. This action cannot be undone.
+                                subtitle: The user will be permanently deleted from the system. Please be sure this what you want to do!
+                                signals:
+                                  - signal: context/SET
+                                    type: SITE_ADMIN
+                                    name: $Param{sitename}
+                                    app: $Param{app}
+                                  - signal: wire/MARK_FOR_DELETE
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - "users"
+                                  - signal: context/CLEAR
+                                    type: SITE_ADMIN
+                                  - signal: "route/NAVIGATE"
+                                    path: app/$Param{app}/site/$Param{sitename}/users
   panels:
-    deleteUser:
-      uesio.type: uesio/io.dialog
-      title: Delete User
-      width: 400px
-      height: 300px
-      components:
-        - uesio/io.text:
-            text: Are you sure you want to delete this user?
-      actions:
-        - uesio/io.button:
-            text: $Label{uesio/io.delete}
-            uesio.variant: uesio/io.primary
-            signals:
-              - signal: context/SET
-                type: SITE_ADMIN
-                name: $Param{sitename}
-                app: $Param{app}
-              - signal: wire/MARK_FOR_DELETE
-              - signal: wire/SAVE
-                wires:
-                  - "users"
-              - signal: context/CLEAR
-                type: SITE_ADMIN
-              - signal: "route/NAVIGATE"
-                path: app/$Param{app}/site/$Param{sitename}/users
-        - uesio/io.button:
-            text: $Label{uesio/io.cancel}
-            uesio.variant: uesio/io.secondary
-            signals:
-              - signal: panel/TOGGLE
-                panel: deleteUser
     newLoginMethod:
       uesio.type: uesio/io.dialog
       title: Create a New Login Method
