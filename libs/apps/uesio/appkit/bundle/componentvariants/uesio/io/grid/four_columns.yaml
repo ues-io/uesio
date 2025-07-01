@@ -1,0 +1,11 @@
+name: four_columns
+label: Four Column Responsive
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-x-6
+      - lg:gap-y-0
+      - grid-cols-1
+      - sm:grid-cols-2
+      - xl:grid-cols-4

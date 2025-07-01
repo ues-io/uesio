@@ -9,10 +9,12 @@ definition:
             title: Audit Information
             uesio.variant: uesio/appkit.sub
         - uesio/io.grid:
-            uesio.variant: uesio/appkit.three_columns
+            uesio.variant: uesio/appkit.four_columns
             items:
               - uesio/io.field:
                   fieldId: uesio/core.owner
+              - uesio/io.field:
+                  fieldId: uesio/core.id
               - uesio/io.field:
                   fieldId: uesio/core.createdby
                   user:
