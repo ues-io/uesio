@@ -30,7 +30,7 @@ slots:
               component: uesio/io.item
               componentsignal: SET_READ_MODE
               targettype: specific
-              componentid: $Prop{wire}_item                
+              componentid: $Prop{wire}_item
           text: Save
           hotkey: "meta+s"
           uesio.variant: uesio/appkit.primary
@@ -59,7 +59,7 @@ slots:
                   value: EDIT
                 - type: wireHasChanges
                   operator: EQUALS
-                  wire: $Prop{wire}       
+                  wire: $Prop{wire}
       - uesio/io.button:
           signals:
             - signal: component/CALL
