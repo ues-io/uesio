@@ -19,7 +19,7 @@ func (c *Connection) invokeModel(requestOptions map[string]any) (any, error) {
 
 	handler, ok := modelHandlers[options.Model]
 	if !ok {
-		return nil, fmt.Errorf("model note supported: %s", options.Model)
+		return nil, fmt.Errorf("model not supported: %s", options.Model)
 	}
 
 	result, inputTokens, outputTokens, err := handler.Invoke(c, options)
