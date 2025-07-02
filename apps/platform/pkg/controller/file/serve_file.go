@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -32,7 +31,6 @@ func respondFile(w http.ResponseWriter, r *http.Request, path string, modified t
 		resp["message"] = "Resource Not Found"
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
-			slog.ErrorContext(r.Context(), err.Error())
 			ctlutil.HandleError(r.Context(), w, err)
 			return
 		}
