@@ -414,6 +414,10 @@ const handlers: Record<MergeType, MergeHandler> = {
         path: propsFrame.path || "",
         readonly: !!componentFrame,
         componentType: propsFrame.componentType,
+        // Our context typing setup isn't really meant to store
+        // a complex object like this, but it's necessary to
+        // keep the context of the creator of a slot so that
+        // it can be used when the slot is eventually rendered.
         context: slotContext as unknown as FieldValue,
       },
     }
