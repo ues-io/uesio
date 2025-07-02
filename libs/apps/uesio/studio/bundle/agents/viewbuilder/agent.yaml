@@ -2,6 +2,6 @@ name: viewbuilder
 label: View Builder
 description: An AI assistant to help with building views.
 tools:
-  - name: str_replace_editor
-    type: text_editor_20241022
+  - name: str_replace_based_edit_tool
+    type: text_editor_20250429
 public: true
