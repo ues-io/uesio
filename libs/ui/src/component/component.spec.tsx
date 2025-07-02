@@ -187,6 +187,39 @@ const resolveDeclarativeComponentDefinitionTests = [
                 path: "",
                 componentType: "me/myapp.testcomponent",
                 readonly: false,
+                slotDef: {
+                  name: "header",
+                },
+                context: expect.objectContaining({
+                  stack: [
+                    {
+                      componentType: "me/myapp.testcomponent",
+                      data: {
+                        header: [
+                          {
+                            "uesio/io.text": {
+                              text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+                            },
+                          },
+                        ],
+                        title: "$Param{foo}",
+                      },
+                      path: "",
+                      slots: [
+                        {
+                          name: "header",
+                        },
+                      ],
+                      type: "PROPS",
+                    },
+                    {
+                      params: { foo: "oof", bar: "rab" },
+                      view: viewName,
+                      viewDef,
+                      type: "VIEW",
+                    },
+                  ],
+                }),
               },
             },
           ],
@@ -235,6 +268,51 @@ const resolveDeclarativeComponentDefinitionTests = [
                 path: "",
                 componentType: "me/myapp.testcomponent",
                 readonly: false,
+                slotDef: {
+                  name: "header",
+                  providesContexts: [
+                    {
+                      type: "WIRE",
+                      wireProperty: "wire",
+                    },
+                  ],
+                },
+                context: expect.objectContaining({
+                  stack: [
+                    {
+                      componentType: "me/myapp.testcomponent",
+                      data: {
+                        header: [
+                          {
+                            "uesio/io.text": {
+                              text: "$ComponentOutput{uesio/tests.notloadedyet:someproperty}",
+                            },
+                          },
+                        ],
+                        title: "$Param{foo}",
+                      },
+                      path: "",
+                      slots: [
+                        {
+                          name: "header",
+                          providesContexts: [
+                            {
+                              type: "WIRE",
+                              wireProperty: "wire",
+                            },
+                          ],
+                        },
+                      ],
+                      type: "PROPS",
+                    },
+                    {
+                      params: { foo: "oof", bar: "rab" },
+                      view: viewName,
+                      viewDef,
+                      type: "VIEW",
+                    },
+                  ],
+                }),
               },
             },
           ],
