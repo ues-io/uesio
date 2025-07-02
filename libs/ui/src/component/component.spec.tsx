@@ -87,14 +87,12 @@ const componentTypeWithSlotsAndContext = {
   ],
 }
 
-const getViewFrame = () => ({
-  params: { foo: "oof", bar: "rab" },
-  view: viewName,
-  viewDef,
-  type: "VIEW",
-})
-
-const getViewContext = () => new Context().addViewFrame(getViewFrame())
+const getViewContext = () =>
+  new Context().addViewFrame({
+    params: { foo: "oof", bar: "rab" },
+    view: viewName,
+    viewDef,
+  })
 
 const resolveDeclarativeComponentDefinitionTests = [
   {
@@ -211,7 +209,12 @@ const resolveDeclarativeComponentDefinitionTests = [
                       ],
                       type: "PROPS",
                     },
-                    getViewFrame(),
+                    {
+                      params: { foo: "oof", bar: "rab" },
+                      view: viewName,
+                      viewDef,
+                      type: "VIEW",
+                    },
                   ],
                 }),
               },
