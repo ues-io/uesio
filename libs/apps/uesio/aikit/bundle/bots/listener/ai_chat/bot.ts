@@ -43,8 +43,6 @@ export default function ai_chat(bot: ListenerBotApi) {
     "uesio/aikit.bedrock",
     "invokemodel",
     {
-      //model: "anthropic.claude-3-sonnet-20240229-v1:0",
-      model: "anthropic.claude-3-haiku-20240307-v1:0",
       messages,
       system: systemPrompt,
     },

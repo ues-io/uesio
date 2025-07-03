@@ -13,6 +13,10 @@ func (c *Connection) invokeModel(requestOptions map[string]any) (any, error) {
 		return nil, err
 	}
 
+	if options.Model == "" {
+		options.Model = BEDROCK_DEFAULT_MODEL_ID
+	}
+
 	handler, ok := modelHandlers[options.Model]
 	if !ok {
 		return nil, fmt.Errorf("model not supported: %s", options.Model)

@@ -16,8 +16,6 @@ function run(bot) {
   const doLogoAndBackground =
     doLogoAndBackgroundParam && doLogoAndBackgroundParam !== "false"
 
-  const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
-
   let headerLogoFile = "uesio/sitekit.yourlogo"
   let headerLogoFilePath = ""
   let footerLogoFile = "uesio/sitekit.yourlogo"
@@ -301,7 +299,6 @@ function run(bot) {
       "uesio/aikit.bedrock",
       "invokemodel",
       {
-        model: modelID,
         messages: [
           {
             role: "user",

@@ -29,7 +29,7 @@ type AgentChatDefinition = {
   afterChatSignals?: signal.SignalDefinition[] | string
 }
 
-const REPLACEMENT_TOOL = "str_replace_editor"
+const REPLACEMENT_TOOL = "str_replace_based_edit_tool"
 
 const StyleDefaults = Object.freeze({
   root: [],

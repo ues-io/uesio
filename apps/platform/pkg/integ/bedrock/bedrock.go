@@ -82,21 +82,21 @@ type ModelHandler interface {
 	Stream(c *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error)
 }
 
-const CLAUDE_3_HAIKU_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
-const CLAUDE_3_SONNET_MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
-const CLAUDE_3_5_SONNET_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
-const CLAUDE_3_OPUS_MODEL_ID = "anthropic.claude-3-opus-20240229-v1:0"
+const CLAUDE_3_5_HAIKU_MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+const CLAUDE_4_OPUS_MODEL_ID = "us.anthropic.claude-opus-4-20250514-v1:0"
+const CLAUDE_4_SONNET_MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
 const STABILITY_IMAGE_ULTRA_MODEL_ID = "stability.stable-image-ultra-v1:0"
 const UESIO_TEST_SIMPLE_MODEL_ID = "uesio.test-simple-responder"
 const UESIO_TEST_ANTHROPIC_MODEL_ID = "uesio.test-anthropic-format"
 
+const BEDROCK_DEFAULT_MODEL_ID = CLAUDE_3_5_HAIKU_MODEL_ID
+
 var modelHandlers = map[string]ModelHandler{
 	UESIO_TEST_ANTHROPIC_MODEL_ID:  uesioTestAnthropicModelHandler,
 	UESIO_TEST_SIMPLE_MODEL_ID:     uesioTestModelHandler,
-	CLAUDE_3_HAIKU_MODEL_ID:        claudeModelHandler,
-	CLAUDE_3_SONNET_MODEL_ID:       claudeModelHandler,
-	CLAUDE_3_5_SONNET_MODEL_ID:     claudeModelHandler,
-	CLAUDE_3_OPUS_MODEL_ID:         claudeModelHandler,
+	CLAUDE_3_5_HAIKU_MODEL_ID:      claudeModelHandler,
+	CLAUDE_4_OPUS_MODEL_ID:         claudeModelHandler,
+	CLAUDE_4_SONNET_MODEL_ID:       claudeModelHandler,
 	STABILITY_IMAGE_ULTRA_MODEL_ID: stabilityModelHandler,
 }
 

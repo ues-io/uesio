@@ -76,18 +76,6 @@ type ClaudeModelHandler struct {
 var claudeModelHandler = &ClaudeModelHandler{}
 
 func (cmh *ClaudeModelHandler) GetClientOptions(input *bedrockruntime.InvokeModelInput) func(o *bedrockruntime.Options) {
-
-	// TODO: Claude 3.5 Sonnet is currently only supported on us-west-2
-	// see: https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html
-	// If there becomes broader support for this model on other regions, we can remove this.
-	// Also there is a thing called cross region inference, which I don't fully understand.
-	// https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html
-	if *input.ModelId == CLAUDE_3_5_SONNET_MODEL_ID {
-		return func(o *bedrockruntime.Options) {
-			o.Region = "us-west-2"
-		}
-	}
-
 	return func(o *bedrockruntime.Options) {}
 }
 
@@ -106,12 +94,6 @@ func (cmh *ClaudeModelHandler) GetBody(options *InvokeModelOptions) ([]byte, err
 	}
 
 	anthropicBeta := []string{}
-	// NOTE: This computer use antropic beta flag allows us to use tools
-	// like the "text_editor_20241022" tool provided by anthropic.
-	// It changes the schema validator to allow tools to have a "type" property.
-	if options.Model == CLAUDE_3_5_SONNET_MODEL_ID {
-		anthropicBeta = []string{"computer-use-2024-10-22"}
-	}
 
 	return json.Marshal(AnthropicMessagesInput{
 		Messages:         messages,

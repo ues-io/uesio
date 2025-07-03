@@ -109,7 +109,7 @@ const handleMessage = (
   context: context.Context,
   message: ToolUseResponse,
 ): ToolResultResponse => {
-  if (message.name === "str_replace_editor") {
+  if (message.name === "str_replace_based_edit_tool") {
     return handleReplaceEditor(context, message)
   }
 

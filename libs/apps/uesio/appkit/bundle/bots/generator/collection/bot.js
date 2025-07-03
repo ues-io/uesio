@@ -27,8 +27,6 @@ function run(bot) {
     .concat("user")
     .concat(...(additionalCollections || []))
 
-  const modelID = "anthropic.claude-3-haiku-20240307-v1:0"
-
   const systemPrompt = `
 		You are an assistant who specializes in creating data models for databases.
 		You deeply understand relational databases and seek to complete the task in
@@ -140,7 +138,6 @@ function run(bot) {
     "uesio/aikit.bedrock",
     "invokemodel",
     {
-      model: modelID,
       messages: [
         {
           role: "user",

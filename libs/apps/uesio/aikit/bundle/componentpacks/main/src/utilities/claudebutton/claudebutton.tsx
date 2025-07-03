@@ -67,7 +67,6 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
                 stepId,
                 params: {
                   input: prompt,
-                  model: "anthropic.claude-3-haiku-20240307-v1:0",
                   temperature: 0.5,
                   tools,
                   tool_choice: toolChoice,
