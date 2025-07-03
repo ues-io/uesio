@@ -14,6 +14,13 @@ interface FileImageProps {
   accept?: string
 }
 
+interface EditButtonsProps {
+  mode?: context.FieldMode
+  fileInfo?: FileInfo
+  uploadLabelId: string
+  deleteLabelId: string
+}
+
 const StyleDefaults = Object.freeze({
   root: ["relative", "group"],
   actionicon: [
@@ -35,6 +42,37 @@ const StyleDefaults = Object.freeze({
   nofileicon: ["text-4xl", "p-8", "text-slate-400"],
 })
 
+const EditButtons: definition.UtilityComponent<EditButtonsProps> = (props) => {
+  const { mode, fileInfo, uploadLabelId, deleteLabelId, classes, context } =
+    props
+  if (!classes) return
+  if (mode !== "EDIT") return
+  // only show the edit button if we're not an attachment
+  // or we don't have any file info
+  const showEditButton = !fileInfo || !fileInfo?.isAttachment
+  const showDeleteButton = !!fileInfo
+  return (
+    <>
+      {showEditButton && (
+        <label
+          className={styles.cx(classes.editicon, classes.actionicon)}
+          htmlFor={uploadLabelId}
+        >
+          <Icon context={context} icon="edit" />
+        </label>
+      )}
+      {showDeleteButton && (
+        <label
+          className={styles.cx(classes.deleteicon, classes.actionicon)}
+          htmlFor={deleteLabelId}
+        >
+          <Icon context={context} icon="delete" />
+        </label>
+      )}
+    </>
+  )
+}
+
 const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   const { context, mode, fileInfo, accept, onUpload, onDelete } = props
 
@@ -53,24 +91,14 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
       uploadLabelId={uploadLabelId}
       deleteLabelId={deleteLabelId}
     >
-      {mode === "EDIT" && (
-        <>
-          <label
-            className={styles.cx(classes.editicon, classes.actionicon)}
-            htmlFor={uploadLabelId}
-          >
-            <Icon context={context} icon="edit" />
-          </label>
-          {fileInfo && (
-            <label
-              className={styles.cx(classes.deleteicon, classes.actionicon)}
-              htmlFor={deleteLabelId}
-            >
-              <Icon context={context} icon="delete" />
-            </label>
-          )}
-        </>
-      )}
+      <EditButtons
+        context={context}
+        mode={mode}
+        fileInfo={fileInfo}
+        classes={classes}
+        uploadLabelId={uploadLabelId}
+        deleteLabelId={deleteLabelId}
+      />
       {fileInfo ? (
         // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
         <img className={classes.image} src={fileInfo.url} />
@@ -87,6 +115,6 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   )
 }
 
-export { StyleDefaults }
+export { StyleDefaults, EditButtons }
 
 export default FileImage

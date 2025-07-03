@@ -2,6 +2,8 @@ package systemdialect
 
 import (
 	"errors"
+	"mime"
+	"path"
 	"slices"
 	"strings"
 
@@ -16,7 +18,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/goutils"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/types/file"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
@@ -112,7 +113,7 @@ const (
 	appNameField       = "uesio/studio.appname"
 	allMetadataField   = "uesio/studio.allmetadata"
 	isCommonFieldField = "uesio/studio.iscommonfield"
-	attachmentsField   = "uesio/studio.attachments"
+	attachmentsField   = "uesio/core.attachments"
 )
 
 func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
@@ -239,7 +240,6 @@ var fakeFields = []string{
 	"uesio/studio.appicon",
 	"uesio/studio.appcolor",
 	"uesio/studio.appname",
-	"uesio/studio.attachments",
 }
 
 func setField(fieldName string, from, to meta.Item) error {
@@ -492,14 +492,29 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 				// Also get attachments
 				attachableItem, isAttachableItem := item.(meta.AttachableItem)
 				if isAttachableItem {
-					pathInfo, err := bundle.GetAttachmentPaths(attachableItem, session, connection)
+					pathInfos, err := bundle.GetAttachmentPaths(attachableItem, session, connection)
 					if err != nil {
 						return err
 					}
-					collectionMetadata.SetField(attachmentsFieldMeta)
-					pathInfoWrappers := make([]file.MetadataWrapper, len(pathInfo))
-					for i, path := range pathInfo {
-						pathInfoWrappers[i] = file.MetadataWrapper{Metadata: path}
+					pathInfoWrappers := make([]*meta.UserFileMetadata, len(pathInfos))
+					for i, pathInfo := range pathInfos {
+						ufm, ok := pathInfo.(*meta.UserFileMetadata)
+						if ok {
+							// If we went to the workspace bundlestore, our data is correct out of the box.
+							pathInfoWrappers[i] = ufm
+							continue
+						}
+						filePath := pathInfo.Path()
+						// Otherwise, fake the user file info
+						pathInfoWrappers[i] = &meta.UserFileMetadata{
+							BuiltIn: meta.BuiltIn{
+								UpdatedAt: pathInfo.LastModified().Unix(),
+							},
+							FilePath:          filePath,
+							FileContentLength: pathInfo.ContentLength(),
+							MimeType:          mime.TypeByExtension(path.Ext(filePath)),
+						}
+
 					}
 					opItem.SetField(fieldName, pathInfoWrappers)
 				}

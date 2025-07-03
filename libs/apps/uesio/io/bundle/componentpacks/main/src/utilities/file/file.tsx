@@ -9,6 +9,7 @@ type FileInfo = {
   url: string
   name: string
   mimetype: string
+  isAttachment: boolean
 }
 
 interface FileUtilityProps {
@@ -49,7 +50,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
     <>
       {mode === "EDIT" && (
         <UploadArea
-          onUpload={onUpload}
+          onUpload={fileInfo?.isAttachment ? undefined : onUpload}
           onDelete={onDelete}
           context={context}
           accept={accept}
@@ -68,12 +69,12 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
         </UploadArea>
       )}
 
-      {
+      {fileInfo && fileInfo.url && (
         <Tile
           context={context}
           className={styles.cx(classes.root, classes.input, classes.readonly)}
         >
-          {fileInfo && (
+          {
             <div className={classes.selecteditemwrapper}>
               <div className={classes.selectediteminner}>{fileInfo.name}</div>
               <a href={fileInfo.url}>
@@ -95,9 +96,9 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
                 </label>
               )}
             </div>
-          )}
+          }
         </Tile>
-      }
+      )}
     </>
   )
 }
