@@ -111,6 +111,7 @@ definition:
                                   root:
                                     - mt-6
                                     - gap-6
+                                    - lg:gap-y-6
                                 items:
                                   - uesio/io.field:
                                       wrapperVariant: uesio/io.minimal
