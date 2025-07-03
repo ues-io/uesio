@@ -106,15 +106,32 @@ var COLLECTION_FIELD_DEF = meta.Field{
 	},
 }
 
+var ATTACHMENTS_FIELD_DEF = meta.Field{
+	BundleableBase: meta.BundleableBase{
+		Name:      "attachments",
+		Namespace: "uesio/core",
+		Label:     "Attachments",
+	},
+	ReadOnly: true,
+	Type:     "REFERENCEGROUP",
+	ReferenceGroupMetadata: &meta.ReferenceGroupMetadata{
+		Collection: "uesio/core.userfile",
+		Field:      "uesio/core.recordid",
+		OnDelete:   "CASCADE",
+		Namespace:  "uesio/core",
+	},
+}
+
 var BUILTIN_FIELDS_MAP = map[string]meta.Field{
-	commonfields.Id:         ID_FIELD_DEF,
-	commonfields.UniqueKey:  UNIQUE_KEY_FIELD_DEF,
-	commonfields.Owner:      OWNER_FIELD_DEF,
-	commonfields.CreatedBy:  CREATEDBY_FIELD_DEF,
-	commonfields.UpdatedBy:  UPDATEDBY_FIELD_DEF,
-	commonfields.CreatedAt:  CREATEDAT_FIELD_DEF,
-	commonfields.UpdatedAt:  UPDATEDAT_FIELD_DEF,
-	commonfields.Collection: COLLECTION_FIELD_DEF,
+	commonfields.Id:          ID_FIELD_DEF,
+	commonfields.UniqueKey:   UNIQUE_KEY_FIELD_DEF,
+	commonfields.Owner:       OWNER_FIELD_DEF,
+	commonfields.CreatedBy:   CREATEDBY_FIELD_DEF,
+	commonfields.UpdatedBy:   UPDATEDBY_FIELD_DEF,
+	commonfields.CreatedAt:   CREATEDAT_FIELD_DEF,
+	commonfields.UpdatedAt:   UPDATEDAT_FIELD_DEF,
+	commonfields.Collection:  COLLECTION_FIELD_DEF,
+	commonfields.Attachments: ATTACHMENTS_FIELD_DEF,
 }
 
 var BUILTIN_FIELD_KEYS = []string{
@@ -126,6 +143,7 @@ var BUILTIN_FIELD_KEYS = []string{
 	commonfields.CreatedAt,
 	commonfields.UpdatedAt,
 	commonfields.Collection,
+	commonfields.Attachments,
 }
 
 func AddAllBuiltinFields(fields meta.BundleableGroup, collectionKey string) {

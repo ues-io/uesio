@@ -6,7 +6,6 @@ import (
 	"slices"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -24,32 +23,6 @@ func getCascadeDeletes(
 	}
 
 	deleteIds := op.Deletes.GetIDs()
-	userFilesToDelete := &wire.Collection{}
-	userFileIdLoadOp := &wire.LoadOp{
-		CollectionName: meta.USERFILEMETADATA_COLLECTION_NAME,
-		Collection:     userFilesToDelete,
-		WireName:       "deleteUserFiles",
-		Conditions: []wire.LoadRequestCondition{
-			{
-				Field:    "uesio/core.recordid",
-				Value:    deleteIds,
-				Operator: "IN",
-			},
-		},
-		Query:   true,
-		LoadAll: true,
-	}
-
-	err := LoadWithError(userFileIdLoadOp, session, &LoadOptions{
-		Connection: connection,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if userFilesToDelete.Len() > 0 {
-		cascadeDeleteFKs[meta.USERFILEMETADATA_COLLECTION_NAME] = *userFilesToDelete
-	}
 
 	metadata, err := op.GetMetadata()
 	if err != nil {
