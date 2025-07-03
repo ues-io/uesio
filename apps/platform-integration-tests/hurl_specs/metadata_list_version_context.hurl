@@ -72,7 +72,7 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/version/uesio
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$[*]" count == 17
+jsonpath "$[*]" count == 18
 # Spot check a uesio/tests field
 jsonpath "$['uesio/tests.genus'].key" == "uesio/tests.genus"
 jsonpath "$['uesio/tests.genus'].namespace" == "uesio/tests"
