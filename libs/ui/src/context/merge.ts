@@ -213,13 +213,10 @@ const handlers: Record<MergeType, MergeHandler> = {
     }).format(value)
   },
   FileSize: (expression, context) => {
-    const bytes = context.merge(expression) as number
-    if (!bytes) {
-      return ""
-    }
+    const bytes = context.merge(expression) as number | 0
     const units = ["byte", "kilobyte", "megabyte", "terabyte", "petabyte"]
     const divisor = 1024
-    const unit = Math.floor(Math.log(bytes) / Math.log(divisor))
+    const unit = bytes ? Math.floor(Math.log(bytes) / Math.log(divisor)) : 0
     return new Intl.NumberFormat("en", {
       style: "unit",
       unit: units[unit],

@@ -2,7 +2,7 @@ import { definition, styles, context } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
-import { StyleDefaults } from "../fileimage/fileimage"
+import { EditButtons, StyleDefaults } from "../fileimage/fileimage"
 import { FileInfo } from "../file/file"
 
 interface FileVideoProps {
@@ -45,24 +45,14 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
       uploadLabelId={uploadLabelId}
       deleteLabelId={deleteLabelId}
     >
-      {mode === "EDIT" && (
-        <>
-          <label
-            className={styles.cx(classes.editicon, classes.actionicon)}
-            htmlFor={uploadLabelId}
-          >
-            <Icon context={context} icon="edit" />
-          </label>
-          {fileInfo && (
-            <label
-              className={styles.cx(classes.deleteicon, classes.actionicon)}
-              htmlFor={deleteLabelId}
-            >
-              <Icon context={context} icon="delete" />
-            </label>
-          )}
-        </>
-      )}
+      <EditButtons
+        context={context}
+        mode={mode}
+        fileInfo={fileInfo}
+        classes={classes}
+        uploadLabelId={uploadLabelId}
+        deleteLabelId={deleteLabelId}
+      />
       {fileInfo ? (
         <video autoPlay={autoplay || true} muted={muted || true}>
           <source src={fileUrl} />

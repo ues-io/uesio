@@ -3,7 +3,7 @@ import { definition, styles } from "@uesio/ui"
 
 interface UploadAreaProps {
   accept?: string
-  onUpload: (files: FileList | null) => void
+  onUpload?: (files: FileList | null) => void
   onDelete?: () => void
   onClick?: () => void
   uploadLabelId?: string
@@ -32,7 +32,7 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
   const onDrop = (e: DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    onUpload(e.dataTransfer.files)
+    onUpload?.(e.dataTransfer.files)
   }
 
   const onDragOver = (e: DragEvent) => {
@@ -61,33 +61,37 @@ const UploadArea: definition.UtilityComponent<UploadAreaProps> = (props) => {
 
   return (
     <>
-      <div
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onDragEnter={onDragEnter}
-        onDragLeave={onDragLeave}
-        className={classes.root}
-        onClick={(e) => {
-          if (props.onClick) {
-            e.preventDefault()
-            e.stopPropagation()
-            props.onClick()
-          }
-        }}
-      >
-        {children}
-      </div>
-      <input
-        className={classes.fileinput}
-        type="file"
-        accept={accept}
-        onChange={(e) => {
-          onUpload(e.target.files)
-          resetFile()
-        }}
-        ref={fileInputRef}
-        id={uploadLabelId}
-      />
+      {onUpload && (
+        <>
+          <div
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onDragEnter={onDragEnter}
+            onDragLeave={onDragLeave}
+            className={classes.root}
+            onClick={(e) => {
+              if (props.onClick) {
+                e.preventDefault()
+                e.stopPropagation()
+                props.onClick()
+              }
+            }}
+          >
+            {children}
+          </div>
+          <input
+            className={classes.fileinput}
+            type="file"
+            accept={accept}
+            onChange={(e) => {
+              onUpload(e.target.files)
+              resetFile()
+            }}
+            ref={fileInputRef}
+            id={uploadLabelId}
+          />
+        </>
+      )}
       {onDelete && (
         <input
           className={classes.fileinput}
