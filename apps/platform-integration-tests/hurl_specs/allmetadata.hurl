@@ -172,16 +172,17 @@ HTTP 200
 # this number should be the number of common fields
 # TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
 # data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
-# explicit/more meaningful. 
-jsonpath "$.wires[0].data" count == 8
-jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.collection"
-jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
-jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
-jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
-jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
-jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
-jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
-jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
+# explicit/more meaningful.
+jsonpath "$.wires[0].data" count == 9
+jsonpath "$.wires[0].data[0]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.attachments"
+jsonpath "$.wires[0].data[1]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.collection"
+jsonpath "$.wires[0].data[2]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdat"
+jsonpath "$.wires[0].data[3]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.createdby"
+jsonpath "$.wires[0].data[4]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.id"
+jsonpath "$.wires[0].data[5]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.owner"
+jsonpath "$.wires[0].data[6]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.uniquekey"
+jsonpath "$.wires[0].data[7]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedat"
+jsonpath "$.wires[0].data[8]['uesio/core.uniquekey']" == "uesio/tests.animal:uesio/core.updatedby"
 
 # Get a list of all secrets available to our workspace
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load

@@ -148,7 +148,7 @@ describe("Uesio Sanity Smoke Tests", () => {
         // TODO: Unclear why this assert exists as its fragile and likely does not help in any way since underlying
         // data can change across the test suite.  Evaluate this tests purpose and adjust the assert to be
         // explicit/more meaningful, for example assert that the specific fields we expect to be there are there.
-        .should("have.length", 8)
+        .should("have.length", 9)
     })
   })
 
