@@ -45,7 +45,7 @@ var specialRefs = map[string]SpecialReferences{
 		ReferenceMetadata: &wire.ReferenceMetadata{
 			Collection: "uesio/core.userfile",
 		},
-		Fields: []string{"uesio/core.mimetype", "uesio/core.path", "uesio/core.updatedat"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.path", "uesio/core.updatedat", "uesio/core.fieldid"},
 	},
 	"USER": {
 		ReferenceMetadata: &wire.ReferenceMetadata{

@@ -34,15 +34,6 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
   // If we don't have a record in context, bail
   if (!record) return null
 
-  const collectionName = record.getWire().getCollection().getFullName()
-
-  if (collectionName !== "uesio/core.userfile")
-    throw new Error(
-      "Wrong Record Type In Context: " +
-        collectionName +
-        " Expecting a userfile",
-    )
-
   const userFile = record.source as UserFileMetadata
 
   return (

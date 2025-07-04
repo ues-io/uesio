@@ -81,6 +81,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
           url: fileUrl,
           name: userFile["uesio/core.path"],
           mimetype: userFile["uesio/core.mimetype"],
+          isAttachment: !userFile["uesio/core.fieldid"],
         }
       : undefined
 
