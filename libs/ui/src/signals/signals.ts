@@ -15,6 +15,7 @@ import notificationSignals from "../bands/notification/signals"
 import oauth2Signals from "../bands/oauth2/signals"
 import viewSignals from "../bands/view/signals"
 import contextSignals from "../context/signals"
+import userfileSignals from "../bands/userfile/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
 import {
@@ -36,6 +37,7 @@ const registry: Record<string, SignalDescriptor> = {
   ...contextSignals,
   ...oauth2Signals,
   ...viewSignals,
+  ...userfileSignals,
 }
 
 const run = (signal: SignalDefinition, context: Context) => {

@@ -380,6 +380,19 @@ class Context {
     return this.clone(this.stack.slice(index + 1)).removeViewFrame(times - 1)
   }
 
+  removeViewFrameById = (viewDef: string): Context => {
+    // Find the index where we are a view frame with the matching id
+    const index = this.stack.findIndex(
+      (frame): frame is ViewContextFrame =>
+        hasViewContext(frame) && frame.viewDef === viewDef,
+    )
+    // If we didn't find this view frame don't do anything
+    if (index === -1) {
+      return this
+    }
+    return this.clone(this.stack.slice(index + 1))
+  }
+
   removeAllPropsFrames = (): Context =>
     this.clone(
       this.stack.filter(
