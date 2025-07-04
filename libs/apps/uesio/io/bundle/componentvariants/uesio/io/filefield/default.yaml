@@ -10,7 +10,8 @@ definition:
       - border(& dashed slate-200 4)
       - hover:border(& dashed blue-200 4)
       - rounded-lg
-      - p-10
+      - px-10
+      - py-7
       - text-sm
       - text-slate-400
       - font-light

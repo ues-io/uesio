@@ -59,8 +59,12 @@ definition:
             uesio.styleTokens:
               root:
                 - $Region{panel}
+              header:
+                - $Region{panelHeader}
               inner:
                 - $Region{panelInner}
+              footer:
+                - $Region{panelFooter}
             header:
               - uesio/io.titlebar:
                   title: $Prop{title}

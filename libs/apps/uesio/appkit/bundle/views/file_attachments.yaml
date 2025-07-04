@@ -1,0 +1,69 @@
+name: file_attachments
+public: true
+definition:
+  wires:
+    newattachment:
+      collection: uesio/core.userfile
+      fields:
+        uesio/core.id:
+        uesio/core.path:
+        uesio/core.recordid:
+        uesio/core.contentlength:
+        uesio/core.collectionid:
+        uesio/core.mimetype:
+        uesio/core.updatedat:
+      init:
+        create: true
+        query: false
+      defaults:
+        - field: uesio/core.recordid
+          valueSource: VALUE
+          value: $Param{recordid}
+        - field: uesio/core.collectionid
+          valueSource: VALUE
+          value: $Param{collection}
+  components:
+    - uesio/io.box:
+        uesio.variant: uesio/appkit.section
+        components:
+          - uesio/io.titlebar:
+              title: Contents
+              uesio.variant: uesio/appkit.sub
+          - uesio/io.box:
+              uesio.styleTokens:
+                root:
+                  - mt-6
+              components:
+                - uesio/io.box:
+                    uesio.display:
+                      - type: paramIsNotSet
+                        param: readonly
+                    uesio.styleTokens:
+                      root:
+                        - min-h-[84px]
+                    components:
+                      - uesio/io.item:
+                          wire: newattachment
+                          components:
+                            - uesio/io.fileattachment:
+                                mode: EDIT
+                                onUploadSignals:
+                                  - signal: wire/RESET
+                                    wire: newattachment
+                                  - signal: context/CLEAR
+                                    type: VIEW
+                                  - signal: wire/LOAD
+                - uesio/io.grid:
+                    uesio.variant: uesio/appkit.two_columns_large
+                    uesio.styleTokens:
+                      root:
+                        - mt-6
+                        - gap-6
+                    items:
+                      - uesio/io.field:
+                          wrapperVariant: uesio/io.minimal
+                          fieldId: uesio/core.attachments
+                          labelPosition: none
+                          reference:
+                            components:
+                              - uesio/appkit.tile_file:

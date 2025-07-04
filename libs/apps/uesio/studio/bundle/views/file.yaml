@@ -32,32 +32,6 @@ definition:
           value: true
         - field: uesio/studio.item
           value: $Param{namespace}.$Param{filename}
-    newattachment:
-      collection: uesio/core.userfile
-      fields:
-        uesio/core.id:
-        uesio/core.path:
-        uesio/core.recordid:
-        uesio/core.contentlength:
-        uesio/core.collectionid:
-        uesio/core.mimetype:
-        uesio/core.updatedat:
-      conditions:
-        - field: uesio/core.recordid
-          valueSource: LOOKUP
-          lookupWire: files
-          lookupField: uesio/core.id
-      init:
-        create: true
-        query: false
-      defaults:
-        - field: uesio/core.recordid
-          valueSource: LOOKUP
-          lookupWire: files
-          lookupField: uesio/core.id
-        - field: uesio/core.collectionid
-          valueSource: VALUE
-          value: uesio/studio.file
   # Components are how we describe the layout of our view
   components:
     - uesio/io.viewlayout:
@@ -99,106 +73,12 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.path
-                      - uesio/io.box:
-                          uesio.variant: uesio/appkit.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: Contents
-                                uesio.variant: uesio/appkit.sub
-                            - uesio/io.grid:
-                                uesio.variant: uesio/appkit.two_columns
-                                uesio.styleTokens:
-                                  root:
-                                    - mt-6
-                                    - gap-6
-                                    - lg:gap-y-6
-                                items:
-                                  - uesio/io.field:
-                                      wrapperVariant: uesio/io.minimal
-                                      fieldId: uesio/core.attachments
-                                      labelPosition: none
-                                      reference:
-                                        components:
-                                          - uesio/io.card:
-                                              uesio.variant: uesio/appkit.main
-                                              uesio.styleTokens:
-                                                titlebarTitle:
-                                                  - break-all
-                                              title: ${uesio/core.path}
-                                              subtitle: ${uesio/core.mimetype}
-                                              actions:
-                                                - uesio/io.box:
-                                                    components:
-                                                      - uesio/io.text:
-                                                          uesio.styleTokens:
-                                                            root:
-                                                              - bg-white
-                                                              - w-max
-                                                          uesio.variant: uesio/appkit.badge
-                                                          text: $FileSize{${uesio/core.contentlength}}
-                                                          element: div
-                                              content:
-                                                - uesio/io.box:
-                                                    uesio.display:
-                                                      - type: paramValue
-                                                        param: app
-                                                        operator: EQUALS
-                                                        value: $Param{namespace}
-                                                    components:
-                                                      - uesio/io.fileattachment:
-                                                          displayAs: PREVIEW
-                                                          mode: EDIT
-                                                          onUploadSignals:
-                                                            - signal: wire/LOAD
-                                                              wires:
-                                                                - files
-                                                          onDeleteSignals:
-                                                            - signal: wire/LOAD
-                                                              wires:
-                                                                - files
-                                                - uesio/io.box:
-                                                    uesio.display:
-                                                      - type: paramValue
-                                                        param: app
-                                                        operator: NOT_EQUALS
-                                                        value: $Param{namespace}
-                                                    components:
-                                                      - uesio/io.image:
-                                                          uesio.context:
-                                                            workspace:
-                                                              name: $Param{workspacename}
-                                                              app: $Param{app}
-                                                          file: $Parent.Record{uesio/studio.namespace}.$Parent.Record{uesio/studio.name}
-                                                          filepath: ${uesio/core.path}
-                                                          uesio.display:
-                                                            - type: hasValue
-                                                              value: $StartsWith{${uesio/core.mimetype}:image}
-                                                      - uesio/io.emptystate:
-                                                          subtitle: No Preview Available
-                                                          icon: mist
-                                                          uesio.display:
-                                                            - type: hasNoValue
-                                                              value: $StartsWith{${uesio/core.mimetype}:image}
-                                  - uesio/io.item:
-                                      wire: newattachment
-                                      uesio.display:
-                                        - type: paramValue
-                                          param: app
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      components:
-                                        - uesio/io.box:
-                                            components:
-                                              - uesio/io.fileattachment:
-                                                  displayAs: PREVIEW
-                                                  mode: EDIT
-                                                  onUploadSignals:
-                                                    - signal: wire/LOAD
-                                                      wires:
-                                                        - files
-                                                    - signal: wire/RESET
-                                                      wire: newattachment
-                                                  onDeleteSignals:
-                                                    - signal: wire/LOAD
-                                                      wires:
-                                                        - files
+                      - uesio/core.view:
+                          view: uesio/appkit.file_attachments
+                          uesio.id: attachments
+                          params:
+                            collection: uesio/studio.file
+                            recordid: ${uesio/core.id}
+                            app: $Param{app}
+                            workspacename: $Param{workspacename}
+                            readonly: $NotEquals{$Param{namespace}:$Param{app}}

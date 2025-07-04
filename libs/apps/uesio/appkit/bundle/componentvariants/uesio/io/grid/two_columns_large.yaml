@@ -1,0 +1,9 @@
+name: two_columns_large
+label: Two Column Responsive Large
+public: true
+definition:
+  uesio.styleTokens:
+    root:
+      - gap-x-6
+      - grid-cols-1
+      - md:grid-cols-2
