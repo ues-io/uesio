@@ -42,6 +42,8 @@ type MergeType =
   | "Date"
   | "If"
   | "StartsWith"
+  | "Equals"
+  | "NotEquals"
   | "Number"
   | "Currency"
   | "RecordMeta"
@@ -259,6 +261,16 @@ const handlers: Record<MergeType, MergeHandler> = {
     const mergedValue = context.mergeString(value)
     return mergedValue.startsWith(search)
   },
+  Equals: (expression, context) => {
+    const [value, search] = parseTwoPartExpression(expression)
+    const mergedValue = context.mergeString(value)
+    return mergedValue === context.mergeString(search)
+  },
+  NotEquals: (expression, context) => {
+    const [value, search] = parseTwoPartExpression(expression)
+    const mergedValue = context.mergeString(value)
+    return mergedValue !== context.mergeString(search)
+  },
   FeatureFlag: (expression, context) =>
     context.getFeatureFlag(expression)?.value,
   Route: (expression, context) => {
@@ -336,13 +348,19 @@ const handlers: Record<MergeType, MergeHandler> = {
     context.getConfigValue(expression) || "",
   File: (expression, context) => {
     const [fileName, filePath] = parseFileExpression(expression)
-    return getURLFromFullName(context, fileName, filePath)
+    return getURLFromFullName(
+      context,
+      context.mergeString(fileName),
+      context.mergeString(filePath),
+    )
   },
   UserFile: (expression, context) => {
     const [wireName, fieldName] = parseWireExpression(expression)
-    const file = context
-      .getRecord(wireName)
-      ?.getFieldValue<PlainWireRecord>(fieldName)
+    // If the expression is blank, then it means that the record in context
+    // is itself a UserFile.
+    const file = fieldName
+      ? context.getRecord(wireName)?.getFieldValue<PlainWireRecord>(fieldName)
+      : context.getRecord()?.source
     if (!file) return ""
     const fileId = file[ID_FIELD] as string
     if (!fileId) return ""
