@@ -15,33 +15,40 @@ var (
 		cw.NoTransform(),
 		cw.Private(),
 	}
+	noCacheOpts = []func(o *cw.CacheOptions){
+		cw.NoCache(),
+		cw.NoStore(),
+		cw.MustRevalidate(),
+	}
 )
 
 func SetNoCache(w http.ResponseWriter) {
-	setCacheHeader(w, cw.NoCache())
+	setCacheHeader(w, noCacheOpts...)
 }
 
 // Set1YearCache implements a default caching policy for client-side assets
 func Set1YearCache(w http.ResponseWriter) {
 	if isHTTPCachingEnabled() {
 		setCacheHeader(w, oneYearCacheOpts...)
+	} else {
+		SetNoCache(w)
 	}
 }
 
 // With1YearCache implements a default caching policy for client-side assets
 func With1YearCache(handler http.Handler) http.Handler {
+	// cw.Cached expects an optionFunc but its private.  We can define our
+	// own option functions (usingfunc(o *cw.CacheOptions)) and are able
+	// to pass those in individually but we can not put them in a slice
+	// and then spread to the variadic argument. To simplify, we create a single
+	// function to wrap the desired behavior we want so that we can
+	// use the same slice of optionFunc's when directly setting header
+	// vs in via the handler.
 	if isHTTPCachingEnabled() {
-		// cw.Cached expects an optionFunc but its private.  We can define our
-		// own option functions (usingfunc(o *cw.CacheOptions)) and are able
-		// to pass those in individually but we can put them in a slice
-		// and then spread to the variadic argument (am I missing something
-		// in go or is this just not possible?). For now, we create a single
-		// function to wrap the desired behavior we want so that we can
-		// use the same slice of optionFunc's when directly setting header
-		// vs in via the handler.
 		return cw.Cached(handler, oneYearCache())
+	} else {
+		return cw.Cached(handler, noCache())
 	}
-	return handler
 }
 
 func WithAccessControlAllowOriginHeader(h http.Handler, origins string) http.Handler {
@@ -63,6 +70,14 @@ func setCacheHeader(w http.ResponseWriter, opts ...func(o *cw.CacheOptions)) {
 func oneYearCache() func(o *cw.CacheOptions) {
 	return func(co *cw.CacheOptions) {
 		for _, o := range oneYearCacheOpts {
+			o(co)
+		}
+	}
+}
+
+func noCache() func(o *cw.CacheOptions) {
+	return func(co *cw.CacheOptions) {
+		for _, o := range noCacheOpts {
 			o(co)
 		}
 	}
