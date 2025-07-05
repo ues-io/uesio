@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -41,7 +41,8 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s.zip\"", version))
+	w.Header().Set("Content-Type", "application/zip")
+	file.SetContentDispositionHeader(w, "attachment", version+".zip")
 	middleware.Set1YearCache(w)
 	ctlutil.AddTrailingStatus(w)
 
