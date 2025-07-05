@@ -279,8 +279,8 @@ func GetSiteMergeData(site *meta.Site) *preload.SiteMergeData {
 func getFaviconVersion(site *meta.Site) string {
 	// intentionally ignore error here since it should not happen
 	// and if so we use version of bundle as a fallback
-	fileItem, _ := meta.NewFile(site.GetFavicon())
-	if bundlestore.IsSystemBundle(fileItem.Namespace) {
+	fileItem, err := meta.NewFile(site.GetFavicon())
+	if err == nil && bundlestore.IsSystemBundle(fileItem.Namespace) {
 		return os.Getenv("UESIO_BUILD_VERSION")
 	} else {
 		return site.Bundle.GetVersionString()

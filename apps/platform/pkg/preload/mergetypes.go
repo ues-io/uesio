@@ -59,7 +59,7 @@ type SiteMergeData struct {
 	Title          string                      `json:"title"`
 	EnableSEO      bool                        `json:"-"`
 	Dependencies   meta.BundleDefDependencyMap `json:"dependencies"`
-	FaviconVersion string                      `json:"faviconVersion"`
+	FaviconVersion string                      `json:"-"`
 }
 
 type WorkspaceMergeData struct {
