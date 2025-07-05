@@ -5,5 +5,5 @@ extends: uesio/appkit.navicon
 definition:
   uesio.styleTokens:
     root:
-      - invisible
+      - has-hover:invisible
       - group-hover:visible

@@ -67,8 +67,15 @@ const processThemeColors = (
 // This converts all our @media queries to @container queries
 const presetContainerQueries = (): Preset => ({
   finalize: (rule) => {
-    if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
-      rule.r[0] = rule.r[0].replace("@media", "@container")
+    if (
+      rule.r &&
+      rule.r.length > 0 &&
+      rule.r[0].startsWith("@media (min-width:")
+    ) {
+      rule.r[0] = rule.r[0].replace(
+        "@media (min-width:",
+        "@container (min-width:",
+      )
     }
     return rule
   },
@@ -164,6 +171,7 @@ const setupStyles = (context: Context) => {
     {
       presets,
       hash: false,
+      variants: [["has-hover", "@media (hover: hover) and (pointer: fine)"]],
       theme: {
         extend: {
           colors: ({ theme }) => processThemeColors(theme, themeData),
