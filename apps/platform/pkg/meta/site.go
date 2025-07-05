@@ -33,6 +33,14 @@ func (s *Site) GetAppBundle() *BundleDef {
 	return s.bundleDef
 }
 
+func (s *Site) GetFavicon() string {
+	favicon := s.GetAppBundle().Favicon
+	if favicon == "" {
+		return "uesio/core.favicon"
+	}
+	return favicon
+}
+
 func (s *Site) GetCollection() CollectionableGroup {
 	return &SiteCollection{}
 }
