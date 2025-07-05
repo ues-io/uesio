@@ -257,15 +257,33 @@ func GetRoutingMergeData(route *meta.Route, metadata *preload.PreloadMetadata, s
 
 func GetSiteMergeData(site *meta.Site) *preload.SiteMergeData {
 	return &preload.SiteMergeData{
-		Name:         site.Name,
-		App:          site.GetAppFullName(),
-		Subdomain:    site.Subdomain,
-		Domain:       site.Domain,
-		Scheme:       site.Scheme,
-		Version:      site.Bundle.GetVersionString(),
-		Title:        site.Title,
-		EnableSEO:    site.EnableSEO,
-		Dependencies: site.GetAppBundle().Dependencies,
+		Name:           site.Name,
+		App:            site.GetAppFullName(),
+		Subdomain:      site.Subdomain,
+		Domain:         site.Domain,
+		Scheme:         site.Scheme,
+		Version:        site.Bundle.GetVersionString(),
+		Title:          site.Title,
+		EnableSEO:      site.EnableSEO,
+		Dependencies:   site.GetAppBundle().Dependencies,
+		FaviconVersion: getFaviconVersion(site),
+	}
+}
+
+// NOTE: Technically speaking, the actual favicon used by a site could point to a different bundle
+// which could have a version different from the site bundle version. However, looking up the favicon
+// to that level has a perf cost (even though it would be cached) that seems unnecessary in the majority
+// of cases. As written below, we will align the favicon caching with the site bundle version which
+// should be sufficient for most use cases. If needed, a specific lookup to the referenced favicon could
+// be performed and the version of the actual favicon source used instead.
+func getFaviconVersion(site *meta.Site) string {
+	// intentionally ignore error here since it should not happen
+	// and if so we use version of bundle as a fallback
+	fileItem, _ := meta.NewFile(site.GetFavicon())
+	if bundlestore.IsSystemBundle(fileItem.Namespace) {
+		return os.Getenv("UESIO_BUILD_VERSION")
+	} else {
+		return site.Bundle.GetVersionString()
 	}
 }
 
