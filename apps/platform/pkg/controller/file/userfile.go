@@ -103,6 +103,8 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 
 	if version != "" {
 		middleware.Set1YearCache(w)
+	} else {
+		middleware.SetNoCache(w)
 	}
 
 	respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)
@@ -132,6 +134,8 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 
 	if version != "" {
 		middleware.Set1YearCache(w)
+	} else {
+		middleware.SetNoCache(w)
 	}
 
 	respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)

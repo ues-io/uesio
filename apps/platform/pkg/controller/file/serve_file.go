@@ -45,7 +45,16 @@ func respondFile(w http.ResponseWriter, r *http.Request, path string, modified t
 	if filename == "." || filename == separatorStr || filename == "" {
 		filename = ""
 	} else {
-		setContentDispositionHeader(w, filename)
+		// TODO: Previous code did not specify a disposition type so it would be browser dependent
+		// but most default to inline when not specified so for backwards compatibility properly
+		// setting the header value (not having a type is an invalid header value). This should
+		// be evaluated to ensure inline is the default we want even if it will break some backwards
+		// compat scenarios if we change to attachment instead. The file component could offer
+		// it as a property and then we could dynamically set it based on that setting but beyond
+		// that we have non-user types of files that go through this path as well. In short,
+		// being explicit here to correct the invalid header value but more thought is needed
+		// on this.
+		SetContentDispositionHeader(w, "inline", path)
 	}
 
 	http.ServeContent(w, r, filename, modified, stream)
@@ -80,6 +89,8 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 
 	if supportsCaching {
 		middleware.Set1YearCache(w)
+	} else {
+		middleware.SetNoCache(w)
 	}
 
 	respondFile(w, r, path, fileMetadata.LastModified(), rs)
@@ -93,17 +104,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 }
 
 // setContentDispositionHeader sets the Content-Disposition header for modern browsers
-func setContentDispositionHeader(w http.ResponseWriter, filename string) {
-	// TODO: Previous code did not specify a disposition type so it would be browser dependent
-	// but most default to inline when not specified so for backwards compatibility properly
-	// setting the header value (not having a type is an invalid header value). This should
-	// be evaluated to ensure inline is the default we want even if it will break some backwards
-	// compat scenarios if we change to attachment instead. The file component could offer
-	// it as a property and then we could dynamically set it based on that setting but beyond
-	// that we have non-user types of files that go through this path as well. In short,
-	// being explicit here to correct the invalid header value but more thought is needed
-	// on this.
-	dispositionType := "inline"
+func SetContentDispositionHeader(w http.ResponseWriter, dispositionType string, filename string) {
 	if needsRFC5987Encoding(filename) {
 		// Modern browsers only - use RFC 5987 encoding for non-ASCII
 		encoded := url.PathEscape(filename)
