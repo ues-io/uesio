@@ -9,14 +9,14 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.36.5
 	github.com/aws/aws-sdk-go-v2/config v1.29.17
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.70
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.82
-	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.30.2
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.82.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.83
+	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.31.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.83.0
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
 	github.com/crewjam/saml v0.5.1
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dolmen-go/contextio v1.0.0
-	github.com/dop251/goja v0.0.0-20250624190929-4d26883d182a
+	github.com/dop251/goja v0.0.0-20250630131328-58d95d85e994
 	github.com/evanw/esbuild v0.25.5
 	github.com/francoispqt/gojay v1.2.13
 	github.com/go-chi/chi/v5 v5.2.2
@@ -45,7 +45,7 @@ require (
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.15.0
 	golang.org/x/text v0.26.0
-	google.golang.org/api v0.239.0
+	google.golang.org/api v0.240.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -81,7 +81,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
-	github.com/google/pprof v0.0.0-20250607225305-033d6d78b36a // indirect
+	github.com/google/pprof v0.0.0-20250630185457-6e76a2b096b5 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/google/wire v0.6.0 // indirect
