@@ -50,15 +50,16 @@ type UserMergeData struct {
 }
 
 type SiteMergeData struct {
-	Name         string                      `json:"name"`
-	App          string                      `json:"app"`
-	Version      string                      `json:"version"`
-	Domain       string                      `json:"domain"`
-	Subdomain    string                      `json:"subdomain"`
-	Scheme       string                      `json:"scheme"`
-	Title        string                      `json:"title"`
-	EnableSEO    bool                        `json:"-"`
-	Dependencies meta.BundleDefDependencyMap `json:"dependencies"`
+	Name           string                      `json:"name"`
+	App            string                      `json:"app"`
+	Version        string                      `json:"version"`
+	Domain         string                      `json:"domain"`
+	Subdomain      string                      `json:"subdomain"`
+	Scheme         string                      `json:"scheme"`
+	Title          string                      `json:"title"`
+	EnableSEO      bool                        `json:"-"`
+	Dependencies   meta.BundleDefDependencyMap `json:"dependencies"`
+	FaviconVersion string                      `json:"-"`
 }
 
 type WorkspaceMergeData struct {

@@ -31,6 +31,7 @@
             {{- end -}}
         {{- end }}
         <script src="{{ .StaticAssetsHost }}/static{{ .StaticAssetsPath }}/ui/uesio.js" type="module" crossorigin="true"></script>
+        <link rel="icon" href="/favicon.ico{{if .Site.FaviconVersion}}?v={{ .Site.FaviconVersion }}{{end}}" sizes="any">
     </head>
 <body>
     <div id="root" class="h-screen overflow-auto"></div>
