@@ -80,6 +80,8 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 
 	if supportsCaching {
 		middleware.Set1YearCache(w)
+	} else {
+		middleware.SetNoCache(w)
 	}
 
 	respondFile(w, r, path, fileMetadata.LastModified(), rs)
