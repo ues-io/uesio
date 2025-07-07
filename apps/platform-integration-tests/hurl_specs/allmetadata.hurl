@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Get a list of all fields available to our workspace for the animal collection
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
@@ -598,6 +599,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 #Site admin all metadata in studio context
 #make sure we can read data as the siteadmin for the studio site

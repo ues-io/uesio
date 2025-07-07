@@ -3,6 +3,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Try to navigate to the workspace home route
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
@@ -43,6 +44,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Try to navigate to the workspace home route
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
@@ -83,6 +85,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "abel"
 }
+HTTP 200
 
 # Try to navigate to the workspace home route
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev

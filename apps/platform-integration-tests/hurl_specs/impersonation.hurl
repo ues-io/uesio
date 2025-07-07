@@ -3,6 +3,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Get the workspace id
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load
@@ -54,6 +55,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Add an impersonation record to use the rep profile
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/setworkspaceuser

@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Test fetching a route as though we are a browser expecting HTML,
 # in which case we want to serve our "NotFound" error page

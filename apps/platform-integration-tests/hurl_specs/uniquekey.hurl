@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Test a simple insert into the bundle collection
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save

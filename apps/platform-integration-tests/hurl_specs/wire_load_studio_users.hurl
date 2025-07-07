@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Delete the sample ORG user if it exists
 DELETE {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/api/v1/collection/uesio/core/user?uesio/core.username=eq.testorguser

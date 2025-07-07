@@ -3,6 +3,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Try to navigate to the workspace home route and make sure that the labels from core and io are there
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev

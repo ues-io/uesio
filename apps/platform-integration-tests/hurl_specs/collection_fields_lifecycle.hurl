@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Get the dev workspace id so we can test saving collections/fields
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/load

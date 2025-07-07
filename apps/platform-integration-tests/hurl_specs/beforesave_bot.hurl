@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Try to insert a Lowland streaked tenrec and check if the aftersave bot increased the population to 10
 # and the before save decrease in 6

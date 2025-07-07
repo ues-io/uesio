@@ -6,7 +6,6 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
-
 # Extract the sessionid from set-cookie header
 HTTP 200
 [Captures]
@@ -18,6 +17,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Set a limit of 1 domain per user
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/save
@@ -44,6 +44,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Delete the test site domain if it already exists. This should succeed even though our domain limit is very low.
 # This ensures that we are ONLY enforcing the limit on new domains, not existing ones.
@@ -111,6 +112,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
+HTTP 200
 
 # Bump up the limit
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/studio/prod/wires/save
@@ -137,6 +139,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Create a new domain - should succeed now
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
