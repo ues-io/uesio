@@ -1,0 +1,93 @@
+name: tile_file
+category: LAYOUT
+type: DECLARATIVE
+definition:
+  - uesio/io.card:
+      uesio.variant: uesio/appkit.main
+      uesio.styleTokens:
+        panelHeader:
+          - p-4
+        titlebarTitle:
+          - break-all
+      title: ${uesio/core.path}
+      subtitle: ${uesio/core.mimetype}
+      actions:
+        - uesio/io.group:
+            components:
+              - uesio/io.box:
+                  uesio.display:
+                    - type: hasValue
+                      value: ${uesio/core.id}
+                  components:
+                    - uesio/io.button:
+                        uesio.variant: uesio/appkit.itemaction
+                        icon: delete
+                        tooltip: Delete
+                        signals:
+                          - signal: userfile/DELETE
+                            id: ${uesio/core.id}
+                          - signal: context/CLEAR
+                            type: VIEW
+                            viewDef: uesio/appkit.file_attachments
+                          - signal: wire/LOAD
+              - uesio/io.box:
+                  components:
+                    - uesio/io.text:
+                        uesio.styleTokens:
+                          root:
+                            - bg-white
+                            - w-max
+                        uesio.variant: uesio/appkit.badge
+                        text: $FileSize{${uesio/core.contentlength}}
+                        element: div
+      avatar:
+        - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $StartsWith{${uesio/core.mimetype}:image}
+              - type: hasValue
+                value: ${uesio/core.id}
+            components:
+              - uesio/io.avatar:
+                  uesio.variant: uesio/appkit.main
+                  image: $UserFile{}
+        - uesio/io.box:
+            uesio.display:
+              - type: hasValue
+                value: $StartsWith{${uesio/core.mimetype}:image}
+              - type: hasNoValue
+                value: ${uesio/core.id}
+            components:
+              - uesio/io.avatar:
+                  uesio.display:
+                    - type: paramIsSet
+                      param: app
+                    - type: paramIsSet
+                      param: workspacename
+                  uesio.context:
+                    workspace:
+                      name: $Param{workspacename}
+                      app: $Param{app}
+                  uesio.variant: uesio/appkit.main
+                  image: $File{$Parent.Record{uesio/studio.namespace}.$Parent.Record{uesio/studio.name}:${uesio/core.path}}
+
+        - uesio/io.box:
+            uesio.display:
+              - type: hasNoValue
+                value: $StartsWith{${uesio/core.mimetype}:image}
+            components:
+              - uesio/io.text:
+                  text: collections
+                  uesio.styleTokens:
+                    root:
+                      - w-12
+                      - h-12
+                      - text-lg
+                  uesio.variant: uesio/appkit.avataricon
+title: File Tile Component
+discoverable: true
+description: A file tile
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
