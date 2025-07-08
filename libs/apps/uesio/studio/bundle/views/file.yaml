@@ -75,5 +75,5 @@ definition:
                                       fieldId: uesio/studio.path
                       - uesio/appkit.section_attachments:
                           title: Content
-                          allowEdit: $Equals{$Param{namespace}:$Param{app}}
+                          allowCreate: $Equals{$Param{namespace}:$Param{app}}
                           allowDelete: $Equals{$Param{namespace}:$Param{app}}

@@ -24,7 +24,7 @@ definition:
                     recordid: ${uesio/core.id}
                     app: $Param{app}
                     workspacename: $Param{workspacename}
-                    allowEdit: $Prop{allowEdit}
+                    allowCreate: $Prop{allowCreate}
                     allowDelete: $Prop{allowDelete}
 title: Attachments Section
 discoverable: true

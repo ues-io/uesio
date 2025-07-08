@@ -26,7 +26,7 @@ definition:
     - uesio/io.box:
         uesio.display:
           - type: paramIsSet
-            param: allowEdit
+            param: allowCreate
         uesio.styleTokens:
           root:
             - min-h-[84px]

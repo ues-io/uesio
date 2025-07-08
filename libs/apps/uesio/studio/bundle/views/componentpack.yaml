@@ -73,5 +73,5 @@ definition:
                                       fieldId: uesio/studio.name
                       - uesio/appkit.section_attachments:
                           title: Component Pack Files
-                          allowEdit: false
+                          allowCreate: false
                           allowDelete: true
