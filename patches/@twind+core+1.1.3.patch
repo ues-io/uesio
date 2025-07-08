@@ -1,0 +1,26 @@
+diff --git a/node_modules/@twind/core/core.dev.js b/node_modules/@twind/core/core.dev.js
+index e7e1df8..1d69d98 100644
+--- a/node_modules/@twind/core/core.dev.js
++++ b/node_modules/@twind/core/core.dev.js
+@@ -31,7 +31,7 @@ function format(rules, seperator = ',') {
+  * @param screen
+  * @param prefix
+  * @returns
+- */ function mql(screen, prefix = '@media ') {
++ */ function mql(screen, prefix = '@container ') {
+     return prefix + asArray(screen).map((screen)=>{
+         return 'string' == typeof screen && (screen = {
+             min: screen
+diff --git a/node_modules/@twind/core/core.js b/node_modules/@twind/core/core.js
+index 26018b3..15145b6 100644
+--- a/node_modules/@twind/core/core.js
++++ b/node_modules/@twind/core/core.js
+@@ -31,7 +31,7 @@ function format(rules, seperator = ',') {
+  * @param screen
+  * @param prefix
+  * @returns
+- */ function mql(screen, prefix = '@media ') {
++ */ function mql(screen, prefix = '@container ') {
+     return prefix + asArray(screen).map((screen)=>{
+         return 'string' == typeof screen && (screen = {
+             min: screen
