@@ -152,6 +152,7 @@ const setupStyles = (context: Context) => {
     {
       presets,
       hash: false,
+      variants: [["has-hover", "@media (hover: hover) and (pointer: fine)"]],
       theme: {
         extend: {
           colors: ({ theme }) => processThemeColors(theme, themeData),
