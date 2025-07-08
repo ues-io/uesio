@@ -64,16 +64,6 @@ const processThemeColors = (
     : {}
 }
 
-// This converts all our @media queries to @container queries
-const presetContainerQueries = (): Preset => ({
-  finalize: (rule) => {
-    if (rule.r && rule.r.length > 0 && rule.r[0].startsWith("@media")) {
-      rule.r[0] = rule.r[0].replace("@media", "@container")
-    }
-    return rule
-  },
-})
-
 // this adds a @scope prefix to any rule that needs a scope.
 // (Used for themes-within-themes)
 const presetAddThemeScope = (scope: string): Preset => {
@@ -150,20 +140,19 @@ const setupStyles = (context: Context) => {
 
   if (activeStyles) return themeClasses
 
-  const presets = [
-    presetAutoprefix(),
-    presetTailwind(),
-    presetContainerQueries(),
-  ]
+  const presets = [presetAutoprefix(), presetTailwind()]
 
   if (themeData.isScoped) {
     presets.push(presetAddThemeScope(themeClass))
   }
 
+  // NOTE: We've patched the twind library to turn all breakpoint queries (sm|md|lg|xl|2xl)
+  // from @media queries to @container queries. See the Patches section in README.md for more info.
   const stylesInstance = twind(
     {
       presets,
       hash: false,
+      variants: [["has-hover", "@media (hover: hover) and (pointer: fine)"]],
       theme: {
         extend: {
           colors: ({ theme }) => processThemeColors(theme, themeData),
