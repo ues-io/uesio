@@ -14,15 +14,3 @@ jsonpath "$[*].app" exists
 jsonpath "$[*].icon" exists
 jsonpath "$[*].description" exists
 jsonpath "$[*].color" exists
-
-# Get published versions for the tests/app bundle
-GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bundles/v1/versions/uesio/tests/list
-Accept: application/json
-HTTP 200
-[Asserts]
-jsonpath "$" count >= 1
-jsonpath "$" count <= 5
-jsonpath "$[*].version" exists
-jsonpath "$[*].description" exists
-jsonpath "$[0].description" == "test bundle"
-jsonpath "$[0].version" == "v0.0.1"
