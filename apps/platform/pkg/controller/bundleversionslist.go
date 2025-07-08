@@ -88,7 +88,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var responses []BundleVersionsListResponse
+	responses := make([]BundleVersionsListResponse, 0, bundles.Len())
 	if err := bundles.Loop(func(item meta.Item, index string) error {
 		description, err := item.GetField("uesio/studio.description")
 		if err != nil {
