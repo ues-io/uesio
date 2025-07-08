@@ -16,6 +16,17 @@ definition:
           value: $Param{app}:$Param{workspacename}
     componentpacks:
       collection: uesio/studio.componentpack
+      fields:
+        uesio/studio.name:
+        uesio/studio.namespace:
+        uesio/core.attachments:
+        uesio/studio.appicon:
+        uesio/studio.appcolor:
+        uesio/core.owner:
+        uesio/core.createdby:
+        uesio/core.createdat:
+        uesio/core.updatedby:
+        uesio/core.updatedat:
       conditions:
         - field: uesio/studio.allmetadata
           value: true
@@ -60,3 +71,7 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
+                      - uesio/appkit.section_attachments:
+                          title: Component Pack Files
+                          allowEdit: false
+                          allowDelete: true

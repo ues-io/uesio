@@ -1,0 +1,35 @@
+name: section_attachments
+category: LAYOUT
+type: DECLARATIVE
+properties:
+  - name: title
+    type: TEXT
+    defaultValue: Attachments
+definition:
+  - uesio/io.box:
+      uesio.variant: uesio/appkit.section
+      components:
+        - uesio/io.titlebar:
+            title: $Prop{title}
+            uesio.variant: uesio/appkit.sub
+        - uesio/io.box:
+            uesio.styleTokens:
+              root:
+                - mt-6
+            components:
+              - uesio/core.view:
+                  view: uesio/appkit.file_attachments
+                  uesio.id: attachments
+                  params:
+                    recordid: ${uesio/core.id}
+                    app: $Param{app}
+                    workspacename: $Param{workspacename}
+                    allowEdit: $Prop{allowEdit}
+                    allowDelete: $Prop{allowDelete}
+title: Attachments Section
+discoverable: true
+description: Attachments Section
+sections:
+  - type: HOME
+    properties:
+  - type: DISPLAY
