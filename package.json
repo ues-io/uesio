@@ -48,7 +48,8 @@
     "test": "nx run-many -t test",
     "watch-all": "npm run build-all && nx watch --all -- nx run-many -t build -p \\$NX_PROJECT_NAME",
     "watch-platform-deps": "nx run platform:watch-deps",
-    "watch-dev": "nx run platform:dev --watch"
+    "watch-dev": "nx run platform:dev --watch",
+    "postinstall": "patch-package"
   },
   "nx": {
     "includedScripts": [],
@@ -132,6 +133,7 @@
     "monaco-editor": "0.50.0",
     "nx": "21.2.2",
     "papaparse": "^5.5.3",
+    "patch-package": "^8.0.0",
     "prettier": "^3.6.2",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
