@@ -7,7 +7,6 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
-
 # Extract the sessionid from set-cookie header
 HTTP 200
 [Captures]

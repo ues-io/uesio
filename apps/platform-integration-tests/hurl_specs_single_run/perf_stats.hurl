@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Run the perf stats job
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/perf/stats

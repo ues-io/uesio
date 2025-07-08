@@ -5,6 +5,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Access the deps route for previewing this route,
 # which should have been seeded in the workspace bundle store cache via lines 227-232 of app_and_workspace.hurl,

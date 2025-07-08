@@ -20,6 +20,4 @@ HTTP 404
 
 # Verify 404 for workspace file that does not exist
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/componentpacks/uesio/tests/1742316697/fakecomponentpack/runtime.js
-
-
-
+HTTP 404

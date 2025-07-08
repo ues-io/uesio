@@ -130,6 +130,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "abel"
 }
+HTTP 200
 
 #Site admin 
 # 4 step Start the review

@@ -7,7 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "ben"
 }
-
+HTTP 200
 
 # Run the usage job so that we're sure to have usage data available
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/worker/usage

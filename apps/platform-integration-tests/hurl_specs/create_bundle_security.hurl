@@ -137,6 +137,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "abel"
 }
+HTTP 200
 
 # now Abel should be able to create a bundle
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createbundle

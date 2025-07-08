@@ -7,6 +7,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 {
     "token": "uesio"
 }
+HTTP 200
 
 # Get a list of all available namespaces from a version context
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/version/uesio/tests/v0.0.1/metadata/namespaces
