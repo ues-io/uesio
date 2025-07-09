@@ -3,6 +3,7 @@ function run(bot) {
   const name = bot.params.get("name")
   const type = bot.params.get("type")
   const definition = bot.params.get("definition")
+  const namespace = bot.getAppName()
   const componentName = `${name.charAt(0).toUpperCase() + name.slice(1)}`
   if (type === "DECLARATIVE") {
     if (definition) {
@@ -36,4 +37,6 @@ function run(bot) {
     },
     "templates/reactComponent.template.yaml",
   )
+
+  bot.setRedirect(`/components/${namespace}/${name}`)
 }
