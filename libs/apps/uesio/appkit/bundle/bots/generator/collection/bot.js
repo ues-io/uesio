@@ -220,7 +220,6 @@ function run(bot) {
     label: "External ID",
     type: "AUTONUMBER",
     autonumber_prefix: collectionName.substring(0, 3).toUpperCase(),
-    autonumber_leadingzeros: 5,
   })
 
   bot.runGenerator("uesio/appkit", "views_collection", {

@@ -38,8 +38,14 @@ migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 2
 # 5. Ensure system user is created
 migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 3
 
+# 6. Rename bulkjob collection field
+migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 4
+
+# 7. Drop autonumber field from data table (2025.07.09 state)
+migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 5
+
 echo "Ran migration to get up to latest master state"
 
 migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" version
 
-# 5. Run some tests??
+# 8. Run some tests??

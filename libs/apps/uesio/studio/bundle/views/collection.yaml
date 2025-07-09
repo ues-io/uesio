@@ -1032,9 +1032,6 @@ definition:
                     - uesio/io.field:
                         fieldId: uesio/studio.autonumber->uesio/studio.prefix
                         uesio.id: new-field-autonumber-prefix
-                    - uesio/io.field:
-                        fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
-                        uesio.id: new-field-autonumber-leading-zeros
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type

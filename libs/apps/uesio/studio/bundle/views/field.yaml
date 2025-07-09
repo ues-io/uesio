@@ -225,13 +225,6 @@ definition:
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type
-                                    value: AUTONUMBER
-                                components:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
-                            - uesio/io.box:
-                                uesio.display:
-                                  - field: uesio/studio.type
                                     value: MULTISELECT
                                 components:
                                   - uesio/io.field:

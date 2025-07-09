@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -14,9 +13,17 @@ import (
 
 type ChangeProcessor func(change *wire.ChangeItem) *exceptions.SaveException
 
-func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
+func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 	return func(change *wire.ChangeItem) *exceptions.SaveException {
+		// only apply auto id to new records (inserts)
 		if !change.IsNew {
+			return nil
+		}
+
+		// if there is a current value, do not overwrite it
+		if current, err := change.GetFieldAsString(field.GetFullName()); err != nil {
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
+		} else if current != "" {
 			return nil
 		}
 
@@ -24,22 +31,15 @@ func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
 		if autoNumberMeta == nil {
 			autoNumberMeta = (*wire.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
 		}
-		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
-		suffix := fmt.Sprintf(format, change.Autonumber)
 
-		an := autoNumberMeta.Prefix + "-" + suffix
+		var an string
 		if autoNumberMeta.Prefix == "" {
-			an = suffix
+			an = change.AutoID
+		} else {
+			an = autoNumberMeta.Prefix + "-" + change.AutoID
 		}
 
-		// See if we're trying to set this value for an insert.
-		// If so, don't set the autonumber and just keep its current value.
-		current, err := change.GetFieldAsString(field.GetFullName())
-		if err == nil && current != "" {
-			return nil
-		}
-
-		if err = change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
+		if err := change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
 			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
 		}
 
@@ -90,14 +90,6 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 	if err != nil {
 		return err
 	}
-	autonumberStart := 0
-	if op.HasInserts() {
-		autonumberResult, err := getAutonumber(connection, collectionMetadata, session)
-		if err != nil {
-			return err
-		}
-		autonumberStart = autonumberResult
-	}
 
 	var populations []ChangeProcessor
 	for _, field := range collectionMetadata.Fields {
@@ -111,14 +103,17 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 				populations = append(populations, populateUser(field, user))
 			}
 		} else if field.Type == "AUTONUMBER" {
-			populations = append(populations, populateAutoNumbers(field))
+			populations = append(populations, populateAutoID(field))
 		}
 	}
 
 	return op.LoopChanges(func(change *wire.ChangeItem) error {
 		if change.IsNew {
-			autonumberStart++
-			change.Autonumber = autonumberStart
+			aid, err := getAutoID()
+			if err != nil {
+				return err
+			}
+			change.AutoID = aid
 		}
 		for _, population := range populations {
 			if saveErr := population(change); saveErr != nil {

@@ -97,7 +97,6 @@ const getUesioFieldFromSuggestedFieldTests = [
       "uesio/studio.type": "AUTONUMBER",
       "uesio/studio.label": "Inventory ID",
       "uesio/studio.autonumber": {
-        "uesio/studio.leadingzeros": 4,
         "uesio/studio.prefix": "IN",
       },
     },

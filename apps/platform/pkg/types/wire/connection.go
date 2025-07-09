@@ -15,7 +15,6 @@ type Connection interface {
 	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
 	Migrate(options *migrations.MigrateOptions) error
 	TruncateTenantData(tenantID string) error
-	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
 	GetCredentials() *Credentials
 	GetDataSource() string
 	BeginTransaction() error

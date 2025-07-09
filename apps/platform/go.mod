@@ -13,6 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.31.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.83.0
 	github.com/bigkevmcd/go-cachewrapper v0.0.0-20240507155736-346a72d92df1
+	github.com/btcsuite/btcd/btcutil v1.1.6
 	github.com/crewjam/saml v0.5.1
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dolmen-go/contextio v1.0.0
@@ -22,7 +23,7 @@ require (
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/httplog/v3 v3.2.2
 	github.com/go-chi/traceid v0.3.0
-	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/gofrs/uuid/v5 v5.3.2
 	github.com/golang-cz/devslog v0.0.15
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/gomodule/redigo v1.9.2
