@@ -56,66 +56,68 @@ definition:
                 itemNameSpaceIcon: ${translations:uesio/studio.appicon}
                 itemNameSpaceColor: ${translations:uesio/studio.appcolor}
         content:
-          - uesio/io.list:
-              uesio.id: translationsDeck
-              wire: translations
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/appkit.main
-                    title: $SelectList{uesio/studio.language}
-                    subtitle: Translation
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: translate
-                          color: ${uesio/studio.appcolor}
-                    actions:
-                      - uesio/io.group:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/io.list:
+                    uesio.id: translationsDeck
+                    wire: translations
+                    mode: READ
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/appkit.main
+                          title: $SelectList{uesio/studio.language}
+                          subtitle: Translation
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                text: translate
+                                color: ${uesio/studio.appcolor}
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: translations
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - translations
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      hotkey: "meta+shift+."
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: translations
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: translations
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: $Label{uesio/io.save}
-                                hotkey: "meta+s"
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: translations
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - translations
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.cancel}
-                                hotkey: "meta+shift+."
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: translations
-                                signals:
-                                  - signal: wire/CANCEL
-                                    wire: translations
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.primarysection
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/appkit.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.language
-                - uesio/io.box:
-                    uesio.variant: uesio/appkit.section
-                    components:
-                      - uesio/studio.translations:
-                          labelsWire: labels
-                          translationsWire: translations
-                          labelsFieldId: uesio/studio.labels
-                - uesio/appkit.section_audit_info:
-                - uesio/appkit.section_delete:
-                    editModeOnly: false
-                    confirm: true
-                    confirmMessage: The $Collection{label} $SelectList{uesio/studio.language} will be deleted. This action cannot be undone.
-                    signals:
-                      - signal: wire/MARK_FOR_DELETE
-                      - signal: wire/SAVE
-                      - signal: route/NAVIGATE
-                        path: app/$Param{app}/workspace/$Param{workspacename}/translations
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.language
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.section
+                          components:
+                            - uesio/studio.translations:
+                                labelsWire: labels
+                                translationsWire: translations
+                                labelsFieldId: uesio/studio.labels
+                      - uesio/appkit.section_audit_info:
+                      - uesio/appkit.section_delete:
+                          editModeOnly: false
+                          confirm: true
+                          confirmMessage: The $Collection{label} $SelectList{uesio/studio.language} will be deleted. This action cannot be undone.
+                          signals:
+                            - signal: wire/MARK_FOR_DELETE
+                            - signal: wire/SAVE
+                            - signal: route/NAVIGATE
+                              path: app/$Param{app}/workspace/$Param{workspacename}/translations
