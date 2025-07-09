@@ -345,8 +345,7 @@ const handlers: Record<MergeType, MergeHandler> = {
     if (option?.languageLabel) {
       return context.getLabel(option.languageLabel)
     }
-    const label = option?.label || ""
-    return label || ""
+    return option?.label || ""
   },
   ConfigValue: (expression, context) =>
     context.getConfigValue(expression) || "",
