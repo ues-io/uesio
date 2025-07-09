@@ -109,4 +109,6 @@ GeneratorForm.signals = {
   RUN: runGenerator,
 }
 
+export { run }
+
 export default GeneratorForm

@@ -1,5 +1,6 @@
 function run(bot) {
   const name = bot.params.get("name")
+  const namespace = bot.getAppName()
   const authSource = bot.params.get("authSource") || ""
   const profile = bot.params.get("profile") || ""
   const usernameTemplate = bot.params.get("usernameTemplate") || ""
@@ -31,4 +32,6 @@ function run(bot) {
     },
     "templates/signupmethod.yaml",
   )
+
+  bot.setRedirect(`/signupmethods/${namespace}/${name}`)
 }

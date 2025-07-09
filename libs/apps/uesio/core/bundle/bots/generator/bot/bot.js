@@ -3,6 +3,7 @@ function run(botapi) {
   const app = botapi.getAppName()
   const params = botapi.params.getAll()
   const { name, collection, content } = params
+  const namespace = botapi.getAppName()
   const botParams = params.params
   const type = (params.type || "LISTENER").toLowerCase()
   const dialect = (params.dialect || "TYPESCRIPT").toLowerCase()
@@ -63,4 +64,6 @@ function run(botapi) {
       `templates/${type}/bot.template.yaml`,
     )
   }
+
+  botapi.setRedirect(`/bots/${type}/${namespace}/${name}`)
 }
