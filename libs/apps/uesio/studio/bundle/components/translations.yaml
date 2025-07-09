@@ -1,3 +1,5 @@
 name: translations
 pack: main
 entrypoint: components/translations/translations
+variants:
+  - uesio/io.titlebar:uesio/appkit.sub

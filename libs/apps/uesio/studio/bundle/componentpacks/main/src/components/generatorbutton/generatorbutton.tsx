@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef, useState } from "react"
+import { RefObject, useRef, useState } from "react"
 import {
   api,
   param,
@@ -15,6 +15,7 @@ import {
   getInitialValueFromParams,
   getWireFieldsFromParams,
 } from "../previewbutton/previewbutton"
+import { run } from "../generatorform/generatorform"
 
 type GeneratorButtonDefinition = {
   generator: metadata.MetadataKey
@@ -31,7 +32,7 @@ interface DialogProps {
 
 interface FormProps {
   generator: metadata.MetadataKey
-  wireRef?: MutableRefObject<wire.Wire | undefined>
+  wireRef?: RefObject<wire.Wire | undefined>
   params?: param.ParamDefinition[]
   onUpdate?: (
     field: string,
@@ -147,30 +148,6 @@ const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
 
   if (!params) return null
 
-  const onClick = async () => {
-    const result = wireRef.current?.getFirstRecord()
-    if (!result) return
-    const botResp = await api.bot.callGenerator(
-      context,
-      genNamespace,
-      genName,
-      getGenParamValues(params, context, result),
-    )
-
-    if (!botResp.success && botResp.error) {
-      api.notification.addError(botResp.error, context.deleteWorkspace())
-      return
-    }
-
-    setOpen(false)
-    return api.signal.run(
-      {
-        signal: "route/RELOAD",
-      },
-      context.deleteWorkspace(),
-    )
-  }
-
   return (
     <FloatingPortal>
       <Dialog
@@ -185,7 +162,10 @@ const GeneratorDialog: definition.UtilityComponent<DialogProps> = (props) => {
               context={context}
               variant={"uesio/appkit.primary"}
               label="Generate"
-              onClick={onClick}
+              onClick={() => {
+                if (!wireRef.current) return
+                run(genNamespace, genName, wireRef.current, params, context)
+              }}
             />
           </Group>
         }

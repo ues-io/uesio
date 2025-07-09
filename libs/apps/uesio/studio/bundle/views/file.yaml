@@ -73,12 +73,7 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.path
-                      - uesio/core.view:
-                          view: uesio/appkit.file_attachments
-                          uesio.id: attachments
-                          params:
-                            collection: uesio/studio.file
-                            recordid: ${uesio/core.id}
-                            app: $Param{app}
-                            workspacename: $Param{workspacename}
-                            readonly: $NotEquals{$Param{namespace}:$Param{app}}
+                      - uesio/appkit.section_attachments:
+                          title: Content
+                          allowCreate: $Equals{$Param{namespace}:$Param{app}}
+                          allowDelete: $Equals{$Param{namespace}:$Param{app}}

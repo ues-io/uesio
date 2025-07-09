@@ -1,14 +1,10 @@
-import { definition, component, styles } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 
 interface Props {
   namespace: string
   translations: TranslationRecord[]
   setTranslations: (newTranslations: TranslationRecord[]) => void
 }
-
-const StyleDefaults = Object.freeze({
-  root: ["mt-10"],
-})
 
 const subFields = {
   key: {
@@ -50,10 +46,15 @@ const TranslationItem: definition.UtilityComponent<Props> = (props) => {
     // Setter to be invoked when translations for this namespace are updated
     setTranslations,
   } = props
-  const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
+
   return (
-    <div className={classes.root}>
-      <TitleBar title={namespace} context={context} />
+    <>
+      <TitleBar
+        title={namespace}
+        context={context}
+        variant="uesio/appkit.sub"
+        styleTokens={{ root: ["mt-10"] }}
+      />
       <ListField
         options={{
           noAdd: true,
@@ -66,7 +67,7 @@ const TranslationItem: definition.UtilityComponent<Props> = (props) => {
         mode={"EDIT"}
         context={context}
       />
-    </div>
+    </>
   )
 }
 

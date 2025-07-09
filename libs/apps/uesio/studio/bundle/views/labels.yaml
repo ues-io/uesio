@@ -123,7 +123,7 @@ definition:
                   fieldId: uesio/studio.value
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             text: Save and New
             signals:
               - signal: wire/SAVE
@@ -131,8 +131,11 @@ definition:
                   - newlabel
               - signal: wire/RESET
                 wire: newlabel
+              - signal: wire/LOAD
+                wires:
+                  - labels
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
@@ -141,7 +144,7 @@ definition:
               - signal: route/NAVIGATE
                 path: app/$Param{app}/workspace/$Param{workspacename}/labels/$Param{app}/${uesio/studio.name}
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE

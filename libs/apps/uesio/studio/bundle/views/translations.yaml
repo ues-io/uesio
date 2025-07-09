@@ -92,7 +92,7 @@ definition:
                                     path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/studio.language}
+                                      text: $SelectList{uesio/studio.language}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -113,7 +113,7 @@ definition:
                   fieldId: uesio/studio.language
       actions:
         - uesio/io.button:
-            uesio.variant: uesio/io.primary
+            uesio.variant: uesio/appkit.primary
             text: $Label{uesio/io.save}
             signals:
               - signal: wire/SAVE
@@ -122,7 +122,7 @@ definition:
               - signal: route/NAVIGATE
                 path: app/$Param{app}/workspace/$Param{workspacename}/translations/${uesio/studio.language}
         - uesio/io.button:
-            uesio.variant: uesio/io.secondary
+            uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.cancel}
             signals:
               - signal: panel/TOGGLE

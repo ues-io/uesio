@@ -18,6 +18,8 @@ definition:
                   uesio.display:
                     - type: hasValue
                       value: ${uesio/core.id}
+                    - type: hasValue
+                      value: $Prop{allowDelete}
                   components:
                     - uesio/io.button:
                         uesio.variant: uesio/appkit.itemaction
