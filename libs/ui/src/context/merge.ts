@@ -341,8 +341,11 @@ const handlers: Record<MergeType, MergeHandler> = {
       context,
     })
     const value = context.getRecord()?.getFieldValue(expression)
-    const label = options?.find((el) => el.value === value)?.label || ""
-    return context.getLabel(label) || ""
+    const option = options?.find((el) => el.value === value)
+    if (option?.languageLabel) {
+      return context.getLabel(option.languageLabel)
+    }
+    return option?.label || ""
   },
   ConfigValue: (expression, context) =>
     context.getConfigValue(expression) || "",
