@@ -131,6 +131,9 @@ definition:
                   - newlabel
               - signal: wire/RESET
                 wire: newlabel
+              - signal: wire/LOAD
+                wires:
+                  - labels
         - uesio/io.button:
             uesio.variant: uesio/appkit.secondary
             text: $Label{uesio/io.save}
