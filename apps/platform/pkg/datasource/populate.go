@@ -21,9 +21,11 @@ func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 		}
 
 		// if there is a current value, do not overwrite it
-		if current, err := change.GetFieldAsString(field.GetFullName()); err != nil {
-			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
-		} else if current != "" {
+		// TODO: Maintaining backwards compat and simply ignoring ANY error that occurs from GetFieldAsString. Note that the error
+		// could be because there was no value present on the change for the field or some other error occurred.  There needs
+		// to be a way to differentiate so that if an unexpected error ocurred, we can return and not potentially overwrite a value
+		// that is present.
+		if current, err := change.GetFieldAsString(field.GetFullName()); err == nil && current != "" {
 			return nil
 		}
 
