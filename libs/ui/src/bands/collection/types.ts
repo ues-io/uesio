@@ -25,6 +25,7 @@ const UPDATED_BY_FIELD = "uesio/core.updatedby"
 const CREATED_BY_FIELD = "uesio/core.createdby"
 const OWNER_FIELD = "uesio/core.owner"
 const COLLECTION_FIELD = "uesio/core.collection"
+const ATTACHMENTS_FIELD = "uesio/core.attachments"
 
 export {
   ID_FIELD,
@@ -35,4 +36,5 @@ export {
   CREATED_AT_FIELD,
   CREATED_BY_FIELD,
   COLLECTION_FIELD,
+  ATTACHMENTS_FIELD,
 }

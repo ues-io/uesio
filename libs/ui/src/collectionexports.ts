@@ -17,6 +17,7 @@ import {
   CREATED_AT_FIELD,
   CREATED_BY_FIELD,
   COLLECTION_FIELD,
+  ATTACHMENTS_FIELD,
 } from "./bands/collection/types"
 import { addBlankSelectOption } from "./bands/field/utils"
 import { SelectOption } from "./definition/selectlist"
@@ -42,4 +43,5 @@ export {
   CREATED_AT_FIELD,
   CREATED_BY_FIELD,
   COLLECTION_FIELD,
+  ATTACHMENTS_FIELD,
 }

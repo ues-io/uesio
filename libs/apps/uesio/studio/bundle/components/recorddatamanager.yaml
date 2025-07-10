@@ -10,3 +10,4 @@ components:
   - uesio/io.grid
   - uesio/io.list
   - uesio/appkit.section_audit_info
+  - uesio/appkit.section_attachments
