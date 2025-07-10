@@ -1,6 +1,5 @@
 name: autoid
 type: "AUTONUMBER"
-label: "Auto ID"
+label: "Auto Id"
 autonumber:
   prefix: "JOB"
-  leadingZeros: 4

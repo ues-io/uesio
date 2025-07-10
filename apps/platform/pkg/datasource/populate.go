@@ -2,7 +2,7 @@ package datasource
 
 import (
 	"fmt"
-	"strconv"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -14,32 +14,44 @@ import (
 
 type ChangeProcessor func(change *wire.ChangeItem) *exceptions.SaveException
 
-func populateAutoNumbers(field *wire.FieldMetadata) ChangeProcessor {
+func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 	return func(change *wire.ChangeItem) *exceptions.SaveException {
+		// only apply auto id to new records (inserts)
 		if !change.IsNew {
 			return nil
 		}
 
-		autoNumberMeta := field.AutoNumberMetadata
-		if autoNumberMeta == nil {
-			autoNumberMeta = (*wire.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
-		}
-		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
-		suffix := fmt.Sprintf(format, change.Autonumber)
-
-		an := autoNumberMeta.Prefix + "-" + suffix
-		if autoNumberMeta.Prefix == "" {
-			an = suffix
-		}
-
-		// See if we're trying to set this value for an insert.
-		// If so, don't set the autonumber and just keep its current value.
-		current, err := change.GetFieldAsString(field.GetFullName())
-		if err == nil && current != "" {
+		// if there is a current value, do not overwrite it
+		// TODO: Maintaining backwards compat and simply ignoring ANY error that occurs from GetFieldAsString. Note that the error
+		// could be because there was no value present on the change for the field or some other error occurred.  There needs
+		// to be a way to differentiate so that if an unexpected error ocurred, we can return and not potentially overwrite a value
+		// that is present.
+		if current, err := change.GetFieldAsString(field.GetFullName()); err == nil && current != "" {
 			return nil
 		}
 
-		if err = change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
+		var format string
+		if field.AutoNumberMetadata == nil {
+			format = meta.DefaultAutoNumberMetadata.Format
+		} else {
+			format = field.AutoNumberMetadata.Format
+		}
+
+		aid, err := getAutoID()
+		if err != nil {
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
+		}
+
+		var an string
+		if format == "" {
+			an = aid
+		} else {
+			// TODO: Could consider supporting escaping {id} token if the user really wants the text {id} in the value. For now,
+			// replacing all occurences of the token with the auto id
+			an = strings.ReplaceAll(format, "{id}", aid)
+		}
+
+		if err := change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
 			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
 		}
 
@@ -90,14 +102,6 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 	if err != nil {
 		return err
 	}
-	autonumberStart := 0
-	if op.HasInserts() {
-		autonumberResult, err := getAutonumber(connection, collectionMetadata, session)
-		if err != nil {
-			return err
-		}
-		autonumberStart = autonumberResult
-	}
 
 	var populations []ChangeProcessor
 	for _, field := range collectionMetadata.Fields {
@@ -111,15 +115,11 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 				populations = append(populations, populateUser(field, user))
 			}
 		} else if field.Type == "AUTONUMBER" {
-			populations = append(populations, populateAutoNumbers(field))
+			populations = append(populations, populateAutoID(field))
 		}
 	}
 
 	return op.LoopChanges(func(change *wire.ChangeItem) error {
-		if change.IsNew {
-			autonumberStart++
-			change.Autonumber = autonumberStart
-		}
 		for _, population := range populations {
 			if saveErr := population(change); saveErr != nil {
 				op.AddError(saveErr)

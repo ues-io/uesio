@@ -1,0 +1,3 @@
+-- No op. Not going back as there is no reliable way via sql script to come back from dropping the autonumber field since each record itself needs 
+-- to be parsed based on the metadata configuration for the AUTONUMBER field at the time the record was created (e.g., prefix, leading zeros, etc.).  
+-- If this is ever needed, a manual approach will be required.

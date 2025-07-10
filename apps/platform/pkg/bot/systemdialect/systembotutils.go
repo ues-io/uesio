@@ -82,3 +82,15 @@ func requireValue(change *wire.ChangeItem, fieldName string) (string, error) {
 	return value, nil
 
 }
+
+func newSaveExceptionError(change *wire.ChangeItem, fieldName string, msg string) error {
+	var m string
+	if change.Metadata != nil {
+		if change.IsNew {
+			m = "unable to insert new record into collection " + change.Metadata.GetFullName() + " at index " + change.RecordKey + ": "
+		} else {
+			m = "unable to update existing record of collection " + change.Metadata.GetFullName() + " with key " + change.RecordKey + ": "
+		}
+	}
+	return exceptions.NewSaveException(change.RecordKey, fieldName, m+fieldName+" "+msg, nil)
+}

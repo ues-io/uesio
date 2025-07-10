@@ -3,7 +3,7 @@ package bulk
 import (
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/gofrs/uuid/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )

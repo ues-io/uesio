@@ -39,11 +39,6 @@ params:
     conditions:
       - param: type
         value: AUTONUMBER
-  - name: autonumber_leadingzeros
-    prompt: Leading Zeros
-    conditions:
-      - param: type
-        value: AUTONUMBER
   - name: accept
     prompt: Accept
     type: SELECT

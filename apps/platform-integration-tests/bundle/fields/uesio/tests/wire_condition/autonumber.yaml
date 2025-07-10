@@ -3,4 +3,3 @@ label: Autonumber
 type: AUTONUMBER
 autonumber:
   prefix: ID
-  leadingZeros: 3

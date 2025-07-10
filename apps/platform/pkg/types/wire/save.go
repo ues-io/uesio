@@ -174,7 +174,6 @@ type ChangeItem struct {
 	OldValues       meta.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
-	Autonumber      int
 	IsNew           bool
 	Metadata        *CollectionMetadata
 }
@@ -379,6 +378,10 @@ func GetValueInt(value any) (int64, error) {
 
 func GetValueString(value any) (string, error) {
 	valueString, ok := value.(string)
+	// TODO: This needs to be evaluated and likely adjusted. This could be an interface{} and the field may not exist but it could be a valid
+	// field and therefore this should either return a typed error for that situation (e.g., ErrNoFieldValue) or possibly even just empty string.
+	// As it stands, callers get an error and there is no way to know if the error was because there wasn't actually a value present or if some
+	// other error occurred.
 	if !ok {
 		return "", fmt.Errorf("could not get value as string: %T", value)
 	}

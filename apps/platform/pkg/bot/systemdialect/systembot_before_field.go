@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -58,6 +59,15 @@ func runFieldBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		}
 
 		switch ftype {
+		case "AUTONUMBER":
+			// TODO: There is no way to differentiate between "NoValue" or "Some other error" currently
+			// so we follow existing behavior in other places and "assume" that any error is "no value".
+			// Per comment in GetFieldAsString, there needs to be a way to differentiate between these
+			// two scenarios
+			f, _ := change.GetFieldAsString("uesio/studio.autonumber->uesio/studio.format")
+			if f != "" && !strings.Contains(f, "{id}") {
+				return newSaveExceptionError(change, "uesio/studio.autonumber->uesio/studio.format", "invalid autoid format, must contain {id} token")
+			}
 		case "FILE":
 			_, err := requireValue(change, "uesio/studio.file->uesio/studio.accept")
 			if err != nil {

@@ -1,3 +1,2 @@
 autonumber:
   prefix: ${autonumber_prefix}
-  leadingZeros: ${autonumber_leadingzeros}

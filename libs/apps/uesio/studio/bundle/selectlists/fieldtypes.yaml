@@ -1,6 +1,6 @@
 name: fieldtypes
 options:
-  - label: "Auto Number"
+  - label: "Auto Id"
     value: "AUTONUMBER"
   - label: "Check Box"
     value: "CHECKBOX"

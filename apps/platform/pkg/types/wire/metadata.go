@@ -305,8 +305,7 @@ type MetadataFieldMetadata struct {
 }
 
 type AutoNumberMetadata struct {
-	Prefix       string `json:"prefix"`
-	LeadingZeros int    `json:"leadingZeros"`
+	Format string `json:"format"`
 }
 
 type ReferenceMetadata struct {

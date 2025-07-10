@@ -43,7 +43,6 @@ function run(bot) {
   ])
   const autonumberDefinition = getDefinition("templates/autonumber.yaml", [
     "autonumber_prefix",
-    "autonumber_leadingzeros",
   ])
 
   const fileDefinition = getDefinition("templates/file.yaml", ["accept"])

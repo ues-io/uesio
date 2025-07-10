@@ -447,12 +447,12 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 4), you can either use `psql` or some other DB tool to manually run the command `update schema_migrations set version = 4, dirty = false` against your database, or use this assuming you haved [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) (e.g., via brew):
+To forcibly set the migration version to latest (currently 5), you can either use `psql` or some other DB tool to manually run the command `update schema_migrations set version = 5, dirty = false` against your database, or use this assuming you haved [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) (e.g., via brew):
 
 ```
 brew install golang-migrate
 export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
-migrate -path apps/platform/migrations -database "$CONN_STR" force 4
+migrate -path apps/platform/migrations -database "$CONN_STR" force 5
 ```
 
 This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 4
@@ -462,7 +462,7 @@ This will skip running any migrations but update `schema_migrations` table to th
 To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!) assuming you have [installed golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation) and `psql` the [postgres client](https://www.postgresql.org/download/):
 
 ```
-docker compose up -d
+npm run start-deps
 bash apps/platform/migrations_test/test_migrations.sh
 ```
 
