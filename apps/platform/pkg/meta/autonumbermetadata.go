@@ -32,7 +32,7 @@ func (a *AutoNumberMetadata) UnmarshalJSON(data []byte) error {
 }
 
 func (a *AutoNumberMetadata) UnmarshalYAML(node *yaml.Node) error {
-	l := autoNumberMetadataLegacy_DONOTUSE{}
+	var l autoNumberMetadataLegacy_DONOTUSE
 	err := node.Decode(&l)
 	if err != nil {
 		return err
