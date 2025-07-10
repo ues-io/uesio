@@ -17,6 +17,8 @@ import (
 
 var bundleStoreMap = map[string]BundleStore{}
 
+// NOTE - This should be kept in sync with the systemBundles list in platform.ts
+// https://github.com/ues-io/uesio/blob/693e6914ca3e2c58f4f57bdf368e062a39360244/libs/ui/src/platform/platform.ts#L188
 var systemBundles = map[string]bool{
 	"uesio/core":    true,
 	"uesio/studio":  true,
