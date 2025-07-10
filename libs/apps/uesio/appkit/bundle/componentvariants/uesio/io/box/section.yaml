@@ -7,3 +7,5 @@ definition:
     root:
       - m-4
       - sm:m-10
+      # if we're in a dialog, don't apply horizontal padding
+      - "group-[.group\\/dialog]/dialog:mx-0"
