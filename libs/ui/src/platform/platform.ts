@@ -192,9 +192,9 @@ const systemBundles = [
   "uesio/builder",
   "uesio/studio",
   "uesio/core",
-	"uesio/sitekit",
-	"uesio/appkit",
-	"uesio/aikit",  
+  "uesio/sitekit",
+  "uesio/appkit",
+  "uesio/aikit",
 ]
 
 export const isSystemBundle = (namespace: string) =>
