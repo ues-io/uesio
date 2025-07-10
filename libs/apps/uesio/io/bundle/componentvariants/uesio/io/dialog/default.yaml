@@ -6,6 +6,7 @@ definition:
     content:
       - p-5
       - overflow-auto
+      - group/dialog
     footer:
       - p-5
       - justify-end
