@@ -56,6 +56,11 @@ definition:
               reference:
                 components:
                   - uesio/appkit.tile_file:
+                      # TODO: Ideally we could just add a REFERENCEGROUP condition
+                      # to the wire in context and we would be able to remove this
+                      # somewhat hacky display condition. That way the caller of
+                      # this view could decide whether or not to show attachments
+                      # that are from FILE fields.
                       uesio.display:
                         - type: hasNoValue
                           value: ${uesio/core.fieldid}
