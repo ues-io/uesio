@@ -161,8 +161,11 @@ const AgentChat: definition.UC<AgentChatDefinition> = (props) => {
       },
     )
 
-    if (!chatResponse.success && chatResponse.error) {
-      api.notification.addError(chatResponse.error, context.deleteWorkspace())
+    if (!chatResponse.success || chatResponse.error) {
+      api.notification.addError(
+        chatResponse.error || "agent chat failed",
+        context.deleteWorkspace(),
+      )
       return
     }
 

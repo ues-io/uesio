@@ -29,9 +29,9 @@ const signals: Record<string, SignalDescriptor> = {
         mergedParams || {},
       )
 
-      if (!response.success && response.error) {
+      if (!response.success || response.error) {
         // TODO: Recommend putting errors within signal output frame as well
-        return context.addErrorFrame([response.error])
+        return context.addErrorFrame([response.error || "bot call failed"])
       }
 
       // If this invocation was given a stable identifier, and the bot returned outputs,
