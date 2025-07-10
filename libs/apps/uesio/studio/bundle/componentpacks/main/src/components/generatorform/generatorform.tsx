@@ -40,9 +40,12 @@ const run = async (
     getGenParamValues(params, context, result),
   )
 
-  if (!botResp.success && botResp.error) {
-    api.notification.addError(botResp.error, context.deleteWorkspace())
-    return
+  if (!botResp.success || botResp.error) {
+    api.notification.addError(
+      botResp.error || "generator bot failed",
+      context.deleteWorkspace(),
+    )
+    return context
   }
 
   const redirectSuffix = botResp.params?.["uesio.redirect"] || ""
