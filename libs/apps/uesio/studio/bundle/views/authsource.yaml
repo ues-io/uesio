@@ -38,98 +38,32 @@ definition:
                 itemNameSpaceIcon: ${authsources:uesio/studio.appicon}
                 itemNameSpaceColor: ${authsources:uesio/studio.appcolor}
         content:
-          - uesio/io.list:
-              uesio.id: authsourcesList
-              wire: authsources
-              mode: READ
-              components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.main
-                    title: ${uesio/studio.name}
-                    subtitle: Auth Source
-                    avatar:
-                      - uesio/io.text:
-                          uesio.variant: uesio/io.icon
-                          text: ${uesio/studio.appicon}
-                          color: ${uesio/studio.appcolor}
-                    actions:
-                      - uesio/io.group:
+          - uesio/appkit.layout_detail_split:
+              main:
+                - uesio/appkit.form_detail:
+                    wire: authsources
+                    avataricon: ${uesio/studio.appicon}
+                    avatariconcolor: ${uesio/studio.appcolor}
+                    deleteconfirm: true
+                    deletesignals:
+                      - signal: wire/MARK_FOR_DELETE
+                      - signal: wire/SAVE
+                      - signal: route/NAVIGATE
+                        path: app/$Param{app}/workspace/$Param{workspacename}/authsources
+                    content:
+                      - uesio/io.box:
+                          uesio.variant: uesio/appkit.primarysection
                           components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.edit}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                  - type: paramValue
-                                    param: app
-                                    operator: EQUALS
-                                    value: $Param{namespace}
-                                signals:
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: TOGGLE_MODE
-                                    targettype: specific
-                                    componentid: authsourcesList
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.primary
-                                text: $Label{uesio/io.save}
-                                uesio.display:
-                                  - type: wireHasChanges
-                                    wire: authsources
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - authsources
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: SET_READ_MODE
-                                    targettype: specific
-                                    componentid: authsourcesList
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.cancel}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: EDIT
-                                signals:
-                                  - signal: wire/CANCEL
-                                    wire: authsources
-                                  - signal: component/CALL
-                                    component: uesio/io.list
-                                    componentsignal: SET_READ_MODE
-                                    targettype: specific
-                                    target: authsourcesList
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: $Label{uesio/io.delete}
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
-                                  - type: paramValue
-                                    param: app
-                                    operator: EQUALS
-                                    value: $Param{namespace}
-                                signals:
-                                  - signal: wire/MARK_FOR_DELETE
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - authsources
-                                  - signal: route/NAVIGATE
-                                    path: app/$Param{app}/workspace/$Param{workspacename}/authsources
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.grid:
-                          uesio.variant: uesio/io.four_columns
-                          items:
-                            - uesio/io.field:
-                                fieldId: uesio/studio.name
-                            - uesio/io.field:
-                                fieldId: uesio/studio.type
-                            - uesio/io.field:
-                                fieldId: uesio/studio.credentials
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{app}
+                            - uesio/io.grid:
+                                uesio.variant: uesio/appkit.four_columns
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.type
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.credentials
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}

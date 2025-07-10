@@ -71,12 +71,9 @@ const COMMON_FIELDS = [
   UPDATED_BY_FIELD,
 ]
 
-const getGridFromFieldDefs = (
-  fieldDefs: collection.Field[],
-  isNewRecord: boolean,
-) => ({
+const getGridFromFieldDefs = (fieldDefs: collection.Field[]) => ({
   "uesio/io.box": {
-    ...(!isNewRecord && { "uesio.variant": "uesio/appkit.primarysection" }),
+    "uesio.variant": "uesio/appkit.primarysection",
     components: [
       {
         "uesio/io.grid": {
@@ -104,9 +101,7 @@ const getComponents = (
   const fields = useFields.sort((a, b) =>
     a.getName().localeCompare(b.getName()),
   )
-  const grids: definition.DefinitionList = [
-    getGridFromFieldDefs(fields, createMode),
-  ]
+  const grids: definition.DefinitionList = [getGridFromFieldDefs(fields)]
   // Add in common fields
   if (!createMode) {
     grids.push({
