@@ -1,8 +1,8 @@
 import { Context, Mergeable } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { BotParams, platform } from "../../platform/platform"
+import { BotParams } from "../../platform/platform"
 import { parseKey } from "../../component/path"
-import { getErrorString } from "../utils"
+import { callBot } from "../../hooks/botapi"
 
 // The key for the entire band
 const BOT_BAND = "bot"
@@ -22,28 +22,27 @@ const signals: Record<string, SignalDescriptor> = {
         params as Record<string, Mergeable>,
       )
 
-      try {
-        const response = await platform.callBot(
-          context,
-          namespace,
-          name,
-          mergedParams || {},
-        )
+      const response = await callBot(
+        context,
+        namespace,
+        name,
+        mergedParams || {},
+      )
 
-        // If this invocation was given a stable identifier, and the bot returned outputs,
-        // expose its outputs for later use
-        if (response && signalInvocation.stepId && response.params) {
-          return context.addSignalOutputFrame(
-            signalInvocation.stepId,
-            response.params,
-          )
-        }
-        return context
-      } catch (error) {
+      if (!response.success || response.error) {
         // TODO: Recommend putting errors within signal output frame as well
-        const message = getErrorString(error)
-        return context.addErrorFrame([message])
+        return context.addErrorFrame([response.error || "bot call failed"])
       }
+
+      // If this invocation was given a stable identifier, and the bot returned outputs,
+      // expose its outputs for later use
+      if (response && signalInvocation.stepId && response.params) {
+        return context.addSignalOutputFrame(
+          signalInvocation.stepId,
+          response.params,
+        )
+      }
+      return context
     },
   },
 }

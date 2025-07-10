@@ -1,5 +1,6 @@
 import { Context } from "../context/context"
 import { BotParams, platform } from "../platform/platform"
+import { getErrorString } from "../utilexports"
 import usePlatformFunc from "./useplatformfunc"
 
 const useParams = (
@@ -27,6 +28,35 @@ const useCallBot = (
     !!(namespace && name && enabled),
   )
 
-const callGenerator = platform.callGeneratorBot
+const callGenerator = async (
+  context: Context,
+  namespace: string,
+  name: string,
+  params: BotParams,
+) => {
+  try {
+    return await platform.callGeneratorBot(context, namespace, name, params)
+  } catch (err) {
+    return {
+      success: false,
+      error: getErrorString(err),
+    }
+  }
+}
 
-export { useParams, callGenerator, useCallBot }
+const callBot = async (
+  context: Context,
+  namespace: string,
+  name: string,
+  params: BotParams,
+) => {
+  try {
+    return await platform.callBot(context, namespace, name, params)
+  } catch (err) {
+    return {
+      success: false,
+      error: getErrorString(err),
+    }
+  }
+}
+export { useParams, callGenerator, callBot, useCallBot }
