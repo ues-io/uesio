@@ -17,7 +17,7 @@ type NumberFieldMetadata = {
 }
 
 type AutonumberFieldMetadata = {
-  "uesio/studio.prefix"?: string
+  "uesio/studio.format"?: string
 }
 
 type CollectionFieldExtraMetadata = {
@@ -64,9 +64,8 @@ export const getUesioFieldFromSuggestedField = (
   } else if (sqlType.includes("serial")) {
     uesioType = "AUTONUMBER"
     extras["uesio/studio.autonumber"] = {
-      "uesio/studio.prefix": collectionPluralLabel
-        .toUpperCase()
-        .substring(0, 2),
+      "uesio/studio.format":
+        collectionPluralLabel.toUpperCase().substring(0, 2) + "-{id}",
     }
   } else if (sqlType.includes("boolean")) {
     uesioType = "CHECKBOX"

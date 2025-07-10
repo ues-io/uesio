@@ -174,7 +174,6 @@ type ChangeItem struct {
 	OldValues       meta.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
-	AutoID          string
 	IsNew           bool
 	Metadata        *CollectionMetadata
 }

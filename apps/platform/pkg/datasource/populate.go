@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -31,14 +32,21 @@ func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			autoNumberMeta = (*wire.AutoNumberMetadata)(&meta.DefaultAutoNumberMetadata)
+			autoNumberMeta = &meta.DefaultAutoNumberMetadata
+		}
+
+		aid, err := getAutoID()
+		if err != nil {
+			return exceptions.NewSaveException(change.RecordKey, field.GetFullName(), "", err)
 		}
 
 		var an string
-		if autoNumberMeta.Prefix == "" {
-			an = change.AutoID
+		if autoNumberMeta.Format == "" {
+			an = aid
 		} else {
-			an = autoNumberMeta.Prefix + "-" + change.AutoID
+			// TODO: Could consider supporting escaping {id} token if the user really wants the text {id} in the value. For now,
+			// replacing all occurences of the token with the auto id
+			an = strings.ReplaceAll(autoNumberMeta.Format, "{id}", aid)
 		}
 
 		if err := change.FieldChanges.SetField(field.GetFullName(), an); err != nil {
@@ -110,13 +118,6 @@ func Populate(op *wire.SaveOp, connection wire.Connection, session *sess.Session
 	}
 
 	return op.LoopChanges(func(change *wire.ChangeItem) error {
-		if change.IsNew {
-			aid, err := getAutoID()
-			if err != nil {
-				return err
-			}
-			change.AutoID = aid
-		}
 		for _, population := range populations {
 			if saveErr := population(change); saveErr != nil {
 				op.AddError(saveErr)

@@ -134,7 +134,7 @@ func GetNumberMetadata(f *meta.Field) *wire.NumberMetadata {
 func GetAutoNumberMetadata(f *meta.Field) *wire.AutoNumberMetadata {
 	if f.Type == "AUTONUMBER" && f.AutoNumberMetadata != nil {
 		return &wire.AutoNumberMetadata{
-			Prefix: f.AutoNumberMetadata.Prefix,
+			Format: f.AutoNumberMetadata.Format,
 		}
 	}
 	return nil

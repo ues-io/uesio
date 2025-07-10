@@ -2,6 +2,10 @@ name: autonumber
 type: STRUCT
 label: Autonumber Metadata
 subfields:
+  # studio.prefix is deprecated in favor of studio.format
   - name: uesio/studio.prefix
     label: Prefix
+    type: TEXT
+  - name: uesio/studio.format
+    label: Format
     type: TEXT

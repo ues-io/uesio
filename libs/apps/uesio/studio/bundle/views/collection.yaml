@@ -1030,8 +1030,8 @@ definition:
                       value: AUTONUMBER
                   components:
                     - uesio/io.field:
-                        fieldId: uesio/studio.autonumber->uesio/studio.prefix
-                        uesio.id: new-field-autonumber-prefix
+                        fieldId: uesio/studio.autonumber->uesio/studio.format
+                        uesio.id: new-field-autonumber-format
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type

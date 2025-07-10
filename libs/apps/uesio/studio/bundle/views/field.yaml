@@ -221,7 +221,7 @@ definition:
                                     value: AUTONUMBER
                                 components:
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.autonumber->uesio/studio.prefix
+                                      fieldId: uesio/studio.autonumber->uesio/studio.format
                             - uesio/io.box:
                                 uesio.display:
                                   - field: uesio/studio.type
