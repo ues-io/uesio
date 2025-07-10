@@ -30,9 +30,11 @@ func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 			return nil
 		}
 
-		autoNumberMeta := field.AutoNumberMetadata
-		if autoNumberMeta == nil {
-			autoNumberMeta = &meta.DefaultAutoNumberMetadata
+		var format string
+		if field.AutoNumberMetadata == nil {
+			format = meta.DefaultAutoNumberMetadata.Format
+		} else {
+			format = field.AutoNumberMetadata.Format
 		}
 
 		aid, err := getAutoID()
@@ -41,12 +43,12 @@ func populateAutoID(field *wire.FieldMetadata) ChangeProcessor {
 		}
 
 		var an string
-		if autoNumberMeta.Format == "" {
+		if format == "" {
 			an = aid
 		} else {
 			// TODO: Could consider supporting escaping {id} token if the user really wants the text {id} in the value. For now,
 			// replacing all occurences of the token with the auto id
-			an = strings.ReplaceAll(autoNumberMeta.Format, "{id}", aid)
+			an = strings.ReplaceAll(format, "{id}", aid)
 		}
 
 		if err := change.FieldChanges.SetField(field.GetFullName(), an); err != nil {

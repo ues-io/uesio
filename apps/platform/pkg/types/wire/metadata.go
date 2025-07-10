@@ -304,7 +304,9 @@ type MetadataFieldMetadata struct {
 	Namespace string `json:"namespace"`
 }
 
-type AutoNumberMetadata = meta.AutoNumberMetadata
+type AutoNumberMetadata struct {
+	Format string `json:"format"`
+}
 
 type ReferenceMetadata struct {
 	Collection      string   `json:"collection"`
