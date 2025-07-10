@@ -186,10 +186,15 @@ export const getPrefix = (context: Context) => {
 }
 
 const systemBundles = [
+  // NOTE - This should be kept in sync with the systemBundles list in bundlestore.go
+  // https://github.com/ues-io/uesio/blob/693e6914ca3e2c58f4f57bdf368e062a39360244/apps/platform/pkg/bundlestore/bundlestore.go#L20
   "uesio/io",
   "uesio/builder",
   "uesio/studio",
   "uesio/core",
+	"uesio/sitekit",
+	"uesio/appkit",
+	"uesio/aikit",  
 ]
 
 export const isSystemBundle = (namespace: string) =>
