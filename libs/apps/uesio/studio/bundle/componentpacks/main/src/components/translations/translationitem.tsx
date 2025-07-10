@@ -64,7 +64,6 @@ const TranslationItem: definition.UtilityComponent<Props> = (props) => {
         }}
         value={translations}
         setValue={setTranslations}
-        mode={"EDIT"}
         context={context}
       />
     </>

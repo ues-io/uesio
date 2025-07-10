@@ -148,6 +148,7 @@ definition:
         - uesio/appkit.section_audit_info:
         - uesio/appkit.section_delete:
             confirm: $Prop{deleteconfirm}
+            confirmMessage: $Prop{deleteconfirmmessage}
             signals: $Prop{deletesignals}
 title: Detail Form Component
 discoverable: true

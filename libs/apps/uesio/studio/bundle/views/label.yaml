@@ -41,68 +41,17 @@ definition:
         content:
           - uesio/appkit.layout_detail_split:
               main:
-                - uesio/io.list:
-                    uesio.id: labelsList
+                - uesio/appkit.form_detail:
                     wire: labels
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/appkit.main
-                          title: ${uesio/studio.name}
-                          subtitle: Label
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                text: ${uesio/studio.appicon}
-                                color: ${uesio/studio.appcolor}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/appkit.secondary
-                                      text: $Label{uesio/io.edit}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: READ
-                                        - type: paramValue
-                                          param: app
-                                          operator: EQUALS
-                                          value: $Param{namespace}
-                                      signals:
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: labelsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/appkit.primary
-                                      text: $Label{uesio/io.save}
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: labels
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - labels
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: labelsList
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/appkit.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: labels
-                                        - signal: component/CALL
-                                          component: uesio/io.list
-                                          componentsignal: TOGGLE_MODE
-                                          targettype: specific
-                                          componentid: labelsList
+                    avataricon: ${uesio/studio.appicon}
+                    avatariconcolor: ${uesio/studio.appcolor}
+                    deleteconfirm: true
+                    deletesignals:
+                      - signal: wire/MARK_FOR_DELETE
+                      - signal: wire/SAVE
+                      - signal: route/NAVIGATE
+                        path: app/$Param{app}/workspace/$Param{workspacename}/labels
+                    content:
                       - uesio/io.box:
                           uesio.variant: uesio/appkit.primarysection
                           components:
@@ -113,11 +62,3 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.value
-                      - uesio/appkit.section_audit_info:
-                      - uesio/appkit.section_delete:
-                          confirm: true
-                          signals:
-                            - signal: wire/MARK_FOR_DELETE
-                            - signal: wire/SAVE
-                            - signal: route/NAVIGATE
-                              path: app/$Param{app}/workspace/$Param{workspacename}/labels
