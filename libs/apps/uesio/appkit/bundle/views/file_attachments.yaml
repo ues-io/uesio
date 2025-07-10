@@ -56,4 +56,7 @@ definition:
               reference:
                 components:
                   - uesio/appkit.tile_file:
+                      uesio.display:
+                        - type: hasNoValue
+                          value: ${uesio/core.fieldid}
                       allowDelete: $Param{allowDelete}

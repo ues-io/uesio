@@ -38,6 +38,7 @@ const getWireDefinition = (
                   "uesio/core.mimetype": {},
                   "uesio/core.contentlength": {},
                   "uesio/core.path": {},
+                  "uesio/core.fieldid": {},
                 },
               }
             : {}
