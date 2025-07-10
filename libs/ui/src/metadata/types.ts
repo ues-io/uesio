@@ -1,5 +1,6 @@
 // TODO: We need to load this from the server rather than hard-coding it here too!
 const METADATA = {
+  AGENT: "agents",
   AUTHSOURCE: "authsources",
   BOT: "bots",
   COLLECTION: "collections",

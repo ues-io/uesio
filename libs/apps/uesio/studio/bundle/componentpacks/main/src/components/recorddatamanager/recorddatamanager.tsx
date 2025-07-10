@@ -8,6 +8,7 @@ const {
   OWNER_FIELD,
   UPDATED_AT_FIELD,
   UPDATED_BY_FIELD,
+  ATTACHMENTS_FIELD,
 } = collection
 
 type DataManagerDefinition = {
@@ -27,7 +28,22 @@ const getWireDefinition = (
   const createMode = !recordID
   return {
     collection,
-    fields: Object.fromEntries(collectionFields.map((f) => [f.getId(), {}])),
+    fields: Object.fromEntries(
+      collectionFields.map((f) => {
+        const fieldId = f.getId()
+        const subFields =
+          fieldId === ATTACHMENTS_FIELD
+            ? {
+                fields: {
+                  "uesio/core.mimetype": {},
+                  "uesio/core.contentlength": {},
+                  "uesio/core.path": {},
+                },
+              }
+            : {}
+        return [fieldId, subFields]
+      }),
+    ),
     conditions: createMode
       ? undefined
       : [
@@ -52,7 +68,10 @@ const getLoadableFields = (
   return (
     collectionMetadata
       .getFields()
-      .filter((f) => f.getType() !== "REFERENCEGROUP")
+      .filter(
+        (f) =>
+          f.getType() !== "REFERENCEGROUP" || f.getId() === ATTACHMENTS_FIELD,
+      )
       .filter((f) =>
         isNewRecord
           ? f.getCreateable()
@@ -69,6 +88,7 @@ const COMMON_FIELDS = [
   CREATED_BY_FIELD,
   UPDATED_AT_FIELD,
   UPDATED_BY_FIELD,
+  ATTACHMENTS_FIELD,
 ]
 
 const getGridFromFieldDefs = (fieldDefs: collection.Field[]) => ({
@@ -106,6 +126,12 @@ const getComponents = (
   if (!createMode) {
     grids.push({
       "uesio/appkit.section_audit_info": {},
+    })
+    grids.push({
+      "uesio/appkit.section_attachments": {
+        allowDelete: true,
+        allowCreate: true,
+      },
     })
   }
   return grids
