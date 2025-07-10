@@ -329,12 +329,11 @@ const platform = {
   ): Promise<LoadResponseBatch> => {
     const prefix = getPrefix(context)
     injectParams(requestBody.wires, context.getParams())
-    let response
-    try {
-      response = await postJSON(context, `${prefix}/wires/load`, requestBody)
-    } catch (err) {
-      return Promise.reject(err)
-    }
+    const response = await postJSON(
+      context,
+      `${prefix}/wires/load`,
+      requestBody,
+    )
     const loadResponse = (await respondJSON(response)) as ServerWireLoadResponse
 
     const { wires, ...rest } = loadResponse
@@ -378,19 +377,12 @@ const platform = {
     params: BotParams,
   ): Promise<BotResponse> => {
     const prefix = getPrefix(context)
-    try {
-      const response = await postJSON(
-        context,
-        `${prefix}/metadata/generate/${namespace}/${name}`,
-        params,
-      )
-      return respondJSON(response)
-    } catch (err) {
-      return {
-        success: false,
-        error: err as string,
-      }
-    }
+    const response = await postJSON(
+      context,
+      `${prefix}/metadata/generate/${namespace}/${name}`,
+      params,
+    )
+    return respondJSON(response)
   },
   getBotParams: async (
     context: Context,

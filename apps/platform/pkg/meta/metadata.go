@@ -130,7 +130,12 @@ func ParseKey(key string) (namespace string, name string, err error) {
 	if len(keyArray) != 2 {
 		return "", "", fmt.Errorf("invalid key: %s", key)
 	}
-	return keyArray[0], keyArray[1], nil
+	namespace = keyArray[0]
+	name = keyArray[1]
+	if namespace == "" || name == "" {
+		return "", "", fmt.Errorf("invalid key: %s", key)
+	}
+	return namespace, name, nil
 }
 
 func ParseKeyWithDefault(key, defaultNamespace string) (string, string, error) {

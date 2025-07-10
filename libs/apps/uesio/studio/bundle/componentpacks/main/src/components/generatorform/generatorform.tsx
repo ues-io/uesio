@@ -42,7 +42,7 @@ const run = async (
 
   if (!botResp.success && botResp.error) {
     api.notification.addError(botResp.error, context.deleteWorkspace())
-    return
+    return context
   }
 
   const redirectSuffix = botResp.params?.["uesio.redirect"] || ""

@@ -3,3 +3,4 @@ label: Agent
 type: METADATA
 metadata:
   type: AGENT
+required: true

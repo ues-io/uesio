@@ -1,13 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit"
-import {
-  component,
-  styles,
-  definition,
-  signal,
-  api,
-  context,
-  platform,
-} from "@uesio/ui"
+import { component, styles, definition, signal, api, context } from "@uesio/ui"
 import { useState } from "react"
 
 type AgentBotResponse = {
@@ -155,9 +147,7 @@ const AgentChat: definition.UC<AgentChatDefinition> = (props) => {
 
     setValue("")
 
-    // TODO: Implement better error handling here. Also fix the
-    // weird platform.platform thing.
-    const chatResponse = await platform.platform.callBot(
+    const chatResponse = await api.bot.callBot(
       context,
       "uesio/aikit",
       "runagent",
@@ -170,6 +160,11 @@ const AgentChat: definition.UC<AgentChatDefinition> = (props) => {
         hiddenInputPrefix: "Editing file: " + fileName + "\n\n",
       },
     )
+
+    if (!chatResponse.success && chatResponse.error) {
+      api.notification.addError(chatResponse.error, context.deleteWorkspace())
+      return
+    }
 
     // This removes the temporary chat message before saving the wire
     threadWire.cancel()
