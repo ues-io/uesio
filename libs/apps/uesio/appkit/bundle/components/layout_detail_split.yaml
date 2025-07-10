@@ -9,8 +9,8 @@ definition:
       uesio.styleTokens:
         root:
           - grid-cols-1
-          - lg:grid-cols-3
-          - xl:grid-cols-4
+          - lg:grid-cols-[1fr_fit-content(320px)]
+          - xl:grid-cols-[1fr_fit-content(25%)]
           - gap-0
           - h-full
           - overflow-auto
@@ -18,8 +18,6 @@ definition:
         - uesio/io.box:
             uesio.styleTokens:
               root:
-                - lg:col-span-2
-                - xl:col-span-3
                 - "[container-type:inline-size]"
             components:
               - $Slot{main}
@@ -38,6 +36,7 @@ definition:
                 - p-4
                 - sm:p-10
                 - pt-0
+                - empty:hidden
             components:
               - $Slot{left}
 title: Detail Split Component
