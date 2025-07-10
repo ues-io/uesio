@@ -5,5 +5,5 @@ uniqueKey:
 nameField: uesio/studio.language
 access: protected
 accessField: uesio/studio.workspace
-label: translation
-pluralLabel: translations
+label: Translation
+pluralLabel: Translations
