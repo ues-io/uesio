@@ -5,5 +5,5 @@ uniqueKey:
 nameField: uesio/studio.name
 access: protected
 accessField: uesio/studio.workspace
-label: label
-pluralLabel: labels
+label: Label
+pluralLabel: Labels

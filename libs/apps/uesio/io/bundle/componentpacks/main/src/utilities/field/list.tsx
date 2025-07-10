@@ -44,7 +44,7 @@ const ListField: definition.UtilityComponent<ListFieldUtilityProps> = (
   const {
     context,
     fieldId,
-    mode,
+    mode = props.context.getFieldMode(),
     options = {} as ListFieldOptions,
     path,
     variant,
