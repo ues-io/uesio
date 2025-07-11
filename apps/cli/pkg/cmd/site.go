@@ -64,8 +64,8 @@ func init() {
 		RunE:         siteUse,
 		SilenceUsage: true,
 	}
-	siteUseCommand.PersistentFlags().StringP("bundle", "b", "", "The bundle to use")
-	siteUseCommand.PersistentFlags().StringP("name", "n", "", "The site name")
+	siteUseCommand.Flags().StringP("bundle", "b", "", "The bundle to use")
+	siteUseCommand.Flags().StringP("name", "n", "", "The site name")
 
 	siteUpsertCmd := &cobra.Command{
 		Use:          "upsert",
@@ -74,9 +74,9 @@ func init() {
 		RunE:         siteUpsert,
 		SilenceUsage: true,
 	}
-	siteUpsertCmd.PersistentFlags().StringP("spec", "s", "", "Filename of upsert specification")
-	siteUpsertCmd.PersistentFlags().StringP("file", "f", "", "Filename of data to upsert")
-	siteUpsertCmd.PersistentFlags().StringP("collection", "c", "", "The collection to upsert")
+	siteUpsertCmd.Flags().StringP("spec", "s", "", "Filename of upsert specification")
+	siteUpsertCmd.Flags().StringP("file", "f", "", "Filename of data to upsert")
+	siteUpsertCmd.Flags().StringP("collection", "c", "", "The collection to upsert")
 
 	siteCommand.AddCommand(siteUseCommand, siteUpsertCmd)
 	rootCmd.AddCommand(siteCommand)

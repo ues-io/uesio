@@ -13,8 +13,8 @@ func init() {
 		RunE:         packer,
 		SilenceUsage: true,
 	}
-	packCommand.PersistentFlags().BoolP("zip", "z", false, "Also gzip packed resources")
-	packCommand.PersistentFlags().BoolP("watch", "w", false, "Watch for filechanges and repack")
+	packCommand.Flags().BoolP("zip", "z", false, "Also gzip packed resources")
+	packCommand.Flags().BoolP("watch", "w", false, "Watch for filechanges and repack")
 	rootCmd.AddCommand(packCommand)
 
 }

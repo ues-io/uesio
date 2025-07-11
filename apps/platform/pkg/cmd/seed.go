@@ -20,15 +20,14 @@ import (
 
 func init() {
 
-	rootCmd.AddCommand(&cobra.Command{
+	seedCmd := &cobra.Command{
 		Use:          "seed",
 		Short:        "Seed Database",
 		RunE:         seed,
 		SilenceUsage: true,
-	})
-
-	rootCmd.PersistentFlags().BoolP("ignore-failures", "i", false, "Set to true to ignore seed failures")
-
+	}
+	seedCmd.Flags().BoolP("ignore-failures", "i", false, "Set to true to ignore seed failures")
+	rootCmd.AddCommand(seedCmd)
 }
 
 func getSeedDataFile(v any, fileName string) error {
