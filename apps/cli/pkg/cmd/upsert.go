@@ -14,9 +14,9 @@ func init() {
 		RunE:         workspaceUpsert,
 		SilenceUsage: true,
 	}
-	upsertCommand.PersistentFlags().StringP("spec", "s", "", "Filename of upsert specification")
-	upsertCommand.PersistentFlags().StringP("file", "f", "", "Filename of data to upsert")
-	upsertCommand.PersistentFlags().StringP("collection", "c", "", "The collection to upsert")
+	upsertCommand.Flags().StringP("spec", "s", "", "Filename of upsert specification")
+	upsertCommand.Flags().StringP("file", "f", "", "Filename of data to upsert")
+	upsertCommand.Flags().StringP("collection", "c", "", "The collection to upsert")
 
 	rootCmd.AddCommand(upsertCommand)
 

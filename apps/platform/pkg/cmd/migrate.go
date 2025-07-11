@@ -16,49 +16,86 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(&cobra.Command{
-		Use:          "migrate",
-		Short:        "Run database migrations",
-		RunE:         migrate,
-		SilenceUsage: true,
-	})
+	migrateCmd := &cobra.Command{
+		Use:   "migrate",
+		Short: "Run all database 'up' migrations",
+		Long:  "Run all database 'up' migrations. Use 'up' or 'down' commands to specify direction and optional number of migrations.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// by default run all 'up' migrations
+			opts := newMigrateUpOptions()
+			return migrate(&opts)
+		},
+	}
+
+	downCmd := &cobra.Command{
+		Use:   "down [N]",
+		Short: "Apply all or N down migrations",
+		Args:  cobra.RangeArgs(0, 1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			opts := newMigrateDownOptions()
+			all, _ := cmd.Flags().GetBool("all")
+			if all {
+				if len(args) > 0 {
+					return errors.New("you cannot specify other arguments when using --all flag")
+				}
+			} else if len(args) == 0 {
+				return errors.New("you must specify a number of migrations to apply or use --all flag")
+			} else {
+				num, err := getMigrationsToApply(args[0])
+				if err != nil {
+					return err
+				}
+				opts.Number = num
+			}
+			return migrate(&opts)
+		},
+	}
+	downCmd.Flags().Bool("all", false, "Apply all down migrations")
+	migrateCmd.AddCommand(downCmd)
+
+	upCmd := &cobra.Command{
+		Use:   "up [N]",
+		Short: "Apply all or N up migrations",
+		Args:  cobra.RangeArgs(0, 1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			opts := newMigrateUpOptions()
+			if len(args) == 1 {
+				num, err := getMigrationsToApply(args[0])
+				if err != nil {
+					return err
+				}
+				opts.Number = num
+			}
+			return migrate(&opts)
+		},
+	}
+	migrateCmd.AddCommand(upCmd)
+
+	rootCmd.AddCommand(migrateCmd)
 }
 
-func parseMigrateOptions(args []string) (*migrations.MigrateOptions, error) {
-	opts := migrations.MigrateOptions{
+func newMigrateUpOptions() migrations.MigrateOptions {
+	return migrations.MigrateOptions{
 		Down:   false,
-		Number: 0,
+		Number: 0, // 0 means all migrations
 	}
-	// If no args, assume we want to migrate up as far as we can go
-	if len(args) == 0 {
-		return &opts, nil
-	}
-	// If one arg, it must be either "up" or "down"
-	if len(args) >= 1 {
-		opts.Down = args[0] == "down"
-	}
-	if len(args) == 2 {
-		num, err := strconv.Atoi(args[1])
-		if err != nil {
-			return nil, errors.New("second argument must be a valid number of migrations to run")
-		}
-		opts.Number = num
-	}
-	return &opts, nil
 }
 
-func migrate(cmd *cobra.Command, args []string) error {
-
-	opts, err := parseMigrateOptions(args)
-	if err != nil {
-		return err
+func newMigrateDownOptions() migrations.MigrateOptions {
+	return migrations.MigrateOptions{
+		Down:   true,
+		Number: 0, // 0 means all migrations
 	}
+}
+
+func migrate(opts *migrations.MigrateOptions) error {
 
 	ctx := context.Background()
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 
-	err = datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
+	err := datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
 		return conn.Migrate(opts)
 	})
 	if err != nil {
@@ -67,4 +104,15 @@ func migrate(cmd *cobra.Command, args []string) error {
 
 	slog.InfoContext(ctx, "Successfully ran migrations")
 	return nil
+}
+
+func getMigrationsToApply(s string) (int, error) {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, errors.New("number of migrations to apply must be a valid number")
+	}
+	if num <= 0 {
+		return 0, errors.New("number of migrations to apply must be greater than 0")
+	}
+	return num, nil
 }
