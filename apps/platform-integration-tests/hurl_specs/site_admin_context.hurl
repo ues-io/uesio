@@ -59,7 +59,29 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/ue
 }
 HTTP 200
 
-# Try (and fail) to administer the tests site as an outsider (sorry abel)
+# Try (and fail) to administer the tests site as a logged in studio user but an outsider to the testsite
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/load
+Accept: application/json
+{
+    "wires": [
+        {
+            "collection":"uesio/tests.account",
+            "query":true,
+            "conditions": [
+                {
+                    "field": "uesio/core.uniquekey",
+                    "value": "Evil Corp"
+                }
+            ]
+        }
+    ]
+}
+HTTP 404
+
+# Logout as abel
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/logout
+HTTP 200
+
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/siteadmin/uesio/tests/testsite/wires/load
 Accept: application/json
 {
