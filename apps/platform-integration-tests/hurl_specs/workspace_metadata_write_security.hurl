@@ -99,4 +99,4 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/s
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" contains "you do not have write access to this workspace"
+jsonpath "$.wires[0].errors[0].message" contains "couldn't find item from platform load: Collection=uesio/studio.workspace"

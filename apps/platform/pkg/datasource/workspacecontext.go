@@ -216,7 +216,7 @@ func AddWorkspaceImpersonationContext(workspaceKey string, session *sess.Session
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it", workspaceKey)
+		return nil, err
 	}
 	err = addWorkspaceContext(workspace, sessClone, connection)
 	if err != nil {
@@ -238,7 +238,7 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
 	if err != nil {
-		return nil, fmt.Errorf("could not get workspace context: workspace %s does not exist or you don't have access to modify it", workspaceKey)
+		return nil, err
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
@@ -252,7 +252,7 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 	sessClone := session.RemoveWorkspaceContext()
 	workspace, err := QueryWorkspaceForWrite(workspaceID, commonfields.Id, sessClone, connection)
 	if err != nil {
-		return nil, errors.New("could not get workspace context: workspace does not exist or you don't have access to modify it")
+		return nil, err
 	}
 	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
 }
@@ -309,7 +309,8 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 		useSession,
 	)
 	if err != nil {
-		return nil, errors.New("you do not have write access to this workspace")
+		// TODO: Need to be able to differentiate between "no access" and other errors here
+		return nil, err
 	}
 
 	// Shortcut to avoid having to do a join to fetch Apps every time we query workspaces
