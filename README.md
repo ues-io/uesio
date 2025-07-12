@@ -621,6 +621,7 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - https://github.com/jestjs/jest/issues/15173
    - https://github.com/jestjs/jest/issues/15236
    - https://github.com/jestjs/jest/issues/15325
+     UPDATE 2025.07.12: Jest v30 support was merged in https://github.com/nrwl/nx/pull/31853/files#diff-d3257785ed94f98f3ff84c30fead7c7147b8efc2091ea70f8c32a9c2aa68ac6d. Just waiting for the next release to include this.
 4. There is a known security vulnerability with [esbuild 0.17.19](https://github.com/ues-io/uesio/security/dependabot/52) which is due to [@modern-js/node-bundle-require](https://github.com/web-infra-dev/modern.js/issues/6993) that is pinned to that esbuild version since it maintains support for [Node 16 until June 30, 2025](https://github.com/web-infra-dev/modern.js/issues/6993#issuecomment-2791792837). To workaround, adding overriding for [esbuild](./package.json#L176).
    - TODO: Once https://github.com/web-infra-dev/modern.js/issues/6993 is resolved/merged/released, the override for esbuild in package.json can be removed.
    - UPDATE 2025.07.03: https://github.com/web-infra-dev/modern.js/issues/6993 has been resolved and was released in [v2.68.0](https://github.com/web-infra-dev/modern.js/releases/tag/v2.68.0). Now waiting on https://github.com/module-federation/core/issues/3719.
