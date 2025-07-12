@@ -88,7 +88,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 		// If the session is expired, and it's not for a public user
-		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicProfile() {
+		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicUser() {
 			session.Remove(browserSession, w)
 			setSession(ctx, s)
 			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
@@ -123,7 +123,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
-		workspaceSession, err := datasource.AddWorkspaceImpersonationContext(appName+":"+workspaceName, GetSession(r), nil)
+		workspaceSession, err := datasource.AddWorkspaceImpersonationContextByKey(appName+":"+workspaceName, GetSession(r), nil)
 		if err != nil {
 			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
@@ -157,7 +157,7 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 	// for a user that is not currently logged in. THe approach to authentication and authorization detection and the underlying
 	// error types themselves need to be revisted and a consistent and reliabble approach implemented to avoid having to "guess"
 	// at higher levels.
-	if s.IsPublicProfile() && (exceptions.IsType[*exceptions.UnauthorizedException](err) || exceptions.IsType[*exceptions.NotFoundException](err) || exceptions.IsType[*exceptions.ForbiddenException](err)) {
+	if s.IsPublicUser() && (exceptions.IsType[*exceptions.UnauthorizedException](err) || exceptions.IsType[*exceptions.NotFoundException](err) || exceptions.IsType[*exceptions.ForbiddenException](err)) {
 		// TODO: Should we using auth.LoggedOut here but RedirectToLoginRoute only applies 200 with Location header when auth.Expired
 		// is specified so maintaining that for backwards compat for now. This should be revisited and appropriate reasons specified.
 		auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)

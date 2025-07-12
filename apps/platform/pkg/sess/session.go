@@ -335,8 +335,24 @@ func IsExpired(browserSession session.Session) bool {
 	return browserSession.Accessed().Add(browserSession.Timeout()).Before(time.Now())
 }
 
-func (s *Session) IsPublicProfile() bool {
-	return s.GetContextProfile() == s.GetPublicProfile()
+// IsPublicUser returns true if the session is for a public user (i.e., not logged in).
+//
+// NOTE: This should not be used for sensitive operations and limited to things like whether or not
+// to redirect to login page, etc.  Given current implementation, the public user will always be
+// "guest" which is a user that cannot be deleted. Due to the way things are currently implemented,
+// the most reliable way to detect the "public user" is by checking the username rather than setting
+// a flag when session is created due to the multiple ways that sessions that may involve the public
+// user are constructed (doing it upon session creation would require much more invasive changes with
+// little to no benefit currently).There are improvements that need to be made to the underlying
+// authentication and authorization system and session creation/management to more reliably determine if
+// a user is the public user and more specifically, whether or not the user is  logged in/authenticated.
+// For now based on how things work this can reliably be used to determine if the session user is the
+// public user.
+func (s *Session) IsPublicUser() bool {
+	// TODO: Once underlying improvements are made to authentication and authorization, middleware, etc.
+	// this should be replaced with an "IsAuthenticated" function that will be a more reliable method of
+	// determining if a user is authenticated or not.
+	return s.GetSiteUser() == nil || s.GetSiteUser().UniqueKey == meta.PublicUsername
 }
 
 func (s *Session) GetPublicProfile() string {

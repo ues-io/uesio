@@ -37,13 +37,13 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		newDeps := wire.Collection{}
 
 		newDeps = append(newDeps, &wire.Item{
-			"uesio/core.username":  "system",
+			"uesio/core.username":  meta.SystemUsername,
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "System",
 			"uesio/core.lastname":  "User",
 			"uesio/core.profile":   publicProfile,
 		}, &wire.Item{
-			"uesio/core.username":  "guest",
+			"uesio/core.username":  meta.PublicUsername,
 			"uesio/core.type":      "PERSON",
 			"uesio/core.firstname": "Guest",
 			"uesio/core.lastname":  "User",
@@ -100,8 +100,8 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 
 		updatedUsers := wire.Collection{
 			&wire.Item{
-				"uesio/core.username":  "guest",
-				"uesio/core.uniquekey": "guest",
+				"uesio/core.username":  meta.PublicUsername,
+				"uesio/core.uniquekey": meta.PublicUsername,
 				"uesio/core.profile":   newPublicProfile,
 			},
 		}

@@ -221,8 +221,8 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	// If this is an invalid param exception
 
-	// If our profile is the public profile, redirect to the login route
-	if redirect && session.IsPublicProfile() {
+	// If public user (not logged in), redirect to the login route
+	if redirect && session.IsPublicUser() {
 		if auth.RedirectToLoginRoute(w, r, session, auth.NotFound) {
 			return
 		}

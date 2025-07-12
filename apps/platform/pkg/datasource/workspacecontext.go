@@ -172,53 +172,52 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 
 }
 
-func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
-	site := session.GetSite()
-	perms := session.GetSitePermissions()
-
+// creates a new session based on the provided session that contains the workspace context
+func addWorkspaceContext(value string, field string, origSession *sess.Session, connection wire.Connection) (*sess.Session, *meta.Workspace, error) {
 	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppFullName() != "uesio/studio" {
-		return errors.New("this site does not allow working with workspaces")
+	if origSession.GetSite().GetAppFullName() != "uesio/studio" {
+		return nil, nil, exceptions.NewForbiddenException("this site does not allow working with workspaces")
 	}
 	// 2. we should have a profile that allows modifying workspaces
-	if !perms.HasNamedPermission(constant.WorkspaceAdminPerm) {
-		return errors.New("your profile does not allow you to work with workspaces")
+	if !origSession.GetSitePermissions().HasNamedPermission(constant.WorkspaceAdminPerm) {
+		return nil, nil, exceptions.NewForbiddenException("your profile does not allow you to work with workspaces")
+	}
+
+	sessClone := origSession.RemoveWorkspaceContext()
+	workspace, err := QueryWorkspaceForWrite(value, field, sessClone, connection)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	workspaceSession := sess.NewWorkspaceSession(
 		workspace,
-		session.GetSiteUser(),
+		sessClone.GetSiteUser(),
 		"uesio/system.admin",
 		meta.GetAdminPermissionSet(),
 	)
-	session.SetWorkspaceSession(workspaceSession)
-	bundleDef, err := bundle.GetWorkspaceBundleDef(session.Context(), workspace, connection)
+	sessClone.SetWorkspaceSession(workspaceSession)
+	bundleDef, err := bundle.GetWorkspaceBundleDef(sessClone.Context(), workspace, connection)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	bundleDef.Licenses = licenseMap
 	workspace.SetAppBundle(bundleDef)
 
-	return nil
+	return sessClone, workspace, nil
 
 }
 
-func AddWorkspaceImpersonationContext(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddWorkspaceImpersonationContextByKey(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
 	// just use the existing session
 	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
 		return session, nil
 	}
-	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
-	if err != nil {
-		return nil, err
-	}
-	err = addWorkspaceContext(workspace, sessClone, connection)
+	sessClone, workspace, err := addWorkspaceContext(workspaceKey, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -235,12 +234,8 @@ func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connec
 	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
 		return session, nil
 	}
-	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(workspaceKey, commonfields.UniqueKey, sessClone, connection)
-	if err != nil {
-		return nil, err
-	}
-	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
+	sessClone, _, err := addWorkspaceContext(workspaceKey, commonfields.UniqueKey, session, connection)
+	return sessClone, err
 }
 
 func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
@@ -249,12 +244,8 @@ func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connecti
 	if session.GetWorkspace() != nil && session.GetWorkspace().ID == workspaceID {
 		return session, nil
 	}
-	sessClone := session.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(workspaceID, commonfields.Id, sessClone, connection)
-	if err != nil {
-		return nil, err
-	}
-	return sessClone, addWorkspaceContext(workspace, sessClone, connection)
+	sessClone, _, err := addWorkspaceContext(workspaceID, commonfields.Id, session, connection)
+	return sessClone, err
 }
 
 const workspaceWritePerm = "uesio.workspacewrite.%s"
@@ -309,8 +300,15 @@ func QueryWorkspaceForWrite(value, field string, session *sess.Session, connecti
 		useSession,
 	)
 	if err != nil {
-		// TODO: Need to be able to differentiate between "no access" and other errors here
-		return nil, err
+		// TODO: Need to be able to differentiate between "no access" and "not found" here. At higher level, could obscure by always
+		// returning a NotFound to client but at this level, ideal if we could differentiate so that callers could handle more appropriately
+		// based on their context. For now, assuming we've only reached this code path in situations where we have already confirmed the workspace
+		// exists so treating as Forbidden.
+		if exceptions.IsType[*exceptions.NotFoundException](err) {
+			return nil, exceptions.NewForbiddenException(fmt.Sprintf("workspace %s does not exist or you don't have access to modify it", value))
+		} else {
+			return nil, err
+		}
 	}
 
 	// Shortcut to avoid having to do a join to fetch Apps every time we query workspaces

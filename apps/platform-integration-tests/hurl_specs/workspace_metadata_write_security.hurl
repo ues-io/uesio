@@ -99,4 +99,34 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/s
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" count == 1
-jsonpath "$.wires[0].errors[0].message" contains "couldn't find item from platform load: Collection=uesio/studio.workspace"
+jsonpath "$.wires[0].errors[0].message" contains "does not exist or you don't have access to modify it"
+
+# Logout
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/logout
+HTTP 200
+
+# try as public user to modify workspace metadata
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newView",
+            "collection":"uesio/studio.view",
+            "changes": {
+                "1": {
+                    "uesio/studio.name": "baxter_should_not_be_able_to_create_this",
+                    "uesio/studio.definition": "wires:\ncomponents:\n"
+                }
+            },
+            "params": {
+                "workspaceid": "{{workspace_id}}",
+                "app": "{{app_fullname}}"
+            }
+        }
+    ]
+}
+# TODO: This should be a 403 or a 404 (to obscure) with only an error returned, need to refactor underlying authorization, authentication & session management code.
+HTTP 200
+[Asserts]
+jsonpath "$.wires[0].errors" count == 1
+jsonpath "$.wires[0].errors[0].message" contains "your profile does not allow you to edit workspace metadata"
