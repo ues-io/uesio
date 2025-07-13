@@ -37,6 +37,7 @@ definition:
                 - sm:p-10
                 - pt-0
                 - empty:hidden
+                - lg:min-w-[320px]
             components:
               - $Slot{left}
 title: Detail Split Component
