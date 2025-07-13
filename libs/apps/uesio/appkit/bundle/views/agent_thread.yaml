@@ -56,7 +56,7 @@ definition:
                     icon: forum
                     iconFill: false
         footer:
-          - uesio/aikit.agent_chat:
+          - uesio/appkit.agent_chat:
               wire: threaditems
               agent: $Param{agent}
               thread: $Param{thread_id}
