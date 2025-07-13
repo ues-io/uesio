@@ -125,7 +125,7 @@ const getSelectedContentDispatcher: signal.ComponentSignalDispatcher<
 > = (state, payload, context) => {
   const selectedPath = getSelectedViewPath(context.removeViewFrame(1))
   const content = getContent(context, selectedPath)
-  return context.addComponentFrame("uesio/aikit.agent_chat", {
+  return context.addComponentFrame("uesio/appkit.agent_chat", {
     content,
   })
 }
@@ -135,7 +135,7 @@ const handleEditsDispatcher: signal.ComponentSignalDispatcher<unknown> = (
   payload,
   context,
 ) => {
-  const results = context.getComponentData("uesio/aikit.agent_chat")
+  const results = context.getComponentData("uesio/appkit.agent_chat")
 
   const messages = results.data.results as AnthropicResponse[]
 
@@ -151,7 +151,7 @@ const handleEditsDispatcher: signal.ComponentSignalDispatcher<unknown> = (
     .map((message) => {
       return handleMessage(context, message)
     })
-  return context.addComponentFrame("uesio/aikit.agent_chat", {
+  return context.addComponentFrame("uesio/appkit.agent_chat", {
     response,
   })
 }
