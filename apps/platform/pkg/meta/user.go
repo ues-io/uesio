@@ -1,5 +1,11 @@
 package meta
 
+const (
+	SystemUsername = "system"
+	PublicUsername = "guest"
+	BootUsername   = "boot"
+)
+
 type User struct {
 	BuiltIn     `yaml:",inline"`
 	FirstName   string            `json:"uesio/core.firstname"`

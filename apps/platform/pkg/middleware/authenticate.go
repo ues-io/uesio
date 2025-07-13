@@ -88,7 +88,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 		// If the session is expired, and it's not for a public user
-		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicProfile() {
+		if s != nil && sess.IsExpired(browserSession) && !s.IsPublicUser() {
 			session.Remove(browserSession, w)
 			setSession(ctx, s)
 			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
@@ -106,11 +106,9 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		siteName := vars["site"]
-		s := GetSession(r)
-		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, s, nil)
+		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, GetSession(r), nil)
 		if err != nil {
-			setSession(ctx, s)
-			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
+			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
 		}
 
@@ -125,11 +123,9 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
-		s := GetSession(r)
-		workspaceSession, err := datasource.AddWorkspaceImpersonationContext(appName+":"+workspaceName, s, nil)
+		workspaceSession, err := datasource.AddWorkspaceImpersonationContextByKey(appName+":"+workspaceName, GetSession(r), nil)
 		if err != nil {
-			setSession(ctx, s)
-			auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
+			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
 		}
 		setSession(ctx, workspaceSession)
@@ -145,10 +141,30 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		app := vars["app"]
 		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
 		if err != nil {
-			HandleError(ctx, w, fmt.Errorf("failed querying version: %w", err))
+			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
 		}
 		setSession(ctx, versionSession)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err error) {
+	ctx := r.Context()
+	s := GetSession(r)
+
+	// TODO: This is not ideal but given the way the underlying code works currently, we special case these exception types
+	// for a user that is not currently logged in. THe approach to authentication and authorization detection and the underlying
+	// error types themselves need to be revisted and a consistent and reliabble approach implemented to avoid having to "guess"
+	// at higher levels.
+	if s.IsPublicUser() && (exceptions.IsType[*exceptions.UnauthorizedException](err) || exceptions.IsType[*exceptions.NotFoundException](err) || exceptions.IsType[*exceptions.ForbiddenException](err)) {
+		// TODO: Should we using auth.LoggedOut here but RedirectToLoginRoute only applies 200 with Location header when auth.Expired
+		// is specified so maintaining that for backwards compat for now. This should be revisited and appropriate reasons specified.
+		auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
+		return
+	}
+
+	// TODO: There is something to be said to special case Unauthorized & Forbidden to NotFound here to be more obsurce but for now, since
+	// we know the user is logged in, we return actual error
+	HandleError(ctx, w, err)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -27,7 +28,7 @@ func clearUserCache(request *wire.SaveOp, connection wire.Connection, session *s
 
 func preventSystemGuestUserDeletion(request *wire.SaveOp) error {
 	for _, uniquekey := range getUniqueKeysFromDeletes(request) {
-		if uniquekey == "system" || uniquekey == "guest" {
+		if uniquekey == meta.SystemUsername || uniquekey == meta.PublicUsername {
 			return fmt.Errorf("user %s can't be deleted", uniquekey)
 		}
 	}

@@ -68,7 +68,7 @@ func getMinimumViableSession() *sess.Session {
 	}
 	s := sess.New("wsbundlecache", &meta.User{
 		BuiltIn: meta.BuiltIn{
-			UniqueKey: "system",
+			UniqueKey: meta.SystemUsername,
 		},
 	}, &meta.Site{
 		BuiltIn: meta.BuiltIn{

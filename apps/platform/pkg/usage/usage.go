@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -45,7 +46,7 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 
 	user := session.GetSiteUser()
 
-	if user.Username == "boot" || user.Username == "system" {
+	if user.UniqueKey == meta.BootUsername || user.UniqueKey == meta.SystemUsername {
 		return nil
 	}
 

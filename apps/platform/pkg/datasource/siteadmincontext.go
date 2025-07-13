@@ -14,7 +14,7 @@ import (
 func getSiteAdminUser() *meta.User {
 	return &meta.User{
 		BuiltIn: meta.BuiltIn{
-			UniqueKey: "system",
+			UniqueKey: meta.SystemUsername,
 		},
 		Permissions: meta.GetAdminPermissionSet(),
 	}

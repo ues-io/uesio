@@ -99,7 +99,7 @@ func TestGetSiteAdminSession(t *testing.T) {
 				assert.True(t, s.GetContextPermissions().ModifyAllRecords)
 				assert.True(t, s.GetContextPermissions().ViewAllRecords)
 				// User should be a new object representation of the system user
-				assert.Equal(t, s.GetContextUser().UniqueKey, "system")
+				assert.Equal(t, s.GetContextUser().UniqueKey, meta.SystemUsername)
 				assert.NotEqual(t, s.GetContextUser(), originalUser)
 			},
 		},

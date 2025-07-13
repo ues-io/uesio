@@ -69,7 +69,7 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/ca
 }
 HTTP 403
 [Asserts]
-body == "you do not have permission to create bundles for app uesio/tests\n"
+body contains "app uesio/tests does not exist or you don't have access to modify it"
 
 # have abel try to add himself to the admins team
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
@@ -173,3 +173,46 @@ POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/s
 HTTP 200
 [Asserts]
 jsonpath "$.wires[0].errors" == null
+
+# Logout as abel
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/logout
+HTTP 200
+
+# try to create a bundle as public user
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/bots/call/uesio/studio/createbundle
+{
+    "type": "patch",
+    "description": "THIS SHOULD FAIL",
+    "app": "uesio/tests",
+    "workspaceName": "dev"
+}
+HTTP 403
+[Asserts]
+body contains "you do not have permission to call bot: uesio/studio.createbundle"
+
+# have public user try to add abel to the admins team
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/wires/save
+{
+    "wires": [
+        {
+            "wire": "newTeamMember",
+            "collection":"uesio/studio.teammember",
+            "changes": {
+                "1": {
+                    "uesio/studio.app": {
+                        "uesio/core.id": "{{testsAppId}}"
+                    },
+                    "uesio/studio.team": {
+                        "uesio/core.id": "{{adminsTeamId}}"
+                    },
+                    "uesio/studio.member": {
+                        "uesio/core.id": "{{abelId}}"
+                    }
+                }
+            }
+        }
+    ]
+}
+HTTP 403
+[Asserts]
+body contains "Profile uesio/studio.public does not have create access to the uesio/studio.teammember collection"

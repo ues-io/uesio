@@ -54,7 +54,7 @@ func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, err
 	if site == nil {
 		return nil, errors.New("no site provided")
 	}
-	return GetUserByKey("guest", sess.GetAnonSession(context.Background(), site), connection)
+	return GetUserByKey(meta.PublicUsername, sess.GetAnonSession(context.Background(), site), connection)
 }
 
 func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Session, error) {
@@ -69,7 +69,7 @@ func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, err
 	if site == nil {
 		return nil, errors.New("no site provided")
 	}
-	return GetUserByKey("system", sess.GetAnonSession(context.Background(), site), connection)
+	return GetUserByKey(meta.SystemUsername, sess.GetAnonSession(context.Background(), site), connection)
 }
 
 func GetSystemSession(ctx context.Context, site *meta.Site, connection wire.Connection) (*sess.Session, error) {

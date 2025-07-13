@@ -92,17 +92,33 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/p
 Accept: application/json
 HTTP 200
 [Asserts]
-jsonpath "$.dependencies.wire[0].errors[0].message" contains "could not get workspace context: workspace uesio/tests:dev does not exist or you don't have access to modify it"
+jsonpath "$.dependencies.wire[0].errors[0].message" contains "workspace uesio/tests:dev does not exist or you don't have access to modify it"
 
 # Try get config values for the dev workspace
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/configvalues
 Accept: application/json
-HTTP 200
+HTTP 403
 [Asserts]
-header "Location" == "/login?r=/workspace/uesio/tests/dev/configvalues&expired=true"
-body startsWith "<a href=\"/login?r=/workspace/uesio/tests/dev/configvalues&amp;expired=true\">OK</a>.\n\n"
+body contains "workspace uesio/tests:dev does not exist or you don't have access to modify it"
 
 # Logout
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/logout
 HTTP 200
+
+# Try to navigate to the workspace home route as public user
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/studio/app/uesio/tests/workspace/dev
+Accept: application/json
+# TODO: This should be a 403 or a 404 (to obscure) with only an error returned, need to refactor underlying authorization, authentication & session management code.
+HTTP 200
+[Asserts]
+jsonpath "$.dependencies.label[?(@.name=='session_expiration_msg')]" count == 1
+
+# Try get config values for the dev workspace as public user
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/configvalues
+Accept: application/json
+# TODO: This should be a 403 or a 404 (to obscure) with only an error returned, need to refactor underlying authorization, authentication & session management code.
+HTTP 200
+[Asserts]
+header "Location" == "/login?r=/workspace/uesio/tests/dev/configvalues&expired=true"
+body startsWith "<a href=\"/login?r=/workspace/uesio/tests/dev/configvalues&amp;expired=true\">OK</a>.\n\n"
 
