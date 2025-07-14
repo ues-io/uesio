@@ -352,7 +352,8 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 		// Handle redirect routes
 		middleware.SetNoCache(w)
 		mergedRouteRedirect, err := MergeRouteData(route.Redirect, &merge.ServerMergeData{
-			Session: session,
+			Session:     session,
+			ParamValues: route.Params,
 		})
 		if err != nil {
 			HandleErrorRoute(w, r, session, path, route.Namespace, err, true)

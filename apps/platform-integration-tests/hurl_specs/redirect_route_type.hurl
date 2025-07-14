@@ -13,10 +13,10 @@ HTTP 200
 session_id: cookie "sessid"
 
 # Verify that previewing a redirect route executes a redirect
-GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/app/uesio/tests/redirect_test
+GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/app/uesio/tests/redirect_test?foo=bar
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Cookie: sessid={{session_id}}
 HTTP 302
 
 [Asserts]
-header "Location" == "https://www.ues.io"
+header "Location" == "https://www.ues.io?redirected_foo=bar"
