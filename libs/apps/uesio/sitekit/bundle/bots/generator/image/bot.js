@@ -20,7 +20,7 @@ function run(bot) {
       action: "invokemodel",
       options: {
         model: modelID,
-        input: prompt,
+        prompt,
         aspect_ratio: aspectRatio,
       },
     })

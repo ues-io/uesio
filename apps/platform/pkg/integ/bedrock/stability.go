@@ -6,10 +6,20 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 type StabilityRequest struct {
+	Prompt      string `json:"prompt"`
+	AspectRatio string `json:"aspect_ratio"`
+}
+
+type StabilityOptions struct {
+	Model       string `json:"model"`
 	Prompt      string `json:"prompt"`
 	AspectRatio string `json:"aspect_ratio"`
 }
@@ -21,6 +31,8 @@ type StabilityResponse struct {
 }
 
 type StabilityModelHandler struct {
+	ic      *wire.IntegrationConnection
+	options StabilityOptions
 }
 
 var stabilityModelHandler = &StabilityModelHandler{}
@@ -34,46 +46,61 @@ func (smh *StabilityModelHandler) GetClientOptions(input *bedrockruntime.InvokeM
 	}
 }
 
-func (smh *StabilityModelHandler) GetBody(options *InvokeModelOptions) ([]byte, error) {
-	return json.Marshal(StabilityRequest{
-		Prompt:      options.Input,
-		AspectRatio: options.AspectRatio,
-	})
+func (smh *StabilityModelHandler) Hydrate(ic *wire.IntegrationConnection, params map[string]any) error {
+	smh.ic = ic
+	options := StabilityOptions{}
+	err := datasource.HydrateOptions(params, &options)
+	if err != nil {
+		return err
+	}
+	smh.options = options
+	return nil
 }
 
-func (smh *StabilityModelHandler) Invoke(connection *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error) {
-	body, err := smh.GetBody(options)
+func (smh *StabilityModelHandler) RecordUsage() {
+	integrationKey := smh.ic.GetIntegration().GetKey()
+	session := smh.ic.GetSession()
+	usage.RegisterEvent("IMAGE_GENERATION", "INTEGRATION", integrationKey, 0, session)
+}
+
+func (smh *StabilityModelHandler) Invoke() (result any, err error) {
+	cfg, err := creds.GetAWSConfig(smh.ic.Context(), smh.ic.GetCredentials())
 	if err != nil {
-		return "", 0, 0, err
+		return nil, err
+	}
+
+	client := bedrockruntime.NewFromConfig(cfg)
+	body, err := json.Marshal(&StabilityRequest{
+		Prompt:      smh.options.Prompt,
+		AspectRatio: smh.options.AspectRatio,
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	input := &bedrockruntime.InvokeModelInput{
-		ModelId:     aws.String(options.Model),
+		ModelId:     aws.String(smh.options.Model),
 		Body:        body,
 		ContentType: aws.String("application/json"),
 		Accept:      aws.String("application/json"),
 	}
 
-	output, err := connection.client.InvokeModel(connection.session.Context(), input, smh.GetClientOptions(input))
+	output, err := client.InvokeModel(smh.ic.Context(), input, smh.GetClientOptions(input))
 	if err != nil {
-		return "", 0, 0, err
+		return nil, err
 	}
-
-	return smh.GetInvokeResult(output.Body)
-
-}
-
-func (utmh *StabilityModelHandler) Stream(connection *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error) {
-	return nil, errors.New("streaming is not supported for the stability model handler")
-}
-
-func (smh *StabilityModelHandler) GetInvokeResult(body []byte) (result any, inputTokens, outputTokens int64, err error) {
 
 	var response StabilityResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		return "", 0, 0, err
+	if err := json.Unmarshal(output.Body, &response); err != nil {
+		return nil, err
 	}
 
-	return response.Images[0], 0, 0, nil
+	smh.RecordUsage()
 
+	return response.Images[0], nil
+
+}
+
+func (utmh *StabilityModelHandler) Stream() (stream *integ.Stream, err error) {
+	return nil, errors.New("streaming is not supported for the stability model handler")
 }

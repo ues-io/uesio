@@ -118,7 +118,7 @@ const AgentChat: definition.UC<AgentChatDefinition> = (props) => {
 
     // Check to see if any file data was returned
     const fileContent = newContext.getComponentDataValue<string>(
-      "uesio/aikit.agent_chat",
+      "uesio/appkit.agent_chat",
       "content",
     )
 
@@ -183,12 +183,12 @@ const AgentChat: definition.UC<AgentChatDefinition> = (props) => {
     // with the property "response".
     newContext = await mergeAndRunSignals(
       afterChatSignals,
-      newContext.addComponentFrame("uesio/aikit.agent_chat", agentResults),
+      newContext.addComponentFrame("uesio/appkit.agent_chat", agentResults),
     )
 
     // Read the tool results context and add the response.
     const response = newContext.getComponentDataValue<ToolResultResponse[]>(
-      "uesio/aikit.agent_chat",
+      "uesio/appkit.agent_chat",
       "response",
     )
 

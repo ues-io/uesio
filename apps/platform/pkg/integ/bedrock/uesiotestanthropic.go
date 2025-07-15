@@ -5,29 +5,33 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type UesioTestAnthropicModelHandler struct {
+	options map[string]any
 }
 
 var uesioTestAnthropicModelHandler = &UesioTestAnthropicModelHandler{}
 
-func (utamh *UesioTestAnthropicModelHandler) Invoke(connection *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error) {
-	body, err := json.MarshalIndent(options, "", "  ")
-	if err != nil {
-		return "", 0, 0, err
-	}
-	content := []MessagesContent{
-		{
-			Type: "text",
-			Text: fmt.Sprintf("Uesio Test Model was invoked with the following options:\n\n%s\n", string(body)),
-		},
-	}
-
-	return content, 0, 0, nil
+func (utamh *UesioTestAnthropicModelHandler) Hydrate(ic *wire.IntegrationConnection, params map[string]any) error {
+	utamh.options = params
+	return nil
 }
 
-func (utamh *UesioTestAnthropicModelHandler) Stream(connection *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error) {
+func (utamh *UesioTestAnthropicModelHandler) Invoke() (result any, err error) {
+	body, err := json.MarshalIndent(utamh.options, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	text := fmt.Sprintf("Uesio Test Model was invoked with the following options:\n\n%s\n", string(body))
+	return []anthropic.MessageParam{
+		anthropic.NewUserMessage(anthropic.NewTextBlock(text)),
+	}, nil
+}
+
+func (utamh *UesioTestAnthropicModelHandler) Stream() (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the uesio test anthropic handler")
 }

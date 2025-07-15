@@ -66,7 +66,17 @@ const ClaudeInvokeButton: definition.UtilityComponent<Props> = (props) => {
                 action: "streammodel",
                 stepId,
                 params: {
-                  input: prompt,
+                  messages: [
+                    {
+                      role: "user",
+                      content: [
+                        {
+                          type: "text",
+                          text: prompt,
+                        },
+                      ],
+                    },
+                  ],
                   temperature: 0.5,
                   tools,
                   tool_choice: toolChoice,
