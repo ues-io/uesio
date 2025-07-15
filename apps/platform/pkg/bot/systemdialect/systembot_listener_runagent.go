@@ -98,8 +98,9 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, err
 	}
 
-	resultMessages, ok := result.([]anthropic.ContentBlockUnion)
-	if !ok {
+	resultMessages := []anthropic.ContentBlockUnion{}
+	err = datasource.HydrateOptions(result, &resultMessages)
+	if err != nil {
 		return nil, exceptions.NewBadRequestException("invalid message format for agent", nil)
 	}
 
