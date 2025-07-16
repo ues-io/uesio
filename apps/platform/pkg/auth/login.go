@@ -176,7 +176,7 @@ func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.
 		return false
 	}
 
-	requestedPath := r.URL.Path
+	requestedPath := r.URL.RequestURI()
 	redirectPath := "/" + loginRoute.Path
 
 	if session.GetContextAppName() != loginRoute.Namespace {
@@ -211,7 +211,7 @@ func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.
 	}
 
 	if requestedPath != "" && requestedPath != "/" {
-		redirectPath = redirectPath + "?r=" + requestedPath
+		redirectPath = redirectPath + "?r=" + url.QueryEscape(requestedPath)
 	}
 	if reason == Expired {
 		if strings.Contains(redirectPath, "?") {
