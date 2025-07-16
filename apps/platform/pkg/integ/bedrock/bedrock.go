@@ -2,84 +2,28 @@ package bedrock
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
 	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
-	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 	brtypes "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type InvokeModelOptions struct {
-	Input             string             `json:"input"`
-	Messages          []AnthropicMessage `json:"messages"`
-	System            string             `json:"system"`
-	Model             string             `json:"model"`
-	MaxTokensToSample int                `json:"max_tokens_to_sample"`
-	Temperature       float64            `json:"temperature,omitempty"`
-	TopK              int                `json:"top_k,omitempty"`
-	TopP              float64            `json:"top_p,omitempty"`
-	Tools             []Tool             `json:"tools,omitempty"`
-	ToolChoice        *ToolChoice        `json:"tool_choice,omitempty"`
-	AspectRatio       string             `json:"aspect_ratio,omitempty"`
-}
-
-type ToolChoice struct {
-	Type string `json:"type"`
-	Name string `json:"name,omitempty"`
-}
-
-type Tool struct {
-	Type        string       `json:"type,omitempty"`
-	Name        string       `json:"name,omitempty"`
-	Description string       `json:"description,omitempty"`
-	InputSchema *InputSchema `json:"input_schema,omitempty"`
-}
-
-type InputSchema struct {
-	Type        string                 `json:"type,omitempty"`
-	Properties  map[string]InputSchema `json:"properties,omitempty"`
-	Items       *InputSchema           `json:"items,omitempty"`
-	Required    []string               `json:"required,omitempty"`
-	Description string                 `json:"description,omitempty"`
-}
-
-func getBedrockConnection(ic *wire.IntegrationConnection) (*Connection, error) {
-
-	cfg, err := creds.GetAWSConfig(ic.Context(), ic.GetCredentials())
-	if err != nil {
-		return nil, err
-	}
-
-	client := bedrockruntime.NewFromConfig(cfg)
-
-	return &Connection{
-		session:     ic.GetSession(),
-		integration: ic.GetIntegration(),
-		credentials: ic.GetCredentials(),
-		client:      client,
-	}, nil
-
-}
-
 type Connection struct {
-	session     *sess.Session
-	integration *meta.Integration
-	credentials *wire.Credentials
-	client      *bedrockruntime.Client
+	integration *wire.IntegrationConnection
 }
 
 type ModelHandler interface {
-	Invoke(c *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error)
-	Stream(c *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error)
+	Hydrate(ic *wire.IntegrationConnection, options map[string]any) error
+	Invoke() (result any, err error)
+	Stream() (stream *integ.Stream, err error)
 }
 
 const CLAUDE_3_5_HAIKU_MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
@@ -100,42 +44,33 @@ var modelHandlers = map[string]ModelHandler{
 	STABILITY_IMAGE_ULTRA_MODEL_ID: stabilityModelHandler,
 }
 
+func getHandler(ic *wire.IntegrationConnection, params map[string]any) (ModelHandler, error) {
+	modelID := param.GetOptionalString(params, "model", BEDROCK_DEFAULT_MODEL_ID)
+	params["model"] = modelID
+	handler, ok := modelHandlers[modelID]
+	if !ok {
+		return nil, fmt.Errorf("model not supported: %s", modelID)
+	}
+	return handler, handler.Hydrate(ic, params)
+}
+
 // RunAction implements the system bot interface
 func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
-	bc, err := getBedrockConnection(ic)
+	handler, err := getHandler(ic, params)
 	if err != nil {
 		return nil, err
 	}
 
 	switch strings.ToLower(actionName) {
 	case "invokemodel":
-		return bc.invokeModel(params)
+		return handler.Invoke()
 	case "streammodel":
-		return bc.streamModel(params)
+		return handler.Stream()
 	}
 
 	return nil, errors.New("invalid action name for Bedrock integration")
 
-}
-
-const MAX_TOKENS_TO_SAMPLE = 200000
-const DEFAULT_TOKENS_TO_SAMPLE = 4096
-
-func hydrateOptions(requestOptions map[string]any) (*InvokeModelOptions, error) {
-
-	options := &InvokeModelOptions{}
-	err := datasource.HydrateOptions(requestOptions, options)
-	if err != nil {
-		return nil, err
-	}
-
-	// Now set defaults
-	if options.MaxTokensToSample == 0 {
-		options.MaxTokensToSample = min(DEFAULT_TOKENS_TO_SAMPLE, MAX_TOKENS_TO_SAMPLE)
-	}
-
-	return options, nil
 }
 
 func handleBedrockError(err error) error {

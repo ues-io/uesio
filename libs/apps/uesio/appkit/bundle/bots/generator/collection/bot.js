@@ -141,7 +141,12 @@ function run(bot) {
       messages: [
         {
           role: "user",
-          content: prompt,
+          content: [
+            {
+              type: "text",
+              text: prompt,
+            },
+          ],
         },
       ],
       system: systemPrompt,

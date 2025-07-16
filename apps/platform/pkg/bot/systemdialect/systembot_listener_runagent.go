@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ/bedrock"
@@ -81,10 +82,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	}
 
 	// Now add the user message
-	messages = append(messages, bedrock.AnthropicMessage{
-		Role:    "user",
-		Content: fullInput,
-	})
+	messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(fullInput)))
 
 	ic, err := datasource.GetIntegrationConnection("uesio/aikit.bedrock", session, connection)
 	if err != nil {
@@ -93,16 +91,22 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	result, err := datasource.RunIntegrationAction(ic, "invokemodel", map[string]any{
 		"model":    modelID,
 		"messages": messages,
-		"system":   systemPrompt,
-		"tools":    agentTools,
+		"system": []map[string]string{
+			{
+				"type": "text",
+				"text": systemPrompt,
+			},
+		},
+		"tools": agentTools,
 	}, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	resultMessages, ok := result.([]bedrock.MessagesContent)
-	if !ok {
-		return nil, exceptions.NewBadRequestException("invalid message format for agent", nil)
+	resultMessages := []anthropic.ContentBlockUnion{}
+	err = datasource.HydrateOptions(result, &resultMessages)
+	if err != nil {
+		return nil, exceptions.NewBadRequestException("invalid message format for agent", err)
 	}
 
 	err = saveNewMessages(userInput, resultMessages, threadID, connection, session)
@@ -113,14 +117,15 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	return map[string]any{"results": resultMessages}, nil
 }
 
-func threadItemToMessage(threadItem *wire.Item) (*bedrock.AnthropicMessage, error) {
+func threadItemToMessage(threadItem *wire.Item) (anthropic.MessageParam, error) {
+	var message anthropic.MessageParam
 	itemType, err := threadItem.GetFieldAsString("uesio/aikit.type")
 	if err != nil {
-		return nil, err
+		return message, err
 	}
 	author, err := threadItem.GetFieldAsString("uesio/aikit.author")
 	if err != nil {
-		return nil, err
+		return message, err
 	}
 	content, _ := threadItem.GetFieldAsString("uesio/aikit.content")
 	toolUseID, _ := threadItem.GetFieldAsString("uesio/aikit.tool_use_id")
@@ -128,64 +133,46 @@ func threadItemToMessage(threadItem *wire.Item) (*bedrock.AnthropicMessage, erro
 	toolInput, _ := threadItem.GetField("uesio/aikit.tool_input")
 
 	if itemType == "text" || itemType == "" {
-		role := "assistant"
+		textContent := anthropic.NewTextBlock(content)
 		if author == "USER" {
-			role = "user"
+			message = anthropic.NewUserMessage(textContent)
+		} else {
+			message = anthropic.NewAssistantMessage(textContent)
 		}
-		return &bedrock.AnthropicMessage{
-			Role:    role,
-			Content: content,
-		}, nil
+		return message, nil
 	}
 
 	if itemType == "tool_use" {
-		return &bedrock.AnthropicMessage{
-			Role: "assistant",
-			Content: []map[string]any{
-				{
-					"type":  itemType,
-					"id":    toolUseID,
-					"name":  toolName,
-					"input": toolInput,
-				},
-			},
-		}, nil
+		message = anthropic.NewAssistantMessage(anthropic.NewToolUseBlock(toolUseID, toolInput, toolName))
+		return message, nil
 	}
 
 	if itemType == "tool_result" {
-		return &bedrock.AnthropicMessage{
-			Role: "user",
-			Content: []map[string]any{
-				{
-					"type":        itemType,
-					"tool_use_id": toolUseID,
-					"content":     content,
-				},
-			},
-		}, nil
+		message = anthropic.NewUserMessage(anthropic.NewToolResultBlock(toolUseID, content, false))
+		return message, nil
 	}
 
-	return nil, fmt.Errorf("thread item type not supported: %s", itemType)
+	return message, fmt.Errorf("thread item type not supported: %s", itemType)
 
 }
 
 // Converts a collection of threadItems to the anthropic message format.
-func threadItemsToMessages(threadItems *wire.Collection) ([]bedrock.AnthropicMessage, error) {
-	messages := []bedrock.AnthropicMessage{}
+func threadItemsToMessages(threadItems *wire.Collection) ([]anthropic.MessageParam, error) {
+	messages := []anthropic.MessageParam{}
 
 	for _, threadItem := range *threadItems {
 		message, err := threadItemToMessage(threadItem)
 		if err != nil {
 			return nil, err
 		}
-		messages = append(messages, *message)
+		messages = append(messages, message)
 	}
 
 	return messages, nil
 }
 
 // Loads the previous messages in the thread
-func loadPreviousMessages(threadID string, connection wire.Connection, session *sess.Session) ([]bedrock.AnthropicMessage, error) {
+func loadPreviousMessages(threadID string, connection wire.Connection, session *sess.Session) ([]anthropic.MessageParam, error) {
 	threadItems := &wire.Collection{}
 	err := datasource.LoadWithError(&wire.LoadOp{
 		CollectionName: "uesio/aikit.thread_item",
@@ -227,7 +214,7 @@ func loadPreviousMessages(threadID string, connection wire.Connection, session *
 	return threadItemsToMessages(threadItems)
 }
 
-func saveNewMessages(input string, messages []bedrock.MessagesContent, threadID string, connection wire.Connection, session *sess.Session) error {
+func saveNewMessages(input string, messages []anthropic.ContentBlockUnion, threadID string, connection wire.Connection, session *sess.Session) error {
 	threadItems := wire.Collection{
 		{
 			"uesio/aikit.content": input,

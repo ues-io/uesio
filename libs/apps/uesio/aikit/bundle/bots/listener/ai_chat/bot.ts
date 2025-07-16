@@ -32,11 +32,21 @@ export default function ai_chat(bot: ListenerBotApi) {
   const messages = messagesResult
     .map((message) => ({
       role: message["uesio/aikit.author"] === "USER" ? "user" : "assistant",
-      content: message["uesio/aikit.content"],
+      content: [
+        {
+          type: "text",
+          text: message["uesio/aikit.content"],
+        },
+      ],
     }))
     .concat({
       role: "user",
-      content: input,
+      content: [
+        {
+          type: "text",
+          text: input,
+        },
+      ],
     })
 
   const result = bot.runIntegrationAction(

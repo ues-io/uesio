@@ -30,11 +30,21 @@ export default function summarize_thread(bot: ListenerBotApi) {
   const messages = messagesResult
     .map((message) => ({
       role: message["uesio/aikit.author"] === "USER" ? "user" : "assistant",
-      content: message["uesio/aikit.content"],
+      content: [
+        {
+          type: "text",
+          text: message["uesio/aikit.content"],
+        },
+      ],
     }))
     .concat({
       role: "user",
-      content: "Please summarize the conversation in less than 8 words.",
+      content: [
+        {
+          type: "text",
+          text: "Please summarize the conversation in less than 8 words.",
+        },
+      ],
     })
 
   const result = bot.runIntegrationAction(
