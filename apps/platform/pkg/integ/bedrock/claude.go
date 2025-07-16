@@ -76,24 +76,13 @@ func (cmh *ClaudeModelHandler) Invoke() (result any, err error) {
 
 	message, err := client.Messages.New(cmh.ic.Context(), cmh.options)
 	if err != nil {
-		return "", handleBedrockError(err)
-	}
-
-	resultMap := map[string]any{}
-
-	err = json.Unmarshal([]byte(message.RawJSON()), &resultMap)
-	if err != nil {
-		return "", err
+		return nil, handleBedrockError(err)
 	}
 
 	cmh.RecordUsage(message.Usage.InputTokens, message.Usage.OutputTokens)
 
-	resultContent, ok := resultMap["content"]
-	if !ok {
-		return "", errors.New("no contents provided in result")
-	}
+	return cmh.GetInvokeResult(message)
 
-	return resultContent, nil
 }
 
 func (cmh *ClaudeModelHandler) Stream() (*integ.Stream, error) {
@@ -140,4 +129,20 @@ func (cmh *ClaudeModelHandler) Stream() (*integ.Stream, error) {
 
 	return outputStream, nil
 
+}
+
+func (cmh *ClaudeModelHandler) GetInvokeResult(message *anthropic.Message) (result any, err error) {
+	resultMap := map[string]any{}
+
+	err = json.Unmarshal([]byte(message.RawJSON()), &resultMap)
+	if err != nil {
+		return nil, err
+	}
+
+	resultContent, ok := resultMap["content"]
+	if !ok {
+		return nil, errors.New("no contents provided in result")
+	}
+
+	return resultContent, nil
 }

@@ -91,8 +91,13 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	result, err := datasource.RunIntegrationAction(ic, "invokemodel", map[string]any{
 		"model":    modelID,
 		"messages": messages,
-		"system":   systemPrompt,
-		"tools":    agentTools,
+		"system": []map[string]string{
+			{
+				"type": "text",
+				"text": systemPrompt,
+			},
+		},
+		"tools": agentTools,
 	}, connection)
 	if err != nil {
 		return nil, err
@@ -101,7 +106,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	resultMessages := []anthropic.ContentBlockUnion{}
 	err = datasource.HydrateOptions(result, &resultMessages)
 	if err != nil {
-		return nil, exceptions.NewBadRequestException("invalid message format for agent", nil)
+		return nil, exceptions.NewBadRequestException("invalid message format for agent: "+err.Error(), nil)
 	}
 
 	err = saveNewMessages(userInput, resultMessages, threadID, connection, session)
@@ -128,11 +133,12 @@ func threadItemToMessage(threadItem *wire.Item) (anthropic.MessageParam, error) 
 	toolInput, _ := threadItem.GetField("uesio/aikit.tool_input")
 
 	if itemType == "text" || itemType == "" {
-
+		textContent := anthropic.NewTextBlock(content)
 		if author == "USER" {
-			message = anthropic.NewUserMessage(anthropic.NewTextBlock(content))
+			message = anthropic.NewUserMessage(textContent)
+		} else {
+			message = anthropic.NewAssistantMessage(textContent)
 		}
-		message = anthropic.NewAssistantMessage(anthropic.NewTextBlock(content))
 		return message, nil
 	}
 

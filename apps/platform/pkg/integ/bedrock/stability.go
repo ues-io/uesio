@@ -90,17 +90,23 @@ func (smh *StabilityModelHandler) Invoke() (result any, err error) {
 		return nil, err
 	}
 
-	var response StabilityResponse
-	if err := json.Unmarshal(output.Body, &response); err != nil {
-		return nil, err
-	}
-
 	smh.RecordUsage()
 
-	return response.Images[0], nil
+	return smh.GetInvokeResult(output.Body)
 
 }
 
 func (utmh *StabilityModelHandler) Stream() (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the stability model handler")
+}
+
+func (smh *StabilityModelHandler) GetInvokeResult(body []byte) (result any, err error) {
+
+	var response StabilityResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", err
+	}
+
+	return response.Images[0], nil
+
 }

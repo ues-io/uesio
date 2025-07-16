@@ -23,10 +23,9 @@ HTTP 200
 Uesio Test Model was invoked with the following options:
 
 {
-  "input": "",
   "messages": [],
-  "system": "",
   "model": "uesio.test-simple-responder",
-  "max_tokens_to_sample": 4096
+  "system": "",
+  "tools": []
 }
 ```
