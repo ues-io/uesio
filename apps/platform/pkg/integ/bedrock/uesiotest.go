@@ -6,22 +6,29 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
 type UesioTestModelHandler struct {
+	options map[string]any
 }
 
 var uesioTestModelHandler = &UesioTestModelHandler{}
 
-func (utmh *UesioTestModelHandler) Invoke(connection *Connection, options *InvokeModelOptions) (result any, inputTokens, outputTokens int64, err error) {
-	body, err := json.MarshalIndent(options, "", "  ")
-	if err != nil {
-		return "", 0, 0, err
-	}
-	content := fmt.Sprintf("Uesio Test Model was invoked with the following options:\n\n%s\n", string(body))
-	return content, 0, 0, nil
+func (utmh *UesioTestModelHandler) Hydrate(ic *wire.IntegrationConnection, params map[string]any) error {
+	utmh.options = params
+	return nil
 }
 
-func (utmh *UesioTestModelHandler) Stream(connection *Connection, options *InvokeModelOptions) (stream *integ.Stream, err error) {
+func (utmh *UesioTestModelHandler) Invoke() (result any, err error) {
+	body, err := json.MarshalIndent(utmh.options, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	content := fmt.Sprintf("Uesio Test Model was invoked with the following options:\n\n%s\n", string(body))
+	return content, nil
+}
+
+func (utmh *UesioTestModelHandler) Stream() (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the uesio test handler")
 }

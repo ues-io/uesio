@@ -6,9 +6,9 @@ params:
     label: Model
     type: TEXT
     required: true
-  - name: input
-    label: Input
-    type: TEXT
+  - name: messages
+    label: Messages
+    type: LIST
     required: true
   - name: temperature
     label: Temperature (0 to 1)

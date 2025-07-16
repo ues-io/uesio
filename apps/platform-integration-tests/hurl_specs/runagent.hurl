@@ -129,20 +129,29 @@ jsonpath "$.params.results[0].text" == ```
 Uesio Test Model was invoked with the following options:
 
 {
-  "input": "",
+  "max_tokens": 4096,
   "messages": [
     {
-      "role": "user",
-      "content": "can you help me?"
+      "content": [
+        {
+          "text": "can you help me?",
+          "type": "text"
+        }
+      ],
+      "role": "user"
     }
   ],
-  "system": "You are an excellent agent.\n",
   "model": "uesio.test-anthropic-format",
-  "max_tokens_to_sample": 4096,
+  "system": [
+    {
+      "text": "You are an excellent agent.\n",
+      "type": "text"
+    }
+  ],
   "tools": [
     {
-      "type": "hammer",
-      "name": "my_favorite_tool"
+      "name": "my_favorite_tool",
+      "type": "hammer"
     }
   ]
 }
@@ -202,28 +211,47 @@ jsonpath "$.params.results[0].text" == ```
 Uesio Test Model was invoked with the following options:
 
 {
-  "input": "",
+  "max_tokens": 4096,
   "messages": [
     {
-      "role": "user",
-      "content": "can you help me?"
+      "content": [
+        {
+          "text": "can you help me?",
+          "type": "text"
+        }
+      ],
+      "role": "user"
     },
     {
-      "role": "assistant",
-      "content": "Uesio Test Model was invoked with the following options:\n\n{\n  \"input\": \"\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"can you help me?\"\n    }\n  ],\n  \"system\": \"You are an excellent agent.\\n\",\n  \"model\": \"uesio.test-anthropic-format\",\n  \"max_tokens_to_sample\": 4096,\n  \"tools\": [\n    {\n      \"type\": \"hammer\",\n      \"name\": \"my_favorite_tool\"\n    }\n  ]\n}\n"
+      "content": [
+        {
+          "text": "Uesio Test Model was invoked with the following options:\n\n{\n  \"max_tokens\": 4096,\n  \"messages\": [\n    {\n      \"content\": [\n        {\n          \"text\": \"can you help me?\",\n          \"type\": \"text\"\n        }\n      ],\n      \"role\": \"user\"\n    }\n  ],\n  \"model\": \"uesio.test-anthropic-format\",\n  \"system\": [\n    {\n      \"text\": \"You are an excellent agent.\\n\",\n      \"type\": \"text\"\n    }\n  ],\n  \"tools\": [\n    {\n      \"name\": \"my_favorite_tool\",\n      \"type\": \"hammer\"\n    }\n  ]\n}\n",
+          "type": "text"
+        }
+      ],
+      "role": "assistant"
     },
     {
-      "role": "user",
-      "content": "Thanks for your help."
+      "content": [
+        {
+          "text": "Thanks for your help.",
+          "type": "text"
+        }
+      ],
+      "role": "user"
     }
   ],
-  "system": "You are an excellent agent.\n",
   "model": "uesio.test-anthropic-format",
-  "max_tokens_to_sample": 4096,
+  "system": [
+    {
+      "text": "You are an excellent agent.\n",
+      "type": "text"
+    }
+  ],
   "tools": [
     {
-      "type": "hammer",
-      "name": "my_favorite_tool"
+      "name": "my_favorite_tool",
+      "type": "hammer"
     }
   ]
 }
