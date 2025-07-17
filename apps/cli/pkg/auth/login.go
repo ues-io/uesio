@@ -22,7 +22,6 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/env"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -49,10 +48,6 @@ func parseKey(key string) (string, string, error) {
 }
 
 func getMockHandler() (*LoginMethodHandler, error) {
-	if !env.InDevMode() {
-		return nil, nil
-	}
-
 	// Check to see if any mock logins exist.
 	users, err := wire.GetMockUsers()
 	if err != nil {
