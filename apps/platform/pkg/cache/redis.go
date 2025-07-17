@@ -76,6 +76,14 @@ func (r RedisCache[T]) DeleteAll() error {
 	return flushAll()
 }
 
+func (r RedisCache[T]) Add(key string, value T) error {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	return addString(namespaced(r.getNamespace(), key), string(bytes), int64(r.getExpiration().Seconds()))
+}
+
 func (r RedisCache[T]) WithExpiration(expiration time.Duration) RedisCache[T] {
 	r.options.Expiration = expiration
 	return r
@@ -196,6 +204,23 @@ func setString(key string, data string, ttlSeconds int64) error {
 	_, err := conn.Do("SET", key, data, "EX", ttlSeconds)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func addString(key string, data string, ttlSeconds int64) error {
+	conn := GetRedisConn()
+	defer conn.Close()
+	result, err := redis.String(conn.Do("SET", key, data, "NX", "EX", ttlSeconds))
+	if err != nil {
+		if err == redis.ErrNil {
+			// redis returns nil when NX set and GET not given if key already exists
+			return ErrKeyExists
+		}
+		return err
+	}
+	if result != "OK" {
+		return fmt.Errorf("unexpected result from redis SET: %s", result)
 	}
 	return nil
 }

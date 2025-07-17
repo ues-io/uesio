@@ -119,6 +119,6 @@ Accept: application/json
 # TODO: This should be a 403 or a 404 (to obscure) with only an error returned, need to refactor underlying authorization, authentication & session management code.
 HTTP 200
 [Asserts]
-header "Location" == "/login?r=/workspace/uesio/tests/dev/configvalues&expired=true"
-body startsWith "<a href=\"/login?r=/workspace/uesio/tests/dev/configvalues&amp;expired=true\">OK</a>.\n\n"
+header "Location" == "/login?r=%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Fconfigvalues&expired=true"
+body startsWith "<a href=\"/login?r=%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Fconfigvalues&amp;expired=true\">OK</a>.\n\n"
 

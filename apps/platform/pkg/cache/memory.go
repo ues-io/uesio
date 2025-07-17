@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"fmt"
 	"time"
 
 	// Using go-cache package to get thread-safety, sharding, expiration, and cleanup,
@@ -52,4 +53,18 @@ func (mc *MemoryCache[T]) GetAll() map[string]T {
 func (mc *MemoryCache[T]) DeleteAll() error {
 	mc.c.Flush()
 	return nil
+}
+
+func (mc MemoryCache[T]) Add(key string, value T) error {
+	err := mc.c.Add(key, value, 0) // 0 duration = use default expiration
+	if err == nil {
+		return nil
+	}
+	// TODO: This is a bit of a hack to match the error type from go-cache
+	// since it does not return a specific error for key existence. Need
+	// to migrate to a library that surfaces more meaningful errors
+	if err.Error() == fmt.Sprintf("Item %s already exists", key) {
+		return ErrKeyExists
+	}
+	return err
 }

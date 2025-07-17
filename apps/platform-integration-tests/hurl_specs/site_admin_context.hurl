@@ -100,5 +100,5 @@ Accept: application/json
 }
 HTTP 200
 [Asserts]
-header "Location" == "/login?r=/siteadmin/uesio/tests/testsite/wires/load&expired=true"
+header "Location" == "/login?r=%2Fsiteadmin%2Fuesio%2Ftests%2Ftestsite%2Fwires%2Fload&expired=true"
 

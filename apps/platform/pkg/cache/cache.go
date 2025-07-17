@@ -6,12 +6,14 @@ import (
 )
 
 var ErrKeyNotFound = errors.New("key not found in cache")
+var ErrKeyExists = errors.New("key already exists in cache")
 
 type Cache[T any] interface {
 	Get(key string) (T, error)
 	Set(key string, value T) error
 	Del(keys ...string) error
 	DeleteAll() error
+	Add(key string, value T) error
 }
 
 type CacheOptions[T any] struct {

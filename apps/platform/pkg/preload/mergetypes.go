@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// NOTE: There is a mirror of this in CLI auth.LoginResponse containing a subset of these properties that needs to be kept in sync.
 type LoginResponse struct {
 	User                   *UserMergeData `json:"user"`
 	RedirectPath           string         `json:"redirectPath,omitempty"`
@@ -36,6 +37,7 @@ type UserPictureMergeData struct {
 	UpdatedAt int64  `json:"updatedat"`
 }
 
+// NOTE: There is a mirror of this in CLI auth.UserMergeData containing a subset of these properties that needs to be kept in sync.
 type UserMergeData struct {
 	FirstName    string                `json:"firstname"`
 	LastName     string                `json:"lastname"`

@@ -2,25 +2,41 @@ package auth
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/cli/browser"
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/wire"
+	"github.com/thecloudmasters/uesio/pkg/auth"
+	"golang.org/x/sync/errgroup"
 )
 
-type LoginHandler func() (map[string]string, error)
+// NOTE: We continue to support platform & mock login in order to support tests and simplify local development.
+// TODO: Eliminate platform & mock login methods adjust support environment variables once OAuth is fully implemented
+// and tokens supported.
+const platformLoginMethod = "uesio/core.platform"
+const mockLoginMethod = "uesio/core.mock"
+const browserLoginMethod = "browser"
+
+type LoginHandler func() (*LoginResponse, error)
 
 type LoginMethodHandler struct {
-	Key     string
-	Label   string
-	Handler LoginHandler
+	Key   string
+	Login LoginHandler
 }
 
 func parseKey(key string) (string, string, error) {
@@ -32,7 +48,6 @@ func parseKey(key string) (string, string, error) {
 }
 
 func getMockHandler() (*LoginMethodHandler, error) {
-
 	// Check to see if any mock logins exist.
 	users, err := wire.GetMockUsers()
 	if err != nil {
@@ -56,9 +71,8 @@ func getMockHandler() (*LoginMethodHandler, error) {
 	}
 
 	return &LoginMethodHandler{
-		Key:   "uesio/core.mock",
-		Label: "Mock login",
-		Handler: func() (map[string]string, error) {
+		Key: mockLoginMethod,
+		Login: func() (*LoginResponse, error) {
 			username := os.Getenv("UESIO_CLI_USERNAME")
 			if username == "" {
 				err := survey.AskOne(&survey.Select{
@@ -69,18 +83,18 @@ func getMockHandler() (*LoginMethodHandler, error) {
 					return nil, err
 				}
 			}
-			return map[string]string{
+			payload := map[string]string{
 				"token": username,
-			}, nil
+			}
+			return processDirectLogin(mockLoginMethod, payload)
 		},
 	}, nil
 
 }
 
 var platformHandler = &LoginMethodHandler{
-	Key:   "uesio/core.platform",
-	Label: "Sign in with username",
-	Handler: func() (map[string]string, error) {
+	Key: platformLoginMethod,
+	Login: func() (*LoginResponse, error) {
 		username := os.Getenv("UESIO_CLI_USERNAME")
 		password := os.Getenv("UESIO_CLI_PASSWORD")
 
@@ -100,107 +114,113 @@ var platformHandler = &LoginMethodHandler{
 				return nil, pwErr
 			}
 		}
-		return map[string]string{
+		payload := map[string]string{
 			"username": username,
 			"password": password,
-		}, nil
+		}
+
+		return processDirectLogin(platformLoginMethod, payload)
 
 	},
 }
 
-func getHandlerOptions(loginHandlers []*LoginMethodHandler) []string {
-	options := make([]string, len(loginHandlers))
-	for i, handler := range loginHandlers {
-		options[i] = handler.Label
-	}
-	return options
-}
-
-func getHandlerByKey(key string, loginHandlers []*LoginMethodHandler) *LoginMethodHandler {
-	for _, handler := range loginHandlers {
-		if handler.Key == key {
-			return handler
+var browserHandler = &LoginMethodHandler{
+	Key: browserLoginMethod,
+	Login: func() (*LoginResponse, error) {
+		platformBaseURL, err := host.GetHostPrompt()
+		if err != nil {
+			return nil, err
 		}
-	}
-	return nil
-}
-func getHandlerByLabel(label string, loginHandlers []*LoginMethodHandler) *LoginMethodHandler {
-	for _, handler := range loginHandlers {
-		if handler.Label == label {
-			return handler
+		authURL, err := url.JoinPath(platformBaseURL, "/site/auth/cli/authorize")
+		if err != nil {
+			return nil, err
 		}
-	}
-	return nil
-}
 
-func getLoginPayload() (string, map[string]string, error) {
-
-	var loginHandlers = []*LoginMethodHandler{platformHandler}
-
-	var handler *LoginMethodHandler
-
-	// Add in mock handler if relevant
-	mockHandler, err := getMockHandler()
-	if err != nil {
-		return "", nil, err
-	}
-	if mockHandler != nil {
-		// Prepend the mock handler so it's first.
-		loginHandlers = append([]*LoginMethodHandler{mockHandler}, loginHandlers...)
-	}
-
-	loginMethodOptions := getHandlerOptions(loginHandlers)
-
-	// If login method is specified via env vars, use that
-	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
-	if loginMethod != "" {
-		handler = getHandlerByKey(loginMethod, loginHandlers)
-	}
-	// If only have one possible login method, just use that
-	if handler == nil && len(loginMethodOptions) == 1 {
-		handler = getHandlerByLabel(loginMethodOptions[0], loginHandlers)
-	}
-	// If we still don't have a login method, then we need to prompt
-	if handler == nil {
-		if err := survey.AskOne(&survey.Select{
-			Message: "Select a login method.",
-			Options: loginMethodOptions,
-		}, &loginMethod); err != nil {
-			return "", nil, err
+		codeVerifier, err := generateCodeVerifier()
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate code verifier: %w", err)
 		}
-		handler = getHandlerByLabel(loginMethod, loginHandlers)
-	}
-	// If we still don't have a handler --- fail
-	if handler == nil {
-		return "", nil, errors.New("invalid login method")
-	}
+		codeChallenge := generateCodeChallenge(codeVerifier)
 
-	payload, err := handler.Handler()
-	if err != nil {
-		return "", nil, err
-	}
+		state, err := generateState()
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate state: %w", err)
+		}
 
-	return handler.Key, payload, nil
+		ready := make(chan string, 1)
+		defer close(ready)
 
+		// if an error occurs server side, the callback will not return so we cancel
+		// if we haven't finished
+		ctx, cancel := context.WithTimeout(context.Background(), auth.AuthCodeLifetime)
+		defer cancel()
+
+		eg, ctx := errgroup.WithContext(ctx)
+		var loginResp *LoginResponse
+		eg.Go(func() error {
+			select {
+			case openURL := <-ready:
+				fmt.Printf("Opening browser for authentication...\n")
+				fmt.Printf("If browser doesn't open, visit: %s\n", openURL)
+
+				if err := browser.OpenURL(openURL); err != nil {
+					fmt.Printf("Could not open browser: %v\n", err)
+				}
+
+				return nil
+			case <-ctx.Done():
+				return fmt.Errorf("context done while waiting for authorization: %w", ctx.Err())
+			}
+		})
+		eg.Go(func() error {
+			code, redirectURL, err := receiveCodeViaLocalServer(ctx, &localServerConfig{readyChan: ready, state: state, codeChallenge: codeChallenge, codeChallengeMethod: "S256", authURL: authURL})
+			if err != nil {
+				return fmt.Errorf("authorization error: %w", err)
+			}
+
+			loginResp, err = exchangePKCECode(code, codeVerifier, redirectURL)
+			if err != nil {
+				return fmt.Errorf("failed to exchange code for token: %w", err)
+			}
+			return nil
+		})
+		if err := eg.Wait(); err != nil {
+			return nil, fmt.Errorf("error during authentication: %w", err)
+		}
+		if loginResp == nil {
+			return nil, errors.New("no authorization response")
+		}
+		return loginResp, nil
+	},
 }
 
-func Login() (*UserMergeData, error) {
+func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) (*LoginResponse, error) {
+	v := url.Values{
+		"code":          {authCode},
+		"code_verifier": {codeVerifier},
+		"redirect_uri":  {redirectURL},
+	}
 
-	// First check to see if you're already logged in
-	currentUser, err := Check()
+	// application/x-www-form-urlencoded per https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
+	resp, err := call.PostForm("site/auth/cli/token", strings.NewReader(v.Encode()), "", nil)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if currentUser != nil && (currentUser.Profile == "uesio/studio.standard" || currentUser.Profile == "uesio/studio.admin") {
-		return currentUser, nil
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("exchange failed with status %d", resp.StatusCode)
 	}
 
-	method, payload, err := getLoginPayload()
-	if err != nil {
+	var tokenResp LoginResponse
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
 		return nil, err
 	}
 
+	return &tokenResp, nil
+}
+
+func processDirectLogin(method string, payload map[string]string) (*LoginResponse, error) {
 	methodNamespace, methodName, err := parseKey(method)
 	if err != nil {
 		return nil, err
@@ -221,31 +241,85 @@ func Login() (*UserMergeData, error) {
 	}
 	defer resp.Body.Close()
 
-	userResponse := &LoginResponse{}
+	var loginResponse LoginResponse
 
-	err = json.NewDecoder(resp.Body).Decode(&userResponse)
+	err = json.NewDecoder(resp.Body).Decode(&loginResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	sessid := ""
+	return &loginResponse, nil
+}
 
-	for _, cookie := range resp.Cookies() {
-		if cookie.Name == "sessid" {
-			sessid = cookie.Value
-			break
+func getLoginHandler() (*LoginMethodHandler, error) {
+	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
+	if loginMethod == "" || loginMethod == browserLoginMethod {
+		return browserHandler, nil
+	}
+
+	if loginMethod == platformLoginMethod {
+		return platformHandler, nil
+	}
+
+	if loginMethod == mockLoginMethod {
+		if mockHandler, err := getMockHandler(); err != nil {
+			return nil, err
+		} else if mockHandler != nil {
+			return mockHandler, nil
 		}
 	}
 
-	if sessid == "" {
-		return nil, errors.New("no cookie found in login response")
-	}
+	return nil, fmt.Errorf("invalid login method: %s", loginMethod)
+}
 
-	err = config.SetSessionID(sessid)
+func Login() (*UserMergeData, error) {
+
+	// First check to see if you're already logged in
+	currentUser, err := Check()
 	if err != nil {
 		return nil, err
 	}
 
-	return userResponse.User, nil
+	if currentUser != nil && (currentUser.Profile == "uesio/studio.standard" || currentUser.Profile == "uesio/studio.admin") {
+		return currentUser, nil
+	}
 
+	handler, err := getLoginHandler()
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := handler.Login()
+	if err != nil {
+		return nil, err
+	}
+
+	err = config.SetSessionID(token.SessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	return token.User, nil
+}
+
+func generateCodeVerifier() (string, error) {
+	// per https://datatracker.ietf.org/doc/html/rfc7636#section-4.1
+	return generateRandom(32)
+}
+
+func generateState() (string, error) {
+	return generateRandom(32)
+}
+
+func generateCodeChallenge(verifier string) string {
+	sha := sha256.Sum256([]byte(verifier))
+	return base64.RawURLEncoding.EncodeToString(sha[:])
+}
+
+func generateRandom(size int) (string, error) {
+	bytes := make([]byte, size)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(bytes)[:size], nil
 }

@@ -340,6 +340,14 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
 	wr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
 
+	// These routes are studio specific and will return forbidden if not uesio/studio.  The way we handle cli auth
+	// and these routes in general can be improved in one of two ways:
+	//   1. Ideal - Move all auth to OAuth - This should be the end goal
+	//   2. Enhanced "Route Bot" - Bot would need to be able to set headers, return redirects, etc. and then this could
+	//      become a studio specific route within studio itself associated to a studio bot.
+	sr.HandleFunc("/auth/cli/authorize", controller.CLIAuthorize).Methods("GET")
+	sr.HandleFunc("/auth/cli/token", controller.CLIToken).Methods("POST")
+
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 

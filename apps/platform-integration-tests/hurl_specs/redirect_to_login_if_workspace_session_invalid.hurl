@@ -30,7 +30,7 @@ Cookie: sessid={{session_id}}
 HTTP 302
 
 [Asserts]
-header "Location" == "/login?r=/workspace/uesio/tests/dev/routes/path/uesio/tests/dependencies_group&expired=true"
+header "Location" == "/login?r=%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Froutes%2Fpath%2Fuesio%2Ftests%2Fdependencies_group&expired=true"
 
 # Access a workspace route with an invalid session, requesting JSON (e.g. a fetch request)
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/wires/load
@@ -49,7 +49,7 @@ Cookie: sessid={{session_id}}
 HTTP 200
 
 [Asserts]
-header "Location" == "/login?r={{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/views/uesio/tests/dependencies_group/edit&expired=true"
+header "Location" == "/login?r={{site_scheme}}%3A%2F%2Fstudio.{{site_primary_domain}}%3A{{site_port}}%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Fviews%2Fuesio%2Ftests%2Fdependencies_group%2Fedit&expired=true"
 
 # Attempt to navigate to a public route with no session id
 # @cookie_storage_clear

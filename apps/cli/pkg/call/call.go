@@ -44,7 +44,9 @@ func Request(r *RequestSpec) (*http.Response, error) {
 		return nil, err
 	}
 
-	req.Header.Set("Cookie", "sessid="+r.SessionId)
+	if r.SessionId != "" {
+		req.Header.Set("Cookie", "sessid="+r.SessionId)
+	}
 	if r.AppContext != nil {
 		r.AppContext.AddHeadersToRequest(req)
 	}
@@ -136,6 +138,19 @@ func Post(url string, payload io.Reader, sessionId string, appContext *context.A
 		Body:       payload,
 		SessionId:  sessionId,
 		AppContext: appContext,
+	})
+}
+
+func PostForm(url string, payload io.Reader, sessionId string, appContext *context.AppContext) (*http.Response, error) {
+	return Request(&RequestSpec{
+		Method:     http.MethodPost,
+		Url:        url,
+		Body:       payload,
+		SessionId:  sessionId,
+		AppContext: appContext,
+		AdditionalHeaders: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
 	})
 }
 
