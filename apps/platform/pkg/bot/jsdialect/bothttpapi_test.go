@@ -153,7 +153,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
+				responseContentType: "application/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					assert.Equal(t, "GET", request.Method)
 					assert.Equal(t, "/array", request.URL.Path)
@@ -161,7 +161,7 @@ func Test_Request(t *testing.T) {
 				responseAsserts: func(t *testing.T, response *BotHttpResponse) {
 					assert.Equal(t, "200 OK", response.Status)
 					assert.Equal(t, http.StatusOK, response.Code)
-					assert.Equal(t, "text/json", response.Headers["Content-Type"])
+					assert.Equal(t, "application/json", response.Headers["Content-Type"])
 					if responses, ok := response.Body.(*[]any); ok {
 						if item, isMap := (*responses)[1].(map[string]any); isMap {
 							assert.Equal(t, "world", item["hello"])
@@ -208,7 +208,7 @@ func Test_Request(t *testing.T) {
 					Body:   `{"first":"Luigi","last":"Vampa"}`,
 					Headers: map[string]string{
 						"Accept":        "text/plain",
-						"Content-Type":  "text/json",
+						"Content-Type":  "application/json",
 						"Authorization": "api-key",
 					},
 				},
@@ -334,7 +334,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/user/111",
 					Headers: map[string]string{
 						"Accept":       "text/plain",
-						"Content-Type": "text/json",
+						"Content-Type": "application/json",
 					},
 					Body: `{"first":"Mario","last":"Vampa"}`,
 				},
@@ -366,7 +366,7 @@ func Test_Request(t *testing.T) {
 						"first": "Mario",
 					},
 					Headers: map[string]string{
-						"Content-Type": "text/json",
+						"Content-Type": "application/json",
 					},
 				},
 				responseStatusCode: http.StatusNoContent,
@@ -391,7 +391,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/user/111",
 					Body:   `{"__delete__":true}`,
 					Headers: map[string]string{
-						"Content-Type": "text/json",
+						"Content-Type": "application/json",
 					},
 				},
 				responseStatusCode: http.StatusNoContent,
@@ -501,7 +501,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
+				responseContentType: "application/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					assert.Equal(t, "GET", request.Method)
 					assert.Equal(t, "Basic bHVpZ2k6YWJjMTIz", request.Header.Get("Authorization"))
@@ -559,7 +559,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
+				responseContentType: "application/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					assert.Equal(t, "Bearer 1234", request.Header.Get("Authorization"))
 				},
@@ -581,7 +581,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
+				responseContentType: "application/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					assert.Equal(t, "1234", request.Header.Get("X-Api-Key"))
 				},
@@ -604,7 +604,7 @@ func Test_Request(t *testing.T) {
 					URL:    server.URL + "/array",
 				},
 				response:            `[{"foo":"bar"},{"hello":"world"}]`,
-				responseContentType: "text/json",
+				responseContentType: "application/json",
 				requestAsserts: func(t *testing.T, request *http.Request) {
 					assert.Equal(t, "1234", request.URL.Query().Get("key"))
 				},
@@ -734,7 +734,7 @@ func Test_Request(t *testing.T) {
 						assert.Equal(t, "GET", request.Method)
 						assert.Equal(t, "Bearer abcd1234", request.Header.Get("Authorization"))
 						serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
-						serveContentType = "text/json"
+						serveContentType = "application/json"
 					default:
 						assert.Fail(t, "unexpected request")
 					}
@@ -782,7 +782,7 @@ func Test_Request(t *testing.T) {
 						assert.Equal(t, "GET", request.Method)
 						assert.Equal(t, "Bearer abcd1234", request.Header.Get("Authorization"))
 						serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
-						serveContentType = "text/json"
+						serveContentType = "application/json"
 					} else {
 						assert.Fail(t, "unexpected request")
 					}
@@ -856,14 +856,14 @@ func Test_Request(t *testing.T) {
 						// If we get called with the old token, return 401
 						if request.Header.Get("Authorization") == "Bearer oldtoken" {
 							serveResponseBody = `{"error":"access_denied"}`
-							serveContentType = "text/json"
+							serveContentType = "application/json"
 							serveStatusCode = http.StatusUnauthorized
 						} else {
 							// Otherwise verify that we are being called with the new token
 							assert.Equal(t, "GET", request.Method)
 							assert.Equal(t, "Bearer newtoken", request.Header.Get("Authorization"))
 							serveResponseBody = `[{"foo":"bar"},{"hello":"world"}]`
-							serveContentType = "text/json"
+							serveContentType = "application/json"
 							serveStatusCode = http.StatusOK
 						}
 					default:
