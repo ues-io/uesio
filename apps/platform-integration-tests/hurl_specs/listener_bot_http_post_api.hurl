@@ -21,5 +21,5 @@ jsonpath "$.params.sum" == 9
 jsonpath "$.params.multiplied" == 20
 jsonpath "$.params.status" == "200 OK"
 jsonpath "$.params.statusCode" == 200
-jsonpath "$.params.contentType" == "text/json"
+jsonpath "$.params.contentType" == "application/json"
 jsonpath "$.success" == true
