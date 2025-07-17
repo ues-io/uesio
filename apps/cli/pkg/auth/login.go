@@ -275,12 +275,9 @@ func getLoginHandler() (*LoginMethodHandler, error) {
 func Login() (*UserMergeData, error) {
 
 	// First check to see if you're already logged in
-	currentUser, err := Check()
-	if err != nil {
+	if currentUser, err := Check(); err != nil {
 		return nil, err
-	}
-
-	if currentUser != nil && (currentUser.Profile == "uesio/studio.standard" || currentUser.Profile == "uesio/studio.admin") {
+	} else if currentUser != nil {
 		return currentUser, nil
 	}
 
