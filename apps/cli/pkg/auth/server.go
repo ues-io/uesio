@@ -42,9 +42,6 @@ const htmlTemplate = `
 <head>
 	<meta charset="UTF-8">
 	<title>Uesio CLI Authorization</title>
-	<script>
-		window.close()
-	</script>
 	<style>
 		body {
 			background-color: #eee;
