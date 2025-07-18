@@ -3,14 +3,14 @@ package print
 import (
 	"fmt"
 
-	"github.com/thecloudmasters/cli/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 )
 
-func PrintUserSummary(user *auth.UserMergeData) string {
+func PrintUserSummary(user *preload.UserMergeData) string {
 	return fmt.Sprintf("%s %s (%s)", user.FirstName, user.LastName, user.Profile)
 }
 
-func PrintUser(user *auth.UserMergeData) {
+func PrintUser(user *preload.UserMergeData) {
 	if user == nil {
 		fmt.Println("no user set")
 		return

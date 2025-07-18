@@ -5,9 +5,11 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 )
 
-func Logout() (*UserMergeData, error) {
+func Logout() (*preload.UserMergeData, error) {
 
 	sessionID, err := config.GetSessionID()
 	if err != nil {
@@ -23,7 +25,7 @@ func Logout() (*UserMergeData, error) {
 	}
 	defer resp.Body.Close()
 
-	userResponse := &LoginResponse{}
+	var userResponse auth.LoginResponse
 
 	if err = json.NewDecoder(resp.Body).Decode(&userResponse); err != nil {
 		return nil, err

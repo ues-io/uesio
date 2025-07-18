@@ -22,6 +22,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -32,7 +33,7 @@ const platformLoginMethod = "uesio/core.platform"
 const mockLoginMethod = "uesio/core.mock"
 const browserLoginMethod = "browser"
 
-type LoginHandler func() (*LoginResponse, error)
+type LoginHandler func() (*auth.TokenResponse, error)
 
 type LoginMethodHandler struct {
 	Key   string
@@ -72,7 +73,7 @@ func getMockHandler() (*LoginMethodHandler, error) {
 
 	return &LoginMethodHandler{
 		Key: mockLoginMethod,
-		Login: func() (*LoginResponse, error) {
+		Login: func() (*auth.TokenResponse, error) {
 			username := os.Getenv("UESIO_CLI_USERNAME")
 			if username == "" {
 				err := survey.AskOne(&survey.Select{
@@ -94,7 +95,7 @@ func getMockHandler() (*LoginMethodHandler, error) {
 
 var platformHandler = &LoginMethodHandler{
 	Key: platformLoginMethod,
-	Login: func() (*LoginResponse, error) {
+	Login: func() (*auth.TokenResponse, error) {
 		username := os.Getenv("UESIO_CLI_USERNAME")
 		password := os.Getenv("UESIO_CLI_PASSWORD")
 
@@ -126,7 +127,7 @@ var platformHandler = &LoginMethodHandler{
 
 var browserHandler = &LoginMethodHandler{
 	Key: browserLoginMethod,
-	Login: func() (*LoginResponse, error) {
+	Login: func() (*auth.TokenResponse, error) {
 		platformBaseURL, err := host.GetHostPrompt()
 		if err != nil {
 			return nil, err
@@ -156,7 +157,7 @@ var browserHandler = &LoginMethodHandler{
 		defer cancel()
 
 		eg, ctx := errgroup.WithContext(ctx)
-		var loginResp *LoginResponse
+		var tokenResp *auth.TokenResponse
 		eg.Go(func() error {
 			select {
 			case openURL := <-ready:
@@ -178,7 +179,7 @@ var browserHandler = &LoginMethodHandler{
 				return fmt.Errorf("authorization error: %w", err)
 			}
 
-			loginResp, err = exchangePKCECode(code, codeVerifier, redirectURL)
+			tokenResp, err = exchangePKCECode(code, codeVerifier, redirectURL)
 			if err != nil {
 				return fmt.Errorf("failed to exchange code for token: %w", err)
 			}
@@ -187,14 +188,14 @@ var browserHandler = &LoginMethodHandler{
 		if err := eg.Wait(); err != nil {
 			return nil, fmt.Errorf("error during authentication: %w", err)
 		}
-		if loginResp == nil {
+		if tokenResp == nil {
 			return nil, errors.New("no authorization response")
 		}
-		return loginResp, nil
+		return tokenResp, nil
 	},
 }
 
-func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) (*LoginResponse, error) {
+func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) (*auth.TokenResponse, error) {
 	v := url.Values{
 		"code":          {authCode},
 		"code_verifier": {codeVerifier},
@@ -212,7 +213,7 @@ func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) 
 		return nil, fmt.Errorf("exchange failed with status %d", resp.StatusCode)
 	}
 
-	var tokenResp LoginResponse
+	var tokenResp auth.TokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
 		return nil, err
 	}
@@ -220,7 +221,7 @@ func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) 
 	return &tokenResp, nil
 }
 
-func processDirectLogin(method string, payload map[string]string) (*LoginResponse, error) {
+func processDirectLogin(method string, payload map[string]string) (*auth.TokenResponse, error) {
 	methodNamespace, methodName, err := parseKey(method)
 	if err != nil {
 		return nil, err
@@ -241,14 +242,14 @@ func processDirectLogin(method string, payload map[string]string) (*LoginRespons
 	}
 	defer resp.Body.Close()
 
-	var loginResponse LoginResponse
+	var loginResponse auth.LoginResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&loginResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	return &loginResponse, nil
+	return auth.NewTokenResponse(loginResponse.User, loginResponse.SessionID), nil
 }
 
 func getLoginHandler() (*LoginMethodHandler, error) {
@@ -272,7 +273,7 @@ func getLoginHandler() (*LoginMethodHandler, error) {
 	return nil, fmt.Errorf("invalid login method: %s", loginMethod)
 }
 
-func Login() (*UserMergeData, error) {
+func Login() (*preload.UserMergeData, error) {
 
 	// First check to see if you're already logged in
 	if currentUser, err := Check(); err != nil {

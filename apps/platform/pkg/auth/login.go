@@ -19,7 +19,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*preload.LoginResponse, error) {
+func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*LoginResponse, error) {
 
 	redirect := "/site/app/uesio/appkit/changepassword"
 	username := user.Username
@@ -28,14 +28,10 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 
 	redirectPath := redirect + "?code=" + code + "&username=" + username
 
-	return &preload.LoginResponse{
-		User:         preload.GetUserMergeData(session),
-		RedirectPath: redirectPath,
-		SessionID:    session.GetSessionID(),
-	}, nil
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, "", ""), nil
 }
 
-func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*preload.LoginResponse, error) {
+func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*LoginResponse, error) {
 
 	site := session.GetSite()
 
@@ -75,14 +71,8 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		}
 	}
 
-	return &preload.LoginResponse{
-		User: preload.GetUserMergeData(session),
-		// We'll want to read this from a setting somewhere
-		RedirectRouteNamespace: redirectNamespace,
-		RedirectRouteName:      redirectRoute,
-		RedirectPath:           redirectPath,
-		SessionID:              session.GetSessionID(),
-	}, nil
+	// TODO: We'll want to read this from a setting somewhere
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, redirectNamespace, redirectRoute), nil
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
