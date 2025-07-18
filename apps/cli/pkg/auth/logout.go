@@ -9,15 +9,15 @@ import (
 
 func Logout() (*UserMergeData, error) {
 
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
 	// If there is no current session id, there's no need to make a logout call
-	if sessionId == "" {
+	if sessionID == "" {
 		return nil, nil
 	}
-	resp, err := call.Post("site/auth/logout", nil, sessionId, nil)
+	resp, err := call.Post("site/auth/logout", nil, sessionID, nil)
 	if err != nil {
 		return nil, err
 	}

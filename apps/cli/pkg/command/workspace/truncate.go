@@ -32,14 +32,14 @@ func Truncate() error {
 		return errors.New("no active workspace is set -- use \"uesio work\" to set one")
 	}
 
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
 	url := fmt.Sprintf("workspace/%s/%s/data/truncate", app, workspace)
 
-	resp, err := call.Post(url, nil, sessionId, context.NewWorkspaceContext(app, workspace))
+	resp, err := call.Post(url, nil, sessionID, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}

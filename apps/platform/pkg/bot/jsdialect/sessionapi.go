@@ -83,8 +83,8 @@ func NewSessionAPI(session *sess.Session) *SessionAPI {
 	}
 }
 
-func (s *SessionAPI) GetId() string {
-	return s.session.GetSessionId()
+func (s *SessionAPI) GetID() string {
+	return s.session.GetSessionID()
 }
 
 func (s *SessionAPI) InWorkspaceContext() bool {

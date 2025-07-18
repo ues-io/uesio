@@ -64,12 +64,12 @@ func AppClone(targetDir string) error {
 		return err
 	}
 
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
-	app, err := askUserToSelectApp(sessionId)
+	app, err := askUserToSelectApp(sessionID)
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func AppClone(targetDir string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.PostBytes(generateURL, payloadBytes, sessionId, nil)
+	resp, err := call.PostBytes(generateURL, payloadBytes, sessionID, nil)
 	if err != nil {
 		return err
 	}
