@@ -10,7 +10,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// NOTE: There is a mirror of this in CLI auth.LoginResponse containing a subset of these properties that needs to be kept in sync.
+// TODO: The CLI uses a subset of the properties in these types but we currently return the full type payload. This
+// should be refactored to have a "base" and "full" version of these types and only use the "full" version where needed to
+// improve performance, reduce payload size and not expose information that isn't needed to the respective client.
 type LoginResponse struct {
 	User                   *UserMergeData `json:"user"`
 	RedirectPath           string         `json:"redirectPath,omitempty"`
@@ -37,7 +39,9 @@ type UserPictureMergeData struct {
 	UpdatedAt int64  `json:"updatedat"`
 }
 
-// NOTE: There is a mirror of this in CLI auth.UserMergeData containing a subset of these properties that needs to be kept in sync.
+// TODO: The CLI uses a subset of the properties in these types but we currently return the full type payload. This
+// should be refactored to have a "base" and "full" version of these types and only use the "full" version where needed to
+// improve performance, reduce payload size and not expose information that isn't needed to the respective client.
 type UserMergeData struct {
 	FirstName    string                `json:"firstname"`
 	LastName     string                `json:"lastname"`
