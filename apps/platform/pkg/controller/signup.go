@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -59,10 +58,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filejson.RespondJSON(w, r, &preload.LoginResponse{
-		RedirectRouteNamespace: redirectRouteNamespace,
-		RedirectRouteName:      redirectRouteName,
-	})
+	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", "", redirectRouteNamespace, redirectRouteName))
 
 }
 

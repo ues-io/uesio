@@ -37,10 +37,5 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filejson.RespondJSON(w, r, &preload.LoginResponse{
-		User: preload.GetUserMergeData(session),
-		// We'll want to read this from a setting somewhere
-		RedirectRouteNamespace: redirectNamespace,
-		RedirectRouteName:      redirectRoute,
-	})
+	filejson.RespondJSON(w, r, auth.NewLoginResponse(preload.GetUserMergeData(session), "", "", redirectNamespace, redirectRoute))
 }

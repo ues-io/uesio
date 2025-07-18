@@ -10,17 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// TODO: The CLI uses a subset of the properties in these types but we currently return the full type payload. This
-// should be refactored to have a "base" and "full" version of these types and only use the "full" version where needed to
-// improve performance, reduce payload size and not expose information that isn't needed to the respective client.
-type LoginResponse struct {
-	User                   *UserMergeData `json:"user"`
-	RedirectPath           string         `json:"redirectPath,omitempty"`
-	RedirectRouteName      string         `json:"redirectRouteName,omitempty"`
-	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
-	SessionID              string         `json:"sessionId"`
-}
-
 type RouteMergeData struct {
 	Dependencies *PreloadMetadata    `json:"dependencies"`
 	Namespace    string              `json:"namespace"`

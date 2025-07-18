@@ -3,9 +3,11 @@ package auth
 import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
+	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/preload"
 )
 
-func Check() (*UserMergeData, error) {
+func Check() (*preload.UserMergeData, error) {
 
 	sessid, err := config.GetSessionID()
 	if err != nil {
@@ -17,9 +19,9 @@ func Check() (*UserMergeData, error) {
 		return nil, nil
 	}
 
-	userResponse := &LoginResponse{}
+	var userResponse auth.UserResponse
 
-	err = call.GetJSON("site/auth/check", sessid, userResponse)
+	err = call.GetJSON("site/auth/check", sessid, &userResponse)
 	if err != nil {
 		return nil, err
 	}

@@ -15,11 +15,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
-type TokenResponse struct {
-	User      *preload.UserMergeData `json:"user"`
-	SessionID string                 `json:"sessionId"`
-}
-
 func CLIToken(w http.ResponseWriter, r *http.Request, requestingSession *sess.Session) {
 	// NOTE: intentionally using generic error messages for general failures
 
@@ -109,10 +104,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request, requestingSession *sess.Se
 
 	DelAuthorizationCode(authCode)
 
-	response := TokenResponse{
-		SessionID: cliSession.ID,
-		User:      preload.GetUserMergeData(cliSession),
-	}
+	response := NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.ID)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to encode response: %w", err))
