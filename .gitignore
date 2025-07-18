@@ -93,3 +93,6 @@ go.work.sum
 # however putting here instead because we would also never want to commit these files if we ever committed in
 # our workflows.
 /go-build-cache
+
+# Valkey
+/valkey
