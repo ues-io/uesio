@@ -31,7 +31,7 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 	return &preload.LoginResponse{
 		User:         preload.GetUserMergeData(session),
 		RedirectPath: redirectPath,
-		SessionId:    session.GetSessionId(),
+		SessionID:    session.GetSessionID(),
 	}, nil
 }
 
@@ -81,7 +81,7 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
-		SessionId:              session.GetSessionId(),
+		SessionID:              session.GetSessionID(),
 	}, nil
 }
 

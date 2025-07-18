@@ -15,13 +15,13 @@ func Delete(appFullName string) error {
 		return err
 	}
 
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 
 	if appFullName == "" {
-		app, err := askUserToSelectApp(sessionId)
+		app, err := askUserToSelectApp(sessionID)
 		if err != nil {
 			return err
 		}

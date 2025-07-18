@@ -525,6 +525,6 @@ func (s *Session) GetContextSite() *meta.Site {
 	return s.GetSite()
 }
 
-func (s *Session) GetSessionId() string {
+func (s *Session) GetSessionID() string {
 	return s.ID
 }

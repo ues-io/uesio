@@ -1,15 +1,15 @@
 package config
 
-const sessionIdProp = "sessionId"
+const sessionIDProp = "sessionId"
 
 func GetSessionID() (string, error) {
-	return GetConfigValue(sessionIdProp)
+	return GetConfigValue(sessionIDProp)
 }
 
 func SetSessionID(id string) error {
-	return SetConfigValue(sessionIdProp, id)
+	return SetConfigValue(sessionIDProp, id)
 }
 
 func DeleteSessionID() error {
-	return DeleteConfigValue(sessionIdProp)
+	return DeleteConfigValue(sessionIDProp)
 }

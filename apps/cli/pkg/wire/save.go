@@ -44,12 +44,12 @@ func Insert(collectionName string, changes []map[string]interface{}, appContext 
 }
 
 func DeleteOne(collectionName, idField, idValue string, appContext *context.AppContext) error {
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return err
 	}
 	deleteUri := fmt.Sprintf("site/api/v1/collection/%s?%s=eq.%s", strings.ReplaceAll(collectionName, ".", "/"), idField, idValue)
-	statusCode, err := call.Delete(deleteUri, sessionId, appContext)
+	statusCode, err := call.Delete(deleteUri, sessionID, appContext)
 	if err != nil {
 		return err
 	}
@@ -86,14 +86,14 @@ func Save(collectionName string, changes []map[string]interface{}, saveOptions S
 		},
 	}
 
-	sessionId, err := config.GetSessionID()
+	sessionID, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
 
 	saveResponse := &SaveReqBatch{}
 
-	err = call.PostJSON("site/wires/save", sessionId, payload, saveResponse, appContext)
+	err = call.PostJSON("site/wires/save", sessionID, payload, saveResponse, appContext)
 	if err != nil {
 		return nil, err
 	}

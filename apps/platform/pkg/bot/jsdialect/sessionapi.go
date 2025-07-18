@@ -83,8 +83,10 @@ func NewSessionAPI(session *sess.Session) *SessionAPI {
 	}
 }
 
+// NOTE: Intentionally lowercase Id since called from JS dialects
+// TODO: See if goja has a way to map this to getId from GetID so we can change the name and be consistent
 func (s *SessionAPI) GetId() string {
-	return s.session.GetSessionId()
+	return s.session.GetSessionID()
 }
 
 func (s *SessionAPI) InWorkspaceContext() bool {

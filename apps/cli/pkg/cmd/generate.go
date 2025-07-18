@@ -50,9 +50,9 @@ func promptForGenerator() string {
 		// attempt to log in
 		userMergeData, err = auth.Login()
 	}
-	var sessionId string
+	var sessionID string
 	if err == nil && userMergeData != nil {
-		sessionId, err = config.GetSessionID()
+		sessionID, err = config.GetSessionID()
 	}
 	if err != nil {
 		return ""
@@ -67,7 +67,7 @@ func promptForGenerator() string {
 		MetadataType: "BOT",
 		Grouping:     "GENERATOR",
 		Required:     true,
-	}, "uesio/core", "0.0.1", sessionId, answers); err != nil {
+	}, "uesio/core", "0.0.1", sessionID, answers); err != nil {
 		return ""
 	}
 	if generatorNameString, isString := answers["generator"].(string); isString {

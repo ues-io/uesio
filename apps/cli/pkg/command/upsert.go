@@ -27,11 +27,11 @@ func getUrlPrefix(tenantType, app, tenant string) string {
 	return fmt.Sprintf("%s/%s/%s", tenantType, app, tenant)
 }
 
-func createJob(prefix, sessionId string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
+func createJob(prefix, sessionID string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
 	url := fmt.Sprintf("%s/bulk/job", prefix)
 	jobResponse := &bulk.JobResponse{}
 
-	err := call.PostJSON(url, sessionId, spec, jobResponse, nil)
+	err := call.PostJSON(url, sessionID, spec, jobResponse, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 	return nil, fmt.Errorf("invalid job type: %s", jobType)
 }
 
-func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
+func runBatch(prefix, sessionID, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
 	payload, err := getImportPayload(spec.JobType, dataFile)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func runBatch(prefix, sessionId, dataFile, jobID string, spec *meta.JobSpecReque
 
 	url := fmt.Sprintf("%s/bulk/job/%s/batch", prefix, jobID)
 
-	resp, err := call.Post(url, payload, sessionId, nil)
+	resp, err := call.Post(url, payload, sessionID, nil)
 	if err != nil {
 		return nil, err
 	}

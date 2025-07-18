@@ -18,7 +18,7 @@ type LoginResponse struct {
 	RedirectPath           string         `json:"redirectPath,omitempty"`
 	RedirectRouteName      string         `json:"redirectRouteName,omitempty"`
 	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
-	SessionId              string         `json:"sessionId"`
+	SessionID              string         `json:"sessionId"`
 }
 
 type RouteMergeData struct {
