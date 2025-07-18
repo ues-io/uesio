@@ -291,7 +291,7 @@ func Login() (*UserMergeData, error) {
 		return nil, err
 	}
 
-	err = config.SetSessionID(token.SessionID)
+	err = config.SetSessionID(token.SessionId)
 	if err != nil {
 		return nil, err
 	}
