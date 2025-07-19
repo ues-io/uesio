@@ -617,17 +617,33 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - Need to continue to monitor the monaco-editor issue(s) and update if/when possible
 
 2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.
-3. When running `npm install` there are errors related to `inflight@1.0.6`, `abab@2.0.6`, `glob@7.2.3`, `domexception@4.0.0` that all are dependencies of jest and its related tooling. There is a jest@next package (currently v30.0.0-alpha.6) that should address most (and hopefully) all of these. See:
-   - https://github.com/jestjs/jest/issues/15173
-   - https://github.com/jestjs/jest/issues/15236
-   - https://github.com/jestjs/jest/issues/15325
-     UPDATE 2025.07.12: Jest v30 support was merged in https://github.com/nrwl/nx/pull/31853/files#diff-d3257785ed94f98f3ff84c30fead7c7147b8efc2091ea70f8c32a9c2aa68ac6d. Just waiting for the next release to include this.
-4. There is a known security vulnerability with [esbuild 0.17.19](https://github.com/ues-io/uesio/security/dependabot/52) which is due to [@modern-js/node-bundle-require](https://github.com/web-infra-dev/modern.js/issues/6993) that is pinned to that esbuild version since it maintains support for [Node 16 until June 30, 2025](https://github.com/web-infra-dev/modern.js/issues/6993#issuecomment-2791792837). To workaround, adding overriding for [esbuild](./package.json#L176).
-   - TODO: Once https://github.com/web-infra-dev/modern.js/issues/6993 is resolved/merged/released, the override for esbuild in package.json can be removed.
-   - UPDATE 2025.07.03: https://github.com/web-infra-dev/modern.js/issues/6993 has been resolved and was released in [v2.68.0](https://github.com/web-infra-dev/modern.js/releases/tag/v2.68.0). Now waiting on https://github.com/module-federation/core/issues/3719.
-5. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
-6. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
-7. `anthropic-sdk-go v1.5.0 has a bug in it where we cannot add a result to a NewToolResultBlock. It should be fixed in the next release. We should upgrade once this issues is resolved.
+3. When running `npm install` there are warnings related to deprecated versions of `inflight@1.0.6`, `rimraf@2.7.1`, `glob@7.2.3` due to higher level dependencies that depend on them.  Specifically:
+   - `inflight@1.0.6`
+      - Tree(s):
+         - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3->inflight@1.0.6 
+      - See:
+         - https://github.com/ds300/patch-package/issues/515
+      - TODO: `patch-package` No PR yet and hasn't had a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If `patch-package` releases https://github.com/ds300/patch-package/pull/517, it should eliminate the inflight issue.
+   - `rimraf@2.7.1`
+      - Tree(s):
+         - patch-package@8.0.0->rimraf@2.7.1
+      - See:
+         - https://github.com/ds300/patch-package/pull/517
+         - https://github.com/ds300/patch-package/issue/575
+         - https://github.com/ds300/patch-package/issue/537
+      - TODO: `patch-package` pull 517 is merged to main but there hasn't been a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If/when `patch-package` releases a new version, it should address both this and the `inflight@1.0.6` issue.
+   - `glob@7.2.3`
+      - Tree(s):
+         - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3
+         - ts-jest@29.4.0->@jest/transform@30.0.4->babel-plugin-istanbul@7.0.0->test-exclude@6.0.0->glob@7.2.3
+      - See:
+         - https://github.com/istanbuljs/babel-plugin-istanbul/issues/294
+         - https://github.com/istanbuljs/babel-plugin-istanbul/issues/300
+         - https://github.com/istanbuljs/babel-plugin-istanbul/pull/301
+      - TODO: The issue is fixed in test-exclude@7 which was released in June 2024 but babel-plugin-istanbul hasn't released a new version yet.  https://github.com/istanbuljs/babel-plugin-istanbul/pull/301 has had some activity so seems to be moving towards a merge & hopeful release.
+4. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
+5. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
+6. `anthropic-sdk-go v1.5.0 has a bug in it where we cannot add a result to a NewToolResultBlock. It should be fixed in the next release. We should upgrade once this issues is resolved.
    https://github.com/anthropics/anthropic-sdk-go/issues/206
 
 ## Patches
