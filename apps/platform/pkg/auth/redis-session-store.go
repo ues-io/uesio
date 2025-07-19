@@ -7,6 +7,7 @@ import (
 
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type RedisSessionStore struct {
@@ -15,7 +16,7 @@ type RedisSessionStore struct {
 
 func NewRedisSessionStore() session.Store {
 	return &RedisSessionStore{
-		cache.NewRedisCache[session.Session]("session").WithInitializer(session.NewSession),
+		cache.NewRedisCache[session.Session]("session").WithExpiration(sess.SessionLifetime).WithInitializer(session.NewSession),
 	}
 }
 

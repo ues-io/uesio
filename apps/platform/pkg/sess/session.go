@@ -11,6 +11,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
+const SessionLifetime = 12 * time.Hour
+
 func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Site) session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]any{
@@ -19,7 +21,7 @@ func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Sit
 		},
 		// TODO: Make Session timeout configurable by App/Site
 		// https://github.com/TheCloudMasters/uesio/issues/2643
-		Timeout: time.Hour * 12,
+		Timeout: SessionLifetime,
 	})
 	// Remove any previous set-cookie headers
 	w.Header().Del("Set-Cookie")
