@@ -19,7 +19,7 @@ require (
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dolmen-go/contextio v1.0.0
 	github.com/dop251/goja v0.0.0-20250630131328-58d95d85e994
-	github.com/evanw/esbuild v0.25.5
+	github.com/evanw/esbuild v0.25.7
 	github.com/francoispqt/gojay v1.2.13
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/httplog/v3 v3.2.2
