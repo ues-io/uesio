@@ -92,7 +92,7 @@
     "@react-hook/resize-observer": "^2.0.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@shikijs/monaco": "^3.7.0",
-    "@shikijs/rehype": "^3.7.0",
+    "@shikijs/rehype": "^3.8.1",
     "@swc-node/register": "^1.10.10",
     "@swc/core": "^1.12.11",
     "@swc/helpers": "^0.5.17",
