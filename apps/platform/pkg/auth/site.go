@@ -62,7 +62,7 @@ func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Sessio
 	if err != nil {
 		return nil, err
 	}
-	return GetSessionFromUser("", publicUser, site)
+	return CreateSessionFromUser(publicUser, site)
 }
 
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {

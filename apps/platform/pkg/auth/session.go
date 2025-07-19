@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gofrs/uuid/v5"
 	"github.com/icza/session"
 	"golang.org/x/crypto/bcrypt"
 
@@ -48,6 +49,21 @@ func GetUserFromBrowserSession(browserSession session.Session, site *meta.Site) 
 		return nil, fmt.Errorf("sites mismatch for user: %s", browserSessionUser)
 	}
 	return GetCachedUserByID(browserSessionUser, site)
+}
+
+func CreateSessionFromUser(user *meta.User, site *meta.Site) (*sess.Session, error) {
+	// We are creating a Uesio Session (sess.Session) here, not a browser session (session.Session).
+	// but we still want to ensure we have a SessionID so we use a UUID to differentiate the session
+	// ID format from one that was created from a browser session. We use v4 for randomness since
+	// these don't need to be sorted or stored.
+	// TODO: Refactor code to be more explicit about a "UesioSession" vs. a "BrowserSession" since
+	// variables and function names all use "Session" which leads to a lot of confusion unless you
+	// pay vary close attention to the types.
+	sessionID, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+	return GetSessionFromUser(sessionID.String(), user, site)
 }
 
 func GetSessionFromUser(sessionID string, user *meta.User, site *meta.Site) (*sess.Session, error) {
