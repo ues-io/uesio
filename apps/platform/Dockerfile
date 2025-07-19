@@ -1,4 +1,4 @@
-FROM golang:1.24.4-alpine AS multistage
+FROM golang:1.24.5-alpine AS multistage
 
 WORKDIR /src
 RUN go env -w GOMODCACHE=/root/.cache/go-build
