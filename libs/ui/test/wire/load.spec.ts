@@ -63,7 +63,7 @@ const tests: WireSignalTest[] = [
         .spyOn(platformModule.platform, "loadData")
         .mockImplementation(defaultPlanetsWireLoadImplementation)
       return (wire) => {
-        expect(spy).toBeCalledTimes(1)
+        expect(spy).toHaveBeenCalledTimes(1)
         const loadWire = spy.mock.calls[0][1].wires[0]
         expect(loadWire).toHaveProperty("name", wireId)
         expect(loadWire).toHaveProperty("collection", collectionId)
@@ -134,7 +134,7 @@ const tests: WireSignalTest[] = [
         .spyOn(platformModule.platform, "loadData")
         .mockImplementation(defaultPlanetsWireLoadImplementation)
       return (wire) => {
-        expect(spy).toBeCalledTimes(2)
+        expect(spy).toHaveBeenCalledTimes(2)
         expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
         expect(spy.mock.calls[1][1].includeMetadata).toBe(false)
         spy.mock.calls.forEach((call) => {
@@ -186,7 +186,7 @@ const tests: WireSignalTest[] = [
         .spyOn(platformModule.platform, "loadData")
         .mockImplementation(defaultPlanetsWireLoadImplementation)
       return (wire) => {
-        expect(spy).toBeCalledTimes(1)
+        expect(spy).toHaveBeenCalledTimes(1)
         expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
         spy.mock.calls.forEach((call) => {
           const loadWire = call[1].wires[0]
@@ -253,7 +253,7 @@ const tests: WireSignalTest[] = [
         .spyOn(platformModule.platform, "loadData")
         .mockImplementation(defaultPlanetsWireLoadImplementation)
       return (wire) => {
-        expect(spy).toBeCalledTimes(1)
+        expect(spy).toHaveBeenCalledTimes(1)
         expect(spy.mock.calls[0][1].includeMetadata).toBe(true)
         spy.mock.calls.forEach((call) => {
           const loadWire = call[1].wires[0]
