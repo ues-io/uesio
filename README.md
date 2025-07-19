@@ -617,30 +617,30 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
    - Need to continue to monitor the monaco-editor issue(s) and update if/when possible
 
 2. `nx` and its plugins need to be pinned to specific versions as the version of all of them must match [per their docs](https://nx.dev/recipes/tips-n-tricks/keep-nx-versions-in-sync). Running [npx nx migrate](https://nx.dev/nx-api/nx/documents/migrate) will ensure that all are kept in-sync.
-3. When running `npm install` there are warnings related to deprecated versions of `inflight@1.0.6`, `rimraf@2.7.1`, `glob@7.2.3` due to higher level dependencies that depend on them.  Specifically:
+3. When running `npm install` there are warnings related to deprecated versions of `inflight@1.0.6`, `rimraf@2.7.1`, `glob@7.2.3` due to higher level dependencies that depend on them. Specifically:
    - `inflight@1.0.6`
-      - Tree(s):
-         - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3->inflight@1.0.6 
-      - See:
-         - https://github.com/ds300/patch-package/issues/515
-      - TODO: `patch-package` No PR yet and hasn't had a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If `patch-package` releases https://github.com/ds300/patch-package/pull/517, it should eliminate the inflight issue.
+     - Tree(s):
+       - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3->inflight@1.0.6
+     - See:
+       - https://github.com/ds300/patch-package/issues/515
+     - TODO: `patch-package` No PR yet and hasn't had a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If `patch-package` releases https://github.com/ds300/patch-package/pull/517, it should eliminate the inflight issue.
    - `rimraf@2.7.1`
-      - Tree(s):
-         - patch-package@8.0.0->rimraf@2.7.1
-      - See:
-         - https://github.com/ds300/patch-package/pull/517
-         - https://github.com/ds300/patch-package/issue/575
-         - https://github.com/ds300/patch-package/issue/537
-      - TODO: `patch-package` pull 517 is merged to main but there hasn't been a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If/when `patch-package` releases a new version, it should address both this and the `inflight@1.0.6` issue.
+     - Tree(s):
+       - patch-package@8.0.0->rimraf@2.7.1
+     - See:
+       - https://github.com/ds300/patch-package/pull/517
+       - https://github.com/ds300/patch-package/issue/575
+       - https://github.com/ds300/patch-package/issue/537
+     - TODO: `patch-package` pull 517 is merged to main but there hasn't been a release since August 2023 so likely need to migrate to an alternative solution, possibly https://github.com/tmcdos/custompatch. If/when `patch-package` releases a new version, it should address both this and the `inflight@1.0.6` issue.
    - `glob@7.2.3`
-      - Tree(s):
-         - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3
-         - ts-jest@29.4.0->@jest/transform@30.0.4->babel-plugin-istanbul@7.0.0->test-exclude@6.0.0->glob@7.2.3
-      - See:
-         - https://github.com/istanbuljs/babel-plugin-istanbul/issues/294
-         - https://github.com/istanbuljs/babel-plugin-istanbul/issues/300
-         - https://github.com/istanbuljs/babel-plugin-istanbul/pull/301
-      - TODO: The issue is fixed in test-exclude@7 which was released in June 2024 but babel-plugin-istanbul hasn't released a new version yet.  https://github.com/istanbuljs/babel-plugin-istanbul/pull/301 has had some activity so seems to be moving towards a merge & hopeful release.
+     - Tree(s):
+       - patch-package@8.0.0->rimraf@2.7.1->glob@7.2.3
+       - ts-jest@29.4.0->@jest/transform@30.0.4->babel-plugin-istanbul@7.0.0->test-exclude@6.0.0->glob@7.2.3
+     - See:
+       - https://github.com/istanbuljs/babel-plugin-istanbul/issues/294
+       - https://github.com/istanbuljs/babel-plugin-istanbul/issues/300
+       - https://github.com/istanbuljs/babel-plugin-istanbul/pull/301
+     - TODO: The issue is fixed in test-exclude@7 which was released in June 2024 but babel-plugin-istanbul hasn't released a new version yet. https://github.com/istanbuljs/babel-plugin-istanbul/pull/301 has had some activity so seems to be moving towards a merge & hopeful release.
 4. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
 5. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
 6. `anthropic-sdk-go v1.5.0 has a bug in it where we cannot add a result to a NewToolResultBlock. It should be fixed in the next release. We should upgrade once this issues is resolved.
