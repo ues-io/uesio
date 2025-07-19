@@ -18,6 +18,10 @@ type FSSessionStore struct {
 	mux         *sync.RWMutex // mutex to synchronize access to FS
 }
 
+// TODO: Note that we do not currently contemplate any type of expiration when it comes to FS based sessions.  Underneath the covers,
+// the memory store used has a background cleaner that will expire sessions after timeout but the fronting "FS" store doesn't do anything
+// with the files so if nothing comes back from memoryStore.Get, we just use a file if its there.  This needs to be addressed and timeouts
+// enforced.
 // NewFSSessionStore func
 func NewFSSessionStore() session.Store {
 	s := &FSSessionStore{
