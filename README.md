@@ -660,8 +660,6 @@ For Go **package naming**, we follow this [guideline](https://blog.golang.org/pa
        - `ts-jest` The issue is fixed in test-exclude@7 which was released in June 2024 but babel-plugin-istanbul hasn't released a new version yet. https://github.com/istanbuljs/babel-plugin-istanbul/pull/301 has had some activity so seems to be moving towards a merge & hopeful release.
 4. `tailwind-merge` v3.x requirese tailwind 4 so sticking with v2.x until the uesio styling system can be refactored and/or testing can be performed with how, if at all due to tailwind v4 base, the other tailwind dependencies interoperate with `tailwind-merge` v3.x.
 5. `@twind/*` packages have their `typescript` dependency overridden to our current `typescript` version due to [peer deps warning](https://github.com/tw-in-js/twind/issues/513). This package no longer appears to be maintained and, similar to `tailwind-merge`, an alternate solution should be researched including refactoring the uesio styling system as a whole.
-6. `anthropic-sdk-go v1.5.0 has a bug in it where we cannot add a result to a NewToolResultBlock. It should be fixed in the next release. We should upgrade once this issues is resolved.
-   https://github.com/anthropics/anthropic-sdk-go/issues/206
 
 ## Patches
 
