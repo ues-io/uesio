@@ -50,7 +50,7 @@ func Authenticate(next http.Handler) http.Handler {
 				return
 			}
 
-			s, err := auth.GetSessionFromUser("", user, site)
+			s, err := auth.CreateSessionFromUser(user, site)
 			if err != nil {
 				HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 				return
