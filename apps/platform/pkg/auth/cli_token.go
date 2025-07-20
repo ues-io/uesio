@@ -95,8 +95,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request, requestingSession *sess.Se
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	browserSession := sess.CreateBrowserSession(w, user, site)
-	cliSession, err := GetSessionFromUser(browserSession.ID(), user, site)
+	cliSession, err := HandleLoginSuccess(r.Context(), user, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

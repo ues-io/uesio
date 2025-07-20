@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -93,10 +92,12 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If we had an old session, remove it.
-	w.Header().Del("set-cookie")
-	// Log the user in
-	sess.Login(w, user, site)
+	session, err = auth.HandleLoginSuccess(r.Context(), user, site)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
+
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
 }

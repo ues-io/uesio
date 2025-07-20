@@ -81,6 +81,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	baseRouter.Use(
 		traceid.Middleware,
 		middleware.RequestLogger(logger, logFormat),
+		middleware.BrowserSession(),
 	)
 	// We hang /health of baseRouter because of the way Authentication middleware currently works. If it does not
 	// find a "site" based on the request.Host an HTTP 500 is currently thrown. For proper health checking, we need

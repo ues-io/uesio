@@ -2,60 +2,19 @@ package sess
 
 import (
 	"context"
-	"net/http"
 	"sort"
 	"time"
-
-	"github.com/icza/session"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 const SessionLifetime = 12 * time.Hour
 
-func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Site) session.Session {
-	sess := session.NewSessionOptions(&session.SessOptions{
-		CAttrs: map[string]any{
-			"Site":   site.GetFullName(),
-			"UserID": user.ID,
-		},
-		// TODO: Make Session timeout configurable by App/Site
-		// https://github.com/TheCloudMasters/uesio/issues/2643
-		Timeout: SessionLifetime,
-	})
-	// Remove any previous set-cookie headers
-	w.Header().Del("Set-Cookie")
-	session.Add(sess, w)
-	return sess
-}
-
-func GetSessionAttribute(browserSession session.Session, key string) string {
-	value, ok := browserSession.CAttr(key).(string)
-	if !ok {
-		return ""
-	}
-	return value
-}
-
 func New(ID string, user *meta.User, site *meta.Site) *Session {
 	return &Session{
 		ID:          ID,
 		siteSession: NewSiteSession(site, user),
 	}
-}
-
-func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
-	return New(CreateBrowserSession(w, user, site).ID(), user, site)
-}
-
-func Logout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *Session) *Session {
-	// Remove the logged-out session
-	browserSession := session.Get(r)
-	if browserSession != nil {
-		session.Remove(browserSession, w)
-	}
-	// Login as the public user
-	return Login(w, publicUser, s.GetSiteSession().GetSite())
 }
 
 type WorkspaceSession struct {
@@ -326,15 +285,6 @@ func (s *Session) GetWorkspaceID() string {
 		return s.workspaceSession.GetID()
 	}
 	return ""
-}
-
-// IsExpired returns true if the browser session's last access time, plus the timeout duration,
-// is prior to the current timestamp.
-func IsExpired(browserSession session.Session) bool {
-	if browserSession == nil {
-		return true
-	}
-	return browserSession.Accessed().Add(browserSession.Timeout()).Before(time.Now())
 }
 
 // IsPublicUser returns true if the session is for a public user (i.e., not logged in).

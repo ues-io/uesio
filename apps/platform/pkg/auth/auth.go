@@ -6,10 +6,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	"os"
 	"strings"
-
-	"github.com/icza/session"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -22,34 +19,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
-
-func init() {
-	session.Global.Close()
-	// The localhost check here is only necessary because hurl doesn't handle secure cookies against *.localhost by default like browsers, curl, etc.
-	// do. If/When they treat "localhost" as a secure connection the IsLocalHost condition can be removed.
-	// TODO: File an issue with hurl regarding this.  libcurl is returning the cookie to them, its in the response, but they are not carrying it
-	// forward to subsequent requests.
-	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.IsLocalhost() || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
-	storageType := os.Getenv("UESIO_SESSION_STORE")
-
-	var store session.Store
-	switch storageType {
-	case "filesystem":
-		store = NewFSSessionStore()
-	case "redis":
-		store = NewRedisSessionStore()
-	case "", "memory":
-		store = session.NewInMemStore()
-	default:
-		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
-	}
-
-	options := &session.CookieMngrOptions{
-		AllowHTTP: allowInsecureCookies,
-	}
-
-	session.Global = session.NewCookieManagerOptions(store, options)
-}
 
 type AuthenticationType interface {
 	GetAuthConnection(*wire.Credentials, *meta.AuthSource, wire.Connection, *sess.Session) (AuthConnection, error)

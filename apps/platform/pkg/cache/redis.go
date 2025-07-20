@@ -94,7 +94,19 @@ func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
 	return r
 }
 
+// NOTE: For now, adding a simple way to obtain the shared redis pool for scenarios where we need a pool direclty and not a cache implementation (e.g., session management)
+// TODO: Refactor this to eliminate the "workaround" currently implemented and consider adding ability to have multiple pools or possibly force multiple pools, one for any RedisCaches and one for each other need. Need to think this through.
+func RegisterNamespace(namespace string) (*redis.Pool, error) {
+	// TODO: This needs to be synchronized via mutex
+	_, exists := existingNamespaces[namespace]
+	if exists {
+		return nil, fmt.Errorf("namespace %s already exists", namespace)
+	}
+	return redisPool, nil
+}
+
 func NewRedisCache[T any](namespace string) *RedisCache[T] {
+	// TODO: This needs to be synchronized via mutex
 	_, exists := existingNamespaces[namespace]
 	if exists {
 		slog.Error(fmt.Sprintf("cannot create a cache for namespace %s, one already exists", namespace))
