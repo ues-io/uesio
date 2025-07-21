@@ -81,7 +81,7 @@
     "@fullcalendar/react": "^6.1.18",
     "@fullcalendar/timegrid": "^6.1.18",
     "@monaco-editor/react": "^4.7.0",
-    "@nx/cypress": "21.3.0",
+    "@nx/cypress": "21.3.1",
     "@nx/eslint": "21.3.0",
     "@nx/eslint-plugin": "21.3.0",
     "@nx/jest": "21.3.0",
