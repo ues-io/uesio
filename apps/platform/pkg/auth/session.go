@@ -59,6 +59,7 @@ func init() {
 	browserSessionManager.Store = store
 	browserSessionManager.Cookie.Name = "sessid"
 	browserSessionManager.Cookie.Secure = !allowInsecureCookies
+	browserSessionManager.Cookie.SameSite = 0
 	browserSessionManager.ErrorFunc = func(w http.ResponseWriter, r *http.Request, err error) {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("browser session error: %w", err))
 	}
