@@ -39,7 +39,7 @@ func init() {
 	var store scs.Store
 	switch storageType {
 	case "redis":
-		prefix := "session:"
+		prefix := "scs:session:"
 		pool, err := cache.RegisterNamespace(prefix)
 		if err != nil {
 			panic(fmt.Sprintf("failed to register scs redis namespace for session store: %v", err))
