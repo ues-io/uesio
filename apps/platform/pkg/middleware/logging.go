@@ -95,7 +95,7 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 				for _, k := range keysSlice {
 					msg += "\n    " + k + ": " + data[k]
 				}
-				fmt.Printf("******* RequestLogger *******%s\n\n", msg)
+				slog.Info(fmt.Sprintf("******* RequestLogger *******%s\n\n", msg))
 			}()
 
 			logHandler(next).ServeHTTP(ww, r.WithContext(ctx))
