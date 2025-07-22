@@ -93,10 +93,8 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If we had an old session, remove it.
-	w.Header().Del("set-cookie")
 	// Log the user in
-	sess.Login(w, user, site)
+	sess.Login(w, r, user, site)
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
 }
