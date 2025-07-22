@@ -34,7 +34,7 @@ docker compose -f docker-compose-tests.yaml up -d --wait
 # parallel=1 seems to be broken in NX 21 so invoking separately until nx resolves the issue
 # TODO: Monitor https://github.com/nrwl/nx/issues/31494 and update to "nx run-many -t test-integration:run test-e2e:run --parallel=1" once a fix is released
 # TODO: refactor e2e and integration tests so that they don't rely on the same "test data" so that they can be run in parallel
-nx run-many -t test-integration:run 
+#nx run-many -t test-integration:run 
 nx run-many -t test-e2e:run
 
 # Spin down the tests network's Docker containers

@@ -36,6 +36,18 @@ func getRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	return route, nil
 }
 
+func GetUserHomeRoute(user *meta.User, session *sess.Session) (*meta.Route, error) {
+	redirectKey := session.GetHomeRoute()
+	profile := user.ProfileRef
+	if profile.HomeRoute != "" {
+		redirectKey = profile.HomeRoute
+	}
+	if redirectKey == "" {
+		return nil, exceptions.NewNotFoundException("no home route found for user")
+	}
+	return getRouteFromKey(redirectKey, session)
+}
+
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
 	return getRouteFromKey(session.GetHomeRoute(), session)
 }

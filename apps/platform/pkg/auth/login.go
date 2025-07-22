@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/preload"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
@@ -40,13 +40,13 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		return nil, err
 	}
 
-	profile := user.ProfileRef
+	//profile := user.ProfileRef
 
-	redirectKey := site.GetAppBundle().HomeRoute
+	//redirectKey := site.GetAppBundle().HomeRoute
 
-	if profile.HomeRoute != "" {
-		redirectKey = profile.HomeRoute
-	}
+	// if profile.HomeRoute != "" {
+	// 	redirectKey = profile.HomeRoute
+	// }
 	session = sess.Login(w, r, user, site)
 
 	// Check for redirect parameter on the referrer
@@ -57,20 +57,23 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 
 	redirectPath := referer.Query().Get("r")
 
-	var redirectNamespace, redirectRoute string
+	//var redirectNamespace, redirectRoute string
 
 	if redirectPath == "" {
-		if redirectKey == "" {
-			return nil, errors.New("no redirect route specified")
-		}
-		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
+		// redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
+
+		// if redirectKey == "" {
+		// 	return nil, errors.New("no redirect route specified")
+		// }
+		route, err := routing.GetUserHomeRoute(user, session)
 		if err != nil {
 			return nil, err
 		}
+		redirectPath = "/" + route.Path
 	}
 
 	// TODO: We'll want to read this from a setting somewhere
-	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, redirectNamespace, redirectRoute), nil
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, "", ""), nil
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
