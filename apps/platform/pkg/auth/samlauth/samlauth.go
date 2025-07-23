@@ -209,13 +209,13 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectPath := "/" + response.RedirectRouteName
-
-	if c.session.GetContextAppName() != response.RedirectRouteNamespace {
-		redirectPath = "/site/app/" + response.RedirectRouteNamespace + "/" + response.RedirectRouteName
-	}
-
-	http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+	// NOTE - The previous version of this code would always ignore any `redirectPath` from GetLoginRedirectResponse
+	// and always use RedirectRouteNamespace & RedirectRouteName.  Additionally, it would check if the c.session.GetContextAppName()
+	// was different from the response.RedirectRouteNamespace and if so, build a redirectPath (see the git history for exact code
+	// that was used). The approach taken was specifically for a prototype of samlauth and was never intended to be production ready.
+	// TODO: If/When samlauth requires full production support, the entire flow needs to be reviweed, validated, adjusted and proper
+	// tests written.
+	http.Redirect(w, r, response.RedirectPath, http.StatusSeeOther)
 }
 
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {

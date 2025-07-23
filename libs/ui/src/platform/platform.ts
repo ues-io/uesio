@@ -160,17 +160,11 @@ type NamespaceInfo = {
   namespace: string
 }
 
-type LoginResponse = LoginResponsePath | LoginResponseRedirect
+type LoginResponse = LoginResponsePath
 
 type LoginResponsePath = {
   user: UserState
   redirectPath: string
-}
-
-type LoginResponseRedirect = {
-  user: UserState
-  redirectRouteNamespace: string
-  redirectRouteName: string
 }
 
 export const getPrefix = (context: Context) => {

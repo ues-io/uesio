@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/mux"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
-	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -52,13 +53,18 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectRouteNamespace, redirectRouteName, err := meta.ParseKey(signupMethod.LandingRoute)
+	route, err := routing.GetRouteFromKey(signupMethod.LandingRoute, systemSession)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
+	redirectPath, err := url.JoinPath("/", route.Path)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
-	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", "", redirectRouteNamespace, redirectRouteName))
+	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", redirectPath))
 
 }
 

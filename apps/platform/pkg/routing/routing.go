@@ -20,7 +20,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
+func GetRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	if key == "" {
 		return nil, nil
 	}
@@ -36,16 +36,28 @@ func getRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	return route, nil
 }
 
+func GetUserHomeRoute(user *meta.User, session *sess.Session) (*meta.Route, error) {
+	redirectKey := session.GetHomeRoute()
+	profile := user.ProfileRef
+	if profile.HomeRoute != "" {
+		redirectKey = profile.HomeRoute
+	}
+	if redirectKey == "" {
+		return nil, exceptions.NewNotFoundException("no home route found for user")
+	}
+	return GetRouteFromKey(redirectKey, session)
+}
+
 func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
-	return getRouteFromKey(session.GetHomeRoute(), session)
+	return GetRouteFromKey(session.GetHomeRoute(), session)
 }
 
 func GetSignupRoute(session *sess.Session) (*meta.Route, error) {
-	return getRouteFromKey(session.GetSignupRoute(), session)
+	return GetRouteFromKey(session.GetSignupRoute(), session)
 }
 
 func GetLoginRoute(session *sess.Session) (*meta.Route, error) {
-	return getRouteFromKey(session.GetLoginRoute(), session)
+	return GetRouteFromKey(session.GetLoginRoute(), session)
 }
 
 func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
