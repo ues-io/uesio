@@ -48,12 +48,44 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// we currently support signup even if you are a logged in user so we can't use the session we received
+	// since we are acting on behalf of the "new user" and not the "current session user" at this point.
+	// We should not allow signup (or login) for users that are already logged in but there is straightforward
+	// way to enforce this due to the way routing currently works. Forthcoming PRs will handle that situation
+	// more gracefully but for now, we just switch to a public user for the remainder of the processing.
+	if !session.IsPublicUser() {
+		publicUser, err := auth.GetPublicUser(site, nil)
+		if err != nil {
+			ctlutil.HandleError(r.Context(), w, err)
+			return
+		}
+		// Intentionally not specifying a session ID because we do not want to send session token
+		// down to client here - we only need a public session for building the redirect since it
+		// should be done in the context of a public user and not the current session user or
+		// system user. This is a temporary solution to ensure we do not redirect using the
+		// system session - more changes are forthcoming to ensure proper login/logout in auth
+		// related flows.
+		session, err = auth.GetSessionFromUser("", publicUser, site)
+		if err != nil {
+			ctlutil.HandleError(r.Context(), w, err)
+			return
+		}
+	}
+
 	if signupMethod.AutoLogin {
-		auth.LoginRedirectResponse(w, r, user, systemSession)
+		auth.LoginRedirectResponse(w, r, user, session)
 		return
 	}
 
-	route, err := routing.GetRouteFromKey(signupMethod.LandingRoute, systemSession)
+	// do not use "user" here since they aren't validated yet
+	// we need permissions for route lookup
+	err = auth.HydrateUserPermissions(session.GetSiteUser(), session)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
+
+	route, err := routing.GetRouteFromKey(signupMethod.LandingRoute, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -64,6 +96,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// session ID is intentionally blank here because we have intentionally not created a browser session
+	// since the user is required to login.
 	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", redirectPath))
 
 }
