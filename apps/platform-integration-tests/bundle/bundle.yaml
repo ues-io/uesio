@@ -1,6 +1,6 @@
 name: uesio/tests
-loginRoute: uesio/tests.eq_condition
-homeRoute: uesio/tests.eq_condition
+loginRoute: uesio/tests.customlogin
+homeRoute: uesio/tests.customhome
 publicProfile: uesio/tests.public
 dependencies:
   uesio/core:
