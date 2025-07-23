@@ -1,0 +1,5 @@
+name: customlogin
+definition:
+  components:
+    - uesio/io.text:
+        text: Please login to Access the Application

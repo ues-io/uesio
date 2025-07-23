@@ -1,0 +1,5 @@
+name: customhome
+definition:
+  components:
+    - uesio/io.text:
+        text: Welcome Home!

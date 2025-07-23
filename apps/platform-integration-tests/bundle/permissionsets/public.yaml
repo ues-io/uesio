@@ -5,6 +5,8 @@ views:
   uesio/tests.declarative_components: true
   uesio/tests.declarative_components_2: true
   uesio/tests.dependencies_theme: true
+  uesio/tests.customhome: true
+  uesio/tests.customlogin: true  
 collections:
   uesio/core.user:
     read: true
@@ -74,6 +76,8 @@ routes:
   uesio/tests.dependencies_theme: true
   uesio/tests.dependencies_theme_no_theme: true
   uesio/tests.publicanimalslist: true
+  uesio/tests.customhome: true
+  uesio/tests.customlogin: true
 files: {}
 bots:
   uesio/tests.add_numbers: true
