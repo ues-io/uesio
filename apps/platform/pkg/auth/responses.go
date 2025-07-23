@@ -18,9 +18,7 @@ type TokenResponse struct {
 
 type LoginResponse struct {
 	TokenResponse
-	RedirectPath           string `json:"redirectPath,omitempty"`
-	RedirectRouteName      string `json:"redirectRouteName,omitempty"`
-	RedirectRouteNamespace string `json:"redirectRouteNamespace,omitempty"`
+	RedirectPath string `json:"redirectPath,omitempty"`
 }
 
 func NewUserResponse(user *preload.UserMergeData) *UserResponse {
@@ -38,7 +36,7 @@ func NewTokenResponse(user *preload.UserMergeData, sessionID string) *TokenRespo
 	}
 }
 
-func NewLoginResponse(user *preload.UserMergeData, sessionID string, redirectPath, redirectRouteNamespace string, redirectRouteName string) *LoginResponse {
+func NewLoginResponse(user *preload.UserMergeData, sessionID string, redirectPath string) *LoginResponse {
 	return &LoginResponse{
 		TokenResponse: TokenResponse{
 			UserResponse: UserResponse{
@@ -46,8 +44,6 @@ func NewLoginResponse(user *preload.UserMergeData, sessionID string, redirectPat
 			},
 			SessionID: sessionID,
 		},
-		RedirectPath:           redirectPath,
-		RedirectRouteName:      redirectRouteName,
-		RedirectRouteNamespace: redirectRouteNamespace,
+		RedirectPath: redirectPath,
 	}
 }

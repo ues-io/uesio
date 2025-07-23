@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/preload"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 
@@ -28,7 +28,7 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 
 	redirectPath := redirect + "?code=" + code + "&username=" + username
 
-	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, "", ""), nil
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
 }
 
 func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*LoginResponse, error) {
@@ -40,13 +40,6 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		return nil, err
 	}
 
-	profile := user.ProfileRef
-
-	redirectKey := site.GetAppBundle().HomeRoute
-
-	if profile.HomeRoute != "" {
-		redirectKey = profile.HomeRoute
-	}
 	// If we had an old session, remove it.
 	w.Header().Del("Set-Cookie")
 	session = sess.Login(w, user, site)
@@ -59,20 +52,18 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 
 	redirectPath := referer.Query().Get("r")
 
-	var redirectNamespace, redirectRoute string
-
 	if redirectPath == "" {
-		if redirectKey == "" {
-			return nil, errors.New("no redirect route specified")
+		route, err := routing.GetUserHomeRoute(user, session)
+		if err != nil {
+			return nil, err
 		}
-		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
+		redirectPath, err = url.JoinPath("/", route.Path)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	// TODO: We'll want to read this from a setting somewhere
-	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath, redirectNamespace, redirectRoute), nil
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {

@@ -1,21 +1,17 @@
 import { Context } from "../../context/context"
 import { dispatch } from "../../store/store"
 import { set as setUser } from "."
-import { navigateToRoute, redirect } from "../../bands/route/operations"
+import { redirect } from "../../bands/route/operations"
 import { getErrorString } from "../utils"
 import { LoginResponse, platform } from "../../platform/platform"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(response: LoginResponse, context: Context) {
-  return "redirectPath" in response
-    ? redirect(context, response.redirectPath)
-    : navigateToRoute(
-        // Always run the logout action in the base route context.
-        context.getRouteContext(),
-        {
-          route: `${response.redirectRouteNamespace}.${response.redirectRouteName}`,
-          params: {},
-        },
-      )
+  // All login responses will return a redirectPath barring any failure server side. If we don't
+  // have a redirectPath, there is nothing we can do here other than try to go to site root or
+  // take user to an error page as trying to query for the "home" route will result in the same
+  // as what login response should contain.
+  // TODO: Consider going to an error page here instead of site root
+  return redirect(context, response.redirectPath || "/")
 }
 
 const signup = async (
