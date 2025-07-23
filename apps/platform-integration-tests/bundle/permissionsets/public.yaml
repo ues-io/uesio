@@ -6,7 +6,7 @@ views:
   uesio/tests.declarative_components_2: true
   uesio/tests.dependencies_theme: true
   uesio/tests.customhome: true
-  uesio/tests.customlogin: true  
+  uesio/tests.customlogin: true
 collections:
   uesio/core.user:
     read: true
