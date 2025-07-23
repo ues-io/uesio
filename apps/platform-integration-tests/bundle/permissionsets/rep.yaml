@@ -1,6 +1,8 @@
 name: rep
 named: {}
-views: {}
+views:
+  uesio/tests.customhome: true
+  uesio/tests.customlogin: true
 collections:
   uesio/core.user:
     read: true
@@ -50,7 +52,9 @@ collections:
     modifyall: true
     viewall: false
     fields: {}
-routes: {}
+routes:
+  uesio/tests.customhome: true
+  uesio/tests.customlogin: true
 files: {}
 bots: {}
 integrationActions: {}
