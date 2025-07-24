@@ -45,6 +45,12 @@ func getUsageCronSchedule() string {
 // ScheduleJobs schedules all configured Uesio worker jobs, such as usage event aggregation, to be run on a schedule
 func ScheduleJobs() {
 
+	// write file as soon as we can to help docker, ecs, etc. detect initial health. The healthcheck job won't run
+	// for the first time until 30 seconds after the worker starts which delays initial health detection.
+	if err := writeHealthCheckFile(); err != nil {
+		slog.Error(fmt.Sprintf("Failed to write health check file, reason: %s", err.Error()))
+	}
+
 	s := cron.New(cron.WithLocation(time.UTC))
 
 	var jobEntries = make([]cron.EntryID, len(jobs))
@@ -104,7 +110,11 @@ func wrapJob(job Job) func() {
 func healthcheck() error {
 	slog.Info("Running healthcheck job")
 
-	healthData := map[string]interface{}{
+	return writeHealthCheckFile()
+}
+
+func writeHealthCheckFile() error {
+	healthData := map[string]any{
 		"timestamp":  time.Now().UTC(),
 		"status":     "healthy",
 		"jobs_count": len(jobs),
