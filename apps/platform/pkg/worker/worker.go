@@ -1,10 +1,12 @@
 package worker
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
@@ -22,6 +24,7 @@ var jobs []Job
 func init() {
 	jobs = append(jobs, NewJob("Invoices", "@daily", invoices.InvoicingJobNoContext))
 	jobs = append(jobs, NewJob("Usage", getUsageCronSchedule(), usage_worker.UsageWorkerNoContext))
+	jobs = append(jobs, NewJob("HealthCheck", "@every 30s", healthcheck))
 }
 
 // Allows for usage job frequency to be overridden by environment variables. defaults to every 10 minutes,
@@ -93,4 +96,34 @@ func wrapJob(job Job) func() {
 			slog.Error(fmt.Sprintf("%s job failed reason: %s", job.Name(), jobErr.Error()))
 		}
 	}
+}
+
+// Very basic healthcheck that can be used by docker, ecs, etc. to monitor "relative" health of worker.
+// TODO: This can be expanded to maintain metrics of other jobs, check db connections, etc. and possibly
+// be turned in to http server for metrics/status checks/etc.
+func healthcheck() error {
+	slog.Info("Running healthcheck job")
+
+	healthData := map[string]interface{}{
+		"timestamp":  time.Now().UTC(),
+		"status":     "healthy",
+		"jobs_count": len(jobs),
+	}
+
+	data, err := json.Marshal(healthData)
+	if err != nil {
+		return err
+	}
+
+	filepath := filepath.Join(getHealthDir(), "worker-healthcheck.json")
+	return os.WriteFile(filepath, data, 0644)
+}
+
+func getHealthDir() string {
+	if healthDir := os.Getenv("UESIO_WORKER_HEALTH_DIR"); healthDir != "" {
+		return healthDir
+	}
+
+	// Default to system temp directory
+	return os.TempDir()
 }
