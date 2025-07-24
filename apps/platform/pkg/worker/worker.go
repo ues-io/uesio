@@ -47,10 +47,12 @@ func ScheduleJobs() {
 
 	// write file as soon as we can to help docker, ecs, etc. detect initial health. The healthcheck job won't run
 	// for the first time until 30 seconds after the worker starts which delays initial health detection.
+	slog.Info("Writing initial health check file...")
 	if err := writeHealthCheckFile(); err != nil {
 		slog.Error(fmt.Sprintf("Failed to write health check file, reason: %s", err.Error()))
 	}
 
+	slog.Info("Configuring scheduler...")
 	s := cron.New(cron.WithLocation(time.UTC))
 
 	var jobEntries = make([]cron.EntryID, len(jobs))
