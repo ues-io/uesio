@@ -29,7 +29,10 @@ GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/ues
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 [Cookies]
 sessid: {{session_id}}
-HTTP 401
+HTTP 302
+[Asserts]
+cookie "sessid" not exists
+header "Location" == "/login?r=%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Froutes%2Fpath%2Fuesio%2Ftests%2Fdependencies_group&expired=true"
 
 # Access a workspace route with an invalid session, requesting JSON (e.g. a fetch request)
 # @cookie_storage_clear
@@ -46,7 +49,10 @@ Cookie: sessid={{session_id}}
         }
     ]
 }
-HTTP 401
+HTTP 200
+[Asserts]
+cookie "sessid" not exists
+header "Location" == "/login?r={{site_scheme}}%3A%2F%2Fstudio.{{site_primary_domain}}%3A{{site_port}}%2Fworkspace%2Fuesio%2Ftests%2Fdev%2Fviews%2Fuesio%2Ftests%2Fdependencies_group%2Fedit&expired=true"
 
 # Attempt to navigate to a public route with no session id
 # @cookie_storage_clear
@@ -64,7 +70,9 @@ cookie "sessid" not contains "{{session_id_public}}"
 GET {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/routes/path/uesio/appkit/requestpassword
 Accept: application/json
 Cookie: sessid={{session_id}}
-HTTP 401
+HTTP 200
+[Asserts]
+cookie "sessid" not exists
 
 # Attempt to navigate to a public route with a good session id
 # @cookie_storage_clear
