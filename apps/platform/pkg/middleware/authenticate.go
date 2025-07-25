@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -61,68 +62,9 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		// Do we have a session id?
-		browserSession, err := getBrowserSession(r)
+		s, err := getSession(r, w, site)
 		if err != nil {
 			HandleError(ctx, w, err)
-			return
-		}
-
-		user, err := getUserFromBrowserSession(browserSession, site)
-		if err != nil {
-			// TODO: We failed to get the user but this could be for any number of reasons, for example
-			// a database or redis issue.  Should we permanently remove the session here? If we don't
-			// we could run in to infite loop so we must do something but.....possibly keep track of
-			// attempts?  We could use Attrs on the session but we haven't implemented it 100% correctly
-			// so changes to Attrs don't write back to the backing store currently.
-			// NOTE: There are several reasons we could fail to GetUserFromBrowserSession, some are due to invalid
-			// cookies which we can't recover from and some infra/system related (e.g., db failure) that we could
-			// recover from. The approach below mirrors the previous approach where we treat any error as unrecoverable,
-			// remove the session we had and create a new public one.  The only difference from prior approach is that
-			// we no longer redirect to login and instead pass through middleware as a public session. We can't redirect
-			// in middleware for a number of reasons (e.g., we don't know if the route is public/priviate, we don't know
-			// if there's even a login route, etc.).
-			// TODO: This can be improved to treat different types of errors from GetUserFromBrowserSession differently
-			// but we need to be able to break a potential infinite loop. To do that, we need to actually "save" the current
-			// session in the store so that we can track a counter or something. For now, leaving prior approach but this
-			// should be revisited once "saving" a session is implemented (which may correspond with refactoring middleware,
-			// auth and session management as well).
-			if browserSession != nil {
-				session.Remove(browserSession, w)
-				browserSession = nil
-			}
-			user, err = auth.GetPublicUser(site, nil)
-			if err != nil {
-				HandleError(ctx, w, fmt.Errorf("failed to retrieve public user: %w", err))
-				return
-			}
-		}
-
-		// NOTE: This is just a sanity check as the session stores should be expiring sessions based on timeout configured, however we do this for two reasons:
-		// 1. the filestore does not expire/delete file based sessions currently
-		// 2. Defensive check just in case
-		// Also note that the current implementation does update the session when it is accessed so the timeout set upon creation is an absolute timeout and not
-		// a rolling timeout.
-		// TODO:
-		// 1. Implement a background cleaner for the filestore that will remove expired sessions
-		// 2. Implement a rolling timeout for the session stores so that the timeout is based on accessed and not created time
-		if browserSession != nil && isExpired(browserSession) {
-			session.Remove(browserSession, w)
-			browserSession = nil
-			user, err = auth.GetPublicUser(site, nil)
-			if err != nil {
-				HandleError(ctx, w, fmt.Errorf("failed to retrieve public user: %w", err))
-				return
-			}
-		}
-
-		if browserSession == nil {
-			browserSession = auth.CreateBrowserSession(w, r, user, site)
-		}
-
-		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)
-		if err != nil {
-			HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 			return
 		}
 
@@ -200,17 +142,17 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 	HandleError(ctx, w, err)
 }
 
-// Retrieves the browser session from the request context if it exists.
-// If it does not exist, the following occurs:
-//  1. Check if there is a sessid cookie in the request
-//  2. If no cookie, return nil browser session
-//  3. If it exists, return UnauthorizedException because the cookie is invalid or has expired
-//  4. If an error is encountered while retrieving the cookie, return the error
+// Creates a uesio session from the request context based on the following:
 //
-// This is necessary due to the way we overload the meaning of what a browser session is since it
-// represents a session with our server but also represents an auth token since we store the userid &
-// password, even for the public user, in the session data. This presents a race condition handling browser
-// requests. For example:
+//  1. If there is an existing browser session in the cache based on the sessid in the request, a uesio session will be built from it
+//  2. If there is no sessid in the request, a public user browser session will be created and a uesio session built from it
+//  3. If there is a sessid in the request but we do not have data in the cache, a uesio session will be built from the public user
+//     but there will NOT be a browser session created. See below for details on why.
+//  4. If an error is encountered while performing the above process, the error will be returned
+//
+// For scenario 3, this is a special case handling due to the fact that we overload the meaning of what a browser session is
+// since it represents a session with our server but also represents an auth token since we store the userid/password, even for
+// the public user, in the session data. This presents a race condition while handling browser requests. For example:
 //  1. Brand new user navigates to a page (no sessid cookie)
 //  2. We process the request, store userid/password in session data and return a sessid cookie which acts
 //     as an auth token for Public User
@@ -219,7 +161,7 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 //     the public user, create a new sessid cookie & store the data with the "actual user" and return to client
 //  5. While we are completing step 4 another request comes in from the browser with the sessid of the public user
 //     session created in step 2. At this point, we have removed the public user session in step 4 but the browser
-//     sent this request (e.g,, for css, font, js, etc.) before it could obtain the cookie from step 5. When this
+//     sent this request (e.g,, for css, font, js, etc.) before it could obtain the cookie from step 4. When this
 //     occurs, we create a new browser session for public user, store session data again and return that sessid
 //     cookie to the browser.
 //  6. The client side javascript changes window.location (e.g., from the login request) but the browser now
@@ -240,34 +182,95 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 // user identification.
 //
 // The code is being stairstepped across multiple PRs to better align with its needs/purpose, however in the
-// meantime, the below should gracefully handle the scenario described above by ensuring that when we receive
-// a Cookie and do not have a session, we do not send back another cookie and instead a UnauthorizedException.
+// meantime, the below should "gracefully" handle the scenario described above by ensuring that when we receive
+// a Cookie and do not have a session, we do not send back another cookie and instead process the request as
+// the public user but without a "browser session" backing it (to avoid sending another cookie back down).
 //
-// To summarize, while technically possible to occur in any situation, this problem was only able to be reproduced
+// To summarize, while technically possible to occur in any situation, the "race" condition problem was only able to be reproduced
 // in two situations:
 //  1. During CI E2E tests when using electron - this was likely due to overall slower processing of CI environment
 //     vs local dev machine
 //  2. Locally running Cypress GUI with DevTools open (which caused source maps to be loaded creating more
 //     requests and timing scenarios) and only in Electron - was not able to reproduce this with Chrome
 //     or Edge
-func getBrowserSession(r *http.Request) (session.Session, error) {
+//
+// Lastly, note that there is one other situation that needs to be accounted for that requires us to continue to process
+// the request as public user instead of simply returning an UnauthorizedException. Our cookies have a 30 day expiration,
+// however our sessions have an absolute 12 hour duration. So, if a user comes back after 12 hours but prior to 30
+// days, they will have a sessid so we can't just return an UnauthorizedException as they would never be able to
+// access the site unless they manually cleared their cookies.
+func getSession(r *http.Request, w http.ResponseWriter, site *meta.Site) (*sess.Session, error) {
 	browserSession := session.Get(r)
 	if browserSession != nil {
-		return browserSession, nil
+		return createSessionFromBrowserSession(browserSession, r, w, site)
 	}
 	_, err := r.Cookie(auth.BrowserSessionCookieName)
 	if err == http.ErrNoCookie {
-		return nil, nil
+		return createSessionFromBrowserSession(nil, r, w, site)
 	}
 	if err != nil {
 		return nil, err
 	}
-	// NOTE: We have a cookie at this point, however it may be empty or non-empty. Intentionally
-	// treating them as invalid since we do not expect to have a cookie at all at this point. This
-	// could be revisited and if cookie is empty string, continue prcessing as public user but
-	// if the cookie is ever written to downstream, we end up in the cycle again so better
-	// to just failfast here.
-	return nil, exceptions.NewUnauthorizedException("unknown_session")
+	// We have a cookie at this point, however it may be empty or non-empty but we treat them the same.
+	return createPublicUserSession("", site)
+}
+
+func createSessionFromBrowserSession(browserSession session.Session, r *http.Request, w http.ResponseWriter, site *meta.Site) (*sess.Session, error) {
+	ctx := r.Context()
+	user, err := getUserFromBrowserSession(browserSession, site)
+	if err != nil {
+		// TODO: We failed to get the user but this could be for any number of reasons, for example
+		// a database or redis issue.  Should we permanently remove the session here? If we don't
+		// we could run in to infite loop so we must do something but.....possibly keep track of
+		// attempts?  We could use Attrs on the session but we haven't implemented it 100% correctly
+		// so changes to Attrs don't write back to the backing store currently.
+		// NOTE: There are several reasons we could fail to GetUserFromBrowserSession, some are due to invalid
+		// cookies which we can't recover from and some infra/system related (e.g., db failure) that we could
+		// recover from. The approach below mirrors the previous approach where we treat any error as unrecoverable,
+		// remove the session we had and create a new public one.  The only difference from prior approach is that
+		// we no longer redirect to login and instead pass through middleware as a public session. We can't redirect
+		// in middleware for a number of reasons (e.g., we don't know if the route is public/priviate, we don't know
+		// if there's even a login route, etc.).
+		// TODO: This can be improved to treat different types of errors from GetUserFromBrowserSession differently
+		// but we need to be able to break a potential infinite loop. To do that, we need to actually "save" the current
+		// session in the store so that we can track a counter or something. For now, leaving prior approach but this
+		// should be revisited once "saving" a session is implemented (which may correspond with refactoring middleware,
+		// auth and session management as well).
+		slog.ErrorContext(ctx, "failed to get user from browser session: "+err.Error())
+		if browserSession != nil {
+			session.Remove(browserSession, w)
+			browserSession = nil
+		}
+	}
+
+	// NOTE: THe expired check here is just a sanity check as the session stores should be expiring sessions based on timeout configured,
+	// however we do this for two reasons:
+	//  1. the filestore does not expire/delete file based sessions currently
+	//  2. defensive check just in case
+	// Also note that the current implementation does not update the session when it is accessed so the timeout set upon creation is an
+	// absolute timeout and not a rolling timeout.
+	// TODO:
+	// 1. Implement a background cleaner for the filestore that will remove expired sessions
+	// 2. Implement a rolling timeout for the session stores so that the timeout is based on accessed and not created time
+	if browserSession == nil || isExpired(browserSession) {
+		if browserSession != nil {
+			session.Remove(browserSession, w)
+			browserSession = nil
+		}
+		browserSession = auth.CreateBrowserSession(w, r, user, site)
+		return createPublicUserSession(browserSession.ID(), site)
+	}
+
+	return auth.GetSessionFromUser(browserSession.ID(), user, site)
+}
+
+func createPublicUserSession(sessionID string, site *meta.Site) (*sess.Session, error) {
+	publicUser, err := auth.GetPublicUser(site, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
+	}
+
+	return auth.GetSessionFromUser(sessionID, publicUser, site)
 }
 
 func getUserFromBrowserSession(browserSession session.Session, site *meta.Site) (*meta.User, error) {
