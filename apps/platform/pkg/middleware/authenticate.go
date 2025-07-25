@@ -211,7 +211,10 @@ func getSession(r *http.Request, w http.ResponseWriter, site *meta.Site) (*sess.
 	if err != nil {
 		return nil, err
 	}
-	// We have a cookie at this point, however it may be empty or non-empty but we treat them the same.
+	// We have a cookie at this point, however it may be empty or non-empty but we treat them the same. We will create
+	// a uesio session but without a browser session backing it.
+	// IMPORTANT: Passing "" is INTENTIONAL here, we do not want a browser session in this situation in order to
+	// avoid passing a new sessid to client on response.
 	return createPublicUserSession("", site)
 }
 
