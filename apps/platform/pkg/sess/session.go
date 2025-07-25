@@ -13,7 +13,7 @@ import (
 
 const SessionLifetime = 12 * time.Hour
 
-func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Site) session.Session {
+func CreateBrowserSession(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]any{
 			"Site":   site.GetFullName(),
@@ -23,7 +23,14 @@ func CreateBrowserSession(w http.ResponseWriter, user *meta.User, site *meta.Sit
 		// https://github.com/TheCloudMasters/uesio/issues/2643
 		Timeout: SessionLifetime,
 	})
+	browserSession := session.Get(r)
+	if browserSession != nil {
+		session.Remove(browserSession, w)
+	}
 	// Remove any previous set-cookie headers
+	// icza updates existing to "" and then its Add method
+	// appends so we end up with two Set-Cookie headers. This ensures
+	// we only have one and it's the current one
 	w.Header().Del("Set-Cookie")
 	session.Add(sess, w)
 	return sess
@@ -44,18 +51,13 @@ func New(ID string, user *meta.User, site *meta.Site) *Session {
 	}
 }
 
-func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
-	return New(CreateBrowserSession(w, user, site).ID(), user, site)
+func Login(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) *Session {
+	return New(CreateBrowserSession(w, r, user, site).ID(), user, site)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *Session) *Session {
-	// Remove the logged-out session
-	browserSession := session.Get(r)
-	if browserSession != nil {
-		session.Remove(browserSession, w)
-	}
-	// Login as the public user
-	return Login(w, publicUser, s.GetSiteSession().GetSite())
+	// Login as the public user - Login will logout the current user
+	return Login(w, r, publicUser, s.GetSiteSession().GetSite())
 }
 
 type WorkspaceSession struct {

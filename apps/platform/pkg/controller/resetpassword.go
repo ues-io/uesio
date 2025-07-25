@@ -8,7 +8,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -19,12 +18,16 @@ func getSignupMethodID(vars map[string]string) string {
 }
 
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
-
-	session := middleware.GetSession(r)
+	// See comments in ensurePublicSession for why we do this.
+	session, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	site := session.GetContextSite()
 
 	var payload map[string]any
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return
@@ -35,16 +38,19 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-
 }
 
 func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
-
-	session := middleware.GetSession(r)
+	// See comments in ensurePublicSession for why we do this.
+	session, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	site := session.GetSite()
 
 	var payload map[string]any
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return
@@ -57,5 +63,4 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth.LoginRedirectResponse(w, r, user, session)
-
 }

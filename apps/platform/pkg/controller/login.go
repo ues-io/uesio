@@ -18,19 +18,44 @@ func getAuthSourceID(vars map[string]string) string {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
-	s := middleware.GetSession(r)
-
+	// See comments in ensurePublicSession for why we do this.
+	s, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	auth.Login(w, r, getAuthSourceID(mux.Vars(r)), s)
+}
 
+func LoginWorkspace(w http.ResponseWriter, r *http.Request) {
+	// NOTE - When this route was originally added (see https://github.com/ues-io/uesio/pull/3173/files#diff-32534e43cb95bca7a16bd38e55836771f681dc0c5a86be6672db6bcbd7745788R330),
+	// according to @humandad, the thinking was to provide a way for users to preview their signup/login/etc. pages within a workspace and perform the operation
+	// without impacting their current logged in session. The implementation was only completed, however, in samlauth and that was only for a prototype scenario. As it stands,
+	// the appkit login that is used always navigates to /site/auth/<loginmethod> routes so other than direct API usage, there is no way to get to a workspace
+	// login route currently and even when you call API, only samlauth provider will process it (others will return error). Most importantly, by using a "Login" process
+	// for this, the current user session would be replaced with the new signed in user and the previously logged in user session removed rendering it somewhat limited
+	// in its benefit. All is to say that this route should likely utilize the "impersonation" concept so that the current user stays logged in or simply "no-op" the login,
+	// signup, etc. activities when in a workspace context, although that would limit the benefit of having them be "usable" in a workspace context. For now, leaving
+	// the functionality as it was prior to the introducing the "ensurePublicSession" concept for standard login operations.
+	s := middleware.GetSession(r)
+	auth.Login(w, r, getAuthSourceID(mux.Vars(r)), s)
 }
 
 func RequestLogin(w http.ResponseWriter, r *http.Request) {
-
-	s := middleware.GetSession(r)
-
+	// See comments in ensurePublicSession for why we do this.
+	s, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	auth.RequestLogin(w, r, getAuthSourceID(mux.Vars(r)), s)
+}
 
+func RequestLoginWorkspace(w http.ResponseWriter, r *http.Request) {
+	// NOTE - See details in comment in LoginWorkspace function. This route was added in https://github.com/ues-io/uesio/pull/3892/files#diff-32534e43cb95bca7a16bd38e55836771f681dc0c5a86be6672db6bcbd7745788)
+	// but takes the same form/purpose as the LoginWorkspace route.
+	s := middleware.GetSession(r)
+	auth.RequestLogin(w, r, getAuthSourceID(mux.Vars(r)), s)
 }
 
 func CLIAuthorize(w http.ResponseWriter, r *http.Request) {

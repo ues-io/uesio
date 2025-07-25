@@ -325,7 +325,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
-	wr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
+	wr.HandleFunc("/auth/"+itemParam+"/login", controller.LoginWorkspace).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
 	sa.HandleFunc("/auth/"+itemParam+"/resetpassword", controller.ResetPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/resetpassword", controller.ResetPassword).Methods("POST")
@@ -338,7 +338,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 
 	sr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
-	wr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
+	wr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLoginWorkspace).Methods("GET")
 
 	// These routes are studio specific and will return forbidden if not uesio/studio.  The way we handle cli auth
 	// and these routes in general can be improved in one of two ways:
