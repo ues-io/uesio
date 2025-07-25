@@ -23,6 +23,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+const BrowserSessionCookieName = "sessid" // icza applied this name by default so we use the same one
+
 func init() {
 	session.Global.Close()
 	// The localhost check here is only necessary because hurl doesn't handle secure cookies against *.localhost by default like browsers, curl, etc.
@@ -45,7 +47,8 @@ func init() {
 	}
 
 	options := &session.CookieMngrOptions{
-		AllowHTTP: allowInsecureCookies,
+		AllowHTTP:        allowInsecureCookies,
+		SessIDCookieName: BrowserSessionCookieName,
 	}
 
 	session.Global = session.NewCookieManagerOptions(store, options)
