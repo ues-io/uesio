@@ -112,7 +112,7 @@ func Authenticate(next http.Handler) http.Handler {
 		}
 
 		if browserSession == nil {
-			browserSession = sess.CreateBrowserSession(w, user, site)
+			browserSession = sess.CreateBrowserSession(w, r, user, site)
 		}
 
 		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)

@@ -15,16 +15,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 func Signup(w http.ResponseWriter, r *http.Request) {
-
-	session := middleware.GetSession(r)
+	// See comments in ensurePublicSession for why we do this.
+	session, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	site := session.GetSite()
 
 	var payload map[string]any
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid signup request body", nil))
 		return
@@ -46,30 +49,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
-	}
-
-	// we currently support signup even if you are a logged in user so we can't use the session we received
-	// since we are acting on behalf of the "new user" and not the "current session user" at this point.
-	// We should not allow signup (or login) for users that are already logged in but there is straightforward
-	// way to enforce this due to the way routing currently works. Forthcoming PRs will handle that situation
-	// more gracefully but for now, we just switch to a public user for the remainder of the processing.
-	if !session.IsPublicUser() {
-		publicUser, err := auth.GetPublicUser(site, nil)
-		if err != nil {
-			ctlutil.HandleError(r.Context(), w, err)
-			return
-		}
-		// Intentionally not specifying a session ID because we do not want to send session token
-		// down to client here - we only need a public session for building the redirect since it
-		// should be done in the context of a public user and not the current session user or
-		// system user. This is a temporary solution to ensure we do not redirect using the
-		// system session - more changes are forthcoming to ensure proper login/logout in auth
-		// related flows.
-		session, err = auth.GetSessionFromUser("", publicUser, site)
-		if err != nil {
-			ctlutil.HandleError(r.Context(), w, err)
-			return
-		}
 	}
 
 	if signupMethod.AutoLogin {
@@ -99,13 +78,16 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	// session ID is intentionally blank here because we have intentionally not created a browser session
 	// since the user is required to login.
 	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", redirectPath))
-
 }
 
 // ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
 func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
-
-	session := middleware.GetSession(r)
+	// See comments in ensurePublicSession for why we do this.
+	session, err := ensurePublicSession(w, r)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	ctx := session.Context()
 	site := session.GetSite()
 	queryParams := r.URL.Query()
@@ -133,10 +115,8 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If we had an old session, remove it.
-	w.Header().Del("set-cookie")
 	// Log the user in
-	sess.Login(w, user, site)
+	_ = sess.Login(w, r, user, site)
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
 }
