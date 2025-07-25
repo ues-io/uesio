@@ -5,8 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -67,7 +68,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := auth.GetUserFromBrowserSession(browserSession, site)
+		user, err := getUserFromBrowserSession(browserSession, site)
 		if err != nil {
 			// TODO: We failed to get the user but this could be for any number of reasons, for example
 			// a database or redis issue.  Should we permanently remove the session here? If we don't
@@ -105,7 +106,7 @@ func Authenticate(next http.Handler) http.Handler {
 		// TODO:
 		// 1. Implement a background cleaner for the filestore that will remove expired sessions
 		// 2. Implement a rolling timeout for the session stores so that the timeout is based on accessed and not created time
-		if browserSession != nil && sess.IsExpired(browserSession) {
+		if browserSession != nil && isExpired(browserSession) {
 			session.Remove(browserSession, w)
 			browserSession = nil
 			user, err = auth.GetPublicUser(site, nil)
@@ -116,7 +117,7 @@ func Authenticate(next http.Handler) http.Handler {
 		}
 
 		if browserSession == nil {
-			browserSession = sess.CreateBrowserSession(w, r, user, site)
+			browserSession = auth.CreateBrowserSession(w, r, user, site)
 		}
 
 		s, err := auth.GetSessionFromUser(browserSession.ID(), user, site)
@@ -267,4 +268,34 @@ func getBrowserSession(r *http.Request) (session.Session, error) {
 	// if the cookie is ever written to downstream, we end up in the cycle again so better
 	// to just failfast here.
 	return nil, exceptions.NewUnauthorizedException("unknown_session")
+}
+
+func getUserFromBrowserSession(browserSession session.Session, site *meta.Site) (*meta.User, error) {
+	if browserSession == nil {
+		return auth.GetPublicUser(site, nil)
+	}
+	browserSessionSite := getBrowserSessionAttribute(browserSession, "Site")
+	browserSessionUser := getBrowserSessionAttribute(browserSession, "UserID")
+	// Check to make sure our session site matches the site from our domain.
+	if browserSessionSite != site.GetFullName() {
+		return nil, fmt.Errorf("sites mismatch for user: %s", browserSessionUser)
+	}
+	return auth.GetCachedUserByID(browserSessionUser, site)
+}
+
+func getBrowserSessionAttribute(browserSession session.Session, key string) string {
+	value, ok := browserSession.CAttr(key).(string)
+	if !ok {
+		return ""
+	}
+	return value
+}
+
+// IsExpired returns true if the browser session's last access time, plus the timeout duration,
+// is prior to the current timestamp.
+func isExpired(browserSession session.Session) bool {
+	if browserSession == nil {
+		return true
+	}
+	return browserSession.Accessed().Add(browserSession.Timeout()).Before(time.Now())
 }

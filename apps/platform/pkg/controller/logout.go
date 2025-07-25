@@ -60,7 +60,7 @@ func ensurePublicSession(w http.ResponseWriter, r *http.Request) (*sess.Session,
 		return nil, err
 	}
 	// logout the current user (which may or may not be the public user) and log in as the public user
-	session = sess.Logout(w, r, publicUser, session)
+	session = auth.ProcessLogout(w, r, publicUser, session)
 	// TODO: Think through whether or not we should be calling the equivalent of auth.setSession
 	// to modify the session information for the entire request. In theory, once we make it through
 	// middleware and controllers, we should only be passing around a context.Context & sess.Session and
