@@ -40,7 +40,7 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 		return nil, err
 	}
 
-	session = sess.Login(w, r, user, site)
+	session = ProcessLogin(w, r, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())

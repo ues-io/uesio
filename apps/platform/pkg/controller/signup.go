@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/routing"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -116,7 +115,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Log the user in
-	_ = sess.Login(w, r, user, site)
+	_ = auth.ProcessLogin(w, r, user, site)
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
 }
