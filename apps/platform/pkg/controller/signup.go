@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/gorilla/mux"
 
@@ -68,15 +67,15 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	redirectPath, err := url.JoinPath("/", route.Path)
+	// session ID is intentionally blank here because we have intentionally not created a browser session
+	// since the user is required to login.
+	redirectPath, err := auth.NewLoginResponseFromRoute(nil, "", session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
-	// session ID is intentionally blank here because we have intentionally not created a browser session
-	// since the user is required to login.
-	filejson.RespondJSON(w, r, auth.NewLoginResponse(nil, "", redirectPath))
+	filejson.RespondJSON(w, r, redirectPath)
 }
 
 // ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention

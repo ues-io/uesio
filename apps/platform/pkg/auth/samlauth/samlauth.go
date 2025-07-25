@@ -213,6 +213,11 @@ func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	// and always use RedirectRouteNamespace & RedirectRouteName.  Additionally, it would check if the c.session.GetContextAppName()
 	// was different from the response.RedirectRouteNamespace and if so, build a redirectPath (see the git history for exact code
 	// that was used). The approach taken was specifically for a prototype of samlauth and was never intended to be production ready.
+	// UPDATED: The implementation of GetLoginRedirectResponse has been updated to included the equivalent logic for
+	// c.session.GetContextAppName() so that part is addressed in terms of providing feature parity prior to this change. That said,
+	// the original version of this still did not handle any "redirectPath" that was provided by the GetLoginRedirectResponse function
+	// so that may have been an oversight for a specific use that was was being implemented at the time or it may have been intentional.
+	// Either way, if/when this code is used in future, this all should be evaluated and updated to meet actual use case requirements.
 	// TODO: If/When samlauth requires full production support, the entire flow needs to be reviweed, validated, adjusted and proper
 	// tests written.
 	http.Redirect(w, r, response.RedirectPath, http.StatusSeeOther)

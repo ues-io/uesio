@@ -49,19 +49,15 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 	}
 
 	redirectPath := referer.Query().Get("r")
-
-	if redirectPath == "" {
-		route, err := routing.GetUserHomeRoute(user, session)
-		if err != nil {
-			return nil, err
-		}
-		redirectPath, err = url.JoinPath("/", route.Path)
-		if err != nil {
-			return nil, err
-		}
+	if redirectPath != "" {
+		return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
 	}
 
-	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
+	route, err := routing.GetUserHomeRoute(user, session)
+	if err != nil {
+		return nil, err
+	}
+	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session.GetSessionID(), session, route)
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {

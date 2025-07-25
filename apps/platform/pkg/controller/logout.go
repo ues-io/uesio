@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
@@ -27,12 +26,12 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	redirectPath, err := url.JoinPath("/", route.Path)
+	redirectPath, err := auth.NewLoginResponseFromRoute(preload.GetUserMergeData(session), "", session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	filejson.RespondJSON(w, r, auth.NewLoginResponse(preload.GetUserMergeData(session), "", redirectPath))
+	filejson.RespondJSON(w, r, redirectPath)
 }
 
 // Logs out any current user and logs in as the public user
