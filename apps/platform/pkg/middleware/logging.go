@@ -2,12 +2,9 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log/slog"
-	"maps"
 	"net/http"
-	"slices"
 	"strings"
 	"sync"
 
@@ -45,10 +42,6 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 	logHandler := httplog.RequestLogger(logger, defaultOptions(logFormat))
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			data := make(map[string]string)
-			data["Host"] = r.Host
-			data["URL"] = r.URL.String()
-			data["CookieIn"] = r.Header.Get("Cookie")
 			ctx := context.WithValue(r.Context(), logDataContextKey{}, &logData{})
 
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
@@ -63,10 +56,7 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 				// because not all requests will be logged based on log level &
 				// other logging options (e.g., Skip).
 				if ld := getLogData(ctx); ld != nil {
-					data["HasLogData"] = "true"
 					if s := ld.GetSession(); s != nil {
-						data["HasSession"] = "true"
-						data["LogDataSessionID"] = s.ID
 						usage.RegisterEvent("REQUEST_COUNT", "REQUEST", "ALL", 1, s)
 						ingressBytes := computeApproximateRequestSize(r, br)
 						if ingressBytes > 0 {
@@ -75,33 +65,13 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 						if ww.BytesWritten() > 0 {
 							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(ww.BytesWritten()), s)
 						}
-					} else {
-						data["HasSession"] = "false"
-						data["LogDataSessionID"] = ""
 					}
-				} else {
-					data["HasLogData"] = "false"
-					data["HasSession"] = "true"
-					data["LogDataSessionID"] = ""
 				}
-				data["CookieOut"] = w.Header().Get("Set-Cookie")
-
-				keysSlice := make([]string, 0, len(data))
-				for k := range maps.Keys(data) {
-					keysSlice = append(keysSlice, k)
-				}
-				slices.Sort(keysSlice)
-				var msg string
-				for _, k := range keysSlice {
-					msg += "\n    " + k + ": " + data[k]
-				}
-				fmt.Printf("******* RequestLogger *******%s\n\n", msg)
 			}()
 
 			logHandler(next).ServeHTTP(ww, r.WithContext(ctx))
 		})
 	}
-
 }
 
 func defaultOptions(logFormat *httplog.Schema) *httplog.Options {
