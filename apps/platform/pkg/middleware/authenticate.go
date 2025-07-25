@@ -266,5 +266,5 @@ func getBrowserSession(r *http.Request) (session.Session, error) {
 	// could be revisited and if cookie is empty string, continue prcessing as public user but
 	// if the cookie is ever written to downstream, we end up in the cycle again so better
 	// to just failfast here.
-	return nil, exceptions.NewUnauthorizedException("not authorized")
+	return nil, exceptions.NewUnauthorizedException("unknown_session")
 }
