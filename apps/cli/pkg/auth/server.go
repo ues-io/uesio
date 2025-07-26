@@ -231,6 +231,9 @@ func setupLocalServer(cfg *callbackHandlerConfig) (*http.Server, error) {
 				} else {
 					statusCode = http.StatusOK
 				}
+				// TODO: The "login as a different user" flow needs to be improved. One way to do this would be to have the "Authorization Result" page live on the actual site so the localhost page
+				// just redirects to a success/failure page but since it's on the site itself, the standard login/logout mechanisms become more obvious to the user. For now, the HTML emitted provides
+				// instructions that the user must visit the site, logout and then run login from the CLI again. This flow is not ideal and should be improved.
 				data.SiteURL = cfg.siteURL
 				buf := bytes.Buffer{}
 				err = t.Execute(&buf, data)
