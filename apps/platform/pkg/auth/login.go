@@ -35,12 +35,10 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 
 	site := session.GetSite()
 
-	err := HydrateUserPermissions(user, session)
+	session, err := ProcessLogin(r.Context(), user, site)
 	if err != nil {
 		return nil, err
 	}
-
-	session = ProcessLogin(w, r, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
