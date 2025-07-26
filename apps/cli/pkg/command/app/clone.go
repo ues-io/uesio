@@ -23,7 +23,7 @@ import (
 
 // Queries for all apps accessible to the user, prompts the user to select one,
 // and then returns the app object
-func askUserToSelectApp(sessid string) (*wire.App, error) {
+func askUserToSelectApp() (*wire.App, error) {
 
 	appsResult, err := wire.GetApps()
 	if err != nil {
@@ -64,12 +64,7 @@ func AppClone(targetDir string) error {
 		return err
 	}
 
-	sessionID, err := config.GetSessionID()
-	if err != nil {
-		return err
-	}
-
-	app, err := askUserToSelectApp(sessionID)
+	app, err := askUserToSelectApp()
 	if err != nil {
 		return err
 	}
@@ -93,7 +88,11 @@ func AppClone(targetDir string) error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.PostBytes(generateURL, payloadBytes, sessionID, nil)
+	token, err := config.GetToken()
+	if err != nil {
+		return err
+	}
+	resp, err := call.PostBytes(generateURL, payloadBytes, token, nil)
 	if err != nil {
 		return err
 	}

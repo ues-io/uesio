@@ -27,7 +27,7 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 		return err
 	}
 
-	sessionID, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func CreateBundle(releaseType, majorVersion, minorVersion, patchVersion, bundleD
 
 	botResponse := &CallBotResponse{}
 
-	err = call.PostJSON(createBundleURL, sessionID, botInputs, botResponse, nil)
+	err = call.PostJSON(createBundleURL, token, botInputs, botResponse, nil)
 	if err != nil {
 		return err
 	}

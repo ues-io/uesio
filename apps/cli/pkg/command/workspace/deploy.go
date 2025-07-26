@@ -33,7 +33,7 @@ func Deploy() error {
 		return errors.New("no active workspace is set -- use \"uesio work\" to set one")
 	}
 
-	sessid, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func Deploy() error {
 
 	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 
-	resp, err := call.Post(url, payload, sessid, context.NewWorkspaceContext(app, workspace))
+	resp, err := call.Post(url, payload, token, context.NewWorkspaceContext(app, workspace))
 	if err != nil {
 		return err
 	}

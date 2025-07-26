@@ -29,7 +29,7 @@ export default function get_weather_forecast(bot: RunActionBotApi) {
   }
   const headers = {
     "Content-Type": "application/json",
-    Cookie: "sessid=" + bot.getSession().getId(),
+    Cookie: "sessid=" + bot.getSession().getAuthToken(),
   } as Record<string, string>
   const result = bot.http.request({
     method: "POST",

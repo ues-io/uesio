@@ -11,15 +11,15 @@ import (
 
 func Logout() (*preload.UserMergeData, error) {
 
-	sessionID, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return nil, err
 	}
 	// If there is no current session id, there's no need to make a logout call
-	if sessionID == "" {
+	if token == "" {
 		return nil, nil
 	}
-	resp, err := call.Post("site/auth/logout", nil, sessionID, nil)
+	resp, err := call.Post("site/auth/logout", nil, token, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,6 +31,6 @@ func Logout() (*preload.UserMergeData, error) {
 		return nil, err
 	}
 
-	return userResponse.User, config.DeleteSessionID()
+	return userResponse.User, config.DeleteToken()
 
 }

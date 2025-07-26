@@ -96,7 +96,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request, requestingSession *sess.Se
 		return
 	}
 	browserSession := CreateBrowserSession(w, r, user, site)
-	cliSession, err := GetSessionFromUser(browserSession.ID(), user, site)
+	cliSession, err := GetSessionFromUser(user, site, browserSession.ID())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -104,7 +104,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request, requestingSession *sess.Se
 
 	DelAuthorizationCode(authCode)
 
-	response := NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.ID)
+	response := NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.GetAuthToken())
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to encode response: %w", err))

@@ -52,7 +52,7 @@ func Authenticate(next http.Handler) http.Handler {
 				return
 			}
 
-			s, err := auth.CreateSessionFromUser(user, site)
+			s, err := auth.GetSessionFromUser(user, site, "")
 			if err != nil {
 				HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 				return
@@ -215,7 +215,7 @@ func getSession(r *http.Request, w http.ResponseWriter, site *meta.Site) (*sess.
 	// a uesio session but without a browser session backing it.
 	// IMPORTANT: Passing "" is INTENTIONAL here, we do not want a browser session in this situation in order to
 	// avoid passing a new sessid to client on response.
-	return createPublicUserSession("", site)
+	return createPublicUserSession(site, "")
 }
 
 func createSessionFromBrowserSession(browserSession session.Session, r *http.Request, w http.ResponseWriter, site *meta.Site) (*sess.Session, error) {
@@ -261,19 +261,19 @@ func createSessionFromBrowserSession(browserSession session.Session, r *http.Req
 			browserSession = nil
 		}
 		browserSession = auth.CreateBrowserSession(w, r, user, site)
-		return createPublicUserSession(browserSession.ID(), site)
+		return createPublicUserSession(site, browserSession.ID())
 	}
 
-	return auth.GetSessionFromUser(browserSession.ID(), user, site)
+	return auth.GetSessionFromUser(user, site, browserSession.ID())
 }
 
-func createPublicUserSession(sessionID string, site *meta.Site) (*sess.Session, error) {
+func createPublicUserSession(site *meta.Site, token string) (*sess.Session, error) {
 	publicUser, err := auth.GetPublicUser(site, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
 	}
 
-	return auth.GetSessionFromUser(sessionID, publicUser, site)
+	return auth.GetSessionFromUser(publicUser, site, token)
 }
 
 func getUserFromBrowserSession(browserSession session.Session, site *meta.Site) (*meta.User, error) {

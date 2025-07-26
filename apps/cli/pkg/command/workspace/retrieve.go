@@ -49,12 +49,12 @@ func Retrieve(options *RetrieveOptions) error {
 	if options.OnlyTypes {
 		appContext := context.NewWorkspaceContext(appName, workspace)
 
-		sessionID, err := config.GetSessionID()
+		token, err := config.GetToken()
 		if err != nil {
 			return err
 		}
 
-		if err = command.GenerateAppTypeDefinitions(appName, workspace, sessionID, appContext); err != nil {
+		if err = command.GenerateAppTypeDefinitions(appName, workspace, token, appContext); err != nil {
 			return err
 		}
 
@@ -86,7 +86,7 @@ func RetrieveBundleForAppWorkspace(appName, workspaceName, outputDir string) err
 	// TODO: Send hashes of all local files so we aren't deleting/retrieving unchanged files every time...
 	url := fmt.Sprintf("workspace/%s/%s/metadata/retrieve", appName, workspaceName)
 
-	sessionID, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func RetrieveBundleForAppWorkspace(appName, workspaceName, outputDir string) err
 	resp, err := call.RequestResult(&call.RequestSpec{
 		Method:     http.MethodGet,
 		Url:        url,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: context.NewWorkspaceContext(appName, workspaceName),
 	}, call.ByteResultReader)
 	if err != nil {

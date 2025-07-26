@@ -66,7 +66,7 @@ func getMinimumViableSession() *sess.Session {
 		FullName: "uesio/core",
 		Name:     "core",
 	}
-	s := sess.New("wsbundlecache", &meta.User{
+	s := sess.New(&meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.SystemUsername,
 		},

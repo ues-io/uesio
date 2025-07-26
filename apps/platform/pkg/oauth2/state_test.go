@@ -40,14 +40,14 @@ func TestStateMarshaling(t *testing.T) {
 		},
 		Name: "prod",
 	}
-	sessWithWorkspaceContext := sess.New("", user, site).SetWorkspaceSession(sess.NewWorkspaceSession(
+	sessWithWorkspaceContext := sess.New(user, site).SetWorkspaceSession(sess.NewWorkspaceSession(
 		&ws,
 		user,
 		"",
 		nil,
 	))
-	sessWithSiteAdminContext := sess.New("", user, site).SetSiteAdminSession(sess.NewSiteSession(otherSite, user))
-	plainSession := sess.New("", user, site)
+	sessWithSiteAdminContext := sess.New(user, site).SetSiteAdminSession(sess.NewSiteSession(otherSite, user))
+	plainSession := sess.New(user, site)
 
 	stateWithWorkspace := (&State{
 		Nonce:           "123",
