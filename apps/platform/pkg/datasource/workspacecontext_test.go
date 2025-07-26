@@ -15,7 +15,7 @@ import (
 )
 
 func sessWithPerms(site *meta.Site, perms *meta.PermissionSet) *sess.Session {
-	return sess.New("", &meta.User{
+	return sess.New(&meta.User{
 		Username:    "luigi",
 		Permissions: perms,
 	}, site)

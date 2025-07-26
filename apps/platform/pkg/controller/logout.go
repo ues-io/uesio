@@ -45,21 +45,10 @@ func ensurePublicSession(w http.ResponseWriter, r *http.Request) (*sess.Session,
 	ctx := session.Context()
 	site := session.GetSite()
 
-	// TODO: This could be optimized to detect if current session is public user and avoid the logout/login
-	// and also skip hydrating permissions if permissions are already present. For now, being defensive and
-	// make sure we have a "clean" public session. As the code continues to be improved/refactored, this
-	// should be revisited.
-	publicUser, err := auth.GetPublicUser(site, nil)
+	session, err := auth.ProcessLogout(r.Context(), site)
 	if err != nil {
 		return nil, err
 	}
-	// TODO: See comment above regarding potential optimization
-	err = auth.HydrateUserPermissions(publicUser, session)
-	if err != nil {
-		return nil, err
-	}
-	// logout the current user (which may or may not be the public user) and log in as the public user
-	session = auth.ProcessLogout(w, r, publicUser, session)
 	// TODO: Think through whether or not we should be calling the equivalent of auth.setSession
 	// to modify the session information for the entire request. In theory, once we make it through
 	// middleware and controllers, we should only be passing around a context.Context & sess.Session and

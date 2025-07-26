@@ -114,7 +114,11 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Log the user in
-	_ = auth.ProcessLogin(w, r, user, site)
+	_, err = auth.ProcessLogin(r.Context(), user, site)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
 	// Redirect to studio home
 	http.Redirect(w, r, "/", http.StatusFound)
 }

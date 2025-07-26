@@ -27,7 +27,7 @@ export default function save_weather_forecast(bot: SaveBotApi) {
     body: {},
     headers: {
       "Content-Type": "application/json",
-      Cookie: "sessid=" + bot.getSession().getId(),
+      Cookie: "sessid=" + bot.getSession().getAuthToken(),
     },
   })
 

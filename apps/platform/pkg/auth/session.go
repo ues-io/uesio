@@ -9,10 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofrs/uuid/v5"
-	"github.com/icza/session"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/alexedwards/scs/redisstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/alexedwards/scs/v2/memstore"
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -23,9 +26,12 @@ import (
 
 const SessionLifetime = 12 * time.Hour
 const BrowserSessionCookieName = "sessid" // icza applied this name by default so we use the same one
+const SiteIDKey = "SiteId"
+const UserIDKey = "UserId"
+
+var BrowserSessionManager *scs.SessionManager
 
 func init() {
-	session.Global.Close()
 	// The localhost check here is only necessary because hurl doesn't handle secure cookies against *.localhost by default like browsers, curl, etc.
 	// do. If/When they treat "localhost" as a secure connection the IsLocalHost condition can be removed.
 	// TODO: File an issue with hurl regarding this.  libcurl is returning the cookie to them, its in the response, but they are not carrying it
@@ -33,24 +39,32 @@ func init() {
 	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.IsLocalhost() || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
 	storageType := os.Getenv("UESIO_SESSION_STORE")
 
-	var store session.Store
+	var store scs.Store
 	switch storageType {
-	case "filesystem":
-		store = NewFSSessionStore()
 	case "redis":
-		store = NewRedisSessionStore()
+		prefix := "scs:session:"
+		pool, err := cache.RegisterNamespace(prefix)
+		if err != nil {
+			panic(fmt.Sprintf("failed to register scs redis namespace for session store: %v", err))
+		}
+		store = redisstore.NewWithPrefix(pool, prefix)
 	case "", "memory":
-		store = session.NewInMemStore()
+		store = memstore.New()
 	default:
 		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
 	}
 
-	options := &session.CookieMngrOptions{
-		AllowHTTP:        allowInsecureCookies,
-		SessIDCookieName: BrowserSessionCookieName,
+	BrowserSessionManager = scs.New()
+	// TODO: This mirrors prior behavior where we had a fixed 12 hour duration since we were not rolling the duration based on
+	// access.  Need to decide on defaults for this and IdleTimeout.
+	//browserSessionManager.IdleTimeout = TODO
+	BrowserSessionManager.Lifetime = SessionLifetime
+	BrowserSessionManager.Store = store
+	BrowserSessionManager.Cookie.Name = BrowserSessionCookieName
+	BrowserSessionManager.Cookie.Secure = !allowInsecureCookies
+	BrowserSessionManager.ErrorFunc = func(w http.ResponseWriter, r *http.Request, err error) {
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("browser session error: %w", err))
 	}
-
-	session.Global = session.NewCookieManagerOptions(store, options)
 }
 
 func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
@@ -75,23 +89,8 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	return GetUserByID(loginmethod.User.ID, adminSession, nil)
 }
 
-func CreateSessionFromUser(user *meta.User, site *meta.Site) (*sess.Session, error) {
-	// We are creating a Uesio Session (sess.Session) here, not a browser session (session.Session).
-	// but we still want to ensure we have a SessionID so we use a UUID to differentiate the session
-	// ID format from one that was created from a browser session. We use v4 for randomness since
-	// these don't need to be sorted or stored.
-	// TODO: Refactor code to be more explicit about a "UesioSession" vs. a "BrowserSession" since
-	// variables and function names all use "Session" which leads to a lot of confusion unless you
-	// pay vary close attention to the types.
-	sessionID, err := uuid.NewV4()
-	if err != nil {
-		return nil, err
-	}
-	return GetSessionFromUser(sessionID.String(), user, site)
-}
-
-func GetSessionFromUser(sessionID string, user *meta.User, site *meta.Site) (*sess.Session, error) {
-	s := sess.New(sessionID, user, site)
+func GetSessionFromUser(user *meta.User, site *meta.Site, token string) (*sess.Session, error) {
+	s := sess.NewWithAuthToken(user, site, token)
 	return s, HydrateUserPermissions(user, s)
 }
 
@@ -131,34 +130,41 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 	return user, nil
 }
 
-func CreateBrowserSession(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) session.Session {
-	sess := session.NewSessionOptions(&session.SessOptions{
-		CAttrs: map[string]any{
-			"Site":   site.GetFullName(),
-			"UserID": user.ID,
-		},
-		// TODO: Make Session timeout configurable by App/Site
-		// https://github.com/TheCloudMasters/uesio/issues/2643
-		Timeout: SessionLifetime,
-	})
-	browserSession := session.Get(r)
-	if browserSession != nil {
-		session.Remove(browserSession, w)
+func ProcessLogin(ctx context.Context, user *meta.User, site *meta.Site) (*sess.Session, error) {
+	return HandlePriviledgeChange(ctx, user, site)
+}
+
+func ProcessLogout(ctx context.Context, site *meta.Site) (*sess.Session, error) {
+	return HandlePriviledgeChange(ctx, nil, site)
+}
+
+// Creates a uesio session from a user and site. If user is nil, the public user for the site is used.
+func HandlePriviledgeChange(ctx context.Context, user *meta.User, site *meta.Site) (*sess.Session, error) {
+	// Being defensive here and clearing out any data associated with the session. We currently only
+	// mantain SiteID and UserID so the net effect is zero since they are just established. However, if
+	// the session is used to track other things (e.g., preferences), we may or may not want to destroy
+	// all existing data in the session in the future.
+	BrowserSessionManager.Destroy(ctx)
+	BrowserSessionManager.RenewToken(ctx)
+
+	if user == nil {
+		// NOTE: For backwards compat, we will generate a browser session with the public user id for the current site. However, there really
+		// is no need to have a browser session backed in redis for the public user since we are only tracking userid & siteid currently. Having it backed
+		// in redis forces us to retrieve from redis on every request just to get the information we already know via GetPublicUser. The only downside
+		// to not having a browser session is that when we create the sess.Session, we will not have an ID to assign it - it's effectively an anonymous
+		// session. This is likely OK and we used to have scenarios that would not assign an ID for sess.Session until some recent PRs enforced having
+		// something for ID even if it was a uuid to diferentiate the type of session. If we don't back the public user session in redis, we avoid
+		// all the calls to redis for every public user request (page, css, fonts, etc.) and avoid user cache lookups because we're always going to end up
+		// with the equivalent of GetPublicUser anyway.
+		// TODO: Consider not having a browser session for public user flows.
+		if publicUser, err := GetPublicUser(site, nil); err != nil {
+			return nil, err
+		} else {
+			user = publicUser
+		}
 	}
-	// Remove any previous set-cookie headers
-	// icza updates existing to "" and then its Add method
-	// appends so we end up with two Set-Cookie headers. This ensures
-	// we only have one and it's the current one
-	w.Header().Del("Set-Cookie")
-	session.Add(sess, w)
-	return sess
-}
 
-func ProcessLogin(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) *sess.Session {
-	return sess.New(CreateBrowserSession(w, r, user, site).ID(), user, site)
-}
-
-func ProcessLogout(w http.ResponseWriter, r *http.Request, publicUser *meta.User, s *sess.Session) *sess.Session {
-	// Login as the public user - Login will logout the current user
-	return ProcessLogin(w, r, publicUser, s.GetSiteSession().GetSite())
+	BrowserSessionManager.Put(ctx, SiteIDKey, site.ID)
+	BrowserSessionManager.Put(ctx, UserIDKey, user.ID)
+	return GetSessionFromUser(user, site, BrowserSessionManager.Token(ctx))
 }

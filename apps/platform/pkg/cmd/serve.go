@@ -91,6 +91,7 @@ func serve(cmd *cobra.Command, args []string) error {
 
 	r := baseRouter.NewRoute().Subrouter()
 	r.Use(
+		middleware.BrowserSessionHandler(),
 		// all routes that follow should honor authentication which may just be a public session
 		// note that as currently written, authenticate will fail if no site can be resolved via request.Host
 		// which is something that could use some improvement.

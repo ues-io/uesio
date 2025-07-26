@@ -19,7 +19,7 @@ type UserResponse struct {
 
 type TokenResponse struct {
 	UserResponse
-	SessionID string `json:"sessionId"`
+	Token string `json:"token,omitempty"`
 }
 
 type LoginResponse struct {
@@ -33,22 +33,22 @@ func NewUserResponse(user *preload.UserMergeData) *UserResponse {
 	}
 }
 
-func NewTokenResponse(user *preload.UserMergeData, sessionID string) *TokenResponse {
+func NewTokenResponse(user *preload.UserMergeData, token string) *TokenResponse {
 	return &TokenResponse{
 		UserResponse: UserResponse{
 			User: user,
 		},
-		SessionID: sessionID,
+		Token: token,
 	}
 }
 
-func NewLoginResponse(user *preload.UserMergeData, sessionID string, redirectPath string) *LoginResponse {
+func NewLoginResponse(user *preload.UserMergeData, token string, redirectPath string) *LoginResponse {
 	return &LoginResponse{
 		TokenResponse: TokenResponse{
 			UserResponse: UserResponse{
 				User: user,
 			},
-			SessionID: sessionID,
+			Token: token,
 		},
 		RedirectPath: redirectPath,
 	}

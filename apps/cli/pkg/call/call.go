@@ -11,6 +11,7 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/context"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	uesiohttp "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
@@ -18,7 +19,7 @@ import (
 type RequestSpec struct {
 	Method            string
 	Url               string
-	SessionID         string
+	Token             string
 	AppContext        *context.AppContext
 	Body              io.Reader
 	AdditionalHeaders map[string]string
@@ -44,8 +45,8 @@ func Request(r *RequestSpec) (*http.Response, error) {
 		return nil, err
 	}
 
-	if r.SessionID != "" {
-		req.Header.Set("Cookie", "sessid="+r.SessionID)
+	if r.Token != "" {
+		req.Header.Set("Cookie", auth.BrowserSessionCookieName+"="+r.Token)
 	}
 	if r.AppContext != nil {
 		r.AppContext.AddHeadersToRequest(req)
@@ -105,11 +106,11 @@ func RequestResult[K any](req *RequestSpec, read ResultReader[K]) (K, error) {
 	return result, nil
 }
 
-func GetJSON(url, sessionID string, response any) error {
+func GetJSON(url, token string, response any) error {
 	_, err := RequestResult(&RequestSpec{
-		Method:    http.MethodGet,
-		Url:       url,
-		SessionID: sessionID,
+		Method: http.MethodGet,
+		Url:    url,
+		Token:  token,
 	}, JSONResultReader(response))
 	if err != nil {
 		return err
@@ -117,11 +118,11 @@ func GetJSON(url, sessionID string, response any) error {
 	return nil
 }
 
-func Delete(url, sessionID string, appContext *context.AppContext) (int, error) {
+func Delete(url, token string, appContext *context.AppContext) (int, error) {
 	resp, err := Request(&RequestSpec{
 		Method:     http.MethodDelete,
 		Url:        url,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 	})
 	if err != nil {
@@ -131,22 +132,22 @@ func Delete(url, sessionID string, appContext *context.AppContext) (int, error) 
 	return resp.StatusCode, nil
 }
 
-func Post(url string, payload io.Reader, sessionID string, appContext *context.AppContext) (*http.Response, error) {
+func Post(url string, payload io.Reader, token string, appContext *context.AppContext) (*http.Response, error) {
 	return Request(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,
 		Body:       payload,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 	})
 }
 
-func PostForm(url string, payload io.Reader, sessionID string, appContext *context.AppContext) (*http.Response, error) {
+func PostForm(url string, payload io.Reader, token string, appContext *context.AppContext) (*http.Response, error) {
 	return Request(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,
 		Body:       payload,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 		AdditionalHeaders: map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -154,7 +155,7 @@ func PostForm(url string, payload io.Reader, sessionID string, appContext *conte
 	})
 }
 
-func PostJSON(url, sessionID string, request, response any, appContext *context.AppContext) error {
+func PostJSON(url, token string, request, response any, appContext *context.AppContext) error {
 
 	payloadBytes := &bytes.Buffer{}
 
@@ -166,7 +167,7 @@ func PostJSON(url, sessionID string, request, response any, appContext *context.
 		Method:     http.MethodPost,
 		Url:        url,
 		Body:       payloadBytes,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 	}, JSONResultReader(response))
 
@@ -176,12 +177,12 @@ func PostJSON(url, sessionID string, request, response any, appContext *context.
 	return nil
 }
 
-func PostBytes(url string, payload io.Reader, sessionID string, appContext *context.AppContext) ([]byte, error) {
+func PostBytes(url string, payload io.Reader, token string, appContext *context.AppContext) ([]byte, error) {
 	return RequestResult(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,
 		Body:       payload,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 	}, ByteResultReader)
 }

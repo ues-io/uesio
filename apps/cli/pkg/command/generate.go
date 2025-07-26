@@ -50,7 +50,7 @@ func Generate(key string) error {
 		return err
 	}
 
-	sessionID, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -58,11 +58,11 @@ func Generate(key string) error {
 	paramsURL := fmt.Sprintf("version/%s/%s/bots/params/generator/%s/%s", namespace, version, namespace, name)
 
 	botParams := &meta.BotParamsResponse{}
-	if err = call.GetJSON(paramsURL, sessionID, botParams); err != nil {
+	if err = call.GetJSON(paramsURL, token, botParams); err != nil {
 		return fmt.Errorf("unable to retrieve metadata for generator '%s': %w", key, err)
 	}
 
-	answers, err := param.AskMany(botParams, app, version, sessionID)
+	answers, err := param.AskMany(botParams, app, version, token)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func Generate(key string) error {
 	if resp, err := call.RequestResult(&call.RequestSpec{
 		Method:     http.MethodPost,
 		Url:        generateURL,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 		Body:       payloadBytes,
 		AdditionalHeaders: map[string]string{
@@ -91,7 +91,7 @@ func Generate(key string) error {
 		}
 	}
 	fmt.Println("Generator completed successfully. Rebuilding type definitions for app...")
-	if err = GenerateAppTypeDefinitions(app, workspace, sessionID, appContext); err != nil {
+	if err = GenerateAppTypeDefinitions(app, workspace, token, appContext); err != nil {
 		return err
 	}
 	fmt.Println("Type definitions successfully updated.")
@@ -100,12 +100,12 @@ func Generate(key string) error {
 
 // GenerateAppTypeDefinitions refetches app-specific type definitions from the server,
 // and writes them to disk in the "generated" folder
-func GenerateAppTypeDefinitions(app, workspace, sessionID string, appContext *context.AppContext) error {
+func GenerateAppTypeDefinitions(app, workspace, token string, appContext *context.AppContext) error {
 	typeDefinitionsUrl := fmt.Sprintf("workspace/%s/%s/retrieve/types", app, workspace)
 	resp, err := call.Request(&call.RequestSpec{
 		Method:     http.MethodGet,
 		Url:        typeDefinitionsUrl,
-		SessionID:  sessionID,
+		Token:      token,
 		AppContext: appContext,
 	})
 	if err != nil {

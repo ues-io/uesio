@@ -7,9 +7,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func New(ID string, user *meta.User, site *meta.Site) *Session {
+func New(user *meta.User, site *meta.Site) *Session {
+	return NewWithAuthToken(user, site, "")
+}
+
+func NewWithAuthToken(user *meta.User, site *meta.Site, authToken string) *Session {
 	return &Session{
-		ID:          ID,
+		authToken:   authToken,
 		siteSession: NewSiteSession(site, user),
 	}
 }
@@ -118,7 +122,7 @@ func NewVersionSession(
 }
 
 type Session struct {
-	ID               string
+	authToken        string
 	siteSession      *SiteSession
 	workspaceSession *WorkspaceSession
 	siteAdminSession *SiteSession
@@ -474,6 +478,12 @@ func (s *Session) GetContextSite() *meta.Site {
 	return s.GetSite()
 }
 
-func (s *Session) GetSessionID() string {
-	return s.ID
+// This is only required because we allow bots to use it to make calls to the APIs. Based on
+// discussion with @humandad, it was largely added in order to support testing more than a real-world
+// use case. Providing bots the ability to do this comes with pros/cons but there is something to be
+// said for eliminating this completely until a real-world use case arises and a solution fully vetted
+// and designed. For now, leaving this in for backwards compatibility.
+// TODO: Per above, evaluate if this should even exist and if so, if it should be implemented differently.
+func (s *Session) GetAuthToken() string {
+	return s.authToken
 }

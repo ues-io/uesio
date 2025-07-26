@@ -26,14 +26,15 @@ type localServerConfig struct {
 	codeChallenge       string
 	codeChallengeMethod string
 	authURL             string
+	siteURL             string
 }
 
 type callbackHandlerConfig struct {
-	//requestID    string
 	state        string
 	respCh       chan<- *authorizationResponse
 	onceRespCh   sync.Once
 	callbackPath string
+	siteURL      string
 }
 
 const htmlTemplate = `
@@ -68,6 +69,13 @@ const htmlTemplate = `
 				Close this tab and return to the CLI for details.
 			{{ else }}
 				Close this tab and return to the CLI to complete the login process.
+			{{ end }}
+		</p>
+		<p>
+			{{ if .Error }}
+				If you are having trouble logging in, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, ensure that you are logged out and then login again from the CLI.
+			{{ else }}
+				To login to the CLI as a different user, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, logout and then login again from the CLI.
 			{{ end }}
 		</p>
 	</div>
@@ -114,6 +122,7 @@ func receiveCodeViaLocalServer(ctx context.Context, cfg *localServerConfig) (str
 		state:        cfg.state,
 		respCh:       respCh,
 		callbackPath: redirectURL.Path,
+		siteURL:      cfg.siteURL,
 	}
 	server, err := setupLocalServer(callbackHandlerConfig)
 	if err != nil {
@@ -215,7 +224,8 @@ func setupLocalServer(cfg *callbackHandlerConfig) (*http.Server, error) {
 
 			onceAuthResult = func() authResult {
 				var data struct {
-					Error bool
+					Error   bool
+					SiteURL string
 				}
 				var statusCode int
 
@@ -225,6 +235,10 @@ func setupLocalServer(cfg *callbackHandlerConfig) (*http.Server, error) {
 				} else {
 					statusCode = http.StatusOK
 				}
+				// TODO: The "login as a different user" flow needs to be improved. One way to do this would be to have the "Authorization Result" page live on the actual site so the localhost page
+				// just redirects to a success/failure page but since it's on the site itself, the standard login/logout mechanisms become more obvious to the user. For now, the HTML emitted provides
+				// instructions that the user must visit the site, logout and then run login from the CLI again. This flow is not ideal and should be improved.
+				data.SiteURL = cfg.siteURL
 				buf := bytes.Buffer{}
 				err = t.Execute(&buf, data)
 				if err != nil {

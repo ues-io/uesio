@@ -28,19 +28,17 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 
 	redirectPath := redirect + "?code=" + code + "&username=" + username
 
-	return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
+	return NewLoginResponse(preload.GetUserMergeData(session), session.GetAuthToken(), redirectPath), nil
 }
 
 func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) (*LoginResponse, error) {
 
 	site := session.GetSite()
 
-	err := HydrateUserPermissions(user, session)
+	session, err := ProcessLogin(r.Context(), user, site)
 	if err != nil {
 		return nil, err
 	}
-
-	session = ProcessLogin(w, r, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
@@ -50,14 +48,14 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 
 	redirectPath := referer.Query().Get("r")
 	if redirectPath != "" {
-		return NewLoginResponse(preload.GetUserMergeData(session), session.GetSessionID(), redirectPath), nil
+		return NewLoginResponse(preload.GetUserMergeData(session), session.GetAuthToken(), redirectPath), nil
 	}
 
 	route, err := routing.GetUserHomeRoute(user, session)
 	if err != nil {
 		return nil, err
 	}
-	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session.GetSessionID(), session, route)
+	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session.GetAuthToken(), session, route)
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {

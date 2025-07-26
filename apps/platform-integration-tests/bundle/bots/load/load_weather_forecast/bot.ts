@@ -29,7 +29,7 @@ export default function load_weather_forecast(bot: LoadBotApi) {
     body: {},
     headers: {
       "Content-Type": "application/json",
-      Cookie: "sessid=" + bot.getSession().getId(),
+      Cookie: "sessid=" + bot.getSession().getAuthToken(),
     },
   })
 

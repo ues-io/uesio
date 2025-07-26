@@ -20,7 +20,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func getAnswerInfo(sessid, existingAppName string) (map[string]interface{}, error) {
+func getAnswerInfo(token, existingAppName string) (map[string]interface{}, error) {
 	users, err := wire.GetAvailableUsernames()
 	if err != nil {
 		return nil, errors.New("unable to retrieve users from studio")
@@ -70,7 +70,7 @@ func getAnswerInfo(sessid, existingAppName string) (map[string]interface{}, erro
 		},
 	)
 
-	answers, err := param.AskMany(&botParams, "", "", sessid)
+	answers, err := param.AskMany(&botParams, "", "", token)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +83,8 @@ func getAnswerInfo(sessid, existingAppName string) (map[string]interface{}, erro
 
 }
 
-func getAnswers(sessid, existingAppName string) (string, string, string, string, error) {
-	answers, err := getAnswerInfo(sessid, existingAppName)
+func getAnswers(token, existingAppName string) (string, string, string, string, error) {
+	answers, err := getAnswerInfo(token, existingAppName)
 	if err != nil {
 		return "", "", "", "", nil
 	}
@@ -104,7 +104,7 @@ func AppInit() error {
 		return err
 	}
 
-	sessid, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func AppInit() error {
 		}
 		// Create an app
 		fmt.Println("Let's create a new app.")
-		username, appname, color, icon, err := getAnswers(sessid, existingAppName)
+		username, appname, color, icon, err := getAnswers(token, existingAppName)
 		if err != nil {
 			return err
 		}
@@ -157,7 +157,7 @@ func AppInit() error {
 	if err != nil {
 		return err
 	}
-	resp, err := call.PostBytes(generateURL, payloadBytes, sessid, nil)
+	resp, err := call.PostBytes(generateURL, payloadBytes, token, nil)
 	if err != nil {
 		return err
 	}

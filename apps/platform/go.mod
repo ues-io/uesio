@@ -6,6 +6,8 @@ require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PaesslerAG/gval v1.2.4
 	github.com/aarol/reload v1.2.2
+	github.com/alexedwards/scs/redisstore v0.0.0-20250417082927-ab20b3feb5e9
+	github.com/alexedwards/scs/v2 v2.9.0
 	github.com/anthropics/anthropic-sdk-go v1.6.2
 	github.com/aws/aws-sdk-go-v2 v1.36.6
 	github.com/aws/aws-sdk-go-v2/config v1.29.18
@@ -29,7 +31,6 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/gomodule/redigo v1.9.2
 	github.com/gorilla/mux v1.8.1
-	github.com/icza/session v1.3.0
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qdm12/reprint v0.0.0-20200326205758-722754a53494

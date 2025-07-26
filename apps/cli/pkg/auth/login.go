@@ -174,7 +174,7 @@ var browserHandler = &LoginMethodHandler{
 			}
 		})
 		eg.Go(func() error {
-			code, redirectURL, err := receiveCodeViaLocalServer(ctx, &localServerConfig{readyChan: ready, state: state, codeChallenge: codeChallenge, codeChallengeMethod: "S256", authURL: authURL})
+			code, redirectURL, err := receiveCodeViaLocalServer(ctx, &localServerConfig{readyChan: ready, state: state, codeChallenge: codeChallenge, codeChallengeMethod: "S256", siteURL: platformBaseURL, authURL: authURL})
 			if err != nil {
 				return fmt.Errorf("authorization error: %w", err)
 			}
@@ -249,7 +249,7 @@ func processDirectLogin(method string, payload map[string]string) (*auth.TokenRe
 		return nil, err
 	}
 
-	return auth.NewTokenResponse(loginResponse.User, loginResponse.SessionID), nil
+	return auth.NewTokenResponse(loginResponse.User, loginResponse.Token), nil
 }
 
 func getLoginHandler() (*LoginMethodHandler, error) {
@@ -274,30 +274,30 @@ func getLoginHandler() (*LoginMethodHandler, error) {
 }
 
 func Login() (*preload.UserMergeData, error) {
-
-	// First check to see if you're already logged in
-	if currentUser, err := Check(); err != nil {
-		return nil, err
-	} else if currentUser != nil {
-		return currentUser, nil
-	}
+	// store off current token so we can log it out after successful login
+	origToken, origTokenErr := config.GetToken()
 
 	handler, err := getLoginHandler()
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := handler.Login()
+	result, err := handler.Login()
 	if err != nil {
 		return nil, err
 	}
 
-	err = config.SetSessionID(token.SessionID)
+	err = config.SetToken(result.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	return token.User, nil
+	if origTokenErr == nil {
+		// intentionally ignoring any failure - the session will eventually expire
+		_ = logoutToken(origToken)
+	}
+
+	return result.User, nil
 }
 
 func generateCodeVerifier() (string, error) {

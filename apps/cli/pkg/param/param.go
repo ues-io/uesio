@@ -25,7 +25,7 @@ import (
 	w "github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func getMetadataList(metadataType, sessid, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
+func getMetadataList(metadataType, token, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
 
 	if metadataType == "" {
 		return nil, nil, errors.New("no metadata type provided for prompt")
@@ -90,7 +90,7 @@ func getMetadataList(metadataType, sessid, grouping string) (labels []string, va
 		url := fmt.Sprintf("version/%s/%s/metadata/types/%s/namespace/%s/list%s", depNamespace, dep.Version, metadataType, depNamespace, groupingURL)
 
 		metadataList := map[string]ns.MetadataResponse{}
-		err = call.GetJSON(url, sessid, &metadataList)
+		err = call.GetJSON(url, token, &metadataList)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -141,10 +141,10 @@ func mergeParam(templateString string, answers map[string]interface{}) (string, 
 	return mergedValue, nil
 }
 
-func AskMany(params *meta.BotParamsResponse, app, version, sessid string) (map[string]interface{}, error) {
+func AskMany(params *meta.BotParamsResponse, app, version, token string) (map[string]interface{}, error) {
 	answers := map[string]interface{}{}
 	for _, parameter := range *params {
-		err := Ask(parameter, app, version, sessid, answers)
+		err := Ask(parameter, app, version, token, answers)
 		if err != nil {
 			return nil, err
 		}
@@ -152,7 +152,7 @@ func AskMany(params *meta.BotParamsResponse, app, version, sessid string) (map[s
 	return answers, nil
 }
 
-func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[string]interface{}) error {
+func Ask(param meta.BotParamResponse, app, version, token string, answers map[string]interface{}) error {
 
 	// Ignore params which are not relevant due to conditions
 	if !meta.IsParamRelevant(param, answers) {
@@ -214,7 +214,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
-		labels, valuesByLabel, err := getMetadataList(param.MetadataType, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, token, grouping)
 		if err != nil {
 			return err
 		}
@@ -235,7 +235,7 @@ func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[s
 		if err != nil {
 			return err
 		}
-		labels, valuesByLabel, err := getMetadataList(param.MetadataType, sessid, grouping)
+		labels, valuesByLabel, err := getMetadataList(param.MetadataType, token, grouping)
 		if err != nil {
 			return err
 		}
