@@ -9,19 +9,19 @@ import (
 
 func Check() (*preload.UserMergeData, error) {
 
-	sessid, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return nil, err
 	}
 
 	// If there's no current session id stored, no need to make check call
-	if sessid == "" {
+	if token == "" {
 		return nil, nil
 	}
 
 	var userResponse auth.UserResponse
 
-	err = call.GetJSON("site/auth/check", sessid, &userResponse)
+	err = call.GetJSON("site/auth/check", token, &userResponse)
 	if err != nil {
 		return nil, err
 	}

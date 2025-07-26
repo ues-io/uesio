@@ -87,7 +87,7 @@ interface DeletesApi {
   get: () => DeleteApi[]
 }
 interface SessionApi {
-  getId: () => string
+  getAuthToken: () => string
   // Returns true only if the Bot is being run in a Workspace context
   inWorkspaceContext: () => boolean
   // If in a Workspace context, returns a Workspace Api

@@ -20,7 +20,7 @@ export default function call_http_api(bot: ListenerBotApi) {
     }),
     headers: {
       "Content-Type": "application/json",
-      Cookie: "sessid=" + bot.getSession().getId(),
+      Cookie: "sessid=" + bot.getSession().getAuthToken(),
     },
   })
   const result = response.body as CallBotResponse

@@ -62,7 +62,7 @@ func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Sessio
 	if err != nil {
 		return nil, err
 	}
-	return CreateSessionFromUser(publicUser, site)
+	return GetSessionFromUser(publicUser, site, "")
 }
 
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
@@ -79,7 +79,7 @@ func GetSystemSession(ctx context.Context, site *meta.Site, connection wire.Conn
 	}
 
 	user.Permissions = meta.GetAdminPermissionSet()
-	session := sess.New("", user, site)
+	session := sess.New(user, site)
 	session.SetGoContext(ctx)
 	return session, nil
 }

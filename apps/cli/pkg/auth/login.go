@@ -249,7 +249,7 @@ func processDirectLogin(method string, payload map[string]string) (*auth.TokenRe
 		return nil, err
 	}
 
-	return auth.NewTokenResponse(loginResponse.User, loginResponse.SessionID), nil
+	return auth.NewTokenResponse(loginResponse.User, loginResponse.Token), nil
 }
 
 func getLoginHandler() (*LoginMethodHandler, error) {
@@ -287,17 +287,17 @@ func Login() (*preload.UserMergeData, error) {
 		return nil, err
 	}
 
-	token, err := handler.Login()
+	result, err := handler.Login()
 	if err != nil {
 		return nil, err
 	}
 
-	err = config.SetSessionID(token.SessionID)
+	err = config.SetToken(result.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	return token.User, nil
+	return result.User, nil
 }
 
 func generateCodeVerifier() (string, error) {

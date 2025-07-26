@@ -67,14 +67,14 @@ func Load(collectionName string, options *LoadOptions) (wire.Collection, error) 
 		},
 	}
 
-	sessid, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return nil, err
 	}
 
 	loadResponse := &LoadResBatch{}
 
-	err = call.PostJSON("site/wires/load", sessid, payload, loadResponse, nil)
+	err = call.PostJSON("site/wires/load", token, payload, loadResponse, nil)
 	if err != nil {
 		return nil, err
 	}

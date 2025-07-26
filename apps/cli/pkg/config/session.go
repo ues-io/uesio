@@ -1,15 +1,15 @@
 package config
 
-const sessionIDProp = "sessionId"
+const tokenProp = "token"
 
-func GetSessionID() (string, error) {
-	return GetConfigValue(sessionIDProp)
+func GetToken() (string, error) {
+	return GetConfigValue(tokenProp)
 }
 
-func SetSessionID(id string) error {
-	return SetConfigValue(sessionIDProp, id)
+func SetToken(token string) error {
+	return SetConfigValue(tokenProp, token)
 }
 
-func DeleteSessionID() error {
-	return DeleteConfigValue(sessionIDProp)
+func DeleteToken() error {
+	return DeleteConfigValue(tokenProp)
 }

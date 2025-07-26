@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/auth"
-	"github.com/thecloudmasters/cli/pkg/config"
 	"github.com/thecloudmasters/cli/pkg/wire"
 )
 
@@ -15,13 +14,8 @@ func Delete(appFullName string) error {
 		return err
 	}
 
-	sessionID, err := config.GetSessionID()
-	if err != nil {
-		return err
-	}
-
 	if appFullName == "" {
-		app, err := askUserToSelectApp(sessionID)
+		app, err := askUserToSelectApp()
 		if err != nil {
 			return err
 		}

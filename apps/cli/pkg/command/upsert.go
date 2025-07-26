@@ -171,7 +171,7 @@ func Upsert(prefix string, options *UpsertOptions) error {
 
 	fmt.Println("Running Upsert Command")
 
-	sessid, err := config.GetSessionID()
+	token, err := config.GetToken()
 	if err != nil {
 		return err
 	}
@@ -181,12 +181,12 @@ func Upsert(prefix string, options *UpsertOptions) error {
 		return err
 	}
 
-	jobResponse, err := createJob(prefix, sessid, spec)
+	jobResponse, err := createJob(prefix, token, spec)
 	if err != nil {
 		return err
 	}
 
-	batchResponse, err := runBatch(prefix, sessid, options.DataFile, jobResponse.ID, spec)
+	batchResponse, err := runBatch(prefix, token, options.DataFile, jobResponse.ID, spec)
 	if err != nil {
 		return err
 	}
