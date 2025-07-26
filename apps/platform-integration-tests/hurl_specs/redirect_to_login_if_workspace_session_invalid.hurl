@@ -13,6 +13,7 @@ HTTP 200
 session_id: cookie "sessid"
 [Asserts]
 cookie "sessid" exists
+cookie "sessid" != ""
 
 # Logout
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/site/auth/logout
@@ -22,6 +23,7 @@ HTTP 200
 session_id_public: cookie "sessid"
 [Asserts]
 cookie "sessid" exists
+cookie "sessid" == ""
 
 # Access a workspace route with an invalid session, requesting HTML
 # @cookie_storage_clear
@@ -61,9 +63,7 @@ Accept: application/json
 HTTP 200
 
 [Asserts]
-cookie "sessid" exists
-cookie "sessid" not contains "{{session_id}}"
-cookie "sessid" not contains "{{session_id_public}}"
+cookie "sessid" not exists
 
 # Attempt to navigate to a public route with a bad session id
 # @cookie_storage_clear

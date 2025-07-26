@@ -140,31 +140,26 @@ func ProcessLogout(ctx context.Context, site *meta.Site) (*sess.Session, error) 
 
 // Creates a uesio session from a user and site. If user is nil, the public user for the site is used.
 func HandlePriviledgeChange(ctx context.Context, user *meta.User, site *meta.Site) (*sess.Session, error) {
-	// Being defensive here and clearing out any data associated with the session. We currently only
-	// mantain SiteID and UserID so the net effect is zero since they are just established. However, if
-	// the session is used to track other things (e.g., preferences), we may or may not want to destroy
-	// all existing data in the session in the future.
+	// We may or may not renew the token so we destroy data either way. For situations where we are going to
+	// renew, since we only track UserID and SiteID and we set them below, destroying the data is OK. However,
+	// if/when we add other data to the store for the session, we may need/want to carry it forward (e.g.,
+	// preferences, etc.)
 	BrowserSessionManager.Destroy(ctx)
-	BrowserSessionManager.RenewToken(ctx)
 
 	if user == nil {
-		// NOTE: For backwards compat, we will generate a browser session with the public user id for the current site. However, there really
-		// is no need to have a browser session backed in redis for the public user since we are only tracking userid & siteid currently. Having it backed
-		// in redis forces us to retrieve from redis on every request just to get the information we already know via GetPublicUser. The only downside
-		// to not having a browser session is that when we create the sess.Session, we will not have an ID to assign it - it's effectively an anonymous
-		// session. This is likely OK and we used to have scenarios that would not assign an ID for sess.Session until some recent PRs enforced having
-		// something for ID even if it was a uuid to diferentiate the type of session. If we don't back the public user session in redis, we avoid
-		// all the calls to redis for every public user request (page, css, fonts, etc.) and avoid user cache lookups because we're always going to end up
-		// with the equivalent of GetPublicUser anyway.
-		// TODO: Consider not having a browser session for public user flows.
-		if publicUser, err := GetPublicUser(site, nil); err != nil {
-			return nil, err
-		} else {
-			user = publicUser
-		}
+		return CreateSessionForPublicUser(site)
 	}
 
+	BrowserSessionManager.RenewToken(ctx)
 	BrowserSessionManager.Put(ctx, SiteIDKey, site.ID)
 	BrowserSessionManager.Put(ctx, UserIDKey, user.ID)
 	return GetSessionFromUser(user, site, BrowserSessionManager.Token(ctx))
+}
+
+func CreateSessionForPublicUser(site *meta.Site) (*sess.Session, error) {
+	publicUser, err := GetPublicUser(site, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
+	}
+	return GetSessionFromUser(publicUser, site, "")
 }

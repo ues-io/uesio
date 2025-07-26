@@ -207,22 +207,7 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 	browserUserID := auth.BrowserSessionManager.GetString(ctx, auth.UserIDKey)
 
 	if browserSiteID == "" && browserUserID == "" {
-		_, err := r.Cookie(auth.BrowserSessionCookieName)
-		if err == http.ErrNoCookie {
-			return auth.HandlePriviledgeChange(ctx, nil, site)
-		}
-		if err != nil {
-			return nil, err
-		}
-		// We have a cookie at this point, however it may be empty or non-empty but we treat them the same. We will create
-		// a uesio session but without a browser session backing it.
-		// IMPORTANT: Passing "" is INTENTIONAL here, we do not want a browser session in this situation in order to
-		// avoid passing a new sessid to client on response.
-		publicUser, err := auth.GetPublicUser(site, nil)
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve public user: %w", err)
-		}
-		return auth.GetSessionFromUser(publicUser, site, "")
+		return auth.CreateSessionForPublicUser(site)
 	}
 
 	if browserSiteID != site.ID {
