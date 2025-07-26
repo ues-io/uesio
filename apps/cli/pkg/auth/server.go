@@ -72,7 +72,11 @@ const htmlTemplate = `
 			{{ end }}
 		</p>
 		<p>
-			To login to the CLI as a different user, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, logout and then login again from the CLI.
+			{{ if .Error }}
+				If you are having trouble logging in, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, logout and then login again from the CLI.
+			{{ else }}
+				To login to the CLI as a different user, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, logout and then login again from the CLI.
+			{{ end }}
 		</p>
 	</div>
 </body>
