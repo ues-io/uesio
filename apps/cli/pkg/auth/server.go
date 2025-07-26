@@ -26,14 +26,15 @@ type localServerConfig struct {
 	codeChallenge       string
 	codeChallengeMethod string
 	authURL             string
+	siteURL             string
 }
 
 type callbackHandlerConfig struct {
-	//requestID    string
 	state        string
 	respCh       chan<- *authorizationResponse
 	onceRespCh   sync.Once
 	callbackPath string
+	siteURL      string
 }
 
 const htmlTemplate = `
@@ -69,6 +70,9 @@ const htmlTemplate = `
 			{{ else }}
 				Close this tab and return to the CLI to complete the login process.
 			{{ end }}
+		</p>
+		<p>
+			To login to the CLI as a different user, visit <a href="{{ .SiteURL }}">{{ .SiteURL }}</a>, logout and then login again from the CLI.
 		</p>
 	</div>
 </body>
@@ -114,6 +118,7 @@ func receiveCodeViaLocalServer(ctx context.Context, cfg *localServerConfig) (str
 		state:        cfg.state,
 		respCh:       respCh,
 		callbackPath: redirectURL.Path,
+		siteURL:      cfg.siteURL,
 	}
 	server, err := setupLocalServer(callbackHandlerConfig)
 	if err != nil {
@@ -215,7 +220,8 @@ func setupLocalServer(cfg *callbackHandlerConfig) (*http.Server, error) {
 
 			onceAuthResult = func() authResult {
 				var data struct {
-					Error bool
+					Error   bool
+					SiteURL string
 				}
 				var statusCode int
 
@@ -225,6 +231,7 @@ func setupLocalServer(cfg *callbackHandlerConfig) (*http.Server, error) {
 				} else {
 					statusCode = http.StatusOK
 				}
+				data.SiteURL = cfg.siteURL
 				buf := bytes.Buffer{}
 				err = t.Execute(&buf, data)
 				if err != nil {
