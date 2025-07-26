@@ -3,9 +3,9 @@ package cache
 import (
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -16,6 +16,7 @@ var redisPool *redis.Pool
 // 1 day
 var redisTTLSeconds = 60 * 60 * 24
 var existingNamespaces map[string]bool
+var namespaceMutex sync.Mutex
 
 const nsFmt = "%s:%s"
 
@@ -94,25 +95,36 @@ func (r RedisCache[T]) WithInitializer(initializer func() T) RedisCache[T] {
 	return r
 }
 
+func addNamespace(namespace string) error {
+	if namespace == "" {
+		return fmt.Errorf("namespace cannot be empty")
+	}
+
+	namespaceMutex.Lock()
+	defer namespaceMutex.Unlock()
+
+	if _, exists := existingNamespaces[namespace]; exists {
+		return fmt.Errorf("namespace %s already exists", namespace)
+	}
+	existingNamespaces[namespace] = true
+	return nil
+}
+
 // NOTE: For now, adding a simple way to obtain the shared redis pool for scenarios where we need a pool direclty and not a cache implementation (e.g., session management)
 // TODO: Refactor this to eliminate the "workaround" currently implemented and consider adding ability to have multiple pools or possibly force multiple pools, one for any RedisCaches and one for each other need. Need to think this through.
 func RegisterNamespace(namespace string) (*redis.Pool, error) {
-	// TODO: This needs to be synchronized via mutex
-	_, exists := existingNamespaces[namespace]
-	if exists {
-		return nil, fmt.Errorf("namespace %s already exists", namespace)
+	err := addNamespace(namespace)
+	if err != nil {
+		return nil, err
 	}
 	return redisPool, nil
 }
 
 func NewRedisCache[T any](namespace string) *RedisCache[T] {
-	// TODO: This needs to be synchronized via mutex
-	_, exists := existingNamespaces[namespace]
-	if exists {
-		slog.Error(fmt.Sprintf("cannot create a cache for namespace %s, one already exists", namespace))
-		return nil
+	err := addNamespace(namespace)
+	if err != nil {
+		panic(fmt.Sprintf("unable to create redis cache for namespace %s: %v", namespace, err))
 	}
-	existingNamespaces[namespace] = true
 	return &RedisCache[T]{
 		&CacheOptions[T]{
 			Namespace: namespace,
