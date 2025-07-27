@@ -19,7 +19,7 @@ func getSignupMethodID(vars map[string]string) string {
 
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	session, err := ensurePublicSession(w, r)
+	session, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -42,7 +42,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	session, err := ensurePublicSession(w, r)
+	session, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

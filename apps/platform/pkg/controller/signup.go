@@ -17,7 +17,7 @@ import (
 
 func Signup(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	session, err := ensurePublicSession(w, r)
+	session, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -81,7 +81,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 // ConfirmSignUp directly confirms the user, logs them in, and redirects them to the Home route, without any manual intervention
 func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	session, err := ensurePublicSession(w, r)
+	session, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
