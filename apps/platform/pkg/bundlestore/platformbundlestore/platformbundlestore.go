@@ -3,6 +3,7 @@ package platformbundlestore
 import (
 	"context"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -18,6 +19,10 @@ import (
 var bundleStoreCache *bundle.BundleStoreCache
 var platformFileConnection file.Connection
 
+var initConnection = sync.OnceValues(func() (file.Connection, error) {
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession(context.Background()))
+})
+
 func init() {
 	// on by default
 	if env.ShouldCacheSiteBundles() {
@@ -28,12 +33,9 @@ func init() {
 type PlatformBundleStore struct{}
 
 func (b *PlatformBundleStore) GetConnection(options bundlestore.ConnectionOptions) (bundlestore.BundleStoreConnection, error) {
-	if platformFileConnection == nil {
-		var err error
-		platformFileConnection, err = fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession(context.Background()))
-		if err != nil {
-			return nil, err
-		}
+	platformFileConnection, err := initConnection()
+	if err != nil {
+		return nil, err
 	}
 	return &filebundlestore.FileBundleStoreConnection{
 		ConnectionOptions: options,
