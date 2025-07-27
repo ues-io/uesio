@@ -19,7 +19,7 @@ func getAuthSourceID(vars map[string]string) string {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	s, err := ensurePublicSession(w, r)
+	s, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -43,7 +43,7 @@ func LoginWorkspace(w http.ResponseWriter, r *http.Request) {
 
 func RequestLogin(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	s, err := ensurePublicSession(w, r)
+	s, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

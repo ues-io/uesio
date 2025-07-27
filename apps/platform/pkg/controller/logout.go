@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -15,7 +16,7 @@ import (
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// See comments in ensurePublicSession for why we do this.
-	session, err := ensurePublicSession(w, r)
+	session, err := ensurePublicSession(r.Context())
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -40,12 +41,11 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 // reliably redirect away from the route if the user is currently logged in due to the way routing works. Instead,
 // we ensure that we always process auth related activities as a public user by logging out any current user (which
 // may or may not be the public user) and logging in as the public user before continuing.
-func ensurePublicSession(w http.ResponseWriter, r *http.Request) (*sess.Session, error) {
-	session := middleware.GetSession(r)
-	ctx := session.Context()
+func ensurePublicSession(ctx context.Context) (*sess.Session, error) {
+	session := middleware.GetSessionFromContext(ctx)
 	site := session.GetSite()
 
-	session, err := auth.ProcessLogout(r.Context(), site)
+	session, err := auth.ProcessLogout(ctx, site)
 	if err != nil {
 		return nil, err
 	}
