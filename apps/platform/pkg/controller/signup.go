@@ -69,7 +69,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	// session ID is intentionally blank here because we have intentionally not created a browser session
 	// since the user is required to login.
-	redirectPath, err := auth.NewLoginResponseFromRoute(nil, "", session, route)
+	redirectPath, err := auth.NewLoginResponseFromRoute(nil, session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

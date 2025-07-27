@@ -26,7 +26,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	redirectPath, err := auth.NewLoginResponseFromRoute(preload.GetUserMergeData(session), "", session, route)
+	redirectPath, err := auth.NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

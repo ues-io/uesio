@@ -3,6 +3,11 @@ import { ListenerBotApi } from "@uesio/bots"
 import { Params } from "@uesio/app/bots/listener/uesio/studio/signup"
 
 export default function signup(bot: ListenerBotApi<Params>) {
+    // NOTE: This will not work for "signup" when in a workspace context. The thinking has been to
+    // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
+    // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
+    // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
+    // activities should work in a workspace context.  
   const redirect = `/site/auth/${bot.getNamespace()}/platform/signup/confirm`
   const username = bot.params.get("username")
   const email = bot.params.get("email")

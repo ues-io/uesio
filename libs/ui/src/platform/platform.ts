@@ -577,6 +577,11 @@ const platform = {
     requestBody: Record<string, string>,
   ): Promise<LoginResponse> => {
     const [namespace, name] = parseKey(signupMethod)
+    // NOTE: This will not work for "signup" when in a workspace context. The thinking has been to
+    // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
+    // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
+    // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
+    // activities should work in a workspace context.
     const response = await postJSON(
       context,
       `/site/auth/${namespace}/${name}/signup`,
@@ -590,6 +595,11 @@ const platform = {
     requestBody: Record<string, string>,
   ): Promise<LoginResponse> => {
     const [namespace, name] = parseKey(authSource)
+    // NOTE: This will not work for "signup" when in a workspace context. The thinking has been to
+    // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
+    // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
+    // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
+    // activities should work in a workspace context.    
     const response = await postJSON(
       context,
       `/site/auth/${namespace}/${name}/login`,
@@ -598,6 +608,11 @@ const platform = {
     return respondJSON(response)
   },
   logout: async (context: Context): Promise<LoginResponse> => {
+    // NOTE: This will not work for "signup" when in a workspace context. The thinking has been to
+    // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
+    // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
+    // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
+    // activities should work in a workspace context.    
     const response = await post(context, "/site/auth/logout")
     return respondJSON(response)
   },
@@ -616,6 +631,11 @@ const platform = {
     return respondVoid(response)
   },
   resetPasswordConfirm: async (
+    // NOTE: This will not work for "signup" when in a workspace context. The thinking has been to
+    // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
+    // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
+    // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
+    // activities should work in a workspace context.    
     context: Context,
     authSource: string,
     requestBody: Record<string, string>,

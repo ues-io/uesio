@@ -54,33 +54,23 @@ func NewLoginResponse(user *preload.UserMergeData, token string, redirectPath st
 	}
 }
 
-// sessionID will be included in the response, session is used to evaluate the final redirect path
-func NewLoginResponseFromRoute(user *preload.UserMergeData, sessionID string, session *sess.Session, route *meta.Route) (*LoginResponse, error) {
+func NewLoginResponseFromRoute(user *preload.UserMergeData, session *sess.Session, route *meta.Route) (*LoginResponse, error) {
 	segments := getRouteUrlPrefix(route, session)
 	segments = append(segments, route.Path)
 	redirectPath, err := url.JoinPath("/", segments...)
 	if err != nil {
 		return nil, err
 	}
-	return NewLoginResponse(user, sessionID, redirectPath), nil
+	return NewLoginResponse(user, session.GetAuthToken(), redirectPath), nil
 }
 
-// TODO: This approach mirrors what is done in navigateToRoute (operations.ts) which the previous code that redirected
-// to the route on login used to use prior to always returning redirectPath instead of routeNamespace/routeName. However,
-// in other areas of the code (e.g., https://github.com/ues-io/uesio/blob/8c7f8f20abbdaaa3b123a1fb3ce2211d545bc81b/apps/platform/pkg/auth/login.go#L157)
-// we use session.GetContextAppName() to compare namspaces. GetContextAppName() gets the site in context vs.
-// the base site which the code in navigateToRoute uses. Not sure if the client side code has an issue and it should
-// be using the site in context or if the code at https://github.com/ues-io/uesio/blob/8c7f8f20abbdaaa3b123a1fb3ce2211d545bc81b/apps/platform/pkg/auth/login.go#L157
-// is wrong and it should be using the base site instead - or possibly they are both right or I'm just misunderstanding.
-// For now, mimicking what used to happen (at least I think this does) client side until this can be reviewed with @humandad.
 func getRouteUrlPrefix(route *meta.Route, session *sess.Session) []string {
 	namespace := route.Namespace
 	workspace := session.GetWorkspace()
-	// TODO: We "sort of" support logging in in a workspace context although it really doesn't work because of the way
-	// the views are written and they always go to /site/auth and don't contemplate a workspace scenario. That said,
-	// the below code exists in navigateToRoute but doesn't work properly to derive the redirectPath after login when
-	// logging in within a workspace context. This needs to be evaluated for both client side and server side although
-	// for client side, we derive redirectPath on server only.
+	// NOTE: This is generic logic but specifically referring to "auth" related routes, We "sort of" support signup/login/etc when in a workspace context
+	// although it really doesn't work because of the way the views are written and they always go to /site/auth and don't contemplate a workspace scenario.
+	// Currently you can only perform auth related activities when in a workspace context directly via the API.
+	// TODO: This may need to be adjusted once a final decision is made on how auth related activities should work in a workspace context.
 	if workspace != nil && workspace.GetAppFullName() != "" && workspace.Name != "" {
 		if namespace == "" {
 			namespace = workspace.GetAppFullName()
@@ -88,9 +78,6 @@ func getRouteUrlPrefix(route *meta.Route, session *sess.Session) []string {
 		return []string{"workspace", workspace.GetAppFullName(), workspace.Name, "app", namespace}
 	}
 
-	// TODO: See note above regarding wether this should be as-is or if it should use GetContextAppName.
-	// The code in navigateToRoute would use "site" from merge data which is the base site, not the site
-	// in context (https://github.com/ues-io/uesio/blob/8c7f8f20abbdaaa3b123a1fb3ce2211d545bc81b/apps/platform/pkg/controller/mergedata.go#L261)
 	site := session.GetSite()
 	if site != nil && site.GetAppFullName() != "" {
 		if namespace != "" && site.GetAppFullName() != namespace {

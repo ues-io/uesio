@@ -55,7 +55,7 @@ func GetLoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta
 	if err != nil {
 		return nil, err
 	}
-	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session.GetAuthToken(), session, route)
+	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
