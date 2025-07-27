@@ -57,12 +57,12 @@ func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, err
 	return GetUserByKey(meta.PublicUsername, sess.GetAnonSession(context.Background(), site), connection)
 }
 
-func GetPublicSession(site *meta.Site, connection wire.Connection) (*sess.Session, error) {
+func GetPublicSession(ctx context.Context, site *meta.Site, connection wire.Connection) (*sess.Session, error) {
 	publicUser, err := GetPublicUser(site, connection)
 	if err != nil {
 		return nil, err
 	}
-	return GetSessionFromUser(publicUser, site, "")
+	return GetSessionFromUser(ctx, publicUser, site, "")
 }
 
 func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
@@ -79,8 +79,7 @@ func GetSystemSession(ctx context.Context, site *meta.Site, connection wire.Conn
 	}
 
 	user.Permissions = meta.GetAdminPermissionSet()
-	session := sess.New(user, site)
-	session.SetGoContext(ctx)
+	session := sess.New(ctx, user, site)
 	return session, nil
 }
 

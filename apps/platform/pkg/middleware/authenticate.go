@@ -54,7 +54,7 @@ func Authenticate(next http.Handler) http.Handler {
 				return
 			}
 
-			s, err := auth.GetSessionFromUser(user, site, "")
+			s, err := auth.GetSessionFromUser(ctx, user, site, "")
 			if err != nil {
 				HandleError(ctx, w, fmt.Errorf("failed to create session: %w", err))
 				return
@@ -166,7 +166,7 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 	browserUserID := auth.BrowserSessionManager.GetString(ctx, auth.UserIDKey)
 
 	if browserSiteID == "" && browserUserID == "" {
-		return auth.CreateSessionForPublicUser(site)
+		return auth.CreateSessionForPublicUser(ctx, site)
 	}
 
 	if browserSiteID != site.ID {
@@ -179,7 +179,7 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 
 	user, err := auth.GetCachedUserByID(browserUserID, site)
 	if err == nil {
-		return auth.GetSessionFromUser(user, site, auth.BrowserSessionManager.Token(ctx))
+		return auth.GetSessionFromUser(ctx, user, site, auth.BrowserSessionManager.Token(ctx))
 	}
 
 	if exceptions.IsType[*exceptions.NotFoundException](err) {

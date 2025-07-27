@@ -89,8 +89,8 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	return GetUserByID(loginmethod.User.ID, adminSession, nil)
 }
 
-func GetSessionFromUser(user *meta.User, site *meta.Site, token string) (*sess.Session, error) {
-	s := sess.NewWithAuthToken(user, site, token)
+func GetSessionFromUser(ctx context.Context, user *meta.User, site *meta.Site, token string) (*sess.Session, error) {
+	s := sess.NewWithAuthToken(ctx, user, site, token)
 	return s, HydrateUserPermissions(user, s)
 }
 
@@ -147,19 +147,19 @@ func HandlePriviledgeChange(ctx context.Context, user *meta.User, site *meta.Sit
 	BrowserSessionManager.Destroy(ctx)
 
 	if user == nil {
-		return CreateSessionForPublicUser(site)
+		return CreateSessionForPublicUser(ctx, site)
 	}
 
 	BrowserSessionManager.RenewToken(ctx)
 	BrowserSessionManager.Put(ctx, SiteIDKey, site.ID)
 	BrowserSessionManager.Put(ctx, UserIDKey, user.ID)
-	return GetSessionFromUser(user, site, BrowserSessionManager.Token(ctx))
+	return GetSessionFromUser(ctx, user, site, BrowserSessionManager.Token(ctx))
 }
 
-func CreateSessionForPublicUser(site *meta.Site) (*sess.Session, error) {
+func CreateSessionForPublicUser(ctx context.Context, site *meta.Site) (*sess.Session, error) {
 	publicUser, err := GetPublicUser(site, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
 	}
-	return GetSessionFromUser(publicUser, site, "")
+	return GetSessionFromUser(ctx, publicUser, site, "")
 }

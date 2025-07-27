@@ -7,14 +7,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func New(user *meta.User, site *meta.Site) *Session {
-	return NewWithAuthToken(user, site, "")
+func New(ctx context.Context, user *meta.User, site *meta.Site) *Session {
+	return NewWithAuthToken(ctx, user, site, "")
 }
 
-func NewWithAuthToken(user *meta.User, site *meta.Site, authToken string) *Session {
+func NewWithAuthToken(ctx context.Context, user *meta.User, site *meta.Site, authToken string) *Session {
 	return &Session{
 		authToken:   authToken,
 		siteSession: NewSiteSession(site, user),
+		ctx:         ctx,
 	}
 }
 
@@ -128,15 +129,19 @@ type Session struct {
 	siteAdminSession *SiteSession
 	versionSession   *VersionSession
 	tokens           TokenMap
-	// the Go context associated with this session's HTTP request
+	// Original comment from when context property was added to Session in https://github.com/ues-io/uesio/pull/3619/files#diff-b50d36d253129bd263753674a60b24374b3b91b19cd0b492aa4c0d700bf1c885R28:
+	// attach the Go context to the session so that we can access the context from basically anywhere.
+	// This was done because it was deemed less invasive than refactoring all of our code to pass a context around,
+	// since we already have a Session basically everywhere.
+	// Ideally, we would have a context.Context in virtually all of our Go method calls,
+	// but I leave that for another day, since it would be very time-consuming to refactor all of our Go method calls.
+	// TODO (not from original comment): We need to eliminate this, refactor and pass a context through the API flow. Currently, session & connection have context but some places do not
+	// have session and connection can sometimes be nil. We also have some things on background contexts (e.g., platform file connection) that are involved in
+	// request processing which results in having multiple contexts involved in a request leading to confusion but more importantly, potentially unexpected outcomes.
 	ctx context.Context
 }
 
-func (s *Session) SetGoContext(ctx context.Context) {
-	s.ctx = ctx
-}
-
-// Context returns the session's associated Go HTTP request Context
+// Context returns the session's associated Go Context
 func (s *Session) Context() context.Context {
 	return s.ctx
 }

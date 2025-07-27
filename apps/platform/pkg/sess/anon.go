@@ -7,7 +7,7 @@ import (
 )
 
 func GetAnonSession(ctx context.Context, site *meta.Site) *Session {
-	s := New(&meta.User{
+	s := New(ctx, &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.BootUsername,
 		},
@@ -16,7 +16,6 @@ func GetAnonSession(ctx context.Context, site *meta.Site) *Session {
 		LastName:    "User",
 		Permissions: meta.GetAdminPermissionSet(),
 	}, site)
-	s.SetGoContext(ctx)
 	return s
 }
 

@@ -178,12 +178,10 @@ func getLoadOp(op *wire.LoadOp, collectionMetadata *wire.CollectionMetadata) (*w
 
 func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, session *sess.Session) error {
 	// Now get a public session
-	publicSession, err := auth.GetPublicSession(site, connection)
+	publicSession, err := auth.GetPublicSession(session.Context(), site, connection)
 	if err != nil {
 		return err
 	}
-
-	publicSession.SetGoContext(session.Context())
 
 	collectionMetadata, err := op.GetCollectionMetadata()
 	if err != nil {
