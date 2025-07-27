@@ -1,6 +1,7 @@
 package oauth2
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,14 +41,14 @@ func TestStateMarshaling(t *testing.T) {
 		},
 		Name: "prod",
 	}
-	sessWithWorkspaceContext := sess.New(user, site).SetWorkspaceSession(sess.NewWorkspaceSession(
+	sessWithWorkspaceContext := sess.New(context.Background(), user, site).SetWorkspaceSession(sess.NewWorkspaceSession(
 		&ws,
 		user,
 		"",
 		nil,
 	))
-	sessWithSiteAdminContext := sess.New(user, site).SetSiteAdminSession(sess.NewSiteSession(otherSite, user))
-	plainSession := sess.New(user, site)
+	sessWithSiteAdminContext := sess.New(context.Background(), user, site).SetSiteAdminSession(sess.NewSiteSession(otherSite, user))
+	plainSession := sess.New(context.Background(), user, site)
 
 	stateWithWorkspace := (&State{
 		Nonce:           "123",

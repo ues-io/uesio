@@ -56,6 +56,5 @@ func ensurePublicSession(ctx context.Context) (*sess.Session, error) {
 	// controller, etc.) that are all, at some level, "controller" methods given current implementation. Once
 	// things are refactored, context passed throughout the system independently and sess.Sess where applicable,
 	// this can likely go completely away anyway.
-	session.SetGoContext(ctx)
 	return session, nil
 }

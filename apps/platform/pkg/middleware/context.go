@@ -32,12 +32,6 @@ func SetError(c context.Context, err error) {
 
 func setSession(ctx context.Context, s *sess.Session) {
 	setLogSession(ctx, s)
-	// attach the Go context to the session so that we can access the request context from basically anywhere.
-	// This was done because it was deemed less invasive than refactoring all of our code to pass a context around,
-	// since we already have a Session basically everywhere.
-	// Ideally, we would have a context.Context in virtually all of our Go method calls,
-	// but I leave that for another day, since it would be very time-consuming to refactor all of our Go method calls.
-	s.SetGoContext(ctx)
 }
 
 // Sets session data on logData for the current context that can be accessed by middleware

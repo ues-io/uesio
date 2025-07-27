@@ -66,7 +66,7 @@ func getMinimumViableSession() *sess.Session {
 		FullName: "uesio/core",
 		Name:     "core",
 	}
-	s := sess.New(&meta.User{
+	s := sess.New(context.Background(), &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.SystemUsername,
 		},
@@ -86,7 +86,6 @@ func getMinimumViableSession() *sess.Session {
 		},
 		App: coreApp,
 	})
-	s.SetGoContext(context.Background())
 	return s
 }
 

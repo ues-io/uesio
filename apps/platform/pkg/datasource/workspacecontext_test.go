@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -15,7 +16,7 @@ import (
 )
 
 func sessWithPerms(site *meta.Site, perms *meta.PermissionSet) *sess.Session {
-	return sess.New(&meta.User{
+	return sess.New(context.Background(), &meta.User{
 		Username:    "luigi",
 		Permissions: perms,
 	}, site)

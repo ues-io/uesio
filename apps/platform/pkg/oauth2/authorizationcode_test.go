@@ -42,8 +42,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 	var requestAsserts func(t *testing.T, request *http.Request)
 
 	integrationName := "luigi/foo.bar"
-	session := &sess.Session{}
-	session.SetGoContext(context.Background())
+	session := sess.New(context.Background(), nil, nil)
 
 	// set up a mock server to handle our test requests
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
