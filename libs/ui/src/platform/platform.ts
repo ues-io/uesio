@@ -599,7 +599,7 @@ const platform = {
     // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
     // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
     // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
-    // activities should work in a workspace context.    
+    // activities should work in a workspace context.
     const response = await postJSON(
       context,
       `/site/auth/${namespace}/${name}/login`,
@@ -612,7 +612,7 @@ const platform = {
     // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
     // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
     // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
-    // activities should work in a workspace context.    
+    // activities should work in a workspace context.
     const response = await post(context, "/site/auth/logout")
     return respondJSON(response)
   },
@@ -635,7 +635,7 @@ const platform = {
     // allow going through signup/login/etc. when developing in a workspace but the feature is not fully
     // implemented and should likely be using the impersonation logic vs. full signup/login if anything.
     // TODO: This needs to be adjusted, as appropriate, once a final decision is made on how auth related
-    // activities should work in a workspace context.    
+    // activities should work in a workspace context.
     context: Context,
     authSource: string,
     requestBody: Record<string, string>,
