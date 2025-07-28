@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/go-chi/traceid"
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -145,12 +146,10 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 }
 
 func seed(cmd *cobra.Command, args []string) error {
-
-	slog.Info("Running seeds")
+	ctx := traceid.NewContext(context.Background())
+	slog.InfoContext(ctx, "Running seeds")
 
 	ignoreSeedFailures, _ := cmd.Flags().GetBool("ignore-failures")
-
-	ctx := context.Background()
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"strconv"
 
+	"github.com/go-chi/traceid"
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -90,8 +91,8 @@ func newMigrateDownOptions() migrations.MigrateOptions {
 }
 
 func migrate(opts *migrations.MigrateOptions) error {
-
-	ctx := context.Background()
+	ctx := traceid.NewContext(context.Background())
+	slog.InfoContext(ctx, "Running migration(s)")
 
 	anonSession := sess.GetStudioAnonSession(ctx)
 
@@ -102,7 +103,7 @@ func migrate(opts *migrations.MigrateOptions) error {
 		return fmt.Errorf("migrations failed: %w", err)
 	}
 
-	slog.InfoContext(ctx, "Successfully ran migrations")
+	slog.InfoContext(ctx, "Successfully ran migration(s)")
 	return nil
 }
 

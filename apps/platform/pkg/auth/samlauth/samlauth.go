@@ -13,6 +13,7 @@ import (
 
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -93,7 +94,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 			return nil, err
 		}
 
-		idpMetadata, err = samlsp.FetchMetadata(context.Background(), http.DefaultClient,
+		idpMetadata, err = samlsp.FetchMetadata(traceid.NewContext(context.Background()), http.DefaultClient,
 			*idpMetadataURL)
 		if err != nil {
 			return nil, err

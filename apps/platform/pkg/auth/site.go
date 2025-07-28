@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -31,7 +32,7 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 				},
 			},
 		},
-		sess.GetStudioAnonSession(context.Background()),
+		sess.GetStudioAnonSession(traceid.NewContext(context.Background())),
 	)
 	if err != nil {
 		return nil, err
@@ -47,14 +48,14 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(context.Background()), nil)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, sess.GetStudioAnonSession(traceid.NewContext(context.Background())), nil)
 }
 
 func GetPublicUser(site *meta.Site, connection wire.Connection) (*meta.User, error) {
 	if site == nil {
 		return nil, errors.New("no site provided")
 	}
-	return GetUserByKey(meta.PublicUsername, sess.GetAnonSession(context.Background(), site), connection)
+	return GetUserByKey(meta.PublicUsername, sess.GetAnonSession(traceid.NewContext(context.Background()), site), connection)
 }
 
 func GetPublicSession(ctx context.Context, site *meta.Site, connection wire.Connection) (*sess.Session, error) {
@@ -69,7 +70,7 @@ func GetSystemUser(site *meta.Site, connection wire.Connection) (*meta.User, err
 	if site == nil {
 		return nil, errors.New("no site provided")
 	}
-	return GetUserByKey(meta.SystemUsername, sess.GetAnonSession(context.Background(), site), connection)
+	return GetUserByKey(meta.SystemUsername, sess.GetAnonSession(traceid.NewContext(context.Background()), site), connection)
 }
 
 func GetSystemSession(ctx context.Context, site *meta.Site, connection wire.Connection) (*sess.Session, error) {

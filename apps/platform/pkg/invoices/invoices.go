@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -17,7 +18,7 @@ import (
 )
 
 func InvoicingJobNoContext() error {
-	return InvoicingJob(context.Background())
+	return InvoicingJob(traceid.NewContext(context.Background()))
 }
 
 func InvoicingJob(ctx context.Context) error {

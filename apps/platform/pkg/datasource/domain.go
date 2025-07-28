@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/tls"
@@ -32,7 +33,7 @@ func QueryDomainFromSite(siteID string, connection wire.Connection) (*meta.SiteD
 			BatchSize:  1,
 			Connection: connection,
 		},
-		sess.GetStudioAnonSession(context.Background()),
+		sess.GetStudioAnonSession(traceid.NewContext(context.Background())),
 	)
 	if err != nil {
 		return nil, err

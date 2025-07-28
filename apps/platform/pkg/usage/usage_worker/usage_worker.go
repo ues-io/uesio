@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 func UsageWorkerNoContext() error {
-	return UsageWorker(context.Background())
+	return UsageWorker(traceid.NewContext(context.Background()))
 }
 
 func UsageWorker(ctx context.Context) error {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -163,7 +164,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	site.Subdomain = subdomain
 	site.Scheme = tls.ServeAppDefaultScheme()
 
-	bundleDef, err := bundle.GetSiteBundleDef(context.Background(), site, nil)
+	bundleDef, err := bundle.GetSiteBundleDef(traceid.NewContext(context.Background()), site, nil)
 	if err != nil {
 		return nil, err
 	}

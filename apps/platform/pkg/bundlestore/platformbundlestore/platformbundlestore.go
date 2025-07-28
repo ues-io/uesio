@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/filebundlestore"
@@ -20,7 +21,7 @@ var bundleStoreCache *bundle.BundleStoreCache
 var platformFileConnection file.Connection
 
 var initConnection = sync.OnceValues(func() (file.Connection, error) {
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession(context.Background()))
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession(traceid.NewContext(context.Background())))
 })
 
 func init() {

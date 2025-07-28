@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -23,7 +24,7 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	id := cutToken[:8]
 	key := cutToken[8:]
 
-	adminSession := sess.GetAnonSession(context.Background(), site)
+	adminSession := sess.GetAnonSession(traceid.NewContext(context.Background()), site)
 	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", nil, adminSession)
 	if err != nil || loginmethod == nil {
 		return nil, exceptions.NewBadRequestException("the api key you are trying to log in with does not exist", nil)
@@ -63,7 +64,7 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 		return cachedUser, nil
 	}
 
-	s := sess.GetAnonSession(context.Background(), site)
+	s := sess.GetAnonSession(traceid.NewContext(context.Background()), site)
 
 	user, err := GetUserWithPictureByID(userid, s, nil)
 	if err != nil {
