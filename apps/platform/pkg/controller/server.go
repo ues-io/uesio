@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/env"
 )
 
@@ -68,20 +69,22 @@ func (s *ServerWithShutdown) WaitShutdown() {
 
 	startupError := false
 
+	ctx := traceid.NewContext(context.Background())
+
 	// Wait for an interrupt signal is sent
 	select {
 	case sig := <-irqSig:
-		slog.Info(fmt.Sprintf("Shutdown initiated (signal: %s)", sig.String()))
+		slog.InfoContext(ctx, fmt.Sprintf("Shutdown initiated (signal: %s)", sig.String()))
 	case <-s.startupError:
 		startupError = true
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(gracefulShutdownSeconds+1)*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(gracefulShutdownSeconds+1)*time.Second)
 	defer cancel()
 
 	// If there was an error starting up the server, this channel will receive a message
 	if !startupError {
-		slog.Info(fmt.Sprintf("Waiting %d seconds to allow in-flight processes to finish...", gracefulShutdownSeconds))
+		slog.InfoContext(ctx, fmt.Sprintf("Waiting %d seconds to allow in-flight processes to finish...", gracefulShutdownSeconds))
 
 		// Create shutdown context with timeout
 		t := time.NewTimer(time.Duration(gracefulShutdownSeconds) * time.Second)
@@ -92,9 +95,9 @@ func (s *ServerWithShutdown) WaitShutdown() {
 	// Completely shutdown the server
 	err := s.Shutdown(ctx)
 	if err != nil {
-		slog.Error("error terminating server: " + err.Error())
+		slog.ErrorContext(ctx, "error terminating server: "+err.Error())
 	}
 	if !startupError {
-		slog.Info("Graceful shutdown is complete.")
+		slog.InfoContext(ctx, "Graceful shutdown is complete.")
 	}
 }

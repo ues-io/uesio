@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/httplog/v3"
+	"github.com/go-chi/traceid"
 	httputil "github.com/thecloudmasters/uesio/pkg/http"
 )
 
@@ -56,7 +57,7 @@ func HandleTrailingError(ctx context.Context, w http.ResponseWriter, err error) 
 }
 
 func AddTrailingStatus(w http.ResponseWriter) {
-	AddTrailingStatusContext(context.Background(), w)
+	AddTrailingStatusContext(traceid.NewContext(context.Background()), w)
 }
 
 func AddTrailingStatusContext(ctx context.Context, w http.ResponseWriter) {

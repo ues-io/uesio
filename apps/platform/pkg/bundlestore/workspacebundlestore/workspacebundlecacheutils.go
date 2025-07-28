@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -66,7 +67,7 @@ func getMinimumViableSession() *sess.Session {
 		FullName: "uesio/core",
 		Name:     "core",
 	}
-	s := sess.New(context.Background(), &meta.User{
+	s := sess.New(traceid.NewContext(context.Background()), &meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.SystemUsername,
 		},

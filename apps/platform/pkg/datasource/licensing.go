@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -61,7 +62,7 @@ func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, erro
 	if ok {
 		return licenseMap, nil
 	}
-	anonSession := sess.GetStudioAnonSession(context.Background())
+	anonSession := sess.GetStudioAnonSession(traceid.NewContext(context.Background()))
 	app := meta.App{}
 	err := PlatformLoadOne(&app, &PlatformLoadOptions{
 		Connection: connection,

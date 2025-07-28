@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -98,7 +99,7 @@ func GetBundleStoreConnection(namespace string, session *sess.Session, connectio
 	} else if connection != nil {
 		ctx = connection.Context()
 	} else {
-		ctx = context.Background()
+		ctx = traceid.NewContext(traceid.NewContext(context.Background()))
 	}
 	return bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Context:      ctx,
