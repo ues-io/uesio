@@ -71,3 +71,6 @@ func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, er
 func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
 	return nil, errors.New("saml auth login is not supported by this auth source type")
 }
+func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return c.Login(loginRequest)
+}

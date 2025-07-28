@@ -350,6 +350,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	//      become a studio specific route within studio itself associated to a studio bot.
 	sr.HandleFunc("/auth/cli/authorize", controller.CLIAuthorize).Methods("GET")
 	sr.HandleFunc("/auth/cli/token", controller.CLIToken).Methods("POST")
+	sr.HandleFunc("/auth/cli/"+itemParam+"/login", controller.CLILogin).Methods("POST")
 
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")

@@ -39,7 +39,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	handleLogin(w, r, session)
+	handleStandardLogin(w, r, session)
 }
 
 func LoginWorkspace(w http.ResponseWriter, r *http.Request) {
@@ -52,25 +52,27 @@ func LoginWorkspace(w http.ResponseWriter, r *http.Request) {
 	// the benefit of having them be "usable" in a workspace context. For now, leaving the functionality as it was prior to the introducing the "ensurePublicSession" concept for standard
 	// login operations.
 	session := middleware.GetSession(r)
-	handleLogin(w, r, session)
+	handleStandardLogin(w, r, session)
 }
 
-func handleLogin(w http.ResponseWriter, r *http.Request, session *sess.Session) {
+func processLogin(r *http.Request, session *sess.Session) (*auth.LoginResult, error) {
 	loginRequest, err := getAuthRequest(r)
 	if err != nil {
-		ctlutil.HandleError(session.Context(), w, exceptions.NewBadRequestException("invalid login request body", err))
-		return
+		return nil, exceptions.NewBadRequestException("invalid login request body", err)
 	}
 
 	conn, err := auth.GetAuthConnection(getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
-		ctlutil.HandleError(session.Context(), w, err)
-		return
+		return nil, err
 	}
 
-	result, err := conn.Login(loginRequest)
+	return conn.Login(loginRequest)
+}
+
+func handleStandardLogin(w http.ResponseWriter, r *http.Request, session *sess.Session) {
+	result, err := processLogin(r, session)
 	if err != nil {
-		ctlutil.HandleError(session.Context(), w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -162,7 +164,7 @@ func handleSAMLLoginResponse(w http.ResponseWriter, r *http.Request, session *se
 
 	result, err := conn.LoginServiceProvider(assertion)
 	if err != nil {
-		ctlutil.HandleError(session.Context(), w, err)
+		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
@@ -185,6 +187,34 @@ func handleSAMLLoginResponse(w http.ResponseWriter, r *http.Request, session *se
 	// TODO: If/When samlauth requires full production support, the entire flow needs to be reviweed, validated, adjusted and proper
 	// tests written or all the samlauth related code should be removed until there is a business need for it.
 	http.Redirect(w, r, response.RedirectPath, http.StatusSeeOther)
+}
+
+func CLILogin(w http.ResponseWriter, r *http.Request) {
+	// See comments in ensurePublicSession for why we do this.
+	session, err := ensurePublicSession(r.Context())
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
+
+	result, err := processLogin(r, session)
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+		return
+	}
+
+	if result.PasswordReset {
+		ctlutil.HandleError(r.Context(), w, exceptions.NewForbiddenException(fmt.Sprintf("password reset required, please visit %s://%s in a browser to reset your password", session.GetSite().Scheme, session.GetSite().GetHost())))
+		return
+	}
+
+	session, err = middleware.ProcessLogin(r.Context(), result.User, session.GetSite())
+	if err != nil {
+		ctlutil.HandleError(r.Context(), w, err)
+	}
+
+	response := auth.NewTokenResponse(preload.GetUserMergeData(session), session.GetAuthToken())
+	filejson.RespondJSON(w, r, response)
 }
 
 func CLIAuthorize(w http.ResponseWriter, r *http.Request) {
@@ -362,11 +392,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request) {
 	auth.DelAuthorizationCode(authCode)
 
 	response := auth.NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.GetAuthToken())
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to encode response: %w", err))
-		return
-	}
+	filejson.RespondJSON(w, r, response)
 }
 
 func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*auth.LoginResponse, error) {
@@ -382,14 +408,14 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 
 	redirectPath := redirect + "?code=" + code + "&username=" + username
 
-	return auth.NewLoginResponse(preload.GetUserMergeData(session), session.GetAuthToken(), redirectPath), nil
+	return auth.NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
 }
 
 func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Session) (*auth.LoginResponse, error) {
 
 	site := session.GetSite()
 
-	session, err := middleware.ProcessLogin(session.Context(), user, site)
+	session, err := middleware.ProcessLogin(r.Context(), user, site)
 	if err != nil {
 		return nil, err
 	}
@@ -402,7 +428,7 @@ func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Se
 
 	redirectPath := referer.Query().Get("r")
 	if redirectPath != "" {
-		return auth.NewLoginResponse(preload.GetUserMergeData(session), session.GetAuthToken(), redirectPath), nil
+		return auth.NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
 	}
 
 	route, err := routing.GetUserHomeRoute(user, session)
