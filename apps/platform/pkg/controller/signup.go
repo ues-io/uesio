@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -25,8 +24,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	site := session.GetSite()
 
-	var payload map[string]any
-	err = json.NewDecoder(r.Body).Decode(&payload)
+	payload, err := getAuthRequest(r)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid signup request body", nil))
 		return
@@ -70,7 +68,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	// session ID is intentionally blank here because we have intentionally not created a browser session
 	// since the user is required to login.
-	redirectPath, err := auth.NewLoginResponseFromRoute(nil, session, route)
+	redirectPath, err := NewLoginResponseFromRoute(nil, session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -99,7 +97,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Convert all query-string params into a map of values to send to the signup confirmation method
-	if err = auth.ConfirmSignUp(systemSession, signupMethodId, map[string]any{
+	if err = auth.ConfirmSignUp(systemSession, signupMethodId, auth.AuthRequest{
 		"username":         username,
 		"verificationcode": queryParams.Get("code"),
 	}, site); err != nil {

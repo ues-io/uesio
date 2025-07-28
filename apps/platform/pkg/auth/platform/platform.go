@@ -81,7 +81,7 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) callListenerBot(botKey, code string, payload map[string]any) error {
+func (c *Connection) callListenerBot(botKey, code string, payload auth.AuthRequest) error {
 
 	site := c.session.GetSite()
 
@@ -131,7 +131,7 @@ func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, er
 	}, nil
 }
 
-func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
@@ -169,7 +169,7 @@ func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMet
 
 }
 
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
@@ -230,7 +230,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]
 	return c.callListenerBot(signupMethod.SignupBot, code, payload)
 
 }
-func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("unable to reset password: you must provide a username", nil)
@@ -289,7 +289,7 @@ func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (
 	return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
 
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("a username must be provided", nil)
@@ -342,7 +342,7 @@ func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, e
 	return auth.GetUserByID(loginmethod.User.ID, c.session, c.connection)
 
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 
 	code := generateCode()
 
@@ -390,7 +390,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	}
 
 	if hasPassword {
-		_, err := c.ConfirmResetPassword(map[string]any{
+		_, err := c.ConfirmResetPassword(auth.AuthRequest{
 			"username":         user.Username,
 			"verificationcode": code,
 			"newpassword":      password,
@@ -410,7 +410,7 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	return c.callListenerBot(signupMethod.CreateLoginBot, code, payload)
 
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
 		return exceptions.NewBadRequestException("username not provided", nil)

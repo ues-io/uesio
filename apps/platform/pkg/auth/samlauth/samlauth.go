@@ -155,19 +155,19 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot login", nil)
 }
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up", nil)
 }
-func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot create a login", nil)
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {

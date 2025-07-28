@@ -23,6 +23,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	authtype "github.com/thecloudmasters/uesio/pkg/types/auth"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -213,7 +214,7 @@ func CLILogin(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 	}
 
-	response := auth.NewTokenResponse(preload.GetUserMergeData(session), session.GetAuthToken())
+	response := NewTokenResponse(preload.GetUserMergeData(session), session.GetAuthToken())
 	filejson.RespondJSON(w, r, response)
 }
 
@@ -391,11 +392,69 @@ func CLIToken(w http.ResponseWriter, r *http.Request) {
 
 	auth.DelAuthorizationCode(authCode)
 
-	response := auth.NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.GetAuthToken())
+	response := NewTokenResponse(preload.GetUserMergeData(cliSession), cliSession.GetAuthToken())
 	filejson.RespondJSON(w, r, response)
 }
 
-func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*auth.LoginResponse, error) {
+func NewUserResponse(user *preload.UserMergeData) *authtype.UserResponse {
+	return &authtype.UserResponse{
+		User: user,
+	}
+}
+
+func NewTokenResponse(user *preload.UserMergeData, token string) *authtype.TokenResponse {
+	return &authtype.TokenResponse{
+		UserResponse: authtype.UserResponse{
+			User: user,
+		},
+		Token: token,
+	}
+}
+
+func NewLoginResponse(user *preload.UserMergeData, redirectPath string) *authtype.LoginResponse {
+	return &authtype.LoginResponse{
+		UserResponse: authtype.UserResponse{
+			User: user,
+		},
+		RedirectPath: redirectPath,
+	}
+}
+
+func NewLoginResponseFromRoute(user *preload.UserMergeData, session *sess.Session, route *meta.Route) (*authtype.LoginResponse, error) {
+	segments := getRouteUrlPrefix(route, session)
+	segments = append(segments, route.Path)
+	redirectPath, err := url.JoinPath("/", segments...)
+	if err != nil {
+		return nil, err
+	}
+	return NewLoginResponse(user, redirectPath), nil
+}
+
+func getRouteUrlPrefix(route *meta.Route, session *sess.Session) []string {
+	namespace := route.Namespace
+	workspace := session.GetWorkspace()
+	// NOTE: This is generic logic but specifically referring to "auth" related routes, We "sort of" support signup/login/etc when in a workspace context
+	// although it really doesn't work because of the way the views are written and they always go to /site/auth and don't contemplate a workspace scenario.
+	// Currently you can only perform auth related activities when in a workspace context directly via the API.
+	// TODO: This may need to be adjusted once a final decision is made on how auth related activities should work in a workspace context.
+	if workspace != nil && workspace.GetAppFullName() != "" && workspace.Name != "" {
+		if namespace == "" {
+			namespace = workspace.GetAppFullName()
+		}
+		return []string{"workspace", workspace.GetAppFullName(), workspace.Name, "app", namespace}
+	}
+
+	site := session.GetSite()
+	if site != nil && site.GetAppFullName() != "" {
+		if namespace != "" && site.GetAppFullName() != namespace {
+			return []string{"site", "app", namespace}
+		}
+	}
+
+	return nil
+}
+
+func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, loginMethod *meta.LoginMethod, session *sess.Session) (*authtype.LoginResponse, error) {
 
 	// TODO: This will not work in all cases and some sites do not even have appkit. The changepassword page likely needs
 	// to be a defined route in site config similar to login, home, etc. However, each auth provider may have a different
@@ -408,10 +467,10 @@ func GetResetPasswordRedirectResponse(w http.ResponseWriter, r *http.Request, us
 
 	redirectPath := redirect + "?code=" + code + "&username=" + username
 
-	return auth.NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
+	return NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
 }
 
-func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Session) (*auth.LoginResponse, error) {
+func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Session) (*authtype.LoginResponse, error) {
 
 	site := session.GetSite()
 
@@ -428,14 +487,14 @@ func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Se
 
 	redirectPath := referer.Query().Get("r")
 	if redirectPath != "" {
-		return auth.NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
+		return NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
 	}
 
 	route, err := routing.GetUserHomeRoute(user, session)
 	if err != nil {
 		return nil, err
 	}
-	return auth.NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
+	return NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
 }
 
 func LoginRedirectResponse(w http.ResponseWriter, r *http.Request, user *meta.User, session *sess.Session) {
@@ -464,6 +523,7 @@ func getAuthRequest(r *http.Request) (auth.AuthRequest, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Body.Close()
 
 	return loginRequest, nil
 }

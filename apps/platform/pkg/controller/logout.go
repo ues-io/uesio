@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/preload"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -27,7 +26,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	redirectPath, err := auth.NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
+	redirectPath, err := NewLoginResponseFromRoute(preload.GetUserMergeData(session), session, route)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
