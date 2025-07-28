@@ -370,17 +370,16 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	// 2. If the payload includes a "password" and a "setTemporary" flag, set the password into
 	//    the temporary password field as well.
 	setTemporary := param.GetBoolean(payload, "setTemporary")
-	// TODO: This seems dangerous for two reasons:
-	//    1. an empty password and not requiring a password reset or for that matter even allowing a user to be created without a password? There is a flow where admin creates user which sends email and user can't login until
-	//       they verify the email addr but explicitly forcereset pwd helps further mitigate risk.
-	//    2. If we set a temporary password we should always forcereset - should not be able to keep your temporary password
 	if hasPassword && setTemporary {
 		loginMethod.TemporaryPassword = password
+		loginMethod.ForceReset = true
 	}
 
 	// 3. If the payload includes a "password" and a "forceReset" flag, set the forceReset flag on
-	//    the login method.
-	forceReset := param.GetBoolean(payload, "forceReset")
+	//    the login method or if we do not have a password.
+	// NOTE: If there is no password, all of the required values for the email notification (e.g., email address)
+	// must be provided in the payload.
+	forceReset := !hasPassword || param.GetBoolean(payload, "forceReset")
 	if forceReset {
 		loginMethod.ForceReset = true
 	}
