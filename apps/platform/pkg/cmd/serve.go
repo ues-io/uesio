@@ -338,8 +338,10 @@ func serve(cmd *cobra.Command, args []string) error {
 	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
 	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
 
-	sr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLogin).Methods("GET")
-	wr.HandleFunc("/auth/"+itemParam+"/requestlogin", controller.RequestLoginWorkspace).Methods("GET")
+	sr.HandleFunc("/auth/saml/"+itemParam+"/sso", controller.SAMLLoginRequest).Methods("GET")
+	wr.HandleFunc("/auth/saml/"+itemParam+"/sso", controller.SAMLLoginRequestWorkspace).Methods("GET")
+	sr.HandleFunc("/auth/saml/"+itemParam+"/acs", controller.SAMLLoginResponse).Methods("POST")
+	wr.HandleFunc("/auth/saml/"+itemParam+"/acs", controller.SAMLLoginResponsetWorkspace).Methods("POST")
 
 	// These routes are studio specific and will return forbidden if not uesio/studio.  The way we handle cli auth
 	// and these routes in general can be improved in one of two ways:

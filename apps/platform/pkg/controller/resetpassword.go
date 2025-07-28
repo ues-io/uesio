@@ -62,5 +62,5 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.LoginRedirectResponse(w, r, user, session)
+	LoginRedirectResponse(w, r, user, session)
 }

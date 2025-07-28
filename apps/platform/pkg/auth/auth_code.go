@@ -13,7 +13,7 @@ import (
 
 const AuthCodeLifetime = 3 * time.Minute
 
-type authCodeRequest struct {
+type AuthCodeRequest struct {
 	CodeChallenge   string
 	ChallengeMethod string
 	UserID          string
@@ -21,13 +21,13 @@ type authCodeRequest struct {
 	RedirectURI     string
 }
 
-var authCodeRequestCache = cache.NewPlatformCache[*authCodeRequest]("authCodeRequests", AuthCodeLifetime)
+var authCodeRequestCache = cache.NewPlatformCache[*AuthCodeRequest]("authCodeRequests", AuthCodeLifetime)
 
-func AddAuthorizationCode(authCode string, req *authCodeRequest) error {
+func AddAuthorizationCode(authCode string, req *AuthCodeRequest) error {
 	return authCodeRequestCache.Add(authCode, req)
 }
 
-func GetAuthorizationCode(authCode string) (*authCodeRequest, error) {
+func GetAuthorizationCode(authCode string) (*AuthCodeRequest, error) {
 	authReq, err := authCodeRequestCache.Get(authCode)
 	if err != nil {
 		return nil, fmt.Errorf("auth request not found: %w", err)

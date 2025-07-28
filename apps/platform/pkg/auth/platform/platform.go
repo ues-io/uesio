@@ -1,10 +1,8 @@
 package platform
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -13,8 +11,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/param"
@@ -109,38 +108,27 @@ func (c *Connection) callListenerBot(botKey, code string, payload map[string]any
 	return nil
 }
 
-func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(r.Context(), w, errors.New("requesting login is not supported by this auth source type"))
-}
-
-func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-	var loginRequest map[string]any
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	user, loginMethod, err := c.DoLogin(loginRequest)
 	if err != nil {
-		msg := "invalid login request body"
-		slog.InfoContext(r.Context(), fmt.Sprintf("%s: %v", msg, err))
-		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException(msg, nil))
-		return
-	}
-	user, loginmethod, err := c.DoLogin(loginRequest)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
+		return nil, err
 	}
 
-	if loginmethod.ForceReset {
-		loginMethod, err := datasource.WithTransactionResult(c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+	requiresReset := loginMethod.ForceReset
+	if requiresReset {
+		loginMethod, err = datasource.WithTransactionResult(c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
 			c.connection = connection
 			return c.ResetPassword(loginRequest, true)
 		})
 		if err != nil {
-			ctlutil.HandleError(r.Context(), w, err)
-			return
+			return nil, err
 		}
-		auth.ResetPasswordRedirectResponse(w, r, user, loginMethod, c.session)
-		return
 	}
-	auth.LoginRedirectResponse(w, r, user, c.session)
+
+	return &auth.LoginResult{
+		AuthResult:    auth.AuthResult{User: user, LoginMethod: loginMethod},
+		PasswordReset: requiresReset,
+	}, nil
 }
 
 func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
@@ -382,6 +370,10 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 	// 2. If the payload includes a "password" and a "setTemporary" flag, set the password into
 	//    the temporary password field as well.
 	setTemporary := param.GetBoolean(payload, "setTemporary")
+	// TODO: This seems dangerous for two reasons:
+	//    1. an empty password and not requiring a password reset or for that matter even allowing a user to be created without a password? There is a flow where admin creates user which sends email and user can't login until
+	//       they verify the email addr but explicitly forcereset pwd helps further mitigate risk.
+	//    2. If we set a temporary password we should always forcereset - should not be able to keep your temporary password
 	if hasPassword && setTemporary {
 		loginMethod.TemporaryPassword = password
 	}
@@ -455,4 +447,10 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[
 	loginmethod.VerificationExpires = 0
 	return datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
 
+}
+func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
+	return nil, errors.New("saml auth is not supported by this auth source type")
+}
+func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+	return nil, errors.New("saml auth login is not supported by this auth source type")
 }

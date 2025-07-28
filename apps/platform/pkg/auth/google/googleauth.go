@@ -1,12 +1,12 @@
 package googleauth
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
+	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -84,23 +84,15 @@ func (c *Connection) Validate(payload map[string]any) (*idtoken.Payload, error) 
 
 }
 
-func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	ctlutil.HandleError(r.Context(), w, errors.New("requesting login is not supported by this auth source type"))
-}
-
-func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-	var loginRequest map[string]any
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	user, loginMethod, err := c.DoLogin(loginRequest)
 	if err != nil {
-		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid login request body", err))
-		return
+		return nil, err
 	}
-	user, _, err := c.DoLogin(loginRequest)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-	auth.LoginRedirectResponse(w, r, user, c.session)
+	return &auth.LoginResult{
+		AuthResult:    auth.AuthResult{User: user, LoginMethod: loginMethod},
+		PasswordReset: false,
+	}, nil
 }
 
 func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
@@ -161,4 +153,10 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
 	return exceptions.NewBadRequestException("google login: unfortunately you cannot change the password", nil)
+}
+func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
+	return nil, errors.New("saml auth is not supported by this auth source type")
+}
+func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+	return nil, errors.New("saml auth login is not supported by this auth source type")
 }

@@ -11,7 +11,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -223,7 +222,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 
 	// If public user (not logged in), redirect to the login route
 	if redirect && session.IsPublicUser() {
-		if auth.RedirectToLoginRoute(w, r, session, auth.NotFound) {
+		if middleware.RedirectToLoginRoute(w, r, session, middleware.NotFound) {
 			return
 		}
 	}

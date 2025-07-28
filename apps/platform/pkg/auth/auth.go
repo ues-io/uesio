@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlsp"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -20,13 +22,30 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
+type AuthRequest = map[string]any
+
+type AuthResult struct {
+	User        *meta.User
+	LoginMethod *meta.LoginMethod
+}
+
+type LoginResult struct {
+	AuthResult
+	PasswordReset bool
+}
+
 type AuthenticationType interface {
 	GetAuthConnection(*wire.Credentials, *meta.AuthSource, wire.Connection, *sess.Session) (AuthConnection, error)
 }
 
 type AuthConnection interface {
-	Login(http.ResponseWriter, *http.Request)
-	RequestLogin(http.ResponseWriter, *http.Request)
+	Login(AuthRequest) (*LoginResult, error)
+	GetServiceProvider(r *http.Request) (*samlsp.Middleware, error)
+	// Explicit method for assertion login vs just creating an AuthRequest and sending to Login because
+	// of the dynamic nature of our calls to "Login". In theory, it's all converted to strings so the type
+	// assertion to Assertion would fail but this ensures we only get Assertions from SP's that have validated
+	// them and not through any POST operation that might flow through /login.
+	LoginServiceProvider(*saml.Assertion) (*LoginResult, error)
 	Signup(*meta.SignupMethod, map[string]any, string) error
 	ConfirmSignUp(*meta.SignupMethod, map[string]any) error
 	ResetPassword(map[string]any, bool) (*meta.LoginMethod, error)
@@ -412,4 +431,30 @@ func GetRequiredPayloadValue(payload map[string]any, key string) (string, error)
 		return "", fmt.Errorf("missing required value: %s", key)
 	}
 	return value, nil
+}
+
+func GetUserFromFederationID(authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
+
+	if session.GetWorkspace() != nil {
+		return nil, nil, exceptions.NewBadRequestException("login isn't currently supported for workspaces", nil)
+	}
+
+	adminSession := sess.GetAnonSessionFrom(session)
+
+	// 4. Check for Existing User
+	loginMethod, err := GetLoginMethod(federationID, authSourceID, connection, adminSession)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed getting login method data: %w", err)
+	}
+
+	if loginMethod == nil {
+		return nil, nil, exceptions.NewNotFoundException("no account found with this login method")
+	}
+
+	user, err := GetUserByID(loginMethod.User.ID, adminSession, nil)
+	if err != nil {
+		return nil, nil, exceptions.NewNotFoundException("failed getting user data: " + err.Error())
+	}
+
+	return user, loginMethod, nil
 }
