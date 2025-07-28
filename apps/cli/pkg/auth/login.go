@@ -23,6 +23,7 @@ import (
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/preload"
+	authtype "github.com/thecloudmasters/uesio/pkg/types/auth"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -33,7 +34,7 @@ const platformLoginMethod = "uesio/core.platform"
 const mockLoginMethod = "uesio/core.mock"
 const browserLoginMethod = "browser"
 
-type LoginHandler func() (*auth.TokenResponse, error)
+type LoginHandler func() (*authtype.TokenResponse, error)
 
 type LoginMethodHandler struct {
 	Key   string
@@ -73,7 +74,7 @@ func getMockHandler() (*LoginMethodHandler, error) {
 
 	return &LoginMethodHandler{
 		Key: mockLoginMethod,
-		Login: func() (*auth.TokenResponse, error) {
+		Login: func() (*authtype.TokenResponse, error) {
 			username := os.Getenv("UESIO_CLI_USERNAME")
 			if username == "" {
 				err := survey.AskOne(&survey.Select{
@@ -95,7 +96,7 @@ func getMockHandler() (*LoginMethodHandler, error) {
 
 var platformHandler = &LoginMethodHandler{
 	Key: platformLoginMethod,
-	Login: func() (*auth.TokenResponse, error) {
+	Login: func() (*authtype.TokenResponse, error) {
 		username := os.Getenv("UESIO_CLI_USERNAME")
 		password := os.Getenv("UESIO_CLI_PASSWORD")
 
@@ -127,7 +128,7 @@ var platformHandler = &LoginMethodHandler{
 
 var browserHandler = &LoginMethodHandler{
 	Key: browserLoginMethod,
-	Login: func() (*auth.TokenResponse, error) {
+	Login: func() (*authtype.TokenResponse, error) {
 		platformBaseURL, err := host.GetHostPrompt()
 		if err != nil {
 			return nil, err
@@ -157,7 +158,7 @@ var browserHandler = &LoginMethodHandler{
 		defer cancel()
 
 		eg, ctx := errgroup.WithContext(ctx)
-		var tokenResp *auth.TokenResponse
+		var tokenResp *authtype.TokenResponse
 		eg.Go(func() error {
 			select {
 			case openURL := <-ready:
@@ -195,7 +196,7 @@ var browserHandler = &LoginMethodHandler{
 	},
 }
 
-func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) (*auth.TokenResponse, error) {
+func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) (*authtype.TokenResponse, error) {
 	v := url.Values{
 		"code":          {authCode},
 		"code_verifier": {codeVerifier},
@@ -213,7 +214,7 @@ func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) 
 		return nil, fmt.Errorf("exchange failed with status %d", resp.StatusCode)
 	}
 
-	var tokenResp auth.TokenResponse
+	var tokenResp authtype.TokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
 		return nil, err
 	}
@@ -221,7 +222,7 @@ func exchangePKCECode(authCode string, codeVerifier string, redirectURL string) 
 	return &tokenResp, nil
 }
 
-func processDirectLogin(method string, payload map[string]string) (*auth.TokenResponse, error) {
+func processDirectLogin(method string, payload map[string]string) (*authtype.TokenResponse, error) {
 	methodNamespace, methodName, err := parseKey(method)
 	if err != nil {
 		return nil, err
@@ -242,14 +243,14 @@ func processDirectLogin(method string, payload map[string]string) (*auth.TokenRe
 	}
 	defer resp.Body.Close()
 
-	var tokenResponse auth.TokenResponse
+	var tokenResponse authtype.TokenResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&tokenResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	return auth.NewTokenResponse(tokenResponse.User, tokenResponse.Token), nil
+	return &tokenResponse, nil
 }
 
 func getLoginHandler() (*LoginMethodHandler, error) {

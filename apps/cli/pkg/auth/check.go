@@ -3,8 +3,8 @@ package auth
 import (
 	"github.com/thecloudmasters/cli/pkg/call"
 	"github.com/thecloudmasters/cli/pkg/config"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/preload"
+	authtype "github.com/thecloudmasters/uesio/pkg/types/auth"
 )
 
 func Check() (*preload.UserMergeData, error) {
@@ -19,7 +19,7 @@ func Check() (*preload.UserMergeData, error) {
 		return nil, nil
 	}
 
-	var userResponse auth.UserResponse
+	var userResponse authtype.UserResponse
 
 	err = call.GetJSON("site/auth/check", token, &userResponse)
 	if err != nil {

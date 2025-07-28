@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -26,8 +25,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	site := session.GetContextSite()
 
-	var payload map[string]any
-	err = json.NewDecoder(r.Body).Decode(&payload)
+	payload, err := getAuthRequest(r)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return
@@ -49,8 +47,7 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	site := session.GetSite()
 
-	var payload map[string]any
-	err = json.NewDecoder(r.Body).Decode(&payload)
+	payload, err := getAuthRequest(r)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid request body", err))
 		return

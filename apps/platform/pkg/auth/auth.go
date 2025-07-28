@@ -47,11 +47,11 @@ type AuthConnection interface {
 	// them and not through any POST operation that might flow through /login.
 	LoginServiceProvider(*saml.Assertion) (*LoginResult, error)
 	LoginCLI(AuthRequest) (*LoginResult, error)
-	Signup(*meta.SignupMethod, map[string]any, string) error
-	ConfirmSignUp(*meta.SignupMethod, map[string]any) error
-	ResetPassword(map[string]any, bool) (*meta.LoginMethod, error)
-	ConfirmResetPassword(map[string]any) (*meta.User, error)
-	CreateLogin(*meta.SignupMethod, map[string]any, *meta.User) error
+	Signup(*meta.SignupMethod, AuthRequest, string) error
+	ConfirmSignUp(*meta.SignupMethod, AuthRequest) error
+	ResetPassword(AuthRequest, bool) (*meta.LoginMethod, error)
+	ConfirmResetPassword(AuthRequest) (*meta.User, error)
+	CreateLogin(*meta.SignupMethod, AuthRequest, *meta.User) error
 }
 
 func GetAuthConnection(authSourceID string, connection wire.Connection, session *sess.Session) (AuthConnection, error) {
@@ -407,7 +407,7 @@ func CreateLoginMethod(loginMethod *meta.LoginMethod, connection wire.Connection
 	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
 }
 
-func GetPayloadValue(payload map[string]any, key string) (string, error) {
+func GetPayloadValue(payload AuthRequest, key string) (string, error) {
 
 	value, ok := payload[key]
 	if !ok {
@@ -423,7 +423,7 @@ func GetPayloadValue(payload map[string]any, key string) (string, error) {
 
 }
 
-func GetRequiredPayloadValue(payload map[string]any, key string) (string, error) {
+func GetRequiredPayloadValue(payload AuthRequest, key string) (string, error) {
 	value, err := GetPayloadValue(payload, key)
 	if err != nil {
 		return "", err

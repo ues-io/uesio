@@ -43,26 +43,26 @@ func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, er
 	}, nil
 }
 
-func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
 		return nil, nil, fmt.Errorf("mock login: %w", err)
 	}
 	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
 }
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
+func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 	return errors.New("mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ResetPassword(payload map[string]any, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmResetPassword(payload map[string]any) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
 	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[string]any, user *meta.User) error {
+func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 	return errors.New("mock login: unfortunately you cannot create a login")
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
+func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	return errors.New("mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
