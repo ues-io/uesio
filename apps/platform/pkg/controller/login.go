@@ -353,7 +353,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	cliSession, err := auth.ProcessLogin(r.Context(), user, site)
+	cliSession, err := middleware.ProcessLogin(r.Context(), user, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -389,7 +389,7 @@ func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Se
 
 	site := session.GetSite()
 
-	session, err := auth.ProcessLogin(session.Context(), user, site)
+	session, err := middleware.ProcessLogin(session.Context(), user, site)
 	if err != nil {
 		return nil, err
 	}

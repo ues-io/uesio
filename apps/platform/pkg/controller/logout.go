@@ -45,7 +45,7 @@ func ensurePublicSession(ctx context.Context) (*sess.Session, error) {
 	session := middleware.GetSessionFromContext(ctx)
 	site := session.GetSite()
 
-	session, err := auth.ProcessLogout(ctx, site)
+	session, err := middleware.ProcessLogout(ctx, site)
 	if err != nil {
 		return nil, err
 	}

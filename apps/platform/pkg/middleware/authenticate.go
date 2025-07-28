@@ -1,15 +1,25 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
+	"time"
 
+	"github.com/alexedwards/scs/redisstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/alexedwards/scs/v2/memstore"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
+	"github.com/thecloudmasters/uesio/pkg/env"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
 	"github.com/gorilla/mux"
@@ -18,8 +28,51 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 )
 
+const sessionLifetime = 12 * time.Hour
+const BrowserSessionCookieName = "sessid" // icza applied this name by default so we use the same one
+const siteIDKey = "SiteId"
+const userIDKey = "UserId"
+
+var browserSessionManager *scs.SessionManager
+
+func init() {
+	// The localhost check here is only necessary because hurl doesn't handle secure cookies against *.localhost by default like browsers, curl, etc.
+	// do. If/When they treat "localhost" as a secure connection the IsLocalHost condition can be removed.
+	// TODO: File an issue with hurl regarding this.  libcurl is returning the cookie to them, its in the response, but they are not carrying it
+	// forward to subsequent requests.
+	allowInsecureCookies := !tls.ServeAppWithTLS() && (env.IsLocalhost() || os.Getenv("UESIO_ALLOW_INSECURE_COOKIES") == "true")
+	storageType := os.Getenv("UESIO_SESSION_STORE")
+
+	var store scs.Store
+	switch storageType {
+	case "redis":
+		prefix := "scs:session:"
+		pool, err := cache.RegisterNamespace(prefix)
+		if err != nil {
+			panic(fmt.Sprintf("failed to register scs redis namespace for session store: %v", err))
+		}
+		store = redisstore.NewWithPrefix(pool, prefix)
+	case "", "memory":
+		store = memstore.New()
+	default:
+		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
+	}
+
+	browserSessionManager = scs.New()
+	// TODO: This mirrors prior behavior where we had a fixed 12 hour duration since we were not rolling the duration based on
+	// access.  Need to decide on defaults for this and IdleTimeout.
+	//browserSessionManager.IdleTimeout = TODO
+	browserSessionManager.Lifetime = sessionLifetime
+	browserSessionManager.Store = store
+	browserSessionManager.Cookie.Name = BrowserSessionCookieName
+	browserSessionManager.Cookie.Secure = !allowInsecureCookies
+	browserSessionManager.ErrorFunc = func(w http.ResponseWriter, r *http.Request, err error) {
+		ctlutil.HandleError(r.Context(), w, fmt.Errorf("browser session error: %w", err))
+	}
+}
+
 func BrowserSessionHandler() func(next http.Handler) http.Handler {
-	return auth.BrowserSessionManager.LoadAndSave
+	return browserSessionManager.LoadAndSave
 }
 
 // Authenticate checks to see if the current user is logged in
@@ -164,28 +217,28 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 // prior to https://github.com/ues-io/uesio/pull/5076 being implemented which eliminated writing public browser sessions to cache.
 func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Session, error) {
 	ctx := r.Context()
-	browserSiteID := auth.BrowserSessionManager.GetString(ctx, auth.SiteIDKey)
-	browserUserID := auth.BrowserSessionManager.GetString(ctx, auth.UserIDKey)
+	browserSiteID := browserSessionManager.GetString(ctx, siteIDKey)
+	browserUserID := browserSessionManager.GetString(ctx, userIDKey)
 
 	if browserSiteID == "" && browserUserID == "" {
-		return auth.CreateSessionForPublicUser(ctx, site)
+		return createSessionForPublicUser(ctx, site)
 	}
 
 	if browserSiteID != site.ID {
 		// TODO: Should we just clear and recover to a public session here? Technically we received
 		// a request that is invalid so I think we should just reject the entire request since we
 		// cannot trust it
-		auth.BrowserSessionManager.Destroy(ctx)
+		browserSessionManager.Destroy(ctx)
 		return nil, exceptions.NewUnauthorizedException("invalid_browser_session: site_mismatch")
 	}
 
 	user, err := auth.GetCachedUserByID(browserUserID, site)
 	if err == nil {
-		return auth.GetSessionFromUser(ctx, user, site, auth.BrowserSessionManager.Token(ctx))
+		return auth.GetSessionFromUser(ctx, user, site, browserSessionManager.Token(ctx))
 	}
 
 	if exceptions.IsType[*exceptions.NotFoundException](err) {
-		return auth.HandlePriviledgeChange(ctx, nil, site)
+		return handlePriviledgeChange(ctx, nil, site)
 	} else {
 		return nil, err
 	}
@@ -266,4 +319,38 @@ func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.
 
 	http.Redirect(w, r, redirectPath, redirectStatusCode)
 	return true
+}
+
+func ProcessLogin(ctx context.Context, user *meta.User, site *meta.Site) (*sess.Session, error) {
+	return handlePriviledgeChange(ctx, user, site)
+}
+
+func ProcessLogout(ctx context.Context, site *meta.Site) (*sess.Session, error) {
+	return handlePriviledgeChange(ctx, nil, site)
+}
+
+// Creates a uesio session from a user and site. If user is nil, the public user for the site is used.
+func handlePriviledgeChange(ctx context.Context, user *meta.User, site *meta.Site) (*sess.Session, error) {
+	// We may or may not renew the token so we destroy data either way. For situations where we are going to
+	// renew, since we only track UserID and SiteID and we set them below, destroying the data is OK. However,
+	// if/when we add other data to the store for the session, we may need/want to carry it forward (e.g.,
+	// preferences, etc.)
+	browserSessionManager.Destroy(ctx)
+
+	if user == nil {
+		return createSessionForPublicUser(ctx, site)
+	}
+
+	browserSessionManager.RenewToken(ctx)
+	browserSessionManager.Put(ctx, siteIDKey, site.ID)
+	browserSessionManager.Put(ctx, userIDKey, user.ID)
+	return auth.GetSessionFromUser(ctx, user, site, browserSessionManager.Token(ctx))
+}
+
+func createSessionForPublicUser(ctx context.Context, site *meta.Site) (*sess.Session, error) {
+	publicUser, err := auth.GetPublicUser(site, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
+	}
+	return auth.GetSessionFromUser(ctx, publicUser, site, "")
 }
