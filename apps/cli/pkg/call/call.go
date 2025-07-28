@@ -72,7 +72,12 @@ func Request(r *RequestSpec) (*http.Response, error) {
 		case http.StatusNotFound:
 			return nil, exceptions.NewNotFoundException("resource not found")
 		case http.StatusForbidden, http.StatusUnauthorized:
-			return nil, exceptions.NewForbiddenException("permission denied")
+			return nil, exceptions.NewForbiddenException(string(data))
+		case http.StatusBadRequest:
+			// intentionally not using NewBadRequestException here because the data already contains the text "bad request: ..." and using
+			// BadRequestException again would emit "bad request:" twice.
+			// TODO: Consider BadRequestException not prefixing the message with "bad request:"
+			return nil, errors.New(string(data))
 		default:
 			return nil, fmt.Errorf("request to %v failed with status code %v: '%v'", resp.Request.URL, resp.StatusCode, string(data))
 		}

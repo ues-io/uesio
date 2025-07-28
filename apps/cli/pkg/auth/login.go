@@ -234,7 +234,7 @@ func processDirectLogin(method string, payload map[string]string) (*auth.TokenRe
 		return nil, err
 	}
 
-	url := fmt.Sprintf("site/auth/%s/%s/login", methodNamespace, methodName)
+	url := fmt.Sprintf("site/auth/cli/%s/%s/login", methodNamespace, methodName)
 
 	resp, err := call.Post(url, payloadBytes, "", nil)
 	if err != nil {
@@ -242,14 +242,14 @@ func processDirectLogin(method string, payload map[string]string) (*auth.TokenRe
 	}
 	defer resp.Body.Close()
 
-	var loginResponse auth.LoginResponse
+	var tokenResponse auth.TokenResponse
 
-	err = json.NewDecoder(resp.Body).Decode(&loginResponse)
+	err = json.NewDecoder(resp.Body).Decode(&tokenResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	return auth.NewTokenResponse(loginResponse.User, loginResponse.Token), nil
+	return auth.NewTokenResponse(tokenResponse.User, tokenResponse.Token), nil
 }
 
 func getLoginHandler() (*LoginMethodHandler, error) {

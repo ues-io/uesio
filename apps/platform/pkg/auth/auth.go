@@ -46,6 +46,7 @@ type AuthConnection interface {
 	// assertion to Assertion would fail but this ensures we only get Assertions from SP's that have validated
 	// them and not through any POST operation that might flow through /login.
 	LoginServiceProvider(*saml.Assertion) (*LoginResult, error)
+	LoginCLI(AuthRequest) (*LoginResult, error)
 	Signup(*meta.SignupMethod, map[string]any, string) error
 	ConfirmSignUp(*meta.SignupMethod, map[string]any) error
 	ResetPassword(map[string]any, bool) (*meta.LoginMethod, error)

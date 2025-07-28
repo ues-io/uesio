@@ -192,3 +192,6 @@ func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.Logi
 		PasswordReset: false,
 	}, nil
 }
+func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return nil, exceptions.NewBadRequestException("SAML login: cli login is not supported, please use browser", nil)
+}

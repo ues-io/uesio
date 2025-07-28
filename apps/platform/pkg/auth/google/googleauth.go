@@ -95,6 +95,10 @@ func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, er
 	}, nil
 }
 
+func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return nil, exceptions.NewBadRequestException("google login: cli login is not supported, please use browser", nil)
+}
+
 func (c *Connection) DoLogin(payload map[string]any) (*meta.User, *meta.LoginMethod, error) {
 	validated, err := c.Validate(payload)
 	if err != nil {
