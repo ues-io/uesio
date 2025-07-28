@@ -9,6 +9,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 	"github.com/thecloudmasters/uesio/pkg/controller/filejson"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 
@@ -114,7 +115,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Log the user in
-	_, err = auth.ProcessLogin(r.Context(), user, site)
+	_, err = middleware.ProcessLogin(r.Context(), user, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

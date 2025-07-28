@@ -11,8 +11,8 @@ import (
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/context"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	uesiohttp "github.com/thecloudmasters/uesio/pkg/http"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
@@ -46,7 +46,7 @@ func Request(r *RequestSpec) (*http.Response, error) {
 	}
 
 	if r.Token != "" {
-		req.Header.Set("Cookie", auth.BrowserSessionCookieName+"="+r.Token)
+		req.Header.Set("Cookie", middleware.BrowserSessionCookieName+"="+r.Token)
 	}
 	if r.AppContext != nil {
 		r.AppContext.AddHeadersToRequest(req)
