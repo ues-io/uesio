@@ -50,7 +50,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if signupMethod.AutoLogin {
-		auth.LoginRedirectResponse(w, r, user, session)
+		LoginRedirectResponse(w, r, user, session)
 		return
 	}
 

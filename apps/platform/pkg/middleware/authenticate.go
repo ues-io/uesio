@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -135,7 +137,7 @@ func HandleContextSwitchAuthError(w http.ResponseWriter, r *http.Request, err er
 	if s.IsPublicUser() && (exceptions.IsType[*exceptions.UnauthorizedException](err) || exceptions.IsType[*exceptions.NotFoundException](err) || exceptions.IsType[*exceptions.ForbiddenException](err)) {
 		// TODO: Should we using auth.LoggedOut here but RedirectToLoginRoute only applies 200 with Location header when auth.Expired
 		// is specified so maintaining that for backwards compat for now. This should be revisited and appropriate reasons specified.
-		auth.RedirectToLoginRoute(w, r.WithContext(ctx), s, auth.Expired)
+		RedirectToLoginRoute(w, r.WithContext(ctx), s, Expired)
 		return
 	}
 
@@ -187,4 +189,81 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 	} else {
 		return nil, err
 	}
+}
+
+func getLoginRoute(session *sess.Session) (*meta.Route, error) {
+	loginRoute, err := meta.NewRoute(session.GetLoginRoute())
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(loginRoute, nil, session, nil)
+	if err != nil {
+		return nil, err
+	}
+	return loginRoute, nil
+}
+
+type RedirectReason int
+
+const (
+	Expired = iota
+	LoggedOut
+	NoAccess
+	NotFound
+)
+
+func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, reason RedirectReason) bool {
+	loginRoute, err := getLoginRoute(session)
+	if err != nil {
+		return false
+	}
+
+	requestedPath := r.URL.RequestURI()
+	redirectPath := "/" + loginRoute.Path
+
+	if session.GetContextAppName() != loginRoute.Namespace {
+		redirectPath = "/site/app/" + loginRoute.Namespace + "/" + redirectPath
+	}
+
+	loginRouteSuffix := fmt.Sprintf("%s/%s", loginRoute.Namespace, loginRoute.Path)
+
+	// If we are going to the login route already, don't do any more redirections
+	if redirectPath == requestedPath || strings.HasSuffix(requestedPath, redirectPath) || strings.HasSuffix(requestedPath, loginRouteSuffix) {
+		return false
+	}
+
+	redirectStatusCode := http.StatusFound
+
+	isHTMLRequest := strings.Contains(r.Header.Get("Accept"), "text/html")
+	refererHeader := r.Header.Get("Referer")
+
+	if !isHTMLRequest {
+		// If this is a Fetch / XHR request, we want to send the user back to the Referer URL
+		// (i.e. the URL in the browser URL bar), NOT the URL being fetched in the XHR,
+		// after the user logs in.
+		if refererHeader != "" {
+			requestedPath = refererHeader
+		}
+		// We need to send a 200 status, not 302, to prevent fetch API
+		// from attempting to do its bad redirect behavior, which is not controllable.
+		// (Zach: I tried using "manual" and "error" for the fetch "redirect" properties,
+		// but none of them provided the ability to capture the location header from the server
+		// WITHOUT doing some unwanted browser behavior).
+		redirectStatusCode = http.StatusOK
+	}
+
+	if requestedPath != "" && requestedPath != "/" {
+		redirectPath = redirectPath + "?r=" + url.QueryEscape(requestedPath)
+	}
+	if reason == Expired {
+		if strings.Contains(redirectPath, "?") {
+			redirectPath = redirectPath + "&"
+		} else {
+			redirectPath = redirectPath + "?"
+		}
+		redirectPath = redirectPath + "expired=true"
+	}
+
+	http.Redirect(w, r, redirectPath, redirectStatusCode)
+	return true
 }

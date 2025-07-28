@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,7 +14,6 @@ import (
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -154,76 +152,9 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 
 }
 
-func (c *Connection) RequestLogin(w http.ResponseWriter, r *http.Request) {
-	samlSP, err := c.getSP(r.Host)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	samlSP.HandleStartAuthFlow(w, r)
+func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot login", nil)
 }
-
-func (c *Connection) Login(w http.ResponseWriter, r *http.Request) {
-
-	sp, err := c.getSP(r.Host)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	err = r.ParseForm()
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	assertion, err := sp.ServiceProvider.ParseResponse(r, []string{})
-	if err != nil {
-		target := &saml.InvalidResponseError{}
-		if errors.As(err, &target) {
-			fmt.Println(target.PrivateErr)
-		}
-
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	sess, err := samlsp.JWTSessionCodec{}.New(assertion)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	claims := sess.(samlsp.JWTSessionClaims)
-
-	user, _, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.connection, c.session)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	response, err := auth.GetLoginRedirectResponse(w, r, user, c.session)
-	if err != nil {
-		ctlutil.HandleError(r.Context(), w, err)
-		return
-	}
-
-	// NOTE - The previous version of this code would always ignore any `redirectPath` from GetLoginRedirectResponse
-	// and always use RedirectRouteNamespace & RedirectRouteName.  Additionally, it would check if the c.session.GetContextAppName()
-	// was different from the response.RedirectRouteNamespace and if so, build a redirectPath (see the git history for exact code
-	// that was used). The approach taken was specifically for a prototype of samlauth and was never intended to be production ready.
-	// UPDATED: The implementation of GetLoginRedirectResponse has been updated to included the equivalent logic for
-	// prefixing the path similar to the way this code was written originally. Specifically, it handles both workspace context
-	// and site namespace differences where the previous code here only handled site namespace difference. In short, the redirectPath
-	// generation portion is consistent (and improved) from the code that was here previously including handling a "redirectPath" value
-	// if there is an explicit redirect path query string parameter. All that said, if/when this code is used in future, this all should
-	// be evaluated and updated to meet actual use case requirements since it was created with a focus on a POC and not production use.
-	// TODO: If/When samlauth requires full production support, the entire flow needs to be reviweed, validated, adjusted and proper
-	// tests written or all the samlauth related code should be removed until there is a business need for it.
-	http.Redirect(w, r, response.RedirectPath, http.StatusSeeOther)
-}
-
 func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload map[string]any, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up", nil)
 }
@@ -238,4 +169,26 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload map[st
 }
 func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload map[string]any) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
+}
+func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
+	return c.getSP(r.Host)
+}
+func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+	sess, err := samlsp.JWTSessionCodec{}.New(assertion)
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := sess.(samlsp.JWTSessionClaims)
+	if !ok {
+		return nil, errors.New("invalid session type")
+	}
+
+	user, loginMethod, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.connection, c.session)
+	if err != nil {
+		return nil, err
+	}
+	return &auth.LoginResult{
+		AuthResult:    auth.AuthResult{User: user, LoginMethod: loginMethod},
+		PasswordReset: false,
+	}, nil
 }
