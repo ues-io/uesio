@@ -1,6 +1,7 @@
 package pack
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -21,10 +22,11 @@ func fileExists(path string) bool {
 }
 
 func CreateEntryFiles() (map[string]string, error) {
+	ctx := context.Background()
 	sbs := &localbundlestore.LocalBundleStore{}
 	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := conn.GetBundleDef()
+	def, err := conn.GetBundleDef(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -33,13 +35,13 @@ func CreateEntryFiles() (map[string]string, error) {
 	namespace := def.Name
 
 	components := &meta.ComponentCollection{}
-	err = conn.GetAllItems(components, nil)
+	err = conn.GetAllItems(ctx, components, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	utilities := &meta.UtilityCollection{}
-	err = conn.GetAllItems(utilities, nil)
+	err = conn.GetAllItems(ctx, utilities, nil)
 	if err != nil {
 		return nil, err
 	}

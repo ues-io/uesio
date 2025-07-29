@@ -17,14 +17,14 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	userLanguage := session.GetContextUser().Language
 
 	var labels meta.LabelCollection
-	err := bundle.LoadAllFromAny(&labels, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &labels, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load labels: %w", err)
 	}
 
 	var translations meta.TranslationCollection
 	if userLanguage != "" {
-		err = bundle.LoadAllFromAny(&translations, &bundlestore.GetAllItemsOptions{
+		err = bundle.LoadAllFromAny(session.Context(), &translations, &bundlestore.GetAllItemsOptions{
 			Conditions: meta.BundleConditions{
 				"uesio/studio.language": userLanguage,
 			},

@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -36,14 +37,14 @@ func (fm *s3FileMeta) LastModified() time.Time {
 	return fm.s3Output.ModTime()
 }
 
-func (c *Connection) Download(path string) (io.ReadSeekCloser, file.Metadata, error) {
-	bucket, err := s3blob.OpenBucketV2(c.ctx, c.client, c.bucket, nil)
+func (c *Connection) Download(ctx context.Context, path string) (io.ReadSeekCloser, file.Metadata, error) {
+	bucket, err := s3blob.OpenBucketV2(ctx, c.client, c.bucket, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 	defer bucket.Close()
 
-	r, err := bucket.NewReader(c.ctx, path, nil)
+	r, err := bucket.NewReader(ctx, path, nil)
 	if err != nil {
 		var respErr *awshttp.ResponseError
 		if errors.As(err, &respErr) && respErr.HTTPStatusCode() == http.StatusNotFound {

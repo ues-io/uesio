@@ -21,7 +21,7 @@ func RetrieveAppTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/typescript")
-	if err := retrieve.GenerateAppTypeScriptTypes(w, bs); err != nil {
+	if err := retrieve.GenerateAppTypeScriptTypes(r.Context(), w, bs); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}

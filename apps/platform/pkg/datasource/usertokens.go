@@ -61,7 +61,7 @@ func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, to
 	}
 
 	// TBD: Why is connection nil here??
-	if err := bundle.LoadMany(tokens, &bundlestore.GetManyItemsOptions{
+	if err := bundle.LoadMany(session.Context(), tokens, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems:     false,
 		IgnoreUnlicensedItems: true,
 	}, session, nil); err != nil {
@@ -156,7 +156,9 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 
 			loadOp.AttachMetadataCache(metadata)
 
-			err = connection.Load(loadOp, adminSession)
+			// intentionally using session context and not adminSession - adminSession is used for permissions
+			// but should not be considered to carry the active context (although it should be the same as session.Context())
+			err = connection.Load(session.Context(), loadOp, adminSession)
 			if err != nil {
 				return err
 			}

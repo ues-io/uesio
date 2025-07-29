@@ -128,7 +128,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	_, err = filesource.Upload(uploadOps, connection, session, nil)
+	_, err = filesource.Upload(session.Context(), uploadOps, connection, session, nil)
 	if err != nil {
 		return nil, err
 	}

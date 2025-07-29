@@ -40,7 +40,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (file.Connect
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(fs, nil, session, nil)
+	err = bundle.Load(session.Context(), fs, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

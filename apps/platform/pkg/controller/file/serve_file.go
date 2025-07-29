@@ -68,7 +68,7 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 		return
 	}
 
-	if err := bundle.Load(file, nil, session, connection); err != nil {
+	if err := bundle.Load(session.Context(), file, nil, session, connection); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
@@ -77,7 +77,7 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 		path = file.Path
 	}
 
-	rs, fileMetadata, err := bundle.GetItemAttachment(file, path, session, connection)
+	rs, fileMetadata, err := bundle.GetItemAttachment(session.Context(), file, path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

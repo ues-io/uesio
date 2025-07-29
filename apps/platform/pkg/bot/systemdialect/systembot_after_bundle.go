@@ -70,12 +70,11 @@ func clearFilesForBundles(ids []string, session *sess.Session) error {
 		dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 			Namespace: appName,
 			Version:   appVersion,
-			Context:   session.Context(),
 		})
 		if err != nil {
 			return err
 		}
-		if err = dest.DeleteBundle(); err != nil {
+		if err = dest.DeleteBundle(session.Context()); err != nil {
 			return err
 		}
 	}

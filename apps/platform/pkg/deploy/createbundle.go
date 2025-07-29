@@ -145,7 +145,6 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
-		Context:    session.Context(),
 	})
 	if err != nil {
 		return nil, err
@@ -155,7 +154,7 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 	// so that we can easily download everything when needed rather than having to get the individual bundle files.
 	buf := new(bytes.Buffer)
 
-	err = source.GetBundleZip(buf, nil)
+	err = source.GetBundleZip(session.Context(), buf, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -178,18 +177,17 @@ func CreateBundleFromData(data []byte, bundle *meta.Bundle, connection wire.Conn
 	dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
 		Namespace: bundle.App.UniqueKey,
 		Version:   bundle.GetVersionString(),
-		Context:   session.Context(),
 	})
 	if err != nil {
 		return err
 	}
 
-	err = dest.SetBundleZip(bytes.NewReader(data), int64(len(data)))
+	err = dest.SetBundleZip(session.Context(), bytes.NewReader(data), int64(len(data)))
 	if err != nil {
 		return err
 	}
 
-	if _, err = filesource.Upload([]*filesource.FileUploadOp{
+	if _, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
 		{
 			Data:         bytes.NewReader(data),
 			Path:         bundle.GetVersionString() + ".zip",

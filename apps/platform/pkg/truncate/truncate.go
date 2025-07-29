@@ -25,7 +25,7 @@ func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 	}
 
 	err := datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
-		return conn.TruncateTenantData(tenantID)
+		return conn.TruncateTenantData(session.Context(), tenantID)
 	})
 	if err != nil {
 		return fmt.Errorf("unable to truncate workspace data: %w", err)

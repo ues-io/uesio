@@ -108,7 +108,7 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 		if err != nil {
 			return errors.New("unable to serialize workspace metadata changes cache key")
 		}
-		if err = connection.Publish(workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
+		if err = connection.Publish(session.Context(), workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
 			slog.ErrorContext(session.Context(), "unable to invalidate workspace cache: "+err.Error())
 			return errors.New("unable to invalidate workspace cache")
 		}

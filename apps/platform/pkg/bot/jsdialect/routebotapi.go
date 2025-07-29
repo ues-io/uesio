@@ -122,7 +122,7 @@ func HandleBotResponse(api *RouteBotAPI) (finalRoute *meta.Route, err error) {
 		if err != nil {
 			return nil, err
 		}
-		if err = bundle.Load(route, nil, api.session, api.connection); err != nil {
+		if err = bundle.Load(api.session.Context(), route, nil, api.session, api.connection); err != nil {
 			return nil, fmt.Errorf("unable to load redirect route for key '%s': %w", localizedRouteKey, err)
 		}
 		finalRoute = route

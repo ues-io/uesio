@@ -351,7 +351,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	if err = datasource.PlatformSaves(saves, options.Connection, studioSession); err != nil {
 		return err
 	}
-	if _, err = filesource.Upload(uploadOps, options.Connection, studioSession, params); err != nil {
+	if _, err = filesource.Upload(session.Context(), uploadOps, options.Connection, studioSession, params); err != nil {
 		return err
 	}
 

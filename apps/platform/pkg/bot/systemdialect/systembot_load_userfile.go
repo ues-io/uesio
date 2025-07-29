@@ -53,7 +53,7 @@ func runUserfileLoadBot(op *wire.LoadOp, connection wire.Connection, session *se
 			return nil
 		}
 
-		r, _, err := filesource.Download(userFileIDString, session)
+		r, _, err := filesource.Download(session.Context(), userFileIDString, session)
 		if err != nil {
 			return err
 		}

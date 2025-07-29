@@ -34,7 +34,6 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 		Version:    version,
 		Connection: nil,
 		Workspace:  nil,
-		Context:    session.Context(),
 	})
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed getting bundle", err))
@@ -46,7 +45,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	middleware.Set1YearCache(w)
 	ctlutil.AddTrailingStatus(w)
 
-	err = source.GetBundleZip(w, nil)
+	err = source.GetBundleZip(session.Context(), w, nil)
 	if err != nil {
 		// Note - We are streaming result so Http StatusCode will have been set to 200 after
 		// the first Write so we implement custom approach to detecting failure on client

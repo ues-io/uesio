@@ -185,7 +185,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
-		err = bundle.Load(robot, nil, session, nil)
+		err = bundle.Load(session.Context(), robot, nil, session, nil)
 		if err != nil {
 			ctlutil.HandleError(r.Context(), w, err)
 			return

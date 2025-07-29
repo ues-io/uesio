@@ -2,6 +2,7 @@ package workspacebundlestore
 
 import (
 	"archive/zip"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -37,7 +38,7 @@ func getFilteredFields(fieldNames []string) []wire.LoadRequestField {
 
 }
 
-func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableItem, includeUserFields bool, looper func(meta.BundleableItem, []wire.ReferenceLocator, string) error) error {
+func (b *WorkspaceBundleStoreConnection) processItems(ctx context.Context, items []meta.BundleableItem, includeUserFields bool, looper func(meta.BundleableItem, []wire.ReferenceLocator, string) error) error {
 	if b.Workspace == nil {
 		return errors.New("workspace bundle store, needs a workspace in context")
 	}
@@ -84,7 +85,7 @@ func (b *WorkspaceBundleStoreConnection) processItems(items []meta.BundleableIte
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
-			}}, b.getStudioAnonSession())
+			}}, b.getStudioAnonSession(ctx))
 		if err != nil {
 			return err
 		}
@@ -129,9 +130,9 @@ type WorkspaceBundleStoreConnection struct {
 	studioAnonSession *sess.Session
 }
 
-func (b *WorkspaceBundleStoreConnection) getStudioAnonSession() *sess.Session {
+func (b *WorkspaceBundleStoreConnection) getStudioAnonSession(ctx context.Context) *sess.Session {
 	if b.studioAnonSession == nil {
-		b.studioAnonSession = sess.GetStudioAnonSession(b.Context)
+		b.studioAnonSession = sess.GetStudioAnonSession(ctx)
 	}
 	return b.studioAnonSession
 }
@@ -142,7 +143,7 @@ func (b *WorkspaceBundleStoreConnection) getWorkspaceCacheKey() string {
 	return b.Workspace.ID
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
+func (b *WorkspaceBundleStoreConnection) GetItem(ctx context.Context, item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
 
 	if options == nil {
 		options = &bundlestore.GetItemOptions{}
@@ -174,7 +175,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, optio
 		},
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
-	}, b.getStudioAnonSession()); err != nil {
+	}, b.getStudioAnonSession(ctx)); err != nil {
 		return err
 	}
 
@@ -186,11 +187,11 @@ func (b *WorkspaceBundleStoreConnection) GetItem(item meta.BundleableItem, optio
 	return bundleStoreCache.AddItemToCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey, item)
 }
 
-func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
+func (b *WorkspaceBundleStoreConnection) HasAny(ctx context.Context, group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
 	if options == nil {
 		options = &bundlestore.HasAnyOptions{}
 	}
-	err := b.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+	err := b.GetAllItems(ctx, group, &bundlestore.GetAllItemsOptions{
 		Conditions: options.Conditions,
 	})
 	if err != nil {
@@ -199,11 +200,11 @@ func (b *WorkspaceBundleStoreConnection) HasAny(group meta.BundleableGroup, opti
 	return group.Len() > 0, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
+func (b *WorkspaceBundleStoreConnection) GetManyItems(ctx context.Context, items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
 	if options == nil {
 		options = &bundlestore.GetManyItemsOptions{}
 	}
-	return b.processItems(items, options.IncludeUserFields, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
+	return b.processItems(ctx, items, options.IncludeUserFields, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("found an item we weren't expecting")
 		}
@@ -223,7 +224,7 @@ func (b *WorkspaceBundleStoreConnection) GetManyItems(items []meta.BundleableIte
 	})
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
+func (b *WorkspaceBundleStoreConnection) GetAllItems(ctx context.Context, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
 
 	if options == nil {
 		options = &bundlestore.GetAllItemsOptions{}
@@ -272,12 +273,12 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(group meta.BundleableGroup,
 		Orders: []wire.LoadRequestOrder{{
 			Field: commonfields.UniqueKey,
 		}},
-	}, b.getStudioAnonSession())
+	}, b.getStudioAnonSession(ctx))
 
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableItem) (string, error) {
-	err := b.GetItem(item, nil)
+func (b *WorkspaceBundleStoreConnection) GetItemRecordID(ctx context.Context, item meta.AttachableItem) (string, error) {
+	err := b.GetItem(ctx, item, nil)
 	if err != nil {
 		return "", err
 	}
@@ -292,20 +293,20 @@ func (b *WorkspaceBundleStoreConnection) GetItemRecordID(item meta.AttachableIte
 	return recordIDString, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
-	recordIDString, err := b.GetItemRecordID(item)
+func (b *WorkspaceBundleStoreConnection) GetItemAttachment(ctx context.Context, item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
+	recordIDString, err := b.GetItemRecordID(ctx, item)
 	if err != nil {
 		return nil, nil, errors.New("invalid record id for attachment")
 	}
-	r, userFileMetadata, err := filesource.DownloadAttachment(recordIDString, path, b.getStudioAnonSession())
+	r, userFileMetadata, err := filesource.DownloadAttachment(ctx, recordIDString, path, b.getStudioAnonSession(ctx))
 	if err != nil {
 		return nil, nil, err
 	}
 	return r, userFileMetadata, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
-	recordIDString, err := b.GetItemRecordID(item)
+func (b *WorkspaceBundleStoreConnection) GetAttachmentData(ctx context.Context, item meta.AttachableItem) (*meta.UserFileMetadataCollection, error) {
+	recordIDString, err := b.GetItemRecordID(ctx, item)
 	if err != nil {
 		return nil, fmt.Errorf("invalid record id for attachment: %w", err)
 	}
@@ -323,13 +324,13 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentData(item meta.AttachableI
 			},
 			Connection: b.Connection,
 		},
-		b.getStudioAnonSession(),
+		b.getStudioAnonSession(ctx),
 	)
 	return userFiles, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {
-	userFiles, err := b.GetAttachmentData(item)
+func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(ctx context.Context, item meta.AttachableItem) ([]file.Metadata, error) {
+	userFiles, err := b.GetAttachmentData(ctx, item)
 	if err != nil {
 		return nil, err
 	}
@@ -340,8 +341,8 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentPaths(item meta.Attachable
 	return paths, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
-	userFiles, err := b.GetAttachmentData(item)
+func (b *WorkspaceBundleStoreConnection) GetItemAttachments(ctx context.Context, creator bundlestore.FileCreator, item meta.AttachableItem) error {
+	userFiles, err := b.GetAttachmentData(ctx, item)
 	if err != nil {
 		return err
 	}
@@ -354,7 +355,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 			}
 			defer f.Close()
 
-			r, _, err := filesource.DownloadItem(ufm, b.getStudioAnonSession())
+			r, _, err := filesource.DownloadItem(ctx, ufm, b.getStudioAnonSession(ctx))
 			if err != nil {
 				return err
 			}
@@ -373,11 +374,11 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(creator bundlestore.
 	return nil
 }
 
-func (b *WorkspaceBundleStoreConnection) DeleteBundle() error {
+func (b *WorkspaceBundleStoreConnection) DeleteBundle(ctx context.Context) error {
 	return errors.New("tried to delete bundle in the workspace bundle store")
 }
 
-func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
+func (b *WorkspaceBundleStoreConnection) GetBundleDef(ctx context.Context) (*meta.BundleDef, error) {
 
 	var by meta.BundleDef
 	by.Name = b.Namespace
@@ -415,7 +416,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 				},
 			},
 		},
-		b.getStudioAnonSession(),
+		b.getStudioAnonSession(ctx),
 	)
 	if err != nil {
 		return nil, err
@@ -444,8 +445,8 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error)
 	return &by, nil
 }
 
-func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
-	return b.processItems(items, false, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
+func (b *WorkspaceBundleStoreConnection) HasAllItems(ctx context.Context, items []meta.BundleableItem) error {
+	return b.processItems(ctx, items, false, func(item meta.BundleableItem, locators []wire.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("found an item we weren't expecting")
 		}
@@ -456,11 +457,11 @@ func (b *WorkspaceBundleStoreConnection) HasAllItems(items []meta.BundleableItem
 	})
 }
 
-func (b *WorkspaceBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+func (b *WorkspaceBundleStoreConnection) SetBundleZip(ctx context.Context, reader io.ReaderAt, size int64) error {
 	return errors.New("tried to upload bundle zip in workspace bundle store")
 }
 
-func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
+func (b *WorkspaceBundleStoreConnection) GetBundleZip(ctx context.Context, writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 	if b.Workspace == nil {
 		return errors.New("no workspace provided for retrieve")
 	}
@@ -469,12 +470,12 @@ func (b *WorkspaceBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptio
 	defer zipwriter.Close()
 	create := retrieve.NewWriterCreator(zipwriter.Create)
 	// Retrieve bundle contents
-	if err := retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b); err != nil {
+	if err := retrieve.RetrieveBundle(ctx, retrieve.BundleDirectory, create, b); err != nil {
 		return err
 	}
 	if zipoptions != nil && zipoptions.IncludeGeneratedTypes {
 		// Retrieve generated TypeScript files
-		if err := retrieve.RetrieveGeneratedFiles(retrieve.GeneratedDir, create, b); err != nil {
+		if err := retrieve.RetrieveGeneratedFiles(ctx, retrieve.GeneratedDir, create, b); err != nil {
 			return err
 		}
 	}

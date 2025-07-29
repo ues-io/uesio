@@ -97,7 +97,7 @@ func migrate(opts *migrations.MigrateOptions) error {
 	anonSession := sess.GetStudioAnonSession(ctx)
 
 	err := datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
-		return conn.Migrate(opts)
+		return conn.Migrate(ctx, opts)
 	})
 	if err != nil {
 		return fmt.Errorf("migrations failed: %w", err)

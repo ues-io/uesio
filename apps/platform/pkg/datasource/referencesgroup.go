@@ -16,7 +16,7 @@ func loadData(op *wire.LoadOp, connection wire.Connection, session *sess.Session
 		return errors.New("you have reached the maximum limit of reference group")
 	}
 
-	err := connection.Load(op, session)
+	err := connection.Load(session.Context(), op, session)
 	if err != nil {
 		return err
 	}

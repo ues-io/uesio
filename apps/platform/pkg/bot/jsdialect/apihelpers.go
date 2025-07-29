@@ -92,7 +92,7 @@ func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connect
 		return nil, "", err
 	}
 
-	if err := bundle.Load(file, nil, session, connection); err != nil {
+	if err := bundle.Load(session.Context(), file, nil, session, connection); err != nil {
 		return nil, "", err
 	}
 
@@ -101,7 +101,7 @@ func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connect
 		path = file.Path
 	}
 
-	r, _, err := bundle.GetItemAttachment(file, path, session, connection)
+	r, _, err := bundle.GetItemAttachment(session.Context(), file, path, session, connection)
 	if err != nil {
 		return nil, "", err
 	}
@@ -116,7 +116,7 @@ func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFiel
 	}
 	defer r.Close()
 
-	_, err = filesource.Upload([]*filesource.FileUploadOp{
+	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
 		{
 			Data:         r,
 			Path:         path,
@@ -130,13 +130,13 @@ func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFiel
 }
 
 func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
-	r, userFileMetadata, err := filesource.Download(sourceFileID, session)
+	r, userFileMetadata, err := filesource.Download(session.Context(), sourceFileID, session)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	_, err = filesource.Upload([]*filesource.FileUploadOp{
+	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
 		{
 			Data:         r,
 			Path:         userFileMetadata.Path(),

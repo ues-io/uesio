@@ -1,6 +1,7 @@
 package filesource
 
 import (
+	"context"
 	"errors"
 	"io"
 
@@ -13,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
+func DownloadAttachment(ctx context.Context, recordID string, path string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -36,10 +37,10 @@ func DownloadAttachment(recordID string, path string, session *sess.Session) (io
 		return nil, nil, err
 	}
 
-	return DownloadItem(userFile, session)
+	return DownloadItem(ctx, userFile, session)
 }
 
-func Download(userFileID string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
+func Download(ctx context.Context, userFileID string, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -85,10 +86,10 @@ func Download(userFileID string, session *sess.Session) (io.ReadSeekCloser, *met
 		return nil, nil, err
 	}
 
-	return DownloadItem(userFile, session)
+	return DownloadItem(ctx, userFile, session)
 }
 
-func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
+func DownloadItem(ctx context.Context, userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeekCloser, *meta.UserFileMetadata, error) {
 
 	if userFile == nil {
 		return nil, nil, errors.New("no file provided")
@@ -101,7 +102,7 @@ func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.Re
 
 	fullPath := userFile.GetFullPath(session.GetTenantID())
 
-	r, _, err := conn.Download(fullPath)
+	r, _, err := conn.Download(ctx, fullPath)
 	if err != nil {
 		return nil, nil, err
 	}

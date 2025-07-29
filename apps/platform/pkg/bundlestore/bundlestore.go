@@ -47,7 +47,6 @@ func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 }
 
 type ConnectionOptions struct {
-	Context      context.Context
 	Namespace    string
 	Version      string
 	Connection   wire.Connection
@@ -87,18 +86,18 @@ type HasAnyOptions struct {
 }
 
 type BundleStoreConnection interface {
-	GetItem(item meta.BundleableItem, options *GetItemOptions) error
-	GetManyItems(items []meta.BundleableItem, options *GetManyItemsOptions) error
-	GetAllItems(group meta.BundleableGroup, options *GetAllItemsOptions) error
-	HasAny(group meta.BundleableGroup, options *HasAnyOptions) (bool, error)
-	GetItemAttachment(item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error)
-	GetItemAttachments(creator FileCreator, item meta.AttachableItem) error
-	GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error)
-	GetBundleDef() (*meta.BundleDef, error)
-	HasAllItems(items []meta.BundleableItem) error
-	DeleteBundle() error
-	GetBundleZip(writer io.Writer, options *BundleZipOptions) error
-	SetBundleZip(reader io.ReaderAt, size int64) error
+	GetItem(ctx context.Context, item meta.BundleableItem, options *GetItemOptions) error
+	GetManyItems(ctx context.Context, items []meta.BundleableItem, options *GetManyItemsOptions) error
+	GetAllItems(ctx context.Context, group meta.BundleableGroup, options *GetAllItemsOptions) error
+	HasAny(ctx context.Context, group meta.BundleableGroup, options *HasAnyOptions) (bool, error)
+	GetItemAttachment(ctx context.Context, item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error)
+	GetItemAttachments(ctx context.Context, creator FileCreator, item meta.AttachableItem) error
+	GetAttachmentPaths(ctx context.Context, item meta.AttachableItem) ([]file.Metadata, error)
+	GetBundleDef(ctx context.Context) (*meta.BundleDef, error)
+	HasAllItems(ctx context.Context, items []meta.BundleableItem) error
+	DeleteBundle(ctx context.Context) error
+	GetBundleZip(ctx context.Context, writer io.Writer, options *BundleZipOptions) error
+	SetBundleZip(ctx context.Context, reader io.ReaderAt, size int64) error
 }
 
 func getBundleStore(namespace string, workspace *meta.Workspace) (BundleStore, error) {

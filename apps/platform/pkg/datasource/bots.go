@@ -48,7 +48,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(item, nil, session, nil)
+		return bundle.Load(session.Context(), item, nil, session, nil)
 	}
 
 	routeBot = meta.NewRouteBot(botNamespace, botName)
@@ -86,7 +86,7 @@ func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session
 	var robots meta.BotCollection
 
 	// TODO why does connection have to be nil
-	err := bundle.LoadAllFromAny(&robots, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(session.Context(), &robots, &bundlestore.GetAllItemsOptions{
 		Conditions: meta.BundleConditions{
 			"uesio/studio.collection": collectionName,
 			"uesio/studio.type":       "BEFORESAVE",
@@ -182,7 +182,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 	}
 
 	// TODO: Figure out why connection has to be nil
-	err = bundle.Load(loadBot, nil, session, nil)
+	err = bundle.Load(session.Context(), loadBot, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -211,7 +211,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 		Type: "SAVE",
 	}
 	// TODO: Figure out why connection has to be nil
-	err = bundle.Load(saveBot, nil, session, nil)
+	err = bundle.Load(session.Context(), saveBot, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("unable to load requested SAVE bot '%s': %w", botName, err)
 	}
@@ -231,7 +231,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 	var robots meta.BotCollection
 
 	// TODO: Figure out why connection has to be nil
-	err := bundle.LoadAllFromAny(&robots, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(session.Context(), &robots, &bundlestore.GetAllItemsOptions{
 		Conditions: meta.BundleConditions{
 			"uesio/studio.collection": collectionName,
 			"uesio/studio.type":       "AFTERSAVE",
@@ -276,7 +276,7 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 	robot := meta.NewGeneratorBot(namespace, name)
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(item, nil, session, nil)
+		return bundle.Load(session.Context(), item, nil, session, nil)
 	}
 
 	if err := bundleLoader(robot); err != nil {
@@ -319,7 +319,7 @@ func CallListenerBot(namespace, name string, params map[string]any, connection w
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(item, nil, session, nil)
+		return bundle.Load(session.Context(), item, nil, session, nil)
 	}
 
 	// First try to run a system bot
@@ -427,7 +427,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(item, nil, session, nil)
+		return bundle.Load(session.Context(), item, nil, session, nil)
 	}
 	robot := meta.NewRunActionBot(botNamespace, botName)
 	if err = bundleLoader(robot); err != nil {

@@ -260,14 +260,14 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 		err = performExternalIntegrationSave(integrationName, op, connection, session)
 	} else {
 		// handle Uesio DB saves
-		err = connection.Save(op, session)
+		err = connection.Save(session.Context(), op, session)
 	}
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	if !isExternalIntegrationCollection(op) {
-		if err = connection.SetRecordAccessTokens(op, session); err != nil {
+		if err = connection.SetRecordAccessTokens(session.Context(), op, session); err != nil {
 			return err
 		}
 	}

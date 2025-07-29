@@ -81,7 +81,7 @@ func getCascadeDeletes(
 
 		idLoadOp.AttachMetadataCache(metadata)
 
-		err = connection.Load(idLoadOp, versionSession)
+		err = connection.Load(session.Context(), idLoadOp, versionSession)
 		if err != nil {
 			return nil, fmt.Errorf("cascade delete error: %w", err)
 		}

@@ -51,7 +51,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	zipwriter.Close()
 
-	_, err = filesource.Upload([]*filesource.FileUploadOp{
+	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
 		{
 			Data:         buf,
 			Path:         fileName,

@@ -1,6 +1,7 @@
 package filesource
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -10,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func Delete(userFileID string, session *sess.Session) error {
+func Delete(ctx context.Context, userFileID string, session *sess.Session) error {
 	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		&userFile,

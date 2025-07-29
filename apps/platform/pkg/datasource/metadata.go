@@ -203,7 +203,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 		return nil, err
 	}
 
-	err = bundle.Load(collection, nil, session, connection)
+	err = bundle.Load(session.Context(), collection, nil, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 
 	if collectionMetadata.Access != "" {
 		var recordChallengeTokens meta.RecordChallengeTokenCollection
-		err = bundle.LoadAllFromAny(&recordChallengeTokens, &bundlestore.GetAllItemsOptions{
+		err = bundle.LoadAllFromAny(session.Context(), &recordChallengeTokens, &bundlestore.GetAllItemsOptions{
 			Conditions: meta.BundleConditions{"uesio/studio.collection": collectionMetadata.GetKey()},
 		}, adminSession, connection)
 		if err != nil {
@@ -236,7 +236,7 @@ func LoadCollectionMetadata(key string, metadataCache *wire.MetadataCache, sessi
 func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *wire.CollectionMetadata, session *sess.Session, connection wire.Connection) error {
 	var fields meta.FieldCollection
 
-	err := bundle.LoadAllFromAny(&fields, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(session.Context(), &fields, &bundlestore.GetAllItemsOptions{
 		Conditions: meta.BundleConditions{
 			"uesio/studio.collection": collectionKey,
 		},
@@ -282,7 +282,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	err := bundle.LoadMany(fields, &bundlestore.GetManyItemsOptions{
+	err := bundle.LoadMany(session.Context(), fields, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, connection)
 	if err != nil {
@@ -307,7 +307,7 @@ func LoadSelectListMetadata(key string, metadataCache *wire.MetadataCache, sessi
 		if err != nil {
 			return err
 		}
-		if err = bundle.Load(selectList, nil, session, connection); err != nil {
+		if err = bundle.Load(session.Context(), selectList, nil, session, connection); err != nil {
 			return err
 		}
 		metadataCache.AddSelectList(key, &wire.SelectListMetadata{

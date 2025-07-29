@@ -78,7 +78,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 			}
 			defer file.Close()
 
-			r, _, err := filesource.DownloadItem(userFile, session)
+			r, _, err := filesource.DownloadItem(session.Context(), userFile, session)
 			if err != nil {
 				return err
 			}

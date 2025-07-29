@@ -76,7 +76,7 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 		return err
 	}
 
-	_, err = filesource.Upload(uploadOps, connection, session, op.Params)
+	_, err = filesource.Upload(session.Context(), uploadOps, connection, session, op.Params)
 	if err != nil {
 		return err
 	}

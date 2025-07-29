@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -35,7 +36,7 @@ func (fm *s3PaginatorFileMeta) LastModified() time.Time {
 	return *fm.s3Output.LastModified
 }
 
-func (c *Connection) List(path string) ([]file.Metadata, error) {
+func (c *Connection) List(ctx context.Context, path string) ([]file.Metadata, error) {
 
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(c.bucket),
@@ -46,7 +47,7 @@ func (c *Connection) List(path string) ([]file.Metadata, error) {
 
 	var paths []file.Metadata
 	for paginator.HasMorePages() {
-		result, err := paginator.NextPage(c.ctx)
+		result, err := paginator.NextPage(ctx)
 		if err != nil {
 			return nil, err
 		}

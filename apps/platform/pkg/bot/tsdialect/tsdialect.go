@@ -22,7 +22,7 @@ type TSDialect struct {
 }
 
 func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
-	r, _, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session, connection)
+	r, _, err := bundle.GetItemAttachment(session.Context(), bot, b.GetFilePath(), session, connection)
 	if err != nil {
 		return err
 	}

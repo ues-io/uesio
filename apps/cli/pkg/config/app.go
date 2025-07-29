@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/cli/pkg/localbundlestore"
@@ -12,7 +13,7 @@ func GetApp() (string, error) {
 	sbs := &localbundlestore.LocalBundleStore{}
 	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := conn.GetBundleDef()
+	def, err := conn.GetBundleDef(context.Background())
 	if err != nil {
 		return "", err
 	}
@@ -25,7 +26,7 @@ func GetVersion(namespace string) (string, error) {
 	sbs := &localbundlestore.LocalBundleStore{}
 	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := conn.GetBundleDef()
+	def, err := conn.GetBundleDef(context.Background())
 	if err != nil {
 		return "", err
 	}

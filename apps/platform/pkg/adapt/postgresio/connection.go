@@ -24,27 +24,22 @@ type Connection struct {
 	client      *pgxpool.Pool
 	transaction pgx.Tx
 	datasource  string
-	ctx         context.Context
 	mux         *sync.Mutex
 }
 
-func (c *Connection) Context() context.Context {
-	return c.ctx
-}
-
-func (c *Connection) GetCredentials() *wire.Credentials {
+func (c *Connection) GetCredentials(ctx context.Context) *wire.Credentials {
 	return c.credentials
 }
 
-func (c *Connection) BeginTransaction() error {
+func (c *Connection) BeginTransaction(ctx context.Context) error {
 	if c.transaction != nil {
 		return errors.New("a transaction on this connection has already started")
 	}
-	client, err := connectForSave(c.ctx, c.credentials)
+	client, err := connectForSave(ctx, c.credentials)
 	if err != nil {
 		return nil
 	}
-	txn, err := client.Begin(c.ctx)
+	txn, err := client.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -52,16 +47,16 @@ func (c *Connection) BeginTransaction() error {
 	c.transaction = txn
 	return nil
 }
-func (c *Connection) CommitTransaction() error {
+func (c *Connection) CommitTransaction(ctx context.Context) error {
 	if c.transaction != nil {
-		return c.transaction.Commit(c.ctx)
+		return c.transaction.Commit(ctx)
 	}
 	return nil
 }
 
-func (c *Connection) RollbackTransaction() error {
+func (c *Connection) RollbackTransaction(ctx context.Context) error {
 	if c.transaction != nil {
-		return c.transaction.Rollback(c.ctx)
+		return c.transaction.Rollback(ctx)
 	}
 	return nil
 }
@@ -73,18 +68,18 @@ func (c *Connection) GetClient() QueryAble {
 	return c.client
 }
 
-func (c *Connection) GetPGConn() (*pgxpool.Conn, error) {
-	return c.client.Acquire(c.ctx)
+func (c *Connection) GetPGConn(ctx context.Context) (*pgxpool.Conn, error) {
+	return c.client.Acquire(ctx)
 }
 
-func (c *Connection) GetDataSource() string {
+func (c *Connection) GetDataSource(ctx context.Context) string {
 	return c.datasource
 }
 
-func (c *Connection) SendBatch(batch *pgx.Batch) error {
+func (c *Connection) SendBatch(ctx context.Context, batch *pgx.Batch) error {
 	c.mux.Lock()
 	defer c.mux.Unlock()
-	results := c.GetClient().SendBatch(c.ctx, batch)
+	results := c.GetClient().SendBatch(ctx, batch)
 
 	execCount := batch.Len()
 	for range execCount {
@@ -97,10 +92,10 @@ func (c *Connection) SendBatch(batch *pgx.Batch) error {
 	return results.Close()
 }
 
-func (c *Connection) Query(fn func(scan func(dest ...any) error, index int) (bool, error), query string, values ...any) error {
+func (c *Connection) Query(ctx context.Context, fn func(scan func(dest ...any) error, index int) (bool, error), query string, values ...any) error {
 	c.mux.Lock()
 	defer c.mux.Unlock()
-	rows, err := c.GetClient().Query(c.ctx, query, values...)
+	rows, err := c.GetClient().Query(ctx, query, values...)
 	if err != nil {
 		return err
 	}
@@ -130,7 +125,6 @@ func (a *Adapter) GetConnection(ctx context.Context, credentials *wire.Credentia
 		credentials: credentials,
 		client:      client,
 		datasource:  datasource,
-		ctx:         ctx,
 		mux:         &sync.Mutex{},
 	}, nil
 }

@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -183,7 +184,7 @@ func getAliasedName(name, alias string) string {
 	return fmt.Sprintf("%s.%s", alias, name)
 }
 
-func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
+func (c *Connection) Load(ctx context.Context, op *wire.LoadOp, session *sess.Session) error {
 
 	// If we're loading uesio/core.user from a workspace, always use the site
 	// tenant id, not the workspace tenant id. Since workspaces don't have users.
@@ -341,9 +342,9 @@ func (c *Connection) Load(op *wire.LoadOp, session *sess.Session) error {
 	//fmt.Println(builder.Values)
 
 	op.HasMoreBatches = false
-	formulaPopulations := formula.GetFormulaFunction(c.ctx, fieldsResponse.FormulaFields, collectionMetadata)
+	formulaPopulations := formula.GetFormulaFunction(ctx, fieldsResponse.FormulaFields, collectionMetadata)
 
-	err = c.Query(func(scan func(dest ...any) error, index int) (bool, error) {
+	err = c.Query(ctx, func(scan func(dest ...any) error, index int) (bool, error) {
 
 		if op.BatchSize == index {
 			op.HasMoreBatches = true

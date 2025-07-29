@@ -17,7 +17,7 @@ func runUserTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
 
 	var uatc meta.UserAccessTokenCollection
-	err := bundle.LoadAllFromAny(&uatc, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &uatc, nil, session, nil)
 	if err != nil {
 		return err
 	}

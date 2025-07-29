@@ -27,7 +27,7 @@ func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.C
 		options = &ConfigLoadOptions{}
 	}
 	allConfigValues := meta.ConfigValueCollection{}
-	err := bundle.LoadAllFromAny(&allConfigValues, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &allConfigValues, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func GetValue(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = bundle.Load(configValue, nil, session, nil)
+	err = bundle.Load(session.Context(), configValue, nil, session, nil)
 	if err != nil {
 		return "", err
 	}
@@ -142,7 +142,7 @@ func SetValue(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(configValue, nil, session, nil)
+	err = bundle.Load(session.Context(), configValue, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func Remove(key string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(configValue, nil, session, nil)
+	err = bundle.Load(session.Context(), configValue, nil, session, nil)
 	if err != nil {
 		return err
 	}
