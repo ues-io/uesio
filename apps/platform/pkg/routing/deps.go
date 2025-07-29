@@ -43,7 +43,7 @@ func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 		return nil, err
 	}
 
-	err = bundle.Load(subViewDep, nil, session, nil)
+	err = bundle.Load(session.Context(), subViewDep, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load SubView '%s': %w", key, err)
 	}
@@ -57,7 +57,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 		return nil, err
 	}
 
-	err = bundle.Load(variantDep, nil, session, nil)
+	err = bundle.Load(session.Context(), variantDep, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load variant '%s': %w", key, err)
 	}
@@ -90,7 +90,7 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 			pack = existingPack
 		}
 	} else {
-		if err := bundle.Load(pack, nil, session, nil); err != nil {
+		if err := bundle.Load(session.Context(), pack, nil, session, nil); err != nil {
 			return err
 		}
 		// TODO: This check can be eventually removed.  It's intended to cover legacy code that
@@ -124,7 +124,7 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 
 	utility := meta.NewBaseUtility(namespace, name)
 
-	if err = bundle.Load(utility, nil, session, nil); err != nil {
+	if err = bundle.Load(session.Context(), utility, nil, session, nil); err != nil {
 		return err
 	}
 
@@ -420,7 +420,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 
 	baseStudioSession := session.RemoveWorkspaceContext()
 
-	err = bundle.Load(theme, nil, baseStudioSession, nil)
+	err = bundle.Load(session.Context(), theme, nil, baseStudioSession, nil)
 	if err != nil {
 		return err
 	}
@@ -481,13 +481,13 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
-	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
+	err = bundle.LoadAllFromAny(session.Context(), &variants, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load variants: %w", err)
 	}
 
 	var components meta.ComponentCollection
-	err = bundle.LoadAllFromAny(&components, nil, session, nil)
+	err = bundle.LoadAllFromAny(session.Context(), &components, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load components: %w", err)
 	}
@@ -532,7 +532,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, err
 	}
 
-	err = bundle.Load(theme, nil, session, nil)
+	err = bundle.Load(session.Context(), theme, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -561,7 +561,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 
 	// Add in fonts
 	var fonts meta.FontCollection
-	err = bundle.LoadAllFromAny(&fonts, nil, session, nil)
+	err = bundle.LoadAllFromAny(session.Context(), &fonts, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load fonts: %w", err)
 	}
@@ -572,7 +572,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 
 	// Add in route assignments
 	var routeAssignments meta.RouteAssignmentCollection
-	err = bundle.LoadAllFromAny(&routeAssignments, nil, session, nil)
+	err = bundle.LoadAllFromAny(session.Context(), &routeAssignments, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load route assignments: %w", err)
 	}
@@ -598,14 +598,14 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		collectionMap[assignment.Collection] = collection
 	}
 
-	err = bundle.LoadMany(routes, &bundlestore.GetManyItemsOptions{
+	err = bundle.LoadMany(session.Context(), routes, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load routes for route assignments: %w", err)
 	}
 
-	err = bundle.LoadMany(collections, &bundlestore.GetManyItemsOptions{
+	err = bundle.LoadMany(session.Context(), collections, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
@@ -705,7 +705,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
 	// Query for all static files in the workspace
 	var files meta.FileCollection
-	err := bundle.LoadAllFromNamespaces([]string{workspace.GetAppFullName()}, &files, nil, session, nil)
+	err := bundle.LoadAllFromNamespaces(session.Context(), []string{workspace.GetAppFullName()}, &files, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load static files: %w", err)
 	}
@@ -957,7 +957,7 @@ func addComponentType(key string, deps *preload.PreloadMetadata, subViews map[st
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(component, nil, session, nil)
+	err = bundle.Load(session.Context(), component, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

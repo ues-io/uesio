@@ -33,12 +33,12 @@ func (r *contentLengthReader) GetContentLength() int64 {
 	return r.contentLength
 }
 
-func (c *Connection) Upload(req file.FileUploadRequest) (int64, error) {
+func (c *Connection) Upload(ctx context.Context, req file.FileUploadRequest) (int64, error) {
 	uploader := manager.NewUploader(c.client)
-	return handleFileUpload(c.ctx, uploader, c.bucket, req.Data(), req.Path())
+	return handleFileUpload(ctx, uploader, c.bucket, req.Data(), req.Path())
 }
 
-func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) {
+func (c *Connection) UploadMany(ctx context.Context, reqs []file.FileUploadRequest) ([]int64, error) {
 	uploader := manager.NewUploader(c.client)
 
 	// TODO: make maxRequestUploadConcurrency configurable. This is a "per request" concurrency limit currently. Need
@@ -47,7 +47,7 @@ func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) 
 	// backend provider as the "host" instance and backend provider will have different resource limitations.
 	maxRequestUploadConcurrency := 5
 	g := &errgroup.Group{}
-	g, uploadCtx := errgroup.WithContext(c.ctx)
+	g, uploadCtx := errgroup.WithContext(ctx)
 	g.SetLimit(maxRequestUploadConcurrency)
 	bytesWritten := make([]int64, len(reqs))
 

@@ -33,7 +33,6 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	}
 
 	bs, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Context:      session.Context(),
 		Namespace:    workspaceSession.GetContextAppName(),
 		Version:      bundle.GetVersionString(),
 		Connection:   connection,
@@ -46,7 +45,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	// Retrieve the bundle zip
 	// Create a new zip archive.
 	buf := new(bytes.Buffer)
-	err = bs.GetBundleZip(buf, nil)
+	err = bs.GetBundleZip(session.Context(), buf, nil)
 	if err != nil {
 		return err
 	}
@@ -122,7 +121,7 @@ func runWorkspaceAfterSaveBot(request *wire.SaveOp, connection wire.Connection, 
 		if workspaceUniqueKey == "" {
 			return errors.New("unable to get workspace unique key, cannot truncate data")
 		}
-		if err = connection.TruncateTenantData(sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
+		if err = connection.TruncateTenantData(session.Context(), sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
 			return fmt.Errorf("unable to truncate workspace data: %w", err)
 		}
 		return nil

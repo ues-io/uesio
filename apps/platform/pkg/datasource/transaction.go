@@ -10,19 +10,19 @@ func WithTransaction(session *sess.Session, existingConn wire.Connection, fn fun
 	if err != nil {
 		return err
 	}
-	err = conn.BeginTransaction()
+	err = conn.BeginTransaction(session.Context())
 	if err != nil {
 		return err
 	}
 	err = fn(conn)
 	if err != nil {
-		rbErr := conn.RollbackTransaction()
+		rbErr := conn.RollbackTransaction(session.Context())
 		if rbErr != nil {
 			return rbErr
 		}
 		return err
 	}
-	return conn.CommitTransaction()
+	return conn.CommitTransaction(session.Context())
 }
 
 func WithTransactionResult[T any](session *sess.Session, existingConn wire.Connection, fn func(conn wire.Connection) (T, error)) (T, error) {
@@ -31,19 +31,19 @@ func WithTransactionResult[T any](session *sess.Session, existingConn wire.Conne
 	if err != nil {
 		return result, err
 	}
-	err = conn.BeginTransaction()
+	err = conn.BeginTransaction(session.Context())
 	if err != nil {
 		return result, err
 	}
 	result, err = fn(conn)
 	if err != nil {
-		rbErr := conn.RollbackTransaction()
+		rbErr := conn.RollbackTransaction(session.Context())
 		if rbErr != nil {
 			return result, rbErr
 		}
 		return result, err
 	}
-	err = conn.CommitTransaction()
+	err = conn.CommitTransaction(session.Context())
 	if err != nil {
 		return result, err
 	}

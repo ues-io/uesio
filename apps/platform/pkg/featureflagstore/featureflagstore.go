@@ -22,7 +22,7 @@ func GetFeatureFlag(key string, session *sess.Session, user string) (*meta.Featu
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(flag, nil, session, nil)
+	err = bundle.Load(session.Context(), flag, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func GetFeatureFlag(key string, session *sess.Session, user string) (*meta.Featu
 
 func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
-	err := bundle.LoadAllFromAny(&featureFlags, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func SetValue(key string, value any, userID string, session *sess.Session) error
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(featureFlag, nil, session, nil)
+	err = bundle.Load(session.Context(), featureFlag, nil, session, nil)
 	if err != nil {
 		return err
 	}

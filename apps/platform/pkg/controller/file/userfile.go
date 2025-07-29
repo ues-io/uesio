@@ -51,7 +51,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 				return nil, errors.New("no recordid specified")
 			}
 			op.Data = part
-			results, err := filesource.Upload([]*filesource.FileUploadOp{op}, nil, session, op.Params)
+			results, err := filesource.Upload(session.Context(), []*filesource.FileUploadOp{op}, nil, session, op.Params)
 			if err != nil {
 				return nil, err
 			}
@@ -76,7 +76,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 // DeleteUserFile deletes the requested user file
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-	if err := filesource.Delete(mux.Vars(r)["fileid"], session); err != nil {
+	if err := filesource.Delete(r.Context(), mux.Vars(r)["fileid"], session); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, &bot.BotResponse{
@@ -94,7 +94,7 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
 		return
 	}
-	rs, userFile, err := filesource.Download(userFileID, session)
+	rs, userFile, err := filesource.Download(r.Context(), userFileID, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -125,7 +125,7 @@ func DownloadAttachment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rs, userFile, err := filesource.DownloadAttachment(recordID, path, session)
+	rs, userFile, err := filesource.DownloadAttachment(r.Context(), recordID, path, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

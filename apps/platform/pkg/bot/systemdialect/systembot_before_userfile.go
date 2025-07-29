@@ -56,7 +56,7 @@ func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, 
 			}
 			fullPath := ufm.GetFullPath(tenantID)
 			// Ignore missing files, possibly it was already deleted
-			_ = conn.Delete(fullPath)
+			_ = conn.Delete(session.Context(), fullPath)
 		}
 	}
 

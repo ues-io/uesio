@@ -336,7 +336,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(item, &bundlestore.GetItemOptions{
+		err = bundle.Load(session.Context(), item, &bundlestore.GetItemOptions{
 			IncludeUserFields: true,
 		}, session, connection)
 		if err != nil {
@@ -400,7 +400,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		}
 
 		if !onlyLoadCommonFields {
-			err = bundle.LoadAllFromNamespaces(namespaces, group, &bundlestore.GetAllItemsOptions{
+			err = bundle.LoadAllFromNamespaces(session.Context(), namespaces, group, &bundlestore.GetAllItemsOptions{
 				Conditions:        conditions,
 				IncludeUserFields: true,
 				Fields:            requestFields,
@@ -492,7 +492,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 				// Also get attachments
 				attachableItem, isAttachableItem := item.(meta.AttachableItem)
 				if isAttachableItem {
-					pathInfos, err := bundle.GetAttachmentPaths(attachableItem, session, connection)
+					pathInfos, err := bundle.GetAttachmentPaths(session.Context(), attachableItem, session, connection)
 					if err != nil {
 						return err
 					}

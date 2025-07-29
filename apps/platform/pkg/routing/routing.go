@@ -28,7 +28,7 @@ func GetRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	if err != nil {
 		return nil, exceptions.NewNotFoundException(err.Error())
 	}
-	err = bundle.Load(route, nil, session, nil)
+	err = bundle.Load(session.Context(), route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	}
 
 	// TODO: Figure out why connection has to be nil
-	err := bundle.LoadAll(&routes, namespace, nil, session, nil)
+	err := bundle.LoadAll(session.Context(), &routes, namespace, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	var routeAssignment *meta.RouteAssignment
 	var routeAssignments meta.RouteAssignmentCollection
 
-	err := bundle.LoadAllFromAny(&routeAssignments, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(session.Context(), &routeAssignments, &bundlestore.GetAllItemsOptions{
 		Conditions: map[string]any{"uesio/studio.collection": namespace + "." + collection},
 	}, session, nil)
 	if err != nil {
@@ -156,7 +156,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
-	err = bundle.Load(route, nil, session, nil)
+	err = bundle.Load(session.Context(), route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute(namespace, routeName)
 	// TODO: connection should not have to be nil
-	err := bundle.Load(route, nil, session, nil)
+	err := bundle.Load(session.Context(), route, nil, session, nil)
 	if err != nil || route == nil {
 		return nil, fmt.Errorf("unable to load route '%s.%s': %w", namespace, routeName, err)
 	}

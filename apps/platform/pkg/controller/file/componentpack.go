@@ -27,12 +27,12 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	if err = bundle.Load(componentPack, nil, session, nil); err != nil {
+	if err = bundle.Load(session.Context(), componentPack, nil, session, nil); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
-	rs, fileMeta, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session, connection)
+	rs, fileMeta, err := bundle.GetItemAttachment(session.Context(), componentPack, "dist/"+path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

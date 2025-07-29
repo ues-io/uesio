@@ -22,7 +22,9 @@ func runRecordTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, ses
 	if err != nil {
 		return err
 	}
-	tokens, err := connection.GetRecordAccessTokens(recordID, inContextSession)
+	// intentionally using session context and not inContextSession since session is what owns the processing
+	// context. The context in both session and inContextSession should be the same but session owns it
+	tokens, err := connection.GetRecordAccessTokens(session.Context(), recordID, inContextSession)
 	if err != nil {
 		return err
 	}

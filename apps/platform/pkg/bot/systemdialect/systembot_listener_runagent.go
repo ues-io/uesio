@@ -47,7 +47,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, exceptions.NewBadRequestException("", err)
 	}
 
-	err = bundle.Load(agent, nil, session.RemoveVersionContext(), connection)
+	err = bundle.Load(session.Context(), agent, nil, session.RemoveVersionContext(), connection)
 	if err != nil {
 		if exceptions.IsType[*exceptions.NotFoundException](err) {
 			return nil, exceptions.NewBadRequestException("", err)
@@ -55,7 +55,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, err
 	}
 
-	r, _, err := bundle.GetItemAttachment(agent, "prompt.txt", session.RemoveVersionContext(), connection)
+	r, _, err := bundle.GetItemAttachment(session.Context(), agent, "prompt.txt", session.RemoveVersionContext(), connection)
 	if err != nil {
 		return nil, err
 	}

@@ -234,7 +234,7 @@ func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, con
 // WARNING!!! This is not a shortcut for Load(ops...)---DO NOT CALL THIS unless you know what you're doing
 func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
-	if err := connection.Load(op, session); err != nil {
+	if err := connection.Load(session.Context(), op, session); err != nil {
 		return err
 	}
 

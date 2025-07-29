@@ -160,7 +160,7 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 	})
 
 	// We need to query with the original session
-	err = connection.Load(newOp, session)
+	err = connection.Load(session.Context(), newOp, session)
 	if err != nil {
 		return err
 	}

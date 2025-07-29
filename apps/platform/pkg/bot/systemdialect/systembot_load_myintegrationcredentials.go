@@ -134,13 +134,13 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	// If we have unique namespaces to load from, do a more targeted load.
 	if len(uniqueNames) > 0 {
 		conditions["uesio/studio.name"] = goutils.MapKeys(uniqueNames)
-		if err := bundle.LoadAllFromNamespaces(goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
+		if err := bundle.LoadAllFromNamespaces(session.Context(), goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
 			return nil, fmt.Errorf("unable to load integrations: %w", err)
 		}
 	} else {
-		if err := bundle.LoadAllFromAny(group, &bundlestore.GetAllItemsOptions{
+		if err := bundle.LoadAllFromAny(session.Context(), group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
 			return nil, fmt.Errorf("unable to load integrations: %w", err)

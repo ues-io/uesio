@@ -292,7 +292,7 @@ func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action st
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
-	r, _, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session, gba.connection)
+	r, _, err := bundle.GetItemAttachment(gba.session.Context(), gba.bot, templateFile, gba.session, gba.connection)
 	if err != nil {
 		return "", err
 	}

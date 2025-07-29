@@ -53,7 +53,7 @@ func setupPlatformSubscription() {
 		panic("unable to establish platform connection!")
 	}
 
-	if err = conn.Subscribe(WorkspaceMetadataChangesChannel, handleWorkspaceMetadataChange); err != nil {
+	if err = conn.Subscribe(s.Context(), WorkspaceMetadataChangesChannel, handleWorkspaceMetadataChange); err != nil {
 		slog.Error("unable to subscribe on channel! " + err.Error())
 		panic("unable to subscribe on channel!")
 	}

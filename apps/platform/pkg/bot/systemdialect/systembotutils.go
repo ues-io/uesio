@@ -56,7 +56,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 	if err != nil {
 		return err
 	}
-	return bundle.IsValid(items, wsSession, connection)
+	return bundle.IsValid(session.Context(), items, wsSession, connection)
 
 }
 

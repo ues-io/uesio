@@ -30,7 +30,7 @@ func GetCredentials(key string, session *sess.Session) (*wire.Credentials, error
 		return nil, err
 	}
 
-	err = bundle.Load(credential, nil, session, nil)
+	err = bundle.Load(session.Context(), credential, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -52,7 +52,7 @@ func LoadLooper(
 
 	op.AttachMetadataCache(metadata)
 
-	err := connection.Load(op, session)
+	err := connection.Load(session.Context(), op, session)
 	if err != nil {
 		return err
 	}

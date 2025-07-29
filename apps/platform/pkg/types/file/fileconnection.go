@@ -1,6 +1,7 @@
 package file
 
 import (
+	"context"
 	"io"
 )
 
@@ -30,10 +31,10 @@ func (f *fileUploadRequest) Path() string {
 }
 
 type Connection interface {
-	Upload(req FileUploadRequest) (int64, error)
-	UploadMany(reqs []FileUploadRequest) ([]int64, error)
-	Download(path string) (io.ReadSeekCloser, Metadata, error)
-	Delete(path string) error
-	List(path string) ([]Metadata, error)
-	EmptyDir(path string) error
+	Upload(ctx context.Context, req FileUploadRequest) (int64, error)
+	UploadMany(ctx context.Context, reqs []FileUploadRequest) ([]int64, error)
+	Download(ctx context.Context, path string) (io.ReadSeekCloser, Metadata, error)
+	Delete(ctx context.Context, path string) error
+	List(ctx context.Context, path string) ([]Metadata, error)
+	EmptyDir(ctx context.Context, path string) error
 }

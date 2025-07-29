@@ -62,7 +62,7 @@ func GetViewParams(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 	session := middleware.GetSession(r)
 	loader := func(item meta.BundleableItem) error {
-		return bundle.Load(item, nil, session, nil)
+		return bundle.Load(session.Context(), item, nil, session, nil)
 	}
 	viewParams, err := getParamsForView(namespace, name, loader)
 	if err != nil {

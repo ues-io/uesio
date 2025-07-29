@@ -2,6 +2,7 @@ package filebundlestore
 
 import (
 	"archive/zip"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -30,7 +31,7 @@ type FileBundleStoreConnection struct {
 	ReadOnly       bool
 }
 
-func (b *FileBundleStoreConnection) getFilePathsAtBasePath(basePath string) ([]file.Metadata, error) {
+func (b *FileBundleStoreConnection) getFilePathsAtBasePath(ctx context.Context, basePath string) ([]file.Metadata, error) {
 	if b.Cache != nil {
 		cachedKeys, ok := b.Cache.GetFileListFromCache(basePath)
 		if ok {
@@ -38,7 +39,7 @@ func (b *FileBundleStoreConnection) getFilePathsAtBasePath(basePath string) ([]f
 		}
 	}
 
-	paths, err := b.FileConnection.List(basePath)
+	paths, err := b.FileConnection.List(ctx, basePath)
 	if err != nil {
 		return nil, err
 	}
@@ -50,11 +51,11 @@ func (b *FileBundleStoreConnection) getFilePathsAtBasePath(basePath string) ([]f
 	return paths, err
 }
 
-func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
+func (b *FileBundleStoreConnection) getFilePaths(ctx context.Context, basePath string, filter meta.FilterFunc, conditions meta.BundleConditions) ([]file.Metadata, error) {
 
 	var filteredPaths []file.Metadata
 
-	paths, err := b.getFilePathsAtBasePath(basePath)
+	paths, err := b.getFilePathsAtBasePath(ctx, basePath)
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +70,11 @@ func (b *FileBundleStoreConnection) getFilePaths(basePath string, filter meta.Fi
 	return filteredPaths, err
 }
 
-func (b *FileBundleStoreConnection) download(path string) (io.ReadSeekCloser, file.Metadata, error) {
-	return b.FileConnection.Download(path)
+func (b *FileBundleStoreConnection) download(ctx context.Context, path string) (io.ReadSeekCloser, file.Metadata, error) {
+	return b.FileConnection.Download(ctx, path)
 }
 
-func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
+func (b *FileBundleStoreConnection) GetItem(ctx context.Context, item meta.BundleableItem, options *bundlestore.GetItemOptions) error {
 	key := item.GetKey()
 	fullCollectionName := item.GetCollectionName()
 	collectionName := item.GetBundleFolderName()
@@ -98,7 +99,7 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 		}
 	}
 
-	r, fileMetadata, err := b.download(filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
+	r, fileMetadata, err := b.download(ctx, filepath.Join(b.PathFunc(b.Namespace, b.Version), collectionName, item.GetPath()))
 	if err != nil {
 		return fmt.Errorf("unable to download metadata item '%s' of type '%s': %w", key, collectionName, err)
 	}
@@ -140,11 +141,11 @@ func (b *FileBundleStoreConnection) GetItem(item meta.BundleableItem, options *b
 	return nil
 }
 
-func (b *FileBundleStoreConnection) HasAny(group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
+func (b *FileBundleStoreConnection) HasAny(ctx context.Context, group meta.BundleableGroup, options *bundlestore.HasAnyOptions) (bool, error) {
 	if options == nil {
 		options = &bundlestore.HasAnyOptions{}
 	}
-	err := b.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+	err := b.GetAllItems(ctx, group, &bundlestore.GetAllItemsOptions{
 		Conditions: options.Conditions,
 	})
 	if err != nil {
@@ -153,12 +154,12 @@ func (b *FileBundleStoreConnection) HasAny(group meta.BundleableGroup, options *
 	return group.Len() > 0, nil
 }
 
-func (b *FileBundleStoreConnection) GetManyItems(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
+func (b *FileBundleStoreConnection) GetManyItems(ctx context.Context, items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions) error {
 	if options == nil {
 		options = &bundlestore.GetManyItemsOptions{}
 	}
 	for _, item := range items {
-		err := b.GetItem(item, nil)
+		err := b.GetItem(ctx, item, nil)
 		if err != nil {
 			if options.AllowMissingItems && exceptions.IsType[*exceptions.ForbiddenException](err) {
 				continue
@@ -169,14 +170,14 @@ func (b *FileBundleStoreConnection) GetManyItems(items []meta.BundleableItem, op
 	return nil
 }
 
-func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
+func (b *FileBundleStoreConnection) GetAllItems(ctx context.Context, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions) error {
 	if options == nil {
 		options = &bundlestore.GetAllItemsOptions{}
 	}
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(b.PathFunc(b.Namespace, b.Version), group.GetBundleFolderName()) + "/"
 
-	pathInfos, err := b.getFilePaths(basePath, group.FilterPath, options.Conditions)
+	pathInfos, err := b.getFilePaths(ctx, basePath, group.FilterPath, options.Conditions)
 	if err != nil {
 		return err
 	}
@@ -189,7 +190,7 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 		}
 
 		// Ignoring forbidden since its a valid situation that a user does not have access
-		if err = b.GetItem(retrievedItem, nil); err != nil {
+		if err = b.GetItem(ctx, retrievedItem, nil); err != nil {
 			if exceptions.IsType[*exceptions.ForbiddenException](err) {
 				continue
 			}
@@ -207,11 +208,11 @@ func (b *FileBundleStoreConnection) GetAllItems(group meta.BundleableGroup, opti
 
 }
 
-func (b *FileBundleStoreConnection) GetItemAttachment(item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
-	return b.download(filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
+func (b *FileBundleStoreConnection) GetItemAttachment(ctx context.Context, item meta.AttachableItem, path string) (io.ReadSeekCloser, file.Metadata, error) {
+	return b.download(ctx, filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path)))
 }
 
-func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem) ([]file.Metadata, error) {
+func (b *FileBundleStoreConnection) GetAttachmentPaths(ctx context.Context, item meta.AttachableItem) ([]file.Metadata, error) {
 	// Get all the file paths for this attachable item
 	basePath := filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
 
@@ -222,14 +223,14 @@ func (b *FileBundleStoreConnection) GetAttachmentPaths(item meta.AttachableItem)
 		// We want all files that *aren't* the definition file
 		return !originalFilter.FilterPath(filepath.Join(item.GetBasePath(), s), nil, true)
 	}
-	return b.getFilePaths(basePath, filter, filterConditions)
+	return b.getFilePaths(ctx, basePath, filter, filterConditions)
 }
 
-func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileCreator, item meta.AttachableItem) error {
+func (b *FileBundleStoreConnection) GetItemAttachments(ctx context.Context, creator bundlestore.FileCreator, item meta.AttachableItem) error {
 	// Get all the file paths for this attachable item
 	basePath := filepath.Join(b.PathFunc(item.GetNamespace(), b.Version), item.GetBundleFolderName(), item.GetBasePath())
 
-	pathInfos, err := b.GetAttachmentPaths(item)
+	pathInfos, err := b.GetAttachmentPaths(ctx, item)
 	if err != nil {
 		return err
 	}
@@ -242,7 +243,7 @@ func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileC
 			}
 			defer f.Close()
 
-			r, _, err := b.FileConnection.Download(filepath.Join(basePath, path))
+			r, _, err := b.FileConnection.Download(ctx, filepath.Join(basePath, path))
 			if err != nil {
 				return err
 			}
@@ -261,11 +262,11 @@ func (b *FileBundleStoreConnection) GetItemAttachments(creator bundlestore.FileC
 	return nil
 }
 
-func (b *FileBundleStoreConnection) StoreItem(path string, reader io.Reader) error {
+func (b *FileBundleStoreConnection) StoreItem(ctx context.Context, path string, reader io.Reader) error {
 
 	fullFilePath := filepath.Join(b.Namespace, b.Version, path)
 
-	_, err := b.FileConnection.Upload(file.NewFileUploadRequest(reader, fullFilePath))
+	_, err := b.FileConnection.Upload(ctx, file.NewFileUploadRequest(reader, fullFilePath))
 	if err != nil {
 		return fmt.Errorf("error writing file: %w", err)
 	}
@@ -273,7 +274,7 @@ func (b *FileBundleStoreConnection) StoreItem(path string, reader io.Reader) err
 	return nil
 }
 
-func (b *FileBundleStoreConnection) DeleteBundle() error {
+func (b *FileBundleStoreConnection) DeleteBundle(ctx context.Context) error {
 
 	if b.ReadOnly {
 		return errors.New("tried to delete bundle in read only bundle store")
@@ -281,7 +282,7 @@ func (b *FileBundleStoreConnection) DeleteBundle() error {
 
 	fullFilePath := filepath.Join(b.Namespace, b.Version)
 
-	err := b.FileConnection.EmptyDir(fullFilePath)
+	err := b.FileConnection.EmptyDir(ctx, fullFilePath)
 	if err != nil {
 		return fmt.Errorf("error deleting bundle: %w", err)
 	}
@@ -289,7 +290,7 @@ func (b *FileBundleStoreConnection) DeleteBundle() error {
 	return nil
 }
 
-func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
+func (b *FileBundleStoreConnection) GetBundleDef(ctx context.Context) (*meta.BundleDef, error) {
 
 	if b.Cache != nil {
 		if cachedItem, ok := b.Cache.GetBundleDefFromCache(b.Namespace, b.Version); ok {
@@ -298,7 +299,7 @@ func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	}
 
 	var by meta.BundleDef
-	r, _, err := b.download(filepath.Join(b.PathFunc(b.Namespace, b.Version), "", "bundle.yaml"))
+	r, _, err := b.download(ctx, filepath.Join(b.PathFunc(b.Namespace, b.Version), "", "bundle.yaml"))
 	if err != nil {
 		return nil, err
 	}
@@ -318,9 +319,9 @@ func (b *FileBundleStoreConnection) GetBundleDef() (*meta.BundleDef, error) {
 	return &by, nil
 }
 
-func (b *FileBundleStoreConnection) HasAllItems(items []meta.BundleableItem) error {
+func (b *FileBundleStoreConnection) HasAllItems(ctx context.Context, items []meta.BundleableItem) error {
 	for _, item := range items {
-		err := b.GetItem(item, nil)
+		err := b.GetItem(ctx, item, nil)
 		if err != nil {
 			return err
 		}
@@ -328,7 +329,7 @@ func (b *FileBundleStoreConnection) HasAllItems(items []meta.BundleableItem) err
 	return nil
 }
 
-func (b *FileBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64) error {
+func (b *FileBundleStoreConnection) SetBundleZip(ctx context.Context, reader io.ReaderAt, size int64) error {
 
 	if b.ReadOnly {
 		return errors.New("tried to set bundle zip in read only bundle store")
@@ -352,7 +353,7 @@ func (b *FileBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64)
 				return err
 			}
 			defer rc.Close()
-			return b.StoreItem(zipFile.Name, rc)
+			return b.StoreItem(ctx, zipFile.Name, rc)
 		})
 	}
 
@@ -360,12 +361,12 @@ func (b *FileBundleStoreConnection) SetBundleZip(reader io.ReaderAt, size int64)
 
 }
 
-func (b *FileBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
+func (b *FileBundleStoreConnection) GetBundleZip(ctx context.Context, writer io.Writer, zipoptions *bundlestore.BundleZipOptions) error {
 
 	if b.ReadOnly {
 		return errors.New("tried to get bundle zip in read only bundle store")
 	}
-	session := sess.GetStudioAnonSession(b.Context)
+	session := sess.GetStudioAnonSession(ctx)
 
 	app := b.Namespace
 	version := b.Version
@@ -412,7 +413,7 @@ func (b *FileBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *b
 		zipwriter := zip.NewWriter(writer)
 		create := retrieve.NewWriterCreator(zipwriter.Create)
 		// Retrieve bundle contents
-		err = retrieve.RetrieveBundle(retrieve.BundleDirectory, create, b)
+		err = retrieve.RetrieveBundle(ctx, retrieve.BundleDirectory, create, b)
 		if err != nil {
 			return err
 		}
@@ -421,7 +422,7 @@ func (b *FileBundleStoreConnection) GetBundleZip(writer io.Writer, zipoptions *b
 		return zipwriter.Close()
 	}
 
-	r, _, err := filesource.Download(bundle.Contents.ID, session)
+	r, _, err := filesource.Download(ctx, bundle.Contents.ID, session)
 	if err != nil {
 		return err
 	}

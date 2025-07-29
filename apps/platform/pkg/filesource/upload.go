@@ -1,6 +1,7 @@
 package filesource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -54,7 +55,7 @@ func getUploadMetadata(metadataResponse *wire.MetadataCache, collectionID, field
 	return collectionMetadata, fieldMetadata, nil
 }
 
-func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]any) ([]*meta.UserFileMetadata, error) {
+func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection, session *sess.Session, params map[string]any) ([]*meta.UserFileMetadata, error) {
 
 	var userFileCollection meta.UserFileMetadataCollection
 	if len(ops) == 0 {
@@ -148,7 +149,7 @@ func Upload(ops []*FileUploadOp, connection wire.Connection, session *sess.Sessi
 			if err != nil {
 				return err
 			}
-			writtenResults, err := conn.UploadMany(reqs)
+			writtenResults, err := conn.UploadMany(ctx, reqs)
 			if err != nil {
 				return err
 			}

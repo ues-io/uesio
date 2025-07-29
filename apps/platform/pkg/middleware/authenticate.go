@@ -249,7 +249,7 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(loginRoute, nil, session, nil)
+	err = bundle.Load(session.Context(), loginRoute, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

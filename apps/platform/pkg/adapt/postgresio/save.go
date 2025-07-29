@@ -1,6 +1,8 @@
 package postgresio
 
 import (
+	"context"
+
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v5"
 
@@ -23,7 +25,7 @@ func queue(batch *pgx.Batch, query string, arguments ...any) {
 	})
 }
 
-func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
+func (c *Connection) Save(ctx context.Context, request *wire.SaveOp, session *sess.Session) error {
 
 	tenantID := session.GetTenantID()
 
@@ -89,6 +91,6 @@ func (c *Connection) Save(request *wire.SaveOp, session *sess.Session) error {
 		queue(batch, DELETE_QUERY, deleteIDs, collectionName, tenantID)
 	}
 
-	return c.SendBatch(batch)
+	return c.SendBatch(ctx, batch)
 
 }

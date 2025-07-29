@@ -23,7 +23,6 @@ func (a *FileAdapter) GetFileConnection(ctx context.Context, credentials *wire.C
 		credentials: credentials,
 		bucket:      bucket,
 		client:      client,
-		ctx:         ctx,
 	}, nil
 }
 
@@ -31,7 +30,6 @@ type Connection struct {
 	credentials *wire.Credentials
 	bucket      string
 	client      *s3.Client
-	ctx         context.Context
 }
 
 // TODO: Figure out a way to clean up and close unused clients

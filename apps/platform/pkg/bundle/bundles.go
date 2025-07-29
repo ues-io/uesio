@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -22,12 +21,11 @@ func GetVersionBundleDef(ctx context.Context, namespace, version string, connect
 		Namespace:  namespace,
 		Version:    version,
 		Connection: connection,
-		Context:    ctx,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetBundleDef()
+	return bs.GetBundleDef(ctx)
 }
 
 func GetWorkspaceBundleDef(ctx context.Context, workspace *meta.Workspace, connection wire.Connection) (*meta.BundleDef, error) {
@@ -37,12 +35,11 @@ func GetWorkspaceBundleDef(ctx context.Context, workspace *meta.Workspace, conne
 		Version:    workspace.Name,
 		Connection: connection,
 		Workspace:  workspace,
-		Context:    ctx,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetBundleDef()
+	return bs.GetBundleDef(ctx)
 }
 
 func GetVersion(namespace string, session *sess.Session) (string, error) {
@@ -93,16 +90,7 @@ func GetBundleStoreConnection(namespace string, session *sess.Session, connectio
 		return nil, err
 	}
 
-	var ctx context.Context
-	if session.Context() != nil {
-		ctx = session.Context()
-	} else if connection != nil {
-		ctx = connection.Context()
-	} else {
-		ctx = traceid.NewContext(traceid.NewContext(context.Background()))
-	}
 	return bundlestore.GetConnection(bundlestore.ConnectionOptions{
-		Context:      ctx,
 		Namespace:    namespace,
 		Version:      version,
 		Connection:   connection,
@@ -112,13 +100,13 @@ func GetBundleStoreConnection(namespace string, session *sess.Session, connectio
 	})
 }
 
-func LoadAllFromAny(group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
-	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, options, session, connection)
+func LoadAllFromAny(ctx context.Context, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
+	return LoadAllFromNamespaces(ctx, session.GetContextNamespaces(), group, options, session, connection)
 }
 
-func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
+func LoadAllFromNamespaces(ctx context.Context, namespaces []string, group meta.BundleableGroup, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
 	for _, namespace := range namespaces {
-		err := LoadAll(group, namespace, options, session, connection)
+		err := LoadAll(ctx, group, namespace, options, session, connection)
 		if err != nil {
 			return err
 		}
@@ -126,24 +114,24 @@ func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, opti
 	return nil
 }
 
-func HasAny(group meta.BundleableGroup, namespace string, options *bundlestore.HasAnyOptions, session *sess.Session, connection wire.Connection) (bool, error) {
+func HasAny(ctx context.Context, group meta.BundleableGroup, namespace string, options *bundlestore.HasAnyOptions, session *sess.Session, connection wire.Connection) (bool, error) {
 	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		return false, err
 	}
-	return bs.HasAny(group, options)
+	return bs.HasAny(ctx, group, options)
 }
 
-func LoadAll(group meta.BundleableGroup, namespace string, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
+func LoadAll(ctx context.Context, group meta.BundleableGroup, namespace string, options *bundlestore.GetAllItemsOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(namespace, session, connection)
 	if err != nil {
 		fmt.Println("failed load all: " + group.GetName())
 		return err
 	}
-	return bs.GetAllItems(group, options)
+	return bs.GetAllItems(ctx, group, options)
 }
 
-func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions, session *sess.Session, connection wire.Connection) error {
+func LoadMany(ctx context.Context, items []meta.BundleableItem, options *bundlestore.GetManyItemsOptions, session *sess.Session, connection wire.Connection) error {
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
@@ -156,44 +144,44 @@ func LoadMany(items []meta.BundleableItem, options *bundlestore.GetManyItemsOpti
 			}
 			return err
 		}
-		if err = bs.GetManyItems(nsItems, options); err != nil {
+		if err = bs.GetManyItems(ctx, nsItems, options); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func Load(item meta.BundleableItem, options *bundlestore.GetItemOptions, session *sess.Session, connection wire.Connection) error {
+func Load(ctx context.Context, item meta.BundleableItem, options *bundlestore.GetItemOptions, session *sess.Session, connection wire.Connection) error {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		return fmt.Errorf("failed to load item: %s of type: %s with error: %w", item.GetKey(), item.GetBundleFolderName(), err)
 	}
-	return bs.GetItem(item, options)
+	return bs.GetItem(ctx, item, options)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, file.Metadata, error) {
+func GetItemAttachment(ctx context.Context, item meta.AttachableItem, path string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, file.Metadata, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		return nil, nil, err
 	}
-	return bs.GetItemAttachment(item, path)
+	return bs.GetItemAttachment(ctx, item, path)
 }
 
-func GetAttachmentPaths(item meta.AttachableItem, session *sess.Session, connection wire.Connection) ([]file.Metadata, error) {
+func GetAttachmentPaths(ctx context.Context, item meta.AttachableItem, session *sess.Session, connection wire.Connection) ([]file.Metadata, error) {
 	bs, err := GetBundleStoreConnection(item.GetNamespace(), session, connection)
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetAttachmentPaths(item)
+	return bs.GetAttachmentPaths(ctx, item)
 }
 
-func IsValid(items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
+func IsValid(ctx context.Context, items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
 	for namespace, nsItems := range groupItemsByNamespace(items) {
 		bs, err := GetBundleStoreConnection(namespace, session, connection)
 		if err != nil {
 			return err
 		}
-		if err = bs.HasAllItems(nsItems); err != nil {
+		if err = bs.HasAllItems(ctx, nsItems); err != nil {
 			return err
 		}
 	}

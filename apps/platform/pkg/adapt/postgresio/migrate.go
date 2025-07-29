@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/url"
@@ -49,7 +50,7 @@ func getConnectionString(credentials *wire.Credentials) (string, error) {
 	return fmt.Sprintf("pgx5://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode), nil
 }
 
-func (c *Connection) Migrate(options *migrations.MigrateOptions) error {
+func (c *Connection) Migrate(ctx context.Context, options *migrations.MigrateOptions) error {
 	if options.Down {
 		if options.Number >= 1 {
 			slog.Info(fmt.Sprintf("Reverting %d previously-run migrations", options.Number))

@@ -1,6 +1,7 @@
 package param
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,7 +27,7 @@ import (
 )
 
 func getMetadataList(metadataType, token, grouping string) (labels []string, valuesByLabel map[string]string, err error) {
-
+	ctx := context.Background()
 	if metadataType == "" {
 		return nil, nil, errors.New("no metadata type provided for prompt")
 	}
@@ -50,12 +51,12 @@ func getMetadataList(metadataType, token, grouping string) (labels []string, val
 	sbs := &localbundlestore.LocalBundleStore{}
 	conn := sbs.GetConnection(bundlestore.ConnectionOptions{})
 
-	def, err := conn.GetBundleDef()
+	def, err := conn.GetBundleDef(ctx)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = conn.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+	err = conn.GetAllItems(ctx, group, &bundlestore.GetAllItemsOptions{
 		Conditions: conditions,
 	})
 	if err != nil {

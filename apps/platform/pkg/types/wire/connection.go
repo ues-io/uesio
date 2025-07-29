@@ -8,18 +8,17 @@ import (
 )
 
 type Connection interface {
-	Context() context.Context
-	Load(*LoadOp, *sess.Session) error
-	Save(*SaveOp, *sess.Session) error
-	SetRecordAccessTokens(*SaveOp, *sess.Session) error
-	GetRecordAccessTokens(string, *sess.Session) ([]string, error)
-	Migrate(options *migrations.MigrateOptions) error
-	TruncateTenantData(tenantID string) error
-	GetCredentials() *Credentials
-	GetDataSource() string
-	BeginTransaction() error
-	CommitTransaction() error
-	RollbackTransaction() error
-	Publish(channelName, payload string) error
-	Subscribe(channelName string, handler func(payload string)) error
+	Load(context.Context, *LoadOp, *sess.Session) error
+	Save(context.Context, *SaveOp, *sess.Session) error
+	SetRecordAccessTokens(context.Context, *SaveOp, *sess.Session) error
+	GetRecordAccessTokens(context.Context, string, *sess.Session) ([]string, error)
+	Migrate(ctx context.Context, options *migrations.MigrateOptions) error
+	TruncateTenantData(ctx context.Context, tenantID string) error
+	GetCredentials(context.Context) *Credentials
+	GetDataSource(context.Context) string
+	BeginTransaction(context.Context) error
+	CommitTransaction(context.Context) error
+	RollbackTransaction(context.Context) error
+	Publish(ctx context.Context, channelName, payload string) error
+	Subscribe(ctx context.Context, channelName string, handler func(payload string)) error
 }

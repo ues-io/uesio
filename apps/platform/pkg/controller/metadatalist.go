@@ -36,7 +36,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	var appNames []string
 
 	if namespace != "" {
-		err = bundle.LoadAll(collection, namespace, &bundlestore.GetAllItemsOptions{
+		err = bundle.LoadAll(session.Context(), collection, namespace, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, nil)
 		if err != nil {
@@ -44,7 +44,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 		appNames = []string{namespace}
 	} else {
-		err := bundle.LoadAllFromAny(collection, &bundlestore.GetAllItemsOptions{
+		err := bundle.LoadAllFromAny(session.Context(), collection, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, nil)
 		if err != nil {

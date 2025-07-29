@@ -42,7 +42,7 @@ func getEnvironmentVariableName(secret *meta.Secret) string {
 func GetSecrets(session *sess.Session) (*meta.SecretCollection, error) {
 
 	allSecrets := meta.SecretCollection{}
-	err := bundle.LoadAllFromAny(&allSecrets, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &allSecrets, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func GetSecret(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err = bundle.Load(secret, nil, session, nil); err != nil {
+	if err = bundle.Load(session.Context(), secret, nil, session, nil); err != nil {
 		return "", err
 	}
 	return getSecretInternal(secret, session)
@@ -112,7 +112,7 @@ func SetSecret(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	if err = bundle.Load(secret, nil, session, nil); err != nil {
+	if err = bundle.Load(session.Context(), secret, nil, session, nil); err != nil {
 		return err
 	}
 	return setSecretInternal(secret, value, session)
@@ -123,7 +123,7 @@ func Remove(key string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(secret, nil, session, nil)
+	err = bundle.Load(session.Context(), secret, nil, session, nil)
 	if err != nil {
 		return err
 	}

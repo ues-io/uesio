@@ -1,6 +1,7 @@
 package retrieve
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -42,12 +43,12 @@ const (
 )
 
 // GenerateAppTypeScriptTypes creates a giant file of all app-specific TypeScript type definitions
-func GenerateAppTypeScriptTypes(out io.Writer, bs bundlestore.BundleStoreConnection) error {
+func GenerateAppTypeScriptTypes(ctx context.Context, out io.Writer, bs bundlestore.BundleStoreConnection) error {
 	// Add app specific metadata types app-specific metadata types
 	for _, group := range meta.GetMetadataTypesWithTypescriptDefinitions() {
 		metadataType := group.GetName()
 		genOptions := group.GetTypeGenerationOptions()
-		err := bs.GetAllItems(group, &bundlestore.GetAllItemsOptions{
+		err := bs.GetAllItems(ctx, group, &bundlestore.GetAllItemsOptions{
 			Conditions: genOptions.GetTypescriptableItemConditions(),
 		})
 		if err != nil {
@@ -115,7 +116,7 @@ declare module "@uesio/app/` + group.GetBundleFolderName() + "/" + ns + "\" {"))
 	return nil
 }
 
-func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
+func RetrieveGeneratedFiles(ctx context.Context, targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -131,21 +132,21 @@ func RetrieveGeneratedFiles(targetDirectory string, create bundlestore.FileCreat
 	if err != nil {
 		return err
 	}
-	if err := GenerateAppTypeScriptTypes(f, bs); err != nil {
+	if err := GenerateAppTypeScriptTypes(ctx, f, bs); err != nil {
 		return err
 	}
 	return nil
 }
 
 // RetrieveBundle retrieves the content of a specific bundle version into the designated targetDirectory
-func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
+func RetrieveBundle(ctx context.Context, targetDirectory string, create bundlestore.FileCreator, bs bundlestore.BundleStoreConnection) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
 		if err != nil {
 			return err
 		}
-		err = bs.GetAllItems(group, nil)
+		err = bs.GetAllItems(ctx, group, nil)
 		if err != nil {
 			return fmt.Errorf("failed to retrieve items of type: %s : %w", metadataType, err)
 		}
@@ -170,7 +171,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
 			if isAttachable {
-				err := bs.GetItemAttachments(func(localpath string) (io.WriteCloser, error) {
+				err := bs.GetItemAttachments(ctx, func(localpath string) (io.WriteCloser, error) {
 					return create(path.Join(targetDirectory, metadataType, attachableItem.GetBasePath(), localpath))
 				}, attachableItem)
 				if err != nil {
@@ -187,7 +188,7 @@ func RetrieveBundle(targetDirectory string, create bundlestore.FileCreator, bs b
 	}
 
 	// Add bundle.yaml
-	bundleDef, err := bs.GetBundleDef()
+	bundleDef, err := bs.GetBundleDef(ctx)
 	if err != nil {
 		return err
 	}

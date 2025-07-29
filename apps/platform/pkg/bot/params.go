@@ -58,7 +58,7 @@ func GetBotParams(namespace, name, metadataType string, session *sess.Session) (
 		robot = meta.NewRunActionBot(namespace, name)
 	}
 
-	err := bundle.Load(robot, nil, session, nil)
+	err := bundle.Load(session.Context(), robot, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

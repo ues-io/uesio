@@ -51,13 +51,13 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	// Load all public routes to get their paths, along with public files.
 	// We are assuming that a crawler would have a public guest session,
 	// so we can just let our permissions system do the work of finding which routes/files are accessible)
-	err := bundle.LoadAllFromAny(&routes, nil, session, nil)
+	err := bundle.LoadAllFromAny(session.Context(), &routes, nil, session, nil)
 
 	if err != nil || len(routes) == 0 {
 		return
 	}
 
-	err = bundle.LoadAllFromAny(&files, nil, session, nil)
+	err = bundle.LoadAllFromAny(session.Context(), &files, nil, session, nil)
 
 	if err != nil {
 		return

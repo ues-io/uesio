@@ -46,16 +46,14 @@ func removeEmptyDir(path string) {
 func (a *FileAdapter) GetFileConnection(ctx context.Context, credentials *wire.Credentials, bucket string) (file.Connection, error) {
 	return &Connection{
 		bucket: bucket,
-		ctx:    ctx,
 	}, nil
 }
 
 type Connection struct {
 	bucket string
-	ctx    context.Context
 }
 
-func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
+func (c *Connection) List(ctx context.Context, dirPath string) ([]file.Metadata, error) {
 	var paths []file.Metadata
 	basePath := filepath.Join(c.bucket, filepath.FromSlash(dirPath)) + string(os.PathSeparator)
 	err := filepath.WalkDir(basePath, func(path string, info fs.DirEntry, err error) error {
@@ -87,17 +85,17 @@ func (c *Connection) List(dirPath string) ([]file.Metadata, error) {
 	return paths, nil
 }
 
-func (c *Connection) Upload(req file.FileUploadRequest) (int64, error) {
-	return handleFileUpload(c.ctx, c.bucket, req.Data(), req.Path())
+func (c *Connection) Upload(ctx context.Context, req file.FileUploadRequest) (int64, error) {
+	return handleFileUpload(ctx, c.bucket, req.Data(), req.Path())
 }
 
-func (c *Connection) UploadMany(reqs []file.FileUploadRequest) ([]int64, error) {
+func (c *Connection) UploadMany(ctx context.Context, reqs []file.FileUploadRequest) ([]int64, error) {
 	// TODO: make maxRequestUploadConcurrency configurable. This is a "per request" concurrency limit currently. Need
 	// to "tune" it and also consider "host/site" wide configuration options beyond just individual request limits. The
 	// configuration limits should likely be exposed at a "host" level (for all configuration limit options) for each
 	// backend provider as the "host" instance and backend provider will have different resource limitations.
 	maxRequestUploadConcurrency := 10
-	g, uploadCtx := errgroup.WithContext(c.ctx)
+	g, uploadCtx := errgroup.WithContext(ctx)
 	g.SetLimit(maxRequestUploadConcurrency)
 	bytesWritten := make([]int64, len(reqs))
 
@@ -150,7 +148,7 @@ func handleFileUpload(ctx context.Context, bucket string, fileData io.Reader, pa
 	return size, nil
 }
 
-func (c *Connection) Download(path string) (io.ReadSeekCloser, file.Metadata, error) {
+func (c *Connection) Download(ctx context.Context, path string) (io.ReadSeekCloser, file.Metadata, error) {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	outFile, err := os.Open(fullPath)
 	if err != nil {
@@ -167,7 +165,7 @@ func (c *Connection) Download(path string) (io.ReadSeekCloser, file.Metadata, er
 	return outFile, file.NewLocalFileMeta(fileInfo, path), nil
 }
 
-func (c *Connection) Delete(path string) error {
+func (c *Connection) Delete(ctx context.Context, path string) error {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.Remove(fullPath)
 	if err != nil {
@@ -178,7 +176,7 @@ func (c *Connection) Delete(path string) error {
 	return nil
 }
 
-func (c *Connection) EmptyDir(path string) error {
+func (c *Connection) EmptyDir(ctx context.Context, path string) error {
 	fullPath := filepath.Join(c.bucket, filepath.FromSlash(path))
 	err := os.RemoveAll(fullPath)
 	if err != nil {
