@@ -42,7 +42,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/zip")
 	file.SetContentDispositionHeader(w, "attachment", version+".zip")
 	middleware.Set1YearCache(w)
-	ctlutil.AddTrailingStatus(w)
+	ctlutil.AddTrailingStatusContext(r.Context(), w)
 
 	err = source.GetBundleZip(r.Context(), w, nil)
 	if err != nil {

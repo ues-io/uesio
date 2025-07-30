@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/httplog/v3"
-	"github.com/go-chi/traceid"
 	httputil "github.com/thecloudmasters/uesio/pkg/http"
 )
 
@@ -54,10 +53,6 @@ func HandleTrailingError(ctx context.Context, w http.ResponseWriter, err error) 
 	// a middleware HandleError utility (or similar) that can update context with error and
 	// write out the error.
 	httputil.HandleTrailingError(ctx, w, err)
-}
-
-func AddTrailingStatus(w http.ResponseWriter) {
-	AddTrailingStatusContext(traceid.NewContext(context.Background()), w)
 }
 
 func AddTrailingStatusContext(ctx context.Context, w http.ResponseWriter) {
