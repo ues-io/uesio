@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -48,7 +49,36 @@ var claudeModelHandler = &ClaudeModelHandler{}
 func (cmh *ClaudeModelHandler) Hydrate(ic *wire.IntegrationConnection, params map[string]any) error {
 	cmh.ic = ic
 	options := anthropic.MessageNewParams{}
-	err := datasource.HydrateOptions(params, &options)
+
+	// NOTE: Special case for system parameter sent as string
+	// The anthropic sdk will not unmarshal strings correctly into
+	// the "System" option. So we have to manually check for a system
+	// parameter that is a string and set its value.
+	systemPrompt, err := param.GetRequiredString(params, "system")
+	// If no err was returned, that means we successfully parsed the
+	// system parameter as a string.
+	if err == nil {
+		options.System = []anthropic.TextBlockParam{
+			{Text: systemPrompt},
+		}
+		delete(params, "system")
+	}
+
+	// NOTE: Special case for input parameter
+	// To ensure backwards compatibility and to handle simple cases,
+	// we accept an input parameter as the input from the user.
+	// If we find the input parameter, we convert it to the correct
+	// messages API format.
+	input, err := param.GetRequiredString(params, "input")
+	// If no error was returned, that means we successfully parsed the
+	// input parameter as a string.
+	if err == nil {
+		options.Messages = []anthropic.MessageParam{
+			anthropic.NewUserMessage(anthropic.NewTextBlock(input)),
+		}
+		delete(params, "input")
+	}
+	err = datasource.HydrateOptions(params, &options)
 	if err != nil {
 		return err
 	}
