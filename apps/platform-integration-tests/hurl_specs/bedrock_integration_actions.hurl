@@ -30,12 +30,12 @@ Uesio Test Model was invoked with the following options:
 }
 ```
 
-# Invoke the test model -- sanity test
+# Invoke the anthropic test model -- and verify that input and system parameters are expanded
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/integrationactions/run/uesio/aikit/bedrock?action=invokemodel
 {
     "model": "uesio.test-anthropic-format",
     "input": "hello!",
-		"system": "you are a good bot"
+    "system": "you are a good bot"
 }
 HTTP 200
 [Asserts]
