@@ -30,6 +30,27 @@ Uesio Test Model was invoked with the following options:
 }
 ```
 
+# Invoke the deprecated test model with a compatibility mapping
+POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/integrationactions/run/uesio/aikit/bedrock?action=invokemodel
+{
+    "model": "uesio.test-simple-responder-deprecated",
+    "messages": [],
+		"system": "test",
+		"tools": []
+}
+HTTP 200
+[Asserts]
+```
+Uesio Test Model was invoked with the following options:
+
+{
+  "messages": [],
+  "model": "uesio.test-simple-responder",
+  "system": "test",
+  "tools": []
+}
+```
+
 # Invoke the anthropic test model -- and verify that input and system parameters are expanded
 POST {{site_scheme}}://studio.{{site_primary_domain}}:{{site_port}}/workspace/uesio/tests/dev/integrationactions/run/uesio/aikit/bedrock?action=invokemodel
 {
