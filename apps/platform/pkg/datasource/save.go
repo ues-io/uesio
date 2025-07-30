@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -39,11 +40,11 @@ type SaveOptions struct {
 	Metadata   *wire.MetadataCache
 }
 
-func Save(requests []SaveRequest, session *sess.Session) error {
-	return SaveWithOptions(requests, session, nil)
+func Save(ctx context.Context, requests []SaveRequest, session *sess.Session) error {
+	return SaveWithOptions(ctx, requests, session, nil)
 }
 
-func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
+func SaveWithOptions(ctx context.Context, requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
 	if options == nil {
 		options = &SaveOptions{}
 	}
@@ -54,7 +55,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, session, options.Connection)
+	connection, err := GetConnection(ctx, meta.PLATFORM_DATA_SOURCE, session, options.Connection)
 	if err != nil {
 		return err
 	}
@@ -69,7 +70,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 
 		collectionKey := request.Collection
 
-		err := GetFullMetadataForCollection(metadataResponse, collectionKey, adminSession, connection)
+		err := GetFullMetadataForCollection(ctx, metadataResponse, collectionKey, adminSession, connection)
 		if err != nil {
 			return err
 		}
@@ -100,11 +101,11 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	hasExistingConnection := options.Connection != nil
 
 	if !hasExistingConnection {
-		return WithTransaction(session, connection, func(conn wire.Connection) error {
-			return SaveOps(allOps, metadataResponse, conn, session)
+		return WithTransaction(ctx, session, connection, func(conn wire.Connection) error {
+			return SaveOps(ctx, allOps, metadataResponse, conn, session)
 		})
 	}
-	return SaveOps(allOps, metadataResponse, connection, session)
+	return SaveOps(ctx, allOps, metadataResponse, connection, session)
 }
 
 func HandleErrorAndAddToSaveOp(op *wire.SaveOp, err error) *exceptions.SaveException {
@@ -122,7 +123,7 @@ func isExternalIntegrationCollection(op *wire.SaveOp) bool {
 	return integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE
 }
 
-func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func SaveOp(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionKey := op.CollectionName
 	collectionMetadata, err := op.GetCollectionMetadata()
@@ -136,12 +137,12 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	if !isExternalIntegrationSave {
 		// TODO Maybe do this for external integration saves at some point
-		err = FetchReferences(connection, op, session)
+		err = FetchReferences(ctx, connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
 
-		err = HandleUpsertLookup(connection, op, session)
+		err = HandleUpsertLookup(ctx, connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -160,7 +161,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	}
 
 	if !isExternalIntegrationSave {
-		err = HandleOldValuesLookup(connection, op, session)
+		err = HandleOldValuesLookup(ctx, connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -178,7 +179,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 		return wire.NewGenericSaveException(fmt.Errorf("error with field population: %s", strings.Join(op.GetErrorStrings(), ", ")))
 	}
 
-	err = runBeforeSaveBots(op, connection, session)
+	err = runBeforeSaveBots(ctx, op, connection, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
@@ -190,7 +191,7 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 
 	// Fetch References again.
 	if !isExternalIntegrationSave {
-		err = FetchReferences(connection, op, session)
+		err = FetchReferences(ctx, connection, op, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
@@ -244,35 +245,35 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	usage.RegisterEvent("SAVE", "DATASOURCE", integrationName, 0, session)
 
 	if !isExternalIntegrationSave {
-		err = GenerateRecordChallengeTokens(op, connection, session)
+		err = GenerateRecordChallengeTokens(ctx, op, connection, session)
 		if err != nil {
 			return HandleErrorAndAddToSaveOp(op, err)
 		}
 	}
 
-	err = performCascadeDeletes(op, connection, session)
+	err = performCascadeDeletes(ctx, op, connection, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	// Handle external data integration saves
 	if isExternalIntegrationSave {
-		err = performExternalIntegrationSave(integrationName, op, connection, session)
+		err = performExternalIntegrationSave(ctx, integrationName, op, connection, session)
 	} else {
 		// handle Uesio DB saves
-		err = connection.Save(session.Context(), op, session)
+		err = connection.Save(ctx, op, session)
 	}
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
 
 	if !isExternalIntegrationCollection(op) {
-		if err = connection.SetRecordAccessTokens(session.Context(), op, session); err != nil {
+		if err = connection.SetRecordAccessTokens(ctx, op, session); err != nil {
 			return err
 		}
 	}
 
-	err = runAfterSaveBots(op, connection, session)
+	err = runAfterSaveBots(ctx, op, connection, session)
 	if err != nil {
 		return HandleErrorAndAddToSaveOp(op, err)
 	}
@@ -284,8 +285,8 @@ func SaveOp(op *wire.SaveOp, connection wire.Connection, session *sess.Session) 
 	return nil
 }
 
-func performExternalIntegrationSave(integrationName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
+func performExternalIntegrationSave(ctx context.Context, integrationName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegrationConnection(ctx, integrationName, session, connection)
 	if err != nil {
 		return err
 	}
@@ -302,18 +303,18 @@ func performExternalIntegrationSave(integrationName string, op *wire.SaveOp, con
 	if botKey == "" && integrationType != nil {
 		botKey = integrationType.SaveBot
 	}
-	if err = runExternalDataSourceSaveBot(botKey, op, connection, session); err != nil {
+	if err = runExternalDataSourceSaveBot(ctx, botKey, op, connection, session); err != nil {
 		return err
 	}
 	return nil
 }
 
-func SaveOps(batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire.Connection, session *sess.Session) error {
+func SaveOps(ctx context.Context, batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire.Connection, session *sess.Session) error {
 
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(connection, metadata, session)
+	err := GenerateUserAccessTokens(ctx, connection, metadata, session)
 	if err != nil {
 		return err
 	}
@@ -328,7 +329,7 @@ func SaveOps(batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire
 		}
 
 		if collectionMetadata.IsDynamic() {
-			err2 := runDynamicCollectionSaveBots(op, connection, session)
+			err2 := runDynamicCollectionSaveBots(ctx, op, connection, session)
 			if err2 != nil {
 				// If this error is already in the save op, don't add it again
 				if exceptions.IsType[*exceptions.SaveException](err2) {
@@ -340,7 +341,7 @@ func SaveOps(batch []*wire.SaveOp, metadata *wire.MetadataCache, connection wire
 			continue
 		}
 
-		err = SaveOp(op, connection, session)
+		err = SaveOp(ctx, op, connection, session)
 		if err != nil {
 			return err
 		}

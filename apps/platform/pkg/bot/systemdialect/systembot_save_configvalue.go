@@ -1,12 +1,14 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runConfigValueSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runConfigValueSaveBot(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	err := op.LoopUpdates(func(change *wire.ChangeItem) error {
 
@@ -20,7 +22,7 @@ func runConfigValueSaveBot(op *wire.SaveOp, connection wire.Connection, session 
 			return err
 		}
 
-		return configstore.SetValue(key, value, session)
+		return configstore.SetValue(ctx, key, value, session)
 	})
 	if err != nil {
 		return err
@@ -30,6 +32,6 @@ func runConfigValueSaveBot(op *wire.SaveOp, connection wire.Connection, session 
 		if err != nil {
 			return err
 		}
-		return configstore.Remove(key, session)
+		return configstore.Remove(ctx, key, session)
 	})
 }

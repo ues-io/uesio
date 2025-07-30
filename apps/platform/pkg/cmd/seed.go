@@ -128,7 +128,7 @@ func runSeeds(ctx context.Context, connection wire.Connection) error {
 		return err
 	}
 
-	return datasource.SaveWithOptions([]datasource.SaveRequest{
+	return datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&loginmethods),
 		getPlatformSeedSR(&apps),
@@ -151,9 +151,9 @@ func seed(cmd *cobra.Command, args []string) error {
 
 	ignoreSeedFailures, _ := cmd.Flags().GetBool("ignore-failures")
 
-	anonSession := sess.GetStudioAnonSession(ctx)
+	anonSession := sess.GetStudioAnonSession()
 
-	err := datasource.WithTransaction(anonSession, nil, func(conn wire.Connection) error {
+	err := datasource.WithTransaction(ctx, anonSession, nil, func(conn wire.Connection) error {
 		return runSeeds(ctx, conn)
 	})
 	if err != nil {

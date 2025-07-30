@@ -1,6 +1,7 @@
 package declarativedialect
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -74,18 +75,18 @@ func runStep(stepDef *yaml.Node, api any) error {
 	}
 }
 
-func (b *DeclarativeDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewBeforeSaveAPI(bot, request, connection, session)
+func (b *DeclarativeDialect) BeforeSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := jsdialect.NewBeforeSaveAPI(ctx, bot, request, connection, session)
 	return runSteps((*yaml.Node)(bot.Definition), botAPI)
 }
 
-func (b *DeclarativeDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewAfterSaveAPI(bot, request, connection, session)
+func (b *DeclarativeDialect) AfterSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := jsdialect.NewAfterSaveAPI(ctx, bot, request, connection, session)
 	return runSteps((*yaml.Node)(bot.Definition), botAPI)
 }
 
-func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	botAPI := jsdialect.NewCallBotAPI(bot, session, connection, params)
+func (b *DeclarativeDialect) CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+	botAPI := jsdialect.NewCallBotAPI(ctx, bot, session, connection, params)
 	err := runSteps((*yaml.Node)(bot.Definition), botAPI)
 	if err != nil {
 		return nil, err
@@ -93,22 +94,22 @@ func (b *DeclarativeDialect) CallBot(bot *meta.Bot, params map[string]any, conne
 	return botAPI.Results, nil
 }
 
-func (b *DeclarativeDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func (b *DeclarativeDialect) CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return nil, errors.New("declarative dialect not implemented yet")
 }
 
-func (b *DeclarativeDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+func (b *DeclarativeDialect) RouteBot(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
 	return nil, errors.New("declarative dialect not implemented yet")
 }
 
-func (b *DeclarativeDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func (b *DeclarativeDialect) LoadBot(ctx context.Context, bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	return errors.New("declarative dialect not implemented yet")
 }
 
-func (b *DeclarativeDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *DeclarativeDialect) SaveBot(ctx context.Context, bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return errors.New("declarative dialect not implemented yet")
 }
 
-func (b *DeclarativeDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+func (b *DeclarativeDialect) RunIntegrationActionBot(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 	return nil, errors.New("declarative dialect not implemented yet")
 }

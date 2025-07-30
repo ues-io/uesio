@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -29,7 +30,7 @@ var supportedCollections = []string{
 
 // intercepts the collection uesio/studio.recentmetadata & enhances the LoadOp
 // Add the required metadata to complete the operation
-func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runRecentMetadataLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	workspace := op.Params["workspacename"]
 	if workspace == "" {
@@ -45,7 +46,7 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 
 	// We need to obtain the workspace id in order to have a condition on the uesio/studio.workspace field,
 	// which contains the UUID of the workspace associated with studio data.
-	inContextSession, err := datasource.AddWorkspaceContextByKey(workspaceKey, session, connection)
+	inContextSession, err := datasource.AddWorkspaceContextByKey(ctx, workspaceKey, session, connection)
 	if err != nil {
 		return err
 	}
@@ -160,7 +161,7 @@ func runRecentMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 	})
 
 	// We need to query with the original session
-	err = connection.Load(session.Context(), newOp, session)
+	err = connection.Load(ctx, newOp, session)
 	if err != nil {
 		return err
 	}

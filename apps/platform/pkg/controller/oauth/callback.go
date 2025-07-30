@@ -33,9 +33,9 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	// perform the corresponding authentication middleware
 	var contextSession *sess.Session
 	if state.HasWorkspaceContext() {
-		contextSession, err = datasource.AddWorkspaceContextByKey(state.AppName+":"+state.WorkspaceName, s, nil)
+		contextSession, err = datasource.AddWorkspaceContextByKey(r.Context(), state.AppName+":"+state.WorkspaceName, s, nil)
 	} else if state.HasSiteAdminContext() {
-		contextSession, err = datasource.AddSiteAdminContextByKey(state.AppName+":"+state.SiteName, s, nil)
+		contextSession, err = datasource.AddSiteAdminContextByKey(r.Context(), state.AppName+":"+state.SiteName, s, nil)
 	}
 	if contextSession != nil {
 		s = contextSession
@@ -44,12 +44,12 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	connection, err := datasource.GetPlatformConnection(s, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), s, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to obtain platform connection: %w", err))
 		return
 	}
-	versionSession, err := datasource.EnterVersionContext("uesio/core", s, connection)
+	versionSession, err := datasource.EnterVersionContext(r.Context(), "uesio/core", s, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("failed to enter version context: %w", err))
 		return
@@ -63,21 +63,21 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	integrationName := state.IntegrationName
 	userId := s.GetSiteUser().ID
 
-	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, s, connection)
+	integrationConnection, err := datasource.GetIntegrationConnection(r.Context(), integrationName, s, connection)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)
 		return
 	}
 
 	host := fmt.Sprintf("%s://%s", tls.ServeAppDefaultScheme(), r.Host)
-	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(s.Context(), integrationConnection.GetCredentials(), host, authCode, state)
+	tok, err := oauth.ExchangeAuthorizationCodeForAccessToken(r.Context(), integrationConnection.GetCredentials(), host, authCode, state)
 	if err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", err, false)
 		return
 	}
 	// Now that we have an access token (and maybe refresh token),
 	// store this into an Integration Credential record in the DB.
-	if err = oauth.UpsertIntegrationCredential(oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
+	if err = oauth.UpsertIntegrationCredential(r.Context(), oauth.BuildIntegrationCredential(integrationName, userId, tok), versionSession, connection); err != nil {
 		controller.HandleErrorRoute(w, r, s, r.URL.Path, "", fmt.Errorf("failed to obtain access token from authorization code: %w", err), false)
 		return
 	}
@@ -87,7 +87,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 
 func loadCallbackRoute(r *http.Request, coreSession *sess.Session, platformConn wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute("uesio/core", "oauth2callback")
-	if err := bundle.Load(coreSession.Context(), route, nil, coreSession, platformConn); err != nil {
+	if err := bundle.Load(r.Context(), route, nil, coreSession, platformConn); err != nil {
 		return nil, fmt.Errorf("unable to load oauth callback route: %w", err)
 	}
 	// Make sure to do a copy to avoid mutating in-memory/cached metadata

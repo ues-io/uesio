@@ -81,7 +81,7 @@ func Authenticate(next http.Handler) http.Handler {
 		ctx := r.Context()
 
 		// Get the site we're currently using from our host
-		site, err := auth.GetSiteFromHost(r.Host)
+		site, err := auth.GetSiteFromHost(r.Context(), r.Host)
 		if err != nil {
 			HandleError(ctx, w, fmt.Errorf("failed to get site from domain: %w", err))
 			return
@@ -100,7 +100,7 @@ func Authenticate(next http.Handler) http.Handler {
 			}
 			authToken := splitToken[1]
 
-			user, err := auth.GetUserFromAuthToken(authToken, site)
+			user, err := auth.GetUserFromAuthToken(r.Context(), authToken, site)
 			if err != nil {
 				// current HandleError will send error message to client to log reason
 				// separately to avoid leaking details to client
@@ -136,7 +136,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		siteName := vars["site"]
-		siteAdminSession, err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, GetSession(r), nil)
+		siteAdminSession, err := datasource.AddSiteAdminContextByKey(r.Context(), appName+":"+siteName, GetSession(r), nil)
 		if err != nil {
 			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
@@ -153,7 +153,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
-		workspaceSession, err := datasource.AddWorkspaceImpersonationContextByKey(appName+":"+workspaceName, GetSession(r), nil)
+		workspaceSession, err := datasource.AddWorkspaceImpersonationContextByKey(r.Context(), appName+":"+workspaceName, GetSession(r), nil)
 		if err != nil {
 			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
@@ -169,7 +169,7 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		version := vars["version"]
 		app := vars["app"]
-		versionSession, err := datasource.AddVersionContext(app, version, GetSession(r), nil)
+		versionSession, err := datasource.AddVersionContext(r.Context(), app, version, GetSession(r), nil)
 		if err != nil {
 			HandleContextSwitchAuthError(w, r.WithContext(ctx), err)
 			return
@@ -232,7 +232,7 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 		return nil, exceptions.NewUnauthorizedException("invalid_browser_session: site_mismatch")
 	}
 
-	user, err := auth.GetCachedUserByID(browserUserID, site)
+	user, err := auth.GetCachedUserByID(r.Context(), browserUserID, site)
 	if err == nil {
 		return auth.GetSessionFromUser(ctx, user, site, browserSessionManager.Token(ctx))
 	}
@@ -244,12 +244,12 @@ func createSessionFromBrowserSession(r *http.Request, site *meta.Site) (*sess.Se
 	}
 }
 
-func getLoginRoute(session *sess.Session) (*meta.Route, error) {
+func getLoginRoute(ctx context.Context, session *sess.Session) (*meta.Route, error) {
 	loginRoute, err := meta.NewRoute(session.GetLoginRoute())
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), loginRoute, nil, session, nil)
+	err = bundle.Load(ctx, loginRoute, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +266,7 @@ const (
 )
 
 func RedirectToLoginRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, reason RedirectReason) bool {
-	loginRoute, err := getLoginRoute(session)
+	loginRoute, err := getLoginRoute(r.Context(), session)
 	if err != nil {
 		return false
 	}
@@ -348,7 +348,7 @@ func handlePriviledgeChange(ctx context.Context, user *meta.User, site *meta.Sit
 }
 
 func createSessionForPublicUser(ctx context.Context, site *meta.Site) (*sess.Session, error) {
-	publicUser, err := auth.GetPublicUser(site, nil)
+	publicUser, err := auth.GetPublicUser(ctx, site, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve public user: %w", err)
 	}

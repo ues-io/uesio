@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -16,12 +17,12 @@ type LoadOptions struct {
 	Metadata   *wire.MetadataCache
 }
 
-func getOpMetadata(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
+func getOpMetadata(ctx context.Context, op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
 	// Attach the collection metadata to the LoadOp so that Load Bots can access it
 	op.AttachMetadataCache(metadata)
 	// Special processing for View-only wires
 	if op.ViewOnly {
-		if err := GetMetadataForViewOnlyWire(op, metadata, connection, session); err != nil {
+		if err := GetMetadataForViewOnlyWire(ctx, op, metadata, connection, session); err != nil {
 			return err
 		}
 		return nil
@@ -31,7 +32,7 @@ func getOpMetadata(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataC
 		return exceptions.NewForbiddenException(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetContextProfile(), op.CollectionName))
 	}
 
-	return GetMetadataForLoad(op, metadata, ops, session, connection)
+	return GetMetadataForLoad(ctx, op, metadata, ops, session, connection)
 }
 
 func addDefaultFieldsAndOrder(op *wire.LoadOp) {
@@ -67,8 +68,8 @@ func addDefaultFieldsAndOrder(op *wire.LoadOp) {
 	}
 }
 
-func LoadWithError(op *wire.LoadOp, session *sess.Session, options *LoadOptions) error {
-	if _, err := Load([]*wire.LoadOp{op}, session, options); err != nil {
+func LoadWithError(ctx context.Context, op *wire.LoadOp, session *sess.Session, options *LoadOptions) error {
+	if _, err := Load(ctx, []*wire.LoadOp{op}, session, options); err != nil {
 		return err
 	}
 
@@ -78,7 +79,7 @@ func LoadWithError(op *wire.LoadOp, session *sess.Session, options *LoadOptions)
 	return nil
 }
 
-func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
+func Load(ctx context.Context, ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wire.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
 	}
@@ -91,7 +92,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 		metadataResponse = options.Metadata
 	}
 
-	connection, err := GetConnection(meta.PLATFORM_DATA_SOURCE, session, options.Connection)
+	connection, err := GetConnection(ctx, meta.PLATFORM_DATA_SOURCE, session, options.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +102,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 
-		err := getOpMetadata(op, ops, metadataResponse, session, connection)
+		err := getOpMetadata(ctx, op, ops, metadataResponse, session, connection)
 		if err != nil {
 			op.AddError(exceptions.NewLoadException("", err))
 			continue
@@ -127,13 +128,13 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 
 	if opsNeedRecordLevelAccessCheck {
 		// Attach user access tokens to the session
-		if err = GenerateUserAccessTokens(connection, metadataResponse, session); err != nil {
+		if err = GenerateUserAccessTokens(ctx, connection, metadataResponse, session); err != nil {
 			return nil, err
 		}
 	}
 
 	for _, op := range opsToQuery {
-		err := queryOp(op, opsToQuery, metadataResponse, session, connection)
+		err := queryOp(ctx, op, opsToQuery, metadataResponse, session, connection)
 		if err != nil {
 			op.AddError(exceptions.NewLoadException("", err))
 			continue
@@ -143,7 +144,7 @@ func Load(ops []*wire.LoadOp, session *sess.Session, options *LoadOptions) (*wir
 	return metadataResponse, nil
 }
 
-func queryOp(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
+func queryOp(ctx context.Context, op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
 	// In order to prevent Uesio DB, Dynamic Collections, and External Integration load bots from each separately
 	// needing to manually filter out inactive conditions, we will instead do that here, as part of processConditions,
 	// which will return a list of active Conditions (and this is recursive, so that sub-conditions of GROUP, SUBQUERY,
@@ -192,13 +193,13 @@ func queryOp(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, 
 	var loadErr error
 	if collectionMetadata.IsDynamic() {
 		// Dynamic collection loads
-		loadErr = runDynamicCollectionLoadBots(op, connection, session)
+		loadErr = runDynamicCollectionLoadBots(ctx, op, connection, session)
 	} else if integrationName != "" && integrationName != meta.PLATFORM_DATA_SOURCE {
 		// external integration loads
-		loadErr = performExternalIntegrationLoad(integrationName, op, connection, session)
+		loadErr = performExternalIntegrationLoad(ctx, integrationName, op, connection, session)
 	} else {
 		// native Uesio DB loads
-		loadErr = LoadOp(op, connection, session)
+		loadErr = LoadOp(ctx, op, connection, session)
 	}
 	// Regardless of what happened with the load, restore the original conditions list now that we're done
 	op.Conditions = originalConditions
@@ -206,8 +207,8 @@ func queryOp(op *wire.LoadOp, ops []*wire.LoadOp, metadata *wire.MetadataCache, 
 	return loadErr
 }
 
-func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	integrationConnection, err := GetIntegrationConnection(integrationName, session, connection)
+func performExternalIntegrationLoad(ctx context.Context, integrationName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+	integrationConnection, err := GetIntegrationConnection(ctx, integrationName, session, connection)
 	if err != nil {
 		return err
 	}
@@ -224,7 +225,7 @@ func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, con
 	if botKey == "" && integrationType != nil {
 		botKey = integrationType.LoadBot
 	}
-	if err = runExternalDataSourceLoadBot(botKey, op, connection, session); err != nil {
+	if err = runExternalDataSourceLoadBot(ctx, botKey, op, connection, session); err != nil {
 		return err
 	}
 	return nil
@@ -232,9 +233,9 @@ func performExternalIntegrationLoad(integrationName string, op *wire.LoadOp, con
 
 // LoadOp loads one operation within a sequence.
 // WARNING!!! This is not a shortcut for Load(ops...)---DO NOT CALL THIS unless you know what you're doing
-func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func LoadOp(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
-	if err := connection.Load(session.Context(), op, session); err != nil {
+	if err := connection.Load(ctx, op, session); err != nil {
 		return err
 	}
 
@@ -242,5 +243,5 @@ func LoadOp(op *wire.LoadOp, connection wire.Connection, session *sess.Session) 
 		return nil
 	}
 
-	return LoadOp(op, connection, session)
+	return LoadOp(ctx, op, connection, session)
 }

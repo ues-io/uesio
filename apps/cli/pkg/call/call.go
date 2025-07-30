@@ -2,6 +2,7 @@ package call
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/cli/pkg/config/host"
-	"github.com/thecloudmasters/cli/pkg/context"
+	appcontext "github.com/thecloudmasters/cli/pkg/context"
 	uesiohttp "github.com/thecloudmasters/uesio/pkg/http"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
@@ -20,7 +21,7 @@ type RequestSpec struct {
 	Method            string
 	Url               string
 	Token             string
-	AppContext        *context.AppContext
+	AppContext        *appcontext.AppContext
 	Body              io.Reader
 	AdditionalHeaders map[string]string
 }
@@ -40,7 +41,7 @@ func Request(r *RequestSpec) (*http.Response, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(r.Method, fmt.Sprintf("%s/%s", hostName, r.Url), r.Body)
+	req, err := http.NewRequestWithContext(context.Background(), r.Method, fmt.Sprintf("%s/%s", hostName, r.Url), r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +124,7 @@ func GetJSON(url, token string, response any) error {
 	return nil
 }
 
-func Delete(url, token string, appContext *context.AppContext) (int, error) {
+func Delete(url, token string, appContext *appcontext.AppContext) (int, error) {
 	resp, err := Request(&RequestSpec{
 		Method:     http.MethodDelete,
 		Url:        url,
@@ -137,7 +138,7 @@ func Delete(url, token string, appContext *context.AppContext) (int, error) {
 	return resp.StatusCode, nil
 }
 
-func Post(url string, payload io.Reader, token string, appContext *context.AppContext) (*http.Response, error) {
+func Post(url string, payload io.Reader, token string, appContext *appcontext.AppContext) (*http.Response, error) {
 	return Request(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,
@@ -147,7 +148,7 @@ func Post(url string, payload io.Reader, token string, appContext *context.AppCo
 	})
 }
 
-func PostForm(url string, payload io.Reader, token string, appContext *context.AppContext) (*http.Response, error) {
+func PostForm(url string, payload io.Reader, token string, appContext *appcontext.AppContext) (*http.Response, error) {
 	return Request(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,
@@ -160,7 +161,7 @@ func PostForm(url string, payload io.Reader, token string, appContext *context.A
 	})
 }
 
-func PostJSON(url, token string, request, response any, appContext *context.AppContext) error {
+func PostJSON(url, token string, request, response any, appContext *appcontext.AppContext) error {
 
 	payloadBytes := &bytes.Buffer{}
 
@@ -182,7 +183,7 @@ func PostJSON(url, token string, request, response any, appContext *context.AppC
 	return nil
 }
 
-func PostBytes(url string, payload io.Reader, token string, appContext *context.AppContext) ([]byte, error) {
+func PostBytes(url string, payload io.Reader, token string, appContext *appcontext.AppContext) ([]byte, error) {
 	return RequestResult(&RequestSpec{
 		Method:     http.MethodPost,
 		Url:        url,

@@ -33,7 +33,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 	file.SetContentDispositionHeader(w, "attachment", fileName)
 	ctlutil.AddTrailingStatus(w)
 
-	if err := bs.GetBundleZip(session.Context(), w, &bundlestore.BundleZipOptions{
+	if err := bs.GetBundleZip(r.Context(), w, &bundlestore.BundleZipOptions{
 		// Only include generated types if we're in a workspace context
 		IncludeGeneratedTypes: session.GetWorkspaceSession() != nil,
 	}); err != nil {

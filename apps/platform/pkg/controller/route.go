@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -33,7 +34,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 	viewtype := vars["viewtype"]
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -50,7 +51,7 @@ func RouteAssignment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	routingMergeData, err := getRouteAPIResult(route, session)
+	routingMergeData, err := getRouteAPIResult(r.Context(), route, session)
 	if err != nil {
 		handleApiErrorRoute(w, r, route.Path, route.Namespace, session, err)
 		return
@@ -71,7 +72,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 	contextPrefix := session.GetContextURLPrefix()
 	prefix := contextPrefix + "/routes/path/" + namespace + "/"
 
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -88,7 +89,7 @@ func RouteByPath(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	routingMergeData, err := getRouteAPIResult(route, session)
+	routingMergeData, err := getRouteAPIResult(r.Context(), route, session)
 	if err != nil {
 		handleApiErrorRoute(w, r, route.Path, namespace, session, err)
 		return
@@ -103,7 +104,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	routeName := vars["name"]
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -118,7 +119,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 		handleRedirectAPIRoute(w, r, route, session)
 		return
 	}
-	routingMergeData, err := getRouteAPIResult(route, session)
+	routingMergeData, err := getRouteAPIResult(r.Context(), route, session)
 	if err != nil {
 		handleApiErrorRoute(w, r, route.Path, namespace, session, err)
 		return
@@ -127,7 +128,7 @@ func RouteByKey(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session, err error) {
-	if routingMergeData, err := getRouteAPIResult(GetErrorRoute(path, namespace, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
+	if routingMergeData, err := getRouteAPIResult(r.Context(), GetErrorRoute(path, namespace, err.Error()), sess.GetAnonSessionFrom(session)); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 	} else {
 		filejson.RespondJSON(w, r, routingMergeData)
@@ -136,6 +137,7 @@ func handleApiErrorRoute(w http.ResponseWriter, r *http.Request, path, namespace
 
 func handleApiNotFoundRoute(w http.ResponseWriter, r *http.Request, path, namespace string, session *sess.Session) {
 	if routingMergeData, err := getRouteAPIResult(
+		r.Context(),
 		getNotFoundRoute(path, namespace, "you may need to log in again.", "true"),
 		sess.GetAnonSessionFrom(session),
 	); err != nil {
@@ -164,9 +166,9 @@ func handleRedirectAPIRoute(w http.ResponseWriter, r *http.Request, route *meta.
 	http.Redirect(w, r, mergedRouteRedirect, http.StatusOK)
 }
 
-func getRouteAPIResult(route *meta.Route, session *sess.Session) (*preload.RouteMergeData, error) {
+func getRouteAPIResult(ctx context.Context, route *meta.Route, session *sess.Session) (*preload.RouteMergeData, error) {
 	usage.RegisterEvent("LOAD", "ROUTE", route.GetKey(), 0, session)
-	depsCache, err := routing.GetMetadataDeps(route, session)
+	depsCache, err := routing.GetMetadataDeps(ctx, route, session)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +247,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		errorSession = session
 	} else {
 		// Otherwise, Enter into a version context to display the error page
-		versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+		versionSession, err := datasource.EnterVersionContext(r.Context(), "uesio/core", session, nil)
 		if err != nil {
 			ctlutil.HandleError(r.Context(), w, fmt.Errorf("error getting version session: %w", err))
 			return
@@ -253,7 +255,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 		errorSession = versionSession
 	}
 
-	depsCache, err := routing.GetMetadataDeps(route, errorSession)
+	depsCache, err := routing.GetMetadataDeps(r.Context(), route, errorSession)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("error getting error route metadata: %w", err))
 		return
@@ -271,7 +273,7 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	if strings.Contains(acceptHeader, "html") {
 		// Must write status code BEFORE executing index template
 		w.WriteHeader(statusCode)
-		ExecuteIndexTemplate(w, route, depsCache, false, session)
+		ExecuteIndexTemplate(r.Context(), w, route, depsCache, false, session)
 		return
 	}
 	// Respond with a structured JSON error response
@@ -297,7 +299,7 @@ func ServeRouteByKey(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	routeName := vars["name"]
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		HandleErrorRoute(w, r, session, r.URL.Path, namespace, err, true)
 		return
@@ -330,7 +332,7 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, namespace, path, prefix string) (*meta.Route, error) {
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		HandleErrorRoute(w, r, session, path, namespace, err, true)
 		return nil, err
@@ -401,11 +403,11 @@ func ServeRouteInternal(w http.ResponseWriter, r *http.Request, session *sess.Se
 		return
 	default:
 		// Handle view routes
-		depsCache, err := routing.GetMetadataDeps(route, session)
+		depsCache, err := routing.GetMetadataDeps(r.Context(), route, session)
 		if err != nil {
 			HandleErrorRoute(w, r, session, path, route.Namespace, err, false)
 			return
 		}
-		ExecuteIndexTemplate(w, route, depsCache, false, session)
+		ExecuteIndexTemplate(r.Context(), w, route, depsCache, false, session)
 	}
 }

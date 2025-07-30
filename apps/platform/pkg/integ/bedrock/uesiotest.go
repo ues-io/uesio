@@ -1,6 +1,7 @@
 package bedrock
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,7 +21,7 @@ func (utmh *UesioTestModelHandler) Hydrate(ic *wire.IntegrationConnection, param
 	return nil
 }
 
-func (utmh *UesioTestModelHandler) Invoke() (result any, err error) {
+func (utmh *UesioTestModelHandler) Invoke(ctx context.Context) (result any, err error) {
 	body, err := json.MarshalIndent(utmh.options, "", "  ")
 	if err != nil {
 		return nil, err
@@ -29,6 +30,6 @@ func (utmh *UesioTestModelHandler) Invoke() (result any, err error) {
 	return content, nil
 }
 
-func (utmh *UesioTestModelHandler) Stream() (stream *integ.Stream, err error) {
+func (utmh *UesioTestModelHandler) Stream(ctx context.Context) (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the uesio test handler")
 }

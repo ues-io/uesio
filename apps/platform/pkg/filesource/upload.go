@@ -67,7 +67,7 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 	// First get create all the metadata
 	for _, op := range ops {
 
-		err := datasource.GetMetadataResponse(metadataResponse, op.CollectionID, op.FieldID, session)
+		err := datasource.GetMetadataResponse(ctx, metadataResponse, op.CollectionID, op.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +95,7 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 	for collectionKey := range idMaps {
 
 		idMap := idMaps[collectionKey]
-		err := datasource.LoadLooper(connection, collectionKey, idMap, []wire.LoadRequestField{
+		err := datasource.LoadLooper(ctx, connection, collectionKey, idMap, []wire.LoadRequestField{
 			{
 				ID: commonfields.Id,
 			},
@@ -142,10 +142,10 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 		fileSourceConnections[ufm.FileSourceID] = append(fileSourceConnections[ufm.FileSourceID], userFileUploadRequest{op.Data, ufm.GetFullPath(tenantID), ufm})
 	}
 
-	g, _ := errgroup.WithContext(session.Context())
+	g, _ := errgroup.WithContext(ctx)
 	for fileSourceID, reqs := range fileSourceConnections {
 		g.Go(func() error {
-			conn, err := fileadapt.GetFileConnection(fileSourceID, session)
+			conn, err := fileadapt.GetFileConnection(ctx, fileSourceID, session)
 			if err != nil {
 				return err
 			}
@@ -173,7 +173,7 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 		return nil, err
 	}
 
-	err := datasource.PlatformSave(datasource.PlatformSaveRequest{
+	err := datasource.PlatformSave(ctx, datasource.PlatformSaveRequest{
 		Collection: &userFileCollection,
 		Options: &wire.SaveOptions{
 			Upsert: true,
@@ -217,7 +217,7 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 
 	}
 
-	err = datasource.SaveWithOptions(fieldUpdates, session, datasource.NewSaveOptions(connection, metadataResponse))
+	err = datasource.SaveWithOptions(ctx, fieldUpdates, session, datasource.NewSaveOptions(connection, metadataResponse))
 	if err != nil {
 		return nil, fmt.Errorf("failed to update field for the given file: %w", err)
 	}

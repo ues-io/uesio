@@ -113,7 +113,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 		Params:         params,
 	}
 
-	err := datasource.LoadWithError(op, session, nil)
+	err := datasource.LoadWithError(r.Context(), op, session, nil)
 
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("error querying collection records to delete", err))
@@ -128,7 +128,7 @@ func DeleteRecordApi(w http.ResponseWriter, r *http.Request) {
 			Deletes:    collection,
 			Params:     params,
 		}}
-		if err = datasource.HandleSaveRequestErrors(saveRequests, datasource.Save(saveRequests, session)); err != nil {
+		if err = datasource.HandleSaveRequestErrors(saveRequests, datasource.Save(r.Context(), saveRequests, session)); err != nil {
 			ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("delete failed", err))
 			return
 		}

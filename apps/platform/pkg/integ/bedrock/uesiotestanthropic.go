@@ -1,6 +1,7 @@
 package bedrock
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,7 +24,7 @@ func (utamh *UesioTestAnthropicModelHandler) Hydrate(ic *wire.IntegrationConnect
 	return cmh.Hydrate(ic, params)
 }
 
-func (utamh *UesioTestAnthropicModelHandler) Invoke() (any, error) {
+func (utamh *UesioTestAnthropicModelHandler) Invoke(ctx context.Context) (any, error) {
 	body, err := json.MarshalIndent(utamh.cmh.options, "", "  ")
 	if err != nil {
 		return nil, err
@@ -43,6 +44,6 @@ func (utamh *UesioTestAnthropicModelHandler) Invoke() (any, error) {
 
 }
 
-func (utamh *UesioTestAnthropicModelHandler) Stream() (stream *integ.Stream, err error) {
+func (utamh *UesioTestAnthropicModelHandler) Stream(ctx context.Context) (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the uesio test anthropic handler")
 }

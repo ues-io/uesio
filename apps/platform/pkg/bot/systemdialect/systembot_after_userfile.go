@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -16,7 +17,7 @@ const (
 	studioBotCollectionId  = "uesio/studio.bot"
 )
 
-func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUserFileAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// TASKS:
 	// 1. Whenever a user file is inserted or updated,  if the file is the User's profile,
 	// we need to invalidate the User cache in Redis
@@ -98,7 +99,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 	// If the related collection is uesio/studio.file,
 	// we need to set the file path on the related record as well
 	if len(studioFileUpdates) > 0 {
-		if err = datasource.SaveWithOptions([]datasource.SaveRequest{
+		if err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 			{
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
@@ -110,7 +111,7 @@ func runUserFileAfterSaveBot(request *wire.SaveOp, connection wire.Connection, s
 		}
 	}
 	if len(studioBotUpdates) > 0 {
-		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+		err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 			{
 				Collection: studioBotCollectionId,
 				Wire:       "StudioBots",

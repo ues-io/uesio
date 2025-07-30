@@ -1,6 +1,7 @@
 package oauth2
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -72,7 +73,7 @@ func TestTransport_setAuthHeader(t1 *testing.T) {
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
 			// dummy request
-			r, _ := http.NewRequest(http.MethodGet, "https://localhost:8080", nil)
+			r, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://localhost:8080", nil)
 			invoked := false
 			onAuthHeaderSet := func(token *oauth2.Token, authHeader string) {
 				invoked = true

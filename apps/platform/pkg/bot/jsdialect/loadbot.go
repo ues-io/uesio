@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"context"
+
 	"github.com/teris-io/shortid"
 
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -10,16 +12,17 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewLoadBotAPI(bot *meta.Bot, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
+func NewLoadBotAPI(ctx context.Context, bot *meta.Bot, loadOp *wire.LoadOp, integrationConnection *wire.IntegrationConnection) *LoadBotAPI {
 	return &LoadBotAPI{
 		// Private
 		bot:                   bot,
 		loadOp:                loadOp,
 		integrationConnection: integrationConnection,
 		// Public
-		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
-		Http:                NewBotHttpAPI(integrationConnection),
+		LogApi:              NewBotLogAPI(ctx, bot),
+		Http:                NewBotHttpAPI(ctx, integrationConnection),
 		LoadRequestMetadata: NewLoadRequestMetadata(loadOp),
+		ctx:                 ctx,
 	}
 }
 
@@ -73,6 +76,9 @@ type LoadBotAPI struct {
 	integrationConnection *wire.IntegrationConnection
 	errors                []string
 	loadOp                *wire.LoadOp
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 	// Public
 	Http                *BotHttpAPI          `bot:"http"`
 	LoadRequestMetadata *LoadRequestMetadata `bot:"loadRequest"`
@@ -80,7 +86,7 @@ type LoadBotAPI struct {
 }
 
 func (lb *LoadBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, lb.integrationConnection.GetSession(), lb.integrationConnection.GetPlatformConnection(), nil)
+	return botLoad(lb.ctx, request, lb.integrationConnection.GetSession(), lb.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (lb *LoadBotAPI) GetErrors() []string {
@@ -119,11 +125,11 @@ func (lb *LoadBotAPI) GetIntegration() *IntegrationMetadata {
 }
 
 func (lb *LoadBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValue(configValueKey, lb.getSession())
+	return configstore.GetValue(lb.ctx, configValueKey, lb.getSession())
 }
 
 func (lb *LoadBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(lb.getSession())
+	return NewSessionAPI(lb.ctx, lb.getSession())
 }
 
 func (lb *LoadBotAPI) GetUser() *UserAPI {
@@ -135,7 +141,7 @@ func (lb *LoadBotAPI) AddError(error string) {
 }
 
 func (lb *LoadBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
-	return botCall(botKey, params, lb.getSession(), lb.integrationConnection.GetPlatformConnection())
+	return botCall(lb.ctx, botKey, params, lb.getSession(), lb.integrationConnection.GetPlatformConnection())
 }
 
 func (lb *LoadBotAPI) AddRecord(record any) {

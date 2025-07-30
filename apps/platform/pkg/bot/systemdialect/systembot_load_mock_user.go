@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -8,10 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runMockUserBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runMockUserBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	adminSession := sess.GetAnonSessionFrom(session)
-	mockAuthEnabled, err := configstore.GetValue("uesio/core.mock_auth", adminSession)
+	mockAuthEnabled, err := configstore.GetValue(ctx, "uesio/core.mock_auth", adminSession)
 	if err != nil {
 		return err
 	}
@@ -21,7 +23,7 @@ func runMockUserBot(op *wire.LoadOp, connection wire.Connection, session *sess.S
 	}
 
 	loginMethods := meta.LoginMethodCollection{}
-	if err := datasource.PlatformLoad(&loginMethods, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(ctx, &loginMethods, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/core.federation_id",

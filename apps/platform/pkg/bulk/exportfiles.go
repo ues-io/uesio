@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"context"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -14,11 +15,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
+func exportFiles(ctx context.Context, create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
 
 	// Now do a special userfile export
 	userFiles := &meta.UserFileMetadataCollection{}
 	err := datasource.PlatformLoad(
+		ctx,
 		userFiles,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -34,7 +36,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 		return err
 	}
 
-	metadataResponse, err := getBatchMetadata(userFiles.GetName(), session)
+	metadataResponse, err := getBatchMetadata(ctx, userFiles.GetName(), session)
 	if err != nil {
 		return err
 	}
@@ -78,7 +80,7 @@ func exportFiles(create bundlestore.FileCreator, spec *meta.JobSpec, session *se
 			}
 			defer file.Close()
 
-			r, _, err := filesource.DownloadItem(session.Context(), userFile, session)
+			r, _, err := filesource.DownloadItem(ctx, userFile, session)
 			if err != nil {
 				return err
 			}

@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -63,6 +64,7 @@ func SetUniqueKey(change *wire.ChangeItem) error {
 }
 
 func HandleOldValuesLookup(
+	ctx context.Context,
 	connection wire.Connection,
 	op *wire.SaveOp,
 	session *sess.Session,
@@ -154,7 +156,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, allFields, commonfields.Id, metadata, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	return LoadLooper(ctx, connection, op.CollectionName, idMap, allFields, commonfields.Id, metadata, session, func(item meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		if item == nil {
 			// This should result in an error, unless we have explicitly indicated that

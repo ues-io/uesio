@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -62,6 +63,7 @@ func processLocalReferences(
 }
 
 func FetchReferences(
+	ctx context.Context,
 	connection wire.Connection,
 	op *wire.SaveOp,
 	session *sess.Session,
@@ -158,7 +160,7 @@ func FetchReferences(
 		}
 	}
 
-	err = HandleReferences(connection, referencedIDCollections, metadata, session, &ReferenceOptions{
+	err = HandleReferences(ctx, connection, referencedIDCollections, metadata, session, &ReferenceOptions{
 		MergeItems:         true,
 		RemoveMissingItems: op.Options != nil && op.Options.IgnoreMissingReferences,
 	})
@@ -166,7 +168,7 @@ func FetchReferences(
 		return err
 	}
 
-	return HandleReferences(connection, referencedUniqueKeyCollections, metadata, session, &ReferenceOptions{
+	return HandleReferences(ctx, connection, referencedUniqueKeyCollections, metadata, session, &ReferenceOptions{
 		MergeItems:         true,
 		RemoveMissingItems: op.Options != nil && op.Options.IgnoreMissingReferences,
 	})

@@ -1,6 +1,7 @@
 package secretstore
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -21,7 +22,7 @@ type mockStore struct {
 	vals map[string]string
 }
 
-func (ms *mockStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
+func (ms *mockStore) Get(ctx context.Context, key string, session *sess.Session) (*meta.SecretStoreValue, error) {
 	if val, isPresent := ms.vals[key]; isPresent {
 		return &meta.SecretStoreValue{
 			Value: val,
@@ -31,18 +32,18 @@ func (ms *mockStore) Get(key string, session *sess.Session) (*meta.SecretStoreVa
 		return nil, exceptions.NewNotFoundException("secret not found: " + key)
 	}
 }
-func (ms *mockStore) Set(key, value string, session *sess.Session) error {
+func (ms *mockStore) Set(ctx context.Context, key, value string, session *sess.Session) error {
 	ms.vals[key] = value
 	return nil
 }
-func (ms *mockStore) Remove(key string, session *sess.Session) error {
+func (ms *mockStore) Remove(ctx context.Context, key string, session *sess.Session) error {
 	return nil
 }
 
 func TestGetSecret(t *testing.T) {
 
 	storeInstance := newMockStore()
-	assert.Nil(t, storeInstance.Set("luigi/secretstests.some_api_key", "site-store-value", nil))
+	assert.Nil(t, storeInstance.Set(context.Background(), "luigi/secretstests.some_api_key", "site-store-value", nil))
 	RegisterSecretStore("mock", storeInstance)
 
 	assert.Nil(t, os.Setenv("UESIO_SECRET_LUIGI_SECRETSTESTS_SOME_API_KEY", "some-api-key-env-value"))
@@ -72,7 +73,7 @@ func TestGetSecret(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getSecretInternal(&meta.Secret{
+			got, err := getSecretInternal(context.Background(), &meta.Secret{
 				BundleableBase: meta.BundleableBase{
 					Name:      tt.secretName,
 					Namespace: tt.secretNamespace,

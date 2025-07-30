@@ -23,7 +23,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(s, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), s, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -36,7 +36,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	params["appName"] = wsParams["app"]
 	params["workspaceName"] = wsParams["workspacename"]
 
-	_, err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s)
+	_, err = datasource.CallGeneratorBot(r.Context(), retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, s)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

@@ -3,6 +3,7 @@ package bulk
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -15,7 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
+func NewExportBatch(ctx context.Context, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
 
@@ -24,7 +25,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		BulkJobID: job.ID,
 	}
 
-	err := datasource.PlatformSaveOne(&batch, nil, nil, session)
+	err := datasource.PlatformSaveOne(ctx, &batch, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -39,19 +40,19 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	zipfilecreate := retrieve.NewWriterCreator(zipwriter.Create)
 
-	err = exportCollection(zipfilecreate, spec, session)
+	err = exportCollection(ctx, zipfilecreate, spec, session)
 	if err != nil {
 		return nil, err
 	}
 
-	err = exportFiles(zipfilecreate, spec, session)
+	err = exportFiles(ctx, zipfilecreate, spec, session)
 	if err != nil {
 		return nil, err
 	}
 
 	zipwriter.Close()
 
-	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
+	_, err = filesource.Upload(ctx, []*filesource.FileUploadOp{
 		{
 			Data:         buf,
 			Path:         fileName,
@@ -73,7 +74,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		},
 	})
 
-	err = datasource.PlatformSaveOne(&batch, nil, nil, session)
+	err = datasource.PlatformSaveOne(ctx, &batch, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

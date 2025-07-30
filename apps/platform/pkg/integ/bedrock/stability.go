@@ -1,6 +1,7 @@
 package bedrock
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 
@@ -63,8 +64,8 @@ func (smh *StabilityModelHandler) RecordUsage() {
 	usage.RegisterEvent("IMAGE_GENERATION", "INTEGRATION", integrationKey, 0, session)
 }
 
-func (smh *StabilityModelHandler) Invoke() (result any, err error) {
-	cfg, err := creds.GetAWSConfig(smh.ic.Context(), smh.ic.GetCredentials())
+func (smh *StabilityModelHandler) Invoke(ctx context.Context) (result any, err error) {
+	cfg, err := creds.GetAWSConfig(ctx, smh.ic.GetCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (smh *StabilityModelHandler) Invoke() (result any, err error) {
 		Accept:      aws.String("application/json"),
 	}
 
-	output, err := client.InvokeModel(smh.ic.Context(), input, smh.GetClientOptions(input))
+	output, err := client.InvokeModel(ctx, input, smh.GetClientOptions(input))
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +97,7 @@ func (smh *StabilityModelHandler) Invoke() (result any, err error) {
 
 }
 
-func (utmh *StabilityModelHandler) Stream() (stream *integ.Stream, err error) {
+func (utmh *StabilityModelHandler) Stream(ctx context.Context) (stream *integ.Stream, err error) {
 	return nil, errors.New("streaming is not supported for the stability model handler")
 }
 

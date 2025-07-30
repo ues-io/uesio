@@ -62,13 +62,13 @@ func respondFile(w http.ResponseWriter, r *http.Request, path string, modified t
 
 func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
-	if err := bundle.Load(session.Context(), file, nil, session, connection); err != nil {
+	if err := bundle.Load(r.Context(), file, nil, session, connection); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
@@ -77,7 +77,7 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 		path = file.Path
 	}
 
-	rs, fileMetadata, err := bundle.GetItemAttachment(session.Context(), file, path, session, connection)
+	rs, fileMetadata, err := bundle.GetItemAttachment(r.Context(), file, path, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

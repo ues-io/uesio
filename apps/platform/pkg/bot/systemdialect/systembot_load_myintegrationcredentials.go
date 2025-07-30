@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -18,15 +19,15 @@ import (
 // Return a list of Integrations with per-user access credentials,
 // along with info about whether the current user has any access / refresh tokens for that integration yet,
 // and if so, when the access token expires.
-func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runMyIntegrationCredentialsLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	// If the load op included workspace/site admin parameters, use these to adjust the context of our session
-	if contextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session); err == nil {
+	if contextSession, err := datasource.GetContextSessionFromParams(ctx, op.Params, connection, session); err == nil {
 		session = contextSession
 	}
 	// Load all existing integration credentials for the user
 	userId := session.GetSiteUser().ID
 	existingCreds, err := getAllIntegrationCredentialsForUser(
-		userId, session, connection, op.Params)
+		ctx, userId, session, connection, op.Params)
 	if err != nil {
 		return err
 	}
@@ -38,7 +39,7 @@ func runMyIntegrationCredentialsLoadBot(op *wire.LoadOp, connection wire.Connect
 	// Find all integrations with per-user credentials that the user has access to,
 	// or just specific ones that they requested
 	targetIntegrationNames := getTargetIntegrationNamesFromConditions(op.Conditions)
-	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(session, connection, targetIntegrationNames)
+	integrationCollection, err := getAllPerUserIntegrationsUserHasAccessTo(ctx, session, connection, targetIntegrationNames)
 	if err != nil {
 		return err
 	}
@@ -113,7 +114,7 @@ func hasStringField(item meta.Item, fieldName string) bool {
 	return false
 }
 
-func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection wire.Connection, integrationKeys []string) (*meta.IntegrationCollection, error) {
+func getAllPerUserIntegrationsUserHasAccessTo(ctx context.Context, session *sess.Session, connection wire.Connection, integrationKeys []string) (*meta.IntegrationCollection, error) {
 	group := &meta.IntegrationCollection{}
 	conditions := meta.BundleConditions{}
 	// Eventually we could add other per-user authentication types to this list,
@@ -134,13 +135,13 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	// If we have unique namespaces to load from, do a more targeted load.
 	if len(uniqueNames) > 0 {
 		conditions["uesio/studio.name"] = goutils.MapKeys(uniqueNames)
-		if err := bundle.LoadAllFromNamespaces(session.Context(), goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
+		if err := bundle.LoadAllFromNamespaces(ctx, goutils.MapKeys(uniqueNamespaces), group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
 			return nil, fmt.Errorf("unable to load integrations: %w", err)
 		}
 	} else {
-		if err := bundle.LoadAllFromAny(session.Context(), group, &bundlestore.GetAllItemsOptions{
+		if err := bundle.LoadAllFromAny(ctx, group, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, connection); err != nil {
 			return nil, fmt.Errorf("unable to load integrations: %w", err)
@@ -149,9 +150,9 @@ func getAllPerUserIntegrationsUserHasAccessTo(session *sess.Session, connection 
 	return group, nil
 }
 
-func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, connection wire.Connection, params map[string]any) (*wire.Collection, error) {
+func getAllIntegrationCredentialsForUser(ctx context.Context, userId string, session *sess.Session, connection wire.Connection, params map[string]any) (*wire.Collection, error) {
 
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, connection)
+	versionSession, err := datasource.EnterVersionContext(ctx, "uesio/core", session, connection)
 	if err != nil {
 		return nil, errors.New("unable to enter version context")
 	}
@@ -182,7 +183,7 @@ func getAllIntegrationCredentialsForUser(userId string, session *sess.Session, c
 		Params:  params,
 	}
 
-	err = datasource.LoadWithError(newOp, versionSession, &datasource.LoadOptions{
+	err = datasource.LoadWithError(ctx, newOp, versionSession, &datasource.LoadOptions{
 		Connection: connection,
 	})
 	if err != nil {

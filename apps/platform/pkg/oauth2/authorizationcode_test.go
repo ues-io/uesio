@@ -42,7 +42,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 	var requestAsserts func(t *testing.T, request *http.Request)
 
 	integrationName := "luigi/foo.bar"
-	session := sess.New(context.Background(), nil, nil)
+	session := sess.New(nil, nil)
 
 	// set up a mock server to handle our test requests
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -146,7 +146,7 @@ func TestAuthorizationCodeFlow(t *testing.T) {
 			assert.Equal(t, []string{"scope1 scope2"}, queryVals["scope"])
 			stateObject, err := UnmarshalState(redirectMeta.State)
 			assert.Nil(t, err)
-			gotToken, err := ExchangeAuthorizationCodeForAccessToken(session.Context(), tt.credentials, host, sampleAuthCode, stateObject)
+			gotToken, err := ExchangeAuthorizationCodeForAccessToken(context.Background(), tt.credentials, host, sampleAuthCode, stateObject)
 			assert.Equal(t, tt.wantAccessToken, gotToken.AccessToken)
 			assert.Equal(t, tt.wantRefreshToken, gotToken.RefreshToken)
 		})

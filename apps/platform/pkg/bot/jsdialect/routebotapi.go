@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -33,7 +34,7 @@ func (s *HeadersKeyStore) Has(key string) bool {
 	return ok
 }
 
-func NewRouteBotApi(bot *meta.Bot, route *meta.Route, request *http.Request, session *sess.Session, connection wire.Connection) *RouteBotAPI {
+func NewRouteBotApi(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, session *sess.Session, connection wire.Connection) *RouteBotAPI {
 	paramsApi := NewRouteBotParamsAPI(route.Params)
 	return &RouteBotAPI{
 		session:       session,
@@ -52,12 +53,10 @@ func NewRouteBotApi(bot *meta.Bot, route *meta.Route, request *http.Request, ses
 		Response: &RouteBotResponseAPI{
 			response: bots.NewRouteResponse(),
 		},
-		AsAdmin: &AsAdminApi{
-			session:    session,
-			connection: connection,
-		},
-		LogApi: NewBotLogAPI(bot, session.Context()),
-		Http:   NewBotHttpAPI(wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
+		AsAdmin: NewAsAdminAPI(ctx, session, connection),
+		LogApi:  NewBotLogAPI(ctx, bot),
+		Http:    NewBotHttpAPI(ctx, wire.NewIntegrationConnection(nil, nil, session, nil, connection)),
+		ctx:     ctx,
 	}
 }
 
@@ -91,12 +90,15 @@ type RouteBotAPI struct {
 	originalRoute *meta.Route
 	connection    wire.Connection
 	bot           *meta.Bot
-	Params        *RouteBotParamsAPI   `bot:"params"`
-	Request       *RouteBotRequestAPI  `bot:"request"`
-	Response      *RouteBotResponseAPI `bot:"response"`
-	AsAdmin       *AsAdminApi          `bot:"asAdmin"`
-	LogApi        *BotLogAPI           `bot:"log"`
-	Http          *BotHttpAPI          `bot:"http"`
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx      context.Context
+	Params   *RouteBotParamsAPI   `bot:"params"`
+	Request  *RouteBotRequestAPI  `bot:"request"`
+	Response *RouteBotResponseAPI `bot:"response"`
+	AsAdmin  *AsAdminApi          `bot:"asAdmin"`
+	LogApi   *BotLogAPI           `bot:"log"`
+	Http     *BotHttpAPI          `bot:"http"`
 }
 
 type RouteBotRequestAPI struct {
@@ -122,7 +124,7 @@ func HandleBotResponse(api *RouteBotAPI) (finalRoute *meta.Route, err error) {
 		if err != nil {
 			return nil, err
 		}
-		if err = bundle.Load(api.session.Context(), route, nil, api.session, api.connection); err != nil {
+		if err = bundle.Load(api.ctx, route, nil, api.session, api.connection); err != nil {
 			return nil, fmt.Errorf("unable to load redirect route for key '%s': %w", localizedRouteKey, err)
 		}
 		finalRoute = route
@@ -165,35 +167,35 @@ func (r *RouteBotResponseAPI) RedirectToURL(url string) {
 //}
 
 func (rba *RouteBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, rba.session, rba.connection, nil)
+	return botSave(rba.ctx, collection, changes, options, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, rba.session, rba.connection, nil)
+	return botDelete(rba.ctx, collection, deletes, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, rba.session, rba.connection, nil)
+	return botLoad(rba.ctx, request, rba.session, rba.connection, nil)
 }
 
 func (rba *RouteBotAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
-	return runIntegrationAction(integrationID, action, options, rba.session, rba.connection)
+	return runIntegrationAction(rba.ctx, integrationID, action, options, rba.session, rba.connection)
 }
 
 func (rba *RouteBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
-	return botCall(botKey, params, rba.session, rba.connection)
+	return botCall(rba.ctx, botKey, params, rba.session, rba.connection)
 }
 
 func (rba *RouteBotAPI) GetHostUrl() (string, error) {
-	return getHostUrl(rba.session, rba.connection)
+	return getHostUrl(rba.ctx, rba.session, rba.connection)
 }
 
 func (rba *RouteBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValue(configValueKey, rba.session)
+	return configstore.GetValue(rba.ctx, configValueKey, rba.session)
 }
 
 func (rba *RouteBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(rba.session)
+	return NewSessionAPI(rba.ctx, rba.session)
 }
 
 func (rba *RouteBotAPI) GetUser() *UserAPI {

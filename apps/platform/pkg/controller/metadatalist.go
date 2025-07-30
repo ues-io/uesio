@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -20,7 +21,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]ns.MetadataResponse, error) {
+func getMetadataList(ctx context.Context, metadatatype, namespace, grouping string, session *sess.Session) (map[string]ns.MetadataResponse, error) {
 	collectionKeyMap := map[string]ns.MetadataResponse{}
 
 	conditions, err := meta.GetGroupingConditions(metadatatype, grouping)
@@ -36,7 +37,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	var appNames []string
 
 	if namespace != "" {
-		err = bundle.LoadAll(session.Context(), collection, namespace, &bundlestore.GetAllItemsOptions{
+		err = bundle.LoadAll(ctx, collection, namespace, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, nil)
 		if err != nil {
@@ -44,7 +45,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 		appNames = []string{namespace}
 	} else {
-		err := bundle.LoadAllFromAny(session.Context(), collection, &bundlestore.GetAllItemsOptions{
+		err := bundle.LoadAllFromAny(ctx, collection, &bundlestore.GetAllItemsOptions{
 			Conditions: conditions,
 		}, session, nil)
 		if err != nil {
@@ -55,7 +56,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		appNames = append(appNames, namespaces...)
 	}
 
-	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
+	appData, err := datasource.GetAppData(ctx, appNames, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +108,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	grouping := vars["grouping"]
 
-	collectionKeyMap, err := getMetadataList(metadatatype, namespace, grouping, session)
+	collectionKeyMap, err := getMetadataList(r.Context(), metadatatype, namespace, grouping, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

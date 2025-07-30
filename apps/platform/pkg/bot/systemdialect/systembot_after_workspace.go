@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -19,15 +20,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Connection, session *sess.Session) error {
+func deployWorkspaceFromBundle(ctx context.Context, workspaceID, bundleID string, connection wire.Connection, session *sess.Session) error {
 	// Enter into a workspace context
-	workspaceSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+	workspaceSession, err := datasource.AddWorkspaceContextByID(ctx, workspaceID, session, connection)
 	if err != nil {
 		return err
 	}
 
 	bundle := &meta.Bundle{}
-	err = datasource.PlatformLoadByID(bundle, bundleID, session, connection)
+	err = datasource.PlatformLoadByID(ctx, bundle, bundleID, session, connection)
 	if err != nil {
 		return err
 	}
@@ -45,12 +46,12 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 	// Retrieve the bundle zip
 	// Create a new zip archive.
 	buf := new(bytes.Buffer)
-	err = bs.GetBundleZip(session.Context(), buf, nil)
+	err = bs.GetBundleZip(ctx, buf, nil)
 	if err != nil {
 		return err
 	}
 
-	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
+	return deploy.DeployWithOptions(ctx, io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{
 		Connection: connection,
 		Upsert:     true,
 		Prefix:     retrieve.BundleDirectory,
@@ -58,7 +59,7 @@ func deployWorkspaceFromBundle(workspaceID, bundleID string, connection wire.Con
 
 }
 
-func deployEmptyWorkspace(workspaceID string, connection wire.Connection, session *sess.Session) error {
+func deployEmptyWorkspace(ctx context.Context, workspaceID string, connection wire.Connection, session *sess.Session) error {
 	buf := new(bytes.Buffer)
 
 	zipwriter := zip.NewWriter(buf)
@@ -91,23 +92,23 @@ func deployEmptyWorkspace(workspaceID string, connection wire.Connection, sessio
 	}
 
 	// Enter into a workspace context
-	workspaceSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+	workspaceSession, err := datasource.AddWorkspaceContextByID(ctx, workspaceID, session, connection)
 	if err != nil {
 		return err
 	}
 
-	return deploy.DeployWithOptions(io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{Connection: connection, Upsert: true})
+	return deploy.DeployWithOptions(ctx, io.NopCloser(buf), workspaceSession, &deploy.DeployOptions{Connection: connection, Upsert: true})
 }
 
-func runWorkspaceAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runWorkspaceAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	if err := request.LoopInserts(func(change *wire.ChangeItem) error {
 		workspaceID := change.IDValue
 		sourceBundleID, _ := change.GetReferenceKey("uesio/studio.sourcebundle")
 		if sourceBundleID == "" {
-			return deployEmptyWorkspace(workspaceID, connection, session)
+			return deployEmptyWorkspace(ctx, workspaceID, connection, session)
 		}
-		return deployWorkspaceFromBundle(workspaceID, sourceBundleID, connection, session)
+		return deployWorkspaceFromBundle(ctx, workspaceID, sourceBundleID, connection, session)
 	}); err != nil {
 		return err
 	}
@@ -121,7 +122,7 @@ func runWorkspaceAfterSaveBot(request *wire.SaveOp, connection wire.Connection, 
 		if workspaceUniqueKey == "" {
 			return errors.New("unable to get workspace unique key, cannot truncate data")
 		}
-		if err = connection.TruncateTenantData(session.Context(), sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
+		if err = connection.TruncateTenantData(ctx, sess.MakeWorkspaceTenantID(workspaceUniqueKey)); err != nil {
 			return fmt.Errorf("unable to truncate workspace data: %w", err)
 		}
 		return nil

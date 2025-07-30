@@ -1,11 +1,13 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runThemeBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runThemeBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return processTheme(request, connection, session)
 }
 

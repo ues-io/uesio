@@ -14,7 +14,6 @@ import (
 
 func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 
-	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
 
 	appID, ok := vars["app"]
@@ -45,7 +44,7 @@ func BundlesRetrieve(w http.ResponseWriter, r *http.Request) {
 	middleware.Set1YearCache(w)
 	ctlutil.AddTrailingStatus(w)
 
-	err = source.GetBundleZip(session.Context(), w, nil)
+	err = source.GetBundleZip(r.Context(), w, nil)
 	if err != nil {
 		// Note - We are streaming result so Http StatusCode will have been set to 200 after
 		// the first Write so we implement custom approach to detecting failure on client

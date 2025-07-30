@@ -1,6 +1,7 @@
 package usage_memory
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -23,7 +24,7 @@ func init() {
 
 type MemoryUsageHandler struct{}
 
-func (pcuh *MemoryUsageHandler) ApplyBatch(session *sess.Session) error {
+func (pcuh *MemoryUsageHandler) ApplyBatch(ctx context.Context, session *sess.Session) error {
 
 	items := usageCache.GetAll()
 
@@ -37,7 +38,7 @@ func (pcuh *MemoryUsageHandler) ApplyBatch(session *sess.Session) error {
 		changes = append(changes, usageItem)
 	}
 
-	err := usage_common.SaveBatch(changes, session)
+	err := usage_common.SaveBatch(ctx, changes, session)
 	if err != nil {
 		return err
 	}

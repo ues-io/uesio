@@ -21,7 +21,8 @@ var bundleStoreCache *bundle.BundleStoreCache
 var platformFileConnection file.Connection
 
 var initConnection = sync.OnceValues(func() (file.Connection, error) {
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession(traceid.NewContext(context.Background())))
+	ctx := traceid.NewContext(context.Background())
+	return fileadapt.GetFileConnection(ctx, "uesio/core.bundlestore", sess.GetStudioAnonSession())
 })
 
 func init() {

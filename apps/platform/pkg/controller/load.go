@@ -22,7 +22,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	metadata, err := datasource.Load(batch.Wires, session, nil)
+	metadata, err := datasource.Load(r.Context(), batch.Wires, session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

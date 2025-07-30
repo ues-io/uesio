@@ -3,6 +3,7 @@ package bulk
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -15,7 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
+func NewFileUploadBatch(ctx context.Context, body io.ReadCloser, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
 
@@ -123,12 +124,12 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	}
 
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(ctx, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = filesource.Upload(session.Context(), uploadOps, connection, session, nil)
+	_, err = filesource.Upload(ctx, uploadOps, connection, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		BulkJobID: job.ID,
 	}
 
-	err = datasource.PlatformSaveOne(&batch, nil, connection, session)
+	err = datasource.PlatformSaveOne(ctx, &batch, nil, connection, session)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"crypto/rand"
 	"errors"
 	"log"
@@ -45,7 +46,7 @@ func SecureRandomBytes(length int) []byte {
 	return randomBytes
 }
 
-func runCreateApiKeyListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func runCreateApiKeyListenerBot(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	// Currently this only works in a siteadmin context
 	if session.GetSiteAdmin() == nil {
@@ -82,7 +83,7 @@ func runCreateApiKeyListenerBot(params map[string]any, connection wire.Connectio
 		return nil, err
 	}
 
-	err = auth.CreateLoginMethod(&meta.LoginMethod{
+	err = auth.CreateLoginMethod(ctx, &meta.LoginMethod{
 		User: &meta.User{
 			BuiltIn: meta.BuiltIn{
 				ID: userID,

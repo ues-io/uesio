@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
@@ -21,7 +22,7 @@ type SimpleResponseBatch struct {
 	Wires []*SimpleResponse
 }
 
-func differentHostLoad(op *wire.LoadOp, session *sess.Session) error {
+func differentHostLoad(ctx context.Context, op *wire.LoadOp, session *sess.Session) error {
 
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
@@ -33,7 +34,7 @@ func differentHostLoad(op *wire.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	botAPI := jsdialect.NewBotHttpAPI(integrationConnection)
+	botAPI := jsdialect.NewBotHttpAPI(ctx, integrationConnection)
 
 	collectionMetadata, err := op.GetCollectionMetadata()
 	if err != nil {
@@ -176,9 +177,9 @@ func getLoadOp(op *wire.LoadOp, collectionMetadata *wire.CollectionMetadata) (*w
 	}, nil
 }
 
-func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, session *sess.Session) error {
+func sameHostLoad(ctx context.Context, op *wire.LoadOp, connection wire.Connection, site *meta.Site, session *sess.Session) error {
 	// Now get a public session
-	publicSession, err := auth.GetPublicSession(session.Context(), site, connection)
+	publicSession, err := auth.GetPublicSession(ctx, site, connection)
 	if err != nil {
 		return err
 	}
@@ -195,7 +196,7 @@ func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, 
 
 	loadOp.Collection = &wire.Collection{}
 
-	err = datasource.LoadWithError(loadOp, publicSession, nil)
+	err = datasource.LoadWithError(ctx, loadOp, publicSession, nil)
 	if err != nil {
 		return err
 	}
@@ -204,7 +205,7 @@ func sameHostLoad(op *wire.LoadOp, connection wire.Connection, site *meta.Site, 
 
 }
 
-func runUesioExternalLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runUesioExternalLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
@@ -220,11 +221,11 @@ func runUesioExternalLoadBot(op *wire.LoadOp, connection wire.Connection, sessio
 		return err
 	}
 
-	site, err := auth.GetSiteFromHost(parsedBaseUrl.Host)
+	site, err := auth.GetSiteFromHost(ctx, parsedBaseUrl.Host)
 	if err != nil {
-		return differentHostLoad(op, session)
+		return differentHostLoad(ctx, op, session)
 	}
 
-	return sameHostLoad(op, connection, site, session)
+	return sameHostLoad(ctx, op, connection, site, session)
 
 }

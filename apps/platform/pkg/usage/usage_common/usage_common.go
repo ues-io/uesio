@@ -1,6 +1,7 @@
 package usage_common
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -11,7 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
+func SaveBatch(ctx context.Context, usage meta.UsageCollection, session *sess.Session) error {
 
 	if len(usage) == 0 {
 		return nil
@@ -30,12 +31,12 @@ func SaveBatch(usage meta.UsageCollection, session *sess.Session) error {
 		},
 	}
 
-	err := datasource.SaveWithOptions(requests, session, nil)
+	err := datasource.SaveWithOptions(ctx, requests, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to update usage events: %w : %v", err, len(usage))
 	}
 
-	slog.InfoContext(session.Context(), fmt.Sprintf("successfully processed %d usage events", len(usage)))
+	slog.InfoContext(ctx, fmt.Sprintf("successfully processed %d usage events", len(usage)))
 	return nil
 
 }

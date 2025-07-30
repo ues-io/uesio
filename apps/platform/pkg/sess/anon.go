@@ -1,13 +1,11 @@
 package sess
 
 import (
-	"context"
-
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func GetAnonSession(ctx context.Context, site *meta.Site) *Session {
-	s := New(ctx, &meta.User{
+func GetAnonSession(site *meta.Site) *Session {
+	s := New(&meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.BootUsername,
 		},
@@ -20,11 +18,11 @@ func GetAnonSession(ctx context.Context, site *meta.Site) *Session {
 }
 
 func GetAnonSessionFrom(session *Session) *Session {
-	return GetAnonSession(session.Context(), session.GetSite())
+	return GetAnonSession(session.GetSite())
 }
 
-func GetStudioAnonSession(ctx context.Context) *Session {
-	return GetAnonSession(ctx, studioSite)
+func GetStudioAnonSession() *Session {
+	return GetAnonSession(studioSite)
 }
 
 var studioSite *meta.Site

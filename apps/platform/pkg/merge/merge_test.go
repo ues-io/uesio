@@ -1,7 +1,6 @@
 package merge
 
 import (
-	"context"
 	"errors"
 	"reflect"
 	"regexp"
@@ -86,8 +85,8 @@ var studioSiteWithoutSubdomain = &meta.Site{
 	App:    studioApp,
 }
 
-var studioSession = sess.New(context.Background(), studioUser, studioSite)
-var studioSessionWithoutSubdomain = sess.New(context.Background(), studioUser, studioSiteWithoutSubdomain)
+var studioSession = sess.New(studioUser, studioSite)
+var studioSessionWithoutSubdomain = sess.New(studioUser, studioSiteWithoutSubdomain)
 
 func Test_serverMergeFuncs(t *testing.T) {
 

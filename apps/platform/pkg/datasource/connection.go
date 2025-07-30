@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -13,7 +14,7 @@ var dataSourceTypesByName = map[string]string{
 	meta.PLATFORM_DATA_SOURCE: "uesio.postgresio",
 }
 
-func GetConnection(dataSourceKey string, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
+func GetConnection(ctx context.Context, dataSourceKey string, session *sess.Session, connection wire.Connection) (wire.Connection, error) {
 
 	// If we were provided a default connection for this datasource,
 	// use that instead
@@ -30,7 +31,7 @@ func GetConnection(dataSourceKey string, session *sess.Session, connection wire.
 	// credentials as the datasource's namespace
 	versionSession := session
 	if session != nil {
-		versionSession, err = EnterVersionContext(namespace, session, connection)
+		versionSession, err = EnterVersionContext(ctx, namespace, session, connection)
 		if err != nil {
 			return nil, err
 		}
@@ -46,10 +47,10 @@ func GetConnection(dataSourceKey string, session *sess.Session, connection wire.
 		return nil, err
 	}
 
-	credentials, err := GetCredentials(adapter.GetCredentials(), versionSession)
+	credentials, err := GetCredentials(ctx, adapter.GetCredentials(), versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	return adapter.GetConnection(session.Context(), credentials, dataSourceKey)
+	return adapter.GetConnection(ctx, credentials, dataSourceKey)
 }

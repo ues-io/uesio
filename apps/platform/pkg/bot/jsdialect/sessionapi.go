@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -16,6 +17,9 @@ type SessionAPI struct {
 	wsApi   *WorkspaceAPI
 	appApi  *AppAPI
 	siteApi *SiteAPI
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 }
 
 type SiteAPI struct {
@@ -77,9 +81,10 @@ func (a *AppAPI) GetColor() string {
 	return a.color
 }
 
-func NewSessionAPI(session *sess.Session) *SessionAPI {
+func NewSessionAPI(ctx context.Context, session *sess.Session) *SessionAPI {
 	return &SessionAPI{
 		session: session,
+		ctx:     ctx,
 	}
 }
 
@@ -130,7 +135,7 @@ func (s *SessionAPI) GetApp(connection wire.Connection) *AppAPI {
 
 	appApi.name = name
 
-	appData, err := datasource.GetAppData(s.session.Context(), []string{appName}, connection)
+	appData, err := datasource.GetAppData(s.ctx, []string{appName}, connection)
 	if err != nil {
 		return appApi
 	}

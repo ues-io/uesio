@@ -18,6 +18,7 @@ func DownloadAttachment(ctx context.Context, recordID string, path string, sessi
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
+		ctx,
 		userFile,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -44,6 +45,7 @@ func Download(ctx context.Context, userFileID string, session *sess.Session) (io
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
+		ctx,
 		userFile,
 		&datasource.PlatformLoadOptions{
 			Fields: []wire.LoadRequestField{
@@ -95,7 +97,7 @@ func DownloadItem(ctx context.Context, userFile *meta.UserFileMetadata, session 
 		return nil, nil, errors.New("no file provided")
 	}
 
-	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
+	conn, err := fileadapt.GetFileConnection(ctx, userFile.FileSourceID, session)
 	if err != nil {
 		return nil, nil, err
 	}

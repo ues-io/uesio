@@ -30,7 +30,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		view := meta.NewBaseView(viewNamespace, viewName)
 
 		// Make sure this is a legit view that we have access to
-		err := bundle.Load(session.Context(), view, nil, session, nil)
+		err := bundle.Load(r.Context(), view, nil, session, nil)
 		if err != nil {
 			HandleErrorRoute(w, r, session, "", "", err, false)
 			return
@@ -48,14 +48,14 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			Title:   "Preview: " + view.Name,
 		}
 
-		depsCache, err := routing.GetMetadataDeps(route, session)
+		depsCache, err := routing.GetMetadataDeps(r.Context(), route, session)
 		if err != nil {
 			HandleErrorRoute(w, r, session, "", "", err, false)
 			return
 		}
 
 		if buildMode {
-			err = routing.GetBuilderDependencies(viewNamespace, viewName, depsCache, session)
+			err = routing.GetBuilderDependencies(r.Context(), viewNamespace, viewName, depsCache, session)
 			if err != nil {
 				HandleErrorRoute(w, r, session, "", "", err, false)
 				return
@@ -63,6 +63,6 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			route.Title = "Edit: " + view.Name
 		}
 
-		ExecuteIndexTemplate(w, route, depsCache, buildMode, session)
+		ExecuteIndexTemplate(r.Context(), w, route, depsCache, buildMode, session)
 	}
 }

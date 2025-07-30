@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -13,8 +14,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runDomainAfterSaveSiteBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	err := enforceMaxDomainsLimit(request, connection, session)
+func runDomainAfterSaveSiteBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	err := enforceMaxDomainsLimit(ctx, request, connection, session)
 	if err != nil {
 		return err
 	}
@@ -25,7 +26,7 @@ func clearHostCacheForDomain(request *wire.SaveOp) error {
 	return auth.ClearHostCacheForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
 }
 
-func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func enforceMaxDomainsLimit(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// We need to enforce a limit on max domains per user
 	// To do that, we need to query for all domains across all sites' apps
@@ -51,7 +52,7 @@ func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, se
 	// Query for the users associated with all of these sites
 	users := meta.UserCollection{}
 	uniqueUserIds := map[string]string{}
-	err = datasource.PlatformLoad(&users, &datasource.PlatformLoadOptions{
+	err = datasource.PlatformLoad(ctx, &users, &datasource.PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:         "uesio/core.id",
@@ -114,7 +115,7 @@ func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, se
 
 	// Lookup the current total domains for these users
 	domainsForUsers := meta.SiteDomainCollection{}
-	err = datasource.PlatformLoad(&domainsForUsers, &datasource.PlatformLoadOptions{
+	err = datasource.PlatformLoad(ctx, &domainsForUsers, &datasource.PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.site->uesio/studio.app->uesio/studio.user",
@@ -175,7 +176,7 @@ func enforceMaxDomainsLimit(request *wire.SaveOp, connection wire.Connection, se
 	// Now compare the limits to the existing domains and the delta
 	for userId := range uniqueUserIds {
 		// Lookup the limit
-		limitDomains, err3 := limits.GetLimitDomainsPerUser(userId, session)
+		limitDomains, err3 := limits.GetLimitDomainsPerUser(ctx, userId, session)
 		if err3 != nil {
 			return fmt.Errorf("unable to determine the limit for max domains for user: %s", uniqueUserIds[userId])
 		}

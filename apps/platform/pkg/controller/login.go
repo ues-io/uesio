@@ -62,12 +62,12 @@ func processLogin(r *http.Request, session *sess.Session) (*auth.LoginResult, er
 		return nil, exceptions.NewBadRequestException("invalid login request body", err)
 	}
 
-	conn, err := auth.GetAuthConnection(getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
+	conn, err := auth.GetAuthConnection(r.Context(), getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		return nil, err
 	}
 
-	return conn.Login(loginRequest)
+	return conn.Login(r.Context(), loginRequest)
 }
 
 func handleStandardLogin(w http.ResponseWriter, r *http.Request, session *sess.Session) {
@@ -103,7 +103,7 @@ func SAMLLoginRequestWorkspace(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSAMLLoginRequest(w http.ResponseWriter, r *http.Request, session *sess.Session) {
-	conn, err := auth.GetAuthConnection(getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
+	conn, err := auth.GetAuthConnection(r.Context(), getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -134,7 +134,7 @@ func SAMLLoginResponsetWorkspace(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSAMLLoginResponse(w http.ResponseWriter, r *http.Request, session *sess.Session) {
-	conn, err := auth.GetAuthConnection(getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
+	conn, err := auth.GetAuthConnection(r.Context(), getAuthSourceID(mux.Vars(r)), nil, datasource.GetSiteAdminSession(session))
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -163,7 +163,7 @@ func handleSAMLLoginResponse(w http.ResponseWriter, r *http.Request, session *se
 		return
 	}
 
-	result, err := conn.LoginServiceProvider(assertion)
+	result, err := conn.LoginServiceProvider(r.Context(), assertion)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -379,7 +379,7 @@ func CLIToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	site := requestingSession.GetSite()
-	user, err := auth.GetCachedUserByID(authRequest.UserID, site)
+	user, err := auth.GetCachedUserByID(r.Context(), authRequest.UserID, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -490,7 +490,7 @@ func GetLoginRedirectResponse(r *http.Request, user *meta.User, session *sess.Se
 		return NewLoginResponse(preload.GetUserMergeData(session), redirectPath), nil
 	}
 
-	route, err := routing.GetUserHomeRoute(user, session)
+	route, err := routing.GetUserHomeRoute(r.Context(), user, session)
 	if err != nil {
 		return nil, err
 	}

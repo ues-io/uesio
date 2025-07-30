@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/tls"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func QueryDomainFromSite(siteID string, connection wire.Connection) (*meta.SiteDomain, error) {
+func QueryDomainFromSite(ctx context.Context, siteID string, connection wire.Connection) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := PlatformLoadOne(
+		ctx,
 		&sd,
 		&PlatformLoadOptions{
 			Fields: []wire.LoadRequestField{
@@ -33,7 +33,7 @@ func QueryDomainFromSite(siteID string, connection wire.Connection) (*meta.SiteD
 			BatchSize:  1,
 			Connection: connection,
 		},
-		sess.GetStudioAnonSession(traceid.NewContext(context.Background())),
+		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err

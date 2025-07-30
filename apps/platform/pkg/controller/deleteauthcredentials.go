@@ -23,18 +23,18 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 
-	conn, err := datasource.GetPlatformConnection(session, nil)
+	conn, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
-	coreSession, err := datasource.EnterVersionContext("uesio/core", session, conn)
+	coreSession, err := datasource.EnterVersionContext(r.Context(), "uesio/core", session, conn)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain core session: %w", err))
 		return
 	}
 
-	credential, err := oauth2.GetIntegrationCredential(user.ID, integrationName, coreSession, conn)
+	credential, err := oauth2.GetIntegrationCredential(r.Context(), user.ID, integrationName, coreSession, conn)
 
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to retrieve integration credential for user: %w", err))
@@ -47,7 +47,7 @@ func DeleteAuthCredentials(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If we have a credential, delete it, otherwise, there's nothing to do
-	if err = oauth2.DeleteIntegrationCredential(credential, coreSession, conn); err != nil {
+	if err = oauth2.DeleteIntegrationCredential(r.Context(), credential, coreSession, conn); err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to delete integration credential: %w", err))
 		return
 	}

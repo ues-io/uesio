@@ -1,6 +1,7 @@
 package configstore
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -10,10 +11,10 @@ import (
 )
 
 type ConfigStore interface {
-	Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error)
-	GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error)
-	Set(key, value string, session *sess.Session) error
-	Remove(key string, session *sess.Session) error
+	Get(ctx context.Context, key string, session *sess.Session) (*meta.ConfigStoreValue, error)
+	GetMany(ctx context.Context, keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error)
+	Set(ctx context.Context, key, value string, session *sess.Session) error
+	Remove(ctx context.Context, key string, session *sess.Session) error
 }
 
 var configStoreMap = map[string]ConfigStore{}
@@ -22,12 +23,12 @@ type ConfigLoadOptions struct {
 	OnlyWriteable bool
 }
 
-func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.ConfigValueCollection, error) {
+func GetConfigValues(ctx context.Context, session *sess.Session, options *ConfigLoadOptions) (*meta.ConfigValueCollection, error) {
 	if options == nil {
 		options = &ConfigLoadOptions{}
 	}
 	allConfigValues := meta.ConfigValueCollection{}
-	err := bundle.LoadAllFromAny(session.Context(), &allConfigValues, nil, session, nil)
+	err := bundle.LoadAllFromAny(ctx, &allConfigValues, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +64,7 @@ func GetConfigValues(session *sess.Session, options *ConfigLoadOptions) (*meta.C
 			keys[i] = cv.GetKey()
 		}
 
-		values, err := store.GetMany(keys, session)
+		values, err := store.GetMany(ctx, keys, session)
 		if err != nil {
 			return nil, err
 		}
@@ -102,7 +103,7 @@ func RegisterConfigStore(name string, store ConfigStore) {
 	configStoreMap[name] = store
 }
 
-func GetValue(key string, session *sess.Session) (string, error) {
+func GetValue(ctx context.Context, key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
 	}
@@ -111,20 +112,20 @@ func GetValue(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = bundle.Load(session.Context(), configValue, nil, session, nil)
+	err = bundle.Load(ctx, configValue, nil, session, nil)
 	if err != nil {
 		return "", err
 	}
 
-	return getValueInternal(configValue, session)
+	return getValueInternal(ctx, configValue, session)
 }
 
-func getValueInternal(cv *meta.ConfigValue, session *sess.Session) (string, error) {
+func getValueInternal(ctx context.Context, cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	store, err := GetConfigStore(cv.Store)
 	if err != nil {
 		return "", err
 	}
-	storeValue, err := store.Get(cv.GetKey(), session)
+	storeValue, err := store.Get(ctx, cv.GetKey(), session)
 	if err != nil {
 		return "", err
 	}
@@ -137,12 +138,12 @@ func getValueInternal(cv *meta.ConfigValue, session *sess.Session) (string, erro
 	return "", nil
 }
 
-func SetValue(key, value string, session *sess.Session) error {
+func SetValue(ctx context.Context, key, value string, session *sess.Session) error {
 	configValue, err := meta.NewConfigValue(key)
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(session.Context(), configValue, nil, session, nil)
+	err = bundle.Load(ctx, configValue, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -150,12 +151,12 @@ func SetValue(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return store.Set(configValue.GetKey(), value, session)
+	return store.Set(ctx, configValue.GetKey(), value, session)
 }
 
-func Merge(template string, session *sess.Session) (string, error) {
+func Merge(ctx context.Context, template string, session *sess.Session) (string, error) {
 	configTemplate, err := templating.NewWithFunc(template, func(m map[string]any, key string) (any, error) {
-		return GetValue(key, session)
+		return GetValue(ctx, key, session)
 	})
 	if err != nil {
 		return "", err
@@ -168,12 +169,12 @@ func Merge(template string, session *sess.Session) (string, error) {
 	return value, nil
 }
 
-func Remove(key string, session *sess.Session) error {
+func Remove(ctx context.Context, key string, session *sess.Session) error {
 	configValue, err := meta.NewConfigValue(key)
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(session.Context(), configValue, nil, session, nil)
+	err = bundle.Load(ctx, configValue, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -181,5 +182,5 @@ func Remove(key string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return store.Remove(key, session)
+	return store.Remove(ctx, key, session)
 }

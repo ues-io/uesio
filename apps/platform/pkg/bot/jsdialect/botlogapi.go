@@ -17,12 +17,14 @@ type BotLogAPI struct {
 	ctx     context.Context
 }
 
-func NewBotLogAPI(bot *meta.Bot, ctx context.Context) *BotLogAPI {
+func NewBotLogAPI(ctx context.Context, bot *meta.Bot) *BotLogAPI {
 	return &BotLogAPI{
 		bot:     bot,
 		counter: 0,
 		start:   time.Now(),
-		ctx:     ctx,
+		// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+		// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+		ctx: ctx,
 	}
 }
 

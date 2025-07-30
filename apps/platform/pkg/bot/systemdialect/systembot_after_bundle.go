@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -11,11 +12,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runBundleAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	return cleanBundleFiles(request, connection, session)
+func runBundleAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	return cleanBundleFiles(ctx, request, connection, session)
 }
 
-func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func cleanBundleFiles(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	if len(request.Deletes) == 0 {
 		return nil
@@ -33,7 +34,7 @@ func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session 
 	}
 
 	bundleDependency := meta.BundleDependencyCollection{}
-	err := datasource.PlatformLoad(&bundleDependency, &datasource.PlatformLoadOptions{
+	err := datasource.PlatformLoad(ctx, &bundleDependency, &datasource.PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.bundle",
@@ -51,7 +52,7 @@ func cleanBundleFiles(request *wire.SaveOp, connection wire.Connection, session 
 		return errors.New("tried to delete a Bundle that is in use")
 	}
 
-	return clearFilesForBundles(uniqueKeys, session)
+	return clearFilesForBundles(ctx, uniqueKeys, session)
 
 }
 
@@ -64,7 +65,7 @@ func parseUniqueKey(UniqueKey string) (appName, appVersion string) {
 	return s[0], app
 }
 
-func clearFilesForBundles(ids []string, session *sess.Session) error {
+func clearFilesForBundles(ctx context.Context, ids []string, session *sess.Session) error {
 	for _, id := range ids {
 		appName, appVersion := parseUniqueKey(id)
 		dest, err := bundlestore.GetConnection(bundlestore.ConnectionOptions{
@@ -74,7 +75,7 @@ func clearFilesForBundles(ids []string, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		if err = dest.DeleteBundle(session.Context()); err != nil {
+		if err = dest.DeleteBundle(ctx); err != nil {
 			return err
 		}
 	}

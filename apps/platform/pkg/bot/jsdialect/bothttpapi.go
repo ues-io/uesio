@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -21,15 +22,19 @@ import (
 
 type BotHttpAPI struct {
 	ic *wire.IntegrationConnection
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 }
 
 func (api *BotHttpAPI) GetIntegration() *meta.Integration {
 	return api.ic.GetIntegration()
 }
 
-func NewBotHttpAPI(integrationConnection *wire.IntegrationConnection) *BotHttpAPI {
+func NewBotHttpAPI(ctx context.Context, integrationConnection *wire.IntegrationConnection) *BotHttpAPI {
 	return &BotHttpAPI{
-		ic: integrationConnection,
+		ic:  integrationConnection,
+		ctx: ctx,
 	}
 }
 
@@ -162,7 +167,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		}
 	}
 
-	httpReq, err := http.NewRequest(useMethod, req.URL, payloadReader)
+	httpReq, err := http.NewRequestWithContext(api.ctx, useMethod, req.URL, payloadReader)
 	if err != nil {
 		return ServerError(err)
 	}

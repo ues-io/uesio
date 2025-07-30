@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -8,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAppBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runAppBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return request.LoopInserts(func(change *wire.ChangeItem) error {
 		user, err := change.GetField("uesio/studio.user")
 		if err != nil {

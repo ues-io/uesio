@@ -44,7 +44,7 @@ func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (any, error) 
 
 }
 
-func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runFieldAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// If there are no changes, only deletes, we have nothing to do
 	if !request.HasChanges() {
@@ -60,7 +60,7 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		},
 	}
 
-	wsAccessResult := datasource.RequestWorkspaceWriteAccess(request.Params, connection, session)
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(ctx, request.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {
 		return wsAccessResult.Error()
 	}
@@ -94,12 +94,12 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 
 	if request.HasChanges() {
 
-		wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+		wsSession, err := datasource.AddWorkspaceContextByID(ctx, workspaceID, session, connection)
 		if err != nil {
 			return err
 		}
 
-		err = collections.Load(metadataResponse, wsSession, connection)
+		err = collections.Load(ctx, metadataResponse, wsSession, connection)
 		if err != nil {
 			return err
 		}
@@ -170,6 +170,6 @@ func runFieldAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sess
 		return err
 	}
 
-	return checkValidItems(workspaceID, items, session, connection)
+	return checkValidItems(ctx, workspaceID, items, session, connection)
 
 }

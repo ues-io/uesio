@@ -70,7 +70,7 @@ func (b *WorkspaceBundleStoreConnection) processItems(ctx context.Context, items
 			fields = getFilteredFields(group.GetFields())
 		}
 
-		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+		err = datasource.PlatformLoad(ctx, &WorkspaceLoadCollection{
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
@@ -85,7 +85,7 @@ func (b *WorkspaceBundleStoreConnection) processItems(ctx context.Context, items
 					Value:    locatorMap.GetIDs(),
 					Operator: "IN",
 				},
-			}}, b.getStudioAnonSession(ctx))
+			}}, b.getStudioAnonSession())
 		if err != nil {
 			return err
 		}
@@ -130,9 +130,9 @@ type WorkspaceBundleStoreConnection struct {
 	studioAnonSession *sess.Session
 }
 
-func (b *WorkspaceBundleStoreConnection) getStudioAnonSession(ctx context.Context) *sess.Session {
+func (b *WorkspaceBundleStoreConnection) getStudioAnonSession() *sess.Session {
 	if b.studioAnonSession == nil {
-		b.studioAnonSession = sess.GetStudioAnonSession(ctx)
+		b.studioAnonSession = sess.GetStudioAnonSession()
 	}
 	return b.studioAnonSession
 }
@@ -164,7 +164,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(ctx context.Context, item meta.
 	}
 
 	// If we didn't find it in cache, we need to go to the database
-	if err := datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoadOne(ctx, item, &datasource.PlatformLoadOptions{
 		WireName: "WorkspaceGetItem",
 		Fields:   fields,
 		Conditions: []wire.LoadRequestCondition{
@@ -175,7 +175,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(ctx context.Context, item meta.
 		},
 		Params:     getParamsFromWorkspace(b.Workspace),
 		Connection: b.Connection,
-	}, b.getStudioAnonSession(ctx)); err != nil {
+	}, b.getStudioAnonSession()); err != nil {
 		return err
 	}
 
@@ -260,7 +260,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(ctx context.Context, group 
 		fields = getFilteredFields(group.GetFields())
 	}
 
-	return datasource.PlatformLoad(&WorkspaceLoadCollection{
+	return datasource.PlatformLoad(ctx, &WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  b.Namespace,
 	}, &datasource.PlatformLoadOptions{
@@ -273,7 +273,7 @@ func (b *WorkspaceBundleStoreConnection) GetAllItems(ctx context.Context, group 
 		Orders: []wire.LoadRequestOrder{{
 			Field: commonfields.UniqueKey,
 		}},
-	}, b.getStudioAnonSession(ctx))
+	}, b.getStudioAnonSession())
 
 }
 
@@ -298,7 +298,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachment(ctx context.Context, 
 	if err != nil {
 		return nil, nil, errors.New("invalid record id for attachment")
 	}
-	r, userFileMetadata, err := filesource.DownloadAttachment(ctx, recordIDString, path, b.getStudioAnonSession(ctx))
+	r, userFileMetadata, err := filesource.DownloadAttachment(ctx, recordIDString, path, b.getStudioAnonSession())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -312,6 +312,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentData(ctx context.Context, 
 	}
 	userFiles := &meta.UserFileMetadataCollection{}
 	err = datasource.PlatformLoad(
+		ctx,
 		userFiles,
 		&datasource.PlatformLoadOptions{
 			WireName: "WorkspaceGetItemAttachments",
@@ -324,7 +325,7 @@ func (b *WorkspaceBundleStoreConnection) GetAttachmentData(ctx context.Context, 
 			},
 			Connection: b.Connection,
 		},
-		b.getStudioAnonSession(ctx),
+		b.getStudioAnonSession(),
 	)
 	return userFiles, nil
 }
@@ -355,7 +356,7 @@ func (b *WorkspaceBundleStoreConnection) GetItemAttachments(ctx context.Context,
 			}
 			defer f.Close()
 
-			r, _, err := filesource.DownloadItem(ctx, ufm, b.getStudioAnonSession(ctx))
+			r, _, err := filesource.DownloadItem(ctx, ufm, b.getStudioAnonSession())
 			if err != nil {
 				return err
 			}
@@ -384,6 +385,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef(ctx context.Context) (*met
 	by.Name = b.Namespace
 	bdc := meta.BundleDependencyCollection{}
 	err := datasource.PlatformLoad(
+		ctx,
 		&bdc,
 		&datasource.PlatformLoadOptions{
 			Connection: b.Connection,
@@ -416,7 +418,7 @@ func (b *WorkspaceBundleStoreConnection) GetBundleDef(ctx context.Context) (*met
 				},
 			},
 		},
-		b.getStudioAnonSession(ctx),
+		b.getStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err

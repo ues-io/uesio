@@ -2,6 +2,7 @@ package routing
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -36,28 +37,28 @@ func getBuilderComponentID(view string) string {
 	return fmt.Sprintf("%s($root):%s", view, DEFAULT_BUILDER_COMPONENT)
 }
 
-func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
+func loadViewDef(ctx context.Context, key string, session *sess.Session) (*meta.View, error) {
 
 	subViewDep, err := meta.NewView(key)
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundle.Load(session.Context(), subViewDep, nil, session, nil)
+	err = bundle.Load(ctx, subViewDep, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load SubView '%s': %w", key, err)
 	}
 	return subViewDep, nil
 }
 
-func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, error) {
+func loadVariant(ctx context.Context, key string, session *sess.Session) (*meta.ComponentVariant, error) {
 
 	variantDep, err := meta.NewComponentVariant(key)
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundle.Load(session.Context(), variantDep, nil, session, nil)
+	err = bundle.Load(ctx, variantDep, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load variant '%s': %w", key, err)
 	}
@@ -75,7 +76,7 @@ func getFullyQualifiedVariantKey(fullName string, componentKey string) (string, 
 	return "", fmt.Errorf("invalid variant key: %s", fullName)
 }
 
-func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) error {
+func addComponentPackToDeps(ctx context.Context, deps *preload.PreloadMetadata, packNamespace, packName string, session *sess.Session) error {
 	pack := meta.NewBaseComponentPack(packNamespace, packName)
 	existingItem, alreadyRequested := deps.ComponentPack.AddItemIfNotExists(pack)
 	// If the pack has not been requested yet we need to load it so that we have that metadata available.
@@ -90,7 +91,7 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 			pack = existingPack
 		}
 	} else {
-		if err := bundle.Load(session.Context(), pack, nil, session, nil); err != nil {
+		if err := bundle.Load(ctx, pack, nil, session, nil); err != nil {
 			return err
 		}
 		// TODO: This check can be eventually removed.  It's intended to cover legacy code that
@@ -115,7 +116,7 @@ func addComponentPackToDeps(deps *preload.PreloadMetadata, packNamespace, packNa
 	return nil
 }
 
-func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, session *sess.Session) error {
+func getDepsForUtilityComponent(ctx context.Context, key string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
@@ -124,7 +125,7 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 
 	utility := meta.NewBaseUtility(namespace, name)
 
-	if err = bundle.Load(session.Context(), utility, nil, session, nil); err != nil {
+	if err = bundle.Load(ctx, utility, nil, session, nil); err != nil {
 		return err
 	}
 
@@ -132,10 +133,10 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 		return nil
 	}
 
-	addComponentPackToDeps(deps, namespace, utility.Pack, session)
+	addComponentPackToDeps(ctx, deps, namespace, utility.Pack, session)
 
 	for _, key := range utility.Utilities {
-		if utilityErr := getDepsForUtilityComponent(key, deps, session); utilityErr != nil {
+		if utilityErr := getDepsForUtilityComponent(ctx, key, deps, session); utilityErr != nil {
 			return utilityErr
 		}
 	}
@@ -144,15 +145,15 @@ func getDepsForUtilityComponent(key string, deps *preload.PreloadMetadata, sessi
 
 }
 
-func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+func getDepsForComponent(ctx context.Context, component *meta.Component, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 
-	versionSession, err := datasource.EnterVersionContext(component.Namespace, session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, component.Namespace, session, nil)
 	if err != nil {
 		return err
 	}
 
 	if component.Pack != "" {
-		addComponentPackToDeps(deps, component.Namespace, component.Pack, versionSession)
+		addComponentPackToDeps(ctx, deps, component.Namespace, component.Pack, versionSession)
 	}
 
 	// Add all Components to the Component Type dependency map
@@ -160,14 +161,14 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 	deps.ComponentType.AddItemIfNotExists((*meta.RuntimeComponentMetadata)(component))
 
 	for _, key := range component.Utilities {
-		err := getDepsForUtilityComponent(key, deps, versionSession)
+		err := getDepsForUtilityComponent(ctx, key, deps, versionSession)
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, key := range component.SubComponents {
-		_, err := addComponentType(key, deps, subViews, versionSession)
+		_, err := addComponentType(ctx, key, deps, subViews, versionSession)
 		if err != nil {
 			return err
 		}
@@ -175,14 +176,14 @@ func getDepsForComponent(component *meta.Component, deps *preload.PreloadMetadat
 
 	// If this is a declarative component, we need to process dependencies of the component's definition
 	if component.Type == meta.DeclarativeComponent {
-		err := getComponentAreaDeps((*yaml.Node)(component.Definition), deps, subViews, versionSession)
+		err := getComponentAreaDeps(ctx, (*yaml.Node)(component.Definition), deps, subViews, versionSession)
 		if err != nil {
 			return err
 		}
 	}
 	// Process any variants now
 	for _, variantKey := range component.Variants {
-		err := addComponentVariantDep(variantKey, component.GetKey(), deps, subViews, versionSession)
+		err := addComponentVariantDep(ctx, variantKey, component.GetKey(), deps, subViews, versionSession)
 		if err != nil {
 			return err
 		}
@@ -232,7 +233,7 @@ func getSubParams(viewDef *yaml.Node, parentParamValues map[string]any, wireData
 	return subParams, slotMapNode, nil
 }
 
-func processViewWires(view *meta.View, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, session *sess.Session) (map[string]meta.Group, error) {
+func processViewWires(ctx context.Context, view *meta.View, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, session *sess.Session) (map[string]meta.Group, error) {
 	wires, err := meta.GetMapNode((*yaml.Node)(view.Definition), "wires")
 	if err != nil {
 		wires = nil
@@ -269,7 +270,7 @@ func processViewWires(view *meta.View, viewInstanceID string, deps *preload.Prel
 			ops = append(ops, loadOp)
 		}
 
-		metadata, err := datasource.Load(ops, session, nil)
+		metadata, err := datasource.Load(ctx, ops, session, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -299,7 +300,7 @@ func processViewWires(view *meta.View, viewInstanceID string, deps *preload.Prel
 	return wireData, nil
 }
 
-func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotMapNode *yaml.Node, session *sess.Session) (map[string]*yaml.Node, error) {
+func processViewComponents(ctx context.Context, view *meta.View, deps *preload.PreloadMetadata, slotMapNode *yaml.Node, session *sess.Session) (map[string]*yaml.Node, error) {
 	components, err := meta.GetMapNode((*yaml.Node)(view.Definition), "components")
 	if err != nil {
 		return nil, err
@@ -316,14 +317,14 @@ func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotM
 
 	subViews := map[string]*yaml.Node{}
 
-	err = getComponentAreaDeps(components, deps, subViews, session)
+	err = getComponentAreaDeps(ctx, components, deps, subViews, session)
 	if err != nil {
 		return nil, err
 	}
 
 	// We need to process slot definitions here in the same
 	// way we do them for declarative components.
-	err = getSlotDeps(meta.ParseSlotDef(slots), slotMapNode, deps, subViews, session)
+	err = getSlotDeps(ctx, meta.ParseSlotDef(slots), slotMapNode, deps, subViews, session)
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +339,7 @@ func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotM
 				}
 				if panelType.Kind == yaml.ScalarNode {
 					compName := panelType.Value
-					if err = getComponentDeps(compName, panel, deps, subViews, session); err != nil {
+					if err = getComponentDeps(ctx, compName, panel, deps, subViews, session); err != nil {
 						return nil, err
 					}
 				}
@@ -349,7 +350,7 @@ func processViewComponents(view *meta.View, deps *preload.PreloadMetadata, slotM
 	return subViews, nil
 }
 
-func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData map[string]meta.Group, subViews map[string]*yaml.Node, params map[string]any, session *sess.Session) error {
+func processSubViews(ctx context.Context, view *meta.View, deps *preload.PreloadMetadata, wireData map[string]meta.Group, subViews map[string]*yaml.Node, params map[string]any, session *sess.Session) error {
 	for viewKey, viewCompDef := range subViews {
 
 		if view.GetKey() == viewKey {
@@ -370,7 +371,7 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 			viewID = ""
 		}
 
-		err = processView(meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, slotMapNode, session)
+		err = processView(ctx, meta.GetFullyQualifiedKey(viewKey, view.Namespace), viewID, deps, subParams, slotMapNode, session)
 		if err != nil {
 			return err
 		}
@@ -379,26 +380,26 @@ func processSubViews(view *meta.View, deps *preload.PreloadMetadata, wireData ma
 	return nil
 }
 
-func processView(key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, slotMapNode *yaml.Node, session *sess.Session) error {
+func processView(ctx context.Context, key string, viewInstanceID string, deps *preload.PreloadMetadata, params map[string]any, slotMapNode *yaml.Node, session *sess.Session) error {
 
-	view, err := loadViewDef(key, session)
+	view, err := loadViewDef(ctx, key, session)
 	if err != nil {
 		return err
 	}
 
 	deps.ViewDef.AddItem(view)
 
-	wireData, err := processViewWires(view, viewInstanceID, deps, params, session)
+	wireData, err := processViewWires(ctx, view, viewInstanceID, deps, params, session)
 	if err != nil {
 		return err
 	}
 
-	subViews, err := processViewComponents(view, deps, slotMapNode, session)
+	subViews, err := processViewComponents(ctx, view, deps, slotMapNode, session)
 	if err != nil {
 		return err
 	}
 
-	return processSubViews(view, deps, wireData, subViews, params, session)
+	return processSubViews(ctx, view, deps, wireData, subViews, params, session)
 
 }
 
@@ -411,7 +412,7 @@ func InBuildMode(fullViewId string, deps *preload.MetadataMergeData) bool {
 	return deps.Has(buildModeKey)
 }
 
-func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, builderComponentID string) error {
+func GetWorkspaceModeDeps(ctx context.Context, deps *preload.PreloadMetadata, session *sess.Session, builderComponentID string) error {
 	// Load in the builder theme.
 	theme, err := meta.NewTheme("uesio/builder.default")
 	if err != nil {
@@ -420,7 +421,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 
 	baseStudioSession := session.RemoveWorkspaceContext()
 
-	err = bundle.Load(session.Context(), theme, nil, baseStudioSession, nil)
+	err = bundle.Load(ctx, theme, nil, baseStudioSession, nil)
 	if err != nil {
 		return err
 	}
@@ -428,7 +429,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 	deps.Theme.AddItem(theme)
 
 	// Add in any builder-specific feature flags.
-	chatPanelFlag, err := featureflagstore.GetFeatureFlag("uesio/studio.chat_panel", baseStudioSession, baseStudioSession.GetContextUser().ID)
+	chatPanelFlag, err := featureflagstore.GetFeatureFlag(ctx, "uesio/studio.chat_panel", baseStudioSession, baseStudioSession.GetContextUser().ID)
 	if err != nil {
 		return err
 	}
@@ -436,7 +437,7 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 
 	// Get the metadata list
 	appNames := session.GetContextNamespaces()
-	appData, err := datasource.GetAppData(session.Context(), appNames, nil)
+	appData, err := datasource.GetAppData(ctx, appNames, nil)
 	if err != nil {
 		return err
 	}
@@ -446,22 +447,22 @@ func GetWorkspaceModeDeps(deps *preload.PreloadMetadata, session *sess.Session, 
 	return nil
 }
 
-func GetViewDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
+func GetViewDependencies(ctx context.Context, viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
 	viewKey := viewNamespace + "." + viewName
-	view, err := loadViewDef(viewKey, session)
+	view, err := loadViewDef(ctx, viewKey, session)
 	if err != nil {
 		return err
 	}
 
 	deps.ViewDef.AddItem(view)
 
-	return processView(viewKey, "", deps, nil, nil, session)
+	return processView(ctx, viewKey, "", deps, nil, nil, session)
 
 }
 
-func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
+func GetBuilderDependencies(ctx context.Context, viewNamespace, viewName string, deps *preload.PreloadMetadata, session *sess.Session) error {
 
-	view, err := loadViewDef(viewNamespace+"."+viewName, session)
+	view, err := loadViewDef(ctx, viewNamespace+"."+viewName, session)
 	if err != nil {
 		return err
 	}
@@ -481,19 +482,19 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 	deps.Component.AddItem(preload.NewComponentMergeData(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String()))
 
 	var variants meta.ComponentVariantCollection
-	err = bundle.LoadAllFromAny(session.Context(), &variants, nil, session, nil)
+	err = bundle.LoadAllFromAny(ctx, &variants, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load variants: %w", err)
 	}
 
 	var components meta.ComponentCollection
-	err = bundle.LoadAllFromAny(session.Context(), &components, nil, session, nil)
+	err = bundle.LoadAllFromAny(ctx, &components, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load components: %w", err)
 	}
 
 	for _, component := range components {
-		if err = getDepsForComponent(component, deps, map[string]*yaml.Node{}, session); err != nil {
+		if err = getDepsForComponent(ctx, component, deps, map[string]*yaml.Node{}, session); err != nil {
 			return err
 		}
 		deps.ComponentType.AddItem(component)
@@ -506,7 +507,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *preload.Preloa
 	deps.Component.AddItem(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), true))
 	deps.Component.AddItem(preload.NewComponentMergeData(GetIndexPanelKey(builderComponentID), true))
 
-	addComponentType(DEFAULT_BUILDER_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession(session.Context()))
+	addComponentType(ctx, DEFAULT_BUILDER_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession())
 
 	return nil
 }
@@ -519,7 +520,7 @@ func GetIndexPanelKey(builderComponentID string) string {
 	return builderComponentID + ":indexpanel"
 }
 
-func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.PreloadMetadata, error) {
+func GetMetadataDeps(ctx context.Context, route *meta.Route, session *sess.Session) (*preload.PreloadMetadata, error) {
 
 	deps := preload.NewPreloadMetadata()
 
@@ -532,36 +533,36 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		return nil, err
 	}
 
-	err = bundle.Load(session.Context(), theme, nil, session, nil)
+	err = bundle.Load(ctx, theme, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	deps.Theme.AddItem(theme)
 
-	err = processView(route.ViewRef, "$root", deps, route.Params, nil, session)
+	err = processView(ctx, route.ViewRef, "$root", deps, route.Params, nil, session)
 	if err != nil {
 		return nil, err
 	}
 
-	labels, err := translate.GetTranslatedLabels(session)
+	labels, err := translate.GetTranslatedLabels(ctx, session)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get translated labels: %w", err)
 	}
 
-	featureFlags, err := featureflagstore.GetFeatureFlags(session, session.GetContextUser().ID)
+	featureFlags, err := featureflagstore.GetFeatureFlags(ctx, session, session.GetContextUser().ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get feature flags: %w", err)
 	}
 
-	configValues, err := configstore.GetConfigValues(session, nil)
+	configValues, err := configstore.GetConfigValues(ctx, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config values: %w", err)
 	}
 
 	// Add in fonts
 	var fonts meta.FontCollection
-	err = bundle.LoadAllFromAny(session.Context(), &fonts, nil, session, nil)
+	err = bundle.LoadAllFromAny(ctx, &fonts, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load fonts: %w", err)
 	}
@@ -572,7 +573,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 
 	// Add in route assignments
 	var routeAssignments meta.RouteAssignmentCollection
-	err = bundle.LoadAllFromAny(session.Context(), &routeAssignments, nil, session, nil)
+	err = bundle.LoadAllFromAny(ctx, &routeAssignments, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load route assignments: %w", err)
 	}
@@ -598,14 +599,14 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		collectionMap[assignment.Collection] = collection
 	}
 
-	err = bundle.LoadMany(session.Context(), routes, &bundlestore.GetManyItemsOptions{
+	err = bundle.LoadMany(ctx, routes, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load routes for route assignments: %w", err)
 	}
 
-	err = bundle.LoadMany(session.Context(), collections, &bundlestore.GetManyItemsOptions{
+	err = bundle.LoadMany(ctx, collections, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems: true,
 	}, session, nil)
 	if err != nil {
@@ -642,7 +643,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 	}
 
 	// Add route Assignments for login, signup, and home routes
-	signupRoute, err := GetSignupRoute(session)
+	signupRoute, err := GetSignupRoute(ctx, session)
 	if err != nil {
 		return nil, err
 	}
@@ -682,30 +683,30 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*preload.Preload
 		// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 
-		err = GetWorkspaceModeDeps(deps, session, builderComponentID)
+		err = GetWorkspaceModeDeps(ctx, deps, session, builderComponentID)
 		if err != nil {
 			return nil, err
 		}
 		// If there is already an entry for build mode, don't override it, as it may be set to true
 		deps.Component.AddItemIfNotExists(preload.NewComponentMergeData(GetBuildModeKey(builderComponentID), false))
-		addComponentPackToDeps(deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, sess.GetStudioAnonSession(session.Context()))
+		addComponentPackToDeps(ctx, deps, DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME, sess.GetStudioAnonSession())
 		// Also load in the modstamps for all static files in the workspace
 		// so that we never have stale URLs in the view builder / preview
-		err = addStaticFileModstampsForWorkspaceToDeps(deps, workspace, session)
+		err = addStaticFileModstampsForWorkspaceToDeps(ctx, deps, workspace, session)
 		if err != nil {
 			return nil, err
 		}
 
-		addComponentType(BUILD_BAR_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession(session.Context()))
+		addComponentType(ctx, BUILD_BAR_COMPONENT, deps, map[string]*yaml.Node{}, sess.GetStudioAnonSession())
 	}
 
 	return deps, nil
 }
 
-func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
+func addStaticFileModstampsForWorkspaceToDeps(ctx context.Context, deps *preload.PreloadMetadata, workspace *meta.Workspace, session *sess.Session) error {
 	// Query for all static files in the workspace
 	var files meta.FileCollection
-	err := bundle.LoadAllFromNamespaces(session.Context(), []string{workspace.GetAppFullName()}, &files, nil, session, nil)
+	err := bundle.LoadAllFromNamespaces(ctx, []string{workspace.GetAppFullName()}, &files, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("failed to load static files: %w", err)
 	}
@@ -723,7 +724,7 @@ func addStaticFileModstampsForWorkspaceToDeps(deps *preload.PreloadMetadata, wor
 	return nil
 }
 
-func addComponentVariantDep(variantName string, compName string, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+func addComponentVariantDep(ctx context.Context, variantName string, compName string, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 	qualifiedKey, err := getFullyQualifiedVariantKey(variantName, compName)
 	if err != nil {
 		// TODO: We should probably return an error here at some point
@@ -734,7 +735,7 @@ func addComponentVariantDep(variantName string, compName string, deps *preload.P
 		return nil
 	}
 	// Otherwise load the variant
-	variant, loadErr := loadVariant(qualifiedKey, session)
+	variant, loadErr := loadVariant(ctx, qualifiedKey, session)
 	if loadErr != nil {
 		return loadErr
 	}
@@ -746,7 +747,7 @@ func addComponentVariantDep(variantName string, compName string, deps *preload.P
 		if extendsErr != nil {
 			return extendsErr
 		}
-		extendsErr = addComponentVariantDep(extendsKey, compName, deps, subViews, session)
+		extendsErr = addComponentVariantDep(ctx, extendsKey, compName, deps, subViews, session)
 		if extendsErr != nil {
 			return extendsErr
 		}
@@ -761,14 +762,14 @@ func addComponentVariantDep(variantName string, compName string, deps *preload.P
 		}
 		depCompName := parts[0]
 		depVariantKey := parts[1]
-		depErr := addComponentVariantDep(depVariantKey, depCompName, deps, subViews, session)
+		depErr := addComponentVariantDep(ctx, depVariantKey, depCompName, deps, subViews, session)
 		if depErr != nil {
 			return err
 		}
 	}
 	// Finally, process the definition itself as a "component" area
 	if variant.Definition != nil && variant.Definition.Content != nil && len(variant.Definition.Content) > 0 {
-		if compDefErr := getComponentDeps(compName, (*yaml.Node)(variant.Definition), deps, subViews, session); compDefErr != nil {
+		if compDefErr := getComponentDeps(ctx, compName, (*yaml.Node)(variant.Definition), deps, subViews, session); compDefErr != nil {
 			return compDefErr
 		}
 	}
@@ -776,7 +777,7 @@ func addComponentVariantDep(variantName string, compName string, deps *preload.P
 	return nil
 }
 
-func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+func getComponentAreaDeps(ctx context.Context, node *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 
 	node = meta.UnwrapDocumentNode(node)
 	if node == nil || node.Kind != yaml.SequenceNode {
@@ -787,7 +788,7 @@ func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subVie
 		comp := node.Content[i]
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
-			if err := getComponentDeps(compName, comp.Content[1], deps, subViews, session); err != nil {
+			if err := getComponentDeps(ctx, compName, comp.Content[1], deps, subViews, session); err != nil {
 				return err
 			}
 			if compName == "uesio/core.view" {
@@ -807,7 +808,7 @@ func getComponentAreaDeps(node *yaml.Node, deps *preload.PreloadMetadata, subVie
 	return nil
 }
 
-func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+func getSlotDeps(ctx context.Context, slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 	if len(slotDefinitions) > 0 {
 		for _, slotDef := range slotDefinitions {
 			if compDefinitionMap != nil {
@@ -822,7 +823,7 @@ func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml
 					continue
 				}
 				for _, n := range matchingNodes {
-					err := getComponentAreaDeps(n, deps, subViews, session)
+					err := getComponentAreaDeps(ctx, n, deps, subViews, session)
 					if err != nil {
 						return err
 					}
@@ -832,7 +833,7 @@ func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml
 			// If there were no matching nodes, and our slot has a default content,
 			// also parse through the default content
 			if len(matchingNodes) == 0 && slotDef.DefaultContent != nil {
-				err := getComponentAreaDeps((*yaml.Node)(slotDef.DefaultContent), deps, subViews, session)
+				err := getComponentAreaDeps(ctx, (*yaml.Node)(slotDef.DefaultContent), deps, subViews, session)
 				if err != nil {
 					return err
 				}
@@ -842,9 +843,9 @@ func getSlotDeps(slotDefinitions []*meta.SlotDefinition, compDefinitionMap *yaml
 	return nil
 }
 
-func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
+func getComponentDeps(ctx context.Context, compName string, compDefinitionMap *yaml.Node, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) error {
 
-	compDef, err := addComponentType(compName, deps, subViews, session)
+	compDef, err := addComponentType(ctx, compName, deps, subViews, session)
 	if err != nil {
 		return err
 	}
@@ -888,7 +889,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 							foundComponentVariant = true
 						}
 					}
-					err = addComponentVariantDep(useVariantName, useComponentName, deps, subViews, session)
+					err = addComponentVariantDep(ctx, useVariantName, useComponentName, deps, subViews, session)
 					if err != nil {
 						// Do nothing
 					}
@@ -900,7 +901,7 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 	// Load in default variants for props that had no value specified
 	for _, propDef := range variantPropsWithNoValue {
 		if propDef.DefaultValue != "" {
-			if err := addComponentVariantDep(propDef.DefaultValue, propDef.Metadata.Grouping, deps, subViews, session); err != nil {
+			if err := addComponentVariantDep(ctx, propDef.DefaultValue, propDef.Metadata.Grouping, deps, subViews, session); err != nil {
 				return err
 			}
 		}
@@ -909,14 +910,14 @@ func getComponentDeps(compName string, compDefinitionMap *yaml.Node, deps *prelo
 	if !foundComponentVariant {
 		defaultVariant := compDef.GetDefaultVariant()
 		if defaultVariant != "" {
-			err := addComponentVariantDep(defaultVariant, compName, deps, subViews, session)
+			err := addComponentVariantDep(ctx, defaultVariant, compName, deps, subViews, session)
 			if err != nil {
 				// Do nothing
 			}
 		}
 	}
 
-	return getSlotDeps(compDef.GetSlotDefinitions(), compDefinitionMap, deps, subViews, session)
+	return getSlotDeps(ctx, compDef.GetSlotDefinitions(), compDefinitionMap, deps, subViews, session)
 
 }
 
@@ -939,7 +940,7 @@ func isComponentLike(node *yaml.Node) bool {
 	return true
 }
 
-func addComponentType(key string, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) (*meta.Component, error) {
+func addComponentType(ctx context.Context, key string, deps *preload.PreloadMetadata, subViews map[string]*yaml.Node, session *sess.Session) (*meta.Component, error) {
 
 	dep, ok := deps.ComponentType.Get(key)
 	if ok {
@@ -957,12 +958,12 @@ func addComponentType(key string, deps *preload.PreloadMetadata, subViews map[st
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), component, nil, session, nil)
+	err = bundle.Load(ctx, component, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = getDepsForComponent(component, deps, subViews, session)
+	err = getDepsForComponent(ctx, component, deps, subViews, session)
 	if err != nil {
 		return nil, err
 	}

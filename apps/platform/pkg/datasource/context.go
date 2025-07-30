@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -23,7 +24,7 @@ func GetParamsFromSession(session *sess.Session) map[string]any {
 	return params
 }
 
-func GetContextSessionFromParams(params map[string]any, connection wire.Connection, session *sess.Session) (*sess.Session, error) {
+func GetContextSessionFromParams(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (*sess.Session, error) {
 	workspaceID := goutils.StringValue(params["workspaceid"])
 	workspace := goutils.StringValue(params["workspacename"])
 	site := goutils.StringValue(params["sitename"])
@@ -32,7 +33,7 @@ func GetContextSessionFromParams(params map[string]any, connection wire.Connecti
 	}
 
 	if workspaceID != "" {
-		return AddWorkspaceContextByID(workspaceID, session, connection)
+		return AddWorkspaceContextByID(ctx, workspaceID, session, connection)
 	}
 
 	app := goutils.StringValue(params["app"])
@@ -42,10 +43,10 @@ func GetContextSessionFromParams(params map[string]any, connection wire.Connecti
 
 	if workspace != "" {
 		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		return AddWorkspaceContextByKey(workspaceKey, session, connection)
+		return AddWorkspaceContextByKey(ctx, workspaceKey, session, connection)
 	}
 
 	siteKey := fmt.Sprintf("%s:%s", app, site)
-	return AddSiteAdminContextByKey(siteKey, session, connection)
+	return AddSiteAdminContextByKey(ctx, siteKey, session, connection)
 
 }

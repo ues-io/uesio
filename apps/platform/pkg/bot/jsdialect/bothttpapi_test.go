@@ -34,7 +34,7 @@ func getIntegrationConnection(authType string, credentials *wire.Credentials) *w
 	user := &meta.User{
 		BuiltIn: meta.BuiltIn{ID: "user123"},
 	}
-	s := sess.New(context.Background(), user, site)
+	s := sess.New(user, site)
 	return wire.NewIntegrationConnection(
 		&meta.Integration{
 			BundleableBase: meta.BundleableBase{
@@ -92,15 +92,15 @@ func Test_Request(t *testing.T) {
 	var noOpSave oauth2.CredentialSaver
 	var noOpDelete oauth2.CredentialSaver
 
-	noOpFetch = func(ic *wire.IntegrationConnection) (*wire.Item, error) {
+	noOpFetch = func(ctx context.Context, ic *wire.IntegrationConnection) (*wire.Item, error) {
 		credentialFetchCalled = true
 		return nil, nil
 	}
-	noOpSave = func(item *wire.Item, ic *wire.IntegrationConnection) error {
+	noOpSave = func(ctx context.Context, item *wire.Item, ic *wire.IntegrationConnection) error {
 		credentialSaveCalled = true
 		return nil
 	}
-	noOpDelete = func(item *wire.Item, ic *wire.IntegrationConnection) error {
+	noOpDelete = func(ctx context.Context, item *wire.Item, ic *wire.IntegrationConnection) error {
 		return nil
 	}
 
@@ -691,7 +691,7 @@ func Test_Request(t *testing.T) {
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
 					Fetch: noOpFetch,
-					Save: func(item *wire.Item, ic *wire.IntegrationConnection) error {
+					Save: func(ctx context.Context, item *wire.Item, ic *wire.IntegrationConnection) error {
 						credentialSaveCalled = true
 						// Verify that the expected fields were called
 						accessToken, _ := item.GetField(oauth2.AccessTokenField)
@@ -761,7 +761,7 @@ func Test_Request(t *testing.T) {
 					"scopes":       "api,refresh_token",
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
-					Fetch: func(ic *wire.IntegrationConnection) (*wire.Item, error) {
+					Fetch: func(ctx context.Context, ic *wire.IntegrationConnection) (*wire.Item, error) {
 						credentialFetchCalled = true
 						item := &wire.Item{
 							oauth2.AccessTokenField:           "abcd1234",
@@ -808,7 +808,7 @@ func Test_Request(t *testing.T) {
 					"clientSecret": "muchsecret",
 				}),
 				credentialAccessors: &oauth2.CredentialAccessors{
-					Fetch: func(ic *wire.IntegrationConnection) (*wire.Item, error) {
+					Fetch: func(ctx context.Context, ic *wire.IntegrationConnection) (*wire.Item, error) {
 						credentialFetchCalled = true
 						item := &wire.Item{
 							oauth2.AccessTokenField:           "oldtoken",
@@ -817,7 +817,7 @@ func Test_Request(t *testing.T) {
 						}
 						return item, nil
 					},
-					Save: func(item *wire.Item, ic *wire.IntegrationConnection) error {
+					Save: func(ctx context.Context, item *wire.Item, ic *wire.IntegrationConnection) error {
 						credentialSaveCalled = true
 						// Verify that the expected fields were provided
 						accessToken, _ := item.GetField(oauth2.AccessTokenField)
@@ -892,7 +892,7 @@ func Test_Request(t *testing.T) {
 			}
 			credentialSaveCalled = false
 			credentialFetchCalled = false
-			botApi := NewBotHttpAPI(tt.args.integration)
+			botApi := NewBotHttpAPI(context.Background(), tt.args.integration)
 			serveResponseBody = tt.args.response
 			serveContentType = tt.args.responseContentType
 			serveStatusCode = tt.args.responseStatusCode

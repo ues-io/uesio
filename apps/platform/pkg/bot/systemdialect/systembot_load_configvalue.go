@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -9,14 +10,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runConfigValueLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runConfigValueLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	// Currently, this doesn't work for regular contexts
 	if session.GetWorkspace() == nil && session.GetSiteAdmin() == nil {
 		return errors.New("must be in workspace or site admin context")
 	}
 
-	configValues, err := configstore.GetConfigValues(session, &configstore.ConfigLoadOptions{
+	configValues, err := configstore.GetConfigValues(ctx, session, &configstore.ConfigLoadOptions{
 		OnlyWriteable: true,
 	})
 	if err != nil {

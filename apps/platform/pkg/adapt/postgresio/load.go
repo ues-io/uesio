@@ -423,17 +423,17 @@ func (c *Connection) Load(ctx context.Context, op *wire.LoadOp, session *sess.Se
 	}
 	op.BatchNumber++
 
-	err = datasource.HandleReferencesGroup(c, op.Collection, fieldsResponse.ReferencedGroupCollections, metadata, session)
+	err = datasource.HandleReferencesGroup(ctx, c, op.Collection, fieldsResponse.ReferencedGroupCollections, metadata, session)
 	if err != nil {
 		return err
 	}
 
-	err = datasource.HandleMultiCollectionReferences(c, fieldsResponse.ReferencedColletions, metadata, session)
+	err = datasource.HandleMultiCollectionReferences(ctx, c, fieldsResponse.ReferencedColletions, metadata, session)
 	if err != nil {
 		return err
 	}
 
-	return datasource.HandleReferences(c, fieldsResponse.ReferencedColletions, metadata, session, &datasource.ReferenceOptions{
+	return datasource.HandleReferences(ctx, c, fieldsResponse.ReferencedColletions, metadata, session, &datasource.ReferenceOptions{
 		AllowMissingItems: true,
 	})
 }

@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -41,7 +42,7 @@ func GetLoadRequestFields(fieldStrings []string) []wire.LoadRequestField {
 	return fields
 }
 
-func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, session *sess.Session) error {
+func PlatformLoad(ctx context.Context, group meta.CollectionableGroup, options *PlatformLoadOptions, session *sess.Session) error {
 
 	if options == nil {
 		options = &PlatformLoadOptions{}
@@ -50,7 +51,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	if fields == nil {
 		fields = GetLoadRequestFields(group.GetFields())
 	}
-	return doPlatformLoad(&wire.LoadOp{
+	return doPlatformLoad(ctx, &wire.LoadOp{
 		WireName:           "Platform Load: " + options.WireName,
 		CollectionName:     group.GetName(),
 		Collection:         group,
@@ -64,8 +65,8 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	}, options, session)
 }
 
-func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
-	err := LoadWithError(op, session, &LoadOptions{
+func doPlatformLoad(ctx context.Context, op *wire.LoadOp, options *PlatformLoadOptions, session *sess.Session) error {
+	err := LoadWithError(ctx, op, session, &LoadOptions{
 		Connection: options.Connection,
 	})
 	if err != nil {
@@ -73,18 +74,18 @@ func doPlatformLoad(op *wire.LoadOp, options *PlatformLoadOptions, session *sess
 	}
 
 	if options.LoadAll && op.HasMoreBatches {
-		return doPlatformLoad(op, options, session)
+		return doPlatformLoad(ctx, op, options, session)
 	}
 
 	return nil
 }
 
-func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions, session *sess.Session) error {
+func PlatformLoadOne(ctx context.Context, item meta.CollectionableItem, options *PlatformLoadOptions, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Item: item,
 	}
 
-	if err := PlatformLoad(collection, options, session); err != nil {
+	if err := PlatformLoad(ctx, collection, options, session); err != nil {
 		return err
 	}
 
@@ -102,8 +103,9 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 	return nil
 }
 
-func PlatformLoadByID(item meta.CollectionableItem, id string, session *sess.Session, connection wire.Connection) error {
+func PlatformLoadByID(ctx context.Context, item meta.CollectionableItem, id string, session *sess.Session, connection wire.Connection) error {
 	return PlatformLoadOne(
+		ctx,
 		item,
 		&PlatformLoadOptions{
 			Connection: connection,

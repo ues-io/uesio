@@ -1,6 +1,7 @@
 package secretstore
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -12,9 +13,9 @@ import (
 )
 
 type SecretStore interface {
-	Get(key string, session *sess.Session) (*meta.SecretStoreValue, error)
-	Set(key, value string, session *sess.Session) error
-	Remove(key string, session *sess.Session) error
+	Get(ctx context.Context, key string, session *sess.Session) (*meta.SecretStoreValue, error)
+	Set(ctx context.Context, key, value string, session *sess.Session) error
+	Remove(ctx context.Context, key string, session *sess.Session) error
 }
 
 var secretStoreMap = map[string]SecretStore{}
@@ -39,10 +40,10 @@ func getEnvironmentVariableName(secret *meta.Secret) string {
 	return strings.ToUpper(fmt.Sprintf("UESIO_SECRET_%s_%s", strings.ReplaceAll(secret.Namespace, "/", "_"), secret.Name))
 }
 
-func GetSecrets(session *sess.Session) (*meta.SecretCollection, error) {
+func GetSecrets(ctx context.Context, session *sess.Session) (*meta.SecretCollection, error) {
 
 	allSecrets := meta.SecretCollection{}
-	err := bundle.LoadAllFromAny(session.Context(), &allSecrets, nil, session, nil)
+	err := bundle.LoadAllFromAny(ctx, &allSecrets, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -59,12 +60,12 @@ func GetSecrets(session *sess.Session) (*meta.SecretCollection, error) {
 	return &secrets, nil
 }
 
-func getSecretInternal(secret *meta.Secret, session *sess.Session) (string, error) {
+func getSecretInternal(ctx context.Context, secret *meta.Secret, session *sess.Session) (string, error) {
 	store, err := GetSecretStore(secret.Store)
 	if err != nil {
 		return "", err
 	}
-	secretValue, err := store.Get(secret.GetKey(), session)
+	secretValue, err := store.Get(ctx, secret.GetKey(), session)
 	if err != nil {
 		// If the secret was not found, and we were NOT looking in the environment store,
 		// check for an environment variable default using the UESIO_SECRET_ naming convention
@@ -84,15 +85,15 @@ func getSecretInternal(secret *meta.Secret, session *sess.Session) (string, erro
 
 }
 
-func setSecretInternal(secret *meta.Secret, value string, session *sess.Session) error {
+func setSecretInternal(ctx context.Context, secret *meta.Secret, value string, session *sess.Session) error {
 	store, err := GetSecretStore(secret.Store)
 	if err != nil {
 		return err
 	}
-	return store.Set(secret.GetKey(), value, session)
+	return store.Set(ctx, secret.GetKey(), value, session)
 }
 
-func GetSecret(key string, session *sess.Session) (string, error) {
+func GetSecret(ctx context.Context, key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
 	}
@@ -100,30 +101,30 @@ func GetSecret(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err = bundle.Load(session.Context(), secret, nil, session, nil); err != nil {
+	if err = bundle.Load(ctx, secret, nil, session, nil); err != nil {
 		return "", err
 	}
-	return getSecretInternal(secret, session)
+	return getSecretInternal(ctx, secret, session)
 
 }
 
-func SetSecret(key, value string, session *sess.Session) error {
+func SetSecret(ctx context.Context, key, value string, session *sess.Session) error {
 	secret, err := meta.NewSecret(key)
 	if err != nil {
 		return err
 	}
-	if err = bundle.Load(session.Context(), secret, nil, session, nil); err != nil {
+	if err = bundle.Load(ctx, secret, nil, session, nil); err != nil {
 		return err
 	}
-	return setSecretInternal(secret, value, session)
+	return setSecretInternal(ctx, secret, value, session)
 }
 
-func Remove(key string, session *sess.Session) error {
+func Remove(ctx context.Context, key string, session *sess.Session) error {
 	secret, err := meta.NewSecret(key)
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(session.Context(), secret, nil, session, nil)
+	err = bundle.Load(ctx, secret, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -131,5 +132,5 @@ func Remove(key string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return store.Remove(key, session)
+	return store.Remove(ctx, key, session)
 }

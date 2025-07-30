@@ -1,11 +1,13 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runViewBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runViewBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return request.LoopInserts(func(change *wire.ChangeItem) error {
 		err := addViewDefaultDefinition(change)
 		if err != nil {

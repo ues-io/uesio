@@ -32,11 +32,11 @@ func init() {
 		// For the workspace bundle store, cache entries should be short-lived
 		bundleStoreCache = bundle.NewBundleStoreCache(10*time.Minute, 10*time.Minute)
 		// Listen for changes to workspace metadata, and invalidate items in the cache as needed
-		go setupPlatformSubscription()
+		go setupPlatformSubscription(traceid.NewContext(context.Background()))
 	}
 }
 
-func setupPlatformSubscription() {
+func setupPlatformSubscription(ctx context.Context) {
 	i := 0
 	for i < 500 {
 		if adapter, err := adapt.GetAdapter(meta.PLATFORM_DATA_SOURCE); err != nil || adapter == nil {
@@ -47,13 +47,13 @@ func setupPlatformSubscription() {
 		}
 	}
 	s := getMinimumViableSession()
-	conn, err := datasource.GetPlatformConnection(s, nil)
+	conn, err := datasource.GetPlatformConnection(ctx, s, nil)
 	if err != nil {
 		slog.Error("unable to establish platform connection! " + err.Error())
 		panic("unable to establish platform connection!")
 	}
 
-	if err = conn.Subscribe(s.Context(), WorkspaceMetadataChangesChannel, handleWorkspaceMetadataChange); err != nil {
+	if err = conn.Subscribe(ctx, WorkspaceMetadataChangesChannel, handleWorkspaceMetadataChange); err != nil {
 		slog.Error("unable to subscribe on channel! " + err.Error())
 		panic("unable to subscribe on channel!")
 	}
@@ -67,7 +67,7 @@ func getMinimumViableSession() *sess.Session {
 		FullName: "uesio/core",
 		Name:     "core",
 	}
-	s := sess.New(traceid.NewContext(context.Background()), &meta.User{
+	s := sess.New(&meta.User{
 		BuiltIn: meta.BuiltIn{
 			UniqueKey: meta.SystemUsername,
 		},

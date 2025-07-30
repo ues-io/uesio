@@ -1,6 +1,7 @@
 package usage_redis
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -17,13 +18,13 @@ const KEYS_SET_NAME = "USAGE_KEYS"
 
 type RedisUsageHandler struct{}
 
-func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
+func (ruh *RedisUsageHandler) ApplyBatch(ctx context.Context, session *sess.Session) error {
 
 	conn := cache.GetRedisConn()
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-			slog.ErrorContext(session.Context(), err.Error())
+			slog.ErrorContext(ctx, err.Error())
 		}
 	}(conn)
 
@@ -36,7 +37,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 	}
 
 	if len(keys) == 0 {
-		slog.InfoContext(session.Context(), "job completed, no usage events to process")
+		slog.InfoContext(ctx, "job completed, no usage events to process")
 		return nil
 	}
 
@@ -58,7 +59,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(session *sess.Session) error {
 		changes = append(changes, usageItem)
 	}
 
-	err = usage_common.SaveBatch(changes, session)
+	err = usage_common.SaveBatch(ctx, changes, session)
 	if err != nil {
 		return err
 	}

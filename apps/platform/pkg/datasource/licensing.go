@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -47,7 +46,7 @@ func getLicenseCache(namespace string) (LicenseMap, bool) {
 	return licenses, true
 }
 
-func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, error) {
+func GetLicenses(ctx context.Context, namespace string, connection wire.Connection) (LicenseMap, error) {
 	// Hardcode the license for uesio/core
 	// This prevents a circular dependency when we try to get
 	// the credentials to load the license data.
@@ -62,9 +61,9 @@ func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, erro
 	if ok {
 		return licenseMap, nil
 	}
-	anonSession := sess.GetStudioAnonSession(traceid.NewContext(context.Background()))
+	anonSession := sess.GetStudioAnonSession()
 	app := meta.App{}
-	err := PlatformLoadOne(&app, &PlatformLoadOptions{
+	err := PlatformLoadOne(ctx, &app, &PlatformLoadOptions{
 		Connection: connection,
 		Fields:     []wire.LoadRequestField{},
 		Conditions: []wire.LoadRequestCondition{
@@ -80,6 +79,7 @@ func GetLicenses(namespace string, connection wire.Connection) (LicenseMap, erro
 	}
 	licenses := meta.LicenseCollection{}
 	err = PlatformLoad(
+		ctx,
 		&licenses,
 		&PlatformLoadOptions{
 			Connection: connection,

@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -15,7 +16,7 @@ var OWNER_TOKEN = "uesio.owner"
 var INSTALLED_TOKEN = "uesio.installed"
 var NAMED_PERMISSION_TOKEN = "uesio.namedpermission"
 
-func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
+func getTokensForRequest(ctx context.Context, metadata *wire.MetadataCache, session *sess.Session, tokenMap sess.TokenMap) (meta.UserAccessTokenCollection, error) {
 
 	uatc := meta.UserAccessTokenCollection{}
 	var tokens []meta.BundleableItem
@@ -61,7 +62,7 @@ func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, to
 	}
 
 	// TBD: Why is connection nil here??
-	if err := bundle.LoadMany(session.Context(), tokens, &bundlestore.GetManyItemsOptions{
+	if err := bundle.LoadMany(ctx, tokens, &bundlestore.GetManyItemsOptions{
 		AllowMissingItems:     false,
 		IgnoreUnlicensedItems: true,
 	}, session, nil); err != nil {
@@ -76,7 +77,7 @@ func getTokensForRequest(metadata *wire.MetadataCache, session *sess.Session, to
 	return uatc, nil
 }
 
-func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session, reason bool) error {
+func HydrateTokenMap(ctx context.Context, tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenCollection, connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session, reason bool) error {
 	user := session.GetContextUser()
 	if !tokenMap.Has(OWNER_TOKEN) {
 		tokenMap.Add(OWNER_TOKEN, []sess.TokenValue{{
@@ -144,7 +145,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 				Query:          true,
 			}
 
-			err := GetMetadataForLoad(loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession, connection)
+			err := GetMetadataForLoad(ctx, loadOp, metadata, []*wire.LoadOp{loadOp}, adminSession, connection)
 			if err != nil {
 				return err
 			}
@@ -158,7 +159,7 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 
 			// intentionally using session context and not adminSession - adminSession is used for permissions
 			// but should not be considered to carry the active context (although it should be the same as session.Context())
-			err = connection.Load(session.Context(), loadOp, adminSession)
+			err = connection.Load(ctx, loadOp, adminSession)
 			if err != nil {
 				return err
 			}
@@ -202,16 +203,16 @@ func HydrateTokenMap(tokenMap sess.TokenMap, tokenDefs meta.UserAccessTokenColle
 	return nil
 }
 
-func GenerateUserAccessTokens(connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session) error {
+func GenerateUserAccessTokens(ctx context.Context, connection wire.Connection, metadata *wire.MetadataCache, session *sess.Session) error {
 
 	tokenMap := session.GetTokenMap()
 
-	tokenDefs, err := getTokensForRequest(metadata, session, tokenMap)
+	tokenDefs, err := getTokensForRequest(ctx, metadata, session, tokenMap)
 	if err != nil {
 		return err
 	}
 
-	err = HydrateTokenMap(tokenMap, tokenDefs, connection, metadata, session, false)
+	err = HydrateTokenMap(ctx, tokenMap, tokenDefs, connection, metadata, session, false)
 	if err != nil {
 		return err
 	}
