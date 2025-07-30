@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/param"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -48,7 +49,22 @@ var claudeModelHandler = &ClaudeModelHandler{}
 func (cmh *ClaudeModelHandler) Hydrate(ic *wire.IntegrationConnection, params map[string]any) error {
 	cmh.ic = ic
 	options := anthropic.MessageNewParams{}
-	err := datasource.HydrateOptions(params, &options)
+	// Special case for system parameter sent as string
+	systemPrompt, err := param.GetRequiredString(params, "system")
+	if err == nil {
+		options.System = []anthropic.TextBlockParam{
+			{Text: systemPrompt},
+		}
+	}
+
+	// Special case for input parameter
+	input, err := param.GetRequiredString(params, "input")
+	if err == nil {
+		options.Messages = []anthropic.MessageParam{
+			anthropic.NewUserMessage(anthropic.NewTextBlock(input)),
+		}
+	}
+	err = datasource.HydrateOptions(params, &options)
 	if err != nil {
 		return err
 	}
