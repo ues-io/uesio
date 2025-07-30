@@ -13,7 +13,6 @@ import (
 
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
-	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -55,7 +54,7 @@ func formatKey(cert string) string {
 var spCache = map[string]*samlsp.Middleware{}
 var lock sync.RWMutex
 
-func (c *Connection) getSP(requestURL string) (*samlsp.Middleware, error) {
+func (c *Connection) getSP(ctx context.Context, requestURL string) (*samlsp.Middleware, error) {
 	hash := c.credentials.GetHash()
 	// Check the pool for a client
 	lock.RLock()
@@ -64,7 +63,7 @@ func (c *Connection) getSP(requestURL string) (*samlsp.Middleware, error) {
 	if ok {
 		return client, nil
 	}
-	pool, err := c.getSPInternal(requestURL)
+	pool, err := c.getSPInternal(ctx, requestURL)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +75,7 @@ func (c *Connection) getSP(requestURL string) (*samlsp.Middleware, error) {
 	return pool, nil
 }
 
-func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error) {
+func (c *Connection) getSPInternal(ctx context.Context, requestURL string) (*samlsp.Middleware, error) {
 
 	entityID := c.credentials.GetEntry("entityId", "")
 	metadataXMLURL := c.credentials.GetEntry("metadataXmlUrl", "")
@@ -94,7 +93,7 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 			return nil, err
 		}
 
-		idpMetadata, err = samlsp.FetchMetadata(traceid.NewContext(context.Background()), http.DefaultClient,
+		idpMetadata, err = samlsp.FetchMetadata(ctx, http.DefaultClient,
 			*idpMetadataURL)
 		if err != nil {
 			return nil, err
@@ -172,7 +171,7 @@ func (c *Connection) ConfirmSignUp(ctx context.Context, signupMethod *meta.Signu
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
-	return c.getSP(r.Host)
+	return c.getSP(r.Context(), r.Host)
 }
 func (c *Connection) LoginServiceProvider(ctx context.Context, assertion *saml.Assertion) (*auth.LoginResult, error) {
 	sess, err := samlsp.JWTSessionCodec{}.New(assertion)

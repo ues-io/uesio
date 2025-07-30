@@ -53,7 +53,7 @@ func (c *Connection) callListenerBot(ctx context.Context, botKey string, payload
 		return err
 	}
 
-	_, err = datasource.CallListenerBot(context.Background(), namespace, name, payload, c.connection, c.session)
+	_, err = datasource.CallListenerBot(ctx, namespace, name, payload, c.connection, c.session)
 	if err != nil {
 		return err
 	}

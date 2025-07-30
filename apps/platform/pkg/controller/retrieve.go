@@ -31,7 +31,7 @@ func Retrieve(w http.ResponseWriter, r *http.Request) {
 	fileName := strings.ReplaceAll(fmt.Sprintf("uesio_retrieve_%s_%s_%s.zip", appName, versionName, time.Now().Format(time.RFC3339)), ":", "_")
 	w.Header().Set("Content-Type", "application/zip")
 	file.SetContentDispositionHeader(w, "attachment", fileName)
-	ctlutil.AddTrailingStatus(w)
+	ctlutil.AddTrailingStatusContext(r.Context(), w)
 
 	if err := bs.GetBundleZip(r.Context(), w, &bundlestore.BundleZipOptions{
 		// Only include generated types if we're in a workspace context
