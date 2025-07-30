@@ -49,12 +49,12 @@ func setupPlatformSubscription(ctx context.Context) {
 	s := getMinimumViableSession()
 	conn, err := datasource.GetPlatformConnection(ctx, s, nil)
 	if err != nil {
-		slog.Error("unable to establish platform connection! " + err.Error())
+		slog.ErrorContext(ctx, "unable to establish platform connection! "+err.Error())
 		panic("unable to establish platform connection!")
 	}
 
 	if err = conn.Subscribe(ctx, WorkspaceMetadataChangesChannel, handleWorkspaceMetadataChange); err != nil {
-		slog.Error("unable to subscribe on channel! " + err.Error())
+		slog.ErrorContext(ctx, "unable to subscribe on channel! "+err.Error())
 		panic("unable to subscribe on channel!")
 	}
 }
@@ -90,15 +90,15 @@ func getMinimumViableSession() *sess.Session {
 	return s
 }
 
-func handleWorkspaceMetadataChange(payload string) {
+func handleWorkspaceMetadataChange(ctx context.Context, payload string) {
 	var wmc WorkspaceMetadataChange
 	unmarshalErr := json.Unmarshal([]byte(payload), &wmc)
 	if unmarshalErr != nil {
-		slog.Error("unable to unmarshal workspace metadata change payload: " + unmarshalErr.Error())
+		slog.ErrorContext(ctx, "unable to unmarshal workspace metadata change payload: "+unmarshalErr.Error())
 	} else {
 		for _, itemKey := range wmc.ChangedItems {
 			if err := bundleStoreCache.InvalidateCacheItem(wmc.AppName, wmc.WorkspaceID, wmc.CollectionName, itemKey); err != nil {
-				slog.Error("unable to purge workspace metadata cache key: " + err.Error())
+				slog.ErrorContext(ctx, "unable to purge workspace metadata cache key: "+err.Error())
 			}
 		}
 	}

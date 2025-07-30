@@ -84,8 +84,8 @@ func ServeFileContent(file *meta.File, path string, supportsCaching bool, w http
 	}
 	defer rs.Close()
 
-	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
-	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
+	usage.RegisterEvent(r.Context(), "DOWNLOAD", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, 0, session)
+	usage.RegisterEvent(r.Context(), "DOWNLOAD_BYTES", "FILESOURCE", filesource.PLATFORM_FILE_SOURCE, fileMetadata.ContentLength(), session)
 
 	if supportsCaching {
 		middleware.Set1YearCache(w)

@@ -161,8 +161,8 @@ func Upload(ctx context.Context, ops []*FileUploadOp, connection wire.Connection
 				}
 				written := writtenResults[i]
 				ufur.Meta.FileContentLength = written
-				usage.RegisterEvent("UPLOAD", "FILESOURCE", ufur.Meta.FileSourceID, 0, session)
-				usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufur.Meta.FileSourceID, written, session)
+				usage.RegisterEvent(ctx, "UPLOAD", "FILESOURCE", ufur.Meta.FileSourceID, 0, session)
+				usage.RegisterEvent(ctx, "UPLOAD_BYTES", "FILESOURCE", ufur.Meta.FileSourceID, written, session)
 			}
 
 			return nil

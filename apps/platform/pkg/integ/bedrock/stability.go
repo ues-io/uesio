@@ -58,10 +58,10 @@ func (smh *StabilityModelHandler) Hydrate(ic *wire.IntegrationConnection, params
 	return nil
 }
 
-func (smh *StabilityModelHandler) RecordUsage() {
+func (smh *StabilityModelHandler) RecordUsage(ctx context.Context) {
 	integrationKey := smh.ic.GetIntegration().GetKey()
 	session := smh.ic.GetSession()
-	usage.RegisterEvent("IMAGE_GENERATION", "INTEGRATION", integrationKey, 0, session)
+	usage.RegisterEvent(ctx, "IMAGE_GENERATION", "INTEGRATION", integrationKey, 0, session)
 }
 
 func (smh *StabilityModelHandler) Invoke(ctx context.Context) (result any, err error) {
@@ -91,7 +91,7 @@ func (smh *StabilityModelHandler) Invoke(ctx context.Context) (result any, err e
 		return nil, err
 	}
 
-	smh.RecordUsage()
+	smh.RecordUsage(ctx)
 
 	return smh.GetInvokeResult(output.Body)
 

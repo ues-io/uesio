@@ -15,7 +15,7 @@ const (
 )
 
 func (c *Connection) TruncateTenantData(ctx context.Context, tenantID string) error {
-	slog.Info("Truncating all data from tenant: " + tenantID)
+	slog.InfoContext(ctx, "Truncating all data from tenant: "+tenantID)
 
 	batch := &pgx.Batch{}
 
@@ -25,7 +25,7 @@ func (c *Connection) TruncateTenantData(ctx context.Context, tenantID string) er
 	err := c.SendBatch(ctx, batch)
 	if err != nil {
 		msg := fmt.Sprintf("error truncating data from tenant '%s': %s", tenantID, err.Error())
-		slog.Error(msg)
+		slog.ErrorContext(ctx, msg)
 		return errors.New(msg)
 	}
 

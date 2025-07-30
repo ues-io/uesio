@@ -33,13 +33,13 @@ func setLicenseCache(namespace string, licenses LicenseMap) error {
 	return licenseCache.Set(namespace, licenses)
 }
 
-func getLicenseCache(namespace string) (LicenseMap, bool) {
+func getLicenseCache(ctx context.Context, namespace string) (LicenseMap, bool) {
 	licenses, err := licenseCache.Get(namespace)
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting licenses for namespace [%s] from cache: %v", namespace, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting licenses for namespace [%s] from cache: %v", namespace, err))
 			return nil, false
 		}
 	}
@@ -57,7 +57,7 @@ func GetLicenses(ctx context.Context, namespace string, connection wire.Connecti
 			},
 		}, nil
 	}
-	licenseMap, ok := getLicenseCache(namespace)
+	licenseMap, ok := getLicenseCache(ctx, namespace)
 	if ok {
 		return licenseMap, nil
 	}

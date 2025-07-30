@@ -7,7 +7,7 @@ import (
 
 // Subscribe establishes a subscription on a channel,
 // and will invoke a function whenever a message is received on the channel
-func (c *Connection) Subscribe(ctx context.Context, channelName string, handler func(payload string)) error {
+func (c *Connection) Subscribe(ctx context.Context, channelName string, handler func(ctx context.Context, payload string)) error {
 	conn, err := c.GetPGConn(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to acquire PG connection for subscription: %s", err.Error())
@@ -24,6 +24,6 @@ func (c *Connection) Subscribe(ctx context.Context, channelName string, handler 
 		if waitErr != nil {
 			return waitErr
 		}
-		handler(notification.Payload)
+		handler(ctx, notification.Payload)
 	}
 }

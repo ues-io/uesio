@@ -58,7 +58,7 @@ func HydrateUserPermissions(ctx context.Context, user *meta.User, session *sess.
 func GetCachedUserByID(ctx context.Context, userid string, site *meta.Site) (*meta.User, error) {
 
 	// Get Cache site info for the host
-	cachedUser, ok := getUserCache(userid, site)
+	cachedUser, ok := getUserCache(ctx, userid, site)
 	if ok {
 		return cachedUser, nil
 	}

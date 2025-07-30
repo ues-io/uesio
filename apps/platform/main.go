@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"mime"
 	"os"
 
+	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_memory"
 	"github.com/thecloudmasters/uesio/pkg/usage/usage_redis"
@@ -92,8 +94,9 @@ func init() {
 }
 
 func main() {
-	if err := cmd.Execute(); err != nil {
-		slog.Error(err.Error())
+	ctx := traceid.NewContext(context.Background())
+	if err := cmd.Execute(ctx); err != nil {
+		slog.ErrorContext(ctx, err.Error())
 		os.Exit(1)
 	}
 	os.Exit(0)

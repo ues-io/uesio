@@ -180,8 +180,8 @@ func queryOp(ctx context.Context, op *wire.LoadOp, ops []*wire.LoadOp, metadata 
 
 	integrationName := collectionMetadata.GetIntegrationName()
 
-	usage.RegisterEvent("LOAD", "COLLECTION", collectionKey, 0, session)
-	usage.RegisterEvent("LOAD", "DATASOURCE", integrationName, 0, session)
+	usage.RegisterEvent(ctx, "LOAD", "COLLECTION", collectionKey, 0, session)
+	usage.RegisterEvent(ctx, "LOAD", "DATASOURCE", integrationName, 0, session)
 
 	// Mutate the conditions immediately before handing off to the load implementations
 	op.Conditions = activeConditions

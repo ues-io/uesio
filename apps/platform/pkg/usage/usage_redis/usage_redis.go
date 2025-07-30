@@ -52,7 +52,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(ctx context.Context, session *sess.Sess
 
 	for i, key := range keys {
 		total, _ := strconv.ParseInt(values[i], 10, 64)
-		usageItem := usage_common.GetUsageItem(key, total)
+		usageItem := usage_common.GetUsageItem(ctx, key, total)
 		if usageItem == nil {
 			continue
 		}
@@ -75,7 +75,7 @@ func (ruh *RedisUsageHandler) ApplyBatch(ctx context.Context, session *sess.Sess
 	return nil
 }
 
-func (ruh *RedisUsageHandler) Set(key string, size int64) error {
+func (ruh *RedisUsageHandler) Set(ctx context.Context, key string, size int64) error {
 	go setRedisUsage(key, size)
 	return nil
 }

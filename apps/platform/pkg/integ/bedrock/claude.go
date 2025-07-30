@@ -88,11 +88,11 @@ func (cmh *ClaudeModelHandler) Hydrate(ic *wire.IntegrationConnection, params ma
 	return nil
 }
 
-func (cmh *ClaudeModelHandler) RecordUsage(inputTokens, outputTokens int64) {
+func (cmh *ClaudeModelHandler) RecordUsage(ctx context.Context, inputTokens, outputTokens int64) {
 	integrationKey := cmh.ic.GetIntegration().GetKey()
 	session := cmh.ic.GetSession()
-	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", integrationKey, inputTokens, session)
-	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", integrationKey, outputTokens, session)
+	usage.RegisterEvent(ctx, "INPUT_TOKENS", "INTEGRATION", integrationKey, inputTokens, session)
+	usage.RegisterEvent(ctx, "OUTPUT_TOKENS", "INTEGRATION", integrationKey, outputTokens, session)
 }
 
 func (cmh *ClaudeModelHandler) Invoke(ctx context.Context) (result any, err error) {
@@ -110,7 +110,7 @@ func (cmh *ClaudeModelHandler) Invoke(ctx context.Context) (result any, err erro
 		return nil, handleBedrockError(err)
 	}
 
-	cmh.RecordUsage(message.Usage.InputTokens, message.Usage.OutputTokens)
+	cmh.RecordUsage(ctx, message.Usage.InputTokens, message.Usage.OutputTokens)
 
 	return cmh.GetInvokeResult(message)
 
@@ -145,7 +145,7 @@ func (cmh *ClaudeModelHandler) Stream(ctx context.Context) (*integ.Stream, error
 					outputStream.Err() <- err
 					return
 				}
-				cmh.RecordUsage(metrics.InputTokens, metrics.OutputTokens)
+				cmh.RecordUsage(ctx, metrics.InputTokens, metrics.OutputTokens)
 			}
 		}
 		err := stream.Err()

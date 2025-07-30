@@ -241,8 +241,8 @@ func SaveOp(ctx context.Context, op *wire.SaveOp, connection wire.Connection, se
 		}
 	}
 
-	usage.RegisterEvent("SAVE", "COLLECTION", collectionKey, 0, session)
-	usage.RegisterEvent("SAVE", "DATASOURCE", integrationName, 0, session)
+	usage.RegisterEvent(ctx, "SAVE", "COLLECTION", collectionKey, 0, session)
+	usage.RegisterEvent(ctx, "SAVE", "DATASOURCE", integrationName, 0, session)
 
 	if !isExternalIntegrationSave {
 		err = GenerateRecordChallengeTokens(ctx, op, connection, session)

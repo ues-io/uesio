@@ -20,5 +20,5 @@ type Connection interface {
 	CommitTransaction(context.Context) error
 	RollbackTransaction(context.Context) error
 	Publish(ctx context.Context, channelName, payload string) error
-	Subscribe(ctx context.Context, channelName string, handler func(payload string)) error
+	Subscribe(ctx context.Context, channelName string, handler func(ctx context.Context, payload string)) error
 }

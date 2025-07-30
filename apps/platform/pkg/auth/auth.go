@@ -185,7 +185,7 @@ func GetSiteFromHost(ctx context.Context, host string) (*meta.Site, error) {
 func getSiteFromDomain(ctx context.Context, domainType, domainValue string) (*meta.Site, error) {
 
 	// Get Cache site info for the host
-	site, ok := getHostCache(domainType, domainValue)
+	site, ok := getHostCache(ctx, domainType, domainValue)
 	if ok {
 
 		return site, nil

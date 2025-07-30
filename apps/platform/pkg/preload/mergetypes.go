@@ -92,6 +92,9 @@ func (md MergeData) String() string {
 	serialized, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)
 	if err != nil {
+		// Intentionally not using ErrorContext since we have no way to obtain one
+		// TODO: Consider a panic here - returning "" for something that is expected to be marshalled likely
+		// isn't the best option
 		slog.Error(err.Error())
 		return ""
 	}
