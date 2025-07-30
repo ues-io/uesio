@@ -54,6 +54,8 @@ var modelHandlers = map[string]ModelHandler{
 
 // This maps old, deprecated models to new, supported ones.
 // The key is the deprecated model and the value is the supported one.
+// TODO: We need to think through how we handle model retirement for
+// situations where modelId is speicified in yaml.
 var modelCompatibilityMap = map[string]string{
 	CLAUDE_3_HAIKU_MODEL_ID:               CLAUDE_3_5_HAIKU_MODEL_ID,
 	CLAUDE_3_SONNET_MODEL_ID:              CLAUDE_4_SONNET_MODEL_ID,
