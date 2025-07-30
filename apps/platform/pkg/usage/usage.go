@@ -12,7 +12,7 @@ import (
 )
 
 type UsageHandler interface {
-	Set(key string, size int64) error
+	Set(ctx context.Context, key string, size int64) error
 	ApplyBatch(ctx context.Context, session *sess.Session) error
 }
 
@@ -45,7 +45,7 @@ func getActiveHandler() UsageHandler {
 	return usageHandlerMap[activeHandler]
 }
 
-func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
+func RegisterEvent(ctx context.Context, actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
 
 	user := session.GetSiteUser()
 
@@ -60,7 +60,7 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 	currentTime := time.Now()
 	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
-	return getActiveHandler().Set(key, size)
+	return getActiveHandler().Set(ctx, key, size)
 
 }
 

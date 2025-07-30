@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -41,13 +42,13 @@ func setUserCache(userUniqueKey string, site *meta.Site, user *meta.User) error 
 	return userCache.Set(GetUserCacheKey(userUniqueKey, site), &clonedUser)
 }
 
-func getUserCache(userUniqueKey string, site *meta.Site) (*meta.User, bool) {
+func getUserCache(ctx context.Context, userUniqueKey string, site *meta.Site) (*meta.User, bool) {
 	user, err := userCache.Get(GetUserCacheKey(userUniqueKey, site))
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting user for key [%s] from cache: %v", userUniqueKey, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting user for key [%s] from cache: %v", userUniqueKey, err))
 			return nil, false
 		}
 	}
@@ -61,13 +62,13 @@ func setHostCache(domainType, domainValue string, site *meta.Site) error {
 	return hostCache.Set(getHostKey(domainType, domainValue), site)
 }
 
-func getHostCache(domainType, domainValue string) (*meta.Site, bool) {
+func getHostCache(ctx context.Context, domainType, domainValue string) (*meta.Site, bool) {
 	site, err := hostCache.Get(getHostKey(domainType, domainValue))
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting site for domain type [%s] and value [%s] from cache: %v", domainType, domainValue, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting site for domain type [%s] and value [%s] from cache: %v", domainType, domainValue, err))
 			return nil, false
 		}
 	}

@@ -31,7 +31,7 @@ func (pcuh *MemoryUsageHandler) ApplyBatch(ctx context.Context, session *sess.Se
 	changes := meta.UsageCollection{}
 
 	for key, value := range items {
-		usageItem := usage_common.GetUsageItem(key, value)
+		usageItem := usage_common.GetUsageItem(ctx, key, value)
 		if usageItem == nil {
 			continue
 		}
@@ -51,11 +51,11 @@ func (pcuh *MemoryUsageHandler) ApplyBatch(ctx context.Context, session *sess.Se
 
 }
 
-func (pcuh *MemoryUsageHandler) Set(key string, size int64) error {
+func (pcuh *MemoryUsageHandler) Set(ctx context.Context, key string, size int64) error {
 	value, err := usageCache.Get(key)
 	if err != nil {
 		if !errors.Is(err, cache.ErrKeyNotFound) {
-			slog.Error(fmt.Sprintf("error getting usage for key [%s] from cache: %v", key, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting usage for key [%s] from cache: %v", key, err))
 		}
 		value = 0
 	}

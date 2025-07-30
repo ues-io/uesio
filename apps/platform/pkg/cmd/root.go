@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +14,6 @@ var rootCmd = &cobra.Command{
 }
 
 // Execute is used as entrypoint to the cobra commands
-func Execute() error {
-	return rootCmd.Execute()
+func Execute(ctx context.Context) error {
+	return rootCmd.ExecuteContext(ctx)
 }

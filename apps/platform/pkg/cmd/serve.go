@@ -74,8 +74,8 @@ var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
 func serve(cmd *cobra.Command, args []string) error {
-
-	slog.Info("Starting Uesio server")
+	ctx := cmd.Context()
+	slog.InfoContext(ctx, "Starting Uesio server")
 	baseRouter := mux.NewRouter()
 	// global/universal middleware
 	baseRouter.Use(
@@ -394,7 +394,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	// In order for reload package to inject its script (and avoid manually having to have it in our code)
 	// gzip compression must be disabled.  Additionally, when running in dev mode, gzip isn't really needed.
 	if !env.InDevMode() {
-		r.Use(middleware.GZip())
+		r.Use(middleware.GZip(ctx))
 	}
 
 	var handler http.Handler = baseRouter
@@ -414,10 +414,10 @@ func serve(cmd *cobra.Command, args []string) error {
 	done := make(chan bool)
 	go func() {
 		if tls.ServeAppWithTLS() {
-			slog.Info("Service started over TLS on port: " + port)
+			slog.InfoContext(ctx, "Service started over TLS on port: "+port)
 			serveErr = server.ListenAndServeTLS(tls.GetSelfSignedCertFilePath(), tls.GetSelfSignedPrivateKeyFile())
 		} else {
-			slog.Info("Service started on port: " + port)
+			slog.InfoContext(ctx, "Service started on port: "+port)
 			serveErr = server.ListenAndServe()
 		}
 		// CORS Stuff we don't need right now
@@ -429,7 +429,7 @@ func serve(cmd *cobra.Command, args []string) error {
 			)(r))
 		*/
 		if serveErr != nil && serveErr.Error() != "http: Server closed" {
-			slog.Error("failed to start server: " + serveErr.Error())
+			slog.ErrorContext(ctx, "failed to start server: "+serveErr.Error())
 			// this will terminate the server without waiting for graceful shutdown
 			server.StartupError()
 		}
@@ -437,9 +437,9 @@ func serve(cmd *cobra.Command, args []string) error {
 	}()
 
 	if os.Getenv("UESIO_WORKER_MODE") == "combined" {
-		slog.Info("Running worker combined with web server")
+		slog.InfoContext(ctx, "Running worker combined with web server")
 		go func() {
-			worker.ScheduleJobs()
+			worker.ScheduleJobs(ctx)
 		}()
 	}
 

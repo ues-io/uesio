@@ -57,13 +57,13 @@ func RequestLogger(logger *slog.Logger, logFormat *httplog.Schema) func(next htt
 				// other logging options (e.g., Skip).
 				if ld := getLogData(ctx); ld != nil {
 					if s := ld.GetSession(); s != nil {
-						usage.RegisterEvent("REQUEST_COUNT", "REQUEST", "ALL", 1, s)
+						usage.RegisterEvent(r.Context(), "REQUEST_COUNT", "REQUEST", "ALL", 1, s)
 						ingressBytes := computeApproximateRequestSize(r, br)
 						if ingressBytes > 0 {
-							usage.RegisterEvent("INGRESS_BYTES", "DATA_TRANSFER", "ALL", ingressBytes, s)
+							usage.RegisterEvent(r.Context(), "INGRESS_BYTES", "DATA_TRANSFER", "ALL", ingressBytes, s)
 						}
 						if ww.BytesWritten() > 0 {
-							usage.RegisterEvent("EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(ww.BytesWritten()), s)
+							usage.RegisterEvent(r.Context(), "EGRESS_BYTES", "DATA_TRANSFER", "ALL", int64(ww.BytesWritten()), s)
 						}
 					}
 				}

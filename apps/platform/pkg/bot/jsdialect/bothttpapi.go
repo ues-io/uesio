@@ -116,8 +116,8 @@ func BadRequest(message string) *BotHttpResponse {
 	}
 }
 
-func ServerError(err error) *BotHttpResponse {
-	slog.Error(err.Error())
+func ServerError(ctx context.Context, err error) *BotHttpResponse {
+	slog.ErrorContext(ctx, err.Error())
 	statusText := http.StatusText(http.StatusInternalServerError)
 	return &BotHttpResponse{
 		Code:    http.StatusInternalServerError,
@@ -169,7 +169,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 
 	httpReq, err := http.NewRequestWithContext(api.ctx, useMethod, req.URL, payloadReader)
 	if err != nil {
-		return ServerError(err)
+		return ServerError(api.ctx, err)
 	}
 	if len(req.Headers) > 0 {
 		for header, value := range req.Headers {
@@ -183,7 +183,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 		if exceptions.IsType[*exceptions.UnauthorizedException](err) {
 			return Unauthorized(err.Error())
 		}
-		return ServerError(err)
+		return ServerError(api.ctx, err)
 	}
 
 	defer httpResp.Body.Close()
@@ -191,7 +191,7 @@ func (api *BotHttpAPI) Request(req *BotHttpRequest) *BotHttpResponse {
 	// Read the full body into a byte array, so we can cache / parse
 	responseData, responseError := io.ReadAll(httpResp.Body)
 	if responseError != nil {
-		return ServerError(fmt.Errorf("unable to read response body: %w", responseError))
+		return ServerError(api.ctx, fmt.Errorf("unable to read response body: %w", responseError))
 	}
 
 	contentType := httpResp.Header.Get("Content-Type")

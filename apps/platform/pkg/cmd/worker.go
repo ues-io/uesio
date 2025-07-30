@@ -18,8 +18,9 @@ func init() {
 	})
 }
 
-func runJobs(*cobra.Command, []string) error {
-	slog.Info("Running Uesio worker process")
-	worker.ScheduleJobs()
+func runJobs(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
+	slog.InfoContext(ctx, "Running Uesio worker process")
+	worker.ScheduleJobs(ctx)
 	return nil
 }

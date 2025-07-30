@@ -33,7 +33,7 @@ type FileBundleStoreConnection struct {
 
 func (b *FileBundleStoreConnection) getFilePathsAtBasePath(ctx context.Context, basePath string) ([]file.Metadata, error) {
 	if b.Cache != nil {
-		cachedKeys, ok := b.Cache.GetFileListFromCache(basePath)
+		cachedKeys, ok := b.Cache.GetFileListFromCache(ctx, basePath)
 		if ok {
 			return cachedKeys, nil
 		}
@@ -90,7 +90,7 @@ func (b *FileBundleStoreConnection) GetItem(ctx context.Context, item meta.Bundl
 	}
 
 	if b.Cache != nil {
-		if cachedItem, ok := b.Cache.GetItemFromCache(b.Namespace, b.Version, fullCollectionName, key); ok {
+		if cachedItem, ok := b.Cache.GetItemFromCache(ctx, b.Namespace, b.Version, fullCollectionName, key); ok {
 			if !b.AllowPrivate && !cachedItem.IsPublic() {
 				message := fmt.Sprintf("metadata item: %s is not public", key)
 				return exceptions.NewForbiddenException(message)
@@ -293,7 +293,7 @@ func (b *FileBundleStoreConnection) DeleteBundle(ctx context.Context) error {
 func (b *FileBundleStoreConnection) GetBundleDef(ctx context.Context) (*meta.BundleDef, error) {
 
 	if b.Cache != nil {
-		if cachedItem, ok := b.Cache.GetBundleDefFromCache(b.Namespace, b.Version); ok {
+		if cachedItem, ok := b.Cache.GetBundleDefFromCache(ctx, b.Namespace, b.Version); ok {
 			return cachedItem, nil
 		}
 	}

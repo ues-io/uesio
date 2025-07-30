@@ -153,7 +153,7 @@ func (b *WorkspaceBundleStoreConnection) GetItem(ctx context.Context, item meta.
 
 	// First check the cache
 	if bundleStoreCache != nil {
-		if cachedItem, ok := bundleStoreCache.GetItemFromCache(b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey); ok {
+		if cachedItem, ok := bundleStoreCache.GetItemFromCache(ctx, b.Namespace, b.getWorkspaceCacheKey(), collectionName, itemUniqueKey); ok {
 			return meta.Copy(item, cachedItem)
 		}
 	}

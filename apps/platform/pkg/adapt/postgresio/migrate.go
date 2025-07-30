@@ -53,15 +53,15 @@ func getConnectionString(credentials *wire.Credentials) (string, error) {
 func (c *Connection) Migrate(ctx context.Context, options *migrations.MigrateOptions) error {
 	if options.Down {
 		if options.Number >= 1 {
-			slog.Info(fmt.Sprintf("Reverting %d previously-run migrations", options.Number))
+			slog.InfoContext(ctx, fmt.Sprintf("Reverting %d previously-run migrations", options.Number))
 		} else {
-			slog.Info("Reverting all previously-run migrations")
+			slog.InfoContext(ctx, "Reverting all previously-run migrations")
 		}
 	} else {
 		if options.Number >= 1 {
-			slog.Info(fmt.Sprintf("Running next %d migrations", options.Number))
+			slog.InfoContext(ctx, fmt.Sprintf("Running next %d migrations", options.Number))
 		} else {
-			slog.Info("Running migrations")
+			slog.InfoContext(ctx, "Running migrations")
 		}
 	}
 	migrationsDir := getMigrationsDirectory()

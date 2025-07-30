@@ -88,8 +88,8 @@ func (c *connection) autoCompleteDefault(ctx context.Context, options *AutoCompl
 		return nil, err
 	}
 
-	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
-	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
+	usage.RegisterEvent(ctx, "INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
+	usage.RegisterEvent(ctx, "OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
 
 	outputs := []string{}
 
@@ -121,8 +121,8 @@ func (c *connection) autoCompleteChat(ctx context.Context, options *AutoComplete
 		return nil, err
 	}
 
-	usage.RegisterEvent("INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
-	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
+	usage.RegisterEvent(ctx, "INPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.PromptTokens), c.session)
+	usage.RegisterEvent(ctx, "OUTPUT_TOKENS", "INTEGRATION", c.integration.GetKey(), int64(resp.Usage.CompletionTokens), c.session)
 
 	var outputs []string
 

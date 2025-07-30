@@ -1,6 +1,7 @@
 package bundle
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -36,13 +37,13 @@ func NewBundleStoreCache(entryExpiration, cleanupFrequency time.Duration) *Bundl
 	}
 }
 
-func (bsc *BundleStoreCache) GetFileListFromCache(basePath string) ([]file.Metadata, bool) {
+func (bsc *BundleStoreCache) GetFileListFromCache(ctx context.Context, basePath string) ([]file.Metadata, bool) {
 	files, err := bsc.fileListCache.Get(basePath)
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting file list for path [%s] from cache: %v", basePath, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting file list for path [%s] from cache: %v", basePath, err))
 			return nil, false
 		}
 	}
@@ -61,14 +62,14 @@ func (bsc *BundleStoreCache) getBundleDefCacheKey(namespace, version string) str
 	return fmt.Sprintf("%s|%s", namespace, version)
 }
 
-func (bsc *BundleStoreCache) GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
+func (bsc *BundleStoreCache) GetItemFromCache(ctx context.Context, namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
 	cacheKey := bsc.getItemCacheKey(namespace, version, bundleGroupName, key)
 	entry, err := bsc.bundleEntryCache.Get(cacheKey)
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting bundle entry for key [%s] from cache: %v", cacheKey, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting bundle entry for key [%s] from cache: %v", cacheKey, err))
 			return nil, false
 		}
 	}
@@ -83,14 +84,14 @@ func (bsc *BundleStoreCache) InvalidateCacheItem(namespace, version, groupName, 
 	return bsc.bundleEntryCache.Del(bsc.getItemCacheKey(namespace, version, groupName, itemKey))
 }
 
-func (bsc *BundleStoreCache) GetBundleDefFromCache(namespace, version string) (*meta.BundleDef, bool) {
+func (bsc *BundleStoreCache) GetBundleDefFromCache(ctx context.Context, namespace, version string) (*meta.BundleDef, bool) {
 	cacheKey := bsc.getBundleDefCacheKey(namespace, version)
 	entry, err := bsc.bundleDefCache.Get(cacheKey)
 	if err != nil {
 		if errors.Is(err, cache.ErrKeyNotFound) {
 			return nil, false
 		} else {
-			slog.Error(fmt.Sprintf("error getting bundle def for key [%s] from cache: %v", cacheKey, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting bundle def for key [%s] from cache: %v", cacheKey, err))
 			return nil, false
 		}
 	}

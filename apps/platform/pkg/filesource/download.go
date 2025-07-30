@@ -109,8 +109,8 @@ func DownloadItem(ctx context.Context, userFile *meta.UserFileMetadata, session 
 		return nil, nil, err
 	}
 
-	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
-	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
+	usage.RegisterEvent(ctx, "DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
+	usage.RegisterEvent(ctx, "DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength(), session)
 
 	return r, userFile, nil
 }

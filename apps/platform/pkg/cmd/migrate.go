@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"strconv"
 
-	"github.com/go-chi/traceid"
 	"github.com/spf13/cobra"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -25,7 +24,7 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// by default run all 'up' migrations
 			opts := newMigrateUpOptions()
-			return migrate(&opts)
+			return migrate(cmd.Context(), &opts)
 		},
 	}
 
@@ -49,7 +48,7 @@ func init() {
 				}
 				opts.Number = num
 			}
-			return migrate(&opts)
+			return migrate(cmd.Context(), &opts)
 		},
 	}
 	downCmd.Flags().Bool("all", false, "Apply all down migrations")
@@ -68,7 +67,7 @@ func init() {
 				}
 				opts.Number = num
 			}
-			return migrate(&opts)
+			return migrate(cmd.Context(), &opts)
 		},
 	}
 	migrateCmd.AddCommand(upCmd)
@@ -90,8 +89,7 @@ func newMigrateDownOptions() migrations.MigrateOptions {
 	}
 }
 
-func migrate(opts *migrations.MigrateOptions) error {
-	ctx := traceid.NewContext(context.Background())
+func migrate(ctx context.Context, opts *migrations.MigrateOptions) error {
 	slog.InfoContext(ctx, "Running migration(s)")
 
 	anonSession := sess.GetStudioAnonSession()

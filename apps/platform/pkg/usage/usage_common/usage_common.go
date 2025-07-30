@@ -41,14 +41,14 @@ func SaveBatch(ctx context.Context, usage meta.UsageCollection, session *sess.Se
 
 }
 
-func GetUsageItem(key string, value int64) *meta.Usage {
+func GetUsageItem(ctx context.Context, key string, value int64) *meta.Usage {
 	// Make sure the value was actually there
 	if key == "nil" {
 		return nil
 	}
 	keyParts := strings.Split(key, ":")
 	if len(keyParts) != 9 {
-		slog.Error("usage key did not match expected pattern: " + key)
+		slog.ErrorContext(ctx, "usage key did not match expected pattern: "+key)
 		return nil
 	}
 
