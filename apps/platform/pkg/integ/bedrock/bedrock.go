@@ -27,6 +27,14 @@ type ModelHandler interface {
 	Stream(ctx context.Context) (stream *integ.Stream, err error)
 }
 
+// Deprecated Model IDs
+const CLAUDE_3_HAIKU_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+const CLAUDE_3_SONNET_MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
+const CLAUDE_3_5_SONNET_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+const CLAUDE_3_OPUS_MODEL_ID = "anthropic.claude-3-opus-20240229-v1:0"
+const UESIO_TEST_SIMPLE_MODEL_DEPRECATED_ID = "uesio.test-simple-responder-deprecated"
+
+// Supported Model IDs
 const CLAUDE_3_5_HAIKU_MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
 const CLAUDE_4_OPUS_MODEL_ID = "us.anthropic.claude-opus-4-20250514-v1:0"
 const CLAUDE_4_SONNET_MODEL_ID = "us.anthropic.claude-sonnet-4-20250514-v1:0"
@@ -45,8 +53,31 @@ var modelHandlers = map[string]ModelHandler{
 	STABILITY_IMAGE_ULTRA_MODEL_ID: stabilityModelHandler,
 }
 
+// This maps old, deprecated models to new, supported ones.
+// The key is the deprecated model and the value is the supported one.
+// TODO: We need to think through how we handle model retirement for
+// situations where modelId is speicified in yaml.
+var modelCompatibilityMap = map[string]string{
+	CLAUDE_3_HAIKU_MODEL_ID:               CLAUDE_3_5_HAIKU_MODEL_ID,
+	CLAUDE_3_SONNET_MODEL_ID:              CLAUDE_4_SONNET_MODEL_ID,
+	CLAUDE_3_5_SONNET_MODEL_ID:            CLAUDE_4_SONNET_MODEL_ID,
+	CLAUDE_3_OPUS_MODEL_ID:                CLAUDE_4_OPUS_MODEL_ID,
+	UESIO_TEST_SIMPLE_MODEL_DEPRECATED_ID: UESIO_TEST_SIMPLE_MODEL_ID,
+}
+
+func getCompatibleModelId(modelID string) string {
+	supportedModelID, hasMapping := modelCompatibilityMap[modelID]
+	if hasMapping {
+		return supportedModelID
+	}
+	return modelID
+}
+
 func getHandler(ic *wire.IntegrationConnection, params map[string]any) (ModelHandler, error) {
 	modelID := param.GetOptionalString(params, "model", BEDROCK_DEFAULT_MODEL_ID)
+	// If the model ID is in the compatibility map, upgrade it to a supported one.
+	// Otherwise, just use the provide modelID.
+	modelID = getCompatibleModelId(modelID)
 	params["model"] = modelID
 	handler, ok := modelHandlers[modelID]
 	if !ok {
