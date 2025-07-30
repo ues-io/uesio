@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -21,7 +22,7 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	return keyArray[0] + "." + keyArray[2], nil
 }
 
-func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runCollectionAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// We will end up here through several different avenues and sometimes we will be in an admin context,
 	// sometimes in an anon context and sometimes in a workspace context, etc. Additionally, depending on
@@ -79,7 +80,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	}
 
 	fc := meta.FieldCollection{}
-	if err := datasource.PlatformLoad(&fc, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(ctx, &fc, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
 				ID: commonfields.Id,
@@ -93,7 +94,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	}
 
 	rac := meta.RouteAssignmentCollection{}
-	if err := datasource.PlatformLoad(&rac, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(ctx, &rac, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
 				ID: commonfields.Id,
@@ -107,7 +108,7 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 	}
 
 	rct := meta.RecordChallengeTokenCollection{}
-	if err := datasource.PlatformLoad(&rct, &datasource.PlatformLoadOptions{
+	if err := datasource.PlatformLoad(ctx, &rct, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
 				ID: commonfields.Id,
@@ -155,6 +156,6 @@ func runCollectionAfterSaveBot(request *wire.SaveOp, connection wire.Connection,
 		return nil
 	}
 
-	return datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, nil))
+	return datasource.SaveWithOptions(ctx, requests, session, datasource.NewSaveOptions(connection, nil))
 
 }

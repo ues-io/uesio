@@ -1,6 +1,7 @@
 package truncate
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
@@ -10,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
+func TruncateWorkspaceData(ctx context.Context, tenantID string, session *sess.Session) error {
 
 	if tenantID == "" {
 		return exceptions.NewInvalidParamException("required parameter not provided in session", "tenant id")
@@ -24,8 +25,8 @@ func TruncateWorkspaceData(tenantID string, session *sess.Session) error {
 		return exceptions.NewForbiddenException("you must be a studio workspace admin to truncate workspace data")
 	}
 
-	err := datasource.WithTransaction(session, nil, func(conn wire.Connection) error {
-		return conn.TruncateTenantData(session.Context(), tenantID)
+	err := datasource.WithTransaction(ctx, session, nil, func(conn wire.Connection) error {
+		return conn.TruncateTenantData(ctx, tenantID)
 	})
 	if err != nil {
 		return fmt.Errorf("unable to truncate workspace data: %w", err)

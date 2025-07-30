@@ -43,7 +43,7 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If the home route is accessible by a guest, then we need to add it to the allowed paths
-	homeRoute, _ := routing.GetHomeRoute(session)
+	homeRoute, _ := routing.GetHomeRoute(r.Context(), session)
 
 	var routes meta.RouteCollection
 	var files meta.FileCollection
@@ -51,13 +51,13 @@ func Robots(w http.ResponseWriter, r *http.Request) {
 	// Load all public routes to get their paths, along with public files.
 	// We are assuming that a crawler would have a public guest session,
 	// so we can just let our permissions system do the work of finding which routes/files are accessible)
-	err := bundle.LoadAllFromAny(session.Context(), &routes, nil, session, nil)
+	err := bundle.LoadAllFromAny(r.Context(), &routes, nil, session, nil)
 
 	if err != nil || len(routes) == 0 {
 		return
 	}
 
-	err = bundle.LoadAllFromAny(session.Context(), &files, nil, session, nil)
+	err = bundle.LoadAllFromAny(r.Context(), &files, nil, session, nil)
 
 	if err != nil {
 		return

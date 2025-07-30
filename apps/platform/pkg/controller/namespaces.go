@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/ctlutil"
@@ -14,7 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getNamespaces(metadataType string, session *sess.Session) ([]string, error) {
+func getNamespaces(ctx context.Context, metadataType string, session *sess.Session) ([]string, error) {
 
 	if metadataType == "" {
 		return session.GetContextNamespaces(), nil
@@ -28,7 +29,7 @@ func getNamespaces(metadataType string, session *sess.Session) ([]string, error)
 		if err != nil {
 			return nil, err
 		}
-		hasSome, err := bundle.HasAny(session.Context(), collection, namespace, nil, session, nil)
+		hasSome, err := bundle.HasAny(ctx, collection, namespace, nil, session, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +47,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	metadatatype := vars["type"]
 
-	namespaces, err := getNamespaces(metadatatype, session)
+	namespaces, err := getNamespaces(r.Context(), metadatatype, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

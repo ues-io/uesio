@@ -31,13 +31,15 @@ func InvoicingJob(ctx context.Context) error {
 	}
 
 	var apps meta.AppCollection
-	err = datasource.PlatformLoad(&apps, nil, session)
+	err = datasource.PlatformLoad(ctx, &apps, nil, session)
 	if err != nil {
 		return err
 	}
 
 	for _, app := range apps {
-		err := CreateInvoice(app, nil, session)
+		// TODO: If an invoice fails, this will fail entire job rather than continue to the next invoice. Consider
+		// logging/notification and moving to next invoice to avoid potential stalement on a single invoice.
+		err := CreateInvoice(ctx, app, nil, session)
 		if err != nil {
 			return err
 		}
@@ -119,11 +121,11 @@ func getLipsDescr(uniquekey string, labels map[string]string) (string, error) {
 	return result, nil
 }
 
-func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Session) error {
+func CreateInvoice(ctx context.Context, app *meta.App, connection wire.Connection, session *sess.Session) error {
 
 	//This creates a copy of the session
 	userSession := session.RemoveWorkspaceContext()
-	labels, err := translate.GetTranslatedLabels(userSession)
+	labels, err := translate.GetTranslatedLabels(ctx, userSession)
 	if err != nil {
 		return err
 	}
@@ -136,7 +138,7 @@ func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Sess
 		Date: time.Now().Format("2006-01-02"),
 	}
 
-	err = datasource.PlatformSaveOne(invoice, nil, connection, session)
+	err = datasource.PlatformSaveOne(ctx, invoice, nil, connection, session)
 	if err != nil {
 		return err
 	}
@@ -144,6 +146,7 @@ func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Sess
 	//GET all active licenses
 	var licenses meta.LicenseCollection
 	err = datasource.PlatformLoad(
+		ctx,
 		&licenses,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
@@ -194,6 +197,7 @@ func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Sess
 	//get all pricing items
 	var lpic meta.LicensePricingItemCollection
 	err = datasource.PlatformLoad(
+		ctx,
 		&lpic,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -223,6 +227,7 @@ func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Sess
 	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
 
 	err = datasource.PlatformLoad(
+		ctx,
 		&usage,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -292,13 +297,13 @@ func CreateInvoice(app *meta.App, connection wire.Connection, session *sess.Sess
 		}
 	}
 
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+	err = datasource.PlatformSave(ctx, datasource.PlatformSaveRequest{
 		Collection: &invoiceLineItems,
 	}, connection, session)
 	if err != nil {
 		return err
 	}
 
-	return datasource.PlatformSaveOne(invoice, nil, connection, session)
+	return datasource.PlatformSaveOne(ctx, invoice, nil, connection, session)
 
 }

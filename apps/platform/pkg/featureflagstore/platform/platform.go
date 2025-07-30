@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -11,14 +12,15 @@ import (
 
 type FeatureFlagStore struct{}
 
-func (ffs *FeatureFlagStore) GetMany(user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error) {
+func (ffs *FeatureFlagStore) GetMany(ctx context.Context, user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error) {
 	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, "uesio/core", session, nil)
 	if err != nil {
 		return nil, err
 	}
 	assignments := &meta.FeatureFlagAssignmentCollection{}
 	err = datasource.PlatformLoad(
+		ctx,
 		assignments,
 		&datasource.PlatformLoadOptions{
 			Fields: []wire.LoadRequestField{
@@ -45,14 +47,15 @@ func (ffs *FeatureFlagStore) GetMany(user string, session *sess.Session) (*meta.
 	return assignments, nil
 }
 
-func (ffs *FeatureFlagStore) Get(key, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
+func (ffs *FeatureFlagStore) Get(ctx context.Context, key, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, "uesio/core", session, nil)
 	if err != nil {
 		return nil, err
 	}
 	assignments := meta.FeatureFlagAssignmentCollection{}
 	err = datasource.PlatformLoad(
+		ctx,
 		&assignments,
 		&datasource.PlatformLoadOptions{
 			Fields: []wire.LoadRequestField{
@@ -91,13 +94,13 @@ func (ffs *FeatureFlagStore) Get(key, user string, session *sess.Session) (*meta
 	return nil, nil
 }
 
-func (ffs *FeatureFlagStore) Set(key, user string, value any, session *sess.Session) error {
+func (ffs *FeatureFlagStore) Set(ctx context.Context, key, user string, value any, session *sess.Session) error {
 	// Enter into a version context to be able to interact with the uesio/core.secretstorevalue collection
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, "uesio/core", session, nil)
 	if err != nil {
 		return err
 	}
-	return datasource.PlatformSaveOne(&meta.FeatureFlagAssignment{
+	return datasource.PlatformSaveOne(ctx, &meta.FeatureFlagAssignment{
 		Flag:  key,
 		Value: value,
 		User: &meta.User{
@@ -108,14 +111,14 @@ func (ffs *FeatureFlagStore) Set(key, user string, value any, session *sess.Sess
 	}, nil, versionSession)
 }
 
-func (ffs *FeatureFlagStore) Remove(key, user string, session *sess.Session) error {
+func (ffs *FeatureFlagStore) Remove(ctx context.Context, key, user string, session *sess.Session) error {
 	// Enter into a version context to be able to interact with the uesio/core.featureflagvalue collection
-	versionSession, err := datasource.EnterVersionContext("uesio/core", session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, "uesio/core", session, nil)
 	if err != nil {
 		return err
 	}
 
-	assignment, err := ffs.Get(key, user, session)
+	assignment, err := ffs.Get(ctx, key, user, session)
 	if err != nil {
 		return err
 	}
@@ -124,5 +127,5 @@ func (ffs *FeatureFlagStore) Remove(key, user string, session *sess.Session) err
 		return nil
 	}
 
-	return datasource.PlatformDeleteOne(assignment, nil, versionSession)
+	return datasource.PlatformDeleteOne(ctx, assignment, nil, versionSession)
 }

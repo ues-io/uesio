@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUserBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// Make sure that all users are their own owner.
 	return request.LoopChanges(func(change *wire.ChangeItem) error {
 		usertype, err := change.GetFieldAsString("uesio/core.type")

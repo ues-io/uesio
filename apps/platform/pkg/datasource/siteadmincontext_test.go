@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,14 +27,14 @@ func TestGetSiteAdminSession(t *testing.T) {
 			UniqueKey: "luigi/foo:prod",
 		},
 	}
-	sessWithWorkspaceContext := sess.New(context.Background(), originalUser, originalSite).SetWorkspaceSession(sess.NewWorkspaceSession(
+	sessWithWorkspaceContext := sess.New(originalUser, originalSite).SetWorkspaceSession(sess.NewWorkspaceSession(
 		&ws,
 		originalUser,
 		"uesio/some.profile",
 		&meta.PermissionSet{},
 	))
-	sessWithSiteAdminContext := sess.New(context.Background(), originalUser, originalSite).SetSiteAdminSession(sess.NewSiteSession(otherSite, originalUser))
-	plainSession := sess.New(context.Background(), originalUser, originalSite)
+	sessWithSiteAdminContext := sess.New(originalUser, originalSite).SetSiteAdminSession(sess.NewSiteSession(otherSite, originalUser))
+	plainSession := sess.New(originalUser, originalSite)
 	tests := []struct {
 		name       string
 		input      *sess.Session

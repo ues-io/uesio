@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -47,16 +49,16 @@ func getUniqueKeysFromDeletes(request *wire.SaveOp) []string {
 	return keys
 }
 
-func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
+func checkValidItems(ctx context.Context, workspaceID string, items []meta.BundleableItem, session *sess.Session, connection wire.Connection) error {
 	if len(items) == 0 {
 		return nil
 	}
 
-	wsSession, err := datasource.AddWorkspaceContextByID(workspaceID, session, connection)
+	wsSession, err := datasource.AddWorkspaceContextByID(ctx, workspaceID, session, connection)
 	if err != nil {
 		return err
 	}
-	return bundle.IsValid(session.Context(), items, wsSession, connection)
+	return bundle.IsValid(ctx, items, wsSession, connection)
 
 }
 

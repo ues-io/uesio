@@ -1,6 +1,7 @@
 package oauth2
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -86,7 +87,7 @@ func BuildIntegrationCredential(integrationName string, userId string, token *oa
 }
 
 // UpsertIntegrationCredential performs an upsert on the provided integration credential item
-func UpsertIntegrationCredential(integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
+func UpsertIntegrationCredential(ctx context.Context, integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
 	integrationCredential.SetField(commonfields.UpdatedAt, time.Now().Unix())
 	requests := []datasource.SaveRequest{
 		{
@@ -99,12 +100,12 @@ func UpsertIntegrationCredential(integrationCredential *wire.Item, coreSession *
 			Params: datasource.GetParamsFromSession(coreSession),
 		},
 	}
-	return datasource.SaveWithOptions(requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
+	return datasource.SaveWithOptions(ctx, requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
 
 }
 
 // DeleteIntegrationCredential deletes a provided integration credential
-func DeleteIntegrationCredential(integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
+func DeleteIntegrationCredential(ctx context.Context, integrationCredential *wire.Item, coreSession *sess.Session, platformConn wire.Connection) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: IntegrationCredentialCollection,
@@ -116,13 +117,13 @@ func DeleteIntegrationCredential(integrationCredential *wire.Item, coreSession *
 			Params: datasource.GetParamsFromSession(coreSession),
 		},
 	}
-	return datasource.SaveWithOptions(requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
+	return datasource.SaveWithOptions(ctx, requests, coreSession, datasource.NewSaveOptions(platformConn, nil))
 
 }
 
 // GetIntegrationCredential retrieves any existing integration credential record for the provided user / integration
 func GetIntegrationCredential(
-	userId, integrationName string, coreSession *sess.Session, connection wire.Connection,
+	ctx context.Context, userId, integrationName string, coreSession *sess.Session, connection wire.Connection,
 ) (*wire.Item, error) {
 	integrationCredentials := &wire.Collection{}
 	fetchIntegrationCredentialOp := &wire.LoadOp{
@@ -160,6 +161,7 @@ func GetIntegrationCredential(
 		},
 	}
 	if err := datasource.LoadWithError(
+		ctx,
 		fetchIntegrationCredentialOp,
 		coreSession,
 		&datasource.LoadOptions{

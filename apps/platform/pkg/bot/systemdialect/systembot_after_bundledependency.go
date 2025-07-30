@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -20,7 +21,7 @@ func parseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[2], nil
 }
 
-func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runBundleDependencyAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	LicenseTemplateDeps := wire.Collection{}
 	visited := map[string]bool{}
@@ -43,6 +44,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 
 		var existingLicense meta.License
 		err = datasource.PlatformLoadOne(
+			ctx,
 			&existingLicense,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
@@ -76,6 +78,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 
 		var lt meta.LicenseTemplate
 		err = datasource.PlatformLoadOne(
+			ctx,
 			&lt,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
@@ -118,7 +121,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 
 	// Deletes first
 	if len(corruptedLicenses) > 0 {
-		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+		err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 			{
 				Collection: "uesio/studio.license",
 				Wire:       "LicensedWire",
@@ -134,7 +137,7 @@ func runBundleDependencyAfterSaveBot(request *wire.SaveOp, connection wire.Conne
 	}
 
 	// Inserts next
-	err = datasource.SaveWithOptions([]datasource.SaveRequest{
+	err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",

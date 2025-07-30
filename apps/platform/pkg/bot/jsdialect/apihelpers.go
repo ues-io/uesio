@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io"
 
@@ -14,7 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func botSave(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
+func botSave(ctx context.Context, collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -23,7 +24,7 @@ func botSave(collection string, changes wire.Collection, options *wire.SaveOptio
 			Options:    options,
 		},
 	}
-	err := datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, metadata))
+	err := datasource.SaveWithOptions(ctx, requests, session, datasource.NewSaveOptions(connection, metadata))
 	err = datasource.HandleSaveRequestErrors(requests, err)
 	if err != nil {
 		return nil, err
@@ -31,7 +32,7 @@ func botSave(collection string, changes wire.Collection, options *wire.SaveOptio
 	return &changes, nil
 }
 
-func botDelete(collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) error {
+func botDelete(ctx context.Context, collection string, deletes wire.Collection, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) error {
 	requests := []datasource.SaveRequest{
 		{
 			Collection: collection,
@@ -39,11 +40,11 @@ func botDelete(collection string, deletes wire.Collection, session *sess.Session
 			Deletes:    &deletes,
 		},
 	}
-	err := datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, metadata))
+	err := datasource.SaveWithOptions(ctx, requests, session, datasource.NewSaveOptions(connection, metadata))
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
+func botLoad(ctx context.Context, request BotLoadOp, session *sess.Session, connection wire.Connection, metadata *wire.MetadataCache) (*wire.Collection, error) {
 	collection := &wire.Collection{}
 
 	op := &wire.LoadOp{
@@ -58,7 +59,7 @@ func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connectio
 		LoadAll:        request.LoadAll,
 	}
 
-	err := datasource.LoadWithError(op, session, &datasource.LoadOptions{
+	err := datasource.LoadWithError(ctx, op, session, &datasource.LoadOptions{
 		Connection: connection,
 		Metadata:   metadata,
 	})
@@ -69,30 +70,30 @@ func botLoad(request BotLoadOp, session *sess.Session, connection wire.Connectio
 	return collection, nil
 }
 
-func runIntegrationAction(integrationID string, action string, options any, session *sess.Session, connection wire.Connection) (any, error) {
-	ic, err := datasource.GetIntegrationConnection(integrationID, session, connection)
+func runIntegrationAction(ctx context.Context, integrationID string, action string, options any, session *sess.Session, connection wire.Connection) (any, error) {
+	ic, err := datasource.GetIntegrationConnection(ctx, integrationID, session, connection)
 	if err != nil {
 		return nil, err
 	}
-	return datasource.RunIntegrationAction(ic, action, options, connection)
+	return datasource.RunIntegrationAction(ctx, ic, action, options, connection)
 }
 
-func botCall(botKey string, params map[string]any, session *sess.Session, connection wire.Connection) (map[string]any, error) {
+func botCall(ctx context.Context, botKey string, params map[string]any, session *sess.Session, connection wire.Connection) (map[string]any, error) {
 	botNamespace, botName, err := meta.ParseKeyWithDefault(botKey, session.GetContextAppName())
 	if err != nil {
 		return nil, errors.New("invalid bot name provided")
 	}
-	return datasource.CallListenerBot(botNamespace, botName, params, connection, session)
+	return datasource.CallListenerBot(ctx, botNamespace, botName, params, connection, session)
 }
 
-func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, string, error) {
+func botGetFileData(ctx context.Context, sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (io.ReadSeekCloser, string, error) {
 
 	file, err := meta.NewFile(sourceKey)
 	if err != nil {
 		return nil, "", err
 	}
 
-	if err := bundle.Load(session.Context(), file, nil, session, connection); err != nil {
+	if err := bundle.Load(ctx, file, nil, session, connection); err != nil {
 		return nil, "", err
 	}
 
@@ -101,22 +102,22 @@ func botGetFileData(sourceKey, sourcePath string, session *sess.Session, connect
 		path = file.Path
 	}
 
-	r, _, err := bundle.GetItemAttachment(session.Context(), file, path, session, connection)
+	r, _, err := bundle.GetItemAttachment(ctx, file, path, session, connection)
 	if err != nil {
 		return nil, "", err
 	}
 	return r, path, nil
 }
 
-func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+func botCopyFile(ctx context.Context, sourceKey, sourcePath, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
 
-	r, path, err := botGetFileData(sourceKey, sourcePath, session, connection)
+	r, path, err := botGetFileData(ctx, sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
+	_, err = filesource.Upload(ctx, []*filesource.FileUploadOp{
 		{
 			Data:         r,
 			Path:         path,
@@ -129,14 +130,14 @@ func botCopyFile(sourceKey, sourcePath, destCollectionID, destRecordID, destFiel
 	return err
 }
 
-func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
-	r, userFileMetadata, err := filesource.Download(session.Context(), sourceFileID, session)
+func botCopyUserFile(ctx context.Context, sourceFileID, destCollectionID, destRecordID, destFieldID string, session *sess.Session, connection wire.Connection) error {
+	r, userFileMetadata, err := filesource.Download(ctx, sourceFileID, session)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	_, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
+	_, err = filesource.Upload(ctx, []*filesource.FileUploadOp{
 		{
 			Data:         r,
 			Path:         userFileMetadata.Path(),
@@ -149,8 +150,8 @@ func botCopyUserFile(sourceFileID, destCollectionID, destRecordID, destFieldID s
 	return err
 }
 
-func getFileContents(sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (string, error) {
-	r, _, err := botGetFileData(sourceKey, sourcePath, session, connection)
+func getFileContents(ctx context.Context, sourceKey, sourcePath string, session *sess.Session, connection wire.Connection) (string, error) {
+	r, _, err := botGetFileData(ctx, sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return "", err
 	}
@@ -163,10 +164,10 @@ func getFileContents(sourceKey, sourcePath string, session *sess.Session, connec
 	return string(b), nil
 }
 
-func getHostUrl(session *sess.Session, connection wire.Connection) (string, error) {
+func getHostUrl(ctx context.Context, session *sess.Session, connection wire.Connection) (string, error) {
 	site := session.GetSite()
 
-	domain, err := datasource.QueryDomainFromSite(site.ID, connection)
+	domain, err := datasource.QueryDomainFromSite(ctx, site.ID, connection)
 	if err != nil {
 		return "", err
 	}
@@ -204,8 +205,8 @@ func mergeTemplateString(templateString string, params map[string]any) (string, 
 	return buf.String(), nil
 }
 
-func mergeTemplateFile(sourceKey, sourcePath string, params map[string]any, session *sess.Session, connection wire.Connection) (string, error) {
-	templateString, err := getFileContents(sourceKey, sourcePath, session, connection)
+func mergeTemplateFile(ctx context.Context, sourceKey, sourcePath string, params map[string]any, session *sess.Session, connection wire.Connection) (string, error) {
+	templateString, err := getFileContents(ctx, sourceKey, sourcePath, session, connection)
 	if err != nil {
 		return "", err
 	}

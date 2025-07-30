@@ -1,6 +1,7 @@
 package deploy
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -50,7 +51,7 @@ func NewCreateSiteOptions(params map[string]any) (*CreateSiteOptions, error) {
 	}, nil
 }
 
-func CreateSite(options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (*meta.Site, error) {
+func CreateSite(ctx context.Context, options *CreateSiteOptions, connection wire.Connection, session *sess.Session) (*meta.Site, error) {
 
 	if options == nil {
 		return nil, errors.New("invalid create options")
@@ -61,7 +62,7 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 	subdomain := options.Subdomain
 	version := options.Version
 
-	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
+	app, err := datasource.QueryAppForWrite(ctx, appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, exceptions.NewForbiddenException("you do not have permission to create bundles for app " + appName)
 	}
@@ -90,13 +91,13 @@ func CreateSite(options *CreateSiteOptions, connection wire.Connection, session 
 	}
 
 	// First, create the site.
-	err = datasource.PlatformSaveOne(site, nil, connection, session)
+	err = datasource.PlatformSaveOne(ctx, site, nil, connection, session)
 	if err != nil {
 		return nil, err
 	}
 
 	// Second, create the domain.
-	err = datasource.PlatformSaveOne(domain, nil, connection, session)
+	err = datasource.PlatformSaveOne(ctx, domain, nil, connection, session)
 	if err != nil {
 		return nil, err
 	}

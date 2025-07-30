@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -32,8 +33,8 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
-	user, loginMethod, err := c.DoLogin(loginRequest)
+func (c *Connection) Login(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	user, loginMethod, err := c.DoLogin(ctx, loginRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -43,34 +44,34 @@ func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, er
 	}, nil
 }
 
-func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(ctx context.Context, payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
 	federationID, err := auth.GetPayloadValue(payload, "token")
 	if err != nil {
 		return nil, nil, fmt.Errorf("mock login: %w", err)
 	}
-	return auth.GetUserFromFederationID(c.authSource.GetKey(), federationID, c.connection, c.session)
+	return auth.GetUserFromFederationID(ctx, c.authSource.GetKey(), federationID, c.connection, c.session)
 }
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
+func (c *Connection) Signup(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 	return errors.New("mock login: unfortunately you cannot sign up for mock login")
 }
-func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(ctx context.Context, payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(ctx context.Context, payload auth.AuthRequest) (*meta.User, error) {
 	return nil, errors.New("mock login: unfortunately you cannot change the password")
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
+func (c *Connection) CreateLogin(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 	return errors.New("mock login: unfortunately you cannot create a login")
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
+func (c *Connection) ConfirmSignUp(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	return errors.New("mock login: unfortunately you cannot change the password")
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
 	return nil, errors.New("saml auth is not supported by this auth source type")
 }
-func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+func (c *Connection) LoginServiceProvider(ctx context.Context, assertion *saml.Assertion) (*auth.LoginResult, error) {
 	return nil, errors.New("saml auth login is not supported by this auth source type")
 }
-func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
-	return c.Login(loginRequest)
+func (c *Connection) LoginCLI(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return c.Login(ctx, loginRequest)
 }

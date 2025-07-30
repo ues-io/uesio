@@ -1,6 +1,7 @@
 package featureflagstore
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -9,25 +10,25 @@ import (
 )
 
 type FeatureFlagStore interface {
-	GetMany(user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error)
-	Get(key, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error)
-	Set(key, user string, value any, session *sess.Session) error
-	Remove(key, user string, session *sess.Session) error
+	GetMany(ctx context.Context, user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error)
+	Get(ctx context.Context, key, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error)
+	Set(ctx context.Context, key, user string, value any, session *sess.Session) error
+	Remove(ctx context.Context, key, user string, session *sess.Session) error
 }
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
-func GetFeatureFlag(key string, session *sess.Session, user string) (*meta.FeatureFlag, error) {
+func GetFeatureFlag(ctx context.Context, key string, session *sess.Session, user string) (*meta.FeatureFlag, error) {
 	flag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), flag, nil, session, nil)
+	err = bundle.Load(ctx, flag, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	assignment, err := getValue(key, user, session)
+	assignment, err := getValue(ctx, key, user, session)
 	if err != nil {
 		return nil, err
 	}
@@ -48,14 +49,14 @@ func GetFeatureFlag(key string, session *sess.Session, user string) (*meta.Featu
 
 }
 
-func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
+func GetFeatureFlags(ctx context.Context, session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
-	err := bundle.LoadAllFromAny(session.Context(), &featureFlags, nil, session, nil)
+	err := bundle.LoadAllFromAny(ctx, &featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	assignments, err := getValues(user, session)
+	assignments, err := getValues(ctx, user, session)
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +83,7 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 }
 
 func getFeatureFlagStore(configStoreType string) (FeatureFlagStore, error) {
+	// TODO: This needs to be synchronized!
 	featureFlagAssignment, ok := featureFlagStoreMap[configStoreType]
 	if !ok {
 		return nil, fmt.Errorf("invalid config store type: %s", configStoreType)
@@ -90,43 +92,44 @@ func getFeatureFlagStore(configStoreType string) (FeatureFlagStore, error) {
 }
 
 func RegisterFeatureFlagStore(name string, store FeatureFlagStore) {
+	// TODO: This needs to be synchronized!
 	featureFlagStoreMap[name] = store
 }
 
-func getValues(user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error) {
+func getValues(ctx context.Context, user string, session *sess.Session) (*meta.FeatureFlagAssignmentCollection, error) {
 	store, err := getFeatureFlagStore("platform")
 	if err != nil {
 		return nil, err
 	}
-	return store.GetMany(user, session)
+	return store.GetMany(ctx, user, session)
 }
 
-func getValue(key, userID string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
+func getValue(ctx context.Context, key, userID string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	store, err := getFeatureFlagStore("platform")
 	if err != nil {
 		return nil, err
 	}
-	return store.Get(key, userID, session)
+	return store.Get(ctx, key, userID, session)
 }
 
-func Remove(key, userID string, session *sess.Session) error {
+func Remove(ctx context.Context, key, userID string, session *sess.Session) error {
 	store, err := getFeatureFlagStore("platform")
 	if err != nil {
 		return err
 	}
-	return store.Remove(key, userID, session)
+	return store.Remove(ctx, key, userID, session)
 }
 
-func SetValue(key string, value any, userID string, session *sess.Session) error {
+func SetValue(ctx context.Context, key string, value any, userID string, session *sess.Session) error {
 	featureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(session.Context(), featureFlag, nil, session, nil)
+	err = bundle.Load(ctx, featureFlag, nil, session, nil)
 	if err != nil {
 		return err
 	}
-	return setValueInternal(featureFlag, value, userID, session)
+	return setValueInternal(ctx, featureFlag, value, userID, session)
 }
 
 type ValidationError struct {
@@ -176,7 +179,7 @@ func ValidateValue(ff *meta.FeatureFlag, value any) (bool, *ValidationError) {
 	}
 }
 
-func setValueInternal(cv *meta.FeatureFlag, value any, userID string, session *sess.Session) error {
+func setValueInternal(ctx context.Context, cv *meta.FeatureFlag, value any, userID string, session *sess.Session) error {
 	store, err := getFeatureFlagStore("platform")
 	if err != nil {
 		return err
@@ -186,5 +189,5 @@ func setValueInternal(cv *meta.FeatureFlag, value any, userID string, session *s
 	if !isValid {
 		return err
 	}
-	return store.Set(cv.GetKey(), userID, value, session)
+	return store.Set(ctx, cv.GetKey(), userID, value, session)
 }

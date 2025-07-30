@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"regexp"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -28,7 +29,7 @@ func matchesRegex(usarname string, regex string) bool {
 	return validMetaRegex.MatchString(usarname)
 }
 
-func Signup(signupMethod *meta.SignupMethod, payload AuthRequest, session *sess.Session) (*meta.User, error) {
+func Signup(ctx context.Context, signupMethod *meta.SignupMethod, payload AuthRequest, session *sess.Session) (*meta.User, error) {
 
 	// If the Signup Method does not have self-signup enabled,
 	// then block the request, unless we are in a Site Admin context
@@ -36,15 +37,15 @@ func Signup(signupMethod *meta.SignupMethod, payload AuthRequest, session *sess.
 		return nil, exceptions.NewForbiddenException("this site does not support self-signup")
 	}
 
-	return datasource.WithTransactionResult(session, nil, func(conn wire.Connection) (*meta.User, error) {
-		return signupWithConnection(signupMethod, payload, conn, session)
+	return datasource.WithTransactionResult(ctx, session, nil, func(conn wire.Connection) (*meta.User, error) {
+		return signupWithConnection(ctx, signupMethod, payload, conn, session)
 	})
 
 }
 
-func signupWithConnection(signupMethod *meta.SignupMethod, payload AuthRequest, connection wire.Connection, session *sess.Session) (*meta.User, error) {
+func signupWithConnection(ctx context.Context, signupMethod *meta.SignupMethod, payload AuthRequest, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, connection, session)
+	authconn, err := GetAuthConnection(ctx, signupMethod.AuthSource, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -58,25 +59,25 @@ func signupWithConnection(signupMethod *meta.SignupMethod, payload AuthRequest, 
 		return nil, exceptions.NewBadRequestException("Signup failed - username does not match required pattern: "+signupMethod.UsernameFormatExplanation, nil)
 	}
 
-	err = authconn.Signup(signupMethod, payload, username)
+	err = authconn.Signup(ctx, signupMethod, payload, username)
 	if err != nil {
 		return nil, err
 	}
 
-	return GetUserByKey(username, session, connection)
+	return GetUserByKey(ctx, username, session, connection)
 }
 
-func ConfirmSignUp(systemSession *sess.Session, signupMethodID string, payload AuthRequest, site *meta.Site) error {
+func ConfirmSignUp(ctx context.Context, systemSession *sess.Session, signupMethodID string, payload AuthRequest, site *meta.Site) error {
 
-	signupMethod, err := GetSignupMethod(signupMethodID, systemSession)
+	signupMethod, err := GetSignupMethod(ctx, signupMethodID, systemSession)
 	if err != nil {
 		return err
 	}
 
-	authconn, err := GetAuthConnection(signupMethod.AuthSource, nil, systemSession)
+	authconn, err := GetAuthConnection(ctx, signupMethod.AuthSource, nil, systemSession)
 	if err != nil {
 		return err
 	}
 
-	return authconn.ConfirmSignUp(signupMethod, payload)
+	return authconn.ConfirmSignUp(ctx, signupMethod, payload)
 }

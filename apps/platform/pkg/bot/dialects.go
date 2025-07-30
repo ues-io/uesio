@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -13,10 +14,12 @@ import (
 var botDialectMap = map[string]BotDialect{}
 
 func RegisterBotDialect(name string, dialect BotDialect) {
+	// TODO: This needs to be synchronized!
 	botDialectMap[name] = dialect
 }
 
 func GetBotDialect(botDialectName string) (BotDialect, error) {
+	// TODO: This needs to be synchronized!
 	dialectKey, ok := meta.GetBotDialects()[botDialectName]
 	if !ok {
 		return nil, fmt.Errorf("invalid bot dialect name: %s", botDialectName)
@@ -29,12 +32,12 @@ func GetBotDialect(botDialectName string) (BotDialect, error) {
 }
 
 type BotDialect interface {
-	BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
-	AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
-	CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
-	CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
-	RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error)
-	LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error
-	SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error
-	RunIntegrationActionBot(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]any) (any, error)
+	BeforeSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
+	AfterSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
+	CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
+	CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
+	RouteBot(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error)
+	LoadBot(ctx context.Context, bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error
+	SaveBot(ctx context.Context, bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error
+	RunIntegrationActionBot(ctx context.Context, bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]any) (any, error)
 }

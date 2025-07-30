@@ -30,19 +30,19 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	systemSession, err := auth.GetSystemSession(session.Context(), site, nil)
+	systemSession, err := auth.GetSystemSession(r.Context(), site, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 
-	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
+	signupMethod, err := auth.GetSignupMethod(r.Context(), getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("Signup failed: %w", err))
 		return
 	}
 
-	user, err := auth.Signup(signupMethod, payload, systemSession)
+	user, err := auth.Signup(r.Context(), signupMethod, payload, systemSession)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -55,13 +55,13 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	// do not use "user" here since they aren't validated yet
 	// we need permissions for route lookup
-	err = auth.HydrateUserPermissions(session.GetSiteUser(), session)
+	err = auth.HydrateUserPermissions(r.Context(), session.GetSiteUser(), session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
-	route, err := routing.GetRouteFromKey(signupMethod.LandingRoute, session)
+	route, err := routing.GetRouteFromKey(r.Context(), signupMethod.LandingRoute, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -85,19 +85,18 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	ctx := session.Context()
 	site := session.GetSite()
 	queryParams := r.URL.Query()
 	username := queryParams.Get("username")
 	signupMethodId := getSignupMethodID(mux.Vars(r))
-	systemSession, err := auth.GetSystemSession(ctx, site, nil)
+	systemSession, err := auth.GetSystemSession(r.Context(), site, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 
 	// Convert all query-string params into a map of values to send to the signup confirmation method
-	if err = auth.ConfirmSignUp(systemSession, signupMethodId, auth.AuthRequest{
+	if err = auth.ConfirmSignUp(r.Context(), systemSession, signupMethodId, auth.AuthRequest{
 		"username":         username,
 		"verificationcode": queryParams.Get("code"),
 	}, site); err != nil {
@@ -106,7 +105,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If signup confirmation succeeded, go ahead and log the user in
-	user, err := auth.GetUserByKey(username, systemSession, nil)
+	user, err := auth.GetUserByKey(r.Context(), username, systemSession, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -8,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runUsageLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	siteAdmin := session.GetSiteAdmin()
 
@@ -47,7 +48,7 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 		BatchNumber:    op.BatchNumber,
 	}
 
-	studioMetadata, err := datasource.Load([]*wire.LoadOp{newOp}, sess.GetStudioAnonSession(session.Context()), &datasource.LoadOptions{})
+	studioMetadata, err := datasource.Load(ctx, []*wire.LoadOp{newOp}, sess.GetStudioAnonSession(), &datasource.LoadOptions{})
 	if err != nil {
 		return err
 	}
@@ -97,7 +98,7 @@ func runUsageLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.
 	op.Collection = usageData
 
 	//get user references with the current site session
-	return datasource.HandleReferences(connection, referencedCollections, metadataResponse, session, &datasource.ReferenceOptions{
+	return datasource.HandleReferences(ctx, connection, referencedCollections, metadataResponse, session, &datasource.ReferenceOptions{
 		AllowMissingItems: true,
 	})
 

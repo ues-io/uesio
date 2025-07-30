@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -45,7 +46,7 @@ func GetSiteAdminSession(currentSession *sess.Session) *sess.Session {
 	return &newSession
 }
 
-func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection wire.Connection) error {
+func addSiteAdminContext(ctx context.Context, siteadmin *meta.Site, session *sess.Session, connection wire.Connection) error {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
 
@@ -71,12 +72,12 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 		getSiteAdminUser(),
 	))
 
-	bundleDef, err := bundle.GetSiteBundleDef(session.Context(), siteadmin, connection)
+	bundleDef, err := bundle.GetSiteBundleDef(ctx, siteadmin, connection)
 	if err != nil {
 		return err
 	}
 
-	licenseMap, err := GetLicenses(siteadmin.GetAppFullName(), connection)
+	licenseMap, err := GetLicenses(ctx, siteadmin.GetAppFullName(), connection)
 	if err != nil {
 		return err
 	}
@@ -87,36 +88,37 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	return nil
 }
 
-func AddSiteAdminContextByID(siteID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddSiteAdminContextByID(ctx context.Context, siteID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
-	siteadmin, err := QuerySiteByID(siteID, sessClone, connection)
+	siteadmin, err := QuerySiteByID(ctx, siteID, sessClone, connection)
 	if err != nil {
 		return nil, err
 	}
-	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
+	return sessClone, addSiteAdminContext(ctx, siteadmin, sessClone, connection)
 }
 
-func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddSiteAdminContextByKey(ctx context.Context, siteKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	sessClone := session.RemoveWorkspaceContext()
-	siteadmin, err := QuerySiteByKey(siteKey, sessClone, connection)
+	siteadmin, err := QuerySiteByKey(ctx, siteKey, sessClone, connection)
 	if err != nil {
 		return nil, err
 	}
-	return sessClone, addSiteAdminContext(siteadmin, sessClone, connection)
+	return sessClone, addSiteAdminContext(ctx, siteadmin, sessClone, connection)
 }
 
-func QuerySiteByID(siteid string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
-	return querySite(siteid, commonfields.Id, session, connection)
+func QuerySiteByID(ctx context.Context, siteid string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
+	return querySite(ctx, siteid, commonfields.Id, session, connection)
 }
 
-func QuerySiteByKey(sitekey string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
-	return querySite(sitekey, commonfields.UniqueKey, session, connection)
+func QuerySiteByKey(ctx context.Context, sitekey string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
+	return querySite(ctx, sitekey, commonfields.UniqueKey, session, connection)
 }
 
-func querySite(value, field string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
+func querySite(ctx context.Context, value, field string, session *sess.Session, connection wire.Connection) (*meta.Site, error) {
 
 	var s meta.Site
 	err := PlatformLoadOne(
+		ctx,
 		&s,
 		&PlatformLoadOptions{
 			Connection: connection,

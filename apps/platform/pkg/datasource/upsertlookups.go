@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
@@ -10,6 +11,7 @@ import (
 )
 
 func HandleUpsertLookup(
+	ctx context.Context,
 	connection wire.Connection,
 	op *wire.SaveOp,
 	session *sess.Session,
@@ -55,7 +57,7 @@ func HandleUpsertLookup(
 		return err
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, []wire.LoadRequestField{
+	return LoadLooper(ctx, connection, op.CollectionName, idMap, []wire.LoadRequestField{
 		{
 			ID: commonfields.Id,
 		},

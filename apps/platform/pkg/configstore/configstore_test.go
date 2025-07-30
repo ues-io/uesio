@@ -1,6 +1,7 @@
 package configstore
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 type TestConfigStore struct {
 }
 
-func (store *TestConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
+func (store *TestConfigStore) Get(ctx context.Context, key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
 	switch key {
 	case "uesio/core.has_value":
 		return &meta.ConfigStoreValue{
@@ -29,10 +30,10 @@ func (store *TestConfigStore) Get(key string, session *sess.Session) (*meta.Conf
 		}, nil
 	}
 }
-func (store *TestConfigStore) GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
+func (store *TestConfigStore) GetMany(ctx context.Context, keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
 	for _, key := range keys {
-		value, err := store.Get(key, session)
+		value, err := store.Get(ctx, key, session)
 		if err != nil {
 			return nil, err
 		}
@@ -40,11 +41,11 @@ func (store *TestConfigStore) GetMany(keys []string, session *sess.Session) (*me
 	}
 	return &results, nil
 }
-func (store *TestConfigStore) Set(key, value string, session *sess.Session) error {
+func (store *TestConfigStore) Set(ctx context.Context, key, value string, session *sess.Session) error {
 	return nil
 }
 
-func (store *TestConfigStore) Remove(key string, session *sess.Session) error {
+func (store *TestConfigStore) Remove(ctx context.Context, key string, session *sess.Session) error {
 	return nil
 }
 
@@ -113,7 +114,7 @@ func TestGetValue(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getValueInternal(tt.cv, nil)
+			got, err := getValueInternal(context.Background(), tt.cv, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetValue() error = %v, wantErr %v", err, tt.wantErr)
 				return

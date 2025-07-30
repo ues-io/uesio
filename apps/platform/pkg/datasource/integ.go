@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -14,64 +15,64 @@ import (
 )
 
 // GetIntegration loads the requested integration from bundle store
-func GetIntegration(integrationID string, session *sess.Session, connection wire.Connection) (*meta.Integration, error) {
+func GetIntegration(ctx context.Context, integrationID string, session *sess.Session, connection wire.Connection) (*meta.Integration, error) {
 	integrationInstance, err := meta.NewIntegration(integrationID)
 	if err != nil {
 		return nil, err
 	}
-	if err = bundle.Load(session.Context(), integrationInstance, nil, session, connection); err != nil {
+	if err = bundle.Load(ctx, integrationInstance, nil, session, connection); err != nil {
 		return nil, fmt.Errorf("unable to load integration '%s': %w", integrationID, err)
 	}
 	return integrationInstance, nil
 }
 
 // GetIntegrationType loads the requested integration type by name from the bundle store
-func GetIntegrationType(integrationTypeName string, session *sess.Session, connection wire.Connection) (*meta.IntegrationType, error) {
+func GetIntegrationType(ctx context.Context, integrationTypeName string, session *sess.Session, connection wire.Connection) (*meta.IntegrationType, error) {
 	integrationType, err := meta.NewIntegrationType(integrationTypeName)
 	if err != nil {
 		return nil, err
 	}
-	if err = bundle.Load(session.Context(), integrationType, nil, session, connection); err != nil {
+	if err = bundle.Load(ctx, integrationType, nil, session, connection); err != nil {
 		return nil, fmt.Errorf("unable to load integration type '%s': %w", integrationTypeName, err)
 	}
 	return integrationType, nil
 }
 
 // GetIntegrationAction loads the requested integration action buy name from the bundle store
-func GetIntegrationAction(integrationType, actionKey string, session *sess.Session, connection wire.Connection) (*meta.IntegrationAction, error) {
+func GetIntegrationAction(ctx context.Context, integrationType, actionKey string, session *sess.Session, connection wire.Connection) (*meta.IntegrationAction, error) {
 	actionKey = strings.ToLower(actionKey)
 	action, err := meta.NewIntegrationAction(integrationType, actionKey)
 	if err != nil {
 		return nil, exceptions.NewNotFoundException("could not find integration action: " + actionKey)
 	}
-	if err = bundle.Load(session.Context(), action, nil, session, connection); err != nil {
+	if err = bundle.Load(ctx, action, nil, session, connection); err != nil {
 		return nil, fmt.Errorf("unable to load integration action '%s': %w", actionKey, err)
 	}
 	return action, nil
 }
 
-func GetIntegrationConnection(integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
+func GetIntegrationConnection(ctx context.Context, integrationID string, session *sess.Session, connection wire.Connection) (*wire.IntegrationConnection, error) {
 	// First load the integration
-	integration, err := GetIntegration(integrationID, session, connection)
+	integration, err := GetIntegration(ctx, integrationID, session, connection)
 	if err != nil {
 		return nil, err
 	}
 	// Then load the integration type
-	integrationType, err := GetIntegrationType(integration.GetType(), session, connection)
+	integrationType, err := GetIntegrationType(ctx, integration.GetType(), session, connection)
 	if err != nil {
 		return nil, err
 	}
 	// Enter into a version context to load credentials in the integration's namespace
-	versionSession, err := EnterVersionContext(integration.Namespace, session, connection)
+	versionSession, err := EnterVersionContext(ctx, integration.Namespace, session, connection)
 	if err != nil {
 		return nil, err
 	}
 	// Credentials are optional, depending on the Integration, there may not be any
 	var credentials *wire.Credentials
 	if integration.Credentials != "" {
-		credentials, err = GetCredentials(integration.Credentials, versionSession)
+		credentials, err = GetCredentials(ctx, integration.Credentials, versionSession)
 		if err != nil {
-			slog.LogAttrs(session.Context(),
+			slog.LogAttrs(ctx,
 				slog.LevelWarn,
 				"Error getting Credentials",
 				slog.String("error", err.Error()),

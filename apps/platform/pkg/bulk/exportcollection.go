@@ -1,6 +1,7 @@
 package bulk
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -12,8 +13,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
-	metadataResponse, err := getBatchMetadata(spec.Collection, session)
+func exportCollection(ctx context.Context, create bundlestore.FileCreator, spec *meta.JobSpec, session *sess.Session) error {
+	metadataResponse, err := getBatchMetadata(ctx, spec.Collection, session)
 	if err != nil {
 		return err
 	}
@@ -58,7 +59,7 @@ func exportCollection(create bundlestore.FileCreator, spec *meta.JobSpec, sessio
 		return fmt.Errorf("cannot process that file type: %s", spec.FileType)
 	}
 
-	return datasource.LoadWithError(&wire.LoadOp{
+	return datasource.LoadWithError(ctx, &wire.LoadOp{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,

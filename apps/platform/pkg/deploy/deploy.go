@@ -3,6 +3,7 @@ package deploy
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -64,7 +65,7 @@ type DeployOptions struct {
 	Prefix     string
 }
 
-func GenerateToWorkspace(namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session, extraWriter io.Writer) (map[string]any, error) {
+func GenerateToWorkspace(ctx context.Context, namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session, extraWriter io.Writer) (map[string]any, error) {
 	buf := new(bytes.Buffer)
 	var zipWriter *zip.Writer
 	// If we were requested to return a ZIP file,
@@ -77,7 +78,7 @@ func GenerateToWorkspace(namespace, name string, params map[string]any, connecti
 		// Otherwise we just want to generate to the workspace
 		zipWriter = zip.NewWriter(buf)
 	}
-	results, err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session)
+	results, err := datasource.CallGeneratorBot(ctx, retrieve.NewWriterCreator(zipWriter.Create), namespace, name, params, connection, session)
 	if err != nil {
 		zipWriter.Close()
 		return nil, err
@@ -89,20 +90,20 @@ func GenerateToWorkspace(namespace, name string, params map[string]any, connecti
 		return nil, err
 	}
 
-	return results, DeployWithOptions(io.NopCloser(buf), session, &DeployOptions{Upsert: true, Connection: connection})
+	return results, DeployWithOptions(ctx, io.NopCloser(buf), session, &DeployOptions{Upsert: true, Connection: connection})
 
 }
 
-func Deploy(body io.ReadCloser, session *sess.Session) error {
-	return datasource.WithTransaction(session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
-		return DeployWithOptions(body, session, &DeployOptions{
+func Deploy(ctx context.Context, body io.ReadCloser, session *sess.Session) error {
+	return datasource.WithTransaction(ctx, session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
+		return DeployWithOptions(ctx, body, session, &DeployOptions{
 			Connection: conn,
 			Upsert:     true,
 		})
 	})
 }
 
-func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *DeployOptions) error {
+func DeployWithOptions(ctx context.Context, body io.ReadCloser, session *sess.Session, options *DeployOptions) error {
 
 	if options == nil {
 		options = &DeployOptions{Upsert: true, Connection: nil}
@@ -186,7 +187,7 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
 			if err != nil {
 				// Most likely found a folder that we don't have a metadata type for
-				slog.InfoContext(session.Context(), "Found bad metadata type: "+metadataType)
+				slog.InfoContext(ctx, "Found bad metadata type: "+metadataType)
 				continue
 			}
 			dep[metadataType] = collection
@@ -348,10 +349,10 @@ func DeployWithOptions(body io.ReadCloser, session *sess.Session, options *Deplo
 	}
 
 	studioSession := session.RemoveWorkspaceContext()
-	if err = datasource.PlatformSaves(saves, options.Connection, studioSession); err != nil {
+	if err = datasource.PlatformSaves(ctx, saves, options.Connection, studioSession); err != nil {
 		return err
 	}
-	if _, err = filesource.Upload(session.Context(), uploadOps, options.Connection, studioSession, params); err != nil {
+	if _, err = filesource.Upload(ctx, uploadOps, options.Connection, studioSession, params); err != nil {
 		return err
 	}
 

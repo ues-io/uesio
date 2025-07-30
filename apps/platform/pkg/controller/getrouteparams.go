@@ -69,7 +69,7 @@ func GetRouteParams(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 	session := middleware.GetSession(r)
 	loader := func(item meta.BundleableItem) error {
-		return bundle.Load(session.Context(), item, nil, session, nil)
+		return bundle.Load(r.Context(), item, nil, session, nil)
 	}
 	route := meta.NewBaseRoute(namespace, name)
 	if err := loader(route); err != nil {

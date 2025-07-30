@@ -45,18 +45,18 @@ func RunIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
 	}
 
-	ic, err := datasource.GetIntegrationConnection(integrationId, session, connection)
+	ic, err := datasource.GetIntegrationConnection(r.Context(), integrationId, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	result, err := datasource.RunIntegrationAction(ic, actionKey, params, connection)
+	result, err := datasource.RunIntegrationAction(r.Context(), ic, actionKey, params, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -149,7 +149,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := middleware.GetSession(r)
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(r.Context(), session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, fmt.Errorf("unable to obtain platform connection: %w", err))
 		return
@@ -157,13 +157,13 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 
 	// Load the integration and integration type
 	integrationTypeName := fmt.Sprintf("%s.%s", namespace, name)
-	integrationType, err := datasource.GetIntegrationType(integrationTypeName, session, connection)
+	integrationType, err := datasource.GetIntegrationType(r.Context(), integrationTypeName, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
 	// The action itself MUST exist as a baseline.
-	action, err := datasource.GetIntegrationAction(integrationTypeName, actionKey, session, connection)
+	action, err := datasource.GetIntegrationAction(r.Context(), integrationTypeName, actionKey, session, connection)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -185,7 +185,7 @@ func DescribeIntegrationAction(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		robot := meta.NewRunActionBot(actionBotNamespace, actionBotName)
-		err = bundle.Load(session.Context(), robot, nil, session, nil)
+		err = bundle.Load(r.Context(), robot, nil, session, nil)
 		if err != nil {
 			ctlutil.HandleError(r.Context(), w, err)
 			return

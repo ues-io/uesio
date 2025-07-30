@@ -20,7 +20,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	metadataType := strings.ToUpper(vars["type"])
 	session := middleware.GetSession(r)
 
-	botParams, err := bot.GetBotParams(namespace, name, metadataType, session)
+	botParams, err := bot.GetBotParams(r.Context(), namespace, name, metadataType, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

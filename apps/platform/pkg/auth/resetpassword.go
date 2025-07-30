@@ -13,12 +13,12 @@ func ResetPassword(ctx context.Context, authSourceID string, payload AuthRequest
 	if err != nil {
 		return nil, err
 	}
-	return datasource.WithTransactionResult(session, nil, func(connection wire.Connection) (*meta.LoginMethod, error) {
-		authconn, err := GetAuthConnection(authSourceID, connection, session)
+	return datasource.WithTransactionResult(ctx, session, nil, func(connection wire.Connection) (*meta.LoginMethod, error) {
+		authconn, err := GetAuthConnection(ctx, authSourceID, connection, session)
 		if err != nil {
 			return nil, err
 		}
-		return authconn.ResetPassword(payload, false)
+		return authconn.ResetPassword(ctx, payload, false)
 	})
 }
 
@@ -29,9 +29,9 @@ func ConfirmResetPassword(ctx context.Context, authSourceID string, payload Auth
 		return nil, err
 	}
 
-	authconn, err := GetAuthConnection(authSourceID, nil, session)
+	authconn, err := GetAuthConnection(ctx, authSourceID, nil, session)
 	if err != nil {
 		return nil, err
 	}
-	return authconn.ConfirmResetPassword(payload)
+	return authconn.ConfirmResetPassword(ctx, payload)
 }

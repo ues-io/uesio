@@ -1,13 +1,15 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runRouteBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Early return if we have only deletes, no changes
 	if !request.HasChanges() {
@@ -16,7 +18,7 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 
 	depMap := wire.MetadataDependencyMap{}
 
-	wsAccessResult := datasource.RequestWorkspaceWriteAccess(request.Params, connection, session)
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(ctx, request.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {
 		return wsAccessResult.Error()
 	}
@@ -52,6 +54,6 @@ func runRouteBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, ses
 		return err
 	}
 
-	return checkValidItems(wsAccessResult.GetWorkspaceID(), items, session, connection)
+	return checkValidItems(ctx, wsAccessResult.GetWorkspaceID(), items, session, connection)
 
 }

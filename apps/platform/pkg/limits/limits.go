@@ -1,6 +1,7 @@
 package limits
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
@@ -9,12 +10,12 @@ import (
 
 const limitNameMaxDomainsPerUser = "uesio/studio.max_domains_per_user"
 
-func GetLimitDomainsPerUser(user string, session *sess.Session) (int, error) {
-	return GetNumericLimit(limitNameMaxDomainsPerUser, user, session)
+func GetLimitDomainsPerUser(ctx context.Context, user string, session *sess.Session) (int, error) {
+	return GetNumericLimit(ctx, limitNameMaxDomainsPerUser, user, session)
 }
 
-func GetNumericLimit(numericLimitName, user string, session *sess.Session) (int, error) {
-	flag, err := featureflagstore.GetFeatureFlag(numericLimitName, session, user)
+func GetNumericLimit(ctx context.Context, numericLimitName, user string, session *sess.Session) (int, error) {
+	flag, err := featureflagstore.GetFeatureFlag(ctx, numericLimitName, session, user)
 	if err != nil {
 		return 0, err
 	}

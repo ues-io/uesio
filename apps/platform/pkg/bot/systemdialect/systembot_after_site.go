@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -15,13 +16,13 @@ import (
 const defaultSitePublicProfile = "uesio/core.public"
 const bundleField = "uesio/studio.bundle->uesio/core.id"
 
-func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runSiteAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	err := request.LoopInserts(func(change *wire.ChangeItem) error {
 
 		siteID := change.IDValue
 
-		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(ctx, siteID, session, connection)
 		if err != nil {
 			return err
 		}
@@ -52,7 +53,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 
 		// We can't bulkify this because we need to be in the context
 		// of each site when we do these inserts.
-		return datasource.SaveWithOptions([]datasource.SaveRequest{
+		return datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 			{
 				Collection: "uesio/core.user",
 				Wire:       "defaultusers",
@@ -88,7 +89,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 			return nil
 		}
 
-		siteAdminSession, err := datasource.AddSiteAdminContextByID(siteID, session, connection)
+		siteAdminSession, err := datasource.AddSiteAdminContextByID(ctx, siteID, session, connection)
 		if err != nil {
 			return err
 		}
@@ -108,7 +109,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 
 		// We can't bulkify this because we need to be in the context
 		// of each site when we do these updates.
-		return datasource.SaveWithOptions([]datasource.SaveRequest{
+		return datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 			{
 				Collection: "uesio/core.user",
 				Wire:       "updateUsers",
@@ -133,7 +134,7 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		if siteUniqueKey == "" {
 			return errors.New("unable to get site unique key, cannot truncate data")
 		}
-		if err = connection.TruncateTenantData(session.Context(), sess.MakeSiteTenantID(siteUniqueKey)); err != nil {
+		if err = connection.TruncateTenantData(ctx, sess.MakeSiteTenantID(siteUniqueKey)); err != nil {
 			return fmt.Errorf("unable to truncate site data: %w", err)
 		}
 		return nil
@@ -142,13 +143,13 @@ func runSiteAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessi
 		return err
 	}
 
-	return clearHostCacheForSite(request, connection, session)
+	return clearHostCacheForSite(ctx, request, connection, session)
 }
 
-func clearHostCacheForSite(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func clearHostCacheForSite(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	ids := getIDsFromUpdatesAndDeletes(request)
 	domains := meta.SiteDomainCollection{}
-	err := datasource.PlatformLoad(&domains, &datasource.PlatformLoadOptions{
+	err := datasource.PlatformLoad(ctx, &domains, &datasource.PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.site",

@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUserAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	if len(request.Deletes) > 0 {
 		if err := preventSystemGuestUserDeletion(request); err != nil {
 			return err

@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -22,7 +23,7 @@ func parseUniquekeyToIntegrationTypeKey(uniquekey string) (string, error) {
 }
 
 // Delete all Integration Actions when an Integration Type is deleted
-func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runIntegrationTypeAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// We will end up here through several different avenues and sometimes we will be in an admin context,
 	// sometimes in an anon context and sometimes in a workspace context, etc. Additionally, depending on
@@ -80,7 +81,7 @@ func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connec
 	}
 
 	iac := meta.IntegrationActionCollection{}
-	err := datasource.PlatformLoad(&iac, &datasource.PlatformLoadOptions{
+	err := datasource.PlatformLoad(ctx, &iac, &datasource.PlatformLoadOptions{
 		Fields: []wire.LoadRequestField{
 			{
 				ID: "uesio/core.id",
@@ -109,6 +110,6 @@ func runIntegrationTypeAfterSaveBot(request *wire.SaveOp, connection wire.Connec
 		return nil
 	}
 
-	return datasource.SaveWithOptions(requests, session, datasource.NewSaveOptions(connection, nil))
+	return datasource.SaveWithOptions(ctx, requests, session, datasource.NewSaveOptions(connection, nil))
 
 }

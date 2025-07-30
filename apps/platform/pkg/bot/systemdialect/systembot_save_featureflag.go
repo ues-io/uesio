@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -38,7 +39,7 @@ func getKeyInfo(change *wire.ChangeItem, session *sess.Session) (string, string,
 	return key, userID, nil
 }
 
-func runFeatureFlagSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runFeatureFlagSaveBot(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	err := op.LoopUpdates(func(change *wire.ChangeItem) error {
 
@@ -52,7 +53,7 @@ func runFeatureFlagSaveBot(op *wire.SaveOp, connection wire.Connection, session 
 			return err
 		}
 
-		return featureflagstore.SetValue(key, value, userID, session)
+		return featureflagstore.SetValue(ctx, key, value, userID, session)
 	})
 	if err != nil {
 		return err
@@ -62,6 +63,6 @@ func runFeatureFlagSaveBot(op *wire.SaveOp, connection wire.Connection, session 
 		if err != nil {
 			return err
 		}
-		return featureflagstore.Remove(key, userID, session)
+		return featureflagstore.Remove(ctx, key, userID, session)
 	})
 }

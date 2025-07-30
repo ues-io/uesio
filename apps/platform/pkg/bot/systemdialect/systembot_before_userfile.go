@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -10,7 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUserFileBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// If a user file is being deleted, we want to delete the underlying file blob data as well
 	// using the configured file storage adapter
 	var userFileIdsBeingDeleted []string
@@ -23,7 +25,7 @@ func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, 
 	if len(userFileIdsBeingDeleted) > 0 {
 		// Load all the userfile records
 		ufmc := meta.UserFileMetadataCollection{}
-		err := datasource.PlatformLoad(&ufmc, &datasource.PlatformLoadOptions{
+		err := datasource.PlatformLoad(ctx, &ufmc, &datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
 				{
 					Field:    commonfields.Id,
@@ -48,7 +50,7 @@ func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, 
 
 			conn, isPresent := fileConnectionsBySource[ufm.FileSourceID]
 			if !isPresent {
-				conn, err = fileadapt.GetFileConnection(ufm.FileSourceID, session)
+				conn, err = fileadapt.GetFileConnection(ctx, ufm.FileSourceID, session)
 				if err != nil {
 					return err
 				}
@@ -56,7 +58,7 @@ func runUserFileBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, 
 			}
 			fullPath := ufm.GetFullPath(tenantID)
 			// Ignore missing files, possibly it was already deleted
-			_ = conn.Delete(session.Context(), fullPath)
+			_ = conn.Delete(ctx, fullPath)
 		}
 	}
 

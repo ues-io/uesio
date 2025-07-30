@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runRecordTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runRecordTokenValueLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	recordIDCondition := extractConditionByField(op.Conditions, "uesio/studio.recordid")
 	if recordIDCondition == nil {
@@ -18,13 +19,13 @@ func runRecordTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, ses
 
 	recordID := recordIDCondition.Value.(string)
 
-	inContextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session)
+	inContextSession, err := datasource.GetContextSessionFromParams(ctx, op.Params, connection, session)
 	if err != nil {
 		return err
 	}
 	// intentionally using session context and not inContextSession since session is what owns the processing
 	// context. The context in both session and inContextSession should be the same but session owns it
-	tokens, err := connection.GetRecordAccessTokens(session.Context(), recordID, inContextSession)
+	tokens, err := connection.GetRecordAccessTokens(ctx, recordID, inContextSession)
 	if err != nil {
 		return err
 	}

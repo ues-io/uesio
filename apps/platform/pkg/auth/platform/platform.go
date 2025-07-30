@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -81,11 +82,11 @@ type Connection struct {
 	session     *sess.Session
 }
 
-func (c *Connection) callListenerBot(botKey, code string, payload auth.AuthRequest) error {
+func (c *Connection) callListenerBot(ctx context.Context, botKey, code string, payload auth.AuthRequest) error {
 
 	site := c.session.GetSite()
 
-	domain, err := datasource.QueryDomainFromSite(site.ID, c.connection)
+	domain, err := datasource.QueryDomainFromSite(ctx, site.ID, c.connection)
 	if err != nil {
 		return err
 	}
@@ -100,7 +101,7 @@ func (c *Connection) callListenerBot(botKey, code string, payload auth.AuthReque
 		return err
 	}
 
-	_, err = datasource.CallListenerBot(namespace, name, payload, c.connection, c.session)
+	_, err = datasource.CallListenerBot(context.Background(), namespace, name, payload, c.connection, c.session)
 	if err != nil {
 		return err
 	}
@@ -108,17 +109,17 @@ func (c *Connection) callListenerBot(botKey, code string, payload auth.AuthReque
 	return nil
 }
 
-func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
-	user, loginMethod, err := c.DoLogin(loginRequest)
+func (c *Connection) Login(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	user, loginMethod, err := c.DoLogin(ctx, loginRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	requiresReset := loginMethod.ForceReset
 	if requiresReset {
-		loginMethod, err = datasource.WithTransactionResult(c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
+		loginMethod, err = datasource.WithTransactionResult(ctx, c.session, c.connection, func(connection wire.Connection) (*meta.LoginMethod, error) {
 			c.connection = connection
-			return c.ResetPassword(loginRequest, true)
+			return c.ResetPassword(ctx, loginRequest, true)
 		})
 		if err != nil {
 			return nil, err
@@ -131,7 +132,7 @@ func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, er
 	}, nil
 }
 
-func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
+func (c *Connection) DoLogin(ctx context.Context, payload auth.AuthRequest) (*meta.User, *meta.LoginMethod, error) {
 
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
@@ -142,7 +143,7 @@ func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginM
 		return nil, nil, exceptions.NewBadRequestException("you must enter a password", nil)
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
+	loginmethod, err := auth.GetLoginMethod(ctx, username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, nil, exceptions.NewBadRequestException("failed getting login method data", err)
 	}
@@ -160,7 +161,7 @@ func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginM
 		return nil, nil, exceptions.NewUnauthorizedException("the password you are trying to log in with is incorrect")
 	}
 
-	user, err := auth.GetUserByID(loginmethod.User.ID, c.session, c.connection)
+	user, err := auth.GetUserByID(ctx, loginmethod.User.ID, c.session, c.connection)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -169,7 +170,7 @@ func (c *Connection) DoLogin(payload auth.AuthRequest) (*meta.User, *meta.LoginM
 
 }
 
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
+func (c *Connection) Signup(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 
 	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
@@ -203,7 +204,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRe
 
 	code := generateCode()
 
-	user, err := auth.CreateUser(signupMethod, &meta.User{
+	user, err := auth.CreateUser(ctx, signupMethod, &meta.User{
 		Username:  username,
 		FirstName: firstname,
 		LastName:  lastname,
@@ -214,7 +215,7 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRe
 	}
 
 	// Add verification code and password hash
-	err = auth.CreateLoginMethod(&meta.LoginMethod{
+	err = auth.CreateLoginMethod(ctx, &meta.LoginMethod{
 		FederationID:        username,
 		User:                user,
 		Hash:                string(hash),
@@ -227,21 +228,21 @@ func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRe
 		return err
 	}
 
-	return c.callListenerBot(signupMethod.SignupBot, code, payload)
+	return c.callListenerBot(ctx, signupMethod.SignupBot, code, payload)
 
 }
-func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(ctx context.Context, payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("unable to reset password: you must provide a username", nil)
 	}
 
-	user, err := auth.GetUserByKey(username, c.session, c.connection)
+	user, err := auth.GetUserByKey(ctx, username, c.session, c.connection)
 	if err != nil {
 		return nil, err
 	}
 
-	loginmethod, err := auth.GetLoginMethodByUserID(user.ID, c.authSource.GetKey(), c.connection, c.session)
+	loginmethod, err := auth.GetLoginMethodByUserID(ctx, user.ID, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -257,7 +258,7 @@ func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool)
 	loginmethod.VerificationExpires = getExpireTimestamp()
 	loginmethod.TemporaryPassword = ""
 	loginmethod.ForceReset = false
-	err = datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
+	err = datasource.PlatformSaveOne(ctx, loginmethod, nil, c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +278,7 @@ func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool)
 		return loginmethod, nil
 	}
 
-	signupMethod, err := auth.GetSignupMethod(signupMethodKey, c.session)
+	signupMethod, err := auth.GetSignupMethod(ctx, signupMethodKey, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -286,10 +287,10 @@ func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool)
 		return loginmethod, nil
 	}
 
-	return loginmethod, c.callListenerBot(signupMethod.ResetPasswordBot, code, payload)
+	return loginmethod, c.callListenerBot(ctx, signupMethod.ResetPasswordBot, code, payload)
 
 }
-func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(ctx context.Context, payload auth.AuthRequest) (*meta.User, error) {
 	username, err := auth.GetPayloadValue(payload, "username")
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("a username must be provided", nil)
@@ -310,7 +311,7 @@ func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User,
 		return nil, exceptions.NewBadRequestException("this password does not meet the password policy requirements", err)
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
+	loginmethod, err := auth.GetLoginMethod(ctx, username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return nil, fmt.Errorf("failed getting login method data: %w", err)
 	}
@@ -335,14 +336,14 @@ func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User,
 	loginmethod.Hash = string(hash)
 	loginmethod.VerificationCode = ""
 	loginmethod.VerificationExpires = 0
-	err = datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
+	err = datasource.PlatformSaveOne(ctx, loginmethod, nil, c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
-	return auth.GetUserByID(loginmethod.User.ID, c.session, c.connection)
+	return auth.GetUserByID(ctx, loginmethod.User.ID, c.session, c.connection)
 
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
+func (c *Connection) CreateLogin(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 
 	code := generateCode()
 
@@ -384,13 +385,13 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.A
 		loginMethod.ForceReset = true
 	}
 
-	err := auth.CreateLoginMethod(loginMethod, c.connection, c.session)
+	err := auth.CreateLoginMethod(ctx, loginMethod, c.connection, c.session)
 	if err != nil {
 		return err
 	}
 
 	if hasPassword {
-		_, err := c.ConfirmResetPassword(auth.AuthRequest{
+		_, err := c.ConfirmResetPassword(ctx, auth.AuthRequest{
 			"username":         user.Username,
 			"verificationcode": code,
 			"newpassword":      password,
@@ -407,10 +408,10 @@ func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.A
 		return nil
 	}
 
-	return c.callListenerBot(signupMethod.CreateLoginBot, code, payload)
+	return c.callListenerBot(ctx, signupMethod.CreateLoginBot, code, payload)
 
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
+func (c *Connection) ConfirmSignUp(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	username, err := auth.GetRequiredPayloadValue(payload, "username")
 	if err != nil {
 		return exceptions.NewBadRequestException("username not provided", nil)
@@ -421,7 +422,7 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth
 		return exceptions.NewBadRequestException("verification code not provided", nil)
 	}
 
-	loginmethod, err := auth.GetLoginMethod(username, c.authSource.GetKey(), c.connection, c.session)
+	loginmethod, err := auth.GetLoginMethod(ctx, username, c.authSource.GetKey(), c.connection, c.session)
 	if err != nil {
 		return fmt.Errorf("failed getting login method data: %w", err)
 	}
@@ -444,15 +445,15 @@ func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth
 
 	loginmethod.VerificationCode = ""
 	loginmethod.VerificationExpires = 0
-	return datasource.PlatformSaveOne(loginmethod, nil, c.connection, c.session)
+	return datasource.PlatformSaveOne(ctx, loginmethod, nil, c.connection, c.session)
 
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
 	return nil, errors.New("saml auth is not supported by this auth source type")
 }
-func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+func (c *Connection) LoginServiceProvider(ctx context.Context, assertion *saml.Assertion) (*auth.LoginResult, error) {
 	return nil, errors.New("saml auth login is not supported by this auth source type")
 }
-func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
-	return c.Login(loginRequest)
+func (c *Connection) LoginCLI(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+	return c.Login(ctx, loginRequest)
 }

@@ -1,15 +1,17 @@
 package datasource
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func ResetRecordTokens(collection string, session *sess.Session) error {
-	return WithTransaction(session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
-		return resetTokenBatches(&wire.LoadOp{
+func ResetRecordTokens(ctx context.Context, collection string, session *sess.Session) error {
+	return WithTransaction(ctx, session.RemoveWorkspaceContext(), nil, func(conn wire.Connection) error {
+		return resetTokenBatches(ctx, &wire.LoadOp{
 			CollectionName: collection,
 			Collection:     &wire.Collection{},
 			Query:          true,
@@ -23,15 +25,15 @@ func ResetRecordTokens(collection string, session *sess.Session) error {
 	})
 }
 
-func resetTokenBatches(loadOp *wire.LoadOp, session *sess.Session) error {
+func resetTokenBatches(ctx context.Context, loadOp *wire.LoadOp, session *sess.Session) error {
 
 	for {
-		err := LoadWithError(loadOp, session, nil)
+		err := LoadWithError(ctx, loadOp, session, nil)
 		if err != nil {
 			return err
 		}
 
-		err = Save([]SaveRequest{
+		err = Save(ctx, []SaveRequest{
 			{
 				Collection: loadOp.CollectionName,
 				Changes:    loadOp.Collection,

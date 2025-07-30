@@ -1,6 +1,7 @@
 package openai
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -39,7 +40,7 @@ func newOpenAiConnection(ic *wire.IntegrationConnection) (*connection, error) {
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+func RunAction(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	c, err := newOpenAiConnection(ic)
 	if err != nil {
@@ -47,14 +48,14 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 	}
 	switch strings.ToLower(actionName) {
 	case "autocomplete":
-		return c.autoComplete(params)
+		return c.autoComplete(ctx, params)
 	}
 
 	return nil, errors.New("invalid action name for openai integration")
 
 }
 
-func (c *connection) autoComplete(requestOptions any) (any, error) {
+func (c *connection) autoComplete(ctx context.Context, requestOptions any) (any, error) {
 
 	options := &AutoCompleteOptions{}
 	err := datasource.HydrateOptions(requestOptions, options)
@@ -63,17 +64,17 @@ func (c *connection) autoComplete(requestOptions any) (any, error) {
 	}
 
 	if options.Format == "chat" {
-		return c.autoCompleteChat(options)
+		return c.autoCompleteChat(ctx, options)
 	}
 
-	return c.autoCompleteDefault(options)
+	return c.autoCompleteDefault(ctx, options)
 
 }
 
-func (c *connection) autoCompleteDefault(options *AutoCompleteOptions) ([]string, error) {
+func (c *connection) autoCompleteDefault(ctx context.Context, options *AutoCompleteOptions) ([]string, error) {
 	// Text requests
 	resp, err := c.client.CreateCompletion(
-		c.session.Context(),
+		ctx,
 		oai.CompletionRequest{
 			Model:     options.Model,
 			Prompt:    options.Input,
@@ -99,9 +100,9 @@ func (c *connection) autoCompleteDefault(options *AutoCompleteOptions) ([]string
 	return outputs, nil
 }
 
-func (c *connection) autoCompleteChat(options *AutoCompleteOptions) ([]string, error) {
+func (c *connection) autoCompleteChat(ctx context.Context, options *AutoCompleteOptions) ([]string, error) {
 	resp, err := c.client.CreateChatCompletion(
-		c.session.Context(),
+		ctx,
 		oai.ChatCompletionRequest{
 			Model: options.Model,
 			Messages: []oai.ChatCompletionMessage{

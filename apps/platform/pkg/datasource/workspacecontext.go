@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -19,7 +20,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/workspace"
 )
 
-type QueryWorkspaceForWriteFn func(queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error)
+type QueryWorkspaceForWriteFn func(ctx context.Context, queryValue, queryField string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error)
 
 // this cache exists to provide quick access to essential fields about a workspace
 // without having to constantly query for it
@@ -36,7 +37,7 @@ func setQueryWorkspaceForWriteFn(fn QueryWorkspaceForWriteFn) {
 	queryWorkspaceForWriteFn = fn
 }
 
-func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
+func RequestWorkspaceWriteAccess(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) *workspace.AccessResult {
 
 	workspaceID := goutils.StringValue(params["workspaceid"])
 	workspaceName := goutils.StringValue(params["workspacename"])
@@ -62,7 +63,7 @@ func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connecti
 		if result, err := wsKeyInfoCache.Get(workspaceID); err == nil {
 			wsKeyInfo = result
 		} else if !errors.Is(err, cache.ErrKeyNotFound) {
-			slog.ErrorContext(session.Context(), fmt.Sprintf("error getting key info for workspace id [%s] from cache: %v", workspaceID, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting key info for workspace id [%s] from cache: %v", workspaceID, err))
 		}
 	}
 
@@ -92,7 +93,7 @@ func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connecti
 			queryField = commonfields.UniqueKey
 			queryValue = workspaceUniqueKey
 		}
-		ws, err := queryWorkspaceForWriteFn(queryValue, queryField, session, connection)
+		ws, err := queryWorkspaceForWriteFn(ctx, queryValue, queryField, session, connection)
 		if err == nil && ws != nil {
 			haveAccess = true
 		} else {
@@ -112,7 +113,7 @@ func RequestWorkspaceWriteAccess(params map[string]any, connection wire.Connecti
 	return workspace.NewWorkspaceAccessResult(wsKeyInfo, haveAccess, false, accessErr)
 }
 
-func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
+func addWorkspaceImpersonationContext(ctx context.Context, workspace *meta.Workspace, session *sess.Session, connection wire.Connection) error {
 
 	if session.GetWorkspace() == nil {
 		return errors.New("must already have a workspace context to add impersonation")
@@ -121,7 +122,7 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 	results := &wire.Collection{}
 
 	// Lookup to see if this user wants to impersonate a profile.
-	err := LoadWithError(&wire.LoadOp{
+	err := LoadWithError(ctx, &wire.LoadOp{
 		WireName:       "CheckImpersonationWorkspaceContext",
 		CollectionName: "uesio/studio.workspaceuser",
 		Collection:     results,
@@ -154,7 +155,7 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 			return err
 		}
 		if profileKey != "" {
-			profile, err := LoadAndHydrateProfile(profileKey, session)
+			profile, err := LoadAndHydrateProfile(ctx, profileKey, session)
 			if err != nil {
 				return fmt.Errorf("error loading profile: %s : %w", profileKey, err)
 			}
@@ -173,7 +174,7 @@ func addWorkspaceImpersonationContext(workspace *meta.Workspace, session *sess.S
 }
 
 // creates a new session based on the provided session that contains the workspace context
-func addWorkspaceContext(value string, field string, origSession *sess.Session, connection wire.Connection) (*sess.Session, *meta.Workspace, error) {
+func addWorkspaceContext(ctx context.Context, value string, field string, origSession *sess.Session, connection wire.Connection) (*sess.Session, *meta.Workspace, error) {
 	// 1. Make sure we're in a site that can read/modify workspaces
 	if origSession.GetSite().GetAppFullName() != "uesio/studio" {
 		return nil, nil, exceptions.NewForbiddenException("this site does not allow working with workspaces")
@@ -184,7 +185,7 @@ func addWorkspaceContext(value string, field string, origSession *sess.Session, 
 	}
 
 	sessClone := origSession.RemoveWorkspaceContext()
-	workspace, err := QueryWorkspaceForWrite(value, field, sessClone, connection)
+	workspace, err := QueryWorkspaceForWrite(ctx, value, field, sessClone, connection)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -196,11 +197,11 @@ func addWorkspaceContext(value string, field string, origSession *sess.Session, 
 		meta.GetAdminPermissionSet(),
 	)
 	sessClone.SetWorkspaceSession(workspaceSession)
-	bundleDef, err := bundle.GetWorkspaceBundleDef(sessClone.Context(), workspace, connection)
+	bundleDef, err := bundle.GetWorkspaceBundleDef(ctx, workspace, connection)
 	if err != nil {
 		return nil, nil, err
 	}
-	licenseMap, err := GetLicenses(workspace.GetAppFullName(), connection)
+	licenseMap, err := GetLicenses(ctx, workspace.GetAppFullName(), connection)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -211,40 +212,40 @@ func addWorkspaceContext(value string, field string, origSession *sess.Session, 
 
 }
 
-func AddWorkspaceImpersonationContextByKey(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddWorkspaceImpersonationContextByKey(ctx context.Context, workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
 	// just use the existing session
 	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
 		return session, nil
 	}
-	sessClone, workspace, err := addWorkspaceContext(workspaceKey, commonfields.UniqueKey, session, connection)
+	sessClone, workspace, err := addWorkspaceContext(ctx, workspaceKey, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
-	err = addWorkspaceImpersonationContext(workspace, sessClone, connection)
+	err = addWorkspaceImpersonationContext(ctx, workspace, sessClone, connection)
 	if err != nil {
 		return nil, err
 	}
 	return sessClone, nil
 }
 
-func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddWorkspaceContextByKey(ctx context.Context, workspaceKey string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
 	// just use the existing session
 	if session.GetWorkspace() != nil && session.GetWorkspace().UniqueKey == workspaceKey {
 		return session, nil
 	}
-	sessClone, _, err := addWorkspaceContext(workspaceKey, commonfields.UniqueKey, session, connection)
+	sessClone, _, err := addWorkspaceContext(ctx, workspaceKey, commonfields.UniqueKey, session, connection)
 	return sessClone, err
 }
 
-func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddWorkspaceContextByID(ctx context.Context, workspaceID string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// Shortcut - if the target workspace is exactly the same as the workspace we already have,
 	// just use the existing session
 	if session.GetWorkspace() != nil && session.GetWorkspace().ID == workspaceID {
 		return session, nil
 	}
-	sessClone, _, err := addWorkspaceContext(workspaceID, commonfields.Id, session, connection)
+	sessClone, _, err := addWorkspaceContext(ctx, workspaceID, commonfields.Id, session, connection)
 	return sessClone, err
 }
 
@@ -255,13 +256,14 @@ func getWorkspaceWritePermName(workspaceID string) string {
 }
 
 // QueryWorkspaceForWrite queries a workspace, with write access required
-func QueryWorkspaceForWrite(value, field string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
+func QueryWorkspaceForWrite(ctx context.Context, value, field string, session *sess.Session, connection wire.Connection) (*meta.Workspace, error) {
 	var workspace meta.Workspace
 	useSession := session
 	if useSession.GetWorkspace() != nil {
 		useSession = session.RemoveWorkspaceContext()
 	}
 	err := PlatformLoadOne(
+		ctx,
 		&workspace,
 		&PlatformLoadOptions{
 			WireName:   "QueryWorkspaceForWrite",

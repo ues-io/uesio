@@ -1,8 +1,6 @@
 package wire
 
 import (
-	"context"
-
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -29,10 +27,6 @@ type IntegrationConnection struct {
 	integrationType *meta.IntegrationType
 	credentials     *Credentials
 	platformConn    Connection
-}
-
-func (ic *IntegrationConnection) Context() context.Context {
-	return ic.session.Context()
 }
 
 func (ic *IntegrationConnection) GetSession() *sess.Session {

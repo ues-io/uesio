@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"io"
 	"slices"
 
@@ -14,7 +15,7 @@ import (
 
 const USER_FILE_DATA_FIELD = "uesio/core.data"
 
-func runUserfileLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runUserfileLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	// If the op included the uesio/core.data field, get it separately.
 	hasDataField := false
@@ -31,7 +32,7 @@ func runUserfileLoadBot(op *wire.LoadOp, connection wire.Connection, session *se
 		op.Fields = newSlice
 	}
 
-	err := datasource.LoadOp(op, connection, session)
+	err := datasource.LoadOp(ctx, op, connection, session)
 	if err != nil {
 		return err
 	}
@@ -53,7 +54,7 @@ func runUserfileLoadBot(op *wire.LoadOp, connection wire.Connection, session *se
 			return nil
 		}
 
-		r, _, err := filesource.Download(session.Context(), userFileIDString, session)
+		r, _, err := filesource.Download(ctx, userFileIDString, session)
 		if err != nil {
 			return err
 		}

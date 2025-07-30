@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
@@ -40,17 +41,18 @@ func init() {
 	}
 }
 
-func NewGeneratorBotAPI(bot *meta.Bot, params map[string]any, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
+func NewGeneratorBotAPI(ctx context.Context, bot *meta.Bot, params map[string]any, create bundlestore.FileCreator, session *sess.Session, connection wire.Connection) *GeneratorBotAPI {
 	return &GeneratorBotAPI{
 		Params: &ParamsAPI{
 			Params: params,
 		},
-		LogApi:     NewBotLogAPI(bot, session.Context()),
+		LogApi:     NewBotLogAPI(ctx, bot),
 		session:    session,
 		create:     create,
 		bot:        bot,
 		connection: connection,
 		Results:    map[string]any{},
+		ctx:        ctx,
 	}
 }
 
@@ -74,6 +76,9 @@ type GeneratorBotAPI struct {
 	session    *sess.Session
 	connection wire.Connection
 	Results    map[string]any
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 }
 
 func (gba *GeneratorBotAPI) AddResult(key string, value any) {
@@ -94,7 +99,7 @@ func (gba *GeneratorBotAPI) GetAppName() string {
 }
 
 func (gba *GeneratorBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(gba.session)
+	return NewSessionAPI(gba.ctx, gba.session)
 }
 
 func (gba *GeneratorBotAPI) GetUser() *UserAPI {
@@ -146,7 +151,7 @@ func (gba *GeneratorBotAPI) CreateBundle(options *deploy.CreateBundleOptions) (m
 		options.WorkspaceName = gba.GetWorkspaceName()
 	}
 
-	bundle, err := deploy.CreateBundle(options, gba.connection, gba.session.RemoveWorkspaceContext())
+	bundle, err := deploy.CreateBundle(gba.ctx, options, gba.connection, gba.session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +175,7 @@ func (gba *GeneratorBotAPI) CreateSite(options *deploy.CreateSiteOptions) (map[s
 		options.AppName = gba.GetAppName()
 	}
 
-	site, err := deploy.CreateSite(options, gba.connection, gba.session.RemoveWorkspaceContext())
+	site, err := deploy.CreateSite(gba.ctx, options, gba.connection, gba.session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +191,7 @@ func (gba *GeneratorBotAPI) CreateUser(options *deploy.CreateUserOptions) (map[s
 	if options == nil {
 		return nil, errors.New("you must provide options to the create user api")
 	}
-	_, err := deploy.CreateUser(options, gba.connection, gba.session.RemoveWorkspaceContext())
+	_, err := deploy.CreateUser(gba.ctx, options, gba.connection, gba.session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +228,11 @@ func (gba *GeneratorBotAPI) GeneratePassword() (string, error) {
 }
 
 func (gba *GeneratorBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
-	return botCall(botKey, params, gba.session, gba.connection)
+	return botCall(gba.ctx, botKey, params, gba.session, gba.connection)
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]any) error {
-	_, err := datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	_, err := datasource.CallGeneratorBot(gba.ctx, gba.create, namespace, name, params, gba.connection, gba.session)
 	return err
 }
 
@@ -237,7 +242,7 @@ func (gba *GeneratorBotAPI) RunGenerators(generators []GeneratorBotOptions) erro
 	mu := sync.Mutex{}
 	for _, generator := range generators {
 		eg.Go(func() error {
-			_, err := datasource.CallGeneratorBot(func(s string) (io.WriteCloser, error) {
+			_, err := datasource.CallGeneratorBot(gba.ctx, func(s string) (io.WriteCloser, error) {
 				buf := &bytes.Buffer{}
 				mu.Lock()
 				creates[s] = buf
@@ -271,7 +276,7 @@ func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOpt
 	results := []any{}
 	for _, action := range actions {
 		eg.Go(func() error {
-			result, err := runIntegrationAction(action.IntegrationID, action.Action, action.Options, gba.session.RemoveWorkspaceContext(), gba.connection)
+			result, err := runIntegrationAction(gba.ctx, action.IntegrationID, action.Action, action.Options, gba.session.RemoveWorkspaceContext(), gba.connection)
 			if err != nil {
 				return err
 			}
@@ -287,12 +292,12 @@ func (gba *GeneratorBotAPI) RunIntegrationActions(actions []IntegrationActionOpt
 }
 
 func (gba *GeneratorBotAPI) RunIntegrationAction(integrationID string, action string, options any) (any, error) {
-	return runIntegrationAction(integrationID, action, options, gba.session.RemoveWorkspaceContext(), gba.connection)
+	return runIntegrationAction(gba.ctx, integrationID, action, options, gba.session.RemoveWorkspaceContext(), gba.connection)
 }
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the Bot.
-	r, _, err := bundle.GetItemAttachment(gba.session.Context(), gba.bot, templateFile, gba.session, gba.connection)
+	r, _, err := bundle.GetItemAttachment(gba.ctx, gba.bot, templateFile, gba.session, gba.connection)
 	if err != nil {
 		return "", err
 	}
@@ -370,11 +375,11 @@ func (gba *GeneratorBotAPI) GenerateBase64File(filename string, content string) 
 }
 
 func (gba *GeneratorBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, gba.session, gba.connection, nil)
+	return botLoad(gba.ctx, request, gba.session, gba.connection, nil)
 }
 
 func (gba *GeneratorBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions, session *sess.Session, connection wire.Connection) (*wire.Collection, error) {
-	return botSave(collection, changes, options, gba.session, gba.connection, nil)
+	return botSave(gba.ctx, collection, changes, options, gba.session, gba.connection, nil)
 }
 
 func performYamlMerge(templateString string, params map[string]any) (*bytes.Buffer, error) {

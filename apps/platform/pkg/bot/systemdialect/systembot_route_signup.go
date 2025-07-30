@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -9,6 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runSignupRouteBot(route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
-	return routing.GetSignupRoute(session)
+func runSignupRouteBot(ctx context.Context, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	return routing.GetSignupRoute(ctx, session)
 }

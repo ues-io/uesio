@@ -8,14 +8,13 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/go-chi/traceid"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/exceptions"
 )
 
-func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
+func GetUserFromAuthToken(ctx context.Context, token string, site *meta.Site) (*meta.User, error) {
 	// Split the token on the ":" character
 	cutToken, ok := strings.CutPrefix(token, "ues_")
 	if !ok {
@@ -24,8 +23,8 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 	id := cutToken[:8]
 	key := cutToken[8:]
 
-	adminSession := sess.GetAnonSession(traceid.NewContext(context.Background()), site)
-	loginmethod, err := GetLoginMethod(id, "uesio/core.apikey", nil, adminSession)
+	adminSession := sess.GetAnonSession(site)
+	loginmethod, err := GetLoginMethod(ctx, id, "uesio/core.apikey", nil, adminSession)
 	if err != nil || loginmethod == nil {
 		return nil, exceptions.NewBadRequestException("the api key you are trying to log in with does not exist", nil)
 	}
@@ -34,20 +33,20 @@ func GetUserFromAuthToken(token string, site *meta.Site) (*meta.User, error) {
 		return nil, exceptions.NewUnauthorizedException("the api key you are trying to log in with is invalid")
 	}
 
-	return GetUserByID(loginmethod.User.ID, adminSession, nil)
+	return GetUserByID(ctx, loginmethod.User.ID, adminSession, nil)
 }
 
 func GetSessionFromUser(ctx context.Context, user *meta.User, site *meta.Site, token string) (*sess.Session, error) {
-	s := sess.NewWithAuthToken(ctx, user, site, token)
-	return s, HydrateUserPermissions(user, s)
+	s := sess.NewWithAuthToken(user, site, token)
+	return s, HydrateUserPermissions(ctx, user, s)
 }
 
-func HydrateUserPermissions(user *meta.User, session *sess.Session) error {
+func HydrateUserPermissions(ctx context.Context, user *meta.User, session *sess.Session) error {
 	profileKey := user.Profile
 	if profileKey == "" {
 		return errors.New("no profile found in session")
 	}
-	profile, err := datasource.LoadAndHydrateProfile(profileKey, session)
+	profile, err := datasource.LoadAndHydrateProfile(ctx, profileKey, session)
 	if err != nil {
 		return fmt.Errorf("error loading profile: %s : %w", profileKey, err)
 	}
@@ -56,7 +55,7 @@ func HydrateUserPermissions(user *meta.User, session *sess.Session) error {
 	return nil
 }
 
-func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
+func GetCachedUserByID(ctx context.Context, userid string, site *meta.Site) (*meta.User, error) {
 
 	// Get Cache site info for the host
 	cachedUser, ok := getUserCache(userid, site)
@@ -64,9 +63,9 @@ func GetCachedUserByID(userid string, site *meta.Site) (*meta.User, error) {
 		return cachedUser, nil
 	}
 
-	s := sess.GetAnonSession(traceid.NewContext(context.Background()), site)
+	s := sess.GetAnonSession(site)
 
-	user, err := GetUserWithPictureByID(userid, s, nil)
+	user, err := GetUserWithPictureByID(ctx, userid, s, nil)
 	if err != nil {
 		return nil, err
 	}

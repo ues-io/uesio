@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
@@ -20,7 +22,7 @@ func getTotal(change *wire.ChangeItem) (int64, error) {
 	return oldTotal + newTotal, nil
 }
 
-func runUsageBeforeSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUsageBeforeSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	return request.LoopChanges(func(change *wire.ChangeItem) error {
 		total, err := getTotal(change)
 		if err != nil {

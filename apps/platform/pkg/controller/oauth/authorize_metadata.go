@@ -20,7 +20,7 @@ func GetRedirectMetadata(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	integrationName := fmt.Sprintf("%s.%s", vars["namespace"], vars["name"])
 	session := middleware.GetSession(r)
-	integrationConnection, err := datasource.GetIntegrationConnection(integrationName, session, nil)
+	integrationConnection, err := datasource.GetIntegrationConnection(r.Context(), integrationName, session, nil)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("invalid integration", err))
 		return

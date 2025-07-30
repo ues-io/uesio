@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -11,6 +12,7 @@ import (
 )
 
 func getCascadeDeletes(
+	ctx context.Context,
 	op *wire.SaveOp,
 	connection wire.Connection,
 	session *sess.Session,
@@ -65,7 +67,7 @@ func getCascadeDeletes(
 			Params: op.Params,
 		}
 
-		versionSession, err := EnterVersionContext(field.Namespace, session, nil)
+		versionSession, err := EnterVersionContext(ctx, field.Namespace, session, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +75,7 @@ func getCascadeDeletes(
 		// Check for metadata, if it does not exist, go get it.
 		_, err = metadata.GetCollection(referencedCollection)
 		if err != nil {
-			err := GetMetadataForLoad(idLoadOp, metadata, nil, versionSession, connection)
+			err := GetMetadataForLoad(ctx, idLoadOp, metadata, nil, versionSession, connection)
 			if err != nil {
 				return nil, err
 			}
@@ -81,7 +83,7 @@ func getCascadeDeletes(
 
 		idLoadOp.AttachMetadataCache(metadata)
 
-		err = connection.Load(session.Context(), idLoadOp, versionSession)
+		err = connection.Load(ctx, idLoadOp, versionSession)
 		if err != nil {
 			return nil, fmt.Errorf("cascade delete error: %w", err)
 		}
@@ -116,13 +118,13 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func performCascadeDeletes(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Perform cascade deletes as an Admin to make sure we find all the records we need to
 	// and to avoid unnecessary security logic
 	adminSession := GetSiteAdminSession(session)
 
-	deletes, err := getCascadeDeletes(op, connection, adminSession)
+	deletes, err := getCascadeDeletes(ctx, op, connection, adminSession)
 	if err != nil {
 		return err
 	}
@@ -145,5 +147,5 @@ func performCascadeDeletes(op *wire.SaveOp, connection wire.Connection, session 
 			})
 		}
 	}
-	return SaveWithOptions(saves, adminSession, NewSaveOptions(connection, nil))
+	return SaveWithOptions(ctx, saves, adminSession, NewSaveOptions(connection, nil))
 }

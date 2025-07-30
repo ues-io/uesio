@@ -31,7 +31,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = auth.ResetPassword(session.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
+	_, err = auth.ResetPassword(r.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
@@ -53,7 +53,7 @@ func ConfirmResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.ConfirmResetPassword(session.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
+	user, err := auth.ConfirmResetPassword(r.Context(), getAuthSourceID(mux.Vars(r)), payload, site)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

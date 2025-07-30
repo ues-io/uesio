@@ -366,7 +366,7 @@ func (b *FileBundleStoreConnection) GetBundleZip(ctx context.Context, writer io.
 	if b.ReadOnly {
 		return errors.New("tried to get bundle zip in read only bundle store")
 	}
-	session := sess.GetStudioAnonSession(ctx)
+	session := sess.GetStudioAnonSession()
 
 	app := b.Namespace
 	version := b.Version
@@ -388,6 +388,7 @@ func (b *FileBundleStoreConnection) GetBundleZip(ctx context.Context, writer io.
 
 	var bundle meta.Bundle
 	if err := datasource.PlatformLoadOne(
+		ctx,
 		&bundle,
 		&datasource.PlatformLoadOptions{
 			Fields: []wire.LoadRequestField{

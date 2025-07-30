@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -12,6 +13,7 @@ import (
 )
 
 func LoadLooper(
+	ctx context.Context,
 	connection wire.Connection,
 	collectionName string,
 	idMap wire.LocatorMap,
@@ -52,7 +54,7 @@ func LoadLooper(
 
 	op.AttachMetadataCache(metadata)
 
-	err := connection.Load(session.Context(), op, session)
+	err := connection.Load(ctx, op, session)
 	if err != nil {
 		return err
 	}
@@ -96,6 +98,7 @@ type ReferenceOptions struct {
 }
 
 func HandleReferences(
+	ctx context.Context,
 	connection wire.Connection,
 	referencedCollections wire.ReferenceRegistry,
 	metadata *wire.MetadataCache,
@@ -141,7 +144,7 @@ func HandleReferences(
 
 		ref.AddFields(refFields)
 
-		err = LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+		err = LoadLooper(ctx, connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 			// This is a weird situation.
 			// It means we found a value that we didn't ask for.
@@ -212,6 +215,7 @@ func HandleReferences(
 }
 
 func HandleMultiCollectionReferences(
+	ctx context.Context,
 	connection wire.Connection,
 	referencedCollections wire.ReferenceRegistry,
 	metadata *wire.MetadataCache,
@@ -241,7 +245,7 @@ func HandleMultiCollectionReferences(
 		},
 	})
 
-	err := LoadLooper(connection, constant.CommonCollection, common.IDMap, common.Fields, common.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
+	err := LoadLooper(ctx, connection, constant.CommonCollection, common.IDMap, common.Fields, common.GetMatchField(), metadata, session, func(refItem meta.Item, matchIndexes []wire.ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.
@@ -291,5 +295,5 @@ func HandleMultiCollectionReferences(
 		}
 	}
 
-	return multiCollectionsRefs.Load(metadata, session, nil)
+	return multiCollectionsRefs.Load(ctx, metadata, session, nil)
 }

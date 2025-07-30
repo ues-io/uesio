@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,7 +20,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAddExternalBundleListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func runAddExternalBundleListenerBot(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	appID, err := param.GetRequiredString(params, "app")
 	if err != nil {
@@ -39,7 +40,7 @@ func runAddExternalBundleListenerBot(params map[string]any, connection wire.Conn
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to install bundles")
 	}
 
-	bundleStoreBaseUrl, err := configstore.GetValue("uesio/studio.external_bundle_store_base_url", session)
+	bundleStoreBaseUrl, err := configstore.GetValue(ctx, "uesio/studio.external_bundle_store_base_url", session)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +55,7 @@ func runAddExternalBundleListenerBot(params map[string]any, connection wire.Conn
 		return nil, err
 	}
 
-	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func runAddExternalBundleListenerBot(params map[string]any, connection wire.Conn
 		return nil, err
 	}
 
-	err = deploy.CreateBundleFromData(body, newBundle, connection, session)
+	err = deploy.CreateBundleFromData(ctx, body, newBundle, connection, session)
 	if err != nil {
 		return nil, err
 	}

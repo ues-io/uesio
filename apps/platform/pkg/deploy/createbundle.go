@@ -2,6 +2,7 @@ package deploy
 
 import (
 	"bytes"
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -69,7 +70,7 @@ func NewCreateBundleOptions(params map[string]any) (*CreateBundleOptions, error)
 	}, nil
 }
 
-func CreateBundle(options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (*meta.Bundle, error) {
+func CreateBundle(ctx context.Context, options *CreateBundleOptions, connection wire.Connection, session *sess.Session) (*meta.Bundle, error) {
 
 	if options == nil {
 		return nil, errors.New("invalid create options")
@@ -86,18 +87,19 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 		return nil, exceptions.NewForbiddenException("you must be a workspace admin to create bundles")
 	}
 
-	app, err := datasource.QueryAppForWrite(appName, commonfields.UniqueKey, session, connection)
+	app, err := datasource.QueryAppForWrite(ctx, appName, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
-	workspace, err := datasource.QueryWorkspaceForWrite(appName+":"+workspaceName, commonfields.UniqueKey, session, connection)
+	workspace, err := datasource.QueryWorkspaceForWrite(ctx, appName+":"+workspaceName, commonfields.UniqueKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
 	var bundles meta.BundleCollection
 	if err = datasource.PlatformLoad(
+		ctx,
 		&bundles,
 		&datasource.PlatformLoadOptions{
 			BatchSize: 1,
@@ -154,12 +156,12 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 	// so that we can easily download everything when needed rather than having to get the individual bundle files.
 	buf := new(bytes.Buffer)
 
-	err = source.GetBundleZip(session.Context(), buf, nil)
+	err = source.GetBundleZip(ctx, buf, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = CreateBundleFromData(buf.Bytes(), bundle, connection, session)
+	err = CreateBundleFromData(ctx, buf.Bytes(), bundle, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -168,9 +170,9 @@ func CreateBundle(options *CreateBundleOptions, connection wire.Connection, sess
 
 }
 
-func CreateBundleFromData(data []byte, bundle *meta.Bundle, connection wire.Connection, session *sess.Session) error {
+func CreateBundleFromData(ctx context.Context, data []byte, bundle *meta.Bundle, connection wire.Connection, session *sess.Session) error {
 
-	if err := datasource.PlatformSaveOne(bundle, nil, connection, session); err != nil {
+	if err := datasource.PlatformSaveOne(ctx, bundle, nil, connection, session); err != nil {
 		return err
 	}
 
@@ -182,12 +184,12 @@ func CreateBundleFromData(data []byte, bundle *meta.Bundle, connection wire.Conn
 		return err
 	}
 
-	err = dest.SetBundleZip(session.Context(), bytes.NewReader(data), int64(len(data)))
+	err = dest.SetBundleZip(ctx, bytes.NewReader(data), int64(len(data)))
 	if err != nil {
 		return err
 	}
 
-	if _, err = filesource.Upload(session.Context(), []*filesource.FileUploadOp{
+	if _, err = filesource.Upload(ctx, []*filesource.FileUploadOp{
 		{
 			Data:         bytes.NewReader(data),
 			Path:         bundle.GetVersionString() + ".zip",

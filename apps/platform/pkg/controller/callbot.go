@@ -26,7 +26,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	returnParams, err := datasource.CallListenerBotInTransaction(namespace, name, params, session)
+	returnParams, err := datasource.CallListenerBotInTransaction(r.Context(), namespace, name, params, session)
 
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)

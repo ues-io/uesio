@@ -21,7 +21,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	route, err := routing.GetLoginRoute(session)
+	route, err := routing.GetLoginRoute(r.Context(), session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return

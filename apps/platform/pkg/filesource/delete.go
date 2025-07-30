@@ -14,6 +14,7 @@ import (
 func Delete(ctx context.Context, userFileID string, session *sess.Session) error {
 	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
+		ctx,
 		&userFile,
 		&datasource.PlatformLoadOptions{
 			Conditions: []wire.LoadRequestCondition{
@@ -34,7 +35,7 @@ func Delete(ctx context.Context, userFileID string, session *sess.Session) error
 	fieldID := userFile.FieldID
 
 	metadataResponse := &wire.MetadataCache{}
-	err = datasource.GetMetadataResponse(metadataResponse, collectionID, fieldID, session)
+	err = datasource.GetMetadataResponse(ctx, metadataResponse, collectionID, fieldID, session)
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,7 @@ func Delete(ctx context.Context, userFileID string, session *sess.Session) error
 		return err
 	}
 
-	err = datasource.PlatformDeleteOne(&userFile, nil, session)
+	err = datasource.PlatformDeleteOne(ctx, &userFile, nil, session)
 	if err != nil {
 		return err
 	}
@@ -55,7 +56,7 @@ func Delete(ctx context.Context, userFileID string, session *sess.Session) error
 			return errors.New("can only delete files attached to FILE fields")
 		}
 
-		err = datasource.Save([]datasource.SaveRequest{
+		err = datasource.Save(ctx, []datasource.SaveRequest{
 			{
 				Collection: collectionID,
 				Wire:       "filefieldupdate",

@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -20,7 +21,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func GetRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
+func GetRouteFromKey(ctx context.Context, key string, session *sess.Session) (*meta.Route, error) {
 	if key == "" {
 		return nil, nil
 	}
@@ -28,7 +29,7 @@ func GetRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	if err != nil {
 		return nil, exceptions.NewNotFoundException(err.Error())
 	}
-	err = bundle.Load(session.Context(), route, nil, session, nil)
+	err = bundle.Load(ctx, route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +37,7 @@ func GetRouteFromKey(key string, session *sess.Session) (*meta.Route, error) {
 	return route, nil
 }
 
-func GetUserHomeRoute(user *meta.User, session *sess.Session) (*meta.Route, error) {
+func GetUserHomeRoute(ctx context.Context, user *meta.User, session *sess.Session) (*meta.Route, error) {
 	redirectKey := session.GetHomeRoute()
 	profile := user.ProfileRef
 	if profile.HomeRoute != "" {
@@ -45,19 +46,19 @@ func GetUserHomeRoute(user *meta.User, session *sess.Session) (*meta.Route, erro
 	if redirectKey == "" {
 		return nil, exceptions.NewNotFoundException("no home route found for user")
 	}
-	return GetRouteFromKey(redirectKey, session)
+	return GetRouteFromKey(ctx, redirectKey, session)
 }
 
-func GetHomeRoute(session *sess.Session) (*meta.Route, error) {
-	return GetRouteFromKey(session.GetHomeRoute(), session)
+func GetHomeRoute(ctx context.Context, session *sess.Session) (*meta.Route, error) {
+	return GetRouteFromKey(ctx, session.GetHomeRoute(), session)
 }
 
-func GetSignupRoute(session *sess.Session) (*meta.Route, error) {
-	return GetRouteFromKey(session.GetSignupRoute(), session)
+func GetSignupRoute(ctx context.Context, session *sess.Session) (*meta.Route, error) {
+	return GetRouteFromKey(ctx, session.GetSignupRoute(), session)
 }
 
-func GetLoginRoute(session *sess.Session) (*meta.Route, error) {
-	return GetRouteFromKey(session.GetLoginRoute(), session)
+func GetLoginRoute(ctx context.Context, session *sess.Session) (*meta.Route, error) {
+	return GetRouteFromKey(ctx, session.GetLoginRoute(), session)
 }
 
 func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
@@ -65,7 +66,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	var routes meta.RouteCollection
 
 	if path == "" {
-		homeRoute, err := GetHomeRoute(session)
+		homeRoute, err := GetHomeRoute(r.Context(), session)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +77,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	}
 
 	// TODO: Figure out why connection has to be nil
-	err := bundle.LoadAll(session.Context(), &routes, namespace, nil, session, nil)
+	err := bundle.LoadAll(r.Context(), &routes, namespace, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +134,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 	var routeAssignment *meta.RouteAssignment
 	var routeAssignments meta.RouteAssignmentCollection
 
-	err := bundle.LoadAllFromAny(session.Context(), &routeAssignments, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(r.Context(), &routeAssignments, &bundlestore.GetAllItemsOptions{
 		Conditions: map[string]any{"uesio/studio.collection": namespace + "." + collection},
 	}, session, nil)
 	if err != nil {
@@ -156,7 +157,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 		return nil, err
 	}
 
-	err = bundle.Load(session.Context(), route, nil, session, nil)
+	err = bundle.Load(r.Context(), route, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func GetRouteFromAssignment(r *http.Request, namespace, collection string, viewt
 func GetRouteByKey(r *http.Request, namespace, routeName string, session *sess.Session, connection wire.Connection) (*meta.Route, error) {
 	route := meta.NewBaseRoute(namespace, routeName)
 	// TODO: connection should not have to be nil
-	err := bundle.Load(session.Context(), route, nil, session, nil)
+	err := bundle.Load(r.Context(), route, nil, session, nil)
 	if err != nil || route == nil {
 		return nil, fmt.Errorf("unable to load route '%s.%s': %w", namespace, routeName, err)
 	}

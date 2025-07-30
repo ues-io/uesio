@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"mime"
 	"path"
@@ -39,7 +40,7 @@ func extractConditionByType(conditions []wire.LoadRequestCondition, conditionTyp
 	return nil
 }
 
-func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runCoreMetadataLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	newCollection := NewNamespaceSwapCollection("uesio/core", "uesio/studio")
 
@@ -67,12 +68,12 @@ func runCoreMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session
 		}
 	}
 
-	err := datasource.GetMetadataForLoad(newOp, studioMetadata, nil, sess.GetStudioAnonSession(session.Context()), connection)
+	err := datasource.GetMetadataForLoad(ctx, newOp, studioMetadata, nil, sess.GetStudioAnonSession(), connection)
 	if err != nil {
 		return err
 	}
 
-	err = runAllMetadataLoadBot(newOp, connection, session)
+	err = runAllMetadataLoadBot(ctx, newOp, connection, session)
 	if err != nil {
 		return err
 	}
@@ -116,22 +117,22 @@ const (
 	attachmentsField   = "uesio/core.attachments"
 )
 
-func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runStudioMetadataLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	allMetadataCondition := extractConditionByField(op.Conditions, allMetadataField)
 
 	if allMetadataCondition != nil && allMetadataCondition.Value == true {
-		inContextSession, err := datasource.GetContextSessionFromParams(op.Params, connection, session)
+		inContextSession, err := datasource.GetContextSessionFromParams(ctx, op.Params, connection, session)
 		if err != nil {
 			return err
 		}
-		return runAllMetadataLoadBot(op, connection, inContextSession)
+		return runAllMetadataLoadBot(ctx, op, connection, inContextSession)
 	}
 
 	// Get the workspace ID from params, and verify that the user performing the query
 	// has write access to the requested workspace
 
-	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(ctx, op.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {
 		return wsAccessResult.Error()
 	}
@@ -150,7 +151,7 @@ func runStudioMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		})
 	}
 
-	return datasource.LoadOp(op, connection, session)
+	return datasource.LoadOp(ctx, op, connection, session)
 
 }
 
@@ -254,7 +255,7 @@ func setField(fieldName string, from, to meta.Item) error {
 	return to.SetField(fieldName, value)
 }
 
-func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runAllMetadataLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	itemCondition := extractConditionByField(op.Conditions, itemField)
 	tagCondition := extractConditionByField(op.Conditions, tagField)
@@ -336,7 +337,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 			return err
 		}
 		group.AddItem(item)
-		err = bundle.Load(session.Context(), item, &bundlestore.GetItemOptions{
+		err = bundle.Load(ctx, item, &bundlestore.GetItemOptions{
 			IncludeUserFields: true,
 		}, session, connection)
 		if err != nil {
@@ -400,7 +401,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		}
 
 		if !onlyLoadCommonFields {
-			err = bundle.LoadAllFromNamespaces(session.Context(), namespaces, group, &bundlestore.GetAllItemsOptions{
+			err = bundle.LoadAllFromNamespaces(ctx, namespaces, group, &bundlestore.GetAllItemsOptions{
 				Conditions:        conditions,
 				IncludeUserFields: true,
 				Fields:            requestFields,
@@ -412,7 +413,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 
 	}
 
-	appData, err := datasource.GetAppData(session.Context(), namespaces, connection)
+	appData, err := datasource.GetAppData(ctx, namespaces, connection)
 	if err != nil {
 		return err
 	}
@@ -492,7 +493,7 @@ func runAllMetadataLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 				// Also get attachments
 				attachableItem, isAttachableItem := item.(meta.AttachableItem)
 				if isAttachableItem {
-					pathInfos, err := bundle.GetAttachmentPaths(session.Context(), attachableItem, session, connection)
+					pathInfos, err := bundle.GetAttachmentPaths(ctx, attachableItem, session, connection)
 					if err != nil {
 						return err
 					}

@@ -153,28 +153,28 @@ func (c *Connection) getSPInternal(requestURL string) (*samlsp.Middleware, error
 
 }
 
-func (c *Connection) Login(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+func (c *Connection) Login(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot login", nil)
 }
-func (c *Connection) Signup(signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
+func (c *Connection) Signup(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, username string) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot sign up", nil)
 }
-func (c *Connection) ResetPassword(payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
+func (c *Connection) ResetPassword(ctx context.Context, payload auth.AuthRequest, authenticated bool) (*meta.LoginMethod, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) ConfirmResetPassword(payload auth.AuthRequest) (*meta.User, error) {
+func (c *Connection) ConfirmResetPassword(ctx context.Context, payload auth.AuthRequest) (*meta.User, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
-func (c *Connection) CreateLogin(signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
+func (c *Connection) CreateLogin(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest, user *meta.User) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot create a login", nil)
 }
-func (c *Connection) ConfirmSignUp(signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
+func (c *Connection) ConfirmSignUp(ctx context.Context, signupMethod *meta.SignupMethod, payload auth.AuthRequest) error {
 	return exceptions.NewBadRequestException("SAML login: unfortunately you cannot change the password", nil)
 }
 func (c *Connection) GetServiceProvider(r *http.Request) (*samlsp.Middleware, error) {
 	return c.getSP(r.Host)
 }
-func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.LoginResult, error) {
+func (c *Connection) LoginServiceProvider(ctx context.Context, assertion *saml.Assertion) (*auth.LoginResult, error) {
 	sess, err := samlsp.JWTSessionCodec{}.New(assertion)
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.Logi
 		return nil, errors.New("invalid session type")
 	}
 
-	user, loginMethod, err := auth.GetUserFromFederationID(c.authSource.GetKey(), claims.Subject, c.connection, c.session)
+	user, loginMethod, err := auth.GetUserFromFederationID(ctx, c.authSource.GetKey(), claims.Subject, c.connection, c.session)
 	if err != nil {
 		return nil, err
 	}
@@ -193,6 +193,6 @@ func (c *Connection) LoginServiceProvider(assertion *saml.Assertion) (*auth.Logi
 		PasswordReset: false,
 	}, nil
 }
-func (c *Connection) LoginCLI(loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
+func (c *Connection) LoginCLI(ctx context.Context, loginRequest auth.AuthRequest) (*auth.LoginResult, error) {
 	return nil, exceptions.NewBadRequestException("SAML login: cli login is not supported, please use browser", nil)
 }

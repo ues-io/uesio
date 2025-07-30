@@ -1,22 +1,25 @@
 package jsdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func NewRunIntegrationActionBotAPI(bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]any) *RunIntegrationActionBotAPI {
+func NewRunIntegrationActionBotAPI(ctx context.Context, bot *meta.Bot, integrationConnection *wire.IntegrationConnection, actionName string, params map[string]any) *RunIntegrationActionBotAPI {
 	return &RunIntegrationActionBotAPI{
 		actionName: actionName,
-		LogApi:     NewBotLogAPI(bot, integrationConnection.Context()),
-		Http:       NewBotHttpAPI(integrationConnection),
+		LogApi:     NewBotLogAPI(ctx, bot),
+		Http:       NewBotHttpAPI(ctx, integrationConnection),
 		Params: &ParamsAPI{
 			Params: params,
 		},
 		Results:               map[string]any{},
 		integrationConnection: integrationConnection,
+		ctx:                   ctx,
 	}
 }
 
@@ -28,6 +31,9 @@ type RunIntegrationActionBotAPI struct {
 	Params                *ParamsAPI `bot:"params"`
 	Results               map[string]any
 	Errors                []string
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 }
 
 func (b *RunIntegrationActionBotAPI) AddError(error string) {
@@ -50,7 +56,7 @@ func (b *RunIntegrationActionBotAPI) GetCredentials() map[string]any {
 }
 
 func (b *RunIntegrationActionBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValue(configValueKey, datasource.GetSiteAdminSession(b.integrationConnection.GetSession()))
+	return configstore.GetValue(b.ctx, configValueKey, datasource.GetSiteAdminSession(b.integrationConnection.GetSession()))
 }
 
 func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {
@@ -63,7 +69,7 @@ func (b *RunIntegrationActionBotAPI) GetIntegration() *IntegrationMetadata {
 }
 
 func (b *RunIntegrationActionBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(b.integrationConnection.GetSession())
+	return NewSessionAPI(b.ctx, b.integrationConnection.GetSession())
 }
 
 func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
@@ -71,17 +77,17 @@ func (b *RunIntegrationActionBotAPI) GetUser() *UserAPI {
 }
 
 func (b *RunIntegrationActionBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
-	return botCall(botKey, params, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
+	return botCall(b.ctx, botKey, params, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection())
 }
 
 func (b *RunIntegrationActionBotAPI) Save(collection string, changes wire.Collection, options *wire.SaveOptions) (*wire.Collection, error) {
-	return botSave(collection, changes, options, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
+	return botSave(b.ctx, collection, changes, options, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (b *RunIntegrationActionBotAPI) Delete(collection string, deletes wire.Collection) error {
-	return botDelete(collection, deletes, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
+	return botDelete(b.ctx, collection, deletes, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (b *RunIntegrationActionBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
+	return botLoad(b.ctx, request, b.integrationConnection.GetSession(), b.integrationConnection.GetPlatformConnection(), nil)
 }

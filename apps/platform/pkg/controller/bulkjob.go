@@ -25,7 +25,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	spec := meta.JobSpec(specRequest)
-	jobID, err := bulk.NewJob(&spec, session)
+	jobID, err := bulk.NewJob(r.Context(), &spec, session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("failed creating new job", err))
 		return

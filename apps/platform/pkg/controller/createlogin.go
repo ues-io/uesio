@@ -17,12 +17,12 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	signupMethod, err := auth.GetSignupMethod(getSignupMethodID(mux.Vars(r)), session)
+	signupMethod, err := auth.GetSignupMethod(r.Context(), getSignupMethodID(mux.Vars(r)), session)
 	if err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}
-	if err = auth.CreateLogin(signupMethod, payload, session); err != nil {
+	if err = auth.CreateLogin(r.Context(), signupMethod, payload, session); err != nil {
 		ctlutil.HandleError(r.Context(), w, err)
 		return
 	}

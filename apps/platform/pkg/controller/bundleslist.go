@@ -29,7 +29,7 @@ func BundlesList(w http.ResponseWriter, r *http.Request) {
 
 	// fetch uesio/studio.bundlelisting records that are published and uesio approved
 	bundleListings := &wire.Collection{}
-	err := datasource.LoadWithError(&wire.LoadOp{
+	err := datasource.LoadWithError(r.Context(), &wire.LoadOp{
 		CollectionName: "uesio/studio.bundlelisting",
 		Collection:     bundleListings,
 		Query:          true,

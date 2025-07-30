@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -287,7 +288,7 @@ func getFaviconVersion(site *meta.Site) string {
 	}
 }
 
-func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta *preload.PreloadMetadata, buildMode bool, session *sess.Session) {
+func ExecuteIndexTemplate(ctx context.Context, w http.ResponseWriter, route *meta.Route, preloadmeta *preload.PreloadMetadata, buildMode bool, session *sess.Session) {
 
 	// #2783 Prevent 3rd party sites from iframing Uesio
 	// Add a content security policy header to prevent any other sites from iframing this site
@@ -300,7 +301,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 
 	routingMergeData, err := GetRoutingMergeData(route, preloadmeta, session)
 	if err != nil {
-		ctlutil.HandleError(session.Context(), w, fmt.Errorf("error getting route merge data: %w", err))
+		ctlutil.HandleError(ctx, w, fmt.Errorf("error getting route merge data: %w", err))
 		return
 	}
 
@@ -314,7 +315,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preloadmeta 
 	}
 
 	if err = indexTemplate.Execute(w, mergeData); err != nil {
-		ctlutil.HandleError(session.Context(), w, fmt.Errorf("error merging template: %w", err))
+		ctlutil.HandleError(ctx, w, fmt.Errorf("error merging template: %w", err))
 		return
 	}
 }

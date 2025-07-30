@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 
 	"slices"
@@ -68,7 +69,7 @@ func getAccessFields(collectionMetadata *wire.CollectionMetadata, metadata *wire
 
 }
 
-func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func loadInAccessFieldData(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	referencedCollections := wire.ReferenceRegistry{}
 
 	metadata, err := op.GetMetadata()
@@ -117,7 +118,7 @@ func loadInAccessFieldData(op *wire.SaveOp, connection wire.Connection, session 
 		return err
 	}
 
-	return HandleReferences(connection, referencedCollections, metadata, session, &ReferenceOptions{
+	return HandleReferences(ctx, connection, referencedCollections, metadata, session, &ReferenceOptions{
 		MergeItems: true,
 	})
 }
@@ -248,7 +249,7 @@ func handleAccessFieldChange(change *wire.ChangeItem, tokenFuncs []tokenFunc, me
 	return nil
 }
 
-func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func GenerateRecordChallengeTokens(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionMetadata, err := op.GetCollectionMetadata()
 	if err != nil {
@@ -277,7 +278,7 @@ func GenerateRecordChallengeTokens(op *wire.SaveOp, connection wire.Connection, 
 			return nil
 		}
 
-		err := loadInAccessFieldData(op, connection, session)
+		err := loadInAccessFieldData(ctx, op, connection, session)
 		if err != nil {
 			return err
 		}

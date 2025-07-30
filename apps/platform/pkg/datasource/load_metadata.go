@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -80,6 +81,7 @@ func getFakeAggregateMetadata(requestField wire.LoadRequestField, collectionMeta
 }
 
 func GetMetadataForLoad(
+	ctx context.Context,
 	op *wire.LoadOp,
 	metadataResponse *wire.MetadataCache,
 	ops []*wire.LoadOp,
@@ -95,7 +97,7 @@ func GetMetadataForLoad(
 		return err
 	}
 
-	err = metadataRequest.Load(metadataResponse, session, connection)
+	err = metadataRequest.Load(ctx, metadataResponse, session, connection)
 	if err != nil {
 
 		return err
@@ -157,7 +159,7 @@ func GetMetadataForLoad(
 			}
 		}
 		if fieldMetadata.IsFormula && fieldMetadata.FormulaMetadata != nil {
-			fieldDeps, err := formula.GetFormulaFields(session.Context(), fieldMetadata.FormulaMetadata.Expression)
+			fieldDeps, err := formula.GetFormulaFields(ctx, fieldMetadata.FormulaMetadata.Expression)
 			if err != nil {
 				return err
 			}
@@ -212,6 +214,7 @@ func getMetadataForViewOnlyField(
 }
 
 func GetMetadataForViewOnlyWire(
+	ctx context.Context,
 	op *wire.LoadOp,
 	metadataResponse *wire.MetadataCache,
 	connection wire.Connection,
@@ -221,7 +224,7 @@ func GetMetadataForViewOnlyWire(
 	for _, requestField := range op.Fields {
 		getMetadataForViewOnlyField(requestField, metadataRequest)
 	}
-	return metadataRequest.Load(metadataResponse, session, connection)
+	return metadataRequest.Load(ctx, metadataResponse, session, connection)
 }
 
 func getMetadataForOrderField(collectionKey string, fieldName string, metadataRequest *MetadataRequest, session *sess.Session) error {

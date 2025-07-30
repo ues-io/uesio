@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runFeatureFlagLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	var userID string
 	// Currently, this doesn't work for regular contexts
@@ -44,7 +45,7 @@ func runFeatureFlagLoadBot(op *wire.LoadOp, connection wire.Connection, session 
 		return errors.New("no user id provided to feature flag load")
 	}
 
-	featureFlags, err := featureflagstore.GetFeatureFlags(session, userID)
+	featureFlags, err := featureflagstore.GetFeatureFlags(ctx, session, userID)
 	if err != nil {
 		return fmt.Errorf("failed to get feature flags: %w", err)
 	}

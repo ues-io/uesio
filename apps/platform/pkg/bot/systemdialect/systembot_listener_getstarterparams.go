@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runGetStarterParamsBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func runGetStarterParamsBot(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	starterTemplate, ok := params["template"]
 	if !ok {
@@ -30,7 +31,7 @@ func runGetStarterParamsBot(params map[string]any, connection wire.Connection, s
 
 	// We should really not use the studio session to enter the version context here.
 	// This requires that studio have the starter template app installed. (This shouldn't be necessary)
-	versionSession, err := datasource.EnterVersionContext(starterApp, session, connection)
+	versionSession, err := datasource.EnterVersionContext(ctx, starterApp, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +42,7 @@ func runGetStarterParamsBot(params map[string]any, connection wire.Connection, s
 		return nil, err
 	}
 
-	botParams, err := bot.GetBotParams(generatorNamespace, generatorName, "GENERATOR", versionSession)
+	botParams, err := bot.GetBotParams(ctx, generatorNamespace, generatorName, "GENERATOR", versionSession)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,8 @@
 package bot
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -42,7 +44,7 @@ func GetParamResponse(params meta.BotParams) meta.BotParamsResponse {
 	return response
 }
 
-func GetBotParams(namespace, name, metadataType string, session *sess.Session) (meta.BotParamsResponse, error) {
+func GetBotParams(ctx context.Context, namespace, name, metadataType string, session *sess.Session) (meta.BotParamsResponse, error) {
 
 	if metadataType != "GENERATOR" && metadataType != "LISTENER" && metadataType != "RUNACTION" {
 		return nil, exceptions.NewBadRequestException("Wrong bot type: "+metadataType, nil)
@@ -58,7 +60,7 @@ func GetBotParams(namespace, name, metadataType string, session *sess.Session) (
 		robot = meta.NewRunActionBot(namespace, name)
 	}
 
-	err := bundle.Load(session.Context(), robot, nil, session, nil)
+	err := bundle.Load(ctx, robot, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

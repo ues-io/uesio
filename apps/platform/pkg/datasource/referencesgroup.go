@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -10,13 +11,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func loadData(op *wire.LoadOp, connection wire.Connection, session *sess.Session, index int) error {
+func loadData(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session, index int) error {
 
 	if index == adapt.MAX_ITER_REF_GROUP {
 		return errors.New("you have reached the maximum limit of reference group")
 	}
 
-	err := connection.Load(session.Context(), op, session)
+	err := connection.Load(ctx, op, session)
 	if err != nil {
 		return err
 	}
@@ -25,10 +26,11 @@ func loadData(op *wire.LoadOp, connection wire.Connection, session *sess.Session
 		return nil
 	}
 
-	return loadData(op, connection, session, index+1)
+	return loadData(ctx, op, connection, session, index+1)
 }
 
 func HandleReferencesGroup(
+	ctx context.Context,
 	connection wire.Connection,
 	collection meta.Group,
 	referencedGroupCollections wire.ReferenceGroupRegistry,
@@ -96,7 +98,7 @@ func HandleReferencesGroup(
 
 	for _, op := range ops {
 		op.AttachMetadataCache(metadata)
-		err := loadData(op, connection, session, 0)
+		err := loadData(ctx, op, connection, session, 0)
 		if err != nil {
 			return err
 		}

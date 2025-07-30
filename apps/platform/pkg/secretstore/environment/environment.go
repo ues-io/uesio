@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"context"
 	"errors"
 	"os"
 
@@ -24,7 +25,7 @@ var secretValues = map[string]string{
 	"uesio/core.db_database":            os.Getenv("UESIO_DB_DATABASE"),
 }
 
-func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStoreValue, error) {
+func (ss *SecretStore) Get(ctx context.Context, key string, session *sess.Session) (*meta.SecretStoreValue, error) {
 	value, ok := secretValues[key]
 	if !ok {
 		return nil, exceptions.NewNotFoundException("secret value not found: " + key)
@@ -35,10 +36,10 @@ func (ss *SecretStore) Get(key string, session *sess.Session) (*meta.SecretStore
 	}, nil
 }
 
-func (ss *SecretStore) Set(key, value string, session *sess.Session) error {
+func (ss *SecretStore) Set(ctx context.Context, key, value string, session *sess.Session) error {
 	return errors.New("you cannot set secret values in the environment store")
 }
 
-func (ss *SecretStore) Remove(key string, session *sess.Session) error {
+func (ss *SecretStore) Remove(ctx context.Context, key string, session *sess.Session) error {
 	return errors.New("you cannot remove secret values in the environment store")
 }

@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -49,10 +50,10 @@ var configValues = map[string]string{
 	"uesio/core.primary_domain":                   env.GetPrimaryDomain(),
 }
 
-func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
+func (cs *ConfigStore) Get(ctx context.Context, key string, session *sess.Session) (*meta.ConfigStoreValue, error) {
 	value, ok := configValues[key]
 	if !ok {
-		slog.DebugContext(session.Context(), "Config Value not found: "+key)
+		slog.DebugContext(ctx, "Config Value not found: "+key)
 		return nil, nil
 	}
 	return &meta.ConfigStoreValue{
@@ -61,10 +62,10 @@ func (cs *ConfigStore) Get(key string, session *sess.Session) (*meta.ConfigStore
 	}, nil
 }
 
-func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
+func (cs *ConfigStore) GetMany(ctx context.Context, keys []string, session *sess.Session) (*meta.ConfigStoreValueCollection, error) {
 	results := meta.ConfigStoreValueCollection{}
 	for _, key := range keys {
-		value, err := cs.Get(key, session)
+		value, err := cs.Get(ctx, key, session)
 		if err != nil {
 			return nil, err
 		}
@@ -73,10 +74,10 @@ func (cs *ConfigStore) GetMany(keys []string, session *sess.Session) (*meta.Conf
 	return &results, nil
 }
 
-func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
+func (cs *ConfigStore) Set(ctx context.Context, key, value string, session *sess.Session) error {
 	return errors.New("you cannot set config values in the environment store")
 }
 
-func (cs *ConfigStore) Remove(key string, session *sess.Session) error {
+func (cs *ConfigStore) Remove(ctx context.Context, key string, session *sess.Session) error {
 	return errors.New("you cannot remove config values from the environment store")
 }

@@ -19,8 +19,8 @@ type FileAdapter interface {
 
 var adapterMap = map[string]FileAdapter{}
 
-func GetFileAdapter(adapterType string, session *sess.Session) (FileAdapter, error) {
-	mergedType, err := configstore.Merge(adapterType, session)
+func GetFileAdapter(ctx context.Context, adapterType string, session *sess.Session) (FileAdapter, error) {
+	mergedType, err := configstore.Merge(ctx, adapterType, session)
 	if err != nil {
 		return nil, err
 	}
@@ -35,37 +35,37 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetFileConnection(fileSourceID string, session *sess.Session) (file.Connection, error) {
+func GetFileConnection(ctx context.Context, fileSourceID string, session *sess.Session) (file.Connection, error) {
 	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), fs, nil, session, nil)
+	err = bundle.Load(ctx, fs, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	// Enter into a version context to get these
 	// credentials as the datasource's namespace
-	versionSession, err := datasource.EnterVersionContext(fs.Namespace, session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, fs.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	fileAdapter, err := GetFileAdapter(fs.Type, versionSession)
+	fileAdapter, err := GetFileAdapter(ctx, fs.Type, versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	credentials, err := datasource.GetCredentials(fs.Credentials, versionSession)
+	credentials, err := datasource.GetCredentials(ctx, fs.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	mergedBucket, err := configstore.Merge(fs.Bucket, versionSession)
+	mergedBucket, err := configstore.Merge(ctx, fs.Bucket, versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	return fileAdapter.GetFileConnection(session.Context(), credentials, mergedBucket)
+	return fileAdapter.GetFileConnection(ctx, credentials, mergedBucket)
 }

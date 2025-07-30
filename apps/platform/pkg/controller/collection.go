@@ -31,7 +31,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 	}
 
 	metadataResponse := wire.MetadataCache{}
-	if err := collections.Load(&metadataResponse, session, nil); err != nil {
+	if err := collections.Load(r.Context(), &metadataResponse, session, nil); err != nil {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("unable to load collection metadata", err))
 		return
 	}

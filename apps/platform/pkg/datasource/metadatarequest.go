@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session, connection wire.Connection) error {
+func GetFullMetadataForCollection(ctx context.Context, metadataResponse *wire.MetadataCache, collectionID string, session *sess.Session, connection wire.Connection) error {
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
 			LoadAllFields:    true,
@@ -26,10 +26,10 @@ func GetFullMetadataForCollection(metadataResponse *wire.MetadataCache, collecti
 		return err
 	}
 
-	return collections.Load(metadataResponse, session, connection)
+	return collections.Load(ctx, metadataResponse, session, connection)
 }
 
-func GetMetadataResponse(metadataResponse *wire.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
+func GetMetadataResponse(ctx context.Context, metadataResponse *wire.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
 	collections := MetadataRequest{}
 
 	if fieldID != "" {
@@ -44,7 +44,7 @@ func GetMetadataResponse(metadataResponse *wire.MetadataCache, collectionID, fie
 		}
 	}
 
-	return collections.Load(metadataResponse, session, nil)
+	return collections.Load(ctx, metadataResponse, session, nil)
 
 }
 
@@ -390,7 +390,7 @@ func ProcessFieldsMetadata(ctx context.Context, fields map[string]*wire.FieldMet
 
 }
 
-func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
+func (mr *MetadataRequest) Load(ctx context.Context, metadataResponse *wire.MetadataCache, session *sess.Session, connection wire.Connection) error {
 	if mr.Options == nil {
 		mr.Options = &MetadataRequestOptions{}
 	}
@@ -403,7 +403,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 	}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
-		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
+		metadata, err := LoadCollectionMetadata(ctx, collectionKey, metadataResponse, session, connection)
 		if err != nil {
 			// Not having access to a collection is not the end of the world.
 			// Just don't get the metadata for it and continue.
@@ -414,7 +414,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 		}
 
 		if metadata.IsDynamic() || mr.Options.LoadAllFields {
-			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
+			err = LoadAllFieldsMetadata(ctx, collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
 			}
@@ -437,7 +437,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
 
-			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
+			err = LoadFieldsMetadata(ctx, fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
 				// Not having access to a field is not the end of the world.
 				// Just don't get the metadata for it and continue.
@@ -459,7 +459,7 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 			}
 		}
 
-		err = ProcessFieldsMetadata(session.Context(), metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
+		err = ProcessFieldsMetadata(ctx, metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
 		if err != nil {
 			return err
 		}
@@ -467,13 +467,13 @@ func (mr *MetadataRequest) Load(metadataResponse *wire.MetadataCache, session *s
 	}
 
 	for selectListKey := range mr.SelectLists {
-		if err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection); err != nil {
+		if err := LoadSelectListMetadata(ctx, selectListKey, metadataResponse, session, connection); err != nil {
 			return err
 		}
 	}
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(metadataResponse, session, connection)
+		return additionalRequests.Load(ctx, metadataResponse, session, connection)
 	}
 	return nil
 }

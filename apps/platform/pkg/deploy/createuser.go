@@ -1,6 +1,7 @@
 package deploy
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -71,7 +72,7 @@ func NewCreateUserOptions(siteID string, params map[string]any) (*CreateUserOpti
 	}, nil
 }
 
-func CreateUser(options *CreateUserOptions, connection wire.Connection, session *sess.Session) (*meta.User, error) {
+func CreateUser(ctx context.Context, options *CreateUserOptions, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 	if options == nil {
 		return nil, errors.New("invalid create options")
 	}
@@ -85,24 +86,24 @@ func CreateUser(options *CreateUserOptions, connection wire.Connection, session 
 		Type:      "PERSON",
 	}
 
-	siteAdminSession, err := datasource.AddSiteAdminContextByID(options.SiteID, session, connection)
+	siteAdminSession, err := datasource.AddSiteAdminContextByID(ctx, options.SiteID, session, connection)
 	if err != nil {
 		return nil, err
 	}
 
 	// Third, create the user.
-	err = datasource.PlatformSaveOne(user, nil, connection, siteAdminSession)
+	err = datasource.PlatformSaveOne(ctx, user, nil, connection, siteAdminSession)
 	if err != nil {
 		return nil, err
 	}
 
 	// Fourth, create a login method.
-	signupMethod, err := auth.GetSignupMethod(options.SignupMethod, siteAdminSession)
+	signupMethod, err := auth.GetSignupMethod(ctx, options.SignupMethod, siteAdminSession)
 	if err != nil {
 		return nil, err
 	}
 
-	err = auth.CreateLoginWithConnection(signupMethod, map[string]any{
+	err = auth.CreateLoginWithConnection(ctx, signupMethod, map[string]any{
 		"username":     options.Username,
 		"email":        options.Email,
 		"password":     options.Password,

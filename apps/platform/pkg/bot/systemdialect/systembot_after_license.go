@@ -1,6 +1,8 @@
 package systemdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/constant/commonfields"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/goutils"
@@ -20,7 +22,7 @@ func setLicenced(licensed map[string]bool, change *wire.ChangeItem) error {
 	return nil
 }
 
-func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runLicenseAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	licensePricingItemDeps := wire.Collection{}
 	visited := map[string]bool{}
@@ -62,6 +64,7 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 
 		var lptc meta.LicensePricingTemplateCollection
 		err = datasource.PlatformLoad(
+			ctx,
 			&lptc,
 			&datasource.PlatformLoadOptions{
 				Connection: connection,
@@ -105,6 +108,7 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 	// But first find the namespaces
 	var apps meta.AppCollection
 	err = datasource.PlatformLoad(
+		ctx,
 		&apps,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
@@ -134,7 +138,7 @@ func runLicenseAfterSaveBot(request *wire.SaveOp, connection wire.Connection, se
 		return nil
 	}
 
-	return datasource.SaveWithOptions([]datasource.SaveRequest{
+	return datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.licensepricingitem",
 			Wire:       "LicensePricingTemplatedWire",

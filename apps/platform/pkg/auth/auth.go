@@ -40,40 +40,40 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Login(AuthRequest) (*LoginResult, error)
-	GetServiceProvider(r *http.Request) (*samlsp.Middleware, error)
+	Login(context.Context, AuthRequest) (*LoginResult, error)
+	GetServiceProvider(*http.Request) (*samlsp.Middleware, error)
 	// Explicit method for assertion login vs just creating an AuthRequest and sending to Login because
 	// of the dynamic nature of our calls to "Login". In theory, it's all converted to strings so the type
 	// assertion to Assertion would fail but this ensures we only get Assertions from SP's that have validated
 	// them and not through any POST operation that might flow through /login.
-	LoginServiceProvider(*saml.Assertion) (*LoginResult, error)
-	LoginCLI(AuthRequest) (*LoginResult, error)
-	Signup(*meta.SignupMethod, AuthRequest, string) error
-	ConfirmSignUp(*meta.SignupMethod, AuthRequest) error
-	ResetPassword(AuthRequest, bool) (*meta.LoginMethod, error)
-	ConfirmResetPassword(AuthRequest) (*meta.User, error)
-	CreateLogin(*meta.SignupMethod, AuthRequest, *meta.User) error
+	LoginServiceProvider(context.Context, *saml.Assertion) (*LoginResult, error)
+	LoginCLI(context.Context, AuthRequest) (*LoginResult, error)
+	Signup(context.Context, *meta.SignupMethod, AuthRequest, string) error
+	ConfirmSignUp(context.Context, *meta.SignupMethod, AuthRequest) error
+	ResetPassword(context.Context, AuthRequest, bool) (*meta.LoginMethod, error)
+	ConfirmResetPassword(context.Context, AuthRequest) (*meta.User, error)
+	CreateLogin(context.Context, *meta.SignupMethod, AuthRequest, *meta.User) error
 }
 
-func GetAuthConnection(authSourceID string, connection wire.Connection, session *sess.Session) (AuthConnection, error) {
-	authSource, err := getAuthSource(authSourceID, session)
+func GetAuthConnection(ctx context.Context, authSourceID string, connection wire.Connection, session *sess.Session) (AuthConnection, error) {
+	authSource, err := getAuthSource(ctx, authSourceID, session)
 	if err != nil {
 		return nil, err
 	}
 
 	// Enter into a version context to get these
 	// credentials as the datasource's namespace
-	versionSession, err := datasource.EnterVersionContext(authSource.Namespace, session, nil)
+	versionSession, err := datasource.EnterVersionContext(ctx, authSource.Namespace, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	authType, err := getAuthType(authSource.Type, versionSession)
+	authType, err := getAuthType(ctx, authSource.Type, versionSession)
 	if err != nil {
 		return nil, err
 	}
 
-	credentials, err := datasource.GetCredentials(authSource.Credentials, versionSession)
+	credentials, err := datasource.GetCredentials(context.Background(), authSource.Credentials, versionSession)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +83,8 @@ func GetAuthConnection(authSourceID string, connection wire.Connection, session 
 
 var authTypeMap = map[string]AuthenticationType{}
 
-func getAuthType(authTypeName string, session *sess.Session) (AuthenticationType, error) {
-	mergedType, err := configstore.Merge(authTypeName, session)
+func getAuthType(ctx context.Context, authTypeName string, session *sess.Session) (AuthenticationType, error) {
+	mergedType, err := configstore.Merge(ctx, authTypeName, session)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func parseHost(host string) (string, string, string, bool, error) {
 	return "domain", host, "", false, nil
 }
 
-func GetSiteFromHost(host string) (*meta.Site, error) {
+func GetSiteFromHost(ctx context.Context, host string) (*meta.Site, error) {
 
 	domainType, domain, subdomain, isSubDomain, err := parseHost(host)
 	if err != nil {
@@ -155,7 +155,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	if isSubDomain {
 		domainValue = subdomain
 	}
-	site, err := getSiteFromDomain(domainType, domainValue)
+	site, err := getSiteFromDomain(ctx, domainType, domainValue)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 		return nil, err
 	}
 
-	licenseMap, err := datasource.GetLicenses(site.GetAppFullName(), nil)
+	licenseMap, err := datasource.GetLicenses(ctx, site.GetAppFullName(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	return site, nil
 }
 
-func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
+func getSiteFromDomain(ctx context.Context, domainType, domainValue string) (*meta.Site, error) {
 
 	// Get Cache site info for the host
 	site, ok := getHostCache(domainType, domainValue)
@@ -191,7 +191,7 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 		return site, nil
 	}
 
-	site, err := querySiteFromDomain(domainType, domainValue)
+	site, err := querySiteFromDomain(ctx, domainType, domainValue)
 	if err != nil {
 		return nil, err
 	}
@@ -207,21 +207,21 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(signupMethod *meta.SignupMethod, user *meta.User, connection wire.Connection, session *sess.Session) (*meta.User, error) {
+func CreateUser(ctx context.Context, signupMethod *meta.SignupMethod, user *meta.User, connection wire.Connection, session *sess.Session) (*meta.User, error) {
 	user.Type = "PERSON"
 	user.Profile = signupMethod.Profile
 	if user.Language == "" {
 		user.Language = "en"
 	}
 
-	err := datasource.PlatformSaveOne(user, nil, connection, session)
+	err := datasource.PlatformSaveOne(ctx, user, nil, connection, session)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func getUser(field, value string, withPicture bool, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+func getUser(ctx context.Context, field, value string, withPicture bool, session *sess.Session, connection wire.Connection) (*meta.User, error) {
 	var user meta.User
 	fields := []wire.LoadRequestField{
 		{
@@ -265,6 +265,7 @@ func getUser(field, value string, withPicture bool, session *sess.Session, conne
 		})
 	}
 	err := datasource.PlatformLoadOne(
+		ctx,
 		&user,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
@@ -285,24 +286,24 @@ func getUser(field, value string, withPicture bool, session *sess.Session, conne
 	return &user, nil
 }
 
-func GetUserByKey(username string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(commonfields.UniqueKey, username, false, session, connection)
+func GetUserByKey(ctx context.Context, username string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(ctx, commonfields.UniqueKey, username, false, session, connection)
 }
 
-func GetUserByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(commonfields.Id, id, false, session, connection)
+func GetUserByID(ctx context.Context, id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(ctx, commonfields.Id, id, false, session, connection)
 }
 
-func GetUserWithPictureByID(id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
-	return getUser(commonfields.Id, id, true, session, connection)
+func GetUserWithPictureByID(ctx context.Context, id string, session *sess.Session, connection wire.Connection) (*meta.User, error) {
+	return getUser(ctx, commonfields.Id, id, true, session, connection)
 }
 
-func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
+func getAuthSource(ctx context.Context, key string, session *sess.Session) (*meta.AuthSource, error) {
 	authSource, err := meta.NewAuthSource(key)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), authSource, nil, session, nil)
+	err = bundle.Load(ctx, authSource, nil, session, nil)
 
 	if err != nil {
 		return nil, err
@@ -311,12 +312,12 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	return authSource, nil
 }
 
-func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
+func GetSignupMethod(ctx context.Context, key string, session *sess.Session) (*meta.SignupMethod, error) {
 	signupMethod, err := meta.NewSignupMethod(key)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(session.Context(), signupMethod, nil, session, nil)
+	err = bundle.Load(ctx, signupMethod, nil, session, nil)
 
 	if err != nil {
 		return nil, err
@@ -325,10 +326,11 @@ func GetSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	return signupMethod, nil
 }
 
-func getLoginMethod(value, field, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
+func getLoginMethod(ctx context.Context, value, field, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginMethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
+		ctx,
 		&loginMethod,
 		&datasource.PlatformLoadOptions{
 			WireName: "AuthGetLoginMethod",
@@ -383,7 +385,7 @@ func getLoginMethod(value, field, authSourceID string, connection wire.Connectio
 	if err != nil {
 		if exceptions.IsNotFoundException(err) {
 			// Login method not found. Log as a warning.
-			slog.LogAttrs(session.Context(),
+			slog.LogAttrs(ctx,
 				slog.LevelWarn,
 				"Could not find login method",
 				slog.String(field, value),
@@ -396,16 +398,16 @@ func getLoginMethod(value, field, authSourceID string, connection wire.Connectio
 	return &loginMethod, nil
 }
 
-func GetLoginMethod(federationID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
-	return getLoginMethod(federationID, "uesio/core.federation_id", authSourceID, connection, session)
+func GetLoginMethod(ctx context.Context, federationID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(ctx, federationID, "uesio/core.federation_id", authSourceID, connection, session)
 }
 
-func GetLoginMethodByUserID(userID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
-	return getLoginMethod(userID, "uesio/core.user", authSourceID, connection, session)
+func GetLoginMethodByUserID(ctx context.Context, userID string, authSourceID string, connection wire.Connection, session *sess.Session) (*meta.LoginMethod, error) {
+	return getLoginMethod(ctx, userID, "uesio/core.user", authSourceID, connection, session)
 }
 
-func CreateLoginMethod(loginMethod *meta.LoginMethod, connection wire.Connection, session *sess.Session) error {
-	return datasource.PlatformSaveOne(loginMethod, nil, connection, session)
+func CreateLoginMethod(ctx context.Context, loginMethod *meta.LoginMethod, connection wire.Connection, session *sess.Session) error {
+	return datasource.PlatformSaveOne(ctx, loginMethod, nil, connection, session)
 }
 
 func GetPayloadValue(payload AuthRequest, key string) (string, error) {
@@ -435,7 +437,7 @@ func GetRequiredPayloadValue(payload AuthRequest, key string) (string, error) {
 	return value, nil
 }
 
-func GetUserFromFederationID(authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
+func GetUserFromFederationID(ctx context.Context, authSourceID string, federationID string, connection wire.Connection, session *sess.Session) (*meta.User, *meta.LoginMethod, error) {
 
 	if session.GetWorkspace() != nil {
 		return nil, nil, exceptions.NewBadRequestException("login isn't currently supported for workspaces", nil)
@@ -444,7 +446,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, connectio
 	adminSession := sess.GetAnonSessionFrom(session)
 
 	// 4. Check for Existing User
-	loginMethod, err := GetLoginMethod(federationID, authSourceID, connection, adminSession)
+	loginMethod, err := GetLoginMethod(ctx, federationID, authSourceID, connection, adminSession)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed getting login method data: %w", err)
 	}
@@ -453,7 +455,7 @@ func GetUserFromFederationID(authSourceID string, federationID string, connectio
 		return nil, nil, exceptions.NewNotFoundException("no account found with this login method")
 	}
 
-	user, err := GetUserByID(loginMethod.User.ID, adminSession, nil)
+	user, err := GetUserByID(ctx, loginMethod.User.ID, adminSession, nil)
 	if err != nil {
 		return nil, nil, exceptions.NewNotFoundException("failed getting user data: " + err.Error())
 	}

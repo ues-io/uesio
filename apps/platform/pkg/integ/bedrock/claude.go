@@ -1,6 +1,7 @@
 package bedrock
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -64,8 +65,8 @@ func (cmh *ClaudeModelHandler) RecordUsage(inputTokens, outputTokens int64) {
 	usage.RegisterEvent("OUTPUT_TOKENS", "INTEGRATION", integrationKey, outputTokens, session)
 }
 
-func (cmh *ClaudeModelHandler) Invoke() (result any, err error) {
-	cfg, err := creds.GetAWSConfig(cmh.ic.Context(), cmh.ic.GetCredentials())
+func (cmh *ClaudeModelHandler) Invoke(ctx context.Context) (result any, err error) {
+	cfg, err := creds.GetAWSConfig(ctx, cmh.ic.GetCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (cmh *ClaudeModelHandler) Invoke() (result any, err error) {
 		bedrock.WithConfig(cfg),
 	)
 
-	message, err := client.Messages.New(cmh.ic.Context(), cmh.options)
+	message, err := client.Messages.New(ctx, cmh.options)
 	if err != nil {
 		return nil, handleBedrockError(err)
 	}
@@ -85,8 +86,8 @@ func (cmh *ClaudeModelHandler) Invoke() (result any, err error) {
 
 }
 
-func (cmh *ClaudeModelHandler) Stream() (*integ.Stream, error) {
-	cfg, err := creds.GetAWSConfig(cmh.ic.Context(), cmh.ic.GetCredentials())
+func (cmh *ClaudeModelHandler) Stream(ctx context.Context) (*integ.Stream, error) {
+	cfg, err := creds.GetAWSConfig(ctx, cmh.ic.GetCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +103,7 @@ func (cmh *ClaudeModelHandler) Stream() (*integ.Stream, error) {
 		defer close(outputStream.Err())
 		defer close(outputStream.Done())
 
-		stream := client.Messages.NewStreaming(cmh.ic.Context(), cmh.options)
+		stream := client.Messages.NewStreaming(ctx, cmh.options)
 
 		for stream.Next() {
 			event := stream.Current()

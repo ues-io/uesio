@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -10,14 +11,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runUserTokenValueLoadBot(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	tokenMap := sess.TokenMap{}
 
 	searchCondition := extractConditionByType(op.Conditions, "SEARCH")
 
 	var uatc meta.UserAccessTokenCollection
-	err := bundle.LoadAllFromAny(session.Context(), &uatc, nil, session, nil)
+	err := bundle.LoadAllFromAny(ctx, &uatc, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -27,7 +28,7 @@ func runUserTokenValueLoadBot(op *wire.LoadOp, connection wire.Connection, sessi
 		return err
 	}
 
-	err = datasource.HydrateTokenMap(tokenMap, uatc, connection, metadata, session, true)
+	err = datasource.HydrateTokenMap(ctx, tokenMap, uatc, connection, metadata, session, true)
 	if err != nil {
 		return err
 	}

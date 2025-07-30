@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -11,10 +12,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runAppAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	if len(request.Inserts) > 0 {
-		err := runStarterTemplates(request, connection, session)
+		err := runStarterTemplates(ctx, request, connection, session)
 		if err != nil {
 			return err
 		}
@@ -23,10 +24,10 @@ func runAppAfterSaveBot(request *wire.SaveOp, connection wire.Connection, sessio
 
 }
 
-func runStarterTemplates(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runStarterTemplates(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	// Loop over the requests and see if any of the inserts are using a starter template.
 	for _, insert := range request.Inserts {
-		err := runStarterTemplate(insert, connection, session)
+		err := runStarterTemplate(ctx, insert, connection, session)
 		if err != nil {
 			return err
 		}
@@ -34,7 +35,7 @@ func runStarterTemplates(request *wire.SaveOp, connection wire.Connection, sessi
 	return nil
 }
 
-func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, session *sess.Session) error {
+func runStarterTemplate(ctx context.Context, appInsert *wire.ChangeItem, connection wire.Connection, session *sess.Session) error {
 	appID, err := appInsert.GetFieldAsString("uesio/core.id")
 	if err != nil {
 		return err
@@ -78,7 +79,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 	}
 
 	// Create a new workspace called dev
-	err = datasource.SaveWithOptions([]datasource.SaveRequest{
+	err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.workspace",
 			Wire:       "RunAppAfterSaveBotStarterAddWorkspace",
@@ -92,7 +93,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 	}
 
 	// Install the specified version of this app. (create dependency record)
-	err = datasource.SaveWithOptions([]datasource.SaveRequest{
+	err = datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.bundledependency",
 			Wire:       "RunAppAfterSaveBotBundleDep",
@@ -124,13 +125,13 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	wsSession, err := datasource.AddWorkspaceContextByID(newWorkspace.ID, session, connection)
+	wsSession, err := datasource.AddWorkspaceContextByID(ctx, newWorkspace.ID, session, connection)
 	if err != nil {
 		return err
 	}
 
 	// Lookup this app's starter template generator bot.
-	versionSession, err := datasource.EnterVersionContext(starterApp, wsSession, connection)
+	versionSession, err := datasource.EnterVersionContext(ctx, starterApp, wsSession, connection)
 	if err != nil {
 		return err
 	}
@@ -147,7 +148,7 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	_, err = deploy.GenerateToWorkspace(starterBotNamespace, starterBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	_, err = deploy.GenerateToWorkspace(ctx, starterBotNamespace, starterBotName, starterTemplateParamsMap, connection, wsSession, nil)
 	if err != nil {
 		return err
 	}
@@ -164,6 +165,6 @@ func runStarterTemplate(appInsert *wire.ChangeItem, connection wire.Connection, 
 		return err
 	}
 
-	_, err = deploy.GenerateToWorkspace(starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
+	_, err = deploy.GenerateToWorkspace(ctx, starterCompleteBotNamespace, starterCompleteBotName, starterTemplateParamsMap, connection, wsSession, nil)
 	return err
 }

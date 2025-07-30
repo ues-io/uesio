@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runAgentListenerBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func runAgentListenerBot(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	agentKey, err := param.GetRequiredString(params, "agent")
 	if err != nil {
@@ -47,7 +48,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, exceptions.NewBadRequestException("", err)
 	}
 
-	err = bundle.Load(session.Context(), agent, nil, session.RemoveVersionContext(), connection)
+	err = bundle.Load(ctx, agent, nil, session.RemoveVersionContext(), connection)
 	if err != nil {
 		if exceptions.IsType[*exceptions.NotFoundException](err) {
 			return nil, exceptions.NewBadRequestException("", err)
@@ -55,7 +56,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, err
 	}
 
-	r, _, err := bundle.GetItemAttachment(session.Context(), agent, "prompt.txt", session.RemoveVersionContext(), connection)
+	r, _, err := bundle.GetItemAttachment(ctx, agent, "prompt.txt", session.RemoveVersionContext(), connection)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		})
 	}
 
-	messages, err := loadPreviousMessages(threadID, connection, session)
+	messages, err := loadPreviousMessages(ctx, threadID, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -84,11 +85,11 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 	// Now add the user message
 	messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(fullInput)))
 
-	ic, err := datasource.GetIntegrationConnection("uesio/aikit.bedrock", session, connection)
+	ic, err := datasource.GetIntegrationConnection(ctx, "uesio/aikit.bedrock", session, connection)
 	if err != nil {
 		return nil, err
 	}
-	result, err := datasource.RunIntegrationAction(ic, "invokemodel", map[string]any{
+	result, err := datasource.RunIntegrationAction(ctx, ic, "invokemodel", map[string]any{
 		"model":    modelID,
 		"messages": messages,
 		"system": []map[string]string{
@@ -109,7 +110,7 @@ func runAgentListenerBot(params map[string]any, connection wire.Connection, sess
 		return nil, exceptions.NewBadRequestException("invalid message format for agent", err)
 	}
 
-	err = saveNewMessages(userInput, resultMessages, threadID, connection, session)
+	err = saveNewMessages(ctx, userInput, resultMessages, threadID, connection, session)
 	if err != nil {
 		return nil, exceptions.NewBadRequestException("", err)
 	}
@@ -172,9 +173,9 @@ func threadItemsToMessages(threadItems *wire.Collection) ([]anthropic.MessagePar
 }
 
 // Loads the previous messages in the thread
-func loadPreviousMessages(threadID string, connection wire.Connection, session *sess.Session) ([]anthropic.MessageParam, error) {
+func loadPreviousMessages(ctx context.Context, threadID string, connection wire.Connection, session *sess.Session) ([]anthropic.MessageParam, error) {
 	threadItems := &wire.Collection{}
-	err := datasource.LoadWithError(&wire.LoadOp{
+	err := datasource.LoadWithError(ctx, &wire.LoadOp{
 		CollectionName: "uesio/aikit.thread_item",
 		Collection:     threadItems,
 		Query:          true,
@@ -214,7 +215,7 @@ func loadPreviousMessages(threadID string, connection wire.Connection, session *
 	return threadItemsToMessages(threadItems)
 }
 
-func saveNewMessages(input string, messages []anthropic.ContentBlockUnion, threadID string, connection wire.Connection, session *sess.Session) error {
+func saveNewMessages(ctx context.Context, input string, messages []anthropic.ContentBlockUnion, threadID string, connection wire.Connection, session *sess.Session) error {
 	threadItems := wire.Collection{
 		{
 			"uesio/aikit.content": input,
@@ -253,7 +254,7 @@ func saveNewMessages(input string, messages []anthropic.ContentBlockUnion, threa
 		}
 	}
 
-	return datasource.SaveWithOptions([]datasource.SaveRequest{
+	return datasource.SaveWithOptions(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/aikit.thread_item",
 			Wire:       "AgentThreadItems",

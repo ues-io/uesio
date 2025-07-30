@@ -1,6 +1,7 @@
 package usage
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -12,7 +13,7 @@ import (
 
 type UsageHandler interface {
 	Set(key string, size int64) error
-	ApplyBatch(session *sess.Session) error
+	ApplyBatch(ctx context.Context, session *sess.Session) error
 }
 
 var usageHandlerMap = map[string]UsageHandler{}
@@ -35,10 +36,12 @@ func init() {
 }
 
 func RegisterUsageHandler(name string, handler UsageHandler) {
+	// TODO: This needs to be synchronized!
 	usageHandlerMap[name] = handler
 }
 
 func getActiveHandler() UsageHandler {
+	// TODO: This needs to be synchronized!
 	return usageHandlerMap[activeHandler]
 }
 
@@ -61,6 +64,6 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 
 }
 
-func ApplyBatch(session *sess.Session) error {
-	return getActiveHandler().ApplyBatch(session)
+func ApplyBatch(ctx context.Context, session *sess.Session) error {
+	return getActiveHandler().ApplyBatch(ctx, session)
 }

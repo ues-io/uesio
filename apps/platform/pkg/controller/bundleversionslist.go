@@ -31,6 +31,7 @@ func BundleVersionsList(w http.ResponseWriter, r *http.Request) {
 
 	var bundles meta.BundleCollection
 	if err := datasource.PlatformLoad(
+		r.Context(),
 		&bundles,
 		&datasource.PlatformLoadOptions{
 			BatchSize: 5,

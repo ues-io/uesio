@@ -1,6 +1,7 @@
 package bedrock
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -22,8 +23,8 @@ type Connection struct {
 
 type ModelHandler interface {
 	Hydrate(ic *wire.IntegrationConnection, options map[string]any) error
-	Invoke() (result any, err error)
-	Stream() (stream *integ.Stream, err error)
+	Invoke(ctx context.Context) (result any, err error)
+	Stream(ctx context.Context) (stream *integ.Stream, err error)
 }
 
 const CLAUDE_3_5_HAIKU_MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
@@ -55,7 +56,7 @@ func getHandler(ic *wire.IntegrationConnection, params map[string]any) (ModelHan
 }
 
 // RunAction implements the system bot interface
-func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+func RunAction(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	handler, err := getHandler(ic, params)
 	if err != nil {
@@ -64,9 +65,9 @@ func RunAction(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string,
 
 	switch strings.ToLower(actionName) {
 	case "invokemodel":
-		return handler.Invoke()
+		return handler.Invoke(ctx)
 	case "streammodel":
-		return handler.Stream()
+		return handler.Stream(ctx)
 	}
 
 	return nil, errors.New("invalid action name for Bedrock integration")

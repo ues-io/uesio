@@ -51,7 +51,7 @@ func processUploadRequest(r *http.Request) (*meta.UserFileMetadata, error) {
 				return nil, errors.New("no recordid specified")
 			}
 			op.Data = part
-			results, err := filesource.Upload(session.Context(), []*filesource.FileUploadOp{op}, nil, session, op.Params)
+			results, err := filesource.Upload(r.Context(), []*filesource.FileUploadOp{op}, nil, session, op.Params)
 			if err != nil {
 				return nil, err
 			}

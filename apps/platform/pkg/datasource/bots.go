@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -29,7 +30,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 		return nil, err
 	}
 
-	modifiedRoute, err := systemDialect.RouteBot(routeBot, route, request, connection, session)
+	modifiedRoute, err := systemDialect.RouteBot(request.Context(), routeBot, route, request, connection, session)
 	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
@@ -48,7 +49,7 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(session.Context(), item, nil, session, nil)
+		return bundle.Load(request.Context(), item, nil, session, nil)
 	}
 
 	routeBot = meta.NewRouteBot(botNamespace, botName)
@@ -68,25 +69,25 @@ func RunRouteBots(route *meta.Route, request *http.Request, session *sess.Sessio
 	}
 
 	// Enter a version context for the bot being called
-	versionSession, err := EnterVersionContext(botNamespace, session, connection)
+	versionSession, err := EnterVersionContext(request.Context(), botNamespace, session, connection)
 	if err != nil {
 		return nil, exceptions.NewExecutionException("unable to invoke bot in context of app " + botNamespace)
 	}
-	modifiedRoute, err = dialect.RouteBot(routeBot, route, request, connection, versionSession)
+	modifiedRoute, err = dialect.RouteBot(request.Context(), routeBot, route, request, connection, versionSession)
 	if err != nil {
 		return nil, exceptions.NewExecutionException("error while running route bot: " + err.Error())
 	}
 	return modifiedRoute, nil
 }
 
-func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runBeforeSaveBots(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionName := request.CollectionName
 
 	var robots meta.BotCollection
 
 	// TODO why does connection have to be nil
-	err := bundle.LoadAllFromAny(session.Context(), &robots, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(ctx, &robots, &bundlestore.GetAllItemsOptions{
 		Conditions: meta.BundleConditions{
 			"uesio/studio.collection": collectionName,
 			"uesio/studio.type":       "BEFORESAVE",
@@ -113,7 +114,7 @@ func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session
 			return err
 		}
 
-		err = dialect.BeforeSave(robot, request, connection, session)
+		err = dialect.BeforeSave(ctx, robot, request, connection, session)
 		if err != nil {
 			return err
 		}
@@ -122,7 +123,7 @@ func runBeforeSaveBots(request *wire.SaveOp, connection wire.Connection, session
 	return nil
 }
 
-func runDynamicCollectionLoadBots(op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runDynamicCollectionLoadBots(ctx context.Context, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	// Currently, all dynamic collections are routed to
 	// the system bot dialect.
@@ -134,11 +135,11 @@ func runDynamicCollectionLoadBots(op *wire.LoadOp, connection wire.Connection, s
 	if err != nil {
 		return err
 	}
-	return dialect.LoadBot(meta.NewLoadBot(namespace, name), op, connection, session)
+	return dialect.LoadBot(ctx, meta.NewLoadBot(namespace, name), op, connection, session)
 
 }
 
-func runDynamicCollectionSaveBots(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runDynamicCollectionSaveBots(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Currently, all dynamic collections are routed to
 	// the system bot dialect.
@@ -150,11 +151,11 @@ func runDynamicCollectionSaveBots(op *wire.SaveOp, connection wire.Connection, s
 	if err != nil {
 		return err
 	}
-	return dialect.SaveBot(meta.NewSaveBot(namespace, name), op, connection, session)
+	return dialect.SaveBot(ctx, meta.NewSaveBot(namespace, name), op, connection, session)
 
 }
 
-func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func runExternalDataSourceLoadBot(ctx context.Context, botName string, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(botName)
 	if err != nil {
@@ -174,7 +175,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 	if err != nil {
 		return err
 	}
-	err = systemDialect.LoadBot(loadBot, op, connection, session)
+	err = systemDialect.LoadBot(ctx, loadBot, op, connection, session)
 	if err != nil && !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		return err
 	} else if err == nil {
@@ -182,7 +183,7 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 	}
 
 	// TODO: Figure out why connection has to be nil
-	err = bundle.Load(session.Context(), loadBot, nil, session, nil)
+	err = bundle.Load(ctx, loadBot, nil, session, nil)
 	if err != nil {
 		return err
 	}
@@ -193,10 +194,10 @@ func runExternalDataSourceLoadBot(botName string, op *wire.LoadOp, connection wi
 	}
 
 	// Finally - run the load bot!
-	return dialect.LoadBot(loadBot, op, connection, session)
+	return dialect.LoadBot(ctx, loadBot, op, connection, session)
 }
 
-func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runExternalDataSourceSaveBot(ctx context.Context, botName string, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	namespace, name, err := meta.ParseKey(botName)
 	if err != nil {
@@ -211,7 +212,7 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 		Type: "SAVE",
 	}
 	// TODO: Figure out why connection has to be nil
-	err = bundle.Load(session.Context(), saveBot, nil, session, nil)
+	err = bundle.Load(ctx, saveBot, nil, session, nil)
 	if err != nil {
 		return fmt.Errorf("unable to load requested SAVE bot '%s': %w", botName, err)
 	}
@@ -220,18 +221,18 @@ func runExternalDataSourceSaveBot(botName string, op *wire.SaveOp, connection wi
 		return err
 	}
 
-	return dialect.SaveBot(saveBot, op, connection, session)
+	return dialect.SaveBot(ctx, saveBot, op, connection, session)
 
 }
 
-func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runAfterSaveBots(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	collectionName := request.CollectionName
 
 	var robots meta.BotCollection
 
 	// TODO: Figure out why connection has to be nil
-	err := bundle.LoadAllFromAny(session.Context(), &robots, &bundlestore.GetAllItemsOptions{
+	err := bundle.LoadAllFromAny(ctx, &robots, &bundlestore.GetAllItemsOptions{
 		Conditions: meta.BundleConditions{
 			"uesio/studio.collection": collectionName,
 			"uesio/studio.type":       "AFTERSAVE",
@@ -258,7 +259,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 			return err
 		}
 
-		err = dialect.AfterSave(robot, request, connection, session)
+		err = dialect.AfterSave(ctx, robot, request, connection, session)
 		if err != nil {
 			return err
 		}
@@ -267,7 +268,7 @@ func runAfterSaveBots(request *wire.SaveOp, connection wire.Connection, session 
 	return nil
 }
 
-func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func CallGeneratorBot(ctx context.Context, create bundlestore.FileCreator, namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return nil, err
@@ -276,7 +277,7 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 	robot := meta.NewGeneratorBot(namespace, name)
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(session.Context(), item, nil, session, nil)
+		return bundle.Load(ctx, item, nil, session, nil)
 	}
 
 	if err := bundleLoader(robot); err != nil {
@@ -291,7 +292,7 @@ func CallGeneratorBot(create bundlestore.FileCreator, namespace, name string, pa
 		return nil, err
 	}
 
-	return dialect.CallGeneratorBot(robot, create, params, connection, session)
+	return dialect.CallGeneratorBot(ctx, robot, create, params, connection, session)
 
 }
 
@@ -305,13 +306,13 @@ func canCallBot(namespace, name string, perms *meta.PermissionSet) (bool, error)
 	return false, exceptions.NewForbiddenException(fmt.Sprintf(BotAccessErrorMessage, botKey))
 }
 
-func CallListenerBotInTransaction(namespace, name string, params map[string]any, session *sess.Session) (map[string]any, error) {
-	return WithTransactionResult(session, nil, func(conn wire.Connection) (map[string]any, error) {
-		return CallListenerBot(namespace, name, params, conn, session)
+func CallListenerBotInTransaction(ctx context.Context, namespace, name string, params map[string]any, session *sess.Session) (map[string]any, error) {
+	return WithTransactionResult(ctx, session, nil, func(conn wire.Connection) (map[string]any, error) {
+		return CallListenerBot(ctx, namespace, name, params, conn, session)
 	})
 }
 
-func CallListenerBot(namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func CallListenerBot(ctx context.Context, namespace, name string, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	if ok, err := canCallBot(namespace, name, session.GetContextPermissions()); !ok {
 		return nil, err
@@ -319,7 +320,7 @@ func CallListenerBot(namespace, name string, params map[string]any, connection w
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(session.Context(), item, nil, session, nil)
+		return bundle.Load(ctx, item, nil, session, nil)
 	}
 
 	// First try to run a system bot
@@ -331,7 +332,7 @@ func CallListenerBot(namespace, name string, params map[string]any, connection w
 		return nil, err
 	}
 
-	systemBotResults, err := systemDialect.CallBot(systemListenerBot, params, connection, session)
+	systemBotResults, err := systemDialect.CallBot(ctx, systemListenerBot, params, connection, session)
 	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
@@ -354,12 +355,12 @@ func CallListenerBot(namespace, name string, params map[string]any, connection w
 	}
 
 	// Call the bot in the version context of the bot being called
-	versionSession, err := EnterVersionContext(namespace, session, connection)
+	versionSession, err := EnterVersionContext(ctx, namespace, session, connection)
 	if err != nil {
 		return nil, exceptions.NewExecutionException("unable to invoke bot in context of app " + namespace)
 	}
 
-	return dialect.CallBot(robot, params, connection, versionSession)
+	return dialect.CallBot(ctx, robot, params, connection, versionSession)
 
 }
 
@@ -376,13 +377,13 @@ func GetIntegrationActionBotName(integrationAction *meta.IntegrationAction, inte
 	return "", exceptions.NewNotFoundException("could not find bot for this integration action")
 }
 
-func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requestOptions any, connection wire.Connection) (any, error) {
+func RunIntegrationAction(ctx context.Context, ic *wire.IntegrationConnection, actionKey string, requestOptions any, connection wire.Connection) (any, error) {
 	integration := ic.GetIntegration()
 	integrationType := ic.GetIntegrationType()
 	session := ic.GetSession()
 	integrationKey := integration.GetKey()
 	actionKey = strings.ToLower(actionKey)
-	action, err := GetIntegrationAction(integrationType.GetKey(), actionKey, session, connection)
+	action, err := GetIntegrationAction(ctx, integrationType.GetKey(), actionKey, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -408,7 +409,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return nil, err
 	}
 
-	systemBotResults, err := systemDialect.RunIntegrationActionBot(systemListenerBot, ic, action.Name, params)
+	systemBotResults, err := systemDialect.RunIntegrationActionBot(ctx, systemListenerBot, ic, action.Name, params)
 	if !exceptions.IsType[*exceptions.SystemBotNotFoundException](err) {
 		// If we found a system bot, we can go ahead and just return the results of
 		// that bot, no need to look for another bot to run.
@@ -427,7 +428,7 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 
 	bundleLoader := func(item meta.BundleableItem) error {
 		// TODO: WHY DOES connection have to be nil here
-		return bundle.Load(session.Context(), item, nil, session, nil)
+		return bundle.Load(ctx, item, nil, session, nil)
 	}
 	robot := meta.NewRunActionBot(botNamespace, botName)
 	if err = bundleLoader(robot); err != nil {
@@ -444,6 +445,6 @@ func RunIntegrationAction(ic *wire.IntegrationConnection, actionKey string, requ
 		return nil, err
 	}
 
-	return dialect.RunIntegrationActionBot(robot, ic, action.Name, params)
+	return dialect.RunIntegrationActionBot(ctx, robot, ic, action.Name, params)
 
 }

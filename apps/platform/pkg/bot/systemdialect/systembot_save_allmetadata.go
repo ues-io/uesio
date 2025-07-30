@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -33,11 +34,11 @@ func init() {
 	}
 }
 
-func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runStudioMetadataSaveBot(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	// Get the workspace ID from params, and verify that the user performing the query
 	// has write access to the requested workspace
-	wsAccessResult := datasource.RequestWorkspaceWriteAccess(op.Params, connection, session)
+	wsAccessResult := datasource.RequestWorkspaceWriteAccess(ctx, op.Params, connection, session)
 	if !wsAccessResult.HasWriteAccess() {
 		return wsAccessResult.Error()
 	}
@@ -56,7 +57,7 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 		}
 	}
 
-	if err := datasource.SaveOp(op, connection, session); err != nil {
+	if err := datasource.SaveOp(ctx, op, connection, session); err != nil {
 		return err
 	}
 
@@ -108,8 +109,8 @@ func runStudioMetadataSaveBot(op *wire.SaveOp, connection wire.Connection, sessi
 		if err != nil {
 			return errors.New("unable to serialize workspace metadata changes cache key")
 		}
-		if err = connection.Publish(session.Context(), workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
-			slog.ErrorContext(session.Context(), "unable to invalidate workspace cache: "+err.Error())
+		if err = connection.Publish(ctx, workspacebundlestore.WorkspaceMetadataChangesChannel, string(messagePayload)); err != nil {
+			slog.ErrorContext(ctx, "unable to invalidate workspace cache: "+err.Error())
 			return errors.New("unable to invalidate workspace cache")
 		}
 	}

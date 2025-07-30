@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func runUserfileSaveBot(ctx context.Context, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	fileData := []string{}
 	err := op.LoopChanges(func(change *wire.ChangeItem) error {
@@ -32,7 +33,7 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 		return err
 	}
 
-	err = datasource.SaveOp(op, connection, session)
+	err = datasource.SaveOp(ctx, op, connection, session)
 	if err != nil {
 		return err
 	}
@@ -76,7 +77,7 @@ func runUserfileSaveBot(op *wire.SaveOp, connection wire.Connection, session *se
 		return err
 	}
 
-	_, err = filesource.Upload(session.Context(), uploadOps, connection, session, op.Params)
+	_, err = filesource.Upload(ctx, uploadOps, connection, session, op.Params)
 	if err != nil {
 		return err
 	}

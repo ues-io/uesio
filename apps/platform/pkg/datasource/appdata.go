@@ -16,7 +16,7 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 	apps := meta.AppCollection{}
 
 	// Load in App Settings
-	err := PlatformLoad(&apps, &PlatformLoadOptions{
+	err := PlatformLoad(ctx, &apps, &PlatformLoadOptions{
 		Conditions: []wire.LoadRequestCondition{
 			{
 				Field:    commonfields.UniqueKey,
@@ -36,7 +36,7 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 			},
 		},
 		Connection: connection,
-	}, sess.GetStudioAnonSession(ctx))
+	}, sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, err
 	}
@@ -57,9 +57,10 @@ func GetAppData(ctx context.Context, namespaces []string, connection wire.Connec
 }
 
 // QueryAppForWrite queries an app with write access required
-func QueryAppForWrite(value, field string, session *sess.Session, connection wire.Connection) (*meta.App, error) {
+func QueryAppForWrite(ctx context.Context, value, field string, session *sess.Session, connection wire.Connection) (*meta.App, error) {
 	var app meta.App
 	err := PlatformLoadOne(
+		ctx,
 		&app,
 		&PlatformLoadOptions{
 			Connection: connection,

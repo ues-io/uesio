@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/constant"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -8,14 +10,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func addVersionContext(app, version string, session *sess.Session, connection wire.Connection) error {
+func addVersionContext(ctx context.Context, app, version string, session *sess.Session, connection wire.Connection) error {
 
-	bundleDef, err := bundle.GetVersionBundleDef(session.Context(), app, version, connection)
+	bundleDef, err := bundle.GetVersionBundleDef(ctx, app, version, connection)
 	if err != nil {
 		return err
 	}
 
-	licenseMap, err := GetLicenses(app, connection)
+	licenseMap, err := GetLicenses(ctx, app, connection)
 	if err != nil {
 		return err
 	}
@@ -27,7 +29,7 @@ func addVersionContext(app, version string, session *sess.Session, connection wi
 
 }
 
-func AddVersionContext(app, version string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func AddVersionContext(ctx context.Context, app, version string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	site := session.GetSite()
 	perms := session.GetSitePermissions()
 
@@ -40,10 +42,10 @@ func AddVersionContext(app, version string, session *sess.Session, connection wi
 		return nil, exceptions.NewForbiddenException("your profile does not allow you to work with versions")
 	}
 	sessClone := session.RemoveWorkspaceContext()
-	return sessClone, addVersionContext(app, version, sessClone, connection)
+	return sessClone, addVersionContext(ctx, app, version, sessClone, connection)
 }
 
-func EnterVersionContext(app string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
+func EnterVersionContext(ctx context.Context, app string, session *sess.Session, connection wire.Connection) (*sess.Session, error) {
 	// We don't need to enter into a version context for our own app
 	if app == session.GetContextAppName() {
 		return session, nil
@@ -54,5 +56,5 @@ func EnterVersionContext(app string, session *sess.Session, connection wire.Conn
 		return nil, err
 	}
 	sessClone := session.Clone()
-	return sessClone, addVersionContext(app, version, sessClone, connection)
+	return sessClone, addVersionContext(ctx, app, version, sessClone, connection)
 }

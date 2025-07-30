@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/constant"
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-func runSetWorkspaceUserBot(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func runSetWorkspaceUserBot(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 
 	workspaceID, hasWorkspaceID := params["workspaceid"]
 	if !hasWorkspaceID {
@@ -25,7 +26,7 @@ func runSetWorkspaceUserBot(params map[string]any, connection wire.Connection, s
 		return nil, errors.New("you must be a workspace admin to update workspace user settings")
 	}
 
-	err := datasource.Save([]datasource.SaveRequest{
+	err := datasource.Save(ctx, []datasource.SaveRequest{
 		{
 			Collection: "uesio/studio.workspaceuser",
 			Changes: &wire.Collection{

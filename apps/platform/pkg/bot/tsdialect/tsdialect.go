@@ -1,6 +1,7 @@
 package tsdialect
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log/slog"
@@ -21,8 +22,8 @@ import (
 type TSDialect struct {
 }
 
-func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
-	r, _, err := bundle.GetItemAttachment(session.Context(), bot, b.GetFilePath(), session, connection)
+func (b *TSDialect) hydrateBot(ctx context.Context, bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
+	r, _, err := bundle.GetItemAttachment(ctx, bot, b.GetFilePath(), session, connection)
 	if err != nil {
 		return err
 	}
@@ -37,7 +38,7 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection 
 		Loader: esbuild.LoaderTS,
 	})
 	if len(result.Errors) > 0 {
-		slog.ErrorContext(session.Context(), fmt.Sprintf("TS Bot %s compilation had %d errors and %d warnings\n",
+		slog.ErrorContext(ctx, fmt.Sprintf("TS Bot %s compilation had %d errors and %d warnings\n",
 			bot.GetKey(), len(result.Errors), len(result.Warnings)))
 		return fmt.Errorf("%s", result.Errors[0].Text)
 	}
@@ -45,41 +46,41 @@ func (b *TSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection 
 	return nil
 }
 
-func (b *TSDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewBeforeSaveAPI(bot, request, connection, session)
-	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
+func (b *TSDialect) BeforeSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := jsdialect.NewBeforeSaveAPI(ctx, bot, request, connection, session)
+	return jsdialect.RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *TSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := jsdialect.NewAfterSaveAPI(bot, request, connection, session)
-	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
+func (b *TSDialect) AfterSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := jsdialect.NewAfterSaveAPI(ctx, bot, request, connection, session)
+	return jsdialect.RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	return jsdialect.CallBot(bot, params, connection, session, b.hydrateBot)
+func (b *TSDialect) CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+	return jsdialect.CallBot(ctx, bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	return jsdialect.CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
+func (b *TSDialect) CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+	return jsdialect.CallGeneratorBot(ctx, bot, create, params, connection, session, b.hydrateBot)
 
 }
 
-func (b *TSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
-	botAPI := jsdialect.NewRouteBotApi(bot, route, request, session, connection)
-	err := jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+func (b *TSDialect) RouteBot(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	botAPI := jsdialect.NewRouteBotApi(ctx, bot, route, request, session, connection)
+	err := jsdialect.RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}
 	return jsdialect.HandleBotResponse(botAPI)
 }
 
-func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func (b *TSDialect) LoadBot(ctx context.Context, bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewLoadBotAPI(bot, op, integrationConnection)
-	if err = jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
+	botAPI := jsdialect.NewLoadBotAPI(ctx, bot, op, integrationConnection)
+	if err = jsdialect.RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
 	loadErrors := botAPI.GetErrors()
@@ -89,18 +90,18 @@ func (b *TSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	return nil
 }
 
-func (b *TSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *TSDialect) SaveBot(ctx context.Context, bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegration()
 	if err != nil {
 		return err
 	}
-	botAPI := jsdialect.NewSaveBotAPI(bot, connection, op, integrationConnection)
-	return jsdialect.RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	botAPI := jsdialect.NewSaveBotAPI(ctx, bot, connection, op, integrationConnection)
+	return jsdialect.RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *TSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
-	botAPI := jsdialect.NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
-	err := jsdialect.RunBot(bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
+func (b *TSDialect) RunIntegrationActionBot(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+	botAPI := jsdialect.NewRunIntegrationActionBotAPI(ctx, bot, ic, actionName, params)
+	err := jsdialect.RunBot(ctx, bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}

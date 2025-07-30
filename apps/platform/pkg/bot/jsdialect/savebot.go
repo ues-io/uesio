@@ -1,6 +1,8 @@
 package jsdialect
 
 import (
+	"context"
+
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -25,17 +27,18 @@ func NewSaveRequestMetadata(op *wire.SaveOp) *SaveRequestMetadata {
 	}
 }
 
-func NewSaveBotAPI(bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveOp, integrationConnection *wire.IntegrationConnection) *SaveBotAPI {
+func NewSaveBotAPI(ctx context.Context, bot *meta.Bot, connection wire.Connection, saveOp *wire.SaveOp, integrationConnection *wire.IntegrationConnection) *SaveBotAPI {
 	return &SaveBotAPI{
 		saveOp:                saveOp,
 		connection:            connection,
 		integrationConnection: integrationConnection,
+		ctx:                   ctx,
 
-		Http:                NewBotHttpAPI(integrationConnection),
+		Http:                NewBotHttpAPI(ctx, integrationConnection),
 		Deletes:             &DeletesAPI{saveOp},
 		Inserts:             &InsertsAPI{saveOp},
 		Updates:             &UpdatesAPI{saveOp},
-		LogApi:              NewBotLogAPI(bot, integrationConnection.Context()),
+		LogApi:              NewBotLogAPI(ctx, bot),
 		SaveRequestMetadata: NewSaveRequestMetadata(saveOp),
 	}
 }
@@ -45,6 +48,9 @@ type SaveBotAPI struct {
 	saveOp                *wire.SaveOp
 	connection            wire.Connection
 	integrationConnection *wire.IntegrationConnection
+	// Intentionally maintaining a context here because this code is called from javascript so we have to keep track of the context
+	// upon creation so we can use as the bot processes. This is an exception to the rule of avoiding keeping context in structs.
+	ctx context.Context
 
 	// PUBLIC
 	SaveRequestMetadata *SaveRequestMetadata `bot:"saveRequest"`
@@ -61,7 +67,7 @@ func (sba *SaveBotAPI) getSession() *sess.Session {
 }
 
 func (sba *SaveBotAPI) Load(request BotLoadOp) (*wire.Collection, error) {
-	return botLoad(request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection(), nil)
+	return botLoad(sba.ctx, request, sba.integrationConnection.GetSession(), sba.integrationConnection.GetPlatformConnection(), nil)
 }
 
 func (sba *SaveBotAPI) GetCredentials() map[string]any {
@@ -91,11 +97,11 @@ func (sb *SaveBotAPI) GetCollectionMetadata(collectionKey string) (*BotCollectio
 	return NewBotCollectionMetadata(collectionMetadata), nil
 }
 func (sba *SaveBotAPI) GetConfigValue(configValueKey string) (string, error) {
-	return configstore.GetValue(configValueKey, sba.getSession())
+	return configstore.GetValue(sba.ctx, configValueKey, sba.getSession())
 }
 
 func (sba *SaveBotAPI) GetSession() *SessionAPI {
-	return NewSessionAPI(sba.getSession())
+	return NewSessionAPI(sba.ctx, sba.getSession())
 }
 
 func (sba *SaveBotAPI) GetUser() *UserAPI {
@@ -107,5 +113,5 @@ func (sba *SaveBotAPI) AddError(message, fieldId, recordId string) {
 }
 
 func (sba *SaveBotAPI) CallBot(botKey string, params map[string]any) (any, error) {
-	return botCall(botKey, params, sba.getSession(), sba.connection)
+	return botCall(sba.ctx, botKey, params, sba.getSession(), sba.connection)
 }

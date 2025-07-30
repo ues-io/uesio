@@ -1,6 +1,7 @@
 package systemdialect
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"slices"
@@ -15,22 +16,22 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 )
 
-type BotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
+type BotFunc func(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
-type CallBotFunc func(params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
+type CallBotFunc func(ctx context.Context, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error)
 
-type LoadBotFunc func(request *wire.LoadOp, connection wire.Connection, session *sess.Session) error
+type LoadBotFunc func(ctx context.Context, request *wire.LoadOp, connection wire.Connection, session *sess.Session) error
 
-type SaveBotFunc func(request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
+type SaveBotFunc func(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error
 
-type RouteBotFunc func(*meta.Route, *http.Request, wire.Connection, *sess.Session) (*meta.Route, error)
+type RouteBotFunc func(context.Context, *meta.Route, *http.Request, wire.Connection, *sess.Session) (*meta.Route, error)
 
-type RunIntegrationActionBotFunc func(bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]any) (any, error)
+type RunIntegrationActionBotFunc func(ctx context.Context, bot *meta.Bot, integration *wire.IntegrationConnection, actionName string, params map[string]any) (any, error)
 
 type SystemDialect struct {
 }
 
-func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *SystemDialect) BeforeSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 
 	var botFunction BotFunc
 
@@ -61,11 +62,11 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connecti
 		return nil
 	}
 
-	return botFunction(request, connection, session)
+	return botFunction(ctx, request, connection, session)
 
 }
 
-func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *SystemDialect) AfterSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	var botFunction BotFunc
 
 	switch request.CollectionName {
@@ -99,11 +100,11 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connectio
 		return nil
 	}
 
-	return botFunction(request, connection, session)
+	return botFunction(ctx, request, connection, session)
 
 }
 
-func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func (b *SystemDialect) CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	var botFunction CallBotFunc
 
 	botNamespace := bot.GetNamespace()
@@ -140,11 +141,11 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]any, connection
 		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
-	return botFunction(params, connection, session)
+	return botFunction(ctx, params, connection, session)
 
 }
 
-func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+func (b *SystemDialect) RunIntegrationActionBot(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
 
 	var botFunction RunIntegrationActionBotFunc
 
@@ -160,15 +161,15 @@ func (b *SystemDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.Integrat
 		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
-	return botFunction(bot, ic, actionName, params)
+	return botFunction(ctx, bot, ic, actionName, params)
 
 }
 
-func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+func (b *SystemDialect) CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
 	return nil, nil
 }
 
-func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+func (b *SystemDialect) RouteBot(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
 	var botFunction RouteBotFunc
 
 	routeKey := route.GetKey()
@@ -184,11 +185,11 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http
 		return nil, exceptions.NewSystemBotNotFoundException()
 	}
 
-	return botFunction(route, request, connection, session)
+	return botFunction(ctx, route, request, connection, session)
 
 }
 
-func getLoadBotFunc(botKey, collectionName string) LoadBotFunc {
+func getLoadBotFunc(ctx context.Context, botKey, collectionName string) LoadBotFunc {
 	switch botKey {
 	case "load:uesio/core.uesio_load":
 		return runUesioExternalLoadBot
@@ -225,12 +226,12 @@ func getLoadBotFunc(botKey, collectionName string) LoadBotFunc {
 	return nil
 }
 
-func (b *SystemDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
-	botFunction := getLoadBotFunc(bot.GetKey(), op.CollectionName)
+func (b *SystemDialect) LoadBot(ctx context.Context, bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+	botFunction := getLoadBotFunc(ctx, bot.GetKey(), op.CollectionName)
 	if botFunction == nil {
 		return exceptions.NewSystemBotNotFoundException()
 	}
-	return botFunction(op, connection, session)
+	return botFunction(ctx, op, connection, session)
 }
 
 func getSaveBotFunc(botKey, collectionName string) SaveBotFunc {
@@ -256,10 +257,10 @@ func getSaveBotFunc(botKey, collectionName string) SaveBotFunc {
 	return nil
 }
 
-func (b *SystemDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *SystemDialect) SaveBot(ctx context.Context, bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	botFunction := getSaveBotFunc(bot.GetKey(), op.CollectionName)
 	if botFunction == nil {
 		return exceptions.NewSystemBotNotFoundException()
 	}
-	return botFunction(op, connection, session)
+	return botFunction(ctx, op, connection, session)
 }

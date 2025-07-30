@@ -1,6 +1,7 @@
 package jsdialect
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -27,7 +28,7 @@ func Logger() {
 type JSDialect struct {
 }
 
-type HydrateFunc func(bot *meta.Bot, session *sess.Session, connection wire.Connection) error
+type HydrateFunc func(ctx context.Context, bot *meta.Bot, session *sess.Session, connection wire.Connection) error
 
 const MAX_TIMEOUT int = 45
 const DEFAULT_TIMEOUT int = 5
@@ -51,8 +52,8 @@ func init() {
 	}
 }
 
-func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
-	r, _, err := bundle.GetItemAttachment(session.Context(), bot, b.GetFilePath(), session, connection)
+func (b *JSDialect) hydrateBot(ctx context.Context, bot *meta.Bot, session *sess.Session, connection wire.Connection) error {
+	r, _, err := bundle.GetItemAttachment(ctx, bot, b.GetFilePath(), session, connection)
 	if err != nil {
 		return err
 	}
@@ -81,18 +82,18 @@ func getBotProgramCacheKey(bot *meta.Bot, session *sess.Session) string {
 	}
 }
 
-func CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
-	botAPI := NewGeneratorBotAPI(bot, params, create, session, connection)
-	err := RunBot(bot, botAPI, session, connection, hydrate, nil)
+func CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
+	botAPI := NewGeneratorBotAPI(ctx, bot, params, create, session, connection)
+	err := RunBot(ctx, bot, botAPI, session, connection, hydrate, nil)
 	if err != nil {
 		return nil, err
 	}
 	return botAPI.Results, nil
 }
 
-func CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
-	botAPI := NewCallBotAPI(bot, session, connection, params)
-	if err := RunBot(bot, botAPI, session, connection, hydrate, botAPI.AddError); err != nil {
+func CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session, hydrate HydrateFunc) (map[string]any, error) {
+	botAPI := NewCallBotAPI(ctx, bot, session, connection, params)
+	if err := RunBot(ctx, bot, botAPI, session, connection, hydrate, botAPI.AddError); err != nil {
 		return nil, err
 	}
 	loadErrors := botAPI.GetErrors()
@@ -102,7 +103,7 @@ func CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, s
 	return botAPI.Results, nil
 }
 
-func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Connection, hydrateBot HydrateFunc, errorFunc func(string)) error {
+func RunBot(ctx context.Context, bot *meta.Bot, api any, session *sess.Session, connection wire.Connection, hydrateBot HydrateFunc, errorFunc func(string)) error {
 
 	cacheKey := getBotProgramCacheKey(bot, session)
 
@@ -113,12 +114,12 @@ func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Conne
 		if cacheItem, err := botProgramsCache.Get(cacheKey); err == nil {
 			program = cacheItem
 		} else if !errors.Is(err, cache.ErrKeyNotFound) {
-			slog.ErrorContext(session.Context(), fmt.Sprintf("error getting bot program for key [%s] from cache: %v", cacheKey, err))
+			slog.ErrorContext(ctx, fmt.Sprintf("error getting bot program for key [%s] from cache: %v", cacheKey, err))
 		}
 	}
 	if program == nil {
 		// We need to hydrate using the dialect-specific hydration mechanism
-		if hydrateErr := hydrateBot(bot, session, connection); hydrateErr != nil {
+		if hydrateErr := hydrateBot(ctx, bot, session, connection); hydrateErr != nil {
 			return hydrateErr
 		}
 		if compiledProgram, compileErr := goja.Compile(cacheKey, strings.ReplaceAll("("+bot.FileContents+")", "export default function", "function"), true); compileErr != nil {
@@ -174,40 +175,40 @@ func RunBot(bot *meta.Bot, api any, session *sess.Session, connection wire.Conne
 	return nil
 }
 
-func (b *JSDialect) BeforeSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := NewBeforeSaveAPI(bot, request, connection, session)
-	return RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
+func (b *JSDialect) BeforeSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := NewBeforeSaveAPI(ctx, bot, request, connection, session)
+	return RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *JSDialect) AfterSave(bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	botAPI := NewAfterSaveAPI(bot, request, connection, session)
-	return RunBot(bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
+func (b *JSDialect) AfterSave(ctx context.Context, bot *meta.Bot, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+	botAPI := NewAfterSaveAPI(ctx, bot, request, connection, session)
+	return RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, botAPI.AddError)
 }
 
-func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	return CallBot(bot, params, connection, session, b.hydrateBot)
+func (b *JSDialect) CallBot(ctx context.Context, bot *meta.Bot, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+	return CallBot(ctx, bot, params, connection, session, b.hydrateBot)
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
-	return CallGeneratorBot(bot, create, params, connection, session, b.hydrateBot)
+func (b *JSDialect) CallGeneratorBot(ctx context.Context, bot *meta.Bot, create bundlestore.FileCreator, params map[string]any, connection wire.Connection, session *sess.Session) (map[string]any, error) {
+	return CallGeneratorBot(ctx, bot, create, params, connection, session, b.hydrateBot)
 }
 
-func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
-	botAPI := NewRouteBotApi(bot, route, request, session, connection)
-	err := RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+func (b *JSDialect) RouteBot(ctx context.Context, bot *meta.Bot, route *meta.Route, request *http.Request, connection wire.Connection, session *sess.Session) (*meta.Route, error) {
+	botAPI := NewRouteBotApi(ctx, bot, route, request, session, connection)
+	err := RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}
 	return HandleBotResponse(botAPI)
 }
 
-func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
+func (b *JSDialect) LoadBot(ctx context.Context, bot *meta.Bot, op *wire.LoadOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegrationConnection()
 	if err != nil {
 		return err
 	}
-	botAPI := NewLoadBotAPI(bot, op, integrationConnection)
-	if err = RunBot(bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
+	botAPI := NewLoadBotAPI(ctx, bot, op, integrationConnection)
+	if err = RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil); err != nil {
 		return err
 	}
 	loadErrors := botAPI.GetErrors()
@@ -217,18 +218,18 @@ func (b *JSDialect) LoadBot(bot *meta.Bot, op *wire.LoadOp, connection wire.Conn
 	return nil
 }
 
-func (b *JSDialect) SaveBot(bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
+func (b *JSDialect) SaveBot(ctx context.Context, bot *meta.Bot, op *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
 	integrationConnection, err := op.GetIntegration()
 	if err != nil {
 		return err
 	}
-	botAPI := NewSaveBotAPI(bot, connection, op, integrationConnection)
-	return RunBot(bot, botAPI, session, connection, b.hydrateBot, nil)
+	botAPI := NewSaveBotAPI(ctx, bot, connection, op, integrationConnection)
+	return RunBot(ctx, bot, botAPI, session, connection, b.hydrateBot, nil)
 }
 
-func (b *JSDialect) RunIntegrationActionBot(bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
-	botAPI := NewRunIntegrationActionBotAPI(bot, ic, actionName, params)
-	err := RunBot(bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
+func (b *JSDialect) RunIntegrationActionBot(ctx context.Context, bot *meta.Bot, ic *wire.IntegrationConnection, actionName string, params map[string]any) (any, error) {
+	botAPI := NewRunIntegrationActionBotAPI(ctx, bot, ic, actionName, params)
+	err := RunBot(ctx, bot, botAPI, ic.GetSession(), ic.GetPlatformConnection(), b.hydrateBot, nil)
 	if err != nil {
 		return nil, err
 	}

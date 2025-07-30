@@ -23,7 +23,7 @@ func UsageWorker(ctx context.Context) error {
 		return fmt.Errorf("unable to obtain a system session to use for usage events job: %w", err)
 	}
 
-	err = usage.ApplyBatch(session)
+	err = usage.ApplyBatch(ctx, session)
 	if err != nil {
 		return err
 	}

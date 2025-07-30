@@ -1,6 +1,7 @@
 package translate
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -9,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
+func GetTranslatedLabels(ctx context.Context, session *sess.Session) (map[string]string, error) {
 
 	if session.HasLabels() {
 		return session.GetLabels(), nil
@@ -17,14 +18,14 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	userLanguage := session.GetContextUser().Language
 
 	var labels meta.LabelCollection
-	err := bundle.LoadAllFromAny(session.Context(), &labels, nil, session, nil)
+	err := bundle.LoadAllFromAny(ctx, &labels, nil, session, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load labels: %w", err)
 	}
 
 	var translations meta.TranslationCollection
 	if userLanguage != "" {
-		err = bundle.LoadAllFromAny(session.Context(), &translations, &bundlestore.GetAllItemsOptions{
+		err = bundle.LoadAllFromAny(ctx, &translations, &bundlestore.GetAllItemsOptions{
 			Conditions: meta.BundleConditions{
 				"uesio/studio.language": userLanguage,
 			},
