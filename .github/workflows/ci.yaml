@@ -349,8 +349,7 @@ jobs:
           app-id: ${{ vars.UPDATE_IMAGE_APP_ID }}
           private-key: ${{ secrets.UPDATE_IMAGE_PRIVATE_KEY }}
           owner: TheCloudMasters
-          repositories:
-            - uesio-infra
+          repositories: uesio-infra
 
       - name: Get GitHub App User ID
         id: get-user-id
