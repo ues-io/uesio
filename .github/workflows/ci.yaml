@@ -340,11 +340,29 @@ jobs:
     permissions:
       id-token: write # This is required for requesting a OIDC JWT for AWS
     steps:
+      - name: Create App Token for GitHub App
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          # The "Update Image" GitHub App must be installed on the TheCloudMasters org
+          # and have permissions to write to the TheCloudMasters/uesio-infra repo.
+          app-id: ${{ vars.UPDATE_IMAGE_APP_ID }}
+          private-key: ${{ secrets.UPDATE_IMAGE_PRIVATE_KEY }}
+          owner: TheCloudMasters
+          repositories:
+            - uesio-infra
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+   
       - name: Checkout TheCloudMasters/uesio-infra
         uses: actions/checkout@v4
         with:
           repository: TheCloudMasters/uesio-infra
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your personal Github access token
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 1
 
       - name: Download docker image artifact
@@ -390,8 +408,8 @@ jobs:
           jq --arg img "$REGISTRY_VERSION_TAG" '.containerDefinitions[0].image = $img' $WORKER_TASK_DEF_PATH > tmp2.json
           mv tmp1.json $APP_TASK_DEF_PATH
           mv tmp2.json $WORKER_TASK_DEF_PATH
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'            
           git add $APP_TASK_DEF_PATH $WORKER_TASK_DEF_PATH
           git commit -m "ci: Auto-update dev image to $REGISTRY_VERSION_TAG"
           git push
