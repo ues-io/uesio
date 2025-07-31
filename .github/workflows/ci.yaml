@@ -207,7 +207,7 @@ jobs:
           UESIO_LOG_LEVEL: ${{ inputs.uesioLogLevel }}
           UESIO_PRIMARY_DOMAIN: ${{ inputs.uesioPrimaryDomain }}
         run: |
-          if ! [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then        
+          if ! [[ -z "${UESIO_PRIMARY_DOMAIN}" ]]; then
             npm run setup-local-dns            
           fi
           npm run setup-ssl
@@ -357,7 +357,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
-   
+
       - name: Checkout TheCloudMasters/uesio-infra
         uses: actions/checkout@v4
         with:
@@ -409,7 +409,7 @@ jobs:
           mv tmp1.json $APP_TASK_DEF_PATH
           mv tmp2.json $WORKER_TASK_DEF_PATH
           git config user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
-          git config user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'            
+          git config user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
           git add $APP_TASK_DEF_PATH $WORKER_TASK_DEF_PATH
           git commit -m "ci: Auto-update dev image to $REGISTRY_VERSION_TAG"
           git push
