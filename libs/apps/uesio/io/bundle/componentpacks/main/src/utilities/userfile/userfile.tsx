@@ -19,6 +19,7 @@ interface UserFileUtilityProps {
   onChange?: (value: string) => void
   accept?: string
   textOptions?: TextOptions
+  attachment?: boolean
 }
 
 const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
@@ -34,6 +35,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     displayAs,
     textOptions,
     variant,
+    attachment,
   } = props
 
   const userFileId = userFile?.[collection.ID_FIELD]
@@ -73,7 +75,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
   }
 
   const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
-  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
+  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate, attachment)
 
   const fileInfo: FileInfo | undefined =
     userFile && fileUrl

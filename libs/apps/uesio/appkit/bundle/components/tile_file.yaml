@@ -23,6 +23,18 @@ definition:
                   components:
                     - uesio/io.button:
                         uesio.variant: uesio/appkit.itemaction
+                        icon: file_download
+                        tooltip: Download
+                        signals:
+                          - signal: route/REDIRECT
+                            # NOTE: attachment should be a parameter to $UserFile{} but we currently only
+                            # support single parameters to merge expressions.
+                            # TODO: Add support for multiple parameters to merge expressions and then update
+                            # $UserFile to take parameter, ideally an options object for future flexibility
+                            # to control attachment vs. inline.
+                            path: $UserFile{}&attachment=true
+                    - uesio/io.button:
+                        uesio.variant: uesio/appkit.itemaction
                         icon: delete
                         tooltip: Delete
                         signals:

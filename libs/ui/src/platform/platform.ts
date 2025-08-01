@@ -429,6 +429,7 @@ const platform = {
     context: Context,
     userfileid: string,
     fileVersion?: string,
+    attachment?: boolean,
   ) => {
     const prefix = getPrefix(context)
     const fileVersionParam = fileVersion
@@ -436,7 +437,7 @@ const platform = {
       : ""
     return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
       userfileid,
-    )}${fileVersionParam}`
+    )}${fileVersionParam}${attachment ? "&attachment=true" : ""}`
   },
   getAttachmentURL: (
     context: Context,
