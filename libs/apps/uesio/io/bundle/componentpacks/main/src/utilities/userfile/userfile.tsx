@@ -75,7 +75,12 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
   }
 
   const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
-  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate, attachment)
+  const fileUrl = api.file.getUserFileURL(
+    context,
+    userFileId,
+    fileModDate,
+    attachment,
+  )
 
   const fileInfo: FileInfo | undefined =
     userFile && fileUrl
