@@ -299,7 +299,7 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
       break
     case "FILE":
       content = (
-        <FileField {...common} displayAs={displayAs} attachment={true} />
+        <FileField {...common} displayAs={displayAs} />
       )
       break
     case "USER":

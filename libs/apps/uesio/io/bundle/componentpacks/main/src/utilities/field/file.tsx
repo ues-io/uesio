@@ -11,7 +11,6 @@ interface FileUtilityProps {
   mode?: context.FieldMode
   record: wire.WireRecord
   displayAs?: string
-  attachment?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -36,7 +35,6 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
     record,
     fieldId,
     variant,
-    attachment,
   } = props
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
@@ -69,7 +67,6 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
       recordId={recordId}
       collectionId={collectionId}
       fieldId={fieldId}
-      attachment={attachment}
     />
   )
 }

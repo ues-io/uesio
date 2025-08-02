@@ -1,9 +1,14 @@
 import { definition, styles, context } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Tile from "../tile/tile"
-import Icon from "../icon/icon"
 import UploadArea from "../uploadarea/uploadarea"
 import { useRef } from "react"
+import MenuButton from "../menubutton/menubutton"
+
+type MenuItem = {
+  id: string
+  label: string
+}
 
 type FileInfo = {
   url: string
@@ -18,6 +23,8 @@ interface FileUtilityProps {
   fileInfo?: FileInfo
   onUpload: (files: FileList | null) => void
   onDelete?: () => void
+  onPreview?: () => void
+  onDownload?: () => void
   accept?: string
 }
 
@@ -28,12 +35,13 @@ const StyleDefaults = Object.freeze({
   selecteditemwrapper: [],
   selectediteminner: [],
   editbutton: [],
+  menubutton: [],
   uploadarea: [],
   emptystate: [],
 })
 
 const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
-  const { context, fileInfo, onUpload, onDelete, accept, mode } = props
+  const { context, fileInfo, onUpload, onDelete, onPreview, onDownload, accept, mode } = props
 
   const classes = styles.useUtilityStyleTokens(
     StyleDefaults,
@@ -42,16 +50,33 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
   )
 
   const uploadLabelId = nanoid()
-  const deleteLabelId = nanoid()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const menuItems: MenuItem[] = [
+    ...(onPreview ? [
+      {
+        id: "preview",
+        label: "Preview",
+      },
+    ] : []),
+    ...(onDownload ? [
+    {
+      id: "download",
+      label: "Download",
+    }] : []),
+    ...(mode === "EDIT" && onDelete ? [
+      {
+        id: "delete",
+        label: "Delete"
+      }] : [])
+  ]  
 
   return (
     <>
       {mode === "EDIT" && (
         <UploadArea
           onUpload={fileInfo?.isAttachment ? undefined : onUpload}
-          onDelete={onDelete}
           context={context}
           accept={accept}
           className={styles.cx(
@@ -59,7 +84,6 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
             !fileInfo && classes.emptystate,
           )}
           uploadLabelId={uploadLabelId}
-          deleteLabelId={deleteLabelId}
           fileInputRef={fileInputRef}
           onClick={() => {
             fileInputRef.current?.click()
@@ -77,24 +101,29 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
           {
             <div className={classes.selecteditemwrapper}>
               <div className={classes.selectediteminner}>{fileInfo.name}</div>
-              <a href={fileInfo.url}>
-                <button
-                  tabIndex={-1}
-                  className={classes.editbutton}
-                  type="button"
-                >
-                  <Icon icon="file_download" context={context} />
-                </button>
-              </a>
-              {mode === "EDIT" && (
-                <label htmlFor={deleteLabelId}>
-                  <Icon
-                    icon="delete"
-                    className={classes.editbutton}
-                    context={context}
-                  />
-                </label>
-              )}
+              <MenuButton
+                buttonVariant="uesio/appkit.navicon"
+                className={classes.menubutton}
+                itemRenderer={(item: MenuItem) => item.label}
+                items={menuItems}
+                getItemKey={(item: MenuItem) => item.id}
+                icon="more_vert"
+                context={context}
+                defaultPlacement="bottom-end"
+                onSelect={(item: MenuItem) => {
+                  switch (item.id) {
+                    case "preview":
+                      onPreview?.()
+                      break
+                    case "download":
+                      onDownload?.()
+                      break
+                    case "delete":
+                      onDelete?.()
+                      break                         
+                  }
+                }}  
+              />
             </div>
           }
         </Tile>

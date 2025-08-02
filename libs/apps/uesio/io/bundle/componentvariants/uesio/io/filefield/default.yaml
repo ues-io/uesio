@@ -6,6 +6,9 @@ definition:
     root:
       - after:hidden
       - min-h-[38px]
+    selecteditemwrapper:
+      - pr-0
+      - gap-1
     uploadarea:
       - border(& dashed slate-200 4)
       - hover:border(& dashed blue-200 4)
@@ -21,4 +24,9 @@ definition:
       - items-center
       - justify-center
       - cursor-pointer
+    menubutton:
+      - w-6
+      - h-6
+      - hover:bg-primary-200/60
+      - tracking-normal
 public: true

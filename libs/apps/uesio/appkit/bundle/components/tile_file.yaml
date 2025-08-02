@@ -15,45 +15,56 @@ definition:
         - uesio/io.group:
             components:
               - uesio/io.box:
-                  uesio.display:
-                    - type: hasValue
-                      value: ${uesio/core.id}
-                    - type: hasValue
-                      value: $Prop{allowDelete}
-                  components:
-                    - uesio/io.button:
-                        uesio.variant: uesio/appkit.itemaction
-                        icon: file_download
-                        tooltip: Download
-                        signals:
-                          - signal: route/REDIRECT
-                            # NOTE: attachment should be a parameter to $UserFile{} but we currently only
-                            # support single parameters to merge expressions.
-                            # TODO: Add support for multiple parameters to merge expressions and then update
-                            # $UserFile to take parameter, ideally an options object for future flexibility
-                            # to control attachment vs. inline.
-                            path: $UserFile{}&attachment=true
-                    - uesio/io.button:
-                        uesio.variant: uesio/appkit.itemaction
-                        icon: delete
-                        tooltip: Delete
-                        signals:
-                          - signal: userfile/DELETE
-                            id: ${uesio/core.id}
-                          - signal: context/CLEAR
-                            type: VIEW
-                            viewDef: uesio/appkit.file_attachments
-                          - signal: wire/LOAD
-              - uesio/io.box:
                   components:
                     - uesio/io.text:
                         uesio.styleTokens:
                           root:
                             - bg-white
                             - w-max
+                            - tracking-normal
                         uesio.variant: uesio/appkit.badge
                         text: $FileSize{${uesio/core.contentlength}}
-                        element: div
+                        element: div            
+              - uesio/io.box:
+                  uesio.display:
+                    - type: hasValue
+                      value: ${uesio/core.id}
+                    - type: hasValue
+                      value: $Prop{allowDelete}
+                  components:
+                    - uesio/io.menubutton:
+                        buttonVariant: uesio/appkit.navicon
+                        icon: more_vert
+                        uesio.styleTokens:
+                          button:
+                            - text-[1.5rem]
+                            - tracking-normal
+                        items:
+                          - id: preview
+                            label: Preview
+                            signals:
+                              - signal: route/REDIRECT
+                                path: $UserFile{}
+                                newtab: true
+                          - id: download
+                            label: Download
+                            signals:
+                              - signal: route/REDIRECT
+                                # NOTE: attachment should be a parameter to $UserFile{} but we currently only
+                                # support single parameters to merge expressions.
+                                # TODO: Add support for multiple parameters to merge expressions and then update
+                                # $UserFile to take parameter, ideally an options object for future flexibility
+                                # to control attachment vs. inline.
+                                path: $UserFile{}&attachment=true
+                          - id: delete
+                            label: Delete
+                            signals:
+                              - signal: userfile/DELETE
+                                id: ${uesio/core.id}
+                              - signal: context/CLEAR
+                                type: VIEW
+                                viewDef: uesio/appkit.file_attachments
+                              - signal: wire/LOAD
       avatar:
         - uesio/io.box:
             uesio.display:
