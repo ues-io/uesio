@@ -20,9 +20,10 @@ const getUserFileURL = (
   context: Context,
   userfileid: string | undefined,
   fileVersion?: string,
+  attachment?: boolean,
 ) => {
   if (!userfileid) return ""
-  return platform.getUserFileURL(context, userfileid, fileVersion)
+  return platform.getUserFileURL(context, userfileid, fileVersion, attachment)
 }
 
 const getAttachmentURL = (

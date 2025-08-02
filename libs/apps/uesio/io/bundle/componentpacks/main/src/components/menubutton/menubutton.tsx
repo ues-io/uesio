@@ -1,4 +1,4 @@
-import { definition, signal, metadata, api } from "@uesio/ui"
+import { definition, signal, metadata, api, component } from "@uesio/ui"
 import { default as IOMenuButton } from "../../utilities/menubutton/menubutton"
 
 type MenuItemDefinition = {
@@ -30,6 +30,7 @@ const MenuButton: definition.UC<MenuButtonDefinition> = (props) => {
       icon={icon}
       context={context}
       buttonVariant={buttonVariant}
+      styleTokens={definition[component.STYLE_TOKENS]}      
     />
   )
 }

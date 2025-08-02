@@ -298,7 +298,9 @@ const Field: definition.UtilityComponent<FieldProps> = (props) => {
       content = <TimestampField {...common} />
       break
     case "FILE":
-      content = <FileField {...common} displayAs={displayAs} />
+      content = (
+        <FileField {...common} displayAs={displayAs} />
+      )
       break
     case "USER":
       content = <UserField {...common} options={user} refoptions={reference} />

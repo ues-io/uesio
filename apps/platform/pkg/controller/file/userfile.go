@@ -90,6 +90,7 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	userFileID := query.Get("userfileid")
 	version := query.Get("version")
+	attachment := query.Get("attachment")
 	if userFileID == "" {
 		ctlutil.HandleError(r.Context(), w, exceptions.NewBadRequestException("missing required query parameter: userfileid", nil))
 		return
@@ -107,7 +108,11 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		middleware.SetNoCache(w)
 	}
 
-	respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)
+	if attachment == "true" {
+		responseFileAttachment(w, r, userFile.Path(), userFile.LastModified(), rs)
+	} else {
+		respondFile(w, r, userFile.Path(), userFile.LastModified(), rs)
+	}
 }
 
 func DownloadAttachment(w http.ResponseWriter, r *http.Request) {

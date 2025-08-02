@@ -26,6 +26,14 @@ var unsafeChars = initUnsafeChars()
 const separatorStr = string(filepath.Separator)
 
 func respondFile(w http.ResponseWriter, r *http.Request, path string, modified time.Time, stream io.ReadSeeker) {
+	respondFileInternal(w, r, path, "inline", modified, stream)
+}
+
+func responseFileAttachment(w http.ResponseWriter, r *http.Request, path string, modified time.Time, stream io.ReadSeeker) {
+	respondFileInternal(w, r, path, "attachment", modified, stream)
+}
+
+func respondFileInternal(w http.ResponseWriter, r *http.Request, path string, disposition string, modified time.Time, stream io.ReadSeeker) {
 	if stream == nil {
 		resp := make(map[string]string)
 		resp["message"] = "Resource Not Found"
@@ -54,7 +62,10 @@ func respondFile(w http.ResponseWriter, r *http.Request, path string, modified t
 		// that we have non-user types of files that go through this path as well. In short,
 		// being explicit here to correct the invalid header value but more thought is needed
 		// on this.
-		SetContentDispositionHeader(w, "inline", path)
+		if disposition == "" {
+			disposition = "inline"
+		}
+		SetContentDispositionHeader(w, disposition, path)
 	}
 
 	http.ServeContent(w, r, filename, modified, stream)
