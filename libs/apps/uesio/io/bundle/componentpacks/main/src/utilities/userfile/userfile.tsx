@@ -19,6 +19,7 @@ interface UserFileUtilityProps {
   onChange?: (value: string) => void
   accept?: string
   textOptions?: TextOptions
+  readonly?: boolean
 }
 
 const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
@@ -34,6 +35,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     displayAs,
     textOptions,
     variant,
+    readonly,
   } = props
 
   const userFileId = userFile?.[collection.ID_FIELD]
@@ -122,6 +124,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     accept,
     displayAs,
     variant,
+    readonly,
   }
 
   switch (displayAs) {

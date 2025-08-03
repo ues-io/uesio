@@ -14,6 +14,7 @@ interface FileVideoProps {
   accept?: string
   muted?: boolean
   autoplay?: boolean
+  readonly?: boolean
 }
 
 const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
@@ -26,6 +27,7 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
     onUpload,
     onDelete,
     accept,
+    readonly,
   } = props
 
   const fileUrl = fileInfo?.url
@@ -34,8 +36,21 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
 
   const uploadLabelId = nanoid()
   const deleteLabelId = nanoid()
+  const isEditMode = !readonly && mode === "EDIT"
 
-  return (
+  const Video = () =>
+    fileInfo ? (
+      <video autoPlay={autoplay || true} muted={muted || true}>
+        <source src={fileUrl} />
+        Your browser does not support the video tag.
+      </video>
+    ) : (
+      <div className={classes.nofile}>
+        <Icon className={classes.nofileicon} context={context} icon="movie" />
+      </div>
+    )
+
+  return isEditMode ? (
     <UploadArea
       onUpload={onUpload}
       onDelete={onDelete}
@@ -53,17 +68,12 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
         uploadLabelId={uploadLabelId}
         deleteLabelId={deleteLabelId}
       />
-      {fileInfo ? (
-        <video autoPlay={autoplay || true} muted={muted || true}>
-          <source src={fileUrl} />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <div className={classes.nofile}>
-          <Icon className={classes.nofileicon} context={context} icon="movie" />
-        </div>
-      )}
+      <Video />
     </UploadArea>
+  ) : (
+    <div className={classes.root}>
+      <Video />
+    </div>
   )
 }
 

@@ -13,6 +13,7 @@ interface FileUtilityProps {
   record: wire.WireRecord
   displayAs?: string
   setValue: FieldValueSetter
+  readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -38,6 +39,7 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
     fieldId,
     variant,
     setValue,
+    readonly,
   } = props
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
@@ -70,6 +72,7 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
       recordId={recordId}
       collectionId={collectionId}
       fieldId={fieldId}
+      readonly={readonly}
     />
   )
 }

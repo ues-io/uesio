@@ -19,23 +19,32 @@ interface FileTextProps {
   displayAs?: string
   textOptions?: TextOptions
   onChange?: (value: string) => void
+  readonly?: boolean
 }
 
 const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
-  const { context, userFile, textOptions, mode, displayAs, onChange } = props
+  const {
+    context,
+    userFile,
+    textOptions,
+    mode,
+    displayAs,
+    onChange,
+    readonly,
+  } = props
 
   const language = displayAs === "MARKDOWN" ? "markdown" : textOptions?.language
   const typeDefinitionFileURIs = textOptions?.typeDefinitionFileURIs
   const theme = textOptions?.theme
-
+  const isEditMode = !readonly && mode === "EDIT" && onChange
   const content = api.file.useUserFile(context, userFile)
 
-  if (displayAs === "MARKDOWN" && mode !== "EDIT") {
+  if (displayAs === "MARKDOWN") {
     return (
       <MarkDownField
         context={context}
         value={content}
-        mode={mode}
+        mode={isEditMode ? mode : "READ"}
         setValue={onChange}
         variant={props.variant}
         theme={theme}
@@ -47,7 +56,7 @@ const FileText: definition.UtilityComponent<FileTextProps> = (props) => {
     <CodeField
       context={context}
       value={content || ""}
-      mode={mode}
+      mode={isEditMode ? mode : "READ"}
       language={language}
       setValue={onChange}
       typeDefinitionFileURIs={typeDefinitionFileURIs}

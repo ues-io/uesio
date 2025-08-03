@@ -26,6 +26,7 @@ interface FileUtilityProps {
   onPreview?: () => void
   onDownload?: () => void
   accept?: string
+  readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({
@@ -50,6 +51,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
     onDownload,
     accept,
     mode,
+    readonly,
   } = props
 
   const classes = styles.useUtilityStyleTokens(
@@ -59,7 +61,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
   )
 
   const uploadLabelId = nanoid()
-
+  const isEditMode = !readonly && mode === "EDIT"
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const menuItems: MenuItem[] = [
@@ -91,7 +93,7 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
 
   return (
     <>
-      {mode === "EDIT" && (
+      {isEditMode && (
         <UploadArea
           onUpload={fileInfo?.isAttachment ? undefined : onUpload}
           context={context}
