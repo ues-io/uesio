@@ -38,6 +38,25 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
 
   const userFileId = userFile?.[collection.ID_FIELD]
 
+  const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
+  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
+  const downloadFileUrl = api.file.getUserFileURL(
+    context,
+    userFileId,
+    fileModDate,
+    true,
+  )
+
+  const fileInfo: FileInfo | undefined =
+    userFile && fileUrl
+      ? {
+          url: fileUrl,
+          name: userFile["uesio/core.path"],
+          mimetype: userFile["uesio/core.mimetype"],
+          isAttachment: !userFile["uesio/core.fieldid"],
+        }
+      : undefined
+
   const onFileUpload = async (file: FileList | File | null) => {
     if (!file) return
     if (file instanceof FileList) {
@@ -72,18 +91,23 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     return deleteResult
   }
 
-  const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
-  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
+  const onFilePreview = async () => {
+    if (!fileUrl) return
+    // TODO: There should likely be an API for the equivalent of /route/operations.ts redirect function
+    // but the only way to get to it is via a signal which is not ideal to be calling from a utility
+    // component as it should use our apis. For now, implementing with native js calls but API should
+    // be evaluated and expanded.
+    window.open(fileUrl, "_blank")
+  }
 
-  const fileInfo: FileInfo | undefined =
-    userFile && fileUrl
-      ? {
-          url: fileUrl,
-          name: userFile["uesio/core.path"],
-          mimetype: userFile["uesio/core.mimetype"],
-          isAttachment: !userFile["uesio/core.fieldid"],
-        }
-      : undefined
+  const onFileDownload = async () => {
+    if (!downloadFileUrl) return
+    // TODO: There should likely be an API for the equivalent of /route/operations.ts redirect function
+    // but the only way to get to it is via a signal which is not ideal to be calling from a utility
+    // component as it should use our apis. For now, implementing with native js calls but API should
+    // be evaluated and expanded.
+    window.open(downloadFileUrl, "_blank")
+  }
 
   // Right now this only works if a file record is in context
   const common = {
@@ -93,6 +117,8 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     fileInfo,
     onUpload: onFileUpload,
     onDelete: onFileDelete,
+    onPreview: onFilePreview,
+    onDownload: onFileDownload,
     accept,
     displayAs,
     variant,

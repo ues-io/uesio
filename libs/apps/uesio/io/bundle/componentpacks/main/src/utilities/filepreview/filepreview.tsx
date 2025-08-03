@@ -9,6 +9,8 @@ interface FilePreviewProps {
   fileInfo?: FileInfo
   onUpload: (files: FileList | null) => void
   onDelete?: () => void
+  onPreview?: () => void
+  onDownload?: () => void
   accept?: string
 }
 

@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { definition, metadata } from "@uesio/ui"
+import { definition, metadata, styles } from "@uesio/ui"
 
 import ListMenu from "../listmenu/listmenu"
 import IconButton from "../iconbutton/iconbutton"
@@ -17,6 +17,10 @@ interface MenuButtonUtilityProps<I> {
   defaultPlacement?: Placement
   offset?: number
 }
+
+const StyleDefaults = Object.freeze({
+  button: [],
+})
 
 const MenuButton: definition.UtilityComponent<
   MenuButtonUtilityProps<unknown>
@@ -37,6 +41,12 @@ const MenuButton: definition.UtilityComponent<
     offset,
   } = props
 
+  const styleClasses = styles.useUtilityStyleTokens(
+    StyleDefaults,
+    props,
+    "uesio/io.menubutton",
+  )
+
   return (
     <ListMenu
       context={context}
@@ -50,7 +60,7 @@ const MenuButton: definition.UtilityComponent<
       offset={offset}
     >
       <IconButton
-        className={className}
+        className={styles.cx(styleClasses.button, className)}
         context={context}
         icon={icon}
         fill={fill}
