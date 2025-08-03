@@ -39,11 +39,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
   const userFileId = userFile?.[collection.ID_FIELD]
 
   const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
-  const fileUrl = api.file.getUserFileURL(
-    context,
-    userFileId,
-    fileModDate,
-  )
+  const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
   const downloadFileUrl = api.file.getUserFileURL(
     context,
     userFileId,
@@ -59,7 +55,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
           mimetype: userFile["uesio/core.mimetype"],
           isAttachment: !userFile["uesio/core.fieldid"],
         }
-      : undefined  
+      : undefined
 
   const onFileUpload = async (file: FileList | File | null) => {
     if (!file) return
@@ -100,7 +96,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     // TODO: There should likely be an API for the equivalent of /route/operations.ts redirect function
     // but the only way to get to it is via a signal which is not ideal to be calling from a utility
     // component as it should use our apis. For now, implementing with native js calls but API should
-    // be evaluated and expanded.    
+    // be evaluated and expanded.
     window.open(fileUrl, "_blank")
   }
 
@@ -110,7 +106,7 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     // but the only way to get to it is via a signal which is not ideal to be calling from a utility
     // component as it should use our apis. For now, implementing with native js calls but API should
     // be evaluated and expanded.
-    window.open(downloadFileUrl, "_blank")    
+    window.open(downloadFileUrl, "_blank")
   }
 
   // Right now this only works if a file record is in context

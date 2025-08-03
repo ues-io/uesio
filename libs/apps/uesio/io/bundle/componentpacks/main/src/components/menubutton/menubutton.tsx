@@ -30,7 +30,7 @@ const MenuButton: definition.UC<MenuButtonDefinition> = (props) => {
       icon={icon}
       context={context}
       buttonVariant={buttonVariant}
-      styleTokens={definition[component.STYLE_TOKENS]}      
+      styleTokens={definition[component.STYLE_TOKENS]}
     />
   )
 }

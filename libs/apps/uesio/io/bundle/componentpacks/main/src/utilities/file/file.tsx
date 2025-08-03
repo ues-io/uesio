@@ -41,7 +41,16 @@ const StyleDefaults = Object.freeze({
 })
 
 const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
-  const { context, fileInfo, onUpload, onDelete, onPreview, onDownload, accept, mode } = props
+  const {
+    context,
+    fileInfo,
+    onUpload,
+    onDelete,
+    onPreview,
+    onDownload,
+    accept,
+    mode,
+  } = props
 
   const classes = styles.useUtilityStyleTokens(
     StyleDefaults,
@@ -54,23 +63,31 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const menuItems: MenuItem[] = [
-    ...(onPreview ? [
-      {
-        id: "preview",
-        label: "Preview",
-      },
-    ] : []),
-    ...(onDownload ? [
-    {
-      id: "download",
-      label: "Download",
-    }] : []),
-    ...(mode === "EDIT" && onDelete ? [
-      {
-        id: "delete",
-        label: "Delete"
-      }] : [])
-  ]  
+    ...(onPreview
+      ? [
+          {
+            id: "preview",
+            label: "Preview",
+          },
+        ]
+      : []),
+    ...(onDownload
+      ? [
+          {
+            id: "download",
+            label: "Download",
+          },
+        ]
+      : []),
+    ...(mode === "EDIT" && onDelete
+      ? [
+          {
+            id: "delete",
+            label: "Delete",
+          },
+        ]
+      : []),
+  ]
 
   return (
     <>
@@ -120,9 +137,9 @@ const File: definition.UtilityComponent<FileUtilityProps> = (props) => {
                       break
                     case "delete":
                       onDelete?.()
-                      break                         
+                      break
                   }
-                }}  
+                }}
               />
             </div>
           }

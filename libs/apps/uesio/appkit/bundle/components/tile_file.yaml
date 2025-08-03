@@ -24,7 +24,7 @@ definition:
                             - tracking-normal
                         uesio.variant: uesio/appkit.badge
                         text: $FileSize{${uesio/core.contentlength}}
-                        element: div            
+                        element: div
               - uesio/io.box:
                   uesio.display:
                     - type: hasValue

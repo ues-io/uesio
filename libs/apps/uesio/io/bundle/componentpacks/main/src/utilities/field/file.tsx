@@ -26,16 +26,8 @@ const StyleDefaults = Object.freeze({
 })
 
 const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
-  const {
-    displayAs,
-    context,
-    mode,
-    id,
-    value,
-    record,
-    fieldId,
-    variant,
-  } = props
+  const { displayAs, context, mode, id, value, record, fieldId, variant } =
+    props
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 

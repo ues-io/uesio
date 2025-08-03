@@ -41,7 +41,11 @@ const MenuButton: definition.UtilityComponent<
     offset,
   } = props
 
-  const styleClasses = styles.useUtilityStyleTokens(StyleDefaults, props, "uesio/io.menubutton")
+  const styleClasses = styles.useUtilityStyleTokens(
+    StyleDefaults,
+    props,
+    "uesio/io.menubutton",
+  )
 
   return (
     <ListMenu
