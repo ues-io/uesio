@@ -13,7 +13,7 @@ interface FileUtilityProps {
   record: wire.WireRecord
   displayAs?: string
   setValue: FieldValueSetter
-  readonly?: boolean  
+  readonly?: boolean
 }
 
 const StyleDefaults = Object.freeze({

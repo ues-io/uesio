@@ -36,20 +36,19 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
 
   const uploadLabelId = nanoid()
   const deleteLabelId = nanoid()
-  const isEditMode = !readonly && mode === "EDIT"  
+  const isEditMode = !readonly && mode === "EDIT"
 
-  const Video = () => (
-      fileInfo ? (
-        <video autoPlay={autoplay || true} muted={muted || true}>
-          <source src={fileUrl} />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <div className={classes.nofile}>
-          <Icon className={classes.nofileicon} context={context} icon="movie" />
-        </div>
-      )
-  )
+  const Video = () =>
+    fileInfo ? (
+      <video autoPlay={autoplay || true} muted={muted || true}>
+        <source src={fileUrl} />
+        Your browser does not support the video tag.
+      </video>
+    ) : (
+      <div className={classes.nofile}>
+        <Icon className={classes.nofileicon} context={context} icon="movie" />
+      </div>
+    )
 
   return isEditMode ? (
     <UploadArea
