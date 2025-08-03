@@ -12,6 +12,7 @@ interface FilePreviewProps {
   onPreview?: () => void
   onDownload?: () => void
   accept?: string
+  readonly?: boolean
 }
 
 const FilePreview: definition.UtilityComponent<FilePreviewProps> = (props) => {
