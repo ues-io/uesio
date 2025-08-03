@@ -1,6 +1,7 @@
 import { definition, context, wire, styles } from "@uesio/ui"
 import { UserFileMetadata } from "../../components/field/field"
 import UserFile from "../userfile/userfile"
+import { FieldValueSetter } from "../../components/field/field"
 
 interface FileUtilityProps {
   path: string
@@ -11,6 +12,7 @@ interface FileUtilityProps {
   mode?: context.FieldMode
   record: wire.WireRecord
   displayAs?: string
+  setValue: FieldValueSetter
 }
 
 const StyleDefaults = Object.freeze({
@@ -26,8 +28,17 @@ const StyleDefaults = Object.freeze({
 })
 
 const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
-  const { displayAs, context, mode, id, value, record, fieldId, variant } =
-    props
+  const {
+    displayAs,
+    context,
+    mode,
+    id,
+    value,
+    record,
+    fieldId,
+    variant,
+    setValue,
+  } = props
 
   const classes = styles.useUtilityStyleTokens(StyleDefaults, props)
 
@@ -49,10 +60,10 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
       userFile={userFile}
       context={context}
       onUpload={async (response) => {
-        record.set(fieldId, response)
+        setValue(response)
       }}
       onDelete={async () => {
-        record.set(fieldId, "")
+        setValue(null)
       }}
       mode={mode}
       variant={variant}
