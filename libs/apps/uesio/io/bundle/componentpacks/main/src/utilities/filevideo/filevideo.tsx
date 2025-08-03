@@ -17,14 +17,21 @@ interface FileVideoProps {
   readonly?: boolean
 }
 
-const Video = ({ fileInfo, classes, context, autoplay, muted, fileUrl }: {
-  fileInfo?: FileVideoProps["fileInfo"], 
-  classes: Record<string, string>, 
-  context: definition.UtilityProps["context"],
-  autoplay?: FileVideoProps["autoplay"],
-  muted?: FileVideoProps["muted"],
+const Video = ({
+  fileInfo,
+  classes,
+  context,
+  autoplay,
+  muted,
+  fileUrl,
+}: {
+  fileInfo?: FileVideoProps["fileInfo"]
+  classes: Record<string, string>
+  context: definition.UtilityProps["context"]
+  autoplay?: FileVideoProps["autoplay"]
+  muted?: FileVideoProps["muted"]
   fileUrl?: string
-}) => (
+}) =>
   fileInfo ? (
     <video autoPlay={autoplay || true} muted={muted || true}>
       <source src={fileUrl} />
@@ -35,7 +42,6 @@ const Video = ({ fileInfo, classes, context, autoplay, muted, fileUrl }: {
       <Icon className={classes.nofileicon} context={context} icon="movie" />
     </div>
   )
-)
 
 const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
   const {
@@ -76,11 +82,25 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
         uploadLabelId={uploadLabelId}
         deleteLabelId={deleteLabelId}
       />
-      <Video fileInfo={fileInfo} classes={classes} context={context} autoplay={autoplay} muted={muted} fileUrl={fileUrl} />
+      <Video
+        fileInfo={fileInfo}
+        classes={classes}
+        context={context}
+        autoplay={autoplay}
+        muted={muted}
+        fileUrl={fileUrl}
+      />
     </UploadArea>
   ) : (
     <div className={classes.root}>
-      <Video fileInfo={fileInfo} classes={classes} context={context} autoplay={autoplay} muted={muted} fileUrl={fileUrl} />
+      <Video
+        fileInfo={fileInfo}
+        classes={classes}
+        context={context}
+        autoplay={autoplay}
+        muted={muted}
+        fileUrl={fileUrl}
+      />
     </div>
   )
 }

@@ -74,7 +74,15 @@ const EditButtons: definition.UtilityComponent<EditButtonsProps> = (props) => {
   )
 }
 
-const Image = ({ fileInfo, classes, context }: {fileInfo?: FileImageProps["fileInfo"], classes: Record<string, string>, context: definition.UtilityProps["context"]}) => (
+const Image = ({
+  fileInfo,
+  classes,
+  context,
+}: {
+  fileInfo?: FileImageProps["fileInfo"]
+  classes: Record<string, string>
+  context: definition.UtilityProps["context"]
+}) =>
   fileInfo ? (
     // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
     <img className={classes.image} src={fileInfo.url} />
@@ -83,7 +91,6 @@ const Image = ({ fileInfo, classes, context }: {fileInfo?: FileImageProps["fileI
       <Icon className={classes.nofileicon} context={context} icon="person" />
     </div>
   )
-)
 
 const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   const { context, mode, fileInfo, accept, onUpload, onDelete, readonly } =
