@@ -31,17 +31,24 @@ const Video = ({
   autoplay?: FileVideoProps["autoplay"]
   muted?: FileVideoProps["muted"]
   fileUrl?: string
-}) =>
-  fileInfo ? (
-    <video autoPlay={autoplay || true} muted={muted || true}>
-      <source src={fileUrl} />
-      Your browser does not support the video tag.
-    </video>
-  ) : (
-    <div className={classes.nofile}>
-      <Icon className={classes.nofileicon} context={context} icon="movie" />
-    </div>
-  )
+}) => (
+  <div className={classes.contentcontainer}>
+    {fileInfo ? (
+      <video
+        className={classes.image}
+        autoPlay={autoplay || true}
+        muted={muted || true}
+      >
+        <source src={fileUrl} />
+        Your browser does not support the video tag.
+      </video>
+    ) : (
+      <div className={classes.nofile}>
+        <Icon className={classes.nofileicon} context={context} icon="movie" />
+      </div>
+    )}
+  </div>
+)
 
 const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
   const {
@@ -74,14 +81,6 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
       uploadLabelId={uploadLabelId}
       deleteLabelId={deleteLabelId}
     >
-      <EditButtons
-        context={context}
-        mode={mode}
-        fileInfo={fileInfo}
-        classes={classes}
-        uploadLabelId={uploadLabelId}
-        deleteLabelId={deleteLabelId}
-      />
       <Video
         fileInfo={fileInfo}
         classes={classes}
@@ -89,6 +88,14 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
         autoplay={autoplay}
         muted={muted}
         fileUrl={fileUrl}
+      />
+      <EditButtons
+        context={context}
+        mode={mode}
+        fileInfo={fileInfo}
+        classes={classes}
+        uploadLabelId={uploadLabelId}
+        deleteLabelId={deleteLabelId}
       />
     </UploadArea>
   ) : (

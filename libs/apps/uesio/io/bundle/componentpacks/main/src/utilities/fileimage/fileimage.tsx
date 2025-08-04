@@ -23,7 +23,7 @@ interface EditButtonsProps {
 }
 
 const StyleDefaults = Object.freeze({
-  root: ["relative", "group"],
+  root: ["group", "grid", "[grid-template-areas:'overlay']", "w-[fit-content]"],
   actionicon: [
     "group-hover:block",
     "cursor-pointer",
@@ -31,14 +31,16 @@ const StyleDefaults = Object.freeze({
     "text-white",
     "backdrop-brightness-75",
     "hidden",
-    "absolute",
     "top-0",
     "m-2",
     "leading-none",
+    "[grid-area:overlay]",
+    "[align-self:start]",
   ],
-  image: ["w-full"],
-  editicon: ["right-0"],
-  deleteicon: ["left-0"],
+  contentcontainer: ["[grid-area:overlay]"],
+  image: ["max-w-full", "h-auto"],
+  editicon: ["[justify-self:end]"],
+  deleteicon: ["[justify-self:start]"],
   nofile: ["flex", "bg-slate-100", "justify-center"],
   nofileicon: ["text-4xl", "p-8", "text-slate-400"],
 })
@@ -82,15 +84,18 @@ const Image = ({
   fileInfo?: FileImageProps["fileInfo"]
   classes: Record<string, string>
   context: definition.UtilityProps["context"]
-}) =>
-  fileInfo ? (
-    // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
-    <img className={classes.image} src={fileInfo.url} />
-  ) : (
-    <div className={classes.nofile}>
-      <Icon className={classes.nofileicon} context={context} icon="person" />
-    </div>
-  )
+}) => (
+  <div className={classes.contentcontainer}>
+    {fileInfo ? (
+      // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
+      <img className={classes.image} src={fileInfo.url} />
+    ) : (
+      <div className={classes.nofile}>
+        <Icon className={classes.nofileicon} context={context} icon="person" />
+      </div>
+    )}
+  </div>
+)
 
 const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   const { context, mode, fileInfo, accept, onUpload, onDelete, readonly } =
@@ -112,6 +117,7 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
       uploadLabelId={uploadLabelId}
       deleteLabelId={deleteLabelId}
     >
+      <Image fileInfo={fileInfo} classes={classes} context={context} />
       <EditButtons
         context={context}
         mode={mode}
@@ -120,7 +126,6 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
         uploadLabelId={uploadLabelId}
         deleteLabelId={deleteLabelId}
       />
-      <Image fileInfo={fileInfo} classes={classes} context={context} />
     </UploadArea>
   ) : (
     <div className={classes.root}>
