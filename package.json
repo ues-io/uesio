@@ -88,7 +88,7 @@
     "@nx/js": "21.3.11",
     "@nx/react": "21.3.11",
     "@nx/workspace": "21.3.11",
-    "@orangeopensource/hurl": "^6.1.4",
+    "@orangeopensource/hurl": "^7.0.0",
     "@react-hook/resize-observer": "^2.0.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@shikijs/monaco": "^3.9.1",
