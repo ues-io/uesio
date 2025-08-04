@@ -74,6 +74,24 @@ const EditButtons: definition.UtilityComponent<EditButtonsProps> = (props) => {
   )
 }
 
+const Image = ({
+  fileInfo,
+  classes,
+  context,
+}: {
+  fileInfo?: FileImageProps["fileInfo"]
+  classes: Record<string, string>
+  context: definition.UtilityProps["context"]
+}) =>
+  fileInfo ? (
+    // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
+    <img className={classes.image} src={fileInfo.url} />
+  ) : (
+    <div className={classes.nofile}>
+      <Icon className={classes.nofileicon} context={context} icon="person" />
+    </div>
+  )
+
 const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   const { context, mode, fileInfo, accept, onUpload, onDelete, readonly } =
     props
@@ -83,16 +101,6 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
   const uploadLabelId = nanoid()
   const deleteLabelId = nanoid()
   const isEditMode = !readonly && mode === "EDIT"
-
-  const Image = () =>
-    fileInfo ? (
-      // eslint-disable-next-line jsx-a11y/alt-text -- TODO See https://github.com/ues-io/uesio/issues/4489
-      <img className={classes.image} src={fileInfo.url} />
-    ) : (
-      <div className={classes.nofile}>
-        <Icon className={classes.nofileicon} context={context} icon="person" />
-      </div>
-    )
 
   return isEditMode ? (
     <UploadArea
@@ -112,11 +120,11 @@ const FileImage: definition.UtilityComponent<FileImageProps> = (props) => {
         uploadLabelId={uploadLabelId}
         deleteLabelId={deleteLabelId}
       />
-      <Image />
+      <Image fileInfo={fileInfo} classes={classes} context={context} />
     </UploadArea>
   ) : (
     <div className={classes.root}>
-      <Image />
+      <Image fileInfo={fileInfo} classes={classes} context={context} />
     </div>
   )
 }

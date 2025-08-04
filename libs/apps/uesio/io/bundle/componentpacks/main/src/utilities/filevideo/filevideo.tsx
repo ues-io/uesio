@@ -17,6 +17,32 @@ interface FileVideoProps {
   readonly?: boolean
 }
 
+const Video = ({
+  fileInfo,
+  classes,
+  context,
+  autoplay,
+  muted,
+  fileUrl,
+}: {
+  fileInfo?: FileVideoProps["fileInfo"]
+  classes: Record<string, string>
+  context: definition.UtilityProps["context"]
+  autoplay?: FileVideoProps["autoplay"]
+  muted?: FileVideoProps["muted"]
+  fileUrl?: string
+}) =>
+  fileInfo ? (
+    <video autoPlay={autoplay || true} muted={muted || true}>
+      <source src={fileUrl} />
+      Your browser does not support the video tag.
+    </video>
+  ) : (
+    <div className={classes.nofile}>
+      <Icon className={classes.nofileicon} context={context} icon="movie" />
+    </div>
+  )
+
 const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
   const {
     mode,
@@ -38,18 +64,6 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
   const deleteLabelId = nanoid()
   const isEditMode = !readonly && mode === "EDIT"
 
-  const Video = () =>
-    fileInfo ? (
-      <video autoPlay={autoplay || true} muted={muted || true}>
-        <source src={fileUrl} />
-        Your browser does not support the video tag.
-      </video>
-    ) : (
-      <div className={classes.nofile}>
-        <Icon className={classes.nofileicon} context={context} icon="movie" />
-      </div>
-    )
-
   return isEditMode ? (
     <UploadArea
       onUpload={onUpload}
@@ -68,11 +82,25 @@ const FileVideo: definition.UtilityComponent<FileVideoProps> = (props) => {
         uploadLabelId={uploadLabelId}
         deleteLabelId={deleteLabelId}
       />
-      <Video />
+      <Video
+        fileInfo={fileInfo}
+        classes={classes}
+        context={context}
+        autoplay={autoplay}
+        muted={muted}
+        fileUrl={fileUrl}
+      />
     </UploadArea>
   ) : (
     <div className={classes.root}>
-      <Video />
+      <Video
+        fileInfo={fileInfo}
+        classes={classes}
+        context={context}
+        autoplay={autoplay}
+        muted={muted}
+        fileUrl={fileUrl}
+      />
     </div>
   )
 }
