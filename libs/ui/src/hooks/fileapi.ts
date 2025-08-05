@@ -48,6 +48,7 @@ const useUserFile = (
   const fileUrl = getUserFileURL(context, userFileId, updatedAt)
   useEffect(() => {
     if (data || !fileUrl) {
+      setContent(data || '')
       return
     }
     const fetchData = async () => {
