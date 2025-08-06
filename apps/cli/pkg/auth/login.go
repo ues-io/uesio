@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"slices"
 	"strings"
 
 	"crypto/rand"
@@ -22,6 +23,8 @@ import (
 	"github.com/thecloudmasters/cli/pkg/config/host"
 	"github.com/thecloudmasters/cli/pkg/wire"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/constant"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/preload"
 	authtype "github.com/thecloudmasters/uesio/pkg/types/auth"
 	"golang.org/x/sync/errgroup"
@@ -33,6 +36,8 @@ import (
 const platformLoginMethod = "uesio/core.platform"
 const mockLoginMethod = "uesio/core.mock"
 const browserLoginMethod = "browser"
+
+var errPublicUser = errors.New("you must be logged in to use the CLI, please logout and login or contact your system administrator")
 
 type LoginHandler func() (*authtype.TokenResponse, error)
 
@@ -274,9 +279,44 @@ func getLoginHandler() (*LoginMethodHandler, error) {
 	return nil, fmt.Errorf("invalid login method: %s", loginMethod)
 }
 
+func validatePermissions(user *preload.UserMergeData) error {
+	// We need to do some santiy checks here for a couple of different reasons:
+	//   1. PublicUser means the user is not logged in
+	//   2. If we have a non-public user but the user doesn't have WorkspaceAdminPerm, all downstream API requests will fail but they
+	//      will fail in different ways (e.g., HTTP status code, messages embedded in wire errors, Location header redirects, etc.). To avoid
+	//      displaying confusing error messages to the user, we check that they have permission to access workspaces and if not, fail fast.
+	// TODO: Remove aLl of these checks once we refactor/improve error handling throughout the system and have a reliable and consistent approach to auth, errors, etc.
+	if user == nil || user.Username == meta.PublicUsername {
+		return errPublicUser
+	} else if !slices.Contains(user.NamedPerms, constant.WorkspaceAdminPerm) {
+		return fmt.Errorf("user %s does not have permission to use the CLI, please logout and login with a different user or contact your system administrator", user.Username)
+	} else {
+		return nil
+	}
+}
+
 func Login() (*preload.UserMergeData, error) {
+	return LoginWithOptions(false)
+}
+
+func LoginWithOptions(force bool) (*preload.UserMergeData, error) {
+	if !force {
+		if currentUser, err := Check(); err != nil {
+			return nil, err
+		} else if currentUser != nil {
+			if err := validatePermissions(currentUser); err == nil {
+				return currentUser, nil
+			} else if !errors.Is(err, errPublicUser) {
+				return nil, err
+			}
+		}
+	}
+
 	// store off current token so we can log it out after successful login
 	origToken, origTokenErr := config.GetToken()
+	if origTokenErr != nil {
+		return nil, origTokenErr
+	}
 
 	handler, err := getLoginHandler()
 	if err != nil {
@@ -287,13 +327,16 @@ func Login() (*preload.UserMergeData, error) {
 	if err != nil {
 		return nil, err
 	}
+	if err := validatePermissions(result.User); err != nil {
+		return nil, err
+	}
 
 	err = config.SetToken(result.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	if origTokenErr == nil {
+	if origToken != "" {
 		// intentionally ignoring any failure - the session will eventually expire
 		_ = logoutToken(origToken)
 	}
