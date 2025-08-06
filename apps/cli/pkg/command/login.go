@@ -11,7 +11,7 @@ func Login() error {
 
 	fmt.Println("Logging in...")
 
-	user, err := auth.Login()
+	user, err := auth.LoginWithOptions(true)
 	if err != nil {
 		return err
 	}
