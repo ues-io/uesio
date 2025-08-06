@@ -93,7 +93,7 @@ func ClearHostCacheForDomains(ctx context.Context, ids []string) error {
 			// and just ignoring since the only situation that this should currently occur in is a malformed domain ID which should never
 			// have made it to the cache.
 			if errors.Is(err, errInvalidDomainID) {
-				slog.ErrorContext(ctx, fmt.Sprintf("error getting host key for domain ID '%s': %v", id, err))
+				slog.WarnContext(ctx, fmt.Sprintf("error getting host key for domain ID '%s': %v", id, err))
 				continue
 			} else {
 				return err
