@@ -15,7 +15,7 @@ function run(bot) {
   const version = `v${bundle.major}.${bundle.minor}.${bundle.patch}`
   const siteName = "prod"
   const appName = bot.getAppName()
-  const subdomain = `${appName.replaceAll("/", "-")}-${siteName}`
+  const subdomain = `${appName.replace(/[\/_]/g, "-")}-${siteName}`
 
   // Create Site and domain
   const site = bot.createSite({
