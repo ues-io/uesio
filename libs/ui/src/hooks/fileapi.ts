@@ -40,15 +40,16 @@ const useUserFile = (
   context: Context,
   userFile: PlainWireRecord | undefined,
 ) => {
-  const data = userFile?.["uesio/core.data"] as string
+  const hasCoreData = userFile && "uesio/core.data" in userFile
+  const data = hasCoreData ? userFile["uesio/core.data"] as string : undefined
   const [content, setContent] = useState<string>(data || "")
 
   const userFileId = userFile?.[ID_FIELD] as string
   const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
   const fileUrl = getUserFileURL(context, userFileId, updatedAt)
   useEffect(() => {
-    if (data || !fileUrl) {
-      setContent(data || '')
+    if (hasCoreData || !fileUrl) {
+      setContent(data || "")
       return
     }
     const fetchData = async () => {
