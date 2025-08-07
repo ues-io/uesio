@@ -13,6 +13,7 @@ import (
 
 var userCache cache.Cache[*meta.User]
 var hostCache cache.Cache[*meta.Site]
+var errInvalidDomainID = errors.New("invalid domain ID format")
 
 func init() {
 	userCache = cache.NewPlatformCache[*meta.User]("user", 0)
@@ -75,12 +76,28 @@ func getHostCache(ctx context.Context, domainType, domainValue string) (*meta.Si
 	return site, true
 }
 
-func ClearHostCacheForDomains(ids []string) error {
+func ClearHostCacheForDomains(ctx context.Context, ids []string) error {
 	keys := make([]string, len(ids))
 	for i, id := range ids {
 		key, err := getHostKeyFromDomainId(id)
 		if err != nil {
-			return err
+			// intentionally ignoring the error here which is not ideal but due to legacy data issues, there may be malformed IDs
+			// and we do not want to fail a delete operation because we can't clear the cache in that situation. In theory, if the
+			// id is malformed, it should never have made it to the cache anyway since our lookup logic that results in things getting
+			// in to the cache would never find the record because its malformed to begin with. In practice, we should never get an error here
+			// but to avoid the inability to delete "bad" domains, we log and continue. See https://github.com/ues-io/uesio/pull/5110.
+			// TODO: Consider removing this and returning an error at some point after "cleaning up" any bad data that exists in the system
+			// and/or consider simply clearing the entire cache via InvalidateHostCache as a fallback. Clearing the entire cache
+			// would have a negligile performance impact on the next request for every site but would ensure that when we fail to maintain
+			// the cache, we ensure any potentially bad or no longer valid entries are purged. For now, choosing the less invasive approach
+			// and just ignoring since the only situation that this should currently occur in is a malformed domain ID which should never
+			// have made it to the cache.
+			if errors.Is(err, errInvalidDomainID) {
+				slog.WarnContext(ctx, fmt.Sprintf("error getting host key for domain ID '%s': %v", id, err))
+				continue
+			} else {
+				return err
+			}
 		}
 		keys[i] = key
 	}
@@ -92,11 +109,21 @@ func InvalidateHostCache() error {
 }
 
 func getHostKeyFromDomainId(id string) (string, error) {
-	idParts := strings.Split(id, ":")
-	if len(idParts) != 2 {
-		return "", fmt.Errorf("bad domain id: %s", id)
+	// we should just be splitting here on ":" but due to legacy data issues that didn't validate input for domain IDs, any string
+	// could have been input so we need to find the last occurrence of ":" to ensure we get the domain and type correctly since the
+	// type was system controlled vs. direct user input.
+	// TODO: As mentioned at https://github.com/ues-io/uesio/blob/b7a3e3ee67051a25fdbc9a646ac4bc371a88a1ab/apps/platform/pkg/auth/auth.go#L121, the
+	// entire approach to how we handle domain IDs should be revisited and improved. Beyond what "values" we expect for a subdomain/domain for a site,
+	// we have multiple approaches to parsing them depending on what operation we are performing. Deciding how custom (sub)domains are handled needs to
+	// be though through, designed and approach finalized and then the code across all areas of the system (initial lookup, creating/saving, deleteing, etc.)
+	// adjusted to be consistent throughout them all.
+	idx := strings.LastIndex(id, ":")
+	if idx == -1 {
+		return "", fmt.Errorf("unable to parse domain ID: %s: %w", id, errInvalidDomainID)
 	}
-	return getHostKey(idParts[1], idParts[0]), nil
+	domain := id[:idx]
+	domainType := id[idx+1:]
+	return getHostKey(domain, domainType), nil
 }
 
 func InvalidateCache() error {

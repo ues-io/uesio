@@ -175,5 +175,5 @@ func clearHostCacheForSite(ctx context.Context, request *wire.SaveOp, connection
 		return err
 	}
 
-	return auth.ClearHostCacheForDomains(domainIds)
+	return auth.ClearHostCacheForDomains(ctx, domainIds)
 }
