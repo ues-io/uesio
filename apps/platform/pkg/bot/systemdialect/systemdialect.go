@@ -56,6 +56,8 @@ func (b *SystemDialect) BeforeSave(ctx context.Context, bot *meta.Bot, request *
 		botFunction = runUsageBeforeSaveBot
 	case "uesio/core.user":
 		botFunction = runUserBeforeSaveBot
+	case "uesio/studio.sitedomain":
+		botFunction = runDomainBeforeSaveSiteBot
 	}
 
 	if botFunction == nil {

@@ -19,11 +19,11 @@ func runDomainAfterSaveSiteBot(ctx context.Context, request *wire.SaveOp, connec
 	if err != nil {
 		return err
 	}
-	return clearHostCacheForDomain(request)
+	return clearHostCacheForDomain(ctx, request)
 }
 
-func clearHostCacheForDomain(request *wire.SaveOp) error {
-	return auth.ClearHostCacheForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
+func clearHostCacheForDomain(ctx context.Context, request *wire.SaveOp) error {
+	return auth.ClearHostCacheForDomains(ctx, getUniqueKeysFromUpdatesAndDeletes(request))
 }
 
 func enforceMaxDomainsLimit(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
