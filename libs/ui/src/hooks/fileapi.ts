@@ -41,7 +41,7 @@ const useUserFile = (
   userFile: PlainWireRecord | undefined,
 ) => {
   const hasCoreData = userFile && "uesio/core.data" in userFile
-  const data = hasCoreData ? userFile["uesio/core.data"] as string : undefined
+  const data = hasCoreData ? (userFile["uesio/core.data"] as string) : undefined
   const [content, setContent] = useState<string>(data || "")
 
   const userFileId = userFile?.[ID_FIELD] as string
