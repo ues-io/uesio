@@ -95,7 +95,7 @@ func isValidDomain(details domainDetails) error {
 			return fmt.Errorf("a subdomain must have one label (e.g., 'mysubdomain'): %s", domain)
 		}
 		// Wildcard certs typically restrict to single label subdomains (e.g., *.example.com) and most cert providers will not issue multi-label wildcard certs. If a multi-label
-		// subdomain is required, an explicit certificate, either for the subdomain explicitly or a wildcard for the top-most level of the subdomain) must be used which requires
+		// subdomain is required, an explicit certificate, either for the subdomain explicitly or a wildcard for the top-most level of the subdomain, must be used which requires
 		// infrastructure configuration depending on the hosting environment.
 		if len(labels) > 1 {
 			return fmt.Errorf("a subdomain can only contain one label (e.g., 'mysubdomain'), contact your administrator if you require a multi-label subdomain: %s", domain)
