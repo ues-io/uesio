@@ -123,7 +123,7 @@ func getHostKeyFromDomainId(id string) (string, error) {
 	}
 	domain := id[:idx]
 	domainType := id[idx+1:]
-	return getHostKey(domain, domainType), nil
+	return getHostKey(domainType, domain), nil
 }
 
 func InvalidateCache() error {
