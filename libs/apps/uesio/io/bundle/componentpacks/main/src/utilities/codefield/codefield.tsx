@@ -77,10 +77,10 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
         ((newValue, ev) => {
           // Do not call setValue when we are currently read-only or the value from monaco is the same as the current value.
           // This is necessary because we using value as a controlled input for Monaco since we can modify the wire outside
-          // of Monaco itself (e.g., user hits cancel button). Monaco behaves different in this way than a standard html input 
-          // which does not fire onChange when the value prop changes programmatically. Monaco is smart enough to not fire the 
-          // change event when the value prop (via code) changes (see https://github.com/suren-atoyan/monaco-react/blob/1e3c3efc29ae3b6d07af7545a9a3da6fa9142ba4/src/Editor/Editor.tsx#L213), 
-          // however it only applies this detection logic when the editor is in EDIT mode. After cancel, we've switched to READ 
+          // of Monaco itself (e.g., user hits cancel button). Monaco behaves different in this way than a standard html input
+          // which does not fire onChange when the value prop changes programmatically. Monaco is smart enough to not fire the
+          // change event when the value prop (via code) changes (see https://github.com/suren-atoyan/monaco-react/blob/1e3c3efc29ae3b6d07af7545a9a3da6fa9142ba4/src/Editor/Editor.tsx#L213),
+          // however it only applies this detection logic when the editor is in EDIT mode. After cancel, we've switched to READ
           // mode and so monaco always fires onChange (see https://github.com/suren-atoyan/monaco-react/blob/1e3c3efc29ae3b6d07af7545a9a3da6fa9142ba4/src/Editor/Editor.tsx#L99).
           // We really do not need both of these checks, we could just detect specifically for the EDIT->READ switch condition
           // but we are being defensive here and checking the mode and the value delta and only calling setValue when EDIT
