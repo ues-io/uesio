@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/types/wire"
 	"golang.org/x/net/idna"
@@ -16,7 +17,11 @@ import (
 var domainRegex = regexp.MustCompile(`^(?i)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$`)
 
 func runDomainBeforeSaveSiteBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
-	err := validateDomains(request)
+	canCreateDomains, err := canCreateDomains(ctx, session)
+	if err != nil {
+		return fmt.Errorf("failed to determine create domain permission: %w", err)
+	}
+	err = validateDomains(request, canCreateDomains)
 	if err != nil {
 		return err
 	}
@@ -28,7 +33,7 @@ type domainDetails struct {
 	domainType string
 }
 
-func validateDomains(request *wire.SaveOp) error {
+func validateDomains(request *wire.SaveOp, canCreateDomains bool) error {
 	domains := make([]domainDetails, 0, len(request.Inserts)+len(request.Updates))
 	getDomain := func(change *wire.ChangeItem) error {
 		domain, err := requireValue(change, "uesio/studio.domain")
@@ -51,20 +56,38 @@ func validateDomains(request *wire.SaveOp) error {
 		return err
 	}
 	for _, domain := range domains {
-		if err := isValidDomain(domain); err != nil {
+		if err := isValidDomain(domain, canCreateDomains); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
+func canCreateDomains(ctx context.Context, session *sess.Session) (bool, error) {
+	flag, err := featureflagstore.GetFeatureFlag(ctx, "uesio/studio.manage_domains", session, session.GetContextUser().ID)
+	if err != nil {
+		return false, err
+	}
+	if flag.Value != nil {
+		if val, ok := flag.Value.(bool); ok {
+			return val, nil
+		}
+	}
+	// if we don't have a value or its not a boolean, default to false
+	return false, nil
+}
+
 // validates that the input string is a valid domain name according to RFC 1035/1123.
-func isValidDomain(details domainDetails) error {
+func isValidDomain(details domainDetails, canCreateDomains bool) error {
 	domain := details.domain
 	domainType := details.domainType
 
 	if domainType != "subdomain" && domainType != "domain" {
 		return fmt.Errorf("unknown domain type for (sub)domain '%s': %s", domain, domainType)
+	}
+
+	if domainType == "domain" && !canCreateDomains {
+		return fmt.Errorf("you do not have permission to create domains: %s", domain)
 	}
 
 	// A colon is not a valid character in a domain name so safe to reject any input that contains a
