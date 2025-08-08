@@ -90,12 +90,12 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/appkit.main
                     title: Domains
-                    subtitle: Add a domain to this site.
+                    subtitle: Manage domains for this site.
                     actions:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                text: "Add a Domain"
+                                text: $If{[$FeatureFlag{uesio/studio.manage_domains}][Add a Domain][Add a Subdomain]}
                                 uesio.variant: uesio/appkit.secondary
                                 signals:
                                   - signal: panel/TOGGLE
@@ -148,7 +148,7 @@ definition:
   panels:
     newDomain:
       uesio.type: uesio/io.dialog
-      title: Add a Domain
+      title: $If{[$FeatureFlag{uesio/studio.manage_domains}][Add a Domain][Add a Subdomain]}
       width: 400px
       height: 500px
       components:
@@ -159,6 +159,7 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.domain
+                  label: $If{[$FeatureFlag{uesio/studio.manage_domains}][Domain][Subdomain]}
               - uesio/io.field:
                   fieldId: uesio/studio.type
                   uesio.display:
