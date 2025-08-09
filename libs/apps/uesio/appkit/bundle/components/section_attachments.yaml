@@ -5,6 +5,14 @@ properties:
   - name: title
     type: TEXT
     defaultValue: Attachments
+  - name: allowCreate
+    type: CHECKBOX
+    label: Allow Create
+    defaultValue: false
+  - name: allowDelete
+    type: CHECKBOX
+    label: Allow Delete
+    defaultValue: false
 definition:
   - uesio/io.box:
       uesio.variant: uesio/appkit.section
@@ -26,6 +34,7 @@ definition:
                     workspacename: $Param{workspacename}
                     allowCreate: $Prop{allowCreate}
                     allowDelete: $Prop{allowDelete}
+                    collectionId: $Collection{id}
 title: Attachments Section
 discoverable: true
 description: Attachments Section

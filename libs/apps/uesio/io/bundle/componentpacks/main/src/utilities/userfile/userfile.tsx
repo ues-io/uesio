@@ -72,23 +72,35 @@ const UserFile: definition.UtilityComponent<UserFileUtilityProps> = (props) => {
     const fieldID = props.fieldId || userFile?.["uesio/core.fieldid"]
 
     if (!recordID || !collectionID) return
-    const uploadResult = await api.file.uploadFile(
-      context,
-      {
-        collectionID,
-        recordID,
-        fieldID,
-        params: context.getParams(),
-      },
-      file,
-    )
+    let uploadResult
+    try {
+      uploadResult = await api.file.uploadFile(
+        context,
+        {
+          collectionID,
+          recordID,
+          fieldID,
+          params: context.getParams(),
+        },
+        file,
+      )
+    } catch (e) {
+      api.notification.addError("Unable to upload file: " + e, context)
+      throw e
+    }
     await onUpload?.(uploadResult)
     return uploadResult
   }
 
   const onFileDelete = async () => {
     if (!userFileId) return
-    const deleteResult = await api.file.deleteFile(context, userFileId)
+    let deleteResult
+    try {
+      deleteResult = await api.file.deleteFile(context, userFileId)
+    } catch (e) {
+      api.notification.addError("Unable to delete file: " + e, context)
+      throw e
+    }
     await onDelete?.(deleteResult)
     return deleteResult
   }

@@ -2,6 +2,7 @@ package systemdialect
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -15,6 +16,7 @@ const (
 	userCollectionId       = "uesio/core.user"
 	studioFileCollectionId = "uesio/studio.file"
 	studioBotCollectionId  = "uesio/studio.bot"
+	userFileCollectionId   = "uesio/core.userfile"
 )
 
 func runUserFileAfterSaveBot(ctx context.Context, request *wire.SaveOp, connection wire.Connection, session *sess.Session) error {
@@ -68,6 +70,8 @@ func runUserFileAfterSaveBot(ctx context.Context, request *wire.SaveOp, connecti
 				commonfields.UpdatedAt: time.Now().Unix(),
 				commonfields.Id:        relatedRecordId,
 			})
+		case userFileCollectionId:
+			return fmt.Errorf("userfile cannot reference collection: %s", userFileCollectionId)
 		}
 		return nil
 	}); err != nil {
