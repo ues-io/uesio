@@ -21,7 +21,7 @@ definition:
           value: $Param{recordid}
         - field: uesio/core.collectionid
           valueSource: VALUE
-          value: $Collection{id}
+          value: $Param{collectionId}
   components:
     - uesio/io.box:
         uesio.display:
